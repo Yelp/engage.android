@@ -46,12 +46,10 @@ public class JRAuthenticatedUser {
     // STATIC FIELDS
     // ------------------------------------------------------------------------
 
-	public static final String KEY_PROVIDER_KEY = "provider_key";
 	public static final String KEY_PROVIDER_NAME = "provider_name";
 	public static final String KEY_DEVICE_TOKEN = "device_token";
     public static final String KEY_PHOTO = "photo";
     public static final String KEY_PREFERRED_USERNAME = "preferred_username";
-    public static final String KEY_AUTH_INFO = "auth_info";
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -68,7 +66,6 @@ public class JRAuthenticatedUser {
     private String mPhoto;
     private String mPreferredUsername;
     private String mDeviceToken;
-    private JRDictionary mAuthInfo;
     private String mProviderName;
 
     // ------------------------------------------------------------------------
@@ -85,14 +82,10 @@ public class JRAuthenticatedUser {
     public JRAuthenticatedUser(JRDictionary dictionary, String providerName) {
     	if ((dictionary != null) && (!TextUtils.isEmpty(providerName)) 
     			&& dictionary.containsKey(KEY_DEVICE_TOKEN)) {
+            mDeviceToken = dictionary.getAsString(KEY_DEVICE_TOKEN);
     		mProviderName = providerName;
     		mPhoto = dictionary.getAsString(KEY_PHOTO);
 			mPreferredUsername = dictionary.getAsString(KEY_PREFERRED_USERNAME);
-    		
-    		// NOTE:  This is commented out in Obj-C code:
-    		// mAuthInfo = (JRDictionary) dictionary.get(KEY_AUTH_INFO);
-    		
-    		mDeviceToken = dictionary.getAsString(KEY_DEVICE_TOKEN);
     	}
     }
 
@@ -112,10 +105,6 @@ public class JRAuthenticatedUser {
         return mDeviceToken;
     }
 
-    public JRDictionary getAuthInfo() {  /* (readonly) */
-        return mAuthInfo;
-    }
-
     public String getProviderName() {  /* (readonly) */
         return mProviderName;
     }
@@ -129,15 +118,13 @@ public class JRAuthenticatedUser {
     	coder.put(KEY_PHOTO, mPhoto);
     	coder.put(KEY_PREFERRED_USERNAME, mPreferredUsername);
     	coder.put(KEY_DEVICE_TOKEN, mDeviceToken);
-    	coder.put(KEY_AUTH_INFO, mAuthInfo);
     }
 
     public void initWithCoder(JRDictionary coder) {
-    	mProviderName = coder.getAsString(KEY_PROVIDER_KEY);
+    	mProviderName = coder.getAsString(KEY_PROVIDER_NAME);
     	mPhoto = coder.getAsString(KEY_PHOTO);
     	mPreferredUsername = coder.getAsString(KEY_PREFERRED_USERNAME);
     	mDeviceToken = coder.getAsString(KEY_DEVICE_TOKEN);
-    	mAuthInfo = coder.getAsDictionary(KEY_AUTH_INFO);
     }
  
 }

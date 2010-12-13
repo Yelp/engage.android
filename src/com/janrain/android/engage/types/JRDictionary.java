@@ -31,7 +31,9 @@ package com.janrain.android.engage.types;
 
 import java.util.HashMap;
 
+import android.content.Context;
 import android.text.TextUtils;
+import com.janrain.android.engage.utils.Archiver;
 
 /**
  * iPhone dictionary work-alike class.  Maps string keys to object values.
@@ -48,6 +50,70 @@ public final class JRDictionary extends HashMap<String,Object> {
 	
 	/* Required for unique object identification. */
 	private static final long serialVersionUID = 3798456277521362434L;
+
+    // ------------------------------------------------------------------------
+    // STATIC METHODS
+    // ------------------------------------------------------------------------
+
+    /**
+     * Utility method used to check if a dictionary object is "empty", that is, it is null or
+     * contains zero items.
+     *
+     * @param dictionary
+     *      The dictionary object to be tested.
+     *
+     * @return
+     *      <code>true</code> if the dictionary is null or contains zero items, <code>false</code>
+     *      otherwise.
+     */
+    public static boolean isEmpty(JRDictionary dictionary) {
+        return ((dictionary == null) || (dictionary.size() == 0));
+    }
+
+    /**
+     * Archives the specified JRDictionary object to disk.
+     *
+     * @param context
+     * 		The application context used for directory/file access.  This parameter cannot be null.
+     *
+     * @param name
+     *      The name the JRDictionary will be saved as on disk.  This parameter cannot be null.
+     *
+     * @param dictionary
+     *      The dictionary object to be saved.
+     *
+     * 		Returns <code>true</code> if the save operation is successful, <code>false</code>
+     * 		otherwise.
+     *
+     * @throws
+     * 		IllegalArgumentException if the context or name parameters are null.
+     */
+    public static boolean archive(Context context, String name, JRDictionary dictionary) {
+        return Archiver.save(context, name, dictionary);
+    }
+
+    /**
+     * Loads (unarchives) the specified JRDictionary object from the local (protected) file system.
+     *
+     * @param context
+     * 		The application context used for directory/file access.  This parameter cannot be null.
+     *
+     * @param name
+     * 		The name of the JRDictionary to be loaded from disk.  This parameter cannot be null.
+     *
+     * @return
+     * 		The JRDictionary if found and loaded, new (empty) JRDictionary otherwise.
+     *
+     * @throws
+     * 		IllegalArgumentException if the context or name parameters are null.
+     */
+    public static JRDictionary unarchive(Context context, String name) {
+        Object obj = Archiver.load(context, name);
+        if ((obj != null) && (obj instanceof JRDictionary)) {
+            return (JRDictionary)obj;
+        }
+        return new JRDictionary();
+    }
 
     // ------------------------------------------------------------------------
     // METHODS
