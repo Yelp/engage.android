@@ -16,4 +16,6 @@ tmp/*
 # IDE stuff
 .idea/
 nbproject/
+*.iml
+
 
