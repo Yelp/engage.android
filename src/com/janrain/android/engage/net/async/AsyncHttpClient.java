@@ -154,7 +154,6 @@ public final class AsyncHttpClient {
 			mListener = listener;
 		}
 		
-		@Override
 		public void run() {
 			if (mListener == null) {
 				Log.w(TAG, "[run] listener instance is null, no one to send response to!");
@@ -197,7 +196,6 @@ public final class AsyncHttpClient {
 			mListener = listener;
 		}
 		
-		@Override
 		public void run() {
 			mListener.onFullResponseReceived(mHolder);
 		}

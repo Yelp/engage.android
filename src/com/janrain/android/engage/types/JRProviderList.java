@@ -25,4 +25,20 @@ public class JRProviderList extends ArrayList<JRProvider> {
         }
         return new JRProviderList();
     }
+
+
+    public JRProviderList() {
+        super();
+    }
+
+    public JRProviderList(int capacity) {
+        super(capacity);
+    }
+
+    public JRProviderList(JRProviderList providerList) {
+        super();
+        if (!isEmpty(providerList)) {
+            addAll(providerList);
+        }
+    }
 }

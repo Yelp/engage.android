@@ -2,4 +2,11 @@
 <resources>
     <string name="hello">Hello World, Lop!</string>
     <string name="app_name"></string>
+
+    <!--
+       - Server URL strings for each of the three typical environments.
+      -->
+    <string name="server_url_local">http://lillialexis.janrain.com:8080</string>
+    <string name="server_url_staging">https://rpxstaging.com</string>
+    <string name="server_url_production">https://rpxnow.com</string>
 </resources>

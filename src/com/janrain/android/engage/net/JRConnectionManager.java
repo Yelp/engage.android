@@ -147,7 +147,6 @@ public class JRConnectionManager implements AsyncHttpFullResponseListener {
     // METHODS
     // ------------------------------------------------------------------------
 
-	@Override
 	public void onFullResponseReceived(AsyncHttpFullResponseHolder holder) {
 		HttpUriRequest request = holder.getRequest();
 		ConnectionData connectionData = mConnectionBuffers.get(request);
@@ -156,7 +155,7 @@ public class JRConnectionManager implements AsyncHttpFullResponseListener {
 		
 		if (holder.hasException()) {
 			delegate.connectionDidFail(
-					new JREngageError(holder.getException()), 
+					holder.getException(),
 					request, 
 					userdata);
 		} else {

@@ -29,10 +29,13 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.types;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 
 import android.content.Context;
 import android.text.TextUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.janrain.android.engage.utils.Archiver;
 
 /**
@@ -50,6 +53,10 @@ public final class JRDictionary extends HashMap<String,Object> {
 	
 	/* Required for unique object identification. */
 	private static final long serialVersionUID = 3798456277521362434L;
+
+    /* Type identifier used by GSON library for [de]serialization. */
+    private static Type sJRDictionaryType = null;
+
 
     // ------------------------------------------------------------------------
     // STATIC METHODS
@@ -113,6 +120,79 @@ public final class JRDictionary extends HashMap<String,Object> {
             return (JRDictionary)obj;
         }
         return new JRDictionary();
+    }
+
+    /**
+     * Serializes the specified dictionary object to a JSON string.
+     *
+     * @param dictionary
+     *      The JRDictionary object to serialize.
+     *
+     * @return
+     *      JSON representation of the specified JRDictionary object.
+     */
+    public static String toJSON(JRDictionary dictionary) {
+        return new Gson().toJson(dictionary, getTypeForGSON());
+    }
+
+    /**
+     * Deserializes the specified JSON string to a JRDictionary instance.
+     *
+     * @param json
+     *      The JSON string to be deserialized.
+     *
+     * @return
+     *      A JRDictionary object representation of the JSON string.
+     */
+    public static JRDictionary fromJSON(String json) {
+        return new Gson().fromJson(json, getTypeForGSON());
+    }
+
+    /**
+     * Lazily initializes the type object instance used for [de]serialization.
+     *
+     * @return
+     *      The type object used for GSON [de]serialization.
+     */
+    private static Type getTypeForGSON() {
+        if (sJRDictionaryType == null) {
+            sJRDictionaryType = new TypeToken<JRDictionary>(){}.getType();
+        }
+        return sJRDictionaryType;
+    }
+
+    // ------------------------------------------------------------------------
+    // CONSTRUCTORS
+    // ------------------------------------------------------------------------
+
+    /**
+     * Default constructor.
+     */
+    public JRDictionary() {
+        super();
+    }
+
+    /**
+     * Initializing constructor.  Creates instance of JRDictionary with the specified
+     * initial size/capacity.
+     *
+     * @param capacity
+     *      Initial size/capacity of JRDictionary instance.
+     */
+    public JRDictionary(int capacity) {
+        super(capacity);
+    }
+
+    /**
+     * Copy constructor.
+     *
+     * @param dictionary
+     *      Dictionary instance to clone.
+     */
+    public JRDictionary(JRDictionary dictionary) {
+        if (!JRDictionary.isEmpty(dictionary)) {
+            putAll(dictionary);
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -248,7 +328,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 	 * 
 	 * @param key
 	 * 		The key of the value to be retrieved.
-	 * 
+	 *
 	 * @return
 	 * 		The JRDictionary value if key is found, null otherwise.
 	 */
@@ -283,4 +363,44 @@ public final class JRDictionary extends HashMap<String,Object> {
 			? new JRDictionary()
 			: retval;
 	}
+
+    /**
+     * Convenience method used to retrieve a named value as a JRProviderList.
+     *
+     * @param key
+     * 		The key of the value to be retrieved.
+     *
+     * @return
+     * 		The JRProviderList value if key is found, null otherwise.
+     */
+    public JRProviderList getAsProviderList(String key) {
+        return getAsProviderList(key, false);
+    }
+
+    /**
+     * Convenience method used to retrieve a named value as a JRProviderList.
+     *
+     * @param key
+     * 		The key of the value to be retrieved.
+     *
+     * @param shouldCreateIfNotFound
+     * 		Flag indicating whether or not a new JRProviderList object should be created if the
+     * 		specified key does not exist.
+     *
+     * @return
+     * 		The JRProviderList value if key is found, null otherwise.
+     */
+    public JRProviderList getAsProviderList(String key, boolean shouldCreateIfNotFound) {
+        JRProviderList retval = null;
+        if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
+            Object value = get(key);
+            if (value instanceof JRProviderList) {
+                retval = (JRProviderList)value;
+            }
+        }
+
+        return ((retval == null) && shouldCreateIfNotFound)
+            ? new JRProviderList()
+            : retval;
+    }
 }
