@@ -42,18 +42,17 @@ import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRProviderList;
 import com.janrain.android.engage.utils.Archiver;
 import com.janrain.android.engage.utils.StringUtils;
-import org.apache.http.HttpRequest;
 
 import android.text.TextUtils;
 
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.JREngageError.ConfigurationError;
 import com.janrain.android.engage.JREngageError.ErrorType;
+import com.janrain.android.engage.JREngageError.SocialPublishingError;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EncodingUtils;
 
 public class JRSessionData implements JRConnectionManagerDelegate {
@@ -113,7 +112,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.w(TAG, "[getInstance] null instance w/ null appId specified.");
 			return null;
 		}
-		
+
+        // TODO:  QUESTIONS FOR LILLI
+        //   -- the singleton approach here will limit the instance to a single appId
+        //   -- and a single delegate.
+        //   -- 1. Is this correct behavior
+        //   -- 2. If yes, why do we need a collection of delegates and not just one?
+
 		sInstance = new JRSessionData(appId, tokenUrl, delegate);
         if (Config.LOGD) {
             Log.d(TAG, "[getInstance] returning new instance.");
@@ -239,13 +244,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                         JREngageError.ErrorType.CONFIGURATION_FAILED);
             } else if (s.equals("shareActivity")) {
                 List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-                if (delegatesCopy != null) {
-                    for (JRSessionDelegate delegate : delegatesCopy) {
-                        JREngageError error = new JREngageError(
-                            "Session error", JREngageError.CODE_UNKNOWN, "", ex
-                        );
-                        delegate.publishingActivity(mActivity, error, mCurrentProvider.getName());
-                    }
+                for (JRSessionDelegate delegate : delegatesCopy) {
+                    JREngageError error = new JREngageError(
+                        "Session error", JREngageError.CODE_UNKNOWN, "", ex
+                    );
+                    delegate.publishingActivity(mActivity, error, mCurrentProvider.getName());
                 }
             }
 
@@ -253,16 +256,14 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             JRDictionary dictionary = (JRDictionary) userdata;
             if ((dictionary != null) && (dictionary.containsKey("tokenUrl"))) {
                 List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-                if (delegatesCopy != null) {
-                    for (JRSessionDelegate delegate : delegatesCopy) {
-                        JREngageError error = new JREngageError(
-                            "Session error", JREngageError.CODE_UNKNOWN, "", ex
-                        );
-                        delegate.authenticationCallToTokenUrl(
-                                dictionary.getAsString("tokenUrl"),
-                                error,
-                                mCurrentProvider.getName());
-                    }
+                for (JRSessionDelegate delegate : delegatesCopy) {
+                    JREngageError error = new JREngageError(
+                        "Session error", JREngageError.CODE_UNKNOWN, "", ex
+                    );
+                    delegate.authenticationCallToTokenUrl(
+                            dictionary.getAsString("tokenUrl"),
+                            error,
+                            mCurrentProvider.getName());
                 }
             }
         }
@@ -270,6 +271,102 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
         Log.i(TAG, "[connectionDidFinishLoading]");
+
+        if (Config.LOGD) {
+            Log.d(TAG, "[connectionDidFinishLoading] payload: " + payload);
+        }
+
+        if (userdata == null) {
+            // TODO:  this case is not handled on iPhone, is it possible?
+        } else if (userdata instanceof String) {
+            String tag = (String) userdata;
+
+            if (tag.equals("shareActivity")) {
+                JRDictionary responseDict = JRDictionary.fromJSON(payload);
+                if (responseDict == null) {
+                    List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
+                    for (JRSessionDelegate delegate : delegatesCopy) {
+                        delegate.publishingActivity(
+                                mActivity,
+                                new JREngageError(payload,
+                                        SocialPublishingError.FAILED,
+                                        ErrorType.PUBLISH_FAILED),
+                                mCurrentProvider.getName());
+                    }
+                }
+
+                // TODO:  Question for Lilli
+                //    Should the if-block above return?  Or should the next block actually be
+                //    an else-if?  We're checking responseDict for null above and then assuming it
+                //    is not null below.  That is bad.
+                // TODO:  Question for Lilli
+
+                
+                if (responseDict.containsKey("stat") && ("ok".equals(responseDict.get("stat")))) {
+                    saveLastUsedSocialProvider();
+                    List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
+                    for (JRSessionDelegate delegate : delegatesCopy) {
+                        delegate.publishingActivityDidSucceed(
+                                mActivity,
+                                mCurrentProvider.getName()
+                        );
+                    }
+                } else {
+                    JRDictionary errorDict = responseDict.getAsDictionary("err");
+                    JREngageError publishError;
+
+                    if (errorDict == null) {
+                        publishError = new JREngageError(
+                                "There was a problem publishing with this activity",
+                                SocialPublishingError.FAILED,
+                                ErrorType.PUBLISH_FAILED);
+                    } else {
+                        int code = (errorDict.containsKey("code"))
+                                ? errorDict.getAsInt("code") : 1000;
+
+                        switch (code) {
+                            case 0: /* "Missing parameter: apiKey" */
+                                publishError = new JREngageError(
+                                        errorDict.getAsString("msg"),
+                                        SocialPublishingError.MISSING_API_KEY,
+                                        ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
+                                break;
+                            case 4: /* "Facebook Error: Invalid OAuth 2.0 Access Token" */
+                                publishError = new JREngageError(
+                                        errorDict.getAsString("msg"),
+                                        SocialPublishingError.INVALID_OAUTH_TOKEN,
+                                        ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
+                                break;
+                            case 100: // TODO LinkedIn character limit error
+                                publishError = new JREngageError(
+                                        errorDict.getAsString("msg"),
+                                        SocialPublishingError.LINKEDIN_CHARACTER_EXCEEDED,
+                                        ErrorType.PUBLISH_INVALID_ACTIVITY);
+                                break;
+                            case 6: // TODO Twitter duplicate error
+                                publishError = new JREngageError(
+                                        errorDict.getAsString("msg"),
+                                        SocialPublishingError.DUPLICATE_TWITTER,
+                                        ErrorType.PUBLISH_INVALID_ACTIVITY);
+                                break;
+                            case 1000: /* Extracting code failed; Fall through. */
+                            default: // TODO Other errors (find them)
+                                publishError = new JREngageError(
+                                        "There was a problem publishing this activity",
+                                        SocialPublishingError.FAILED,
+                                        ErrorType.PUBLISH_FAILED);
+                                break;
+                        }
+                    }
+
+                    List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
+                    for (JRSessionDelegate delegate : delegatesCopy) {
+                        delegate.publishingActivity(mActivity,publishError,
+                                mCurrentProvider.getName());
+                    }
+                }
+            }
+        }
 
 	}
 
@@ -283,14 +380,12 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             JRDictionary dictionary = (JRDictionary) userdata;
             if ((dictionary != null) && (dictionary.containsKey("tokenUrl"))) {
                 List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-                if (delegatesCopy != null) {
-                    for (JRSessionDelegate delegate : delegatesCopy) {
-                        delegate.authenticationDidReachTokenUrl(
-                                dictionary.getAsString("tokenUrl"),
-                                headers,
-                                payload,
-                                mCurrentProvider.getName());
-                    }
+                for (JRSessionDelegate delegate : delegatesCopy) {
+                    delegate.authenticationDidReachTokenUrl(
+                            dictionary.getAsString("tokenUrl"),
+                            headers,
+                            payload,
+                            mCurrentProvider.getName());
                 }
             }
 
@@ -306,7 +401,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 }
 
                 if (payloadString.contains("\"provider_info\":{")) {
-                    finishGetConfiguration(payloadString /* TODO: IMPORTANT:  need etag accessor! */);
+                    mError = finishGetConfiguration(payloadString, headers.getETag());
                 } else {
                     mError = new JREngageError(
                             "There was a problem communicating with the Janrain server while configuring authentication.",
@@ -320,6 +415,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public void connectionWasStopped(Object userdata) {
         Log.i(TAG, "[connectionWasStopped]");
+        // nothing to do here...
 	}
 
     // ------------------------------------------------------------------------
@@ -524,8 +620,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
      */
 
-
     private synchronized List<JRSessionDelegate> getDelegatesCopy() {
-        return new ArrayList<JRSessionDelegate>(mDelegates);
+        return (mDelegates == null)
+                ? new ArrayList<JRSessionDelegate>()
+                : new ArrayList<JRSessionDelegate>(mDelegates);
     }
 }

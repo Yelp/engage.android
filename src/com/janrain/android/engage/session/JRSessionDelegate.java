@@ -60,7 +60,9 @@ public interface JRSessionDelegate {
     void publishingDidComplete();
     
     void publishingActivityDidSucceed(JRActivityObject activity, String provider);
-    
+
+    // TODO:  Question for Lilli
+    //  Should we rename this to 'publishingActivityDidFail(...)???
     void publishingActivity(JRActivityObject activity, JREngageError error, String provider);
 
 }

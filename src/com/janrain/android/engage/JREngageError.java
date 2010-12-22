@@ -69,12 +69,12 @@ public class JREngageError extends Exception {
     public static final class SocialPublishingError {
         private static final int START = 300;
 
-        public static final int Publish_Failed_Error = START;
-        public static final int PUBLISH_ERROR_ACTIVITY_NIL = START + 1;
-        public static final int PUBLISH_ERROR_MISSING_API_KEY = START + 2;
-        public static final int PUBLISH_ERROR_INVALID_OAUTH_TOKEN = START + 3;
-        public static final int PUBLISH_ERROR_DUPLICATE_TWITTER = START + 4;
-        public static final int PUBLISH_ERROR_LINKEDIN_CHARACTER_EXCEEDED = START + 5;
+        public static final int FAILED = START;
+        public static final int ACTIVITY_NIL = START + 1;
+        public static final int MISSING_API_KEY = START + 2;
+        public static final int INVALID_OAUTH_TOKEN = START + 3;
+        public static final int DUPLICATE_TWITTER = START + 4;
+        public static final int LINKEDIN_CHARACTER_EXCEEDED = START + 5;
     }
 
     // ------------------------------------------------------------------------
