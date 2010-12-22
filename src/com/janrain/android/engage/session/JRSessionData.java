@@ -225,7 +225,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     // DELEGATE METHODS
     // ------------------------------------------------------------------------
 
-	public void connectionDidFail(Exception ex, HttpRequest request, Object userdata) {
+    public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
         Log.i(TAG, "[connectionDidFail]");
 
         if (userdata == null) {
@@ -268,13 +268,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 	}
 
-	public void connectionDidFinishLoading(String payload, HttpRequest request, Object userdata) {
+    public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
         Log.i(TAG, "[connectionDidFinishLoading]");
 
 	}
 
-	public void connectionDidFinishLoading(HttpResponseHeaders fullResponse, byte[] payload,
-                                           HttpRequest request, Object userdata) {
+    public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload,
+                                           String requestUrl, Object userdata) {
         Log.i(TAG, "[connectionDidFinishLoading-full]");
 
         if (userdata == null) {
@@ -287,7 +287,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                     for (JRSessionDelegate delegate : delegatesCopy) {
                         delegate.authenticationDidReachTokenUrl(
                                 dictionary.getAsString("tokenUrl"),
-                                fullResponse,
+                                headers,
                                 payload,
                                 mCurrentProvider.getName());
                     }
@@ -318,7 +318,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 	}
 
-	public void connectionWasStopped(Object userdata) {
+    public void connectionWasStopped(Object userdata) {
         Log.i(TAG, "[connectionWasStopped]");
 	}
 
@@ -332,10 +332,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[startGetConfiguration] url: " + urlString);
         }
 
-        HttpGet request = new HttpGet(urlString);
         final String tag = "getConfiguration";
 
-        if (!JRConnectionManager.createConnection(request, this, true, tag)) {
+        if (!JRConnectionManager.createConnection(urlString, this, true, tag)) {
             Log.w(TAG, "[startGetConfiguration] createConnection failed.");
             return new JREngageError(
                     "There was a problem connecting to the Janrain server while configuring authentication.",

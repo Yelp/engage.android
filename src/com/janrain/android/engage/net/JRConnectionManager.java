@@ -29,17 +29,13 @@
 */
 package com.janrain.android.engage.net;
 
+import com.janrain.android.engage.net.async.AsyncHttpClient;
+import com.janrain.android.engage.net.async.AsyncHttpResponseHolder;
+import com.janrain.android.engage.net.async.AsyncHttpResponseListener;
+
 import java.util.HashMap;
 
-import org.apache.http.client.methods.HttpUriRequest;
-
-import com.janrain.android.engage.JREngageError;
-import com.janrain.android.engage.net.async.AsyncHttpClient;
-import com.janrain.android.engage.net.async.AsyncHttpFullResponseHolder;
-import com.janrain.android.engage.net.async.AsyncHttpFullResponseListener;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
-
-public class JRConnectionManager implements AsyncHttpFullResponseListener {
+public class JRConnectionManager implements AsyncHttpResponseListener {
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -79,24 +75,25 @@ public class JRConnectionManager implements AsyncHttpFullResponseListener {
 		return sInstance;
 	}
 	
-	public static boolean createConnection(HttpUriRequest request, 
-			JRConnectionManagerDelegate delegate, Object userdata) {
-		return createConnection(request, delegate, false, userdata);
+	public static boolean createConnection(String requestUrl,
+                                           JRConnectionManagerDelegate delegate,
+                                           Object userdata) {
+		return createConnection(requestUrl, delegate, false, userdata);
 	}
 
-	public static boolean createConnection(HttpUriRequest request, 
-			JRConnectionManagerDelegate delegate, boolean shouldReturnFullResponse, 
-			Object userdata) {
-		
+	public static boolean createConnection(String requestUrl,
+                                           JRConnectionManagerDelegate delegate,
+                                           boolean shouldReturnFullResponse,
+                                           Object userdata) {
 		// get singleton instance (lazy init)
 		JRConnectionManager instance = getInstance();
 		
 		// create/store connection data
-		instance.mConnectionBuffers.put(request, 
+		instance.mConnectionBuffers.put(requestUrl,
 				new ConnectionData(delegate, shouldReturnFullResponse, userdata));
 
 		// execute request
-		AsyncHttpClient.executeFullRequest(request, instance);
+		AsyncHttpClient.executeRequest(requestUrl, instance);
 		
 		return true;
 	}
@@ -105,13 +102,13 @@ public class JRConnectionManager implements AsyncHttpFullResponseListener {
 		// get singleton instance (lazy init)
 		JRConnectionManager instance = getInstance();
 
-		for (HttpUriRequest request : instance.mConnectionBuffers.keySet()) {
-			if (instance.mConnectionBuffers.get(request).mDelegate == delegate) {
+		for (String requestUrl : instance.mConnectionBuffers.keySet()) {
+			if (instance.mConnectionBuffers.get(requestUrl).mDelegate == delegate) {
 				/* TODO:  
 				 * need to figure out how to stop connection - not as straightforward w/
 				 * the Android/Apache HTTP classes.  For now, just remove from the hash map.
 				 */
-				instance.mConnectionBuffers.remove(request);
+				instance.mConnectionBuffers.remove(requestUrl);
 			}
 		}
 		return true;
@@ -125,7 +122,7 @@ public class JRConnectionManager implements AsyncHttpFullResponseListener {
     // FIELDS
     // ------------------------------------------------------------------------
 
-	private HashMap<HttpUriRequest, ConnectionData> mConnectionBuffers;
+	private HashMap<String, ConnectionData> mConnectionBuffers;
 	
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -136,7 +133,7 @@ public class JRConnectionManager implements AsyncHttpFullResponseListener {
     // ------------------------------------------------------------------------
 
 	private JRConnectionManager() {
-		mConnectionBuffers = new HashMap<HttpUriRequest, ConnectionData>();
+		mConnectionBuffers = new HashMap<String, ConnectionData>();
 	}
 	
     // ------------------------------------------------------------------------
@@ -147,27 +144,30 @@ public class JRConnectionManager implements AsyncHttpFullResponseListener {
     // METHODS
     // ------------------------------------------------------------------------
 
-	public void onFullResponseReceived(AsyncHttpFullResponseHolder holder) {
-		HttpUriRequest request = holder.getRequest();
-		ConnectionData connectionData = mConnectionBuffers.get(request);
-		JRConnectionManagerDelegate delegate = connectionData.mDelegate;
-		Object userdata = connectionData.mTag;
-		
-		if (holder.hasException()) {
-			delegate.connectionDidFail(
-					holder.getException(),
-					request, 
-					userdata);
-		} else {
-			byte[] payload = holder.getPayload();
-			if (connectionData.mShouldReturnFullReponse && holder.hasHeaders()) {
-				delegate.connectionDidFinishLoading(holder.getHeaders(), payload, request, userdata);
-			} else {
-				delegate.connectionDidFinishLoading(new String(payload), request, userdata);
-			}
-		}
+	public void onResponseReceived(AsyncHttpResponseHolder response) {
+        String requestUrl = response.getUrl();
+        ConnectionData connectionData = mConnectionBuffers.get(requestUrl);
+        JRConnectionManagerDelegate delegate = connectionData.mDelegate;
 
-		mConnectionBuffers.remove(request);
+        if (response.hasException()) {
+            delegate.connectionDidFail(response.getException(), requestUrl, connectionData.mTag);
+        } else {
+            if (connectionData.mShouldReturnFullReponse && response.hasHeaders()) {
+                // full response
+                delegate.connectionDidFinishLoading(
+                        response.getHeaders(),
+                        response.getPayload(),
+                        requestUrl,
+                        connectionData.mTag);
+            } else {
+                // non-full response
+                delegate.connectionDidFinishLoading(
+                        new String(response.getPayload()),
+                        requestUrl,
+                        connectionData.mTag);
+            }
+
+        }
 	}
 
 	/*

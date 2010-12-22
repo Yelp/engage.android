@@ -29,13 +29,11 @@
 */
 package com.janrain.android.engage.net.async;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpUriRequest;
+import com.janrain.android.engage.utils.IOUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.os.Handler;
@@ -52,156 +50,89 @@ public final class AsyncHttpClient {
     // ------------------------------------------------------------------------
 
 	/*
-	 * Sends HTTP request in background and returns the response via a handler.
-	 */
-	private static class BasicSender extends Thread {
-
-		private static final String TAG = BasicSender.class.getSimpleName();
-		private static final DefaultHttpClient sHttpClient = new DefaultHttpClient();
-		
-		private HttpUriRequest mRequest;
-		private Handler mHandler;
-		private BasicCallbackWrapper mWrapper;
-		
-		public BasicSender(HttpUriRequest request, Handler handler, BasicCallbackWrapper wrapper) {
-			mRequest = request;
-			mHandler = handler;
-			mWrapper = wrapper;
-		}
-		
-		public void run() {
-			if (Config.LOGD) { Log.d(TAG, "[run] BEGIN."); }
-			try {
-				final HttpResponse response;
-				synchronized (sHttpClient) {
-					response = sHttpClient.execute(mRequest);
-				}
-				mWrapper.setResponse(new AsyncHttpBasicResponseHolder(mRequest, response));
-				mHandler.post(mWrapper);
-				if (Config.LOGD) { Log.d(TAG, "[run] SUCCESS."); }
-			} catch (ClientProtocolException e) {
-				Log.e(TAG, "Problem executing request." + e.getMessage(), e);
-				mWrapper.setResponse(new AsyncHttpBasicResponseHolder(mRequest, e));
-			} catch (IOException e) {
-				Log.e(TAG, "Problem executing request." + e.getMessage(), e);
-				mWrapper.setResponse(new AsyncHttpBasicResponseHolder(mRequest, e));
-			}
-		}
-	}
-	
-	/*
 	 * Sends HTTP request in background, loads header and response, and returns via handler.
 	 */
-	private static class FullSender extends Thread {
+	private static class HttpSender extends Thread {
 		
-		private static final String TAG = FullSender.class.getSimpleName();
+		private static final String TAG = HttpSender.class.getSimpleName();
 		private static final DefaultHttpClient sHttpClient = new DefaultHttpClient();
-		
-		private HttpUriRequest mRequest;
+
+        private String mUrl;
 		private Handler mHandler;
-		private FullCallbackWrapper mWrapper;
+		private HttpCallbackWrapper mWrapper;
 		
-		public FullSender(HttpUriRequest request, Handler handler, FullCallbackWrapper wrapper) {
-			mRequest = request;
+		public HttpSender(String url, Handler handler, HttpCallbackWrapper wrapper) {
+			mUrl = url;
 			mHandler = handler;
 			mWrapper = wrapper;
 		}
 		
 		public void run() {
 			if (Config.LOGD) { Log.d(TAG, "[run] BEGIN."); }
-			try {
-				final HttpResponse response;
-				synchronized (sHttpClient) {
-					response = sHttpClient.execute(mRequest);
-				}
-				mWrapper.setResponse(new AsyncHttpFullResponseHolder(
-						mRequest, 
-						HttpResponseHeaders.fromHttpResponse(response),
-						loadResponseData(response)));
-				mHandler.post(mWrapper);
-				if (Config.LOGD) { Log.d(TAG, "[run] SUCCESS."); }
-			} catch (ClientProtocolException e) {
-				Log.e(TAG, "Problem executing request." + e.getMessage(), e);
-				mWrapper.setResponse(new AsyncHttpFullResponseHolder(mRequest, e));
-			} catch (IOException e) {
-				Log.e(TAG, "Problem executing request." + e.getMessage(), e);
-				mWrapper.setResponse(new AsyncHttpFullResponseHolder(mRequest, e));
-			}
-		}
-		
-		/*
-		 * Loads and returns binary array of data from the HttpResponse object.
-		 */
-		private byte[] loadResponseData(HttpResponse response) throws IOException {
-			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-			HttpEntity entity = response.getEntity();
-			entity.writeTo(buffer);  // should we do this manually and control buffer size?
-			return buffer.toByteArray();
-		}
-	}
-	
-	/*
-	 * Sends basic response (or exception) back to the listener.
-	 */
-	private static class BasicCallbackWrapper implements Runnable {
 
-		private static final String TAG = BasicCallbackWrapper.class.getSimpleName();
-		
-		private AsyncHttpBasicResponseListener mListener;
-		private AsyncHttpBasicResponseHolder mHolder;
-		
-		public BasicCallbackWrapper(AsyncHttpBasicResponseListener listener) {
-			mListener = listener;
-		}
-		
-		public void run() {
-			if (mListener == null) {
-				Log.w(TAG, "[run] listener instance is null, no one to send response to!");
-				// don't want to leave connection open if no one is listening...
-				closeConnection();
-			} else {
-				mListener.onResponseReceived(mHolder);
-				if (Config.LOGD) { Log.d(TAG, "[run] listener invoked."); }
-			}
+            URL url;
+            HttpURLConnection connection = null;
+
+            try {
+                url = new URL(mUrl);
+                connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod(HTTP_METHOD_GET);
+                connection.setDoOutput(true);
+                connection.setReadTimeout(DEFAULT_TIMEOUT);
+                connection.setInstanceFollowRedirects(true);
+
+                connection.setRequestProperty("User-Agent", USER_AGENT);
+                connection.setRequestProperty("Accept-Encoding", ACCEPT_ENCODING);
+
+                connection.connect();
+
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
+                    byte[] data = IOUtils.readFromStream(connection.getInputStream(), true);
+                    mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
+                } else {
+                    String message = "[run] Unexpected HTTP response:  [code: "
+                            + connection.getResponseCode() + " | message: "
+                            + connection.getResponseMessage()
+                            + "]";
+
+                    Log.e(TAG, message);
+                    mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, new Exception(message)));
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "[run] Problem executing HTTP request.", e);
+                mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, e));
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                    connection = null;
+                }
+            }
 		}
 
-		public void setResponse(AsyncHttpBasicResponseHolder holder) {
-			mHolder = holder;
-			Log.d(TAG, "[setResponse] response set.");
-		}
-		
-		private void closeConnection() {
-			if (mHolder != null && mHolder.hasResponse()) {
-				try {
-					mHolder.getResponse().getEntity().getContent().close();
-					if (Config.LOGD) { Log.d(TAG, "[run] connection closed."); }
-				} catch (Exception e) {
-					Log.w(TAG, "Problem closing connection", e);
-				}
-			}
-		}
 	}
 	
 	/*
 	 * Sends full response (or exception) back to the listener.
 	 */
-	private static class FullCallbackWrapper implements Runnable {
+	private static class HttpCallbackWrapper implements Runnable {
 
-		private static final String TAG = FullCallbackWrapper.class.getSimpleName();
+		private static final String TAG = HttpCallbackWrapper.class.getSimpleName();
 		
-		private AsyncHttpFullResponseListener mListener;
-		private AsyncHttpFullResponseHolder mHolder;
+		private AsyncHttpResponseListener mListener;
+		private AsyncHttpResponseHolder mResponse;
 		
-		public FullCallbackWrapper(AsyncHttpFullResponseListener listener) {
+		public HttpCallbackWrapper(AsyncHttpResponseListener listener) {
 			mListener = listener;
 		}
 		
 		public void run() {
-			mListener.onFullResponseReceived(mHolder);
+			mListener.onResponseReceived(mResponse);
 		}
 		
-		public void setResponse(AsyncHttpFullResponseHolder holder) {
-			mHolder = holder;
+		public void setResponse(AsyncHttpResponseHolder holder) {
+			mResponse = holder;
 			Log.d(TAG, "[setResponse] response set.");
 		}
 	}
@@ -211,54 +142,33 @@ public final class AsyncHttpClient {
     // ------------------------------------------------------------------------
 
 	private static final String TAG = AsyncHttpClient.class.getSimpleName();
+
+    private static final String HTTP_METHOD_GET = "GET";
+    private static final String USER_AGENT = "Android Janrain Engage/1.0.0";
+    private static final String ACCEPT_ENCODING = "identity";
+    private static final int DEFAULT_TIMEOUT = 30000;  // 30 seconds
+
 	
     // ------------------------------------------------------------------------
     // STATIC METHODS
     // ------------------------------------------------------------------------
 
 	/**
-	 * Executes the specified "basic" HTTP request asynchronously.  The results will be returned to 
+	 * Executes the specified HTTP (get) request asynchronously.  The results will be returned to
 	 * the specified listener.
 	 * 
-	 * A "basic" request is one in which the caller will receive a HttpResponse object and are 
-	 * themselves responsible for reading the data and managing/closing the connection.
-	 * 
-	 * @param request
-	 * 		The HTTP request to be executed asynchronously.
+	 * @param url
+	 * 		The URL to be executed asynchronously.
 	 * @param listener
-	 * 		The AsyncHttpBasicResponseListener to return the results to.
+	 * 		The AsyncHttpResponseListener to return the results to.
 	 */
-	public static void executeBasicRequest(final HttpUriRequest request, 
-			AsyncHttpBasicResponseListener listener) {
-		
-		if (Config.LOGD) {
-			Log.d(TAG, "[executeBasicRequest] invoked");
-		}
-		
-		(new BasicSender(request, new Handler(), new BasicCallbackWrapper(listener))).start();
-	}
-
-	/**
-	 * Executes the specified "full" HTTP request asynchronously.  The results will be returned to
-	 * the specified listener.
-	 * 
-	 * A "full" request is on in which the caller will receive the synthesized header information 
-	 * as well as a buffer (byte array) containing the entire returned payload.  The connection
-	 * will be managed for them.
-	 * 
-	 * @param request
-	 * 		The HTTP request to be executed asynchronously.
-	 * @param listener
-	 * 		The AsyncHttpFullResponseListener to return the results to. 
-	 */
-	public static void executeFullRequest(final HttpUriRequest request, 
-			AsyncHttpFullResponseListener listener) {
+	public static void executeRequest(final String url, AsyncHttpResponseListener listener) {
 
 		if (Config.LOGD) {
 			Log.d(TAG, "[executeFullRequest] invoked");
 		}
 		
-		(new FullSender(request, new Handler(), new FullCallbackWrapper(listener))).start();
+		(new HttpSender(url, new Handler(), new HttpCallbackWrapper(listener))).start();
 	}
 
     // ------------------------------------------------------------------------

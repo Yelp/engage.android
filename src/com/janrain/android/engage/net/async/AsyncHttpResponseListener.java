@@ -1,21 +1,21 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  Copyright (c) 2010, Janrain, Inc.
- 
+
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
- 
+
  * Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer. 
- * Redistributions in binary form must reproduce the above copyright notice, 
+ list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation and/or
- other materials provided with the distribution. 
+ other materials provided with the distribution.
  * Neither the name of the Janrain, Inc. nor the names of its
  contributors may be used to endorse or promote products derived from this
  software without specific prior written permission.
- 
- 
+
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -25,23 +25,22 @@
  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package com.janrain.android.engage.net.async;
 
 /**
- * Interface used to define behavior for listening to basic asynchronous HTTP responses. 
+ * Interface used to define behavior for listening to asynchronous HTTP responses.
  */
-public interface AsyncHttpBasicResponseListener {
+public interface AsyncHttpResponseListener {
 
-	/**
-	 * Method which is invoked when a response from a basic asynchronous request is received.
-	 * 
-	 * @param holder
-	 * 		The AsyncHttpResponseHolder object returned from the basic asynchronous request 
-	 * 		operation. This object will contain the response (connection) if successful or an 
-	 * 		exception if an error has occurred.
-	 */
-	void onResponseReceived(AsyncHttpBasicResponseHolder holder);
-	
+    /**
+     * Method invoked when a response from an asynchronous request is received.
+     *
+     * @param response
+     *      The response object returned from the asynchronous request.  This object will contain either the
+     *      the response headers and data or if an issue occurs, an exception detailing the issue encountered.
+     */
+    void onResponseReceived(AsyncHttpResponseHolder response);
+
 }
