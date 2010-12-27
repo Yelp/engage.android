@@ -51,7 +51,7 @@ public interface JRSessionDelegate {
     
     void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, byte[] payload, String provider);
     
-    void authenticationCallToTokenUrl(String tokenUrl, JREngageError error, String provider);
+    void authenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider);
     
     void publishingDidRestart();
     
@@ -61,9 +61,7 @@ public interface JRSessionDelegate {
     
     void publishingActivityDidSucceed(JRActivityObject activity, String provider);
 
-    // TODO:  Question for Lilli
-    //  Should we rename this to 'publishingActivityDidFail(...)???
-    void publishingActivity(JRActivityObject activity, JREngageError error, String provider);
+    void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
 
 }
 

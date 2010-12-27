@@ -29,7 +29,6 @@
 */
 package com.janrain.android.engage.prefs;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import com.janrain.android.engage.JREngage;
@@ -61,19 +60,7 @@ public final class Prefs {
      * @return The value of the preference, or defValue if not found.
      */
     public static String getAsString(String key, String defValue) {
-        return getAsString(JREngage.getContext(), key, defValue);
-    }
-
-    /**
-     * Wrapper for getting shared preference string value by key.
-     *
-     * @param ctx The context used to obtain the shared preferences.
-     * @param key The key of the preference to get.
-     * @param defValue The default value if not found.
-     * @return The value of the preference, or defValue if not found.
-     */
-    public static String getAsString(Context ctx, String key, String defValue) {
-        return PreferenceManager.getDefaultSharedPreferences(ctx).getString(key, defValue);
+        return getSharedPreferences().getString(key, defValue);
     }
 
     /**
@@ -84,19 +71,7 @@ public final class Prefs {
      * @return The value of the preference, or defValue if not found.
      */
     public static boolean getAsBoolean(String key, boolean defValue) {
-        return getAsBoolean(JREngage.getContext(), key, defValue);
-    }
-
-    /**
-     * Wrapper for getting shared preference boolean value by key.
-     *
-     * @param ctx The context used to obtain the shared preferences.
-     * @param key The key of the preference to get.
-     * @param defValue The default value if not found.
-     * @return The value of the preference, or defValue if not found.
-     */
-    public static boolean getAsBoolean(Context ctx, String key, boolean defValue) {
-        return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(key, defValue);
+        return getSharedPreferences().getBoolean(key, defValue);
     }
 
     /**
@@ -107,19 +82,7 @@ public final class Prefs {
      * @return The value of the preference, or defValue if not found.
      */
     public static int getAsInt(String key, int defValue) {
-        return getAsInt(JREngage.getContext(), key, defValue);
-    }
-
-    /**
-     * Wrapper for getting shared preference integer value by key.
-     *
-     * @param ctx The context used to obtain the shared preferences.
-     * @param key The key of the preference to get.
-     * @param defValue The default value if not found.
-     * @return The value of the preference, or defValue if not found.
-     */
-    public static int getAsInt(Context ctx, String key, int defValue) {
-        return PreferenceManager.getDefaultSharedPreferences(ctx).getInt(key, defValue);
+        return getSharedPreferences().getInt(key, defValue);
     }
 
     /**
@@ -129,18 +92,7 @@ public final class Prefs {
      * @param value The value to be saved.
      */
     public static void putString(String key, String value) {
-        putString(JREngage.getContext(), key, value);
-    }
-
-    /**
-     * Wrapper for saving a string value to the shared preferences.
-     *
-     * @param ctx The context used to obtain the shared preferences.
-     * @param key Key for value to be saved.
-     * @param value The value to be saved.
-     */
-    public static void putString(Context ctx, String key, String value) {
-        getEditor(ctx).putString(key, value);
+        getEditor().putString(key, value);
     }
 
     /**
@@ -150,18 +102,7 @@ public final class Prefs {
      * @param value The value to be saved.
      */
     public static void putBoolean(String key, boolean value) {
-        putBoolean(JREngage.getContext(), key, value);
-    }
-
-    /**
-     * Wrapper for saving a boolean value to the shared preferences.
-     *
-     * @param ctx The context used to obtain the shared preferences.
-     * @param key Key for value to be saved.
-     * @param value The value to be saved.
-     */
-    public static void putBoolean(Context ctx, String key, boolean value) {
-        getEditor(ctx).putBoolean(key, value);
+        getEditor().putBoolean(key, value);
     }
 
     /**
@@ -171,25 +112,21 @@ public final class Prefs {
      * @param value The value to be saved.
      */
     public static void putInt(String key, int value) {
-        putInt(JREngage.getContext(), key, value);
+        getEditor().putInt(key, value);
     }
 
     /**
-     * Wrapper for saving a integer value to the shared preferences.
-     *
-     * @param ctx The context used to obtain the shared preferences.
-     * @param key Key for value to be saved.
-     * @param value The value to be saved.
+     * Helper method used to get the default shared preferences instance.
      */
-    public static void putInt(Context ctx, String key, int value) {
-        getEditor(ctx).putInt(key, value);
+    private static SharedPreferences getSharedPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(JREngage.getContext());
     }
 
     /**
      * Helper method used to get a shared preferences editor instance.
      */
-    private static SharedPreferences.Editor getEditor(Context ctx) {
-        return PreferenceManager.getDefaultSharedPreferences(ctx).edit();
+    private static SharedPreferences.Editor getEditor() {
+        return getSharedPreferences().edit();
     }
 
     // ------------------------------------------------------------------------

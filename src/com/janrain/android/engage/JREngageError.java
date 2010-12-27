@@ -63,7 +63,7 @@ public class JREngageError extends Exception {
     public static final class AuthenticationError {
         private static final int START = 200;
 
-        public static final int CODE_AuthenticationFailedError = START;
+        public static final int AUTHENTICATION_FAILED = START;
     }
 
     public static final class SocialPublishingError {

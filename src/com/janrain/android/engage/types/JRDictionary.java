@@ -29,14 +29,14 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.types;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-
-import android.content.Context;
 import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.utils.Archiver;
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
 
 /**
  * iPhone dictionary work-alike class.  Maps string keys to object values.
@@ -80,9 +80,6 @@ public final class JRDictionary extends HashMap<String,Object> {
     /**
      * Archives the specified JRDictionary object to disk.
      *
-     * @param context
-     * 		The application context used for directory/file access.  This parameter cannot be null.
-     *
      * @param name
      *      The name the JRDictionary will be saved as on disk.  This parameter cannot be null.
      *
@@ -95,15 +92,12 @@ public final class JRDictionary extends HashMap<String,Object> {
      * @throws
      * 		IllegalArgumentException if the context or name parameters are null.
      */
-    public static boolean archive(Context context, String name, JRDictionary dictionary) {
-        return Archiver.save(context, name, dictionary);
+    public static boolean archive(String name, JRDictionary dictionary) {
+        return Archiver.save(name, dictionary);
     }
 
     /**
      * Loads (unarchives) the specified JRDictionary object from the local (protected) file system.
-     *
-     * @param context
-     * 		The application context used for directory/file access.  This parameter cannot be null.
      *
      * @param name
      * 		The name of the JRDictionary to be loaded from disk.  This parameter cannot be null.
@@ -114,8 +108,8 @@ public final class JRDictionary extends HashMap<String,Object> {
      * @throws
      * 		IllegalArgumentException if the context or name parameters are null.
      */
-    public static JRDictionary unarchive(Context context, String name) {
-        Object obj = Archiver.load(context, name);
+    public static JRDictionary unarchive(String name) {
+        Object obj = Archiver.load(name);
         if ((obj != null) && (obj instanceof JRDictionary)) {
             return (JRDictionary)obj;
         }
@@ -363,6 +357,27 @@ public final class JRDictionary extends HashMap<String,Object> {
 			? new JRDictionary()
 			: retval;
 	}
+
+    /**
+     * Convenience method used to retrieve a named value as a JRProvider
+     *
+     * @param key
+     *      The key of the value to be retrieved.
+     *
+     * @return
+     *      The JRProvider object if found, null otherwise.
+     */
+    public JRProvider getAsProvider(String key) {
+        JRProvider retval = null;
+        if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
+            Object value = get(key);
+            if (value instanceof JRProvider) {
+                retval = (JRProvider) value;
+            }
+        }
+
+        return retval;
+    }
 
     /**
      * Convenience method used to retrieve a named value as a JRProviderList.

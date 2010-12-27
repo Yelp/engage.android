@@ -29,13 +29,11 @@
 */
 package com.janrain.android.engage.session;
 
-import java.util.ArrayList;
-
 import android.text.TextUtils;
-
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
+
+import java.util.ArrayList;
 
 /**
  * TODO:DOC
@@ -138,6 +136,14 @@ public class JRProvider {
         return mRequiresInput;
     }
 
+    public String getOpenIdentifier() { /* (readonly) */
+        return mOpenIdentifier;
+    }
+
+    public String getUrl() { /* (readonly) */
+        return mUrl;
+    }
+
     public boolean getForceReauth() {
         return mForceReauth;
     }
@@ -199,10 +205,10 @@ public class JRProvider {
     }
 
     private void loadDynamicVariables() {
-    	mUserInput = Prefs.getAsString(JREngage.getContext(), Prefs.KEY_JR_USER_INPUT, "");
-    	mWelcomeString = Prefs.getAsString(JREngage.getContext(), Prefs.KEY_JR_WELCOME_STRING, "");
+    	mUserInput = Prefs.getAsString(Prefs.KEY_JR_USER_INPUT, "");
+    	mWelcomeString = Prefs.getAsString(Prefs.KEY_JR_WELCOME_STRING, "");
     	// TODO: TBD: Is false the correct default value?
-    	mForceReauth = Prefs.getAsBoolean(JREngage.getContext(), Prefs.KEY_JR_USER_INPUT, false);
+    	mForceReauth = Prefs.getAsBoolean(Prefs.KEY_JR_USER_INPUT, false);
     }
     
 }

@@ -32,6 +32,7 @@ package com.janrain.android.engage.utils;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import com.janrain.android.engage.JREngage;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -62,9 +63,6 @@ public final class Archiver {
     /**
      * Saves (archives) the specified object to the local (protected) file system.
      *
-     * @param context
-     * 		The application context used for directory/file access.  This parameter cannot be null.
-     *
      * @param name
      * 		The name the object will be saved as on disk.  This parameter cannot be null.
      *
@@ -78,7 +76,8 @@ public final class Archiver {
      * @throws
      * 		IllegalArgumentException if the context or name parameters are null.
      */
-    public static boolean save(Context context, String name, Object object) {
+    public static boolean save(String name, Object object) {
+        Context context = JREngage.getContext();
         if (context == null) {
             throw new IllegalArgumentException("context parameter cannot be null");
         } else if (TextUtils.isEmpty(name)) {
@@ -91,14 +90,11 @@ public final class Archiver {
         context.deleteFile(fileName);
 
         // then save current dictionary contents
-        return saveObject(context, fileName, object);
+        return saveObject(fileName, object);
     }
 
     /**
      * Loads (unarchives) the specified object from the local (protected) file system.
-     *
-     * @param context
-     * 		The application context used for directory/file access.  This parameter cannot be null.
      *
      * @param name
      * 		The name of the object to be loaded from disk.  This parameter cannot be null.
@@ -109,7 +105,8 @@ public final class Archiver {
      * @throws
      * 		IllegalArgumentException if the context or name parameters are null.
      */
-    public static Object load(Context context, String name) {
+    public static Object load(String name) {
+        Context context = JREngage.getContext();
         if (context == null) {
             throw new IllegalArgumentException("context parameter cannot be null");
         } else if (TextUtils.isEmpty(name)) {
@@ -117,15 +114,12 @@ public final class Archiver {
         }
 
         String fileName = String.format(DICTIONARY_BASE_FORMAT, name);
-        return loadObject(context, fileName);
+        return loadObject(fileName);
     }
 
     /**
      * Loads (unarchives) the specified string object from the local (protected) file system.
      * 
-     * @param context
-     * 		The application context used for directory/file access.  This parameter cannot be null.
-     *
      * @param name
      * 		The name of the string to be loaded from disk.  This parameter cannot be null.
      *
@@ -135,8 +129,8 @@ public final class Archiver {
      * @throws
      * 		IllegalArgumentException if the context or name parameters are null.
      */
-    public static String loadString(Context context, String name) {
-        Object obj = load(context, name);
+    public static String loadString(String name) {
+        Object obj = load(name);
         if ((obj != null) && (obj instanceof String)) {
             return (String)obj;
         }
@@ -145,9 +139,6 @@ public final class Archiver {
 
     /**
      * Loads (unarchives) the specified integer object from the local (protected) file system.
-     *
-     * @param context
-     * 		The application context used for directory/file access.  This parameter cannot be null.
      *
      * @param name
      * 		The name of the integer to be loaded from disk.  This parameter cannot be null.
@@ -158,8 +149,8 @@ public final class Archiver {
      * @throws
      * 		IllegalArgumentException if the context or name parameters are null.
      */
-    public static Integer loadInteger(Context context, String name) {
-        Object obj = load(context, name);
+    public static Integer loadInteger(String name) {
+        Object obj = load(name);
         if ((obj != null) && (obj instanceof Integer)) {
             return (Integer)obj;
         }
@@ -168,9 +159,6 @@ public final class Archiver {
 
     /**
      * Loads (unarchives) the specified boolean object from the local (protected) file system.
-     *
-     * @param context
-     * 		The application context used for directory/file access.  This parameter cannot be null.
      *
      * @param name
      * 		The name of the boolean to be loaded from disk.  This parameter cannot be null.
@@ -181,8 +169,8 @@ public final class Archiver {
      * @throws
      * 		IllegalArgumentException if the context or name parameters are null.
      */
-    public static Boolean loadBoolean(Context context, String name) {
-        Object obj = load(context, name);
+    public static Boolean loadBoolean(String name) {
+        Object obj = load(name);
         if ((obj != null) && (obj instanceof Boolean)) {
             return (Boolean)obj;
         }
@@ -192,23 +180,28 @@ public final class Archiver {
     /*
      * Handles saving of the named dictionary to disk.
      */
-    private static boolean saveObject(Context context, String fileName, Object object) {
+    private static boolean saveObject(String fileName, Object object) {
         boolean retval = false;
-        FileOutputStream fos = null;
-        try {
-            fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-            fos.write(IOUtils.objectToBytes(object));
-            retval = true;
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "[saveFile] fnfe", e);
-        } catch (IOException e) {
-            Log.e(TAG, "[saveFile] ioe", e);
-        } finally {
+        Context context = JREngage.getContext();
+        if (context == null) {
+            Log.e(TAG, "[saveObject] JREngage.context is null.");
+        } else {
+            FileOutputStream fos = null;
             try {
-                if (fos != null) {
-                    fos.close();
+                fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+                fos.write(IOUtils.objectToBytes(object));
+                retval = true;
+            } catch (FileNotFoundException e) {
+                Log.e(TAG, "[saveObject] fnfe", e);
+            } catch (IOException e) {
+                Log.e(TAG, "[saveObject] ioe", e);
+            } finally {
+                try {
+                    if (fos != null) {
+                        fos.close();
+                    }
+                } catch (IOException ignore) {
                 }
-            } catch (IOException ignore) {
             }
         }
         return retval;
@@ -217,20 +210,25 @@ public final class Archiver {
     /*
      * Loads the named dictionary from disk.
      */
-    private static Object loadObject(Context context, String fileName) {
+    private static Object loadObject(String fileName) {
         Object value = null;
-        FileInputStream fis = null;
-        try {
-            fis = context.openFileInput(fileName);
-            byte[] bytes = IOUtils.readFromStream(fis);
-            value = IOUtils.bytesToObject(bytes);
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "[loadFile] fnfe", e);
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException ignore) {
+        Context context = JREngage.getContext();
+        if (context == null) {
+            Log.e(TAG, "[loadObject] JREngage.context is null.");
+        } else {
+            FileInputStream fis = null;
+            try {
+                fis = context.openFileInput(fileName);
+                byte[] bytes = IOUtils.readFromStream(fis);
+                value = IOUtils.bytesToObject(bytes);
+            } catch (FileNotFoundException e) {
+                Log.e(TAG, "[loadObject] fnfe", e);
+            } finally {
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException ignore) {
+                    }
                 }
             }
         }

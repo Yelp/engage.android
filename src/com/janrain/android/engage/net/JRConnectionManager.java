@@ -41,6 +41,9 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
     // TYPES
     // ------------------------------------------------------------------------
 
+    /**
+     * Connection data for managed connections.
+     */
 	private static class ConnectionData {
 		private boolean mShouldReturnFullReponse;
 		private Object mTag;
@@ -74,13 +77,27 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 		}
 		return sInstance;
 	}
-	
-	public static boolean createConnection(String requestUrl,
-                                           JRConnectionManagerDelegate delegate,
-                                           Object userdata) {
-		return createConnection(requestUrl, delegate, false, userdata);
-	}
 
+    /**
+     * Creates a managed HTTP GET connection.
+     *
+     * @param requestUrl
+     *      The URL to be executed.
+     *
+     * @param delegate
+     *      The delegate (listener) class instance.
+     *
+     * @param shouldReturnFullResponse
+     *      Whether or not a full response should be returned.  Quite frankly, this doesn't make
+     *      a lot of sense on Android and it's not used...
+     *
+     * @param userdata
+     *      The tag object associated with the connection.
+     *
+     * @return
+     *      <code>true</code> if the connection is created successfully, <code>false</code>
+     *      otherwise.
+     */
 	public static boolean createConnection(String requestUrl,
                                            JRConnectionManagerDelegate delegate,
                                            boolean shouldReturnFullResponse,
@@ -92,12 +109,64 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 		instance.mConnectionBuffers.put(requestUrl,
 				new ConnectionData(delegate, shouldReturnFullResponse, userdata));
 
-		// execute request
-		AsyncHttpClient.executeRequest(requestUrl, instance);
+		// execute HTTP GET request
+		AsyncHttpClient.executeHttpGet(requestUrl, instance);
 		
 		return true;
 	}
-	
+
+    /**
+     * Creates a managed HTTP POST connection.
+     *
+     * @param requestUrl
+     *      The URL to be executed.
+     *
+     * @param postData
+     *      The data to be sent to the server via POST.
+     *
+     * @param delegate
+     *      The delegate (listener) class instance.
+     *
+     * @param shouldReturnFullResponse
+     *      Whether or not a full response should be returned.  Quite frankly, this doesn't make
+     *      a lot of sense on Android and it's not used...
+     *
+     * @param userdata
+     *      The tag object associated with the connection.
+     *
+     * @return
+     *      <code>true</code> if the connection is created successfully, <code>false</code>
+     *      otherwise.
+     */
+    public static boolean createConnection(String requestUrl,
+                                           byte[] postData,
+                                           JRConnectionManagerDelegate delegate,
+                                           boolean shouldReturnFullResponse,
+                                           Object userdata) {
+		// get singleton instance (lazy init)
+		JRConnectionManager instance = getInstance();
+
+		// create/store connection data
+		instance.mConnectionBuffers.put(requestUrl,
+				new ConnectionData(delegate, shouldReturnFullResponse, userdata));
+
+		// execute HTTP POST request
+		AsyncHttpClient.executeHttpPost(requestUrl, postData, instance);
+
+		return true;
+    }
+
+    /**
+     * Stop all connections for the specified delegate.
+     *
+     * TODO: see below
+     *
+     * @param delegate
+     *      The delegate to stop all connections for.
+     *
+     * @return
+     *      Currently always returns true...
+     */
 	public static boolean stopConnectionsForDelegate(JRConnectionManagerDelegate delegate) {
 		// get singleton instance (lazy init)
 		JRConnectionManager instance = getInstance();
@@ -113,7 +182,13 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 		}
 		return true;
 	}
-	
+
+    /**
+     * Returns the number of current (actively managed) connections.
+     *
+     * @return
+     *      The number of current (actively managed) connections.
+     */
 	public static int openConnections() {
 		return getInstance().mConnectionBuffers.size();
 	}
@@ -122,6 +197,7 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
     // FIELDS
     // ------------------------------------------------------------------------
 
+    /* Map of managed connections, where connection data is mapped to URL. */
 	private HashMap<String, ConnectionData> mConnectionBuffers;
 	
     // ------------------------------------------------------------------------

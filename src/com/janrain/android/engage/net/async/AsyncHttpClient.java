@@ -29,6 +29,7 @@
 */
 package com.janrain.android.engage.net.async;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -55,18 +56,26 @@ public final class AsyncHttpClient {
 	private static class HttpSender extends Thread {
 		
 		private static final String TAG = HttpSender.class.getSimpleName();
-		private static final DefaultHttpClient sHttpClient = new DefaultHttpClient();
 
         private String mUrl;
+        private byte[] mPostData;
 		private Handler mHandler;
 		private HttpCallbackWrapper mWrapper;
 		
-		public HttpSender(String url, Handler handler, HttpCallbackWrapper wrapper) {
-			mUrl = url;
-			mHandler = handler;
-			mWrapper = wrapper;
-		}
-		
+        public HttpSender(String url, Handler handler, HttpCallbackWrapper wrapper) {
+            mUrl = url;
+            mPostData = null;
+            mHandler = handler;
+            mWrapper = wrapper;
+        }
+
+        public HttpSender(String url, byte[] postData, Handler handler, HttpCallbackWrapper wrapper) {
+            mUrl = url;
+            mPostData = postData;
+            mHandler = handler;
+            mWrapper = wrapper;
+        }
+
 		public void run() {
 			if (Config.LOGD) { Log.d(TAG, "[run] BEGIN."); }
 
@@ -77,20 +86,22 @@ public final class AsyncHttpClient {
                 url = new URL(mUrl);
                 connection = (HttpURLConnection) url.openConnection();
 
-                connection.setRequestMethod(HTTP_METHOD_GET);
-                connection.setDoOutput(true);
-                connection.setReadTimeout(DEFAULT_TIMEOUT);
-                connection.setInstanceFollowRedirects(true);
+                if (mPostData == null) {
+                    // HTTP GET OPERATION
+                    prepareConnectionForHttpGet(connection);
+                    connection.connect();
+                } else {
+                    // HTTP POST OPERATION
+                    prepareConnectionForHttpPost(connection);
+                    doHttpPost(connection);
+                }
 
-                connection.setRequestProperty("User-Agent", USER_AGENT);
-                connection.setRequestProperty("Accept-Encoding", ACCEPT_ENCODING);
-
-                connection.connect();
 
                 if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
                     byte[] data = IOUtils.readFromStream(connection.getInputStream(), true);
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
+                    mHandler.post(mWrapper);
                 } else {
                     String message = "[run] Unexpected HTTP response:  [code: "
                             + connection.getResponseCode() + " | message: "
@@ -99,10 +110,12 @@ public final class AsyncHttpClient {
 
                     Log.e(TAG, message);
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, new Exception(message)));
+                    mHandler.post(mWrapper);
                 }
             } catch (IOException e) {
                 Log.e(TAG, "[run] Problem executing HTTP request.", e);
                 mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, e));
+                mHandler.post(mWrapper);
             } finally {
                 if (connection != null) {
                     connection.disconnect();
@@ -110,6 +123,40 @@ public final class AsyncHttpClient {
                 }
             }
 		}
+
+        private void prepareConnectionForHttpGet(HttpURLConnection connection) throws IOException {
+            connection.setRequestMethod(HTTP_METHOD_GET);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("User-Agent", USER_AGENT);
+            connection.setRequestProperty("Accept-Encoding", ACCEPT_ENCODING);
+        }
+
+        private void prepareConnectionForHttpPost(HttpURLConnection connection) throws IOException {
+            connection.setRequestMethod(HTTP_METHOD_POST);
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Content-Length", "" + mPostData.length);
+            connection.setRequestProperty("Content-Language", "en-US");
+            connection.setUseCaches(false);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("User-Agent", USER_AGENT);
+            connection.setRequestProperty("Accept-Encoding", ACCEPT_ENCODING);
+        }
+
+        private void doHttpPost(HttpURLConnection connection) throws IOException {
+            DataOutputStream writer = null;
+            try {
+                writer = new DataOutputStream(connection.getOutputStream());
+                writer.write(mPostData);
+                writer.flush();
+            } catch (IOException e) {
+                throw e;
+            } finally {
+                if (writer != null) {
+                    writer.close();
+                }
+            }
+        }
 
 	}
 	
@@ -144,6 +191,7 @@ public final class AsyncHttpClient {
 	private static final String TAG = AsyncHttpClient.class.getSimpleName();
 
     private static final String HTTP_METHOD_GET = "GET";
+    private static final String HTTP_METHOD_POST = "POST";
     private static final String USER_AGENT = "Android Janrain Engage/1.0.0";
     private static final String ACCEPT_ENCODING = "identity";
     private static final int DEFAULT_TIMEOUT = 30000;  // 30 seconds
@@ -154,7 +202,7 @@ public final class AsyncHttpClient {
     // ------------------------------------------------------------------------
 
 	/**
-	 * Executes the specified HTTP (get) request asynchronously.  The results will be returned to
+	 * Executes the specified HTTP GET request asynchronously.  The results will be returned to
 	 * the specified listener.
 	 * 
 	 * @param url
@@ -162,14 +210,33 @@ public final class AsyncHttpClient {
 	 * @param listener
 	 * 		The AsyncHttpResponseListener to return the results to.
 	 */
-	public static void executeRequest(final String url, AsyncHttpResponseListener listener) {
+    public static void executeHttpGet(final String url, AsyncHttpResponseListener listener) {
+        if (Config.LOGD) {
+            Log.d(TAG, "[executeHttpGet] invoked");
+        }
 
-		if (Config.LOGD) {
-			Log.d(TAG, "[executeFullRequest] invoked");
-		}
-		
-		(new HttpSender(url, new Handler(), new HttpCallbackWrapper(listener))).start();
-	}
+        (new HttpSender(url, new Handler(), new HttpCallbackWrapper(listener))).start();
+    }
+
+    /**
+     * Executes the specified HTTP POST request asynchronously.  The results will be returned to
+     * the specified listener.
+     *
+     * @param url
+     * 		The URL to be executed asynchronously.
+     * @param data
+     *      The data to be posted (written) to the server.
+     * @param listener
+     * 		The AsyncHttpResponseListener to return the results to.
+     */
+    public static void executeHttpPost(final String url, byte[] data, AsyncHttpResponseListener listener) {
+        if (Config.LOGD) {
+            Log.d(TAG, "[executeHttpPost] invoked");
+        }
+
+        (new HttpSender(url, data, new Handler(), new HttpCallbackWrapper(listener))).start();
+
+    }
 
     // ------------------------------------------------------------------------
     // CONSTRUCTORS

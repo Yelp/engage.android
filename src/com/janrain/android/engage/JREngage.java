@@ -36,13 +36,17 @@ import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRSessionData;
+import com.janrain.android.engage.session.JRSessionDelegate;
+import com.janrain.android.engage.types.JRActivityObject;
+import com.janrain.android.engage.types.JRDictionary;
 
 /**
  * TODO:DOC
  *
  */
-public class JREngage {
+public class JREngage implements JRSessionDelegate {
     // ------------------------------------------------------------------------
     // TYPES
     // ------------------------------------------------------------------------
@@ -182,6 +186,58 @@ public class JREngage {
     // ------------------------------------------------------------------------
 
     // ------------------------------------------------------------------------
+    // DELEGATE METHODS
+    // ------------------------------------------------------------------------
+
+    public void authenticationDidRestart() {
+        // TODO: implement
+    }
+
+    public void authenticationDidCancel() {
+        // TODO: implement
+    }
+
+    public void authenticationDidComplete(String token, String provider) {
+        // TODO: implement
+    }
+
+    public void authenticationDidComplete(JRDictionary profile, String provider) {
+        // TODO: implement
+    }
+
+    public void authenticationDidFail(JREngageError error, String provider) {
+        // TODO: implement
+    }
+
+    public void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, byte[] payload, String provider) {
+        // TODO: implement
+    }
+
+    public void authenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
+        // TODO: implement
+    }
+
+    public void publishingDidRestart() {
+        // TODO: implement
+    }
+
+    public void publishingDidCancel() {
+        // TODO: implement
+    }
+
+    public void publishingDidComplete() {
+        // TODO: implement
+    }
+
+    public void publishingActivityDidSucceed(JRActivityObject activity, String provider) {
+        // TODO: implement
+    }
+
+    public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
+        // TODO: implement
+    }
+
+    // ------------------------------------------------------------------------
     // METHODS
     // ------------------------------------------------------------------------
 	
@@ -211,5 +267,5 @@ public class JREngage {
 	protected Object clone() throws CloneNotSupportedException {
 		throw new CloneNotSupportedException("JREngage does not permit clone");
 	}
-	
+
 }
