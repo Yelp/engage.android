@@ -2,6 +2,7 @@ package com.janrain.android.engage.net.async;
 
 import android.util.Config;
 import android.util.Log;
+import com.janrain.android.engage.types.JRDictionary;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

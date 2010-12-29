@@ -29,6 +29,7 @@
 */
 package com.janrain.android.engage;
 
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 
@@ -166,7 +167,7 @@ public interface JREngageDelegate {
      *   The URL on the server where the token was posted and server-side authentication was completed
      *
      * @param response
-     *   The final NSURLResponse returned from the server
+     *   The response headers returned from the server
      *
      * @param tokenUrlPayload
      *   The response from the server
@@ -175,7 +176,7 @@ public interface JREngageDelegate {
      *   The name of the provider on which the user authenticated.  For a list of possible strings, 
      *   please see the \ref basicProviders "List of Providers"
      **/
-    void jrAuthenticationDidReachTokenUrl(String tokenUrl, JRDictionary response,
+    void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response,
                                           byte[] tokenUrlPayload, String provider);
 
     /**
@@ -192,7 +193,7 @@ public interface JREngageDelegate {
      *   The name of the provider on which the user authenticated.  For a list of possible strings, 
      *   please see the \ref basicProviders "List of Providers"
      **/
-    void jrAuthenticationCallToTokenUrl(String tokenUrl, JREngageError error, String provider);
+    void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider);
 
     /*@}*/
 
@@ -244,6 +245,6 @@ public interface JREngageDelegate {
      *   The name of the provider on which the user attempted to publish the activity.  For a list 
      *   of possible strings, please see the \ref socialProviders "List of Social Providers"
      **/
-    void jrSocialPublisingActivity(JRActivityObject activity, JREngageError error, String provider);
+    void jrSocialPublisingActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
     /*@}*/
 }

@@ -30,6 +30,7 @@
 package com.janrain.android.engage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -190,52 +191,205 @@ public class JREngage implements JRSessionDelegate {
     // ------------------------------------------------------------------------
 
     public void authenticationDidRestart() {
-        // TODO: implement
+        if (Config.LOGD) {
+            Log.d(TAG, "[authenticationDidRestart]");
+        }
+        // TODO:  implement UI stuff
+        // interfaceMaestro.authenticationRestarted();
     }
 
     public void authenticationDidCancel() {
-        // TODO: implement
+        if (Config.LOGD) {
+            Log.d(TAG, "[authenticationDidCancel]");
+        }
+
+        for (JREngageDelegate delegate : getDelegatesCopy()) {
+            delegate.jrAuthenticationDidNotComplete();
+        }
+
+        // TODO:  implement UI stuff
+        // interfaceMaestro.authenticationCanceled();
     }
 
     public void authenticationDidComplete(String token, String provider) {
-        // TODO: implement
+        //
+        // NOTE:  METHOD COMMENTED OUT IN IPHONE VERSION
+        //
+        if (Config.LOGD) {
+            Log.d(TAG, "[authenticationDidComplete]");
+        }
     }
 
     public void authenticationDidComplete(JRDictionary profile, String provider) {
-        // TODO: implement
+        if (Config.LOGD) {
+            Log.d(TAG, "[authenticationDidComplete]");
+        }
+
+        for (JREngageDelegate delegate : getDelegatesCopy()) {
+            delegate.jrAuthenticationDidSucceedForUser(profile, provider);
+        }
+
+        // TODO:  implement UI stuff
+        // interfaceMaestro.authenticationCompleted();
     }
 
     public void authenticationDidFail(JREngageError error, String provider) {
-        // TODO: implement
+        if (Config.LOGD) {
+            Log.d(TAG, "[authenticationDidFail]");
+        }
+
+        for (JREngageDelegate delegate : getDelegatesCopy()) {
+            delegate.jrAuthenticationDidFailWithError(error, provider);
+        }
+
+        // TODO:  implement UI stuff
+        // interfaceMaestro.authenticationFailed();
     }
 
     public void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, byte[] payload, String provider) {
-        // TODO: implement
+        if (Config.LOGD) {
+            Log.d(TAG, "[authenticationDidReachTokenUrl]");
+        }
+
+        for (JREngageDelegate delegate : getDelegatesCopy()) {
+            delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, payload, provider);
+            delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, response, payload, provider);
+        }
     }
 
     public void authenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
-        // TODO: implement
+        if (Config.LOGD) {
+            Log.d(TAG, "[authenticationCallToTokenUrlDidFail]");
+        }
+
+        for (JREngageDelegate delegate : getDelegatesCopy()) {
+            delegate.jrAuthenticationCallToTokenUrlDidFail(tokenUrl, error, provider);
+        }        
     }
 
     public void publishingDidRestart() {
-        // TODO: implement
+        if (Config.LOGD) {
+            Log.d(TAG, "[publishingDidRestart]");
+        }
+
+        // TODO:  implement UI stuff
+        // interfaceMaestro.publishingRestarted();
     }
 
     public void publishingDidCancel() {
-        // TODO: implement
+        if (Config.LOGD) {
+            Log.d(TAG, "[publishingDidCancel]");
+        }
+
+        for (JREngageDelegate delegate : getDelegatesCopy()) {
+            delegate.jrSocialDidNotCompletePublishing();
+        }
+
+        // TODO:  implement UI stuff
+        // interfaceMaestro.publishingCanceled();
     }
 
     public void publishingDidComplete() {
-        // TODO: implement
+        if (Config.LOGD) {
+            Log.d(TAG, "[publishingDidComplete]");
+        }
+
+        for (JREngageDelegate delegate : getDelegatesCopy()) {
+            delegate.jrSocialDidCompletePublishing();
+        }
+
+        // TODO:  implement UI stuff
+        // interfaceMaestro.publishingCompleted();
     }
 
     public void publishingActivityDidSucceed(JRActivityObject activity, String provider) {
-        // TODO: implement
+        if (Config.LOGD) {
+            Log.d(TAG, "[publishingActivityDidSucceed]");
+        }
+
+        for (JREngageDelegate delegate : getDelegatesCopy()) {
+            delegate.jrSocialDidPublishActivity(activity, provider);
+        }
     }
 
     public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
-        // TODO: implement
+        if (Config.LOGD) {
+            Log.d(TAG, "[publishingActivityDidFail]");
+        }
+
+        for (JREngageDelegate delegate : getDelegatesCopy()) {
+            delegate.jrSocialPublisingActivityDidFail(activity, error, provider);
+        }
     }
+
+    /*
+     * TODO:  See setCustomNavigationController in iPhone code.  Do we need this?
+     */
+
+
+    public JRDictionary getUserForProvider(String provider) {
+        if (Config.LOGD) {
+            Log.d(TAG, "[getUserForProvider]");
+        }
+        return mSessionData.authenticatedUserForProviderNamed(provider).getAuthInfo();
+    }
+
+    public void signoutUserForProvider(String provider) {
+        if (Config.LOGD) {
+            Log.d(TAG, "[signoutUserForProvider]");
+        }
+        mSessionData.forgetAuthenticatedUserForProvider(provider);
+    }
+
+    public void signoutUserForAllProviders() {
+        if (Config.LOGD) {
+            Log.d(TAG, "[signoutUserForAllProviders]");
+        }
+        mSessionData.forgetAllAuthenticatedUsers();
+    }
+
+    public void signoutUserForSocialProvider(String provider) {
+        if (Config.LOGD) {
+            Log.d(TAG, "[signoutUserForSocialProvider]");
+        }
+        mSessionData.forgetAuthenticatedUserForProvider(provider);
+    }
+
+    public void signoutUserForAllSocialProviders() {
+        if (Config.LOGD) {
+            Log.d(TAG, "[signoutUserForAllSocialProviders]");
+        }
+        mSessionData.forgetAllAuthenticatedUsers();
+    }
+
+    public void alwaysForceReauthentication(boolean force) {
+        if (Config.LOGD) {
+            Log.d(TAG, "[alwaysForceReauthentication]");
+        }
+        mSessionData.setAlwaysForceReauth(force);
+    }
+
+    public void cancelAuthentication() {
+        if (Config.LOGD) {
+            Log.d(TAG, "[cancelAuthentication]");
+        }
+        mSessionData.triggerAuthenticationDidCancel();
+    }
+
+    public void cancelPublishing() {
+        if (Config.LOGD) {
+            Log.d(TAG, "[cancelPublishing]");
+        }
+        mSessionData.triggerPublishingDidCancel();
+    }
+
+    public void updateTokenUrl(String newTokenUrl) {
+        if (Config.LOGD) {
+            Log.d(TAG, "[updateTokenUrl]");
+        }
+        mSessionData.setTokenUrl(newTokenUrl);
+    }
+
 
     // ------------------------------------------------------------------------
     // METHODS
@@ -254,18 +408,84 @@ public class JREngage implements JRSessionDelegate {
 		}
 		mDelegates.remove(delegate);
 	}
-	
+
+    public void engageDidFailWithError(JREngageError error) {
+        for (JREngageDelegate delegate : getDelegatesCopy()) {
+            delegate.jrEngageDialogDidFailToShowWithError(error);
+        }
+    }
+
 	public void showAuthenticationDialog() {
 		if (Config.LOGD) { 
 			Log.d(TAG, "[showAuthenticationDialog]"); 
 		}
-		
-		//if (mSessionData)
+
+        /* If there was error configuring the library, sessionData.error will not be null. */
+        JREngageError error = mSessionData.getError();
+		if (error != null) {
+            /* If there was an error, send a message to the delegates, release the error, then
+            attempt to restart the configuration.  If, for example, the error was temporary
+            (network issues, etc.) reattempting to configure the library could end successfully.
+            Since configuration may happen before the user attempts to use the library, if the
+            user attempts to use the library at all, we only try to reconfigure when the library
+            is needed. */
+            if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
+                engageDidFailWithError(error);
+                mSessionData.tryToReconfigureLibrary();
+
+                return;
+            }
+        }
+
+        // TODO:  implement UI stuff
+        // interfaceMaestro.showAuthenticationDialog();
 	}
+
+    public void showSocialPublishingDialogWithActivity(JRActivityObject activity) {
+        if (Config.LOGD) {
+            Log.d(TAG, "[showSocialPublishingDialogWithActivity]");
+        }
+
+        /* If there was error configuring the library, sessionData.error will not be null. */
+        JREngageError error = mSessionData.getError();
+		if (error != null) {
+            /* If there was an error, send a message to the delegates, release the error, then
+            attempt to restart the configuration.  If, for example, the error was temporary
+            (network issues, etc.) reattempting to configure the library could end successfully.
+            Since configuration may happen before the user attempts to use the library, if the
+            user attempts to use the library at all, we only try to reconfigure when the library
+            is needed. */
+            if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
+                engageDidFailWithError(error);
+                mSessionData.tryToReconfigureLibrary();
+
+                return;
+            }
+        }
+
+        if (activity == null) {
+            engageDidFailWithError(new JREngageError(
+                    "Activity object cannot be null",
+                    JREngageError.SocialPublishingError.ACTIVITY_NIL,
+                    JREngageError.ErrorType.PUBLISH_FAILED
+            ));
+        }
+
+        mSessionData.setActivity(activity);
+
+        // TODO:  implement UI stuff
+        // interfaceMaestro.showPublishingDialogWithActivity();
+    }
 	
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		throw new CloneNotSupportedException("JREngage does not permit clone");
 	}
+
+    private synchronized List<JREngageDelegate> getDelegatesCopy() {
+        return (mDelegates == null)
+                ? new ArrayList<JREngageDelegate>()
+                : new ArrayList<JREngageDelegate>(mDelegates);
+    }
 
 }

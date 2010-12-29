@@ -223,6 +223,34 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     // GETTERS/SETTERS
     // ------------------------------------------------------------------------
 
+    public JREngageError getError() {
+        return mError;
+    }
+
+    public JRActivityObject getActivity() {
+        return mActivity;
+    }
+
+    public void setActivity(JRActivityObject activity) {
+        mActivity = activity;
+    }
+
+    public boolean getAlwaysForceReauth() {
+        return mAlwaysForceReauth;
+    }
+
+    public void setAlwaysForceReauth(boolean force) {
+        mAlwaysForceReauth = force;
+    }
+
+    public String getTokenUrl() {
+        return mTokenUrl;
+    }
+
+    public void setTokenUrl(String tokenUrl) {
+        mTokenUrl = tokenUrl;
+    }
+
     // ------------------------------------------------------------------------
     // DELEGATE METHODS
     // ------------------------------------------------------------------------
@@ -430,6 +458,15 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[removeDelegate]");
         }
         mDelegates.remove(delegate);
+    }
+
+    public void tryToReconfigureLibrary() {
+        if (Config.LOGD) {
+            Log.d(TAG, "[tryToReconfigureLibrary]");
+        }
+
+        mError = null;
+        mError = startGetConfiguration();
     }
 
     private JREngageError startGetConfiguration() {
@@ -706,7 +743,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return (JRAuthenticatedUser) mAuthenticatedUsersByProvider.get(provider.getName());
     }
 
-    private JRAuthenticatedUser authenticatedUserForProviderNamed(String provider) {
+    public JRAuthenticatedUser authenticatedUserForProviderNamed(String provider) {
         if (Config.LOGD) {
             Log.d(TAG, "[authenticatedUserForProviderNamed]");
         }
@@ -714,7 +751,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return (JRAuthenticatedUser) mAuthenticatedUsersByProvider.get(provider);
     }
 
-    private void forgetAuthenticatedUserForProvider(String providerName) {
+    public void forgetAuthenticatedUserForProvider(String providerName) {
         if (Config.LOGD) {
             Log.d(TAG, "[forgetAuthenticatedUserForProvider]");
         }
@@ -730,7 +767,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
-    private void forgetAllAuthenticatedUsers() {
+    public void forgetAllAuthenticatedUsers() {
         if (Config.LOGD) {
             Log.d(TAG, "[forgetAllAuthenticatedUsers]");
         }
@@ -879,7 +916,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
-    private void triggerAuthenticationDidCancel() {
+    public void triggerAuthenticationDidCancel() {
         if (Config.LOGD) {
             Log.d(TAG, "[triggerAuthenticationDidCancel]");
         }
@@ -916,7 +953,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
-    private void triggerPublishingDidCancel() {
+    public void triggerPublishingDidCancel() {
         if (Config.LOGD) {
             Log.d(TAG, "[triggerPublishingDidCancel]");
         }
