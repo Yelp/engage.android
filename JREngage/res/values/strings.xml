@@ -9,4 +9,17 @@
     <string name="server_url_local">http://lillialexis.janrain.com:8080</string>
     <string name="server_url_staging">https://rpxstaging.com</string>
     <string name="server_url_production">https://rpxnow.com</string>
+
+    <!--
+       - Shared/common strings.
+      -->
+    <string name="powered_by">Powered by Janrain</string>
+
+
+    <!--
+       - JRProvidersActivity strings.
+      -->
+    <string name="provider_list_empty">No configured providers</string>
+    <string name="provider_unknown">Unknown provider</string>
+    <string name="provider_sign_in_with">Sign in with...</string>
 </resources>

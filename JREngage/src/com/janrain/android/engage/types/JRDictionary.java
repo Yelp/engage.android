@@ -30,13 +30,17 @@
 package com.janrain.android.engage.types;
 
 import android.text.TextUtils;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import android.util.Config;
+import android.util.Log;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.utils.Archiver;
+import org.codehaus.jackson.map.ObjectMapper;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * iPhone dictionary work-alike class.  Maps string keys to object values.
@@ -56,6 +60,9 @@ public final class JRDictionary extends HashMap<String,Object> {
 
     /* Type identifier used by GSON library for [de]serialization. */
     private static Type sJRDictionaryType = null;
+
+    /* Tag used for logging. */
+    private static final String TAG = JRDictionary.class.getSimpleName();
 
 
     // ------------------------------------------------------------------------
@@ -126,7 +133,16 @@ public final class JRDictionary extends HashMap<String,Object> {
      *      JSON representation of the specified JRDictionary object.
      */
     public static String toJSON(JRDictionary dictionary) {
-        return new Gson().toJson(dictionary, getTypeForGSON());
+        String retval = "";
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            retval = mapper.writeValueAsString(dictionary);
+        } catch (IOException e) {
+            Log.w(TAG, "[toJSON] problem serializing JSON string: ", e);
+        }
+
+        return retval;
     }
 
     /**
@@ -139,20 +155,20 @@ public final class JRDictionary extends HashMap<String,Object> {
      *      A JRDictionary object representation of the JSON string.
      */
     public static JRDictionary fromJSON(String json) {
-        return new Gson().fromJson(json, getTypeForGSON());
-    }
-
-    /**
-     * Lazily initializes the type object instance used for [de]serialization.
-     *
-     * @return
-     *      The type object used for GSON [de]serialization.
-     */
-    private static Type getTypeForGSON() {
-        if (sJRDictionaryType == null) {
-            sJRDictionaryType = new TypeToken<JRDictionary>(){}.getType();
+        if (Config.LOGD) {
+            Log.d(TAG, "[fromJSON] json: " + json);
         }
-        return sJRDictionaryType;
+
+        JRDictionary retval = null;
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            retval = mapper.readValue(json, JRDictionary.class);
+        } catch (IOException e) {
+            Log.w(TAG, "[fromJSON] problem deserializing JSON string: ", e);
+        }
+
+        return retval;
     }
 
     // ------------------------------------------------------------------------
@@ -175,6 +191,18 @@ public final class JRDictionary extends HashMap<String,Object> {
      */
     public JRDictionary(int capacity) {
         super(capacity);
+    }
+
+    /**
+     * Copy constructor (for base type).
+     *
+     * @param hashMap
+     *      The HashMap instance to clone.
+     */
+    public JRDictionary(HashMap<String,Object> hashMap) {
+        if (hashMap != null) {
+            putAll(hashMap);
+        }
     }
 
     /**
@@ -350,7 +378,9 @@ public final class JRDictionary extends HashMap<String,Object> {
 			Object value = get(key);
 			if (value instanceof JRDictionary) {
 				retval = (JRDictionary)value;
-			}
+			} else if (value instanceof HashMap) {
+                retval = new JRDictionary((HashMap<String,Object>)value);
+            }
 		}
 		
 		return ((retval == null) && shouldCreateIfNotFound)
@@ -411,6 +441,8 @@ public final class JRDictionary extends HashMap<String,Object> {
             Object value = get(key);
             if (value instanceof JRProviderList) {
                 retval = (JRProviderList)value;
+            } else if (value instanceof ArrayList) {
+                retval = new JRProviderList((ArrayList<JRProvider>)value);
             }
         }
 
@@ -418,4 +450,23 @@ public final class JRDictionary extends HashMap<String,Object> {
             ? new JRProviderList()
             : retval;
     }
+
+    public ArrayList<String> getAsListOfStrings(String key) {
+        return getAsListOfStrings(key, false);
+    }
+
+    public ArrayList<String> getAsListOfStrings(String key, boolean shouldCreateIfNotFound) {
+        ArrayList<String> retval = null;
+        if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
+            Object value = get(key);
+            if (value instanceof ArrayList) {
+                retval = (ArrayList<String>)value;
+            }
+        }
+
+        return ((retval == null) && shouldCreateIfNotFound)
+            ? new ArrayList<String>()
+            : retval;
+    }
+
 }

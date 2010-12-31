@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+   - Layout for JRProvidersActivity
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        >
+
+    <!-- Header (title) area -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/provider_header_background"
+        >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="@string/provider_sign_in_with"
+            android:textColor="#ffffff"
+            android:gravity="center_horizontal|center_vertical"
+            />
+
+    </LinearLayout>
+
+    <!-- List view (list) -->
+    <ListView
+        android:id="@+id/android:list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        />
+
+    <!-- List view (empty state) -->
+    <TextView
+        android:id="@+id/android:empty"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="@string/provider_list_empty"
+        android:textColor="#000000"
+        />
+
+    <!-- Footer (powered by) area -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/provider_footer_background"
+        >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="@string/powered_by"
+            android:textColor="#ffffff"
+            android:gravity="right|center_vertical"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

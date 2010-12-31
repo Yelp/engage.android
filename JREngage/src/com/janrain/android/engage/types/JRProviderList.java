@@ -81,6 +81,16 @@ public class JRProviderList extends ArrayList<JRProvider> {
     }
 
     /**
+     * Creates a new list with the contents of the specified list (base type) cloned.
+     */
+    public JRProviderList(ArrayList<JRProvider> list) {
+        super();
+        if (list != null) {
+            addAll(list);
+        }
+    }
+
+    /**
      * Creates a new list with the contents of the specified list cloned.
      */
     public JRProviderList(JRProviderList providerList) {

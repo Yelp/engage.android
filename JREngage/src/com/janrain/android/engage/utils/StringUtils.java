@@ -30,12 +30,21 @@
 package com.janrain.android.engage.utils;
 
 import android.text.TextUtils;
-import com.google.gson.Gson;
+import android.util.Log;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
 
 /**
  * String utility methods.
  */
 public final class StringUtils {
+
+    // ------------------------------------------------------------------------
+    // STATIC FIELDS
+    // ------------------------------------------------------------------------
+
+    private static final String TAG = StringUtils.class.getSimpleName();
 
     // ------------------------------------------------------------------------
     // STATIC METHODS
@@ -81,7 +90,15 @@ public final class StringUtils {
      *      The JSONified string.
      */
     public static String toJSON(String str) {
-        return (new Gson()).toJson(str, String.class);
+        String retval = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            retval = mapper.writeValueAsString(str);
+        } catch (IOException e) {
+            Log.w(TAG, "[toJSON] problem serializing JSON string: ", e);
+        }
+
+        return retval;
     }
 
 

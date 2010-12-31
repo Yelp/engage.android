@@ -33,12 +33,13 @@ import android.text.TextUtils;
 import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * TODO:DOC
  */
-public class JRProvider {
+public class JRProvider implements Serializable {
 	
     // ------------------------------------------------------------------------
     // TYPES

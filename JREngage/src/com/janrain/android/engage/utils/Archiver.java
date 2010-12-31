@@ -177,6 +177,27 @@ public final class Archiver {
         return null;
     }
 
+    /**
+     * Loads (unarchives) the specified boolean value from the local (protected) file system.  If
+     * the value cannot be found (null), the default value will be returned.
+     *
+     * @param name
+     * 		The name of the boolean to be loaded from disk.  This parameter cannot be null.
+     *
+     * @param defaultValue
+     *      The default boolean value to be returned if the lookup fails.
+     * 
+     * @return
+     * 		The boolean if found and loaded, null otherwise.
+     *
+     * @throws
+     * 		IllegalArgumentException if the context or name parameters are null.
+     */
+    public static boolean loadBooleanWithDefault(String name, boolean defaultValue) {
+        Boolean value = loadBoolean(name);
+        return (value == null) ? defaultValue : value;
+    }
+
     /*
      * Handles saving of the named dictionary to disk.
      */
@@ -189,7 +210,8 @@ public final class Archiver {
             FileOutputStream fos = null;
             try {
                 fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-                fos.write(IOUtils.objectToBytes(object));
+                byte[] bytes = IOUtils.objectToBytes(object);
+                fos.write(bytes);
                 retval = true;
             } catch (FileNotFoundException e) {
                 Log.e(TAG, "[saveObject] fnfe", e);
@@ -222,7 +244,7 @@ public final class Archiver {
                 byte[] bytes = IOUtils.readFromStream(fis);
                 value = IOUtils.bytesToObject(bytes);
             } catch (FileNotFoundException e) {
-                Log.e(TAG, "[loadObject] fnfe", e);
+                Log.i(TAG, "[loadObject] File not found: " + fileName);
             } finally {
                 if (fis != null) {
                     try {

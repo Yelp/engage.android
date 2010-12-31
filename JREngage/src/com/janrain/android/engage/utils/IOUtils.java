@@ -93,7 +93,7 @@ public final class IOUtils {
 		byte[] retval = null;
 		if (obj != null) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = null;
+			ObjectOutputStream oos;
 			try {
 				oos = new ObjectOutputStream(baos);
 				oos.writeObject(obj);

@@ -47,6 +47,7 @@ import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.types.JRProviderList;
 import com.janrain.android.engage.utils.Archiver;
+import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.StringUtils;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.util.EncodingUtils;
@@ -74,7 +75,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     
 	private static JRSessionData sInstance;
 
-    private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
+    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
 
     private static final String ARCHIVE_USERS = "users";
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
@@ -82,10 +83,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private static final String ARCHIVE_SOCIAL_PROVIDERS = "socialProviders";
     private static final String ARCHIVE_ICONS_STILL_NEEDED = "iconsStillNeeded";
     private static final String ARCHIVE_PROVIDERS_WITH_ICONS = "providersWithIcons";
-    private static final String ARCHIVE_BASE_URL = "baseUrl";
-    private static final String ARCHIVE_HIDE_POWERED_BY = "hidePoweredBy";
-    private static final String ARCHIVE_LAST_USED_SOCIAL = "lastUsedSocialProvider";
-    private static final String ARCHIVE_LAST_USED_BASIC = "lastUsedBasicProvider";
     private static final String ARCHIVE_AUTH_USERS_BY_PROVIDER = "jrAuthenticatedUsersByProvider";
 
     private static final String FMT_CONFIG_URL =
@@ -137,8 +134,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	private String mReturningSocialProvider;
 	
 	private JRDictionary mAllProviders;
-	private JRProviderList mBasicProviders;
-	private JRProviderList mSocialProviders;
+	private ArrayList<String> mBasicProviders;
+	private ArrayList<String> mSocialProviders;
 	private JRDictionary mAuthenticatedUsersByProvider;
 	
 	private String mSavedConfigurationBlock;
@@ -195,10 +192,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mAllProviders = JRDictionary.unarchive(ARCHIVE_ALL_PROVIDERS);
 
         // Load the list of basic providers
-        mBasicProviders = JRProviderList.unarchive(ARCHIVE_BASIC_PROVIDERS);
+        mBasicProviders = (ArrayList<String>)Archiver.load(ARCHIVE_BASIC_PROVIDERS);
 
         // Load the list of social providers
-        mSocialProviders = JRProviderList.unarchive(ARCHIVE_SOCIAL_PROVIDERS);
+        mSocialProviders = (ArrayList<String>)Archiver.load(ARCHIVE_SOCIAL_PROVIDERS);
 
         // Load the list of icons that the library should re-attempt to download, in case
         // previous attempts failed for whatever reason
@@ -209,12 +206,14 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mProvidersWithIcons = JRProviderList.unarchive(ARCHIVE_PROVIDERS_WITH_ICONS);
 
         // Load the base url and whether or not we need to hide the tagline.
-        mBaseUrl = Archiver.loadString(ARCHIVE_BASE_URL);
-        mHidePoweredBy = Archiver.loadBoolean(ARCHIVE_HIDE_POWERED_BY);
+        mBaseUrl = Prefs.getAsString(Prefs.KEY_JR_BASE_URL, "");
+
+        // Figure out of we're suppose to hide the powered by line
+        mHidePoweredBy = Prefs.getAsBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, false);
 
         // And load the last used basic and social providers
-        mReturningSocialProvider = Archiver.loadString(ARCHIVE_LAST_USED_SOCIAL);
-        mReturningBasicProvider = Archiver.loadString(ARCHIVE_LAST_USED_BASIC);
+        mReturningSocialProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
+        mReturningBasicProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
 
         mError = startGetConfiguration();
 	}
@@ -249,6 +248,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public void setTokenUrl(String tokenUrl) {
         mTokenUrl = tokenUrl;
+    }
+
+    public ArrayList<String> getBasicProviders() {
+        return mBasicProviders;
     }
 
     // ------------------------------------------------------------------------
@@ -499,6 +502,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         try {
             jsonDict = JRDictionary.fromJSON(dataStr);
         } catch (Exception e) {
+            Log.w(TAG, "[finishGetConfiguration] json error: ", e);
             jsonEx = e;
         }
 
@@ -517,7 +521,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         if (!baseUrl.equals(mBaseUrl)) {
             // Save the new base url
             mBaseUrl = StringUtils.chomp(baseUrl, "/");
-            Prefs.putString("jrBaseUrl", mBaseUrl);
+            Prefs.putString(Prefs.KEY_JR_BASE_URL, mBaseUrl);
         }
 
         // Get the providers out of the provider_info section.  These are likely to have changed.
@@ -535,23 +539,23 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         // Get the ordered list of basic providers
-        mBasicProviders = jsonDict.getAsProviderList("enabled_providers");
+        mBasicProviders = jsonDict.getAsListOfStrings("enabled_providers");
         // Get the ordered list of social providers
-        mSocialProviders = jsonDict.getAsProviderList("social_providers");
+        mSocialProviders = jsonDict.getAsListOfStrings("social_providers");
 
         // Done!
 
         // Save data to local store
         JRDictionary.archive(ARCHIVE_ALL_PROVIDERS, mAllProviders);
-        JRProviderList.archive(ARCHIVE_BASIC_PROVIDERS, mBasicProviders);
-        JRProviderList.archive(ARCHIVE_SOCIAL_PROVIDERS, mSocialProviders);
+        Archiver.save(ARCHIVE_BASIC_PROVIDERS, mBasicProviders);
+        Archiver.save(ARCHIVE_SOCIAL_PROVIDERS, mSocialProviders);
 
         // Figure out of we're suppose to hide the powered by line
         mHidePoweredBy = jsonDict.getAsBoolean("hide_tagline", false);
-        Prefs.putBoolean("jrHidePoweredBy", mHidePoweredBy);
+        Prefs.putBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, mHidePoweredBy);
 
         // Once we know everything is parsed and saved, save the new etag
-        Prefs.putString("jrConfigurationEtag", mNewEtag);
+        Prefs.putString(Prefs.KEY_JR_CONFIGURATION_ETAG, mNewEtag);
 
         return null;
     }
@@ -573,8 +577,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
              * where a dialog is showing but there isn't any data that it could be using (that
              * is, the lists of basic and social providers are nil), go ahead and update it too.
              * The dialogs won't try and do anything until we're done updating the lists. */
-            if (!mDialogIsShowing || (JRProviderList.isEmpty(mBasicProviders)
-                    && JRProviderList.isEmpty(mSocialProviders))) {
+            if (!mDialogIsShowing || (ListUtils.isEmpty(mBasicProviders)
+                    && ListUtils.isEmpty(mSocialProviders))) {
                 return finishGetConfiguration(dataStr);
             }
 
@@ -618,14 +622,14 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         if (Config.LOGD) {
             Log.d(TAG, "[loadLastUsedSocialProvider]");
         }
-        mReturningSocialProvider = Prefs.getAsString("jrLastUsedSocialProvider", "");
+        mReturningSocialProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
     }
 
     private void loadLastUsedBasicProvider() {
         if (Config.LOGD) {
             Log.d(TAG, "[loadLastUsedBasicProvider]");
         }
-        mReturningBasicProvider = Prefs.getAsString("jrLastUsedBasicProvider", "");
+        mReturningBasicProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
     }
 
     private void saveLastUsedSocialProvider() {
@@ -633,7 +637,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[saveLastUsedSocialProvider]");
         }
         mReturningSocialProvider = mCurrentProvider.getName();
-        Prefs.putString("jrLastUsedSocialProvider", mReturningSocialProvider);
+        Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, mReturningSocialProvider);
     }
 
     private void saveLastUsedBasicProvider() {
@@ -650,7 +654,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         mReturningBasicProvider = mCurrentProvider.getName();
-        Prefs.putString("jrLastUsedBasicProvider", mReturningBasicProvider);
+        Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, mReturningBasicProvider);
     }
 
     private void deleteFacebookCookies() {
@@ -782,14 +786,17 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
     }
 
+    private JRProvider getProviderAtIndex(int index, List<String> fromList) {
+        String key = fromList.get(index);
+        return mAllProviders.getAsProvider(key);
+    }
+
     private JRProvider getBasicProviderAtIndex(int index) {
-        return ((index >= 0) && (index < mBasicProviders.size()))
-                ? mBasicProviders.get(index) : null;
+        return getProviderAtIndex(index, mBasicProviders);
     }
 
     private JRProvider getSocialProviderAtIndex(int index) {
-        return ((index >= 0) && (index < mSocialProviders.size()))
-                ? mSocialProviders.get(index) : null;
+        return getProviderAtIndex(index, mSocialProviders);
     }
 
     private JRProvider getProviderName(String name) {

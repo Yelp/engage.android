@@ -7,6 +7,7 @@
 
     <application android:debuggable="true">
         <activity android:name="SampleActivity"/>
+        <activity android:name=".ui.JRProvidersActivity" />
     </application>
 
 </manifest>

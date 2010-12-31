@@ -45,9 +45,12 @@ public final class Prefs {
 	public static final String KEY_JR_USER_INPUT = "jrPrefUserInput";
 	public static final String KEY_JR_WELCOME_STRING = "jrPrefWelcomeString";
 	public static final String KEY_JR_FORCE_REAUTH = "jrPrefForceReauth";
-    
+    public static final String KEY_JR_HIDE_POWERED_BY = "jrHidePoweredBy";
     public static final String KEY_JR_CONFIGURATION_ETAG = "jrConfigurationEtag";
-	
+    public static final String KEY_JR_LAST_USED_BASIC_PROVIDER = "jrLastUsedBasicProvider";
+    public static final String KEY_JR_LAST_USED_SOCIAL_PROVIDER = "jrLastUsedSocialProvider";
+    public static final String KEY_JR_BASE_URL = "jrBaseUrl";
+
     // ------------------------------------------------------------------------
     // STATIC METHODS
     // ------------------------------------------------------------------------

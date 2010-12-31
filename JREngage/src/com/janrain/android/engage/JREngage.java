@@ -42,6 +42,7 @@ import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.ui.JRUserInterfaceMaestro;
 
 /**
  * TODO:DOC
@@ -58,10 +59,10 @@ public class JREngage implements JRSessionDelegate {
 	
 	// Tag used for logging
 	private static final String TAG = JREngage.class.getSimpleName();
-	
+
+    // Singleton instance of this class
 	private static JREngage sInstance;
-	private static Context sContext;
-	
+
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
     // ------------------------------------------------------------------------
@@ -69,6 +70,54 @@ public class JREngage implements JRSessionDelegate {
     // ------------------------------------------------------------------------
     // STATIC METHODS
     // ------------------------------------------------------------------------
+
+    /**
+     * Initializes and returns instance of JREngage.
+     *
+     * @param context
+     * 		Application context used for access to application and information (e.g. global
+     * 		preferences).  This value cannot be null.
+     *
+     * @param appId
+     * 		This is your 20-character application ID.  You can find this on your application's
+     * 		Dashboard on <a href="http://rpxnow.com">http://rpxnow.com</a>.  This value cannot be
+     * 		null.
+     *
+     * @param tokenUrl
+     * 		The url on your server where you wish to complete authentication.  If provided,
+     *   	the JREngage library will post the user's authentication token to this url where it can
+     *   	used for further authentication and processing.  When complete, the library will pass
+     *   	the server's response back to the your application.
+
+     * @param delegate
+     * 		The delegate object that implements the JREngageDelegate protocol.
+     *
+     * @return
+     * 		The shared instance of the \c JREngage object initialized with the given
+     *   	<code>appId</code>, <code>tokenUrl</code>, and <code>delegate</code>.  If the given
+     *   	<code>appId</code> is <code>null</code>, returns <code>null</code>.
+     */
+    public static JREngage initInstance(Context context, String appId, String tokenUrl,
+            JREngageDelegate delegate) {
+
+        if (sInstance == null) {
+
+            if (context == null) {
+                Log.e(TAG, "[initialize] context parameter cannot be null.");
+                return null;
+            }
+
+            if (TextUtils.isEmpty(appId)) {
+                Log.e(TAG, "[initialize] appId parameter cannot be null.");
+                return null;
+            }
+
+            sInstance = new JREngage();
+            sInstance.initialize(context, appId, tokenUrl, delegate);
+        }
+
+        return sInstance;
+    }
 
 	/**
 	 * Returns singleton instance, provided it has been initialized.
@@ -81,84 +130,27 @@ public class JREngage implements JRSessionDelegate {
 	}
 	
 	/**
-	 * Initializes and returns instance of JREngage.
-	 * 
-	 * @param context
-	 * 		Application context used for access to application and information (e.g. global 
-	 * 		preferences).  This value cannot be null.
-	 * 
-	 * @param appId
-	 * 		This is your 20-character application ID.  You can find this on your application's 
-	 * 		Dashboard on <a href="http://rpxnow.com">http://rpxnow.com</a>.  This value cannot be 
-	 * 		null.
-	 * 
-	 * @param tokenUrl
-	 * 		The url on your server where you wish to complete authentication.  If provided, 
-	 *   	the JREngage library will post the user's authentication token to this url where it can
-	 *   	used for further authentication and processing.  When complete, the library will pass 
-	 *   	the server's response back to the your application.
-
-	 * @param delegate
-	 * 		The delegate object that implements the JREngageDelegate protocol.
-	 * 
-	 * @return
-	 * 		The shared instance of the \c JREngage object initialized with the given
-	 *   	<code>appId</code>, <code>tokenUrl</code>, and <code>delegate</code>.  If the given 
-	 *   	<code>appId</code> is <code>null</code>, returns <code>null</code>.
-	 */
-	public static JREngage initialize(Context context, String appId, String tokenUrl, 
-			JREngageDelegate delegate) {
-		if (sInstance != null) {
-			return sInstance;
-		}
-		
-		if (context == null) {
-			Log.e(TAG, "[initialize] context parameter cannot be null.");
-			return null;
-		}
-		
-		if (TextUtils.isEmpty(appId)) {
-			Log.e(TAG, "[initialize] appId parameter cannot be null.");
-			return null;
-		}
-		
-		return initHelper(context, appId, tokenUrl, delegate);
-	}
-	
-	/**
 	 * Returns the application context used to initialize the library.
 	 * 
 	 * @return
 	 * 		Context object used to initialize this library.
 	 */
 	public static Context getContext() {
-		return sContext;
-	}
-	
-	/*
-	 * Helper method for initialization.
-	 */
-	private static synchronized JREngage initHelper(Context context, String appId, String tokenUrl, 
-			JREngageDelegate delegate) {
-
-		Log.i(TAG, "[initialize] JREngage library initialing.");
-		if (Config.LOGD) {
-			Log.d(TAG, "[initialize] appId: " + appId + " | tokenUrl: " + tokenUrl);
-		}
-		
-		if (sInstance == null) {
-			sInstance = new JREngage();
-		}
-		
-		sContext = context;
-		sInstance.mDelegates.add(delegate);
-		
-		return sInstance;
+        return (sInstance == null) ? null : sInstance.mContext;
 	}
 
     // ------------------------------------------------------------------------
     // FIELDS
     // ------------------------------------------------------------------------
+
+    // Application context
+    private Context mContext;
+
+    // Application ID string
+    private String mAppId;
+
+    // Token URL
+    private String mTokenUrl;
 
 	// Holds configuration and state for the JREngage library
 	private JRSessionData mSessionData;
@@ -167,7 +159,7 @@ public class JREngage implements JRSessionDelegate {
 	private ArrayList<JREngageDelegate> mDelegates;
 	
 	// TODO:  Need to implement UI classes
-	// private JRUserInterfaceMaestro mInterfaceMaestro;
+	private JRUserInterfaceMaestro mInterfaceMaestro;
 	
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -177,9 +169,25 @@ public class JREngage implements JRSessionDelegate {
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
 
+	/*
+	 * Initializing constructor.
+	 */
+//	private JREngage(Context context, String appId, String tokenUrl, JREngageDelegate delegate) {
+//        mContext = context;
+//        mAppId = appId;
+//        mTokenUrl = tokenUrl;
+//        mDelegates = new ArrayList<JREngageDelegate>();
+//        if (delegate != null) {
+//            mDelegates.add(delegate);
+//        }
+//        mSessionData = JRSessionData.getInstance(mAppId, mTokenUrl, this);
+//        mInterfaceMaestro = JRUserInterfaceMaestro.getInstance();
+//	}
+    
+    /*
+     * Hide default constructor (singleton pattern).
+     */
 	private JREngage() {
-		//mSessionData = new JRSessionData();
-		mDelegates = new ArrayList<JREngageDelegate>();
 	}
 	
     // ------------------------------------------------------------------------
@@ -437,8 +445,7 @@ public class JREngage implements JRSessionDelegate {
             }
         }
 
-        // TODO:  implement UI stuff
-        // interfaceMaestro.showAuthenticationDialog();
+        mInterfaceMaestro.showAuthenticationDialog();
 	}
 
     public void showSocialPublishingDialogWithActivity(JRActivityObject activity) {
@@ -487,5 +494,21 @@ public class JREngage implements JRSessionDelegate {
                 ? new ArrayList<JREngageDelegate>()
                 : new ArrayList<JREngageDelegate>(mDelegates);
     }
+
+	/*
+	 * Initializer.
+	 */
+	private void initialize(Context context, String appId, String tokenUrl, JREngageDelegate delegate) {
+        mContext = context;
+        mAppId = appId;
+        mTokenUrl = tokenUrl;
+        mDelegates = new ArrayList<JREngageDelegate>();
+        if (delegate != null) {
+            mDelegates.add(delegate);
+        }
+        mSessionData = JRSessionData.getInstance(mAppId, mTokenUrl, this);
+        mInterfaceMaestro = JRUserInterfaceMaestro.getInstance();
+	}
+
 
 }
