@@ -16,7 +16,8 @@
         </activity>
 
         <!-- For Janrain -->
-        <activity android:name="com.janrain.android.engage.ui.JRProvidersActivity" />
+        <activity android:name="com.janrain.android.engage.ui.JRProvidersActivity"
+                android:theme="@android:style/Theme.Light.NoTitleBar"/>
         
     </application>
 

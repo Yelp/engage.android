@@ -3,7 +3,7 @@
 <!--
    - Layout for JRProvidersActivity
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -11,9 +11,11 @@
 
     <!-- Header (title) area -->
     <LinearLayout
+        android:id="@+id/header"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dip"
+        android:layout_alignParentTop="true"
         android:background="@drawable/provider_header_background"
         >
 
@@ -23,6 +25,9 @@
             android:singleLine="true"
             android:text="@string/provider_sign_in_with"
             android:textColor="#ffffff"
+            android:textSize="26dip"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
             android:gravity="center_horizontal|center_vertical"
             />
 
@@ -33,6 +38,7 @@
         android:id="@+id/android:list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_below="@id/header"
         />
 
     <!-- List view (empty state) -->
@@ -40,15 +46,18 @@
         android:id="@+id/android:empty"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_below="@id/header"
         android:text="@string/provider_list_empty"
         android:textColor="#000000"
         />
 
     <!-- Footer (powered by) area -->
     <LinearLayout
+        android:id="@+id/footer"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="24dip"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/provider_footer_background"
         >
 
@@ -58,9 +67,12 @@
             android:singleLine="true"
             android:text="@string/powered_by"
             android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
             android:gravity="right|center_vertical"
+            android:layout_marginRight="6dip"
             />
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

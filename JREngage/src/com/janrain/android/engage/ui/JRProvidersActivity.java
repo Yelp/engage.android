@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
@@ -18,18 +16,19 @@ import java.util.ArrayList;
 /**
  * TODO:  Javadoc
  */
-public class JRProvidersActivity extends ListActivity {
-
+public class JRProvidersActivity extends ListActivity implements View.OnClickListener {
     // ------------------------------------------------------------------------
     // TYPES
     // ------------------------------------------------------------------------
 
     private class ProviderAdapter extends ArrayAdapter<JRProvider> {
 
+        private int mResourceId;
         private ArrayList<JRProvider> mItems;
 
         public ProviderAdapter(Context context, int resId, ArrayList<JRProvider> items) {
             super(context, resId, items);
+            mResourceId = resId;
             mItems = items;
         }
 
@@ -38,20 +37,16 @@ public class JRProvidersActivity extends ListActivity {
             View v = convertView;
             if (v == null) {
                 LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = li.inflate(R.layout.provider_listview_row, null);
+                v = li.inflate(mResourceId, null);
             }
 
             JRProvider provider = mItems.get(position);
             if (provider != null) {
-                ImageView icon = (ImageView)v.findViewById(R.id.icon);
-                if (icon != null) {
-                    icon.setImageResource(providerNameToIconResource(provider.getName()));
-                }
+                ImageView icon = (ImageView)v.findViewById(R.id.rowIcon);
+                icon.setImageResource(providerNameToIconResource(provider.getName()));
 
-                TextView label = (TextView)v.findViewById(R.id.label);
-                if (label != null) {
-                    label.setText(provider.getFriendlyName());
-                }
+                TextView label = (TextView)v.findViewById(R.id.rowLabel);
+                label.setText(provider.getFriendlyName());
             }
 
             return v;
@@ -116,7 +111,8 @@ public class JRProvidersActivity extends ListActivity {
     // FIELDS
     // ------------------------------------------------------------------------
 
-    private ArrayList<String> mProviderList;
+    private JRSessionData mSessionData;
+    private ArrayList<JRProvider> mProviderList;
     private ProviderAdapter mAdapter;
 
     // ------------------------------------------------------------------------
@@ -128,10 +124,6 @@ public class JRProvidersActivity extends ListActivity {
     // ------------------------------------------------------------------------
 
     public JRProvidersActivity() {
-        JRSessionData sessionData = JRSessionData.getInstance();
-        if (sessionData != null) {
-            mProviderList = sessionData.getBasicProviders();
-        }
     }
 
     // ------------------------------------------------------------------------
@@ -141,5 +133,27 @@ public class JRProvidersActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.provider_listview);
+
+        mSessionData = JRSessionData.getInstance();
+        mProviderList = mSessionData.getBasicProviders();
+
+        mAdapter = new ProviderAdapter(this, R.layout.provider_listview_row, mProviderList);
+        setListAdapter(mAdapter);
     }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int pos, long id) {
+        JRProvider provider = mAdapter.getItem(pos);
+        if (provider.requiresInput() || provider.equals(mSessionData.getReturningBasicProvider())) {
+            // myUserLandingController
+        } else {
+            // myWebViewController
+        }
+    }
+
+    public void onClick(View view) {
+
+    }
+
+
 }

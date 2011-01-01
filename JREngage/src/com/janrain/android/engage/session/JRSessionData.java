@@ -193,9 +193,23 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         // Load the list of basic providers
         mBasicProviders = (ArrayList<String>)Archiver.load(ARCHIVE_BASIC_PROVIDERS);
+        if (Config.LOGD) {
+            if (ListUtils.isEmpty(mBasicProviders)) {
+                Log.d(TAG, "[ctor] basic providers is empty");
+            } else {
+                Log.d(TAG, "[ctor] basic providers: [" + TextUtils.join(",", mBasicProviders) + "]");
+            }
+        }
 
         // Load the list of social providers
         mSocialProviders = (ArrayList<String>)Archiver.load(ARCHIVE_SOCIAL_PROVIDERS);
+        if (Config.LOGD) {
+            if (ListUtils.isEmpty(mSocialProviders)) {
+                Log.d(TAG, "[ctor] social providers is empty");
+            } else {
+                Log.d(TAG, "[ctor] social providers: [" + TextUtils.join(",", mSocialProviders) + "]");
+            }
+        }
 
         // Load the list of icons that the library should re-attempt to download, in case
         // previous attempts failed for whatever reason
@@ -250,8 +264,19 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mTokenUrl = tokenUrl;
     }
 
-    public ArrayList<String> getBasicProviders() {
-        return mBasicProviders;
+    public ArrayList<JRProvider> getBasicProviders() {
+        ArrayList<JRProvider> providerList = new ArrayList<JRProvider>();
+        if ((mBasicProviders != null) && (mBasicProviders.size() > 0)) {
+            for (String name : mBasicProviders) {
+                JRProvider provider = mAllProviders.getAsProvider(name);
+                providerList.add(provider);
+            }
+        }
+        return providerList;
+    }
+
+    public String getReturningBasicProvider() {
+        return mReturningBasicProvider;
     }
 
     // ------------------------------------------------------------------------
