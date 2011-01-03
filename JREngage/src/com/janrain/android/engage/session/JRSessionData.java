@@ -264,6 +264,14 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mTokenUrl = tokenUrl;
     }
 
+    public JRProvider getCurrentProvider() {
+        return mCurrentProvider;
+    }
+
+    public void setCurrentProvider(JRProvider provider) {
+        mCurrentProvider = provider;
+    }
+
     public ArrayList<JRProvider> getBasicProviders() {
         ArrayList<JRProvider> providerList = new ArrayList<JRProvider>();
         if ((mBasicProviders != null) && (mBasicProviders.size() > 0)) {
@@ -690,7 +698,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         CookieHelper.deleteCookiesByUrl("http://live.com");
     }
 
-    private URL startUrlForCurrentProvider() {
+    public String startUrlForCurrentProvider() {
         if (Config.LOGD) {
             Log.d(TAG, "[startUrlForCurrentProvider]");
         }
@@ -736,14 +744,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[startUrlForCurrentProvider] startUrl: " + str);
         }
 
-        URL url = null;
-        try {
-            url = new URL(str);
-        } catch (MalformedURLException e) {
-            Log.e(TAG, "[startUrlForCurrentProvider] unable to parse start URL: " + str);
-        }
-
-        return url;
+        return str;
     }
 
     private boolean weShouldBeFirstResponder() {

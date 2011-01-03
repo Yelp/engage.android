@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-   - Layout for JRProvidersActivity
+   - Layout for JRWebViewActivity
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
@@ -11,25 +11,14 @@
     <!-- Header (title) area -->
     <include layout="@layout/shared_header" />
 
-    <!-- List view (list) -->
-    <ListView
-        android:id="@+id/android:list"
+    <!-- Web view -->
+    <WebView
+        android:id="@+id/webview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/header"
         android:layout_above="@+id/footer"
-        />
-
-    <!-- List view (empty state) -->
-    <TextView
-        android:id="@+id/android:empty"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:text="@string/provider_list_empty"
-        android:textColor="#000000"
-        android:layout_below="@+id/header"
-        android:layout_above="@+id/footer"
-        />
+        />        
 
     <!-- Footer (powered by) area -->
     <include layout="@layout/shared_footer" />
