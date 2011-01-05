@@ -287,6 +287,18 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mReturningBasicProvider;
     }
 
+    public String getBaseUrl() {
+        return mBaseUrl;
+    }
+
+    public boolean getSocial() {
+        return mSocialSharing;
+    }
+
+    public void setSocial(boolean value) {
+        mSocialSharing = value;
+    }
+
     // ------------------------------------------------------------------------
     // DELEGATE METHODS
     // ------------------------------------------------------------------------
@@ -730,7 +742,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             }
         }
 
-        str = String.format("%s%s?%s%sversion=android_one&device=android",
+        //str = String.format("%s%s?%s%sversion=android_one&device=android",
+        str = String.format("%s%s?%s%sversion=iphone_two&device=iphone",
                 mBaseUrl,
                 mCurrentProvider.getUrl(),
                 oid,
@@ -896,7 +909,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
-    private void triggerAuthenticationDidCompleteWithPayload(JRDictionary payloadDict) {
+    public void triggerAuthenticationDidCompleteWithPayload(JRDictionary payloadDict) {
         if (Config.LOGD) {
             Log.d(TAG, "[triggerAuthenticationDidCompleteWithPayload]");
         }
@@ -933,7 +946,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mCurrentProvider = null;
     }
 
-    private void triggerAuthenticationDidFail(JREngageError error) {
+    public void triggerAuthenticationDidFail(JREngageError error) {
         if (Config.LOGD) {
             Log.d(TAG, "[triggerAuthenticationDidFailWithError]");
         }
@@ -962,7 +975,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
-    private void triggerPublishingDidComplete() {
+    public void triggerPublishingDidComplete() {
         if (Config.LOGD) {
             Log.d(TAG, "[triggerPublishingDidComplete]");
         }
@@ -976,7 +989,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mSocialSharing = false;
     }
 
-    private void triggerPublishingDidFail(JREngageError error) {
+    public void triggerPublishingDidFail(JREngageError error) {
         if (Config.LOGD) {
             Log.d(TAG, "[triggerPublishingDidFail]");
         }

@@ -202,8 +202,7 @@ public class JREngage implements JRSessionDelegate {
         if (Config.LOGD) {
             Log.d(TAG, "[authenticationDidRestart]");
         }
-        // TODO:  implement UI stuff
-        // interfaceMaestro.authenticationRestarted();
+        mInterfaceMaestro.authenticationRestarted();
     }
 
     public void authenticationDidCancel() {
@@ -215,8 +214,7 @@ public class JREngage implements JRSessionDelegate {
             delegate.jrAuthenticationDidNotComplete();
         }
 
-        // TODO:  implement UI stuff
-        // interfaceMaestro.authenticationCanceled();
+        mInterfaceMaestro.authenticationCanceled();
     }
 
     public void authenticationDidComplete(String token, String provider) {
@@ -237,8 +235,7 @@ public class JREngage implements JRSessionDelegate {
             delegate.jrAuthenticationDidSucceedForUser(profile, provider);
         }
 
-        // TODO:  implement UI stuff
-        // interfaceMaestro.authenticationCompleted();
+        mInterfaceMaestro.authenticationCompleted();
     }
 
     public void authenticationDidFail(JREngageError error, String provider) {
@@ -250,8 +247,7 @@ public class JREngage implements JRSessionDelegate {
             delegate.jrAuthenticationDidFailWithError(error, provider);
         }
 
-        // TODO:  implement UI stuff
-        // interfaceMaestro.authenticationFailed();
+        mInterfaceMaestro.authenticationFailed();
     }
 
     public void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, byte[] payload, String provider) {

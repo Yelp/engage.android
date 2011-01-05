@@ -31,7 +31,9 @@ package com.janrain.android.engage.ui;
 
 import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Config;
 import android.util.Log;
@@ -49,9 +51,31 @@ import java.util.TimerTask;
  * Displays list of [basic] providers.
  */
 public class JRProvidersActivity extends ListActivity {
+    
     // ------------------------------------------------------------------------
     // TYPES
     // ------------------------------------------------------------------------
+
+    /**
+     * Used to listen to "Finish" broadcast messages sent by JRUserInterfaceMaestro.  A facility
+     * for iPhone-like ability to close this activity from the maestro class.
+     */
+    private class FinishReceiver extends BroadcastReceiver {
+
+        private final String TAG = FinishReceiver.class.getSimpleName();
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String target = intent.getStringExtra(
+                    JRUserInterfaceMaestro.EXTRA_FINISH_ACTIVITY_TARGET);
+            if (JRProvidersActivity.class.toString().equals(target)) {
+                tryToFinishActivity();
+                Log.i(TAG, "[onReceive] handled");
+            } else if (Config.LOGD) {
+                Log.i(TAG, "[onReceive] ignored");
+            }
+        }
+    }
 
     /**
      * Array adapter used to render individual providers in list view.
@@ -157,6 +181,7 @@ public class JRProvidersActivity extends ListActivity {
     private ProviderAdapter mAdapter;
     private Timer mTimer;
     private int mTimerCount;
+    private FinishReceiver mFinishReceiver;
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -236,6 +261,23 @@ public class JRProvidersActivity extends ListActivity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (mFinishReceiver == null) {
+            mFinishReceiver = new FinishReceiver();
+        }
+        registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(mFinishReceiver);
+    }
+
     /**
      * This method will be called when an item in the list is selected.
      */
@@ -275,6 +317,11 @@ public class JRProvidersActivity extends ListActivity {
      */
     protected Dialog onCreateDialog(int id) {
         return mLayoutHelper.onCreateDialog(id);
+    }
+
+    public void tryToFinishActivity() {
+        Log.i(TAG, "[tryToFinishActivity]");
+        finish();
     }
 
     /**
