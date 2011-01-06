@@ -39,6 +39,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.Config;
 import android.util.Log;
 import android.view.Menu;
@@ -56,6 +57,7 @@ import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.utils.StringUtils;
 
 /**
  * Container for authentication web view.  Mimics JRWebViewController iPhone interface.
@@ -108,8 +110,23 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
             if (Config.LOGD) {
                 Log.d(TAG, "[onPageStarted] url: " + url);
             }
+
             mLayoutHelper.showProgressDialog();
-            super.onPageStarted(view, url, favicon);
+
+            //
+            // HERE HERE
+            //      - check to see if we should hijack and load data ourselves
+            //
+            final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
+            if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
+                Log.d(TAG, "[onPageStarted] JREngage URL intercepted, loading data.");
+                // stop the current load
+                mWebView.stopLoading();
+                // fire up the manual connection
+                startAuthenticationConnection(url);
+            } else {
+                super.onPageStarted(view, url, favicon);
+            }
         }
 
         @Override
@@ -133,40 +150,6 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         }
     }
 
-    /**
-     * Handler for result data (e.g. when JREngage server returns data as a result of a web
-     * page load/response).
-     */
-    private class JRDownloadListener implements DownloadListener {
-
-        private final String TAG = JRDownloadListener.class.getSimpleName();
-
-        public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType,
-                                    long contentLength) {
-
-            if (Config.LOGD) {
-                Log.d(TAG, "[onDownloadStart] url: " + url + " | userAgent: " + userAgent
-                    + "disposition: " + contentDisposition + " | mimeType: " + mimeType
-                    + " | length: " + contentLength);
-            }
-
-            final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
-            if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
-                if (!JRConnectionManager.createConnection(
-                        url, JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
-
-                    // TODO:  handle error case
-
-                }
-
-                return;
-            }
-
-            // TODO:  is windows live hack necessary here, as it is on iPhone?
-        }
-
-    }
-
     // ------------------------------------------------------------------------
     // STATIC FIELDS
     // ------------------------------------------------------------------------
@@ -174,8 +157,6 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
     private static final String TAG = JRWebViewActivity.class.getSimpleName();
 
     private static final String RPX_RESULT_TAG = "rpx_result";
-
-    private static final int ALERT_WAIT_TIMER_INTERVAL = 500;  // millis
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -243,7 +224,6 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         mWebView = (WebView)findViewById(R.id.webview);
         mWebView.clearView();
         mWebView.setWebViewClient(new JRWebViewClient());
-        mWebView.setDownloadListener(new JRDownloadListener());
         mWebView.setInitialScale(100);
 
         WebSettings webSettings = mWebView.getSettings();
@@ -288,9 +268,7 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return (mLayoutHelper.handleAboutMenu(item))
-            ? true
-            : super.onOptionsItemSelected(item);
+        return mLayoutHelper.handleAboutMenu(item) || super.onOptionsItemSelected(item);
     }
 
     /**
@@ -326,11 +304,31 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         }
     }
 
+    private void startAuthenticationConnection(String url) {
+        final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
+        if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
+            mLayoutHelper.showProgressDialog();
+            if (!JRConnectionManager.createConnection(
+                    url, JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
+
+                mLayoutHelper.dismissProgressDialog();
+                // TODO:  handle error case
+
+            }
+
+            // return;
+        }
+
+        // TODO:  is windows live hack necessary here, as it is on iPhone?
+    }
+
 
     ////
 
     public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
         Log.d(TAG, "[connectionDidFinishLoading] userdata: " + userdata + " | payload: " + payload);
+
+        mLayoutHelper.dismissProgressDialog();
 
         if ((userdata != null) && (userdata instanceof String)) {
             final String tag = (String)userdata;
@@ -343,7 +341,7 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
                     mSessionData.triggerAuthenticationDidCompleteWithPayload(payloadDictionary);
                 } else {
                     final String error = resultDictionary.getAsString("error");
-                    String alertTitle = "", alertMessage = "", logMessage = "";
+                    String alertTitle, alertMessage, logMessage;
                     if ("Discovery failed for the OpenID you entered".equals(error)) {
                         alertTitle = "Invalid Input";
                         alertMessage = (mSessionData.getCurrentProvider().requiresInput())
@@ -410,7 +408,8 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
     }
 
     public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object userdata) {
-        Log.d(TAG, "[connectionDidFinishLoading-2] userdata: " + userdata + " | payload: " + payload);
+        Log.d(TAG, "[connectionDidFinishLoading-2] userdata: " + userdata + " | payload: "
+                + StringUtils.decodeUtf8(payload, null));
         // Not used
     }
 

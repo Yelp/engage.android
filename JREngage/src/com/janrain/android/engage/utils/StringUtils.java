@@ -34,6 +34,7 @@ import android.util.Log;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * String utility methods.
@@ -99,6 +100,27 @@ public final class StringUtils {
         }
 
         return retval;
+    }
+
+    /**
+     * Converts the byte array to String using UTF-8 encoding.
+     *
+     * @param bytes
+     *      The byte array to be converted.
+     *
+     * @param defaultStr
+     *      The value to return if conversion fails.
+     *
+     * @return
+     *      Decoded byte array if successful, defaultStr otherwise.
+     */
+    public static String decodeUtf8(byte[] bytes, String defaultStr) {
+        final String UTF8 = "UTF-8";
+        try {
+            return new String(bytes, UTF8);
+        } catch (UnsupportedEncodingException e) {
+            return defaultStr;
+        }
     }
 
 

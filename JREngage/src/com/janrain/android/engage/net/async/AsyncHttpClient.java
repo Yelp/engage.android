@@ -77,7 +77,7 @@ public final class AsyncHttpClient {
         }
 
 		public void run() {
-			if (Config.LOGD) { Log.d(TAG, "[run] BEGIN."); }
+			if (Config.LOGD) { Log.d(TAG, "[run] BEGIN, url: " + mUrl); }
 
             URL url;
             HttpURLConnection connection = null;
@@ -88,14 +88,15 @@ public final class AsyncHttpClient {
 
                 if (mPostData == null) {
                     // HTTP GET OPERATION
+                    if (Config.LOGD) { Log.d(TAG, "[run] HTTP GET"); }
                     prepareConnectionForHttpGet(connection);
                     connection.connect();
                 } else {
                     // HTTP POST OPERATION
+                    if (Config.LOGD) { Log.d(TAG, "[run] HTTP POST"); }
                     prepareConnectionForHttpPost(connection);
                     doHttpPost(connection);
                 }
-
 
                 if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
@@ -127,7 +128,7 @@ public final class AsyncHttpClient {
         private void prepareConnectionForHttpGet(HttpURLConnection connection) throws IOException {
             connection.setRequestMethod(HTTP_METHOD_GET);
             connection.setDoOutput(true);
-            connection.setRequestProperty("User-Agent", USER_AGENT);
+            //connection.setRequestProperty("User-Agent", USER_AGENT);
             connection.setRequestProperty("Accept-Encoding", ACCEPT_ENCODING);
         }
 
