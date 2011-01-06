@@ -15,7 +15,7 @@ log/*
 tmp/*
 
 # IDE stuff
-.idea/
 nbproject/
-*.iml
+#.idea/
+#*.iml
 
