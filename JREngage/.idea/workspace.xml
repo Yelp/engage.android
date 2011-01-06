@@ -6,11 +6,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fc585230-e2d1-4a60-af8c-dddad559706f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/janrain/android/engage/JREngage.java" afterPath="$PROJECT_DIR$/src/com/janrain/android/engage/JREngage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/janrain/android/engage/session/JRSessionData.java" afterPath="$PROJECT_DIR$/src/com/janrain/android/engage/session/JRSessionData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRProvidersActivity.java" afterPath="$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRProvidersActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRUserInterfaceMaestro.java" afterPath="$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRUserInterfaceMaestro.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRWebViewActivity.java" afterPath="$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRWebViewActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="engage.android.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -85,48 +81,7 @@
     <favorites_list name="engage.android" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="JRWebViewActivity.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRWebViewActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="137" column="27" selection-start="5621" selection-end="5621" vertical-scroll-proportion="1.5816203">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JRProvidersActivity.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRProvidersActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="62" column="0" selection-start="2527" selection-end="2718" vertical-scroll-proportion="-17.692308">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JRUserInterfaceMaestro.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRUserInterfaceMaestro.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="68" column="26" selection-start="3067" selection-end="3067" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JRSessionData.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/session/JRSessionData.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="791" column="9" selection-start="32139" selection-end="32139" vertical-scroll-proportion="-22.807692">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -196,7 +151,7 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -225,71 +180,9 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="engage.android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="JREngage" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="engage" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="engage.android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="JREngage" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="engage" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ui" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="engage.android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="JREngage" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="engage" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="net" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="Favorites" />
     </panes>
   </component>
@@ -553,26 +446,26 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1689" y="19" width="1417" height="977" extended-state="0" />
+    <frame x="-1689" y="19" width="1327" height="979" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3271028" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32943925" sideWeight="0.4880775" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32827103" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23684211" sideWeight="0.6705608" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32942098" sideWeight="0.0" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32907802" sideWeight="0.48750946" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Android Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.50596124" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3271028" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32827103" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -640,84 +533,64 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="36" selection-start="600" selection-end="600" vertical-scroll-proportion="0.23216444">
-          <folding />
-        </state>
+        <state line="16" column="36" selection-start="600" selection-end="600" vertical-scroll-proportion="0.23216444" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/ui/SharedLayoutHelper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="166" column="0" selection-start="6020" selection-end="6020" vertical-scroll-proportion="0.57920194">
-          <folding />
-        </state>
+        <state line="166" column="0" selection-start="6020" selection-end="6020" vertical-scroll-proportion="0.57920194" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/res/layout/provider_listview.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="17" selection-start="1063" selection-end="1063" vertical-scroll-proportion="0.52237004">
-          <folding />
-        </state>
+        <state line="36" column="17" selection-start="1063" selection-end="1063" vertical-scroll-proportion="0.52237004" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/JREngageError.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="53" selection-start="3236" selection-end="3257" vertical-scroll-proportion="0.3470375">
-          <folding />
-        </state>
+        <state line="65" column="53" selection-start="3236" selection-end="3257" vertical-scroll-proportion="0.3470375" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/net/JRConnectionManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="13" selection-start="1881" selection-end="1881" vertical-scroll-proportion="-0.43530834">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/session/JRSessionData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="791" column="9" selection-start="32139" selection-end="32139" vertical-scroll-proportion="-22.807692">
-          <folding />
-        </state>
+        <state line="37" column="13" selection-start="1881" selection-end="1881" vertical-scroll-proportion="-0.43530834" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/JREngage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="249" column="36" selection-start="8937" selection-end="8937" vertical-scroll-proportion="0.29739776">
+        <state line="249" column="36" selection-start="8937" selection-end="8937" vertical-scroll-proportion="0.29739776" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRPublishActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="0" selection-start="2378" selection-end="2378" vertical-scroll-proportion="-0.27690446" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRWebViewActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="137" column="27" selection-start="5621" selection-end="5621" vertical-scroll-proportion="0.014705882">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRProvidersActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="62" column="0" selection-start="2527" selection-end="2718" vertical-scroll-proportion="0.014475271">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRUserInterfaceMaestro.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="68" column="26" selection-start="3067" selection-end="3067" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRProvidersActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="0" selection-start="2527" selection-end="2718" vertical-scroll-proportion="-17.692308">
+        <state line="68" column="26" selection-start="3067" selection-end="3067" vertical-scroll-proportion="0.014475271">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRPublishActivity.java">
+    <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/session/JRSessionData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="0" selection-start="2378" selection-end="2378" vertical-scroll-proportion="-0.27690446">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/janrain/android/engage/ui/JRWebViewActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="137" column="27" selection-start="5621" selection-end="5621" vertical-scroll-proportion="1.5816203">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="808" column="43" selection-start="32785" selection-end="32785" vertical-scroll-proportion="0.2647059">
+          <folding />
         </state>
       </provider>
     </entry>

@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../SimpleDemo/SimpleDemo.iml" filepath="$PROJECT_DIR$/../SimpleDemo/SimpleDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/engage.android.iml" filepath="$PROJECT_DIR$/engage.android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../engage.android.test/engage.android.test.iml" filepath="$PROJECT_DIR$/../engage.android.test/engage.android.test.iml" />
     </modules>
   </component>
 </project>
