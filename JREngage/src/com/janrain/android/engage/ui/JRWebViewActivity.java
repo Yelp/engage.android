@@ -100,9 +100,12 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            if (Config.LOGD) {
+            Log.d(TAG, "WTF!?!?");
+
+
+            //if (Config.LOGD) {
                 Log.d(TAG, "[shouldOverrideUrlLoading] url: " + url);
-            }
+            //}
             view.loadUrl(url);
             return true;
         }
@@ -138,6 +141,10 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
             }
             mLayoutHelper.dismissProgressDialog();
             super.onPageFinished(view, url);
+
+            Log.d(TAG, "[view.getOriginalUrl()]: " + view.getOriginalUrl());
+            Log.d(TAG, "[view.getUrl()]: " + view.getUrl());
+            view.debugDump();
         }
 
         @Override
@@ -241,7 +248,7 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         if (startUrl == null) {
             // PROBLEM
         } else {
-            mWebView.loadUrl(startUrl.toString());
+            mWebView.loadUrl(startUrl.toString());//loadUrl("https://jrauthenticate.rpxnow.com/openid/start?openid_identifier=https%3A%2F%2Fwww.google.com%2Faccounts%2Fo8%2Fid&device=iphone&extended=true");//
         }
     }
 

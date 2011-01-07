@@ -86,7 +86,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private static final String ARCHIVE_AUTH_USERS_BY_PROVIDER = "jrAuthenticatedUsersByProvider";
 
     private static final String FMT_CONFIG_URL =
-            "%s/openid/iphone_config_and_baseurl?appId=%s&skipXdReceiver=true";
+            "%s/openid/mobile_config_and_baseurl?appId=%s&device=android";
     
 
     // ------------------------------------------------------------------------
@@ -746,12 +746,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         //str = String.format("%s%s?%s%sversion=android_one&device=android",
-        str = String.format("%s%s?%s%sversion=iphone_two&device=iphone",
+        str = String.format("%s%s?%s%sdevice=android&extended=true",
                 mBaseUrl,
                 mCurrentProvider.getUrl(),
                 oid,
-                ((mAlwaysForceReauth || mCurrentProvider.getForceReauth()) ? "force_reauth=true&" : ""),
-                (("facebook".equals(mCurrentProvider.getName())) ? "ext_perm=publish_stream,offline_access&" : "")
+                ((mAlwaysForceReauth || mCurrentProvider.getForceReauth()) ? "force_reauth=true&" : "")
         );
 
         mCurrentProvider.setForceReauth(false);

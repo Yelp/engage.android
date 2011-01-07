@@ -18,4 +18,4 @@ tmp/*
 nbproject/
 #.idea/
 #*.iml
-
+SimpleDemo/local.properties
