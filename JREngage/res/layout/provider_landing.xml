@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+   - Layout for JRLandingActivity
+  -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffdedede"
+    >
+
+    <!-- Header (title) area -->
+    <include layout="@layout/shared_header" />
+
+    <!--
+       - Bordered box/container.
+       -
+       - TODO:  Layout is filling vertically and not centered in landscape mode.
+      -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_below="@+id/header"
+        android:layout_above="@+id/footer"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/shape_landing_box">
+
+        <ImageView
+            android:id="@+id/landing_logo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="4dp"
+            android:src="@drawable/logo_aol_280x65"
+            />
+
+        <EditText
+            android:id="@+id/landing_edit"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="4dp"
+            android:singleLine="true"
+            android:hint="..."
+            />
+
+        <LinearLayout
+            android:id="@+id/landing_buttons"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/landing_left_btn"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="4dp"
+                android:background="@drawable/sel_black_135x40"
+                android:text="@string/landing_default_secondary_btn_text"
+                android:textColor="#ffffffff"
+                android:textStyle="bold"
+                />
+
+            <Button
+                android:id="@+id/landing_middle_btn"
+                android:visibility="visible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="4dp"
+                android:background="@drawable/sel_iosblue_280x40"
+                android:text="@string/landing_default_primary_btn_text"
+                android:textColor="#ffffffff"
+                android:textStyle="bold"
+                />
+
+            <Button
+                android:id="@+id/landing_right_btn"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="4dp"
+                android:background="@drawable/sel_iosblue_135x40"
+                android:text="@string/landing_default_primary_btn_text"
+                android:textColor="#ffffffff"
+                android:textStyle="bold"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Footer (powered by) area -->
+    <include layout="@layout/shared_footer" />
+
+</RelativeLayout>

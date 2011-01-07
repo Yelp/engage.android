@@ -59,6 +59,8 @@ import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.StringUtils;
 
+import java.net.URL;
+
 /**
  * Container for authentication web view.  Mimics JRWebViewController iPhone interface.
  */
@@ -233,7 +235,14 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         webSettings.setJavaScriptCanOpenWindowsAutomatically(false);
         webSettings.setSupportZoom(true);
 
-        mWebView.loadUrl(mSessionData.startUrlForCurrentProvider());
+        // mWebView.loadUrl(mSessionData.startUrlForCurrentProvider());
+
+        URL startUrl = mSessionData.startUrlForCurrentProvider();
+        if (startUrl == null) {
+            // PROBLEM
+        } else {
+            mWebView.loadUrl(startUrl.toString());
+        }
     }
 
     @Override
@@ -384,7 +393,7 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
                                 JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
                                 JREngageError.ErrorType.AUTHENTICATION_FAILED);
 
-                        mSessionData.triggerPublishingDidFail(err);
+                        mSessionData.triggerAuthenticationDidFail(err);
                     } else {
                         JREngageError err = new JREngageError(
                                 "Authentication failed: " + payload,

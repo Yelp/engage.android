@@ -9,7 +9,7 @@
     android:layout_width="fill_parent"
     android:layout_height="30dip"
     android:layout_alignParentBottom="true"
-    android:background="@drawable/provider_footer_background"
+    android:background="@drawable/bg_provider_footer"
     >
 
     <TextView

@@ -710,7 +710,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         CookieHelper.deleteCookiesByUrl("http://live.com");
     }
 
-    public String startUrlForCurrentProvider() {
+    //public String startUrlForCurrentProvider() {
+    public URL startUrlForCurrentProvider() {
         if (Config.LOGD) {
             Log.d(TAG, "[startUrlForCurrentProvider]");
         }
@@ -724,7 +725,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         if (!TextUtils.isEmpty(mCurrentProvider.getOpenIdentifier())) {
             oid = String.format("openid_identifier=%s&", mCurrentProvider.getOpenIdentifier());
             if (mCurrentProvider.requiresInput()) {
-                oid.replaceAll("%@", mCurrentProvider.getUserInput());
+                oid = oid.replaceAll("%@", mCurrentProvider.getUserInput());
+            } else {
+                oid = oid.replaceAll("%@", "");
             }
         } else {
             oid = "";
@@ -757,7 +760,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[startUrlForCurrentProvider] startUrl: " + str);
         }
 
-        return str;
+        URL url = null;
+        try {
+            url = new URL(str);
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "[startUrlForCurrentProvider] URL create failed for string: " + str);
+        }
+        return url;
     }
 
     private boolean weShouldBeFirstResponder() {

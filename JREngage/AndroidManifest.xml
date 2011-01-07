@@ -8,6 +8,7 @@
     <application android:debuggable="true">
         <activity android:name="SampleActivity"/>
         <activity android:name=".ui.JRProvidersActivity" />
+        <activity android:name=".ui.JRLandingActivity"/>
         <activity android:name=".ui.JRWebViewActivity"/>
     </application>
 

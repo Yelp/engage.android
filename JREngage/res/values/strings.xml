@@ -31,4 +31,11 @@
     <string name="provider_list_empty">No configured providers</string>
     <string name="provider_unknown">Unknown provider</string>
     <string name="provider_sign_in_with">Sign in with...</string>
+
+    <!--
+       - JRLandingActivity strings.
+      -->
+    <string name="landing_default_secondary_btn_text">Switch Accounts</string>
+    <string name="landing_default_primary_btn_text">Sign In</string>
+    <string name="landing_default_custom_title">Welcome Back!</string>
 </resources>
