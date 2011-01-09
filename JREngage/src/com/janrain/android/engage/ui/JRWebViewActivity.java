@@ -39,15 +39,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.util.Config;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.DownloadListener;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.webkit.*;
 import android.widget.Toast;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
@@ -58,13 +54,17 @@ import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Container for authentication web view.  Mimics JRWebViewController iPhone interface.
  */
-public class JRWebViewActivity extends Activity implements JRConnectionManagerDelegate {
+public class JRWebViewActivity extends Activity
+        implements DownloadListener, JRConnectionManagerDelegate {
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -98,6 +98,10 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
 
         private final String TAG = JRWebViewClient.class.getSimpleName();
 
+        /*
+        NOTE:  This method gets called once, when WebView.loadUrl() is called.  It is not
+               called for redirects, which would be really really nice...
+
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             if (Config.LOGD) {
@@ -106,6 +110,7 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
             view.loadUrl(url);
             return true;
         }
+        */
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -115,20 +120,23 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
 
             mLayoutHelper.showProgressDialog();
 
-            //
-            // HERE HERE
-            //      - check to see if we should hijack and load data ourselves
-            //
+//            final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
+//            if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
+//                Log.d(TAG, "[onPageStarted] JREngage URL intercepted, loading data.");
+//                // stop the current load
+//                mWebView.stopLoading();
+//                // fire up the manual connection
+//                loadMobileEndpointUrl(url);
+//            } else {
+//                super.onPageStarted(view, url, favicon);
+//            }
+
             final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
             if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
-                Log.d(TAG, "[onPageStarted] JREngage URL intercepted, loading data.");
-                // stop the current load
-                mWebView.stopLoading();
-                // fire up the manual connection
-                startAuthenticationConnection(url);
-            } else {
-                super.onPageStarted(view, url, favicon);
+                Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
             }
+            
+            super.onPageStarted(view, url, favicon);
         }
 
         @Override
@@ -212,6 +220,8 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.provider_webview);
 
+        CookieSyncManager.createInstance(this);
+
         mSessionData = JRSessionData.getInstance();
         JRProvider provider = mSessionData.getCurrentProvider();
 
@@ -226,6 +236,7 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         mWebView = (WebView)findViewById(R.id.webview);
         mWebView.clearView();
         mWebView.setWebViewClient(new JRWebViewClient());
+        mWebView.setDownloadListener(this);
         mWebView.setInitialScale(100);
 
         WebSettings webSettings = mWebView.getSettings();
@@ -234,8 +245,6 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         webSettings.setJavaScriptEnabled(true);
         webSettings.setJavaScriptCanOpenWindowsAutomatically(false);
         webSettings.setSupportZoom(true);
-
-        // mWebView.loadUrl(mSessionData.startUrlForCurrentProvider());
 
         URL startUrl = mSessionData.startUrlForCurrentProvider();
         if (startUrl == null) {
@@ -313,12 +322,28 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         }
     }
 
-    private void startAuthenticationConnection(String url) {
+    private boolean isMobileEndpointUrl(String url) {
         final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
-        if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
+        return ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl)));
+    }
+
+    private void loadMobileEndpointUrl(String url) {
+        if (isMobileEndpointUrl(url)) {
+            // additional headers to be sent when connecting to the ME-URL
+            ArrayList<NameValuePair> headers = new ArrayList<NameValuePair>();
+
+            // check for cookies that may need be sent
+            String cookies = CookieManager.getInstance().getCookie(url);
+            if (!TextUtils.isEmpty(cookies)) {
+                headers.add(new BasicNameValuePair("Cookie", cookies));
+                if (Config.LOGD) {
+                    Log.d(TAG, "[loadMobileEndpointUrl] cookies: " + cookies);
+                }
+            }
+
             mLayoutHelper.showProgressDialog();
             if (!JRConnectionManager.createConnection(
-                    url, JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
+                    url, headers, JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
 
                 mLayoutHelper.dismissProgressDialog();
                 // TODO:  handle error case
@@ -329,6 +354,23 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         }
 
         // TODO:  is windows live hack necessary here, as it is on iPhone?
+    }
+
+
+    ///
+
+    public void onDownloadStart(String url, String userAgent,
+            String contentDisposition, String mimetype, long contentLength) {
+
+        if (Config.LOGD) {
+            Log.d(TAG, "[onDownloadStart] url: " + url);
+            Log.d(TAG, "[onDownloadStart] userAgent: " + userAgent);
+            Log.d(TAG, "[onDownloadStart] contentDisposition: " + contentDisposition);
+            Log.d(TAG, "[onDownloadStart] mimetype: " + mimetype);
+            Log.d(TAG, "[onDownloadStart] contentLength: " + contentLength);
+        }
+
+        loadMobileEndpointUrl(url);
     }
 
 

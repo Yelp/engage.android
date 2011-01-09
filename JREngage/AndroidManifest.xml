@@ -6,10 +6,22 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application android:debuggable="true">
-        <activity android:name="SampleActivity"/>
-        <activity android:name=".ui.JRProvidersActivity" />
-        <activity android:name=".ui.JRLandingActivity"/>
-        <activity android:name=".ui.JRWebViewActivity"/>
+        <activity
+            android:name="SampleActivity"
+            android:configChanges="orientation|keyboardHidden"
+            />
+        <activity
+            android:name=".ui.JRProvidersActivity"
+            android:configChanges="orientation|keyboardHidden"
+            />
+        <activity
+            android:name=".ui.JRLandingActivity"
+            android:configChanges="orientation|keyboardHidden"
+            />
+        <activity
+            android:name=".ui.JRWebViewActivity"
+            android:configChanges="orientation|keyboardHidden"
+            />
     </application>
 
 </manifest>
