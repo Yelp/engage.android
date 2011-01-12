@@ -32,8 +32,11 @@ package com.janrain.android.engage.net;
 import com.janrain.android.engage.net.async.AsyncHttpClient;
 import com.janrain.android.engage.net.async.AsyncHttpResponseHolder;
 import com.janrain.android.engage.net.async.AsyncHttpResponseListener;
+import org.apache.http.NameValuePair;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class JRConnectionManager implements AsyncHttpResponseListener {
 
@@ -45,13 +48,13 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
      * Connection data for managed connections.
      */
 	private static class ConnectionData {
-		private boolean mShouldReturnFullReponse;
+		private boolean mShouldReturnFullResponse;
 		private Object mTag;
 		private JRConnectionManagerDelegate mDelegate;
 		
 		public ConnectionData(JRConnectionManagerDelegate delegate, 
 				boolean shouldReturnFullResponse, Object userdata) {
-			mShouldReturnFullReponse = shouldReturnFullResponse;
+			mShouldReturnFullResponse = shouldReturnFullResponse;
 			mDelegate = delegate;
 			mTag = userdata;
 		}
@@ -102,18 +105,53 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
                                            JRConnectionManagerDelegate delegate,
                                            boolean shouldReturnFullResponse,
                                            Object userdata) {
+
+        return createConnection(requestUrl, delegate, shouldReturnFullResponse,
+                new ArrayList<NameValuePair>(), userdata);
+	}
+
+    /**
+     * Creates a managed HTTP GET connection.
+     *
+     * @param requestUrl
+     *      The URL to be executed.
+     *
+     * @param delegate
+     *      The delegate (listener) class instance.
+     *
+     * @param shouldReturnFullResponse
+     *      Whether or not a full response should be returned.  Quite frankly, this doesn't make
+     *      a lot of sense on Android and it's not used...
+     *
+     * @param requestHeaders
+     *      Any additional headers to be sent with the connection.
+     *
+     * @param userdata
+     *      The tag object associated with the connection.
+     *
+     * @return
+     *      <code>true</code> if the connection is created successfully, <code>false</code>
+     *      otherwise.
+     */
+    public static boolean createConnection(String requestUrl,
+                                           JRConnectionManagerDelegate delegate,
+                                           boolean shouldReturnFullResponse,
+                                           List<NameValuePair> requestHeaders,
+                                           Object userdata) {
+
 		// get singleton instance (lazy init)
 		JRConnectionManager instance = getInstance();
-		
+
 		// create/store connection data
 		instance.mConnectionBuffers.put(requestUrl,
 				new ConnectionData(delegate, shouldReturnFullResponse, userdata));
 
 		// execute HTTP GET request
-		AsyncHttpClient.executeHttpGet(requestUrl, instance);
-		
+		AsyncHttpClient.executeHttpGet(requestUrl, requestHeaders, instance);
+
 		return true;
-	}
+
+    }
 
     /**
      * Creates a managed HTTP POST connection.
@@ -143,6 +181,7 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
                                            JRConnectionManagerDelegate delegate,
                                            boolean shouldReturnFullResponse,
                                            Object userdata) {
+
 		// get singleton instance (lazy init)
 		JRConnectionManager instance = getInstance();
 
@@ -154,6 +193,7 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 		AsyncHttpClient.executeHttpPost(requestUrl, postData, instance);
 
 		return true;
+
     }
 
     /**
@@ -228,7 +268,7 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
         if (response.hasException()) {
             delegate.connectionDidFail(response.getException(), requestUrl, connectionData.mTag);
         } else {
-            if (connectionData.mShouldReturnFullReponse && response.hasHeaders()) {
+            if (connectionData.mShouldReturnFullResponse && response.hasHeaders()) {
                 // full response
                 delegate.connectionDidFinishLoading(
                         response.getHeaders(),

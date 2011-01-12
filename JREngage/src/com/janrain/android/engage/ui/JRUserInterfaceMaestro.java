@@ -195,9 +195,8 @@ public class JRUserInterfaceMaestro {
             Log.d(TAG, "[popAll]");
         }
 
-        Class managedActivity;
-        while ((managedActivity = mActivityStack.pop()) != null) {
-            doFinishActivity(managedActivity);
+        while (!mActivityStack.isEmpty()) {
+            doFinishActivity(mActivityStack.pop());
         }
     }
 

@@ -33,10 +33,12 @@ import com.janrain.android.engage.types.JRDictionary;
 
 import android.text.TextUtils;
 
+import java.io.Serializable;
+
 /**
  * TODO:DOC
  */
-public class JRAuthenticatedUser {
+public class JRAuthenticatedUser implements Serializable {
 
     // ------------------------------------------------------------------------
     // TYPES

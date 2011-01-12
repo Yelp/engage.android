@@ -341,7 +341,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                     delegate.authenticationCallToTokenUrlDidFail(
                             dictionary.getAsString("tokenUrl"),
                             error,
-                            mCurrentProvider.getName());
+                            dictionary.getAsString("providerName"));
                 }
             }
         }
@@ -458,7 +458,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                             dictionary.getAsString("tokenUrl"),
                             headers,
                             payload,
-                            mCurrentProvider.getName());
+                            dictionary.getAsString("providerName"));
                 }
             }
 
@@ -894,19 +894,12 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[makeCallToTokenUrl] tokenUrl: " + tokenUrl);
         }
 
-        StringBuilder body = new StringBuilder();
-        body.append("token=").append(token);
-
-        byte[] postData = null;
-        try {
-            postData = URLEncoder.encode(body.toString(), "UTF-8").getBytes();
-        } catch (UnsupportedEncodingException ignore) {
-            Log.w(TAG, "[shareActivityForUser] problem loading encoder (UTF-8).", ignore);
-        }
+        String body = "token=" + token;
+        byte[] postData = body.getBytes();  // URL encode necessary?
 
         JRDictionary tag = new JRDictionary();
         tag.put("tokenUrl", tokenUrl);
-        tag.put("providerName", null);
+        tag.put("providerName", providerName);
 
         if (!JRConnectionManager.createConnection(tokenUrl, postData, this, true, tag)) {
             JREngageError error = new JREngageError(
@@ -954,7 +947,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             makeCallToTokenUrl(mTokenUrl, token, mCurrentProvider.getName());
         }
 
-        mCurrentProvider = null;
+        // mCurrentProvider = null;
+        setCurrentProvider(null);
     }
 
     public void triggerAuthenticationDidFail(JREngageError error) {
@@ -964,7 +958,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         String providerName = mCurrentProvider.getName();
 
-        mCurrentProvider = null;
+        //mCurrentProvider = null;
+        setCurrentProvider(null);
         mReturningBasicProvider = null;
         mReturningSocialProvider = null;
 
@@ -978,7 +973,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[triggerAuthenticationDidCancel]");
         }
 
-        mCurrentProvider = null;
+        //mCurrentProvider = null;
+        setCurrentProvider(null);
+                 setCurrentProvider(null);
         mReturningBasicProvider = null;
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
@@ -991,7 +988,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[triggerPublishingDidComplete]");
         }
 
-        mCurrentProvider = null;
+        //mCurrentProvider = null;
+        setCurrentProvider(null);
+
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.publishingDidComplete();
