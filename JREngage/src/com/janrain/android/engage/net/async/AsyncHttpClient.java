@@ -29,17 +29,18 @@
 */
 package com.janrain.android.engage.net.async;
 
+import android.os.Handler;
+import android.util.Config;
+import android.util.Log;
+import com.janrain.android.engage.utils.IOUtils;
+import com.janrain.android.engage.utils.StringUtils;
+import org.apache.http.NameValuePair;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import com.janrain.android.engage.utils.IOUtils;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import android.os.Handler;
-import android.util.Config;
-import android.util.Log;
+import java.util.List;
 
 /**
  * Utility class which performs HTTP operations asynchronously.
@@ -58,19 +59,24 @@ public final class AsyncHttpClient {
 		private static final String TAG = HttpSender.class.getSimpleName();
 
         private String mUrl;
+        private List<NameValuePair> mHeaders;
         private byte[] mPostData;
 		private Handler mHandler;
 		private HttpCallbackWrapper mWrapper;
 		
-        public HttpSender(String url, Handler handler, HttpCallbackWrapper wrapper) {
+        public HttpSender(String url, List<NameValuePair> requestHeaders,
+                          Handler handler, HttpCallbackWrapper wrapper) {
             mUrl = url;
+            mHeaders = requestHeaders;
             mPostData = null;
             mHandler = handler;
             mWrapper = wrapper;
         }
 
-        public HttpSender(String url, byte[] postData, Handler handler, HttpCallbackWrapper wrapper) {
+        public HttpSender(String url, byte[] postData,
+                          Handler handler, HttpCallbackWrapper wrapper) {
             mUrl = url;
+            mHeaders = null;
             mPostData = postData;
             mHandler = handler;
             mWrapper = wrapper;
@@ -84,7 +90,11 @@ public final class AsyncHttpClient {
 
             try {
                 url = new URL(mUrl);
+
                 connection = (HttpURLConnection) url.openConnection();
+
+                // XYZ
+                addRequestHeaders(connection);
 
                 if (mPostData == null) {
                     // HTTP GET OPERATION
@@ -101,6 +111,16 @@ public final class AsyncHttpClient {
                 if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
                     byte[] data = IOUtils.readFromStream(connection.getInputStream(), true);
+
+                    if (Config.LOGD) {
+                        Log.d(TAG, "[run] " + headers.toString());
+                        if (data == null) {
+                            Log.d(TAG, "[run] data is null");
+                        } else {
+                            Log.d(TAG, "[run] data: " + StringUtils.decodeUtf8(data, ""));
+                        }
+                    }
+
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
                     mHandler.post(mWrapper);
                 } else {
@@ -125,10 +145,19 @@ public final class AsyncHttpClient {
             }
 		}
 
+        private void addRequestHeaders(HttpURLConnection connection) {
+            if ((mHeaders != null) && (mHeaders.size() > 0)) {
+                for (NameValuePair nvp : mHeaders) {
+                    connection.setRequestProperty(nvp.getName(), nvp.getValue());
+                    Log.d(TAG, "[addRequestHeaders] added header --> " +
+                            nvp.getName() + ": " + nvp.getValue());
+                }
+            }
+        }
+
         private void prepareConnectionForHttpGet(HttpURLConnection connection) throws IOException {
             connection.setRequestMethod(HTTP_METHOD_GET);
-            connection.setDoOutput(true);
-            //connection.setRequestProperty("User-Agent", USER_AGENT);
+            connection.setRequestProperty("User-Agent", USER_AGENT);
             connection.setRequestProperty("Accept-Encoding", ACCEPT_ENCODING);
         }
 
@@ -193,9 +222,8 @@ public final class AsyncHttpClient {
 
     private static final String HTTP_METHOD_GET = "GET";
     private static final String HTTP_METHOD_POST = "POST";
-    private static final String USER_AGENT = "Android Janrain Engage/1.0.0";
+    private static final String USER_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
     private static final String ACCEPT_ENCODING = "identity";
-    private static final int DEFAULT_TIMEOUT = 30000;  // 30 seconds
 
 	
     // ------------------------------------------------------------------------
@@ -208,15 +236,20 @@ public final class AsyncHttpClient {
 	 * 
 	 * @param url
 	 * 		The URL to be executed asynchronously.
+     * @param requestHeaders
+     *      Any additional headers to be sent with the get.
 	 * @param listener
 	 * 		The AsyncHttpResponseListener to return the results to.
 	 */
-    public static void executeHttpGet(final String url, AsyncHttpResponseListener listener) {
+    public static void executeHttpGet(final String url,
+                                      List<NameValuePair> requestHeaders,
+                                      AsyncHttpResponseListener listener) {
         if (Config.LOGD) {
             Log.d(TAG, "[executeHttpGet] invoked");
         }
 
-        (new HttpSender(url, new Handler(), new HttpCallbackWrapper(listener))).start();
+        (new HttpSender(url, requestHeaders, new Handler(),
+                new HttpCallbackWrapper(listener))).start();
     }
 
     /**
@@ -230,12 +263,15 @@ public final class AsyncHttpClient {
      * @param listener
      * 		The AsyncHttpResponseListener to return the results to.
      */
-    public static void executeHttpPost(final String url, byte[] data, AsyncHttpResponseListener listener) {
+    public static void executeHttpPost(final String url,
+                                       byte[] data,
+                                       AsyncHttpResponseListener listener) {
         if (Config.LOGD) {
             Log.d(TAG, "[executeHttpPost] invoked");
         }
 
-        (new HttpSender(url, data, new Handler(), new HttpCallbackWrapper(listener))).start();
+        (new HttpSender(url, data, new Handler(),
+                new HttpCallbackWrapper(listener))).start();
 
     }
 

@@ -146,4 +146,18 @@ public class HttpResponseHeaders {
     // METHODS
     // ------------------------------------------------------------------------
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("HttpResponseHeaders [");
+        sb.append(" Response Code: ").append(mResponseCode);
+        sb.append(" | Content Encoding: ").append(mContentEncoding);
+        sb.append(" | Content Length: ").append(mContentLength);
+        sb.append(" | Content Type: ").append(mContentType);
+        sb.append(" | Content Date: ").append(mDate);
+        sb.append(" | Content Last Modified: ").append(mLastModified);
+        sb.append(" | Content Last Modified UTC: ").append(mLastModifiedUtc);
+        sb.append(" | ETag: ").append(mETag);
+        sb.append(" ]");
+        return sb.toString();
+    }
 }

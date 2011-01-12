@@ -139,9 +139,14 @@ public final class CookieHelper {
         try {
             // Convert url string to object, so we can get parts
             final URL urlObj = new URL(url);
+
+            // If the port is not specified in the URL, we'll use the default port
+            int port = urlObj.getPort();
+            port = (port == -1) ? urlObj.getDefaultPort() : port;
+
             // Build origin object from URL parts
             final CookieOrigin origin = new CookieOrigin(
-                    urlObj.getHost(), urlObj.getPort(), urlObj.getPath(), false);
+                    urlObj.getHost(), port, urlObj.getPath(), false);
             // Cookie spec object used for comparing/matching
             final CookieSpecBase specBase = new BrowserCompatSpec();
 

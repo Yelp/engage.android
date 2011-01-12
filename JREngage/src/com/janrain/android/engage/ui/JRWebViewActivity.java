@@ -39,15 +39,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.util.Config;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.DownloadListener;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.webkit.*;
 import android.widget.Toast;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
@@ -57,14 +53,20 @@ import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.utils.IOUtils;
 import com.janrain.android.engage.utils.StringUtils;
+import com.sun.tools.corba.se.idl.ExceptionEntry;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Container for authentication web view.  Mimics JRWebViewController iPhone interface.
  */
-public class JRWebViewActivity extends Activity implements JRConnectionManagerDelegate {
+public class JRWebViewActivity extends Activity
+        implements DownloadListener, JRConnectionManagerDelegate {
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -76,7 +78,7 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
      */
     private class FinishReceiver extends BroadcastReceiver {
 
-        private final String TAG = FinishReceiver.class.getSimpleName();
+        private final String TAG = JRWebViewActivity.TAG + "-" + FinishReceiver.class.getSimpleName();
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -98,6 +100,10 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
 
         private final String TAG = JRWebViewClient.class.getSimpleName();
 
+        /*
+        NOTE:  This method gets called once, when WebView.loadUrl() is called.  It is not
+               called for redirects, which would be really really nice...
+
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             if (Config.LOGD) {
@@ -106,6 +112,7 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
             view.loadUrl(url);
             return true;
         }
+        */
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -115,20 +122,40 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
 
             mLayoutHelper.showProgressDialog();
 
-            //
-            // HERE HERE
-            //      - check to see if we should hijack and load data ourselves
-            //
+
+            /*
+             * TODO:  FINDME: FIXME:
+             *
+             * METHOD ONE:
+             * Intercept the mobile endpoint URL here in onPageStarted and manually kick off the HTTP
+             * POST operation to it.  We use the token value plucked from the HTML form found in the
+             * cache.  Johnny Hacker, welcome to Screen-Scraping 101.
+             */
             final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
             if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
                 Log.d(TAG, "[onPageStarted] JREngage URL intercepted, loading data.");
                 // stop the current load
                 mWebView.stopLoading();
                 // fire up the manual connection
-                startAuthenticationConnection(url);
+                loadMobileEndpointUrl(url);
             } else {
                 super.onPageStarted(view, url, favicon);
             }
+
+            /*
+             * TODO:  FINDME: FIXME:
+             *
+             * METHOD TWO:
+             * The correct way to do it...provided it worked...or the server side is changed to a
+             * HTTP GET mechanism.  Revisit once server-side is fixed.  Will probably need to pluck
+             * data from the URL itself.
+             */
+//            final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
+//            if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
+//                Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
+//            }
+//
+//            super.onPageStarted(view, url, favicon);
         }
 
         @Override
@@ -136,7 +163,33 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
             if (Config.LOGD) {
                 Log.d(TAG, "[onPageFinished] url: " + url);
             }
-            mLayoutHelper.dismissProgressDialog();
+
+            /*
+             * TODO:  FINDME: FIXME:
+             *
+             * METHOD ONE:
+             * Comb through the cache manager and see if we can dig up the HTML form with
+             * the HTTP POST form containing the token.  Oh dirty dirty.
+             */
+            CacheManager.CacheResult cacheResult = CacheManager.getCacheFile(url, null);
+            if (cacheResult != null) {
+                byte[] data = IOUtils.readFromStream(cacheResult.getInputStream());
+                if (data != null) {
+                    try {
+                        String sData = new String(data, cacheResult.getEncoding());
+                        Log.d(TAG, "[onPageFinished] found our form, data: " + sData);
+                        parsePostHtml(sData);
+                    } catch (Exception ignore) {
+                        // when this happens, the encoding is not specified (means the cached data
+                        // does not interest us).
+                    }
+                }
+            }
+
+            if (!mIsMobileEndpointUrlLoading) {
+                mLayoutHelper.dismissProgressDialog();
+            }
+
             super.onPageFinished(view, url);
         }
 
@@ -178,6 +231,7 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
     private boolean mIsAlertShowing;
     private boolean mIsFinishPending;
     private FinishReceiver mFinishReceiver;
+    private boolean mIsMobileEndpointUrlLoading;
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -190,6 +244,7 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
     public JRWebViewActivity() {
         mIsAlertShowing = false;
         mIsFinishPending = false;
+        mIsMobileEndpointUrlLoading = false;
     }
 
     // ------------------------------------------------------------------------
@@ -212,6 +267,8 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.provider_webview);
 
+        CookieSyncManager.createInstance(this);
+
         mSessionData = JRSessionData.getInstance();
         JRProvider provider = mSessionData.getCurrentProvider();
 
@@ -226,6 +283,7 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         mWebView = (WebView)findViewById(R.id.webview);
         mWebView.clearView();
         mWebView.setWebViewClient(new JRWebViewClient());
+        mWebView.setDownloadListener(this);
         mWebView.setInitialScale(100);
 
         WebSettings webSettings = mWebView.getSettings();
@@ -234,8 +292,6 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         webSettings.setJavaScriptEnabled(true);
         webSettings.setJavaScriptCanOpenWindowsAutomatically(false);
         webSettings.setSupportZoom(true);
-
-        // mWebView.loadUrl(mSessionData.startUrlForCurrentProvider());
 
         URL startUrl = mSessionData.startUrlForCurrentProvider();
         if (startUrl == null) {
@@ -251,13 +307,13 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
 
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
+            registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
-        registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
 
         unregisterReceiver(mFinishReceiver);
     }
@@ -313,12 +369,21 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         }
     }
 
-    private void startAuthenticationConnection(String url) {
+    private boolean isMobileEndpointUrl(String url) {
         final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
-        if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
+        return ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl)));
+    }
+
+    private void loadMobileEndpointUrl(String url) {
+        if (isMobileEndpointUrl(url)) {
+            mIsMobileEndpointUrlLoading = true;
+
             mLayoutHelper.showProgressDialog();
+
+            byte[] bytes = buildPostDataBuffer();
+
             if (!JRConnectionManager.createConnection(
-                    url, JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
+                    url, bytes, JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
 
                 mLayoutHelper.dismissProgressDialog();
                 // TODO:  handle error case
@@ -331,6 +396,80 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
         // TODO:  is windows live hack necessary here, as it is on iPhone?
     }
 
+    ///
+
+    /*
+     * TODO:  FINDME: FIXME:
+     *
+     * Data and methods used by METHOD ONE hack-code above.
+     */
+
+    private String mToken;
+    private String mDevice;
+
+    private void parsePostHtml(String html) {
+        if (!TextUtils.isEmpty(html) && html.contains("POST")) {
+            String[] lines = html.split("\n");
+            if ((lines != null) && (lines.length > 0)) {
+                for (String line : lines) {
+                    if (line.contains("<input")) {
+                        if (line.contains("token")) {
+                            mToken = extractInputTagValueAttribute(line);
+                            Log.d(TAG, "[parsePostHtml] mToken: " + mToken);
+                        } else if (line.contains("device")) {
+                            mDevice = extractInputTagValueAttribute(line);
+                            Log.d(TAG, "[parsePostHtml] mDevice: " + mDevice);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private String extractInputTagValueAttribute(String s) {
+        final String VALUE = "value=";
+        int startIndex = s.indexOf(VALUE);
+        if (startIndex > 0) {
+            startIndex = (startIndex + VALUE.length() + 1);
+            int endIndex = s.lastIndexOf("\"");
+            if (endIndex > 0) {
+                return s.substring(startIndex, endIndex);
+            }
+        }
+        return null;
+    }
+
+    private byte[] buildPostDataBuffer() {
+        if (!TextUtils.isEmpty(mToken) && !TextUtils.isEmpty(mDevice)) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("token=").append(mToken).append("&");
+            sb.append("device=").append(mDevice);
+            return sb.toString().getBytes();
+        }
+        return null;
+    }
+
+    ///
+
+    public void onDownloadStart(String url, String userAgent,
+            String contentDisposition, String mimetype, long contentLength) {
+
+        if (Config.LOGD) {
+            Log.d(TAG, "[onDownloadStart] url: " + url);
+            Log.d(TAG, "[onDownloadStart] userAgent: " + userAgent);
+            Log.d(TAG, "[onDownloadStart] contentDisposition: " + contentDisposition);
+            Log.d(TAG, "[onDownloadStart] mimetype: " + mimetype);
+            Log.d(TAG, "[onDownloadStart] contentLength: " + contentLength);
+        }
+
+        /*
+         * TODO: FINDME: FIXME:
+         *
+         * In METHOD ONE we are kicking off the mobile endpoint load from
+         * JRWebViewClient.onPageStarted() instead.
+         */
+//        loadMobileEndpointUrl(url);
+    }
 
     ////
 
