@@ -73,10 +73,10 @@ public final class AsyncHttpClient {
             mWrapper = wrapper;
         }
 
-        public HttpSender(String url, List<NameValuePair> requestHeaders, byte[] postData,
+        public HttpSender(String url, byte[] postData,
                           Handler handler, HttpCallbackWrapper wrapper) {
             mUrl = url;
-            mHeaders = requestHeaders;
+            mHeaders = null;
             mPostData = postData;
             mHandler = handler;
             mWrapper = wrapper;
@@ -258,22 +258,19 @@ public final class AsyncHttpClient {
      *
      * @param url
      * 		The URL to be executed asynchronously.
-     * @param requestHeaders
-     *      Any additional headers to be sent with the post.
      * @param data
      *      The data to be posted (written) to the server.
      * @param listener
      * 		The AsyncHttpResponseListener to return the results to.
      */
     public static void executeHttpPost(final String url,
-                                       List<NameValuePair> requestHeaders,
                                        byte[] data,
                                        AsyncHttpResponseListener listener) {
         if (Config.LOGD) {
             Log.d(TAG, "[executeHttpPost] invoked");
         }
 
-        (new HttpSender(url, requestHeaders, data, new Handler(),
+        (new HttpSender(url, data, new Handler(),
                 new HttpCallbackWrapper(listener))).start();
 
     }

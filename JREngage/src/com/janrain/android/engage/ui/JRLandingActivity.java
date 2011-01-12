@@ -62,7 +62,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
      */
     private class FinishReceiver extends BroadcastReceiver {
 
-        private final String TAG = FinishReceiver.class.getSimpleName();
+        private final String TAG = JRLandingActivity.TAG + "-" + FinishReceiver.class.getSimpleName();
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -160,23 +160,17 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
 
     @Override
     protected void onStart() {
-        super.onStart();
+        super.onResume();
 
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
+            registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
-        registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        focusEditAndPopKeyboard();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
 
         unregisterReceiver(mFinishReceiver);
     }

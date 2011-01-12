@@ -106,8 +106,8 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
                                            boolean shouldReturnFullResponse,
                                            Object userdata) {
 
-        return createConnection(requestUrl, new ArrayList<NameValuePair>(), delegate,
-                shouldReturnFullResponse, userdata);
+        return createConnection(requestUrl, delegate, shouldReturnFullResponse,
+                new ArrayList<NameValuePair>(), userdata);
 	}
 
     /**
@@ -116,15 +116,15 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
      * @param requestUrl
      *      The URL to be executed.
      *
-     * @param requestHeaders
-     *      Any additional headers to be sent with the connection.
-     *
      * @param delegate
      *      The delegate (listener) class instance.
      *
      * @param shouldReturnFullResponse
      *      Whether or not a full response should be returned.  Quite frankly, this doesn't make
      *      a lot of sense on Android and it's not used...
+     *
+     * @param requestHeaders
+     *      Any additional headers to be sent with the connection.
      *
      * @param userdata
      *      The tag object associated with the connection.
@@ -134,9 +134,9 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
      *      otherwise.
      */
     public static boolean createConnection(String requestUrl,
-                                           List<NameValuePair> requestHeaders,
                                            JRConnectionManagerDelegate delegate,
                                            boolean shouldReturnFullResponse,
+                                           List<NameValuePair> requestHeaders,
                                            Object userdata) {
 
 		// get singleton instance (lazy init)
@@ -182,43 +182,6 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
                                            boolean shouldReturnFullResponse,
                                            Object userdata) {
 
-        return createConnection(requestUrl, new ArrayList<NameValuePair>(), postData,
-                delegate, shouldReturnFullResponse, userdata);
-    }
-
-    /**
-     * Creates a managed HTTP POST connection.
-     *
-     * @param requestUrl
-     *      The URL to be executed.
-     *
-     * @param requestHeaders
-     *      Any additional headers to be sent with the connection.
-     * 
-     * @param postData
-     *      The data to be sent to the server via POST.
-     *
-     * @param delegate
-     *      The delegate (listener) class instance.
-     *
-     * @param shouldReturnFullResponse
-     *      Whether or not a full response should be returned.  Quite frankly, this doesn't make
-     *      a lot of sense on Android and it's not used...
-     *
-     * @param userdata
-     *      The tag object associated with the connection.
-     *
-     * @return
-     *      <code>true</code> if the connection is created successfully, <code>false</code>
-     *      otherwise.
-     */
-    public static boolean createConnection(String requestUrl,
-                                           List<NameValuePair> requestHeaders,
-                                           byte[] postData,
-                                           JRConnectionManagerDelegate delegate,
-                                           boolean shouldReturnFullResponse,
-                                           Object userdata) {
-
 		// get singleton instance (lazy init)
 		JRConnectionManager instance = getInstance();
 
@@ -227,7 +190,7 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 				new ConnectionData(delegate, shouldReturnFullResponse, userdata));
 
 		// execute HTTP POST request
-		AsyncHttpClient.executeHttpPost(requestUrl, requestHeaders, postData, instance);
+		AsyncHttpClient.executeHttpPost(requestUrl, postData, instance);
 
 		return true;
 

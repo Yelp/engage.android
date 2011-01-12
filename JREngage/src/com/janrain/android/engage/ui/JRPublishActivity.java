@@ -52,7 +52,7 @@ public class JRPublishActivity extends Activity {
      */
     private class FinishReceiver extends BroadcastReceiver {
 
-        private final String TAG = FinishReceiver.class.getSimpleName();
+        private final String TAG = JRPublishActivity.TAG + "-" + FinishReceiver.class.getSimpleName();
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -114,13 +114,13 @@ public class JRPublishActivity extends Activity {
 
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
+            registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
-        registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
 
         unregisterReceiver(mFinishReceiver);
     }

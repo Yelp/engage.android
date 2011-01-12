@@ -33,7 +33,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -121,6 +123,12 @@ public final class StringUtils {
         } catch (UnsupportedEncodingException e) {
             return defaultStr;
         }
+    }
+
+    public static String generateStackTrace(String msg) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        new Exception(msg).printStackTrace(new PrintStream(baos));
+        return baos.toString();
     }
 
 
