@@ -51,6 +51,7 @@ import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.StringUtils;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.util.EncodingUtils;
+import sun.font.TrueTypeFont;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -744,6 +745,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 deleteLiveCookies();
             }
         }
+
+//        mAlwaysForceReauth = true;
 
         //str = String.format("%s%s?%s%sversion=android_one&device=android",
         str = String.format("%s%s?%s%sdevice=android&extended=true",

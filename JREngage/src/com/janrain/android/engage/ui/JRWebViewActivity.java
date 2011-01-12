@@ -44,10 +44,7 @@ import android.util.Config;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.DownloadListener;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.webkit.*;
 import android.widget.Toast;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
@@ -97,15 +94,18 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
     private class JRWebViewClient extends WebViewClient {
 
         private final String TAG = JRWebViewClient.class.getSimpleName();
+        private boolean thatUrlFound = false;
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            Log.d(TAG, "WTF!?!?");
+//            Log.d(TAG, "WTF!?!?");
 
 
-            //if (Config.LOGD) {
+            if (Config.LOGD) {
                 Log.d(TAG, "[shouldOverrideUrlLoading] url: " + url);
-            //}
+            }
+
+            // QUESTION: If this was actually called, won't this create an infinite loop?
             view.loadUrl(url);
             return true;
         }
@@ -125,10 +125,17 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
             final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
             if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
                 Log.d(TAG, "[onPageStarted] JREngage URL intercepted, loading data.");
-                // stop the current load
-                mWebView.stopLoading();
-                // fire up the manual connection
-                startAuthenticationConnection(url);
+
+//              Commented out by  Lilli for now
+//                // stop the current load
+//                mWebView.stopLoading();
+//
+//                // fire up the manual connection
+//                startAuthenticationConnection(url);
+
+                // Added by Lilli
+                thatUrlFound = true;
+
             } else {
                 super.onPageStarted(view, url, favicon);
             }
@@ -139,12 +146,29 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
             if (Config.LOGD) {
                 Log.d(TAG, "[onPageFinished] url: " + url);
             }
+
+            //if (thatUrlFound)
+            //{
+                CacheManager cache_man = new CacheManager();
+                CacheManager.CacheResult result = cache_man.getCacheFile(url, null);
+
+                if (result != null)
+                {
+                    Log.d(TAG, "result");
+                }
+                else
+                {
+                    Log.d(TAG, "not result");
+                }
+            //}
+
+
             mLayoutHelper.dismissProgressDialog();
             super.onPageFinished(view, url);
 
-            Log.d(TAG, "[view.getOriginalUrl()]: " + view.getOriginalUrl());
-            Log.d(TAG, "[view.getUrl()]: " + view.getUrl());
-            view.debugDump();
+//            Log.d(TAG, "[view.getOriginalUrl()]: " + view.getOriginalUrl());
+//            Log.d(TAG, "[view.getUrl()]: " + view.getUrl());
+//            view.debugDump();
         }
 
         @Override
@@ -158,6 +182,40 @@ public class JRWebViewActivity extends Activity implements JRConnectionManagerDe
             super.onReceivedError(view, errorCode, description, url);
         }
     }
+
+    /**
+     * Handler for result data (e.g. when JREngage server returns data as a result of a web
+     * page load/response).
+     */
+    private class JRDownloadListener implements DownloadListener {
+
+        private final String TAG = JRDownloadListener.class.getSimpleName();
+
+        public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType,
+                                    long contentLength) {
+
+            if (Config.LOGD) {
+                Log.d(TAG, "[onDownloadStart] url: " + url + " | userAgent: " + userAgent
+                    + "disposition: " + contentDisposition + " | mimeType: " + mimeType
+                    + " | length: " + contentLength);
+            }
+
+//            final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
+//            if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
+//                if (!JRConnectionManager.createConnection(
+//                        url, JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
+//
+//                    // TODO:  handle error case
+//
+//                }
+//
+//                return;
+//            }
+
+            // TODO:  is windows live hack necessary here, as it is on iPhone?
+        }
+    }
+
 
     // ------------------------------------------------------------------------
     // STATIC FIELDS
