@@ -34,6 +34,7 @@ import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.utils.Archiver;
+import com.janrain.android.engage.utils.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -328,18 +329,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 				retval = ((Boolean)value).booleanValue();
 			} else if (value instanceof String) {
 				String strValue = (String)value;
-				if (!TextUtils.isEmpty(strValue)) {
-					try {
-						retval = Boolean.parseBoolean(strValue);
-					} catch (Exception e) {
-						// string does not contain true|false (case-insensitive), try yes|no
-						if ("yes".equalsIgnoreCase(strValue)) {
-							retval = true;
-						} else if ("no".equalsIgnoreCase(strValue)) {
-							retval = false;
-						}
-					}
-				}
+                retval = StringUtils.stringToBoolean(strValue, false);
 			}
 		}
 		return retval;

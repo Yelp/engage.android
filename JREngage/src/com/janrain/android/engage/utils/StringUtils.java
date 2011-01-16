@@ -125,6 +125,76 @@ public final class StringUtils {
         }
     }
 
+    /**
+     * Converts string to boolean, checking for all supported meanings of true.
+     *
+     * @param stringToConvert
+     *      The string to be converted to a boolean value.
+     *
+     * @param defaultValue
+     *      The default value if the string cannot be converted.
+     *
+     * @return
+     *      The converted value if convertible, default value otherwise.
+     */
+    public static boolean stringToBoolean(String stringToConvert, boolean defaultValue) {
+        boolean retval = defaultValue;
+        if (isTrue(stringToConvert)) {
+            retval = true;
+        } else if (isFalse(stringToConvert)) {
+            retval = false;
+        }
+        return retval;
+    }
+
+    /**
+     * Checks to see if the specified string is one of the supported values that
+     * equates to true.
+     *
+     * @param stringToCheck
+     *      The string to examine.
+     *
+     * @return
+     *      <code>true</code> if the value is true, <code>false</code> otherwise.
+     */
+    public static boolean isTrue(String stringToCheck) {
+        final String[] STRINGS = { "true", "yes" };
+        boolean retval = false;
+        if (!TextUtils.isEmpty(stringToCheck)) {
+            for (String s : STRINGS) {
+                if (s.equalsIgnoreCase(stringToCheck)) {
+                    retval = true;
+                    break;
+                }
+            }
+        }
+        return retval;
+    }
+
+    /**
+     * Checks to see if the specified string is one of the supported values that
+     * equates to false.
+     *
+     * @param stringToCheck
+     *      The string to examine.
+     *
+     * @return
+     *      <code>true</code> if the value is false, <code>false</code> otherwise.
+     */
+    public static boolean isFalse(String stringToCheck) {
+        final String[] STRINGS = { "false", "no" };
+        boolean retval = false;
+        if (!TextUtils.isEmpty(stringToCheck)) {
+            for (String s : STRINGS) {
+                if (s.equalsIgnoreCase(stringToCheck)) {
+                    retval = true;
+                    break;
+                }
+            }
+        }
+        return retval;
+    }
+
     public static String generateStackTrace(String msg) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new Exception(msg).printStackTrace(new PrintStream(baos));

@@ -247,7 +247,7 @@ public class JRProvidersActivity extends ListActivity {
         JRProvider provider = mAdapter.getItem(pos);
         mSessionData.setCurrentProvider(provider);
         if (provider.requiresInput() || provider.equals(mSessionData.getReturningBasicProvider())) {
-            // myUserLandingController
+            JRUserInterfaceMaestro.getInstance().showUserLanding();
         } else {
             JRUserInterfaceMaestro.getInstance().showWebView();
         }
