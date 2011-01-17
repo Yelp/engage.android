@@ -29,7 +29,9 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Config;
@@ -145,6 +147,22 @@ public class JRUserInterfaceMaestro {
         }
     }
 
+    /**
+     * Shows the user landing page.
+     */
+    public void showUserLanding() {
+        startActivity(JRLandingActivity.class);
+    }
+
+    /**
+     * Shows the web view for authentication.
+     */
+    public void showWebView() {
+        startActivity(JRWebViewActivity.class);
+    }
+
+
+
     public void authenticationFailed() {
         popToOriginal();
     }
@@ -168,13 +186,6 @@ public class JRUserInterfaceMaestro {
 
     public void publishingCanceled() {
         popAll();
-    }
-
-    /**
-     * Shows the web view for authentication.
-     */
-    public void showWebView() {
-        startActivity(JRWebViewActivity.class);
     }
 
     /**

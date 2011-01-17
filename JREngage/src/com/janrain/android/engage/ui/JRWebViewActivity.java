@@ -315,6 +315,7 @@ public class JRWebViewActivity extends Activity
     protected void onDestroy() {
         super.onDestroy();
 
+        mLayoutHelper.dismissProgressDialog();
         unregisterReceiver(mFinishReceiver);
     }
 
@@ -445,6 +446,9 @@ public class JRWebViewActivity extends Activity
             sb.append("token=").append(mToken).append("&");
             sb.append("device=").append(mDevice);
             return sb.toString().getBytes();
+        } else {
+            Log.w(TAG, "[buildPostDataBuffer] token is empty, post data is therefore null.");
+            Log.w(TAG, "[buildPostDataBuffer] authentication will likely fail.");
         }
         return null;
     }

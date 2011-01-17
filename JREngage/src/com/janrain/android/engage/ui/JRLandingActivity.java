@@ -30,8 +30,10 @@
 package com.janrain.android.engage.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -68,7 +70,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
         public void onReceive(Context context, Intent intent) {
             String target = intent.getStringExtra(
                     JRUserInterfaceMaestro.EXTRA_FINISH_ACTIVITY_TARGET);
-            if (JRPublishActivity.class.toString().equals(target)) {
+            if (JRLandingActivity.class.toString().equals(target)) {
                 tryToFinishActivity();
                 Log.i(TAG, "[onReceive] handled");
             } else if (Config.LOGD) {
@@ -104,6 +106,9 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
     private JRSessionData mSessionData;
     private FinishReceiver mFinishReceiver;
 
+    private boolean mIsAlertShowing;
+    private boolean mIsFinishPending;
+
     private ImageView mImageView;
     private EditText mEditText;
 
@@ -122,6 +127,8 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
     public JRLandingActivity() {
         mLayoutHelper = new SharedLayoutHelper(this);
         mSessionData = JRSessionData.getInstance();
+        mIsAlertShowing = false;
+        mIsFinishPending = false;
     }
 
     // ------------------------------------------------------------------------
@@ -183,18 +190,49 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
         }
     }
 
-    public void tryToFinishActivity() {
-        Log.i(TAG, "[tryToFinishActivity]");
-        finish();
-    }
-
     private void handlePrimaryButtonClick() {
-
+        String text = mEditText.getText().toString();
+        if (TextUtils.isEmpty(text)) {
+            showAlertDialog("Invalid Input",
+                    "The input you have entered is not valid. Please try again.");
+        } else {
+            showHideKeyboard(false);
+            mSessionData.getCurrentProvider().setUserInput(text);
+            JRUserInterfaceMaestro.getInstance().showWebView();
+        }
     }
 
     private void handleSecondaryButtonClick() {
 
     }
+
+    private void showAlertDialog(String title, String message) {
+        mIsAlertShowing = true;
+        new AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    mIsAlertShowing = false;
+                    if (mIsFinishPending) {
+                        mIsFinishPending = false;
+                        finish();
+                    }
+                }
+            })
+            .show();
+    }
+
+    public void tryToFinishActivity() {
+        Log.i(TAG, "[tryToFinishActivity]");
+        if (mIsAlertShowing) {
+            mIsFinishPending = true;
+        } else {
+            finish();
+        }
+    }
+
+
 
     private boolean prepareUserInterface() {
 
@@ -267,6 +305,16 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
         return provider.requiresInput()
                 ? provider.getShortText()
                 : getString(R.string.landing_default_custom_title);
+    }
+
+    private void showHideKeyboard(boolean show) {
+        if (show) {
+            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                .showSoftInput(mEditText, 0);
+        } else {
+            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+        }
     }
 
     private void focusEditAndPopKeyboard() {
