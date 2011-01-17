@@ -70,7 +70,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
         public void onReceive(Context context, Intent intent) {
             String target = intent.getStringExtra(
                     JRUserInterfaceMaestro.EXTRA_FINISH_ACTIVITY_TARGET);
-            if (JRPublishActivity.class.toString().equals(target)) {
+            if (JRLandingActivity.class.toString().equals(target)) {
                 tryToFinishActivity();
                 Log.i(TAG, "[onReceive] handled");
             } else if (Config.LOGD) {
@@ -196,6 +196,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
             showAlertDialog("Invalid Input",
                     "The input you have entered is not valid. Please try again.");
         } else {
+            showHideKeyboard(false);
             mSessionData.getCurrentProvider().setUserInput(text);
             JRUserInterfaceMaestro.getInstance().showWebView();
         }
@@ -304,6 +305,16 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
         return provider.requiresInput()
                 ? provider.getShortText()
                 : getString(R.string.landing_default_custom_title);
+    }
+
+    private void showHideKeyboard(boolean show) {
+        if (show) {
+            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                .showSoftInput(mEditText, 0);
+        } else {
+            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+        }
     }
 
     private void focusEditAndPopKeyboard() {
