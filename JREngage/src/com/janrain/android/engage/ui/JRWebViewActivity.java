@@ -171,20 +171,20 @@ public class JRWebViewActivity extends Activity
              * Comb through the cache manager and see if we can dig up the HTML form with
              * the HTTP POST form containing the token.  Oh dirty dirty.
              */
-            CacheManager.CacheResult cacheResult = CacheManager.getCacheFile(url, null);
-            if (cacheResult != null) {
-                byte[] data = IOUtils.readFromStream(cacheResult.getInputStream());
-                if (data != null) {
-                    try {
-                        String sData = new String(data, cacheResult.getEncoding());
-                        Log.d(TAG, "[onPageFinished] found our form, data: " + sData);
-                        parsePostHtml(sData);
-                    } catch (Exception ignore) {
-                        // when this happens, the encoding is not specified (means the cached data
-                        // does not interest us).
-                    }
-                }
-            }
+//            CacheManager.CacheResult cacheResult = CacheManager.getCacheFile(url, null);
+//            if (cacheResult != null) {
+//                byte[] data = IOUtils.readFromStream(cacheResult.getInputStream());
+//                if (data != null) {
+//                    try {
+//                        String sData = new String(data, cacheResult.getEncoding());
+//                        Log.d(TAG, "[onPageFinished] data: " + sData);
+////                        parsePostHtml(sData);
+//                    } catch (Exception ignore) {
+//                        // when this happens, the encoding is not specified (means the cached data
+//                        // does not interest us).
+//                    }
+//                }
+//            }
 
             if (!mIsMobileEndpointUrlLoading) {
                 mLayoutHelper.dismissProgressDialog();
@@ -381,10 +381,12 @@ public class JRWebViewActivity extends Activity
 
             mLayoutHelper.showProgressDialog();
 
-            byte[] bytes = buildPostDataBuffer();
+            //byte[] bytes = buildPostDataBuffer();
+
+            Log.d(TAG, "[loadMobileEndpointUrl] url: " + url);
 
             if (!JRConnectionManager.createConnection(
-                    url, bytes, JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
+                    url + "&auth_info=true", JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
 
                 mLayoutHelper.dismissProgressDialog();
                 // TODO:  handle error case

@@ -44,8 +44,10 @@ import com.janrain.android.engage.ui.JRLandingActivity;
 
 public class MainActivity extends Activity implements View.OnClickListener, JREngageDelegate {
 
-    private static final String ENGAGE_APP_ID = "pjdhmmpbeiimnpfmndkm";//"appcfamhnpkagijaeinl";//
+    private static final String ENGAGE_APP_ID = "pjdhmmpbeiimnpfmndkm";
     private static final String ENGAGE_TOKEN_URL = "http://jrengage-for-android.appspot.com/login";
+//    private static final String ENGAGE_APP_ID = "aehecdnjkodopeijgjgo";
+//    private static final String ENGAGE_TOKEN_URL = null;//"http://jrengage-for-android.appspot.com/login";
 
     private JREngage mEngage;
     private Button mBtnTestAuth;

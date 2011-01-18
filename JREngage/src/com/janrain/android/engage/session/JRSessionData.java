@@ -77,6 +77,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	private static JRSessionData sInstance;
 
     private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
+//  private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
+//  private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
 
     private static final String ARCHIVE_USERS = "users";
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
@@ -315,7 +317,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.w(TAG, "[connectionDidFail] userdata is null, this is unexpected.");
         } else if (userdata instanceof String) {
             String s = (String)userdata;
-            if (s.equals(JREngageError.ErrorType.CONFIGURATION_FAILED)) {
+            if (s.equals("getConfiguration")) {
                 mError = new JREngageError(
                         "There was a problem communicating with the Janrain server while configuring authentication.",
                         ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
