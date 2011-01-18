@@ -100,20 +100,6 @@ public class JRWebViewActivity extends Activity
 
         private final String TAG = JRWebViewClient.class.getSimpleName();
 
-        /*
-        NOTE:  This method gets called once, when WebView.loadUrl() is called.  It is not
-               called for redirects, which would be really really nice...
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[shouldOverrideUrlLoading] url: " + url);
-            }
-            view.loadUrl(url);
-            return true;
-        }
-        */
-
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             if (Config.LOGD) {
@@ -122,40 +108,15 @@ public class JRWebViewActivity extends Activity
 
             mLayoutHelper.showProgressDialog();
 
-
             /*
-             * TODO:  FINDME: FIXME:
-             *
-             * METHOD ONE:
-             * Intercept the mobile endpoint URL here in onPageStarted and manually kick off the HTTP
-             * POST operation to it.  We use the token value plucked from the HTML form found in the
-             * cache.  Johnny Hacker, welcome to Screen-Scraping 101.
+             * Check for mobile endpoint URL.
              */
             final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
             if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
-                Log.d(TAG, "[onPageStarted] JREngage URL intercepted, loading data.");
-                // stop the current load
-                mWebView.stopLoading();
-                // fire up the manual connection
-                loadMobileEndpointUrl(url);
-            } else {
-                super.onPageStarted(view, url, favicon);
+                Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
             }
 
-            /*
-             * TODO:  FINDME: FIXME:
-             *
-             * METHOD TWO:
-             * The correct way to do it...provided it worked...or the server side is changed to a
-             * HTTP GET mechanism.  Revisit once server-side is fixed.  Will probably need to pluck
-             * data from the URL itself.
-             */
-//            final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
-//            if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
-//                Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
-//            }
-//
-//            super.onPageStarted(view, url, favicon);
+            super.onPageStarted(view, url, favicon);
         }
 
         @Override
@@ -163,28 +124,6 @@ public class JRWebViewActivity extends Activity
             if (Config.LOGD) {
                 Log.d(TAG, "[onPageFinished] url: " + url);
             }
-
-            /*
-             * TODO:  FINDME: FIXME:
-             *
-             * METHOD ONE:
-             * Comb through the cache manager and see if we can dig up the HTML form with
-             * the HTTP POST form containing the token.  Oh dirty dirty.
-             */
-//            CacheManager.CacheResult cacheResult = CacheManager.getCacheFile(url, null);
-//            if (cacheResult != null) {
-//                byte[] data = IOUtils.readFromStream(cacheResult.getInputStream());
-//                if (data != null) {
-//                    try {
-//                        String sData = new String(data, cacheResult.getEncoding());
-//                        Log.d(TAG, "[onPageFinished] data: " + sData);
-////                        parsePostHtml(sData);
-//                    } catch (Exception ignore) {
-//                        // when this happens, the encoding is not specified (means the cached data
-//                        // does not interest us).
-//                    }
-//                }
-//            }
 
             if (!mIsMobileEndpointUrlLoading) {
                 mLayoutHelper.dismissProgressDialog();
@@ -381,12 +320,8 @@ public class JRWebViewActivity extends Activity
 
             mLayoutHelper.showProgressDialog();
 
-            //byte[] bytes = buildPostDataBuffer();
-
-            Log.d(TAG, "[loadMobileEndpointUrl] url: " + url);
-
             if (!JRConnectionManager.createConnection(
-                    url + "&auth_info=true", JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
+                    url, JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
 
                 mLayoutHelper.dismissProgressDialog();
                 // TODO:  handle error case
@@ -399,82 +334,22 @@ public class JRWebViewActivity extends Activity
         // TODO:  is windows live hack necessary here, as it is on iPhone?
     }
 
-    ///
-
-    /*
-     * TODO:  FINDME: FIXME:
-     *
-     * Data and methods used by METHOD ONE hack-code above.
+    /**
+     * Invoked by WebKit when there is something to be downloaded that it does not
+     * typically handle (e.g. result of post, mobile endpoint url results, etc).
      */
-
-    private String mToken;
-    private String mDevice;
-
-    private void parsePostHtml(String html) {
-        if (!TextUtils.isEmpty(html) && html.contains("POST")) {
-            String[] lines = html.split("\n");
-            if ((lines != null) && (lines.length > 0)) {
-                for (String line : lines) {
-                    if (line.contains("<input")) {
-                        if (line.contains("token")) {
-                            mToken = extractInputTagValueAttribute(line);
-                            Log.d(TAG, "[parsePostHtml] mToken: " + mToken);
-                        } else if (line.contains("device")) {
-                            mDevice = extractInputTagValueAttribute(line);
-                            Log.d(TAG, "[parsePostHtml] mDevice: " + mDevice);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private String extractInputTagValueAttribute(String s) {
-        final String VALUE = "value=";
-        int startIndex = s.indexOf(VALUE);
-        if (startIndex > 0) {
-            startIndex = (startIndex + VALUE.length() + 1);
-            int endIndex = s.lastIndexOf("\"");
-            if (endIndex > 0) {
-                return s.substring(startIndex, endIndex);
-            }
-        }
-        return null;
-    }
-
-    private byte[] buildPostDataBuffer() {
-        if (!TextUtils.isEmpty(mToken) && !TextUtils.isEmpty(mDevice)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("token=").append(mToken).append("&");
-            sb.append("device=").append(mDevice);
-            return sb.toString().getBytes();
-        } else {
-            Log.w(TAG, "[buildPostDataBuffer] token is empty, post data is therefore null.");
-            Log.w(TAG, "[buildPostDataBuffer] authentication will likely fail.");
-        }
-        return null;
-    }
-
-    ///
-
     public void onDownloadStart(String url, String userAgent,
             String contentDisposition, String mimetype, long contentLength) {
 
         if (Config.LOGD) {
-            Log.d(TAG, "[onDownloadStart] url: " + url);
-            Log.d(TAG, "[onDownloadStart] userAgent: " + userAgent);
-            Log.d(TAG, "[onDownloadStart] contentDisposition: " + contentDisposition);
-            Log.d(TAG, "[onDownloadStart] mimetype: " + mimetype);
-            Log.d(TAG, "[onDownloadStart] contentLength: " + contentLength);
+            Log.d(TAG, "[onDownloadStart] url: " + url + " | mimetype: " + mimetype
+                + " | length: " + contentLength);
         }
 
         /*
-         * TODO: FINDME: FIXME:
-         *
-         * In METHOD ONE we are kicking off the mobile endpoint load from
-         * JRWebViewClient.onPageStarted() instead.
+         * Download data from mobile endpoint url call.
          */
-//        loadMobileEndpointUrl(url);
+        loadMobileEndpointUrl(url);
     }
 
     ////
