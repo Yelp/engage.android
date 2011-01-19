@@ -32,8 +32,10 @@ package com.janrain.android.simpledemo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
@@ -89,32 +91,43 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     // JREngage DELEGATE METHODS
     // ------------------------------------------------------------------------
 
-    public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrAuthenticationDidNotComplete() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     public void jrAuthenticationDidSucceedForUser(JRDictionary authInfo, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
+        JRDictionary profile = (authInfo == null) ? null : authInfo.getAsDictionary("profile");
+        String displayName = (profile == null) ? null : profile.getAsString("displayName");
+        String message = "Authentication successful" + ((TextUtils.isEmpty(displayName))
+                ? "" : (" for user: " + displayName));
 
-    public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     public void jrAuthenticationDidReachTokenUrl(String tokenUrl, byte[] tokenUrlPayload, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        Toast.makeText(this, "Authentication did reach token url", Toast.LENGTH_SHORT).show();
     }
 
     public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, byte[] tokenUrlPayload, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        Toast.makeText(this, "Authentication did reach token url", Toast.LENGTH_SHORT).show();
+    }
+
+    public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
+        String message = "Authentication failed to show, error: " +
+                ((error == null) ? "unknown" : error.getMessage());
+
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void jrAuthenticationDidNotComplete() {
+        Toast.makeText(this, "Authentication did not complete", Toast.LENGTH_SHORT).show();
+    }
+
+    public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
+        String message = "Authentication failed, error: " +
+                ((error == null) ? "unknown" : error.getMessage());
+
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        Toast.makeText(this, "Authentication failed to reach token url", Toast.LENGTH_SHORT).show();
     }
 
     public void jrSocialDidNotCompletePublishing() {
