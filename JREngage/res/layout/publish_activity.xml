@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+   - Layout for JRPublishActivity
+  -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+    <!-- Header (title) area -->
+    <include layout="@layout/shared_header" />
+
+    <LinearLayout
+        android:id="@+id/provider_toolbar"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header"
+        android:padding="4dip"
+        android:background="#FF333333"
+        >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:text="@string/provider_spinner_prompt"
+            android:textColor="#ffffffff"
+            />
+
+        <Spinner
+            android:id="@+id/provider_spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:layout_marginBottom="5dip"
+            android:prompt="@string/provider_spinner_prompt"
+            />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/edit_comment"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/provider_toolbar"
+        android:layout_marginTop="10dip"
+        android:layout_marginRight="7dip"
+        android:layout_marginLeft="7dip"
+        android:gravity="top|left"
+        android:lines="5"
+        />
+
+    <LinearLayout
+        android:id="@+id/activity_info_container"
+        android:layout_width="fill_parent"
+        android:layout_height="120dip"
+        android:layout_below="@id/edit_comment"
+        android:layout_marginTop="10dip"
+        android:layout_marginRight="7dip"
+        android:layout_marginLeft="7dip"
+        android:gravity="top|left"
+        android:background="@drawable/bg_provider_activity_info"
+        />
+
+    <TextView
+        android:id="@+id/powered_by_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@+id/share_button_container"
+        android:layout_marginLeft="7dip"
+        android:layout_marginBottom="10dip"
+        android:singleLine="true"
+        android:text="@string/powered_by"
+        android:textColor="#ffdedede"
+        android:textStyle="normal"
+        android:paddingRight="6dip"
+        />
+
+    <ImageView
+        android:id="@+id/provider_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_above="@+id/share_button_container"
+        android:layout_marginRight="7dip"
+        android:layout_marginBottom="10dip"
+        android:src="@drawable/icon_facebook_30x30"
+        />
+
+    <LinearLayout
+            android:id="@+id/share_button_container"
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="top|center_horizontal"
+            android:paddingTop="0dip"
+            android:paddingBottom="22dip"
+            android:background="#333b5999"
+            >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/triangle_icon"
+            />
+
+        <Button
+            android:id="@+id/share_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center_horizontal|center_vertical"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="4dp"
+            android:background="@drawable/sel_iosblue_280x40"
+            android:text="Connect and Share"
+            android:textSize="20dip"
+            android:textColor="#ffffffff"
+            android:textStyle="bold"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>

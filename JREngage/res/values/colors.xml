@@ -1,0 +1,9 @@
+<resources>
+    <!-- colors used in JRProviderActivity for share_button_container background color -->
+    <color name="bg_clr_facebook">#333B5999</color>
+    <color name="bg_clr_twitter">#3335CEFF</color>
+    <color name="bg_clr_yahoo">#33650065</color>
+    <color name="bg_clr_linkedin">#33005A88</color>
+    <color name="bg_clr_myspace">#331B3E8F</color>
+    <color name="bg_clr_google">#333F65DB</color>
+</resources>

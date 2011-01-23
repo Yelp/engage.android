@@ -33,6 +33,9 @@
         <activity android:name="com.janrain.android.engage.ui.JRWebViewActivity"
                   android:configChanges="orientation|keyboardHidden"
                   android:theme="@android:style/Theme.Light.NoTitleBar"/>
+        <activity android:name="com.janrain.android.engage.ui.JRPublishActivity"
+                  android:configChanges="orientation|keyboardHidden"
+                  android:theme="@android:style/Theme.Light.NoTitleBar"/>
 
     </application>
 

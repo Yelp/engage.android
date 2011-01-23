@@ -78,9 +78,9 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         if (view == mBtnTestAuth) {
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
-//            mEngage.showSocialPublishingDialogWithActivity(
-//                    new JRActivityObject()
-//            );
+            mEngage.showSocialPublishingDialogWithActivity(
+                    new JRActivityObject("blah", "blah") // TODO: findme fixme
+            );
         } else if (view == mBtnTestLand) {
             Intent intent = new Intent(this, JRLandingActivity.class);
             startActivity(intent);

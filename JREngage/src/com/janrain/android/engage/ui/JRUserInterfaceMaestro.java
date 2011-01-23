@@ -161,7 +161,9 @@ public class JRUserInterfaceMaestro {
         startActivity(JRWebViewActivity.class);
     }
 
-
+    public void showPublishingDialogWithActivity() {
+        startActivity(JRPublishActivity.class);
+    }
 
     public void authenticationFailed() {
         popToOriginal();

@@ -449,35 +449,34 @@ public class JREngage implements JRSessionDelegate {
             Log.d(TAG, "[showSocialPublishingDialogWithActivity]");
         }
 
-        /* If there was error configuring the library, sessionData.error will not be null. */
-        JREngageError error = mSessionData.getError();
-		if (error != null) {
-            /* If there was an error, send a message to the delegates, release the error, then
-            attempt to restart the configuration.  If, for example, the error was temporary
-            (network issues, etc.) reattempting to configure the library could end successfully.
-            Since configuration may happen before the user attempts to use the library, if the
-            user attempts to use the library at all, we only try to reconfigure when the library
-            is needed. */
-            if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
-                engageDidFailWithError(error);
-                mSessionData.tryToReconfigureLibrary();
+//        /* If there was error configuring the library, sessionData.error will not be null. */
+//        JREngageError error = mSessionData.getError();
+//		if (error != null) {
+//            /* If there was an error, send a message to the delegates, release the error, then
+//            attempt to restart the configuration.  If, for example, the error was temporary
+//            (network issues, etc.) reattempting to configure the library could end successfully.
+//            Since configuration may happen before the user attempts to use the library, if the
+//            user attempts to use the library at all, we only try to reconfigure when the library
+//            is needed. */
+//            if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
+//                engageDidFailWithError(error);
+//                mSessionData.tryToReconfigureLibrary();
+//
+//                return;
+//            }
+//        }
+//
+//        if (activity == null) {
+//            engageDidFailWithError(new JREngageError(
+//                    "Activity object cannot be null",
+//                    JREngageError.SocialPublishingError.ACTIVITY_NIL,
+//                    JREngageError.ErrorType.PUBLISH_FAILED
+//            ));
+//        }
+//
+//        mSessionData.setActivity(activity);
 
-                return;
-            }
-        }
-
-        if (activity == null) {
-            engageDidFailWithError(new JREngageError(
-                    "Activity object cannot be null",
-                    JREngageError.SocialPublishingError.ACTIVITY_NIL,
-                    JREngageError.ErrorType.PUBLISH_FAILED
-            ));
-        }
-
-        mSessionData.setActivity(activity);
-
-        // TODO:  implement UI stuff
-        // interfaceMaestro.showPublishingDialogWithActivity();
+        mInterfaceMaestro.showPublishingDialogWithActivity();
     }
 	
 	@Override

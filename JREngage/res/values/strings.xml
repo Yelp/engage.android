@@ -38,4 +38,9 @@
     <string name="landing_default_secondary_btn_text">Switch Accounts</string>
     <string name="landing_default_primary_btn_text">Sign In</string>
     <string name="landing_default_custom_title">Welcome Back!</string>
+
+    <!--
+       - JRPublishActivity strings.
+      -->
+    <string name="provider_spinner_prompt">Select a provider</string>
 </resources>
