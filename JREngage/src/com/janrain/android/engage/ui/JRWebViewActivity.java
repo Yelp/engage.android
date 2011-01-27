@@ -320,8 +320,13 @@ public class JRWebViewActivity extends Activity
 
             mLayoutHelper.showProgressDialog();
 
+            String urlToLoad = url + "&auth_info=true";
+            if (Config.LOGD) {
+                Log.d(TAG, "[loadMobileEndpointUrl] loading url: " + urlToLoad);
+            }
+
             if (!JRConnectionManager.createConnection(
-                    url, JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
+                    urlToLoad, JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
 
                 mLayoutHelper.dismissProgressDialog();
                 // TODO:  handle error case

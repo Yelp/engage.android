@@ -52,8 +52,8 @@
         android:lines="5"
         />
 
-    <LinearLayout
-        android:id="@+id/activity_info_container"
+    <RelativeLayout
+        android:id="@+id/media_content_view"
         android:layout_width="fill_parent"
         android:layout_height="120dip"
         android:layout_below="@id/edit_comment"
@@ -62,7 +62,55 @@
         android:layout_marginLeft="7dip"
         android:gravity="top|left"
         android:background="@drawable/bg_provider_activity_info"
-        />
+        >
+
+        <ImageView
+            android:id="@+id/media_content_image"
+            android:layout_width="60dip"
+            android:layout_height="60dip"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="5dip"
+            android:src="@drawable/media60x60"
+            />
+
+        <TextView
+            android:id="@+id/media_content_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dip"
+            android:layout_marginRight="5dip"
+            android:layout_marginBottom="1dip"
+            android:layout_marginLeft="5dip"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/media_content_image"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+            android:textStyle="bold"
+            />
+
+        <!--
+           - NOTE:  In order to get the text to extend more than two lines, had to use the 'inputType=...'
+           -        property.  Unfortunately, doing so breaks the ellipsize function.  Android BUG.
+          -->
+        <TextView
+            android:id="@+id/media_content_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dip"
+            android:layout_marginRight="5dip"
+            android:layout_marginBottom="0dip"
+            android:layout_marginLeft="5dip"
+            android:layout_below="@id/media_content_title"
+            android:layout_toRightOf="@id/media_content_image"
+            android:inputType="textMultiLine"
+            android:ellipsize="end"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ultrices tincidunt neque et fringilla. Quisque a dignissim tellus. Duis bibendum sem vitae tortor accumsan sagittis. Quisque mattis lacinia sapien, quis bibendum erat tempor at. Vivamus malesuada, est ut malesuada fringilla, libero erat bibendum nibh, a consequat orci nisl gravida magna. Vivamus sagittis cursus mauris, sed imperdiet orci placerat at. Nunc ac mollis lorem. Praesent ac ante a nibh semper elementum. Vivamus in massa est, eu laoreet justo. Etiam molestie consequat tortor, vitae bibendum felis imperdiet nec. Praesent semper risus vitae augue lobortis aliquet. Proin blandit, sapien eu feugiat elementum, ante."
+            android:textStyle="normal"
+            />
+
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/powered_by_text"

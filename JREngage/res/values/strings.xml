@@ -42,5 +42,6 @@
     <!--
        - JRPublishActivity strings.
       -->
+    <string name="publish_activity_title">Share</string>
     <string name="provider_spinner_prompt">Select a provider</string>
 </resources>

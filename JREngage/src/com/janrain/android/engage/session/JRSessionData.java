@@ -302,6 +302,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mSocialSharing = value;
     }
 
+    public boolean getHidePoweredBy() {
+        return mHidePoweredBy;
+    }
+
     // ------------------------------------------------------------------------
     // DELEGATE METHODS
     // ------------------------------------------------------------------------
@@ -838,20 +842,20 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
     }
 
-    private JRProvider getProviderAtIndex(int index, List<String> fromList) {
+    public JRProvider getProviderAtIndex(int index, List<String> fromList) {
         String key = fromList.get(index);
         return mAllProviders.getAsProvider(key);
     }
 
-    private JRProvider getBasicProviderAtIndex(int index) {
+    public JRProvider getBasicProviderAtIndex(int index) {
         return getProviderAtIndex(index, mBasicProviders);
     }
 
-    private JRProvider getSocialProviderAtIndex(int index) {
+    public JRProvider getSocialProviderAtIndex(int index) {
         return getProviderAtIndex(index, mSocialProviders);
     }
 
-    private JRProvider getProviderName(String name) {
+    public JRProvider getProviderByName(String name) {
         return mAllProviders.getAsProvider(name);
     }
 

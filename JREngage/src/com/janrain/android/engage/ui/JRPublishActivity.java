@@ -34,12 +34,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.janrain.android.engage.R;
+import com.janrain.android.engage.session.JRAuthenticatedUser;
+import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
+import com.janrain.android.engage.types.JRActivityObject;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -47,7 +51,9 @@ import java.util.Set;
 /**
  * Publishing UI
  */
-public class JRPublishActivity extends Activity implements View.OnClickListener {
+public class JRPublishActivity extends Activity
+        implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+
     // ------------------------------------------------------------------------
     // TYPES
     // ------------------------------------------------------------------------
@@ -73,59 +79,40 @@ public class JRPublishActivity extends Activity implements View.OnClickListener 
         }
     }
 
-    private static class ProviderArrayItem {
-
-        private boolean mIsActivityInfoVisible;
+    /**
+     * UI display attributes for for each of the supported providers.
+     */
+    private static class ProviderDisplayInfo {
+        // whether or not activity info section is displayed
+        private boolean mIsMediaContentVisible;
+        // provider icon resource id
         private int mIconResId;
+        // share section background color
         private int mShareBgColorResId;
+        // share button resource id
         private int mShareButtonResId;
 
-        ProviderArrayItem(boolean isInfoVisible, int iconResId, int shareBgColorResId, int shareBtnResId) {
-            mIsActivityInfoVisible = isInfoVisible;
+        ProviderDisplayInfo(boolean isInfoVisible, int iconResId, int shareBgColorResId, int shareBtnResId) {
+            mIsMediaContentVisible = isInfoVisible;
             mIconResId = iconResId;
             mShareBgColorResId = shareBgColorResId;
             mShareButtonResId = shareBtnResId;
         }
 
-        boolean getIsActivityInfoVisible() {
-            return mIsActivityInfoVisible;
+        boolean getIsMediaContentVisible() {
+            return mIsMediaContentVisible;
         }
-
         int getIconResId() {
             return mIconResId;
         }
-
         int getShareBgColorResId() {
             return mShareBgColorResId;
         }
-
         int getShareBtnResId() {
             return mShareButtonResId;
         }
     }
 
-
-    public class MyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
-
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            String selected = parent.getItemAtPosition(pos).toString();
-            ProviderArrayItem item = PROVIDER_MAP.get(selected);
-
-            if (item.getIsActivityInfoVisible()) {
-                mActivityInfoContainer.setVisibility(View.VISIBLE);
-            } else {
-                mActivityInfoContainer.setVisibility(View.GONE);
-            }
-
-            mProviderIcon.setImageResource(item.getIconResId());
-            mShareButtonContainer.setBackgroundResource(item.getShareBgColorResId());
-            mShareButton.setBackgroundResource(item.getShareBtnResId());
-        }
-
-        public void onNothingSelected(AdapterView parent) {
-            // Do nothing.
-        }
-    }
 
     // ------------------------------------------------------------------------
     // STATIC FIELDS
@@ -133,34 +120,34 @@ public class JRPublishActivity extends Activity implements View.OnClickListener 
 
     private static final String TAG = JRPublishActivity.class.getSimpleName();
 
-    private static HashMap<String, ProviderArrayItem> PROVIDER_MAP;
+    private static HashMap<String, ProviderDisplayInfo> PROVIDER_MAP;
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
     // ------------------------------------------------------------------------
 
     static {
-        PROVIDER_MAP = new HashMap<String, ProviderArrayItem>();
+        PROVIDER_MAP = new HashMap<String, ProviderDisplayInfo>();
         PROVIDER_MAP.put("Facebook",
-                new ProviderArrayItem(
+                new ProviderDisplayInfo(
                         true,
                         R.drawable.icon_facebook_30x30,
                         R.color.bg_clr_facebook,
                         R.drawable.button_facebook_280x40));
         PROVIDER_MAP.put("Twitter",
-                new ProviderArrayItem(
+                new ProviderDisplayInfo(
                         false,
                         R.drawable.icon_twitter_30x30,
                         R.color.bg_clr_twitter,
                         R.drawable.button_twitter_280x40));
         PROVIDER_MAP.put("MySpace",
-                new ProviderArrayItem(
+                new ProviderDisplayInfo(
                         false,
                         R.drawable.icon_myspace_30x30,
                         R.color.bg_clr_myspace,
                         R.drawable.button_myspace_280x40));
         PROVIDER_MAP.put("LinkedIn",
-                new ProviderArrayItem(
+                new ProviderDisplayInfo(
                         false,
                         R.drawable.icon_linkedin_30x30,
                         R.color.bg_clr_linkedin,
@@ -177,11 +164,16 @@ public class JRPublishActivity extends Activity implements View.OnClickListener 
 
     private FinishReceiver mFinishReceiver;
     private SharedLayoutHelper mLayoutHelper;
+
     private JRSessionData mSessionData;
+    private JRProvider mSelectedProvider;
+    private JRAuthenticatedUser mLoggedInUser;
+    
+    private JRActivityObject mActivityObject;
 
     private Spinner mSpinner;
 
-    private LinearLayout mActivityInfoContainer;
+    private RelativeLayout mMediaContentView;
     private ImageView mProviderIcon;
     private LinearLayout mShareButtonContainer;
     private Button mShareButton;
@@ -213,10 +205,9 @@ public class JRPublishActivity extends Activity implements View.OnClickListener 
         setContentView(R.layout.publish_activity);
 
         mSessionData = JRSessionData.getInstance();
+        mActivityObject = mSessionData.getActivity();
+
         mLayoutHelper = new SharedLayoutHelper(this);
-        //mLayoutHelper.setHeaderText("Share");
-        TextView title = (TextView)findViewById(R.id.header_text);
-        title.setText("Share");
 
         mSpinner = (Spinner) findViewById(R.id.provider_spinner);
 
@@ -226,12 +217,21 @@ public class JRPublishActivity extends Activity implements View.OnClickListener 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, keyArray);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(adapter);
-        mSpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
+        mSpinner.setOnItemSelectedListener(this);
 
-        mActivityInfoContainer = (LinearLayout) findViewById(R.id.activity_info_container);
+        if (mSessionData.getHidePoweredBy()) {
+            TextView poweredBy = (TextView)findViewById(R.id.powered_by_text);
+            poweredBy.setVisibility(View.GONE);
+        }
+        
+        TextView title = (TextView)findViewById(R.id.header_text);
+        title.setText(getString(R.string.publish_activity_title));
+
+        mMediaContentView = (RelativeLayout) findViewById(R.id.media_content_view);
         mProviderIcon = (ImageView) findViewById(R.id.provider_icon);
         mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
         mShareButton = (Button) findViewById(R.id.share_button);
+        mShareButton.setOnClickListener(this);
     }
 
     @Override
@@ -250,14 +250,68 @@ public class JRPublishActivity extends Activity implements View.OnClickListener 
 
         unregisterReceiver(mFinishReceiver);
     }
-    
+
+    /**
+     * Invoked by JRUserInterfaceMaestro via FinishReceiver to close this activity.
+     */
     public void tryToFinishActivity() {
         Log.i(TAG, "[tryToFinishActivity]");
         finish();
     }
 
+    //
+    // View.OnClickListener
+    //
+
     public void onClick(View view) {
     }
 
+
+    //
+    // AdapterView.OnItemSelectedListener
+    //
+
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        String selected = parent.getItemAtPosition(pos).toString();
+        ProviderDisplayInfo item = PROVIDER_MAP.get(selected);
+
+        mMediaContentView.setVisibility(item.getIsMediaContentVisible()
+                ? View.VISIBLE : View.GONE);
+        mProviderIcon.setImageResource(item.getIconResId());
+        mShareButtonContainer.setBackgroundResource(item.getShareBgColorResId());
+        mShareButton.setBackgroundResource(item.getShareBtnResId());
+    }
+
+    public void onNothingSelected(AdapterView parent) {
+        // Do nothing.
+    }
+
+    //
+    // Helper methods
+    //
+
+    private void loadActivityObjectToView() {
+
+        // TODO:  check "hasEditedUserContentForActivityAlready"
+
+        if (/*(weAreReady) && */ (mActivityObject.getMedia().size() > 0)
+                && providerCanShareMedia(mSelectedProvider.getName())) {
+
+            showHideMediaContentView(true);
+
+
+        } else {
+            showHideMediaContentView(false);
+        }
+
+    }
+
+    private boolean providerCanShareMedia(String providerName) {
+        return (!TextUtils.isEmpty(providerName)) && ("facebook".equalsIgnoreCase(providerName));
+    }
+
+    private void showHideMediaContentView(boolean show) {
+        mMediaContentView.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
 
 }
