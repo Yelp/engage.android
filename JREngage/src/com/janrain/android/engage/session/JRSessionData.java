@@ -104,8 +104,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 		return sInstance;
 	}
 	
-	public static JRSessionData getInstance(String appId, String tokenUrl, 
-			JRSessionDelegate delegate) {
+	public static JRSessionData getInstance(String appId, String tokenUrl, JRSessionDelegate delegate) {
 		
 		if (sInstance != null) {
             if (Config.LOGD) {
@@ -222,7 +221,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         // is faster than checking for the icons themselves
         mProvidersWithIcons = JRProviderList.unarchive(ARCHIVE_PROVIDERS_WITH_ICONS);
 
-        // Load the base url and whether or not we need to hide the tagline.
+        // Load the base url
         mBaseUrl = Prefs.getAsString(Prefs.KEY_JR_BASE_URL, "");
 
         // Figure out of we're suppose to hide the powered by line
@@ -249,6 +248,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public void setActivity(JRActivityObject activity) {
         mActivity = activity;
+
+        // TODO: Add function equiv. to [self startGetShortenedUrlsForActivity:activity];
     }
 
     public boolean getAlwaysForceReauth() {
@@ -326,7 +327,12 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                         "There was a problem communicating with the Janrain server while configuring authentication.",
                         ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
                         JREngageError.ErrorType.CONFIGURATION_FAILED);
+            } else if (s.equals("emailSuccess")) {
+                // TODO: Implement notifications for email/sms sharing
+            } else if (s.equals("smsSuccess")) {
+                // TODO: Implement notifications for email/sms sharing
             } else if (s.equals("shareActivity")) {
+                // TODO: ShareActivity user data should be a dictionary, not a string
                 List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
                 for (JRSessionDelegate delegate : delegatesCopy) {
                     JREngageError error = new JREngageError(
@@ -334,20 +340,31 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                     );
                     delegate.publishingActivityDidFail(mActivity, error, mCurrentProvider.getName());
                 }
+            } else {
+
             }
 
         } else if (userdata instanceof JRDictionary) {
             JRDictionary dictionary = (JRDictionary) userdata;
-            if ((dictionary != null) && (dictionary.containsKey("tokenUrl"))) {
-                List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-                for (JRSessionDelegate delegate : delegatesCopy) {
-                    JREngageError error = new JREngageError(
-                        "Session error", JREngageError.CODE_UNKNOWN, "", ex
-                    );
-                    delegate.authenticationCallToTokenUrlDidFail(
-                            dictionary.getAsString("tokenUrl"),
-                            error,
-                            dictionary.getAsString("providerName"));
+            if (dictionary != null)
+            {   // TODO: Should "tokenUrl" be a key, and if so, to what?  In iPhone lib, it's a value to key "action"
+                if (dictionary.containsKey("tokenUrl")) {
+                    List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
+                    for (JRSessionDelegate delegate : delegatesCopy) {
+                        JREngageError error = new JREngageError(
+                            "Session error", JREngageError.CODE_UNKNOWN, "", ex
+                        );
+                        delegate.authenticationCallToTokenUrlDidFail(
+                                dictionary.getAsString("tokenUrl"),
+                                error,
+                                dictionary.getAsString("providerName"));
+                    }
+                } else if (dictionary.containsKey("shareActivity")) {
+                    // TODO: ShareActivity user data should be a dictionary, not a string
+                } else if (dictionary.containsKey("shortenUrls")) {
+
+                } else {
+
                 }
             }
         }
@@ -370,6 +387,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             String tag = (String) userdata;
 
             if (tag.equals("shareActivity")) {
+                // TODO: ShareActivity user data should be a dictionary, not a string
+                // TODO: Move all of this code out of the connection delegate function
                 JRDictionary responseDict = JRDictionary.fromJSON(payload);
                 if (responseDict == null) {
                     List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
@@ -444,9 +463,25 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                                 mCurrentProvider.getName());
                     }
                 }
+            } else if (tag.equals("emailSuccess")) {
+
+            } else if (tag.equals("smsSuccess")) {
+
+            } else {
+
+            }
+        } else if (userdata instanceof JRDictionary) {
+            JRDictionary dictionary = (JRDictionary) userdata;
+            if (dictionary != null) {
+                if (dictionary.containsKey("shareActivity")) {
+                    // TODO: ShareActivity user data should be a dictionary, not a string
+                } else if (dictionary.containsKey("shortenUrls")) {
+
+                } else {
+
+                }
             }
         }
-
 	}
 
     public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload,
@@ -457,17 +492,20 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             // TODO:  this case is not handled on iPhone, is it possible?
         } else if (userdata instanceof JRDictionary) {
             JRDictionary dictionary = (JRDictionary) userdata;
-            if ((dictionary != null) && (dictionary.containsKey("tokenUrl"))) {
-                List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-                for (JRSessionDelegate delegate : delegatesCopy) {
-                    delegate.authenticationDidReachTokenUrl(
-                            dictionary.getAsString("tokenUrl"),
-                            headers,
-                            payload,
-                            dictionary.getAsString("providerName"));
+            if (dictionary != null) {
+                if (dictionary.containsKey("tokenUrl")) {
+                    List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
+                    for (JRSessionDelegate delegate : delegatesCopy) {
+                        delegate.authenticationDidReachTokenUrl(
+                                dictionary.getAsString("tokenUrl"),
+                                headers,
+                                payload,
+                                dictionary.getAsString("providerName"));
+                    }
+                } else if (dictionary.containsKey("downloadPicture")) {
+                    // TODO: Add icon downloading code
                 }
             }
-
         } else if (userdata instanceof String) {
             String s = (String)userdata;
             if (TextUtils.isEmpty(s)) {
@@ -1027,6 +1065,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     /*
     TODO:  This method appears to have gone away.
+    TODO RESPONSE: Um... pretty sure it just moved to a spot higher in the iPhone version of the file?
 
     private String appNameAndVersion() {
         final String FMT = "appName=%s.%s&version=%d_%s";
