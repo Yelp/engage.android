@@ -37,7 +37,7 @@
                   android:configChanges="orientation|keyboardHidden"
                   android:theme="@android:style/Theme.Light.NoTitleBar"/>
         
-        <uses-library android:name="com.janrain.android.engage"/>
+<!--        <uses-library android:name="com.janrain.android.engage"/>-->
 
     </application>
 
