@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="jackson-core">
+  <library name="jackson">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/JREngage/libs/jackson-mapper-lgpl-1.6.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/JREngage/libs/jackson-core-lgpl-1.6.4.jar!/" />

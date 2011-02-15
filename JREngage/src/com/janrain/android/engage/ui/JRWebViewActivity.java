@@ -55,7 +55,7 @@ import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.IOUtils;
 import com.janrain.android.engage.utils.StringUtils;
-import com.sun.tools.corba.se.idl.ExceptionEntry;
+//import com.sun.tools.corba.se.idl.ExceptionEntry;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
