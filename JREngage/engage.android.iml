@@ -5,8 +5,8 @@
     <libelement value="file://libs/gson-1.5.jar" />
     <conelement value="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK" />
     <src_description expected_position="1">
-      <src_folder value="file://$MODULE_DIR$/gen" expected_position="1" />
       <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
+      <src_folder value="file://$MODULE_DIR$/gen" expected_position="1" />
     </src_description>
   </component>
   <component name="FacetManager">
@@ -43,7 +43,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Android 1.6 Platform" level="application" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/jackson-core-lgpl-1.6.4.jar!/" />
@@ -52,7 +52,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/jackson-mapper-lgpl-1.6.4.jar!/" />

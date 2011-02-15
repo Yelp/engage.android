@@ -209,7 +209,7 @@ public class JRProvider implements Serializable {
     	mUserInput = Prefs.getAsString(Prefs.KEY_JR_USER_INPUT, "");
     	mWelcomeString = Prefs.getAsString(Prefs.KEY_JR_WELCOME_STRING, "");
     	// TODO: TBD: Is false the correct default value?
-    	mForceReauth = Prefs.getAsBoolean(Prefs.KEY_JR_USER_INPUT, false);
+    	mForceReauth = Prefs.getAsBoolean(Prefs.KEY_JR_FORCE_REAUTH, false);
     }
     
 }
