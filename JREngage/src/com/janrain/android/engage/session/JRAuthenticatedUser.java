@@ -53,6 +53,8 @@ public class JRAuthenticatedUser implements Serializable {
 	public static final String KEY_DEVICE_TOKEN = "device_token";
     public static final String KEY_PHOTO = "photo";
     public static final String KEY_PREFERRED_USERNAME = "preferred_username";
+    //TODO remove authinfo field
+    //TODO use keychain or something to store device token
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
