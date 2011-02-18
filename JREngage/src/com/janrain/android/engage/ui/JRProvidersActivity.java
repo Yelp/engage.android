@@ -35,6 +35,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 import android.view.*;
@@ -229,6 +230,10 @@ public class JRProvidersActivity extends ListActivity {
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
+        }
+
+        if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
+            JRUserInterfaceMaestro.getInstance().showUserLanding();
         }
     }
 
