@@ -95,7 +95,9 @@ public final class Prefs {
      * @param value The value to be saved.
      */
     public static void putString(String key, String value) {
-        getEditor().putString(key, value);
+        SharedPreferences.Editor ed = getEditor();
+        ed.putString(key, value);
+        ed.commit();
     }
 
     /**
@@ -105,7 +107,9 @@ public final class Prefs {
      * @param value The value to be saved.
      */
     public static void putBoolean(String key, boolean value) {
-        getEditor().putBoolean(key, value);
+        SharedPreferences.Editor ed = getEditor();
+        ed.putBoolean(key, value);
+        ed.commit();
     }
 
     /**
@@ -115,7 +119,9 @@ public final class Prefs {
      * @param value The value to be saved.
      */
     public static void putInt(String key, int value) {
-        getEditor().putInt(key, value);
+        SharedPreferences.Editor ed = getEditor();
+        ed.putInt(key, value);
+        ed.commit();
     }
 
     /**
