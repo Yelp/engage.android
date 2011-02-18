@@ -134,6 +134,13 @@ public class JRUserInterfaceMaestro {
      */
     public void showAuthenticationDialog() {
         startActivity(JRProvidersActivity.class);
+
+        if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
+            mSessionData.setCurrentProviderByName(mSessionData.getReturningBasicProvider());
+            showUserLanding();
+        }
+
+
     }
 
     public void authenticationRestarted() {

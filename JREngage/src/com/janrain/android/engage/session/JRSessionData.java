@@ -279,6 +279,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mCurrentProvider = provider;
     }
 
+    public void setCurrentProviderByName(String providerName) {
+        Object provider = mAllProviders.get(providerName);
+        setCurrentProvider((JRProvider)provider);
+    }
+
     public ArrayList<JRProvider> getBasicProviders() {
         ArrayList<JRProvider> providerList = new ArrayList<JRProvider>();
         if ((mBasicProviders != null) && (mBasicProviders.size() > 0)) {

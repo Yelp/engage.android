@@ -223,6 +223,15 @@ public class JRProvidersActivity extends ListActivity {
         }
     }
 
+    public void onResume () {
+        super.onResume();
+
+//        if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
+//                    mSessionData.setCurrentProviderByName(mSessionData.getReturningBasicProvider());
+//                    JRUserInterfaceMaestro.getInstance().showUserLanding();
+//        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -230,10 +239,6 @@ public class JRProvidersActivity extends ListActivity {
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
-        }
-
-        if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
-            JRUserInterfaceMaestro.getInstance().showUserLanding();
         }
     }
 
@@ -317,5 +322,4 @@ public class JRProvidersActivity extends ListActivity {
         }
 
     }
-
 }
