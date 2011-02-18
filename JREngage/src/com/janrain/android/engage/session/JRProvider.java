@@ -82,6 +82,10 @@ public class JRProvider implements Serializable {
     private String mUserInput;      // <- across cached provider reloads
     private String mWelcomeString;  // <-
 
+    private boolean mForceReauth;
+    private String mUserInput;
+    private String mWelcomeString;
+    private JRDictionary socialSharingProperties;
     // ------------------------------------------------------------------------
     // INITIALIZERS
     // ------------------------------------------------------------------------
@@ -151,6 +155,8 @@ public class JRProvider implements Serializable {
 
     public void setForceReauth(boolean forceReauth) {
         this.mForceReauth = forceReauth;
+
+        Prefs.putBoolean(Prefs.KEY_JR_FORCE_REAUTH + this.mName, this.mForceReauth);
     }
 
     public String getUserInput() {
@@ -159,6 +165,8 @@ public class JRProvider implements Serializable {
 
     public void setUserInput(String userInput) {
         this.mUserInput = userInput;
+
+        Prefs.putString(Prefs.KEY_JR_USER_INPUT + this.mName, this.mUserInput);
     }
 
     public String getWelcomeString() {
@@ -167,49 +175,52 @@ public class JRProvider implements Serializable {
 
     public void setWelcomeString(String welcomeString) {
         this.mWelcomeString = welcomeString;
+
+        Prefs.putString(Prefs.KEY_JR_WELCOME_STRING + this.mName, this.mWelcomeString);
     }
 
     // ------------------------------------------------------------------------
     // METHODS
     // ------------------------------------------------------------------------
 	
-	public void initWithCoder(JRDictionary coder) {
-		mName = coder.getAsString(KEY_NAME);
-		mFriendlyName = coder.getAsString(KEY_FRIENDLY_NAME);
-		mPlaceholderText = coder.getAsString(KEY_PLACEHOLDER_TEXT);
-		mShortText = coder.getAsString(KEY_SHORT_TEXT);
-		mOpenIdentifier = coder.getAsString(KEY_OPENID_IDENTIFIER);
-		mUrl = coder.getAsString(KEY_URL);
-		mRequiresInput = coder.getAsBoolean(KEY_REQUIRES_INPUT);
-    }
- 
-    public void encodeWithCoder(JRDictionary coder) {
-		coder.put(KEY_NAME, mName);
-		coder.put(KEY_FRIENDLY_NAME, mFriendlyName);
-		coder.put(KEY_PLACEHOLDER_TEXT, mPlaceholderText);
-		coder.put(KEY_SHORT_TEXT, mShortText);
-		coder.put(KEY_OPENID_IDENTIFIER, mOpenIdentifier);
-		coder.put(KEY_URL, mUrl);
-		coder.put(KEY_REQUIRES_INPUT, mRequiresInput);
-    }
-    
-    public boolean isEqualToProvider(JRProvider provider) {
-    	boolean isEqual = false;
-    	if (provider != null) {
-    		isEqual = ((!TextUtils.isEmpty(mName)) && (mName.equals(provider.getName())));
-    	}
-    	return isEqual;
-    }
+//	public void initWithCoder(JRDictionary coder) {
+//		mName = coder.getAsString(KEY_NAME);
+//		mFriendlyName = coder.getAsString(KEY_FRIENDLY_NAME);
+//		mPlaceholderText = coder.getAsString(KEY_PLACEHOLDER_TEXT);
+//		mShortText = coder.getAsString(KEY_SHORT_TEXT);
+//		mOpenIdentifier = coder.getAsString(KEY_OPENID_IDENTIFIER);
+//		mUrl = coder.getAsString(KEY_URL);
+//		mRequiresInput = coder.getAsBoolean(KEY_REQUIRES_INPUT);
+//
+//        this.loadDynamicVariables();
+//    }
+//
+//    public void encodeWithCoder(JRDictionary coder) {
+//		coder.put(KEY_NAME, mName);
+//		coder.put(KEY_FRIENDLY_NAME, mFriendlyName);
+//		coder.put(KEY_PLACEHOLDER_TEXT, mPlaceholderText);
+//		coder.put(KEY_SHORT_TEXT, mShortText);
+//		coder.put(KEY_OPENID_IDENTIFIER, mOpenIdentifier);
+//		coder.put(KEY_URL, mUrl);
+//		coder.put(KEY_REQUIRES_INPUT, mRequiresInput);
+//    }
+//
+//    public boolean isEqualToProvider(JRProvider provider) {
+//    	boolean isEqual = false;
+//    	if (provider != null) {
+//    		isEqual = ((!TextUtils.isEmpty(mName)) && (mName.equals(provider.getName())));
+//    	}
+//    	return isEqual;
+//    }
     
     public boolean isEqualToReturningProvider(String returningProvider) {
     	return ((!TextUtils.isEmpty(mName)) && (mName.equals(returningProvider)));
     }
 
-    private void loadDynamicVariables() {
-    	mUserInput = Prefs.getAsString(Prefs.KEY_JR_USER_INPUT, "");
-    	mWelcomeString = Prefs.getAsString(Prefs.KEY_JR_WELCOME_STRING, "");
-    	// TODO: TBD: Is false the correct default value?
-    	mForceReauth = Prefs.getAsBoolean(Prefs.KEY_JR_FORCE_REAUTH, false);
+    public void loadDynamicVariables() {
+    	mUserInput = Prefs.getAsString(Prefs.KEY_JR_USER_INPUT + mName, "");
+    	mWelcomeString = Prefs.getAsString(Prefs.KEY_JR_WELCOME_STRING + mName, "");
+    	mForceReauth = Prefs.getAsBoolean(Prefs.KEY_JR_FORCE_REAUTH + mName, false);
     }
     
 }

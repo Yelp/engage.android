@@ -192,6 +192,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         // Load the list of all providers
         mAllProviders = JRDictionary.unarchive(ARCHIVE_ALL_PROVIDERS);
 
+        for (Object provider : mAllProviders.values()) {
+            ((JRProvider)provider).loadDynamicVariables();
+        }
+
         // Load the list of basic providers
         mBasicProviders = (ArrayList<String>)Archiver.load(ARCHIVE_BASIC_PROVIDERS);
         if (Config.LOGD) {
