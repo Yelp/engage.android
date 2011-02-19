@@ -296,6 +296,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     public String getReturningBasicProvider() {
+        if (mAlwaysForceReauth)
+            return null;
+
         return mReturningBasicProvider;
     }
 

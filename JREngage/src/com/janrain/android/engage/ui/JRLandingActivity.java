@@ -44,6 +44,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
@@ -112,6 +113,8 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
     private ImageView mImageView;
     private EditText mEditText;
 
+    private TextView mWelcomeLabel;
+
     private Button mLeftButton;     // iPhone: signInButton
     private Button mMiddleButton;   // iPhone: bigSignInButton
     private Button mRightButton;    // iPhone: backToProvidersButton
@@ -155,6 +158,8 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
         mImageView = (ImageView)findViewById(R.id.landing_logo);
         mEditText = (EditText)findViewById(R.id.landing_edit);
 
+        mWelcomeLabel = (TextView)findViewById(R.id.landing_welcome_label);
+
         mLeftButton = (Button)findViewById(R.id.landing_left_btn);
         mLeftButton.setOnClickListener(this);
         mMiddleButton = (Button)findViewById(R.id.landing_middle_btn);
@@ -191,13 +196,21 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
     }
 
     private void handlePrimaryButtonClick() {
-        String text = mEditText.getText().toString();
-        if (TextUtils.isEmpty(text)) {
-            showAlertDialog("Invalid Input",
-                    "The input you have entered is not valid. Please try again.");
-        } else {
+        if (mSessionData.getCurrentProvider().requiresInput())
+        {
+            String text = mEditText.getText().toString();
+            if (TextUtils.isEmpty(text)) {
+                showAlertDialog("Invalid Input",
+                        "The input you have entered is not valid. Please try again.");
+            } else {
+                showHideKeyboard(false);
+                mSessionData.getCurrentProvider().setUserInput(text);
+                JRUserInterfaceMaestro.getInstance().showWebView();
+            }
+        }
+        else
+        {
             showHideKeyboard(false);
-            mSessionData.getCurrentProvider().setUserInput(text);
             JRUserInterfaceMaestro.getInstance().showWebView();
         }
     }
@@ -256,33 +269,62 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
         mImageView.setImageResource(
                 ResourceHelper.providerNameToLogoResourceId(currentProvider.getName()));
 
-        if (currentProvider.requiresInput()) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[prepareUserInterface] current provider requires input");
-            }
 
-            String userInput = currentProvider.getUserInput();
-            if (!TextUtils.isEmpty(userInput)) {
-                mEditText.setText(userInput);
-                configureButtonVisibility(false);
+        if (currentProvider.getName().equals(mSessionData.getReturningBasicProvider())) {
+            configureButtonVisibility(false);
+
+            if (currentProvider.requiresInput()) {
+                if (Config.LOGD) {
+                    Log.d(TAG, "[prepareUserInterface] current provider requires input");
+                }
+
+                mEditText.setVisibility(View.VISIBLE);
+                mWelcomeLabel.setVisibility(View.GONE);
+
+                String userInput = currentProvider.getUserInput();
+                if (!TextUtils.isEmpty(userInput)) {
+                    mEditText.setText(userInput);
+                    //configureButtonVisibility(false);
+                } else { // Will probably never happen
+                    mEditText.setText("");
+                    configureButtonVisibility(true);
+                }
+
+                mEditText.setHint(currentProvider.getPlaceholderText());
+
             } else {
-                mEditText.setText("");
-                configureButtonVisibility(true);
+                if (Config.LOGD) {
+                    Log.d(TAG, "[prepareUserInterface] current provider doesn't require input");
+                }
+
+                mEditText.setVisibility(View.GONE);
+                mWelcomeLabel.setVisibility(View.VISIBLE);
+
+                mWelcomeLabel.setText(currentProvider.getWelcomeString());
             }
-
-            mEditText.setHint(currentProvider.getPlaceholderText());
-
-            // TODO:
-            // welcome label?
-            // forget user button?
-
         } else {
-            if (Config.LOGD) {
-                Log.d(TAG, "[prepareUserInterface] current provider does not require input");
-            }
+             configureButtonVisibility(true);
 
-            // TODO:
-            // Need to implement this.  Is this the table view?
+            if (currentProvider.requiresInput()) {
+                if (Config.LOGD) {
+                    Log.d(TAG, "[prepareUserInterface] current provider requires input");
+                }
+
+                mEditText.setVisibility(View.VISIBLE);
+                mWelcomeLabel.setVisibility(View.GONE);
+
+                String userInput = currentProvider.getUserInput();
+                if (!TextUtils.isEmpty(userInput)) {
+                    mEditText.setText(userInput);
+                } else {
+                    mEditText.setText("");
+                }
+
+                mEditText.setHint(currentProvider.getPlaceholderText());
+
+            } else { // Will never happen
+
+            }
         }
 
         return true;
