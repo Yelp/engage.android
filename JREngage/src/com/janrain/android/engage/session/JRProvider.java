@@ -30,6 +30,8 @@
 package com.janrain.android.engage.session;
 
 import android.text.TextUtils;
+import android.util.Config;
+import android.util.Log;
 import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
 
@@ -58,7 +60,7 @@ public class JRProvider implements Serializable {
 	public static final String KEY_URL = "url";
 	public static final String KEY_REQUIRES_INPUT = "requires_input";
 
-	
+
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
     // ------------------------------------------------------------------------
@@ -109,15 +111,15 @@ public class JRProvider implements Serializable {
     		} else {
     			mShortText = "";
     		}
-    		
+
     		loadDynamicVariables();
     	}
     }
-    
+
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
     // ------------------------------------------------------------------------
-    
+
     public String getName() {  /* (readonly) */
         return mName;
     }
@@ -161,6 +163,11 @@ public class JRProvider implements Serializable {
     }
 
     public void setUserInput(String userInput) {
+        if (Config.LOGD) {
+            Log.d("JRProvider", "[prov] user input: [" + Prefs.KEY_JR_USER_INPUT + mName + "]");
+            }
+
+
         this.mUserInput = userInput;
 
         Prefs.putString(Prefs.KEY_JR_USER_INPUT + this.mName, this.mUserInput);
@@ -179,7 +186,7 @@ public class JRProvider implements Serializable {
     // ------------------------------------------------------------------------
     // METHODS
     // ------------------------------------------------------------------------
-	
+
 //	public void initWithCoder(JRDictionary coder) {
 //		mName = coder.getAsString(KEY_NAME);
 //		mFriendlyName = coder.getAsString(KEY_FRIENDLY_NAME);
@@ -209,16 +216,20 @@ public class JRProvider implements Serializable {
 //    	}
 //    	return isEqual;
 //    }
-    
+
     public boolean isEqualToReturningProvider(String returningProvider) {
     	return ((!TextUtils.isEmpty(mName)) && (mName.equals(returningProvider)));
     }
 
     public void loadDynamicVariables() {
+        if (Config.LOGD) {
+            Log.d("JRProvider", "[prov] user input: [" + Prefs.KEY_JR_USER_INPUT + mName + "]");
+        }
+
     	mUserInput = Prefs.getAsString(Prefs.KEY_JR_USER_INPUT + mName, "");
     	mWelcomeString = Prefs.getAsString(Prefs.KEY_JR_WELCOME_STRING + mName, "");
     	mForceReauth = Prefs.getAsBoolean(Prefs.KEY_JR_FORCE_REAUTH + mName, false);
     }
-    
+
 }
 

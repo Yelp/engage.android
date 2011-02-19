@@ -34,6 +34,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
@@ -133,6 +134,13 @@ public class JRUserInterfaceMaestro {
      */
     public void showAuthenticationDialog() {
         startActivity(JRProvidersActivity.class);
+
+        if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
+            mSessionData.setCurrentProviderByName(mSessionData.getReturningBasicProvider());
+            showUserLanding();
+        }
+
+
     }
 
     public void authenticationRestarted() {
