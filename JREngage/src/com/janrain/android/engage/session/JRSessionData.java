@@ -32,6 +32,7 @@ package com.janrain.android.engage.session;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
+import android.webkit.CookieManager;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.JREngageError.AuthenticationError;
 import com.janrain.android.engage.JREngageError.ConfigurationError;
@@ -746,13 +747,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[saveLastUsedBasicProvider]");
         }
 
-        List<Cookie> cookies = CookieHelper.getCookiesByUrl(mBaseUrl);
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("welcome_info")) {
-                mCurrentProvider.setWelcomeString(
-                        getWelcomeMessageFromCookieString(cookie.getValue()));
-            }
-        }
+        //CookieHelper doesn't interact with our WebViews cookies :(
+        String cookies = CookieManager.getInstance().getCookie(getBaseUrl());
+        String welcome_info = cookies.replaceAll(".*welcome_info=([^;]*).*", "$1");
+        mCurrentProvider.setWelcomeString(getWelcomeMessageFromCookieString(welcome_info));
 
         mReturningBasicProvider = mCurrentProvider.getName();
         Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, mReturningBasicProvider);
