@@ -35,8 +35,8 @@
     <!--
        - JRLandingActivity strings.
       -->
-    <string name="landing_default_secondary_btn_text">Switch Accounts</string>
-    <string name="landing_default_primary_btn_text">Sign In</string>
+    <string name="landing_switch_account_button_text">Switch Accounts</string>
+    <string name="landing_signin_button_text">Sign In</string>
     <string name="landing_default_custom_title">Welcome Back!</string>
 
     <!--

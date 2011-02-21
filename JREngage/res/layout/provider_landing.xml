@@ -10,7 +10,7 @@
     >
 
     <!-- Header (title) area -->
-    <include layout="@layout/shared_header" />
+    <include android:id="@+id/header" layout="@layout/shared_header" />
 
     <!--
        - Bordered box/container.
@@ -20,7 +20,7 @@
     <LinearLayout
         android:id="@+id/landing_dialog"
         android:orientation="vertical"
-        android:layout_below="@+id/header"
+        android:layout_below="@id/header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -75,7 +75,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/landing_left_btn"
+                android:id="@+id/landing_switch_account_button"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -85,13 +85,13 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="4dp"
                 android:background="@drawable/sel_black_135x40"
-                android:text="@string/landing_default_secondary_btn_text"
+                android:text="@string/landing_switch_account_button_text"
                 android:textColor="#ffffffff"
                 android:textStyle="bold"
                 />
 
             <Button
-                android:id="@+id/landing_middle_btn"
+                android:id="@+id/landing_big_signin_button"
                 android:visibility="visible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,13 +101,13 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="4dp"
                 android:background="@drawable/sel_iosblue_280x40"
-                android:text="@string/landing_default_primary_btn_text"
+                android:text="@string/landing_signin_button_text"
                 android:textColor="#ffffffff"
                 android:textStyle="bold"
                 />
 
             <Button
-                android:id="@+id/landing_right_btn"
+                android:id="@+id/landing_small_signin_button"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="4dp"
                 android:background="@drawable/sel_iosblue_135x40"
-                android:text="@string/landing_default_primary_btn_text"
+                android:text="@string/landing_signin_button_text"
                 android:textColor="#ffffffff"
                 android:textStyle="bold"
                 />

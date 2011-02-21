@@ -132,7 +132,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	private ArrayList<JRSessionDelegate> mDelegates;
 	
 	private JRProvider mCurrentProvider;
-	private String mReturningBasicProvider;
+
+    private String mReturningBasicProvider;
 	private String mReturningSocialProvider;
 	
 	private JRDictionary mAllProviders;
@@ -157,7 +158,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private boolean mHidePoweredBy;
 
 	private boolean mAlwaysForceReauth;
-	private boolean mForceReauth;
+
+    private boolean mForceReauth;
 
 	private boolean mSocialSharing;
 	
@@ -264,6 +266,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mAlwaysForceReauth = force;
     }
 
+    public void setForceReauth(boolean mForceReauth) {
+        this.mForceReauth = mForceReauth;
+    }
+
     public String getTokenUrl() {
         return mTokenUrl;
     }
@@ -301,6 +307,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             return null;
 
         return mReturningBasicProvider;
+    }
+
+    public void setReturningBasicProvider(String mReturningBasicProvider) {
+        this.mReturningBasicProvider = mReturningBasicProvider;
     }
 
     public String getBaseUrl() {
@@ -747,7 +757,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[saveLastUsedBasicProvider]");
         }
 
-        //CookieHelper doesn't interact with our WebViews cookies :(
+        //CookieHelper doesn't interact with our WebView's cookies :(
         String cookies = CookieManager.getInstance().getCookie(getBaseUrl());
         String welcome_info = cookies.replaceAll(".*welcome_info=([^;]*).*", "$1");
         mCurrentProvider.setWelcomeString(getWelcomeMessageFromCookieString(welcome_info));
@@ -825,6 +835,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     private boolean weShouldBeFirstResponder() {
+        //todo this is confusing and could use documentation elaborating on, and clarifying it's role
         if (Config.LOGD) {
             Log.d(TAG, "[weShouldBeFirstResponder]");
         }
@@ -904,10 +915,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public JRProvider getProviderByName(String name) {
         return mAllProviders.getAsProvider(name);
-    }
-
-    private void setReturningBasicProviderToNull() {
-        mReturningBasicProvider = null;
     }
 
     private void shareActivityForUser(JRAuthenticatedUser user) {

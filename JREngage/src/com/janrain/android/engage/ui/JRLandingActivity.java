@@ -115,9 +115,9 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
 
     private TextView mWelcomeLabel;
 
-    private Button mLeftButton;     // iPhone: signInButton
-    private Button mMiddleButton;   // iPhone: bigSignInButton
-    private Button mRightButton;    // iPhone: backToProvidersButton
+    private Button mSwitchAccountButton;     // iPhone: signInButton
+    private Button mBigSigninButton;   // iPhone: bigSignInButton
+    private Button mSmallSigninButton;    // iPhone: backToProvidersButton
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -160,12 +160,12 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
 
         mWelcomeLabel = (TextView)findViewById(R.id.landing_welcome_label);
 
-        mLeftButton = (Button)findViewById(R.id.landing_left_btn);
-        mLeftButton.setOnClickListener(this);
-        mMiddleButton = (Button)findViewById(R.id.landing_middle_btn);
-        mMiddleButton.setOnClickListener(this);
-        mRightButton = (Button)findViewById(R.id.landing_right_btn);
-        mRightButton.setOnClickListener(this);
+        mSwitchAccountButton = (Button)findViewById(R.id.landing_switch_account_button);
+        mSwitchAccountButton.setOnClickListener(this);
+        mBigSigninButton = (Button)findViewById(R.id.landing_big_signin_button);
+        mBigSigninButton.setOnClickListener(this);
+        mSmallSigninButton = (Button)findViewById(R.id.landing_small_signin_button);
+        mSmallSigninButton.setOnClickListener(this);
 
         prepareUserInterface();
     }
@@ -188,9 +188,9 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
     }
 
     public void onClick(View view) {
-        if (view.equals(mRightButton) || view.equals(mMiddleButton)) {
+        if (view.equals(mSmallSigninButton) || view.equals(mBigSigninButton)) {
             handlePrimaryButtonClick();
-        } else if (view.equals(mLeftButton)) {
+        } else if (view.equals(mSwitchAccountButton)) {
             handleSecondaryButtonClick();
         }
     }
@@ -198,6 +198,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
     private void handlePrimaryButtonClick() {
         if (mSessionData.getCurrentProvider().requiresInput())
         {
+            //TODO validate OpenID URLs so they don't hang the WebView
             String text = mEditText.getText().toString();
             if (TextUtils.isEmpty(text)) {
                 showAlertDialog("Invalid Input",
@@ -216,7 +217,8 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
     }
 
     private void handleSecondaryButtonClick() {
-
+        mSessionData.setForceReauth(true); //todo lilli, is this the right behavior?
+        mSessionData.setReturningBasicProvider("");
     }
 
     private void showAlertDialog(String title, String message) {
@@ -332,13 +334,13 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
 
     private void configureButtonVisibility(boolean isSingleButtonLayout) {
         if (isSingleButtonLayout) {
-            mLeftButton.setVisibility(View.GONE);
-            mRightButton.setVisibility(View.GONE);
-            mMiddleButton.setVisibility(View.VISIBLE);
+            mSwitchAccountButton.setVisibility(View.GONE);
+            mSmallSigninButton.setVisibility(View.GONE);
+            mBigSigninButton.setVisibility(View.VISIBLE);
         } else {
-            mMiddleButton.setVisibility(View.GONE);
-            mLeftButton.setVisibility(View.VISIBLE);
-            mRightButton.setVisibility(View.VISIBLE);
+            mBigSigninButton.setVisibility(View.GONE);
+            mSwitchAccountButton.setVisibility(View.VISIBLE);
+            mSmallSigninButton.setVisibility(View.VISIBLE);
         }
     }
 
