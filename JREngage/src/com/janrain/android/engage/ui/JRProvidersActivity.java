@@ -98,7 +98,8 @@ public class JRProvidersActivity extends ListActivity {
             if (v == null) {
                 LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = li.inflate(mResourceId, null);
-            }
+                Log.i(TAG, "[getView] with null converView");
+            } else Log.i(TAG, "[getView] with non null convertView");
 
             JRProvider provider = mItems.get(position);
             if (provider != null) {
