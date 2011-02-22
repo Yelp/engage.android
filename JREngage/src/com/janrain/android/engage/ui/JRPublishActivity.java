@@ -30,9 +30,11 @@
 package com.janrain.android.engage.ui;
 
 import android.app.Activity;
+import android.app.TabActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Config;
@@ -51,7 +53,7 @@ import java.util.Set;
 /**
  * Publishing UI
  */
-public class JRPublishActivity extends Activity
+public class JRPublishActivity extends TabActivity
         implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     // ------------------------------------------------------------------------
@@ -171,12 +173,13 @@ public class JRPublishActivity extends Activity
     
     private JRActivityObject mActivityObject;
 
-    private Spinner mSpinner;
+//    private Spinner mSpinner;
 
     private RelativeLayout mMediaContentView;
     private ImageView mProviderIcon;
     private LinearLayout mShareButtonContainer;
     private Button mShareButton;
+
 
 
     // ------------------------------------------------------------------------
@@ -209,15 +212,47 @@ public class JRPublishActivity extends Activity
 
         mLayoutHelper = new SharedLayoutHelper(this);
 
-        mSpinner = (Spinner) findViewById(R.id.provider_spinner);
+//        mSpinner = (Spinner) findViewById(R.id.provider_spinner);
 
-        Set<String> keySet = PROVIDER_MAP.keySet();
-        String[] keyArray = keySet.toArray(new String[keySet.size()]);
+//        Set<String> keySet = PROVIDER_MAP.keySet();
+//        String[] keyArray = keySet.toArray(new String[keySet.size()]);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, keyArray);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinner.setAdapter(adapter);
-        mSpinner.setOnItemSelectedListener(this);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, keyArray);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        mSpinner.setAdapter(adapter);
+//        mSpinner.setOnItemSelectedListener(this);
+
+
+
+        Resources res = getResources(); // Resource object to get Drawables
+        TabHost tabHost = getTabHost();  // The activity TabHost
+        TabHost.TabSpec spec;  // Resusable TabSpec for each tab
+        //Intent intent;  // Reusable Intent for each tab
+
+        // Create an Intent to launch an Activity for the tab (to be reused)
+        //intent = new Intent().setClass(this, ArtistsActivity.class);
+
+        // Initialize a TabSpec for each tab and add it to the TabHost
+        spec = tabHost.newTabSpec("facebook").setIndicator("Facebook",
+                          res.getDrawable(R.drawable.ic_facebook_tab))
+                      .setContent(R.id.tab_view_content);
+        tabHost.addTab(spec);
+
+        // Do the same for the other tabs
+        //intent = new Intent().setClass(this, AlbumsActivity.class);
+        spec = tabHost.newTabSpec("twitter").setIndicator("Twitter",
+                          res.getDrawable(R.drawable.ic_twitter_tab))
+                      .setContent(R.id.tab_view_content);
+        tabHost.addTab(spec);
+
+//    intent = new Intent().setClass(this, SongsActivity.class);
+//    spec = tabHost.newTabSpec("songs").setIndicator("Songs",
+//                      res.getDrawable(R.drawable.ic_tab_songs))
+//                  .setContent(intent);
+//    tabHost.addTab(spec);
+
+        tabHost.setCurrentTab(0);
+
 
         if (mSessionData.getHidePoweredBy()) {
             TextView poweredBy = (TextView)findViewById(R.id.powered_by_text);

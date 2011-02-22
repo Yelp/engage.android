@@ -3,176 +3,212 @@
 <!--
    - Layout for JRPublishActivity
   -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/tabhost"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
 
-    <!-- Header (title) area -->
-    <include layout="@layout/shared_header" />
-
-    <LinearLayout
-        android:id="@+id/provider_toolbar"
+    <RelativeLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/header"
-        android:padding="4dip"
-        android:background="#FF333333"
-        >
+        android:layout_height="fill_parent"
+        android:padding="5dp">
 
-        <TextView
+        <!-- Header (title) area -->
+        <include layout="@layout/shared_header" />
+
+
+        <TabWidget
+            android:id="@android:id/tabs"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dip"
-            android:text="@string/provider_spinner_prompt"
-            android:textColor="#ffffffff"
+            android:layout_below="@id/header"
             />
 
-        <Spinner
-            android:id="@+id/provider_spinner"
+        <FrameLayout
+            android:id="@android:id/tabcontent"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dip"
-            android:layout_marginBottom="5dip"
-            android:prompt="@string/provider_spinner_prompt"
-            />
+            android:layout_height="fill_parent"
+            android:layout_below="@id/header"
+            android:padding="5dp"/>
 
-    </LinearLayout>
+            <RelativeLayout
+                android:id="@+id/tab_view_content"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                >
 
-    <EditText
-        android:id="@+id/edit_comment"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/provider_toolbar"
-        android:layout_marginTop="10dip"
-        android:layout_marginRight="7dip"
-        android:layout_marginLeft="7dip"
-        android:gravity="top|left"
-        android:lines="5"
-        />
+                <!--
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:id="@+id/provider_toolbar"
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/header"
+                    android:padding="4dip"
+                    android:background="#FF333333"
+                    >
 
-    <RelativeLayout
-        android:id="@+id/media_content_view"
-        android:layout_width="fill_parent"
-        android:layout_height="120dip"
-        android:layout_below="@id/edit_comment"
-        android:layout_marginTop="10dip"
-        android:layout_marginRight="7dip"
-        android:layout_marginLeft="7dip"
-        android:gravity="top|left"
-        android:background="@drawable/bg_provider_activity_info"
-        >
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_marginTop="5dip"
+                        android:text="@string/provider_spinner_prompt"
+                        android:textColor="#ffffffff"
+                        />
 
-        <ImageView
-            android:id="@+id/media_content_image"
-            android:layout_width="60dip"
-            android:layout_height="60dip"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="5dip"
-            android:src="@drawable/media60x60"
-            />
+                    <Spinner
+                        android:id="@+id/provider_spinner"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dip"
+                        android:layout_marginBottom="5dip"
+                        android:prompt="@string/provider_spinner_prompt"
+                        />
 
-        <TextView
-            android:id="@+id/media_content_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dip"
-            android:layout_marginRight="5dip"
-            android:layout_marginBottom="1dip"
-            android:layout_marginLeft="5dip"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@id/media_content_image"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-            android:textStyle="bold"
-            />
+                </LinearLayout>
+                -->
 
-        <!--
-           - NOTE:  In order to get the text to extend more than two lines, had to use the 'inputType=...'
-           -        property.  Unfortunately, doing so breaks the ellipsize function.  Android BUG.
-          -->
-        <TextView
-            android:id="@+id/media_content_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dip"
-            android:layout_marginRight="5dip"
-            android:layout_marginBottom="0dip"
-            android:layout_marginLeft="5dip"
-            android:layout_below="@id/media_content_title"
-            android:layout_toRightOf="@id/media_content_image"
-            android:inputType="textMultiLine"
-            android:ellipsize="end"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ultrices tincidunt neque et fringilla. Quisque a dignissim tellus. Duis bibendum sem vitae tortor accumsan sagittis. Quisque mattis lacinia sapien, quis bibendum erat tempor at. Vivamus malesuada, est ut malesuada fringilla, libero erat bibendum nibh, a consequat orci nisl gravida magna. Vivamus sagittis cursus mauris, sed imperdiet orci placerat at. Nunc ac mollis lorem. Praesent ac ante a nibh semper elementum. Vivamus in massa est, eu laoreet justo. Etiam molestie consequat tortor, vitae bibendum felis imperdiet nec. Praesent semper risus vitae augue lobortis aliquet. Proin blandit, sapien eu feugiat elementum, ante."
-            android:textStyle="normal"
-            />
+                <!--android:layout_below="@id/provider_toolbar"-->
+                <EditText
+                    android:id="@+id/edit_comment"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dip"
+                    android:layout_marginRight="7dip"
+                    android:layout_marginLeft="7dip"
+                    android:gravity="top|left"
+                    android:lines="5"
+                    />
+
+                <RelativeLayout
+                    android:id="@+id/media_content_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="120dip"
+                    android:layout_below="@id/edit_comment"
+                    android:layout_marginTop="10dip"
+                    android:layout_marginRight="7dip"
+                    android:layout_marginLeft="7dip"
+                    android:gravity="top|left"
+                    android:background="@drawable/bg_provider_activity_info"
+                    >
+
+                    <ImageView
+                        android:id="@+id/media_content_image"
+                        android:layout_width="60dip"
+                        android:layout_height="60dip"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_margin="5dip"
+                        android:src="@drawable/media60x60"
+                        />
+
+                    <TextView
+                        android:id="@+id/media_content_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="0dip"
+                        android:layout_marginRight="5dip"
+                        android:layout_marginBottom="1dip"
+                        android:layout_marginLeft="5dip"
+                        android:layout_alignParentTop="true"
+                        android:layout_toRightOf="@id/media_content_image"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+                        android:textStyle="bold"
+                        />
+
+                    <!--
+                       - NOTE:  In order to get the text to extend more than two lines, had to use the 'inputType=...'
+                       -        property.  Unfortunately, doing so breaks the ellipsize function.  Android BUG.
+                      -->
+                    <TextView
+                        android:id="@+id/media_content_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dip"
+                        android:layout_marginRight="5dip"
+                        android:layout_marginBottom="0dip"
+                        android:layout_marginLeft="5dip"
+                        android:layout_below="@id/media_content_title"
+                        android:layout_toRightOf="@id/media_content_image"
+                        android:inputType="textMultiLine"
+                        android:ellipsize="end"
+                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ultrices tincidunt neque et fringilla. Quisque a dignissim tellus. Duis bibendum sem vitae tortor accumsan sagittis. Quisque mattis lacinia sapien, quis bibendum erat tempor at. Vivamus malesuada, est ut malesuada fringilla, libero erat bibendum nibh, a consequat orci nisl gravida magna. Vivamus sagittis cursus mauris, sed imperdiet orci placerat at. Nunc ac mollis lorem. Praesent ac ante a nibh semper elementum. Vivamus in massa est, eu laoreet justo. Etiam molestie consequat tortor, vitae bibendum felis imperdiet nec. Praesent semper risus vitae augue lobortis aliquet. Proin blandit, sapien eu feugiat elementum, ante."
+                        android:textStyle="normal"
+                        />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/powered_by_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_above="@+id/share_button_container"
+                    android:layout_marginLeft="7dip"
+                    android:layout_marginBottom="10dip"
+                    android:singleLine="true"
+                    android:text="@string/powered_by"
+                    android:textColor="#ffdedede"
+                    android:textStyle="normal"
+                    android:paddingRight="6dip"
+                    />
+
+                <ImageView
+                    android:id="@+id/provider_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_above="@+id/share_button_container"
+                    android:layout_marginRight="7dip"
+                    android:layout_marginBottom="10dip"
+                    android:src="@drawable/icon_facebook_30x30"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/share_button_container"
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="top|center_horizontal"
+                    android:paddingTop="0dip"
+                    android:paddingBottom="22dip"
+                    android:background="#333b5999"
+                    >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/triangle_icon"
+                        />
+
+                    <Button
+                        android:id="@+id/share_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="4dp"
+                        android:background="@drawable/sel_iosblue_280x40"
+                        android:text="Connect and Share"
+                        android:textSize="20dip"
+                        android:textColor="#ffffffff"
+                        android:textStyle="bold"
+                        />
+                </LinearLayout>
+
+            </RelativeLayout>>
+
+        <!--/FrameLayout-->
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/powered_by_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_above="@+id/share_button_container"
-        android:layout_marginLeft="7dip"
-        android:layout_marginBottom="10dip"
-        android:singleLine="true"
-        android:text="@string/powered_by"
-        android:textColor="#ffdedede"
-        android:textStyle="normal"
-        android:paddingRight="6dip"
-        />
-
-    <ImageView
-        android:id="@+id/provider_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_above="@+id/share_button_container"
-        android:layout_marginRight="7dip"
-        android:layout_marginBottom="10dip"
-        android:src="@drawable/icon_facebook_30x30"
-        />
-
-    <LinearLayout
-            android:id="@+id/share_button_container"
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:gravity="top|center_horizontal"
-            android:paddingTop="0dip"
-            android:paddingBottom="22dip"
-            android:background="#333b5999"
-            >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/triangle_icon"
-            />
-
-        <Button
-            android:id="@+id/share_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:gravity="center_horizontal|center_vertical"
-            android:layout_marginTop="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:background="@drawable/sel_iosblue_280x40"
-            android:text="Connect and Share"
-            android:textSize="20dip"
-            android:textColor="#ffffffff"
-            android:textStyle="bold"
-            />
-
-    </LinearLayout>
-
-</RelativeLayout>
+</TabHost>
