@@ -262,6 +262,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
             mSessionData.triggerAuthenticationDidFail(error);
 
             // TODO:  toast or error dialog???
+            // call finish?
 
             return false;
         }

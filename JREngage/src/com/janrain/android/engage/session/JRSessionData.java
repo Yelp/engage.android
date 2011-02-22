@@ -1017,6 +1017,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[triggerAuthenticationDidFailWithError]");
         }
 
+        //todo if we've reached this point from JRLandingActivity.prepareUserInterface mCurrentProvider will definitely
+        //be null and this will raise a null pointer exception.
         String providerName = mCurrentProvider.getName();
 
         //mCurrentProvider = null;
