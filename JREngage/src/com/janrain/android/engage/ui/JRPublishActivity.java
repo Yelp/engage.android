@@ -48,13 +48,14 @@ import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRActivityObject;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * Publishing UI
  */
 public class JRPublishActivity extends TabActivity
-        implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+        implements View.OnClickListener, AdapterView.OnItemSelectedListener, TabHost.OnTabChangeListener {
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -222,8 +223,7 @@ public class JRPublishActivity extends TabActivity
 //        mSpinner.setAdapter(adapter);
 //        mSpinner.setOnItemSelectedListener(this);
 
-
-
+        configureTabs();
 
         if (mSessionData.getHidePoweredBy()) {
             TextView poweredBy = (TextView)findViewById(R.id.powered_by_text);
@@ -277,34 +277,61 @@ public class JRPublishActivity extends TabActivity
     // AdapterView.OnItemSelectedListener
     //
 
+    private static final Map<String, Integer> icon_resources = new HashMap<String, Integer>(){
+       {
+           put("facebook", R.drawable.ic_facebook_tab);
+           put("linkedin", R.drawable.ic_linkedin_tab);
+           put("myspace", R.drawable.ic_myspace_tab);
+           put("twitter", R.drawable.ic_twitter_tab);
+           put("yahoo", R.drawable.ic_yahoo_tab);
+       }
+    };
+
     private void configureTabs() {
+
+        // TODO: If no providers
+
 
         Resources res = getResources(); // Resource object to get Drawables
         TabHost tabHost = getTabHost();  // The activity TabHost
         TabHost.TabSpec spec;  // Resusable TabSpec for each tab
 
-        for (String providerName : mSessionData.)
+        int currentIndex = 0, indexOfLastUsedProvider = 0;
+        for (JRProvider provider : mSessionData.getSocialProviders())
+        {
+            // TODO: If provider is NULL
+            
+            spec = tabHost.newTabSpec(provider.getName()).setIndicator(provider.getFriendlyName(),
+                              res.getDrawable(icon_resources.get(provider.getName())))
+                          .setContent(R.id.tab_view_content);
+            tabHost.addTab(spec);
 
-        // Initialize a TabSpec for each tab and add it to the TabHost
-        spec = tabHost.newTabSpec("facebook").setIndicator("Facebook",
-                          res.getDrawable(R.drawable.ic_facebook_tab))
-                      .setContent(R.id.tab_view_content);
-        tabHost.addTab(spec);
+            if (provider.getName().equals(mSessionData.getReturningSocialProvider()))
+                indexOfLastUsedProvider = currentIndex;
 
-        // Do the same for the other tabs
-        //intent = new Intent().setClass(this, AlbumsActivity.class);
-        spec = tabHost.newTabSpec("twitter").setIndicator("Twitter",
-                          res.getDrawable(R.drawable.ic_twitter_tab))
-                      .setContent(R.id.tab_view_content);
-        tabHost.addTab(spec);
+            currentIndex++;
+        }
 
-//    intent = new Intent().setClass(this, SongsActivity.class);
-//    spec = tabHost.newTabSpec("songs").setIndicator("Songs",
-//                      res.getDrawable(R.drawable.ic_tab_songs))
-//                  .setContent(intent);
-//    tabHost.addTab(spec);
+        tabHost.setCurrentTab(indexOfLastUsedProvider);
 
-        tabHost.setCurrentTab(0);
+        tabHost.setOnTabChangedListener(this);
+    }
+
+    public void onTabChanged(String tabId) {
+        Log.d(TAG, "[onTabChange]: " + tabId);
+
+        mSessionData.setCurrentProviderByName(tabId);
+
+        mSelectedProvider = mSessionData.getCurrentProvider();
+
+        String can_share_media = (String)mSelectedProvider.getSocialSharingProperties().get("can_share_media");
+
+        if (can_share_media.equals("YES"))
+            mMediaContentView.setVisibility(View.VISIBLE);
+        else
+            mMediaContentView.setVisibility(View.GONE);
+
+
 
     }
 

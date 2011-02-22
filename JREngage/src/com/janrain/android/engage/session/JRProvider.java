@@ -148,6 +148,10 @@ public class JRProvider implements Serializable {
         return mUrl;
     }
 
+    public JRDictionary getSocialSharingProperties() { /* (readonly) */
+        return socialSharingProperties;
+    }
+
     public boolean getForceReauth() {
         return mForceReauth;
     }
