@@ -238,6 +238,8 @@ public class JRPublishActivity extends TabActivity
         mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
         mShareButton = (Button) findViewById(R.id.share_button);
         mShareButton.setOnClickListener(this);
+
+        configureTabs();
     }
 
     @Override
@@ -283,7 +285,7 @@ public class JRPublishActivity extends TabActivity
         TabHost tabHost = getTabHost();  // The activity TabHost
         TabHost.TabSpec spec;  // Resusable TabSpec for each tab
 
-        for (String providerName : mSessionData.)
+        //for (String providerName : mSessionData.)
 
         // Initialize a TabSpec for each tab and add it to the TabHost
         spec = tabHost.newTabSpec("facebook").setIndicator("Facebook",
