@@ -224,35 +224,6 @@ public class JRPublishActivity extends TabActivity
 
 
 
-        Resources res = getResources(); // Resource object to get Drawables
-        TabHost tabHost = getTabHost();  // The activity TabHost
-        TabHost.TabSpec spec;  // Resusable TabSpec for each tab
-        //Intent intent;  // Reusable Intent for each tab
-
-        // Create an Intent to launch an Activity for the tab (to be reused)
-        //intent = new Intent().setClass(this, ArtistsActivity.class);
-
-        // Initialize a TabSpec for each tab and add it to the TabHost
-        spec = tabHost.newTabSpec("facebook").setIndicator("Facebook",
-                          res.getDrawable(R.drawable.ic_facebook_tab))
-                      .setContent(R.id.tab_view_content);
-        tabHost.addTab(spec);
-
-        // Do the same for the other tabs
-        //intent = new Intent().setClass(this, AlbumsActivity.class);
-        spec = tabHost.newTabSpec("twitter").setIndicator("Twitter",
-                          res.getDrawable(R.drawable.ic_twitter_tab))
-                      .setContent(R.id.tab_view_content);
-        tabHost.addTab(spec);
-
-//    intent = new Intent().setClass(this, SongsActivity.class);
-//    spec = tabHost.newTabSpec("songs").setIndicator("Songs",
-//                      res.getDrawable(R.drawable.ic_tab_songs))
-//                  .setContent(intent);
-//    tabHost.addTab(spec);
-
-        tabHost.setCurrentTab(0);
-
 
         if (mSessionData.getHidePoweredBy()) {
             TextView poweredBy = (TextView)findViewById(R.id.powered_by_text);
@@ -305,6 +276,37 @@ public class JRPublishActivity extends TabActivity
     //
     // AdapterView.OnItemSelectedListener
     //
+
+    private void configureTabs() {
+
+        Resources res = getResources(); // Resource object to get Drawables
+        TabHost tabHost = getTabHost();  // The activity TabHost
+        TabHost.TabSpec spec;  // Resusable TabSpec for each tab
+
+        for (String providerName : mSessionData.)
+
+        // Initialize a TabSpec for each tab and add it to the TabHost
+        spec = tabHost.newTabSpec("facebook").setIndicator("Facebook",
+                          res.getDrawable(R.drawable.ic_facebook_tab))
+                      .setContent(R.id.tab_view_content);
+        tabHost.addTab(spec);
+
+        // Do the same for the other tabs
+        //intent = new Intent().setClass(this, AlbumsActivity.class);
+        spec = tabHost.newTabSpec("twitter").setIndicator("Twitter",
+                          res.getDrawable(R.drawable.ic_twitter_tab))
+                      .setContent(R.id.tab_view_content);
+        tabHost.addTab(spec);
+
+//    intent = new Intent().setClass(this, SongsActivity.class);
+//    spec = tabHost.newTabSpec("songs").setIndicator("Songs",
+//                      res.getDrawable(R.drawable.ic_tab_songs))
+//                  .setContent(intent);
+//    tabHost.addTab(spec);
+
+        tabHost.setCurrentTab(0);
+
+    }
 
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         String selected = parent.getItemAtPosition(pos).toString();
