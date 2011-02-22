@@ -166,8 +166,6 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
         mBigSigninButton.setOnClickListener(this);
         mSmallSigninButton = (Button)findViewById(R.id.landing_small_signin_button);
         mSmallSigninButton.setOnClickListener(this);
-
-        prepareUserInterface();
     }
 
     @Override
@@ -178,6 +176,8 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
+
+        prepareUserInterface();
     }
 
     @Override
@@ -217,8 +217,10 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
     }
 
     private void handleSecondaryButtonClick() {
-        mSessionData.setForceReauth(true); //todo lilli, is this the right behavior?
+        Log.i(TAG, "[handleSecondaryButtonClick]");
+        mSessionData.getCurrentProvider().setForceReauth(true);
         mSessionData.setReturningBasicProvider("");
+        finish();
     }
 
     private void showAlertDialog(String title, String message) {

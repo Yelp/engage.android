@@ -834,24 +834,25 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return url;
     }
 
+    /* This function is used to determine whether the library should retain first responderness for the
+     * UI purposes of making sure that the on screen keyboard stays on screen
     private boolean weShouldBeFirstResponder() {
-        //todo this is confusing and could use documentation elaborating on, and clarifying it's role
         if (Config.LOGD) {
             Log.d(TAG, "[weShouldBeFirstResponder]");
         }
 
         /* If we're authenticating with a provider for social publishing, then don't worry about the return experience
-         * for basic authentication. */
+         * for basic authentication. *//*
         if (mSocialSharing)
             return mCurrentProvider.requiresInput();
 
         /* If we're authenticating with a basic provider, then we don't need to gather infomation if we're displaying
-         * return screen. */
+         * return screen. *//*
         if (mCurrentProvider.isEqualToReturningProvider(mReturningBasicProvider))
             return false;
 
         return mCurrentProvider.requiresInput();
-    }
+    }*/
 
     private JRAuthenticatedUser authenticatedUserForProvider(JRProvider provider) {
         if (Config.LOGD) {
