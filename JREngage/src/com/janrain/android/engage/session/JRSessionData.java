@@ -302,6 +302,17 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return providerList;
     }
 
+    public ArrayList<JRProvider> getSocialProviders() {
+        ArrayList<JRProvider> providerList = new ArrayList<JRProvider>();
+        if ((mSocialProviders != null) && (mSocialProviders.size() > 0)) {
+            for (String name : mSocialProviders) {
+                JRProvider provider = mAllProviders.getAsProvider(name);
+                providerList.add(provider);
+            }
+        }
+        return providerList;
+    }
+
     public String getReturningBasicProvider() {
         if (mAlwaysForceReauth)
             return null;
@@ -312,6 +323,15 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     public void setReturningBasicProvider(String mReturningBasicProvider) {
         this.mReturningBasicProvider = mReturningBasicProvider;
     }
+
+    public String getReturningSocialProvider() {
+            return mReturningSocialProvider;
+    }
+
+    public void setReturningSocialProvider(String mReturningSocialProvider) {
+        this.mReturningSocialProvider = mReturningSocialProvider;
+    }
+
 
     public String getBaseUrl() {
         return mBaseUrl;
@@ -680,7 +700,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         /* If the configuration for this rp has changed, the etag will have changed, and we need
          * to update our current configuration information. */
         String oldEtag = Prefs.getAsString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
-        if (!oldEtag.equals(etag)) {
+        //todo implement git commit checking for cache reloading
+        if (!oldEtag.equals(etag) || true) {
             mNewEtag = etag;
 
             /* We can only update all of our data if the UI isn't currently using that

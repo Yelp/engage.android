@@ -29,11 +29,13 @@
 */
 package com.janrain.android.engage.session;
 
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
+import sun.tools.tree.ThisExpression;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -83,11 +85,15 @@ public class JRProvider implements Serializable {
     private boolean mForceReauth;   // <- these three user parameters get preserved
     private String mUserInput;      // <- across cached provider reloads
     private String mWelcomeString;  // <-
-    private JRDictionary socialSharingProperties;
+    private JRDictionary mSocialSharingProperties;
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
     // ------------------------------------------------------------------------
+
+    {
+        Log.d(null, "");
+    }
 
     // ------------------------------------------------------------------------
     // CONSTRUCTORS
@@ -113,6 +119,8 @@ public class JRProvider implements Serializable {
     		}
 
     		loadDynamicVariables();
+
+            mSocialSharingProperties = dictionary.getAsDictionary("social_sharing_properties");
     	}
     }
 
@@ -146,6 +154,10 @@ public class JRProvider implements Serializable {
 
     public String getUrl() { /* (readonly) */
         return mUrl;
+    }
+
+    public JRDictionary getSocialSharingProperties() { /* (readonly) */
+        return mSocialSharingProperties;
     }
 
     public boolean getForceReauth() {
