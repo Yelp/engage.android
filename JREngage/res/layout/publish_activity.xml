@@ -9,30 +9,25 @@
     android:layout_height="fill_parent"
     >
 
-    <RelativeLayout
+    <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:padding="5dp">
+        >
 
-        <!-- Header (title) area -->
         <include layout="@layout/shared_header" />
-
 
         <TabWidget
             android:id="@android:id/tabs"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/header"
-            android:divider="#00000000"
             />
 
         <FrameLayout
             android:id="@android:id/tabcontent"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_below="@android:id/tabs"
-            android:padding="5dp">
+            >
 
             <RelativeLayout
                 android:id="@+id/tab_view_content"
@@ -41,38 +36,6 @@
                 android:layout_height="fill_parent"
                 >
 
-                <!--
-                <LinearLayout
-                    android:layout_height="wrap_content"
-                    android:id="@+id/provider_toolbar"
-                    android:orientation="vertical"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/header"
-                    android:padding="4dip"
-                    android:background="#FF333333"
-                    >
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_marginTop="5dip"
-                        android:text="@string/provider_spinner_prompt"
-                        android:textColor="#ffffffff"
-                        />
-
-                    <Spinner
-                        android:id="@+id/provider_spinner"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dip"
-                        android:layout_marginBottom="5dip"
-                        android:prompt="@string/provider_spinner_prompt"
-                        />
-
-                </LinearLayout>
-                -->
-
-                <!--android:layout_below="@id/provider_toolbar"-->
                 <EditText
                     android:id="@+id/edit_comment"
                     android:layout_width="fill_parent"
@@ -81,14 +44,24 @@
                     android:layout_marginRight="7dip"
                     android:layout_marginLeft="7dip"
                     android:gravity="top|left"
-                    android:lines="5"
+                    android:lines="4"
+                    />
+
+                <TextView
+                    android:id="@+id/character_count_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/edit_comment"
+                    android:singleLine="true"
+                    android:textColor="#ff333333"
                     />
 
                 <RelativeLayout
                     android:id="@+id/media_content_view"
                     android:layout_width="fill_parent"
                     android:layout_height="120dip"
-                    android:layout_below="@id/edit_comment"
+                    android:layout_below="@id/character_count_view"
                     android:layout_marginTop="10dip"
                     android:layout_marginRight="7dip"
                     android:layout_marginLeft="7dip"
@@ -210,6 +183,6 @@
 
         </FrameLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </TabHost>

@@ -50,7 +50,6 @@ import com.janrain.android.engage.types.JRProviderList;
 import com.janrain.android.engage.utils.Archiver;
 import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.StringUtils;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.util.EncodingUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -90,7 +89,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     private static final String FMT_CONFIG_URL =
             "%s/openid/mobile_config_and_baseurl?appId=%s&device=android";
-    
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -325,7 +323,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     public String getReturningSocialProvider() {
-            return mReturningSocialProvider;
+        return mReturningSocialProvider;
     }
 
     public void setReturningSocialProvider(String mReturningSocialProvider) {

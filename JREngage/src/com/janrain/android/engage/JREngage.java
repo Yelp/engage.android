@@ -465,16 +465,17 @@ public class JREngage implements JRSessionDelegate {
 //                return;
 //            }
 //        }
-//
-//        if (activity == null) {
-//            engageDidFailWithError(new JREngageError(
-//                    "Activity object cannot be null",
-//                    JREngageError.SocialPublishingError.ACTIVITY_NIL,
-//                    JREngageError.ErrorType.PUBLISH_FAILED
-//            ));
-//        }
-//
-//        mSessionData.setActivity(activity);
+
+
+        if (activity == null) {
+            engageDidFailWithError(new JREngageError(
+                    "Activity object cannot be null",
+                    JREngageError.SocialPublishingError.ACTIVITY_NIL,
+                    JREngageError.ErrorType.PUBLISH_FAILED
+            ));
+        }
+
+        mSessionData.setActivity(activity);
 
         mInterfaceMaestro.showPublishingDialogWithActivity();
     }
