@@ -224,7 +224,8 @@ public class JRActivityObject {
         mActionLinks = actionLinks;
     }
 
-    public void addActionLink(JRActionLink al) {
+    public void setActionLink(JRActionLink al) {
+        mActionLinks = new ArrayList<JRActionLink>();
         mActionLinks.add(al);
     }
 
@@ -236,7 +237,8 @@ public class JRActivityObject {
         mMedia = media;
     }
 
-    public void addJRMediaObject(JRMediaObject mo) {
+    public void setMedia(JRMediaObject mo) {
+        mMedia = new ArrayList<JRMediaObject>();
         mMedia.add(mo);
     }
 

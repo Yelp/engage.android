@@ -31,10 +31,13 @@ package com.janrain.android.simpledemo;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.TextUtils;
+import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -44,6 +47,7 @@ import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.types.JRImageMediaObject;
 import com.janrain.android.engage.ui.JRLandingActivity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,7 +72,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     private Button mBtnTestAuth;
     private Button mBtnTestPub;
     private Button mBtnTestLand;
-    String titleText, linkText, descriptionText;
+    String titleText, linkText, descriptionText, imageUrl;
 
     /** Called when the activity is first created. */
     @Override
@@ -96,13 +100,21 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                     Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
                     Element rss = (Element) d.getElementsByTagName("rss").item(0);
                     Element channel = (Element) rss.getElementsByTagName("channel").item(0);
-                    Element item = (Element) channel.getElementsByTagName("item").item(0);
+                    Element item = (Element) channel.getElementsByTagName("item").item(1);
                     Element title = (Element) item.getElementsByTagName("title").item(0);
                     Element link = (Element) item.getElementsByTagName("link").item(0);
                     Element description = (Element) item.getElementsByTagName("description").item(0);
+
                     titleText = title.getFirstChild().getNodeValue();
                     linkText = link.getFirstChild().getNodeValue();
                     descriptionText = description.getFirstChild().getNodeValue();
+
+//                    Html.fromHtml(Html.fromHtml(descriptionText).toString(), new Html.ImageGetter() {
+//                        public Drawable getDrawable(String s) {
+//                            imageUrl = s;
+//                            return null;
+//                        }
+//                    }, null);
                 } catch (Exception e) { throw new RuntimeException(e); }
                 return null;
             }
@@ -119,6 +131,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         } else if (view == mBtnTestPub) {
             JRActivityObject jra = new JRActivityObject(titleText, linkText);
             jra.setDescription(descriptionText);
+            //jra.setMedia(new JRImageMediaObject(imageUrl, ""));
             mEngage.showSocialPublishingDialogWithActivity(jra);
         } else if (view == mBtnTestLand) {
             Intent intent = new Intent(this, JRLandingActivity.class);

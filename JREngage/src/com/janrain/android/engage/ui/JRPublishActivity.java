@@ -358,9 +358,10 @@ public class JRPublishActivity extends TabActivity
         onTabChanged(tabHost.getCurrentTabTag());
     }
 
-    /**
-     * populates the UI elements with the properties of the activity object
-     */
+    //
+    //populates the UI elements with the properties of the activity object
+    //
+
     private void loadActivityObjectToView() {
         // TODO:  check "hasEditedUserContentForActivityAlready"
 
