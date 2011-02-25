@@ -118,7 +118,6 @@
                         android:layout_toRightOf="@id/media_content_image"
                         android:singleLine="true"
                         android:ellipsize="end"
-                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                         android:textStyle="bold"
                         />
 
@@ -138,7 +137,6 @@
                         android:layout_toRightOf="@id/media_content_image"
                         android:inputType="textMultiLine"
                         android:ellipsize="end"
-                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ultrices tincidunt neque et fringilla. Quisque a dignissim tellus. Duis bibendum sem vitae tortor accumsan sagittis. Quisque mattis lacinia sapien, quis bibendum erat tempor at. Vivamus malesuada, est ut malesuada fringilla, libero erat bibendum nibh, a consequat orci nisl gravida magna. Vivamus sagittis cursus mauris, sed imperdiet orci placerat at. Nunc ac mollis lorem. Praesent ac ante a nibh semper elementum. Vivamus in massa est, eu laoreet justo. Etiam molestie consequat tortor, vitae bibendum felis imperdiet nec. Praesent semper risus vitae augue lobortis aliquet. Proin blandit, sapien eu feugiat elementum, ante."
                         android:textStyle="normal"
                         />
 
