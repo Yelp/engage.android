@@ -29,6 +29,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.types;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,7 +116,7 @@ public class JRActivityObject {
      * NOTE: Any objects added to this array that are not of type <code>JRActionLink</code> will
      * be ignored.
      */
-    private List<JRActionLink> mActionLinks;
+    private List<JRActionLink> mActionLinks = new ArrayList<JRActionLink>();
 
     /**
      * An array of objects with base class <code>JRMediaObject (i.e., JRImageMediaObject,
@@ -139,7 +140,7 @@ public class JRActivityObject {
      * href="http://developers.facebook.com/docs/guides/attachments">Facebook Developer page
      * on Attachments</a>.
      */
-    private List<JRMediaObject> mMedia;
+    private List<JRMediaObject> mMedia = new ArrayList<JRMediaObject>();
 
     /**
      * An object with attributes describing properties of the update. An attribute value can be
@@ -157,7 +158,7 @@ public class JRActivityObject {
      *   }
      * </code>
      */
-    private Map<String, Object> mProperties;
+    private Map<String, Object> mProperties = new HashMap<String, Object>();
 
     // ------------------------------------------------------------------------
     // CONSTRUCTORS
@@ -223,12 +224,22 @@ public class JRActivityObject {
         mActionLinks = actionLinks;
     }
 
+    public void setActionLink(JRActionLink al) {
+        mActionLinks = new ArrayList<JRActionLink>();
+        mActionLinks.add(al);
+    }
+
     public List<JRMediaObject> getMedia() {
         return mMedia;
     }
 
     public void setMedia(List<JRMediaObject> media) {
         mMedia = media;
+    }
+
+    public void setMedia(JRMediaObject mo) {
+        mMedia = new ArrayList<JRMediaObject>();
+        mMedia.add(mo);
     }
 
     public Map<String, Object> getProperties() {

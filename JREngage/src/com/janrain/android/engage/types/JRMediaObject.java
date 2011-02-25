@@ -33,4 +33,9 @@ package com.janrain.android.engage.types;
  * Base class for JRImageMediaObject, JRFlashMediaObject, and JRMp3MediaObject.
  */
 public abstract class JRMediaObject {
+
+    public boolean hasThumbnail() { return false; }
+
+    public String getThumbnail() {return null; }
+
 }

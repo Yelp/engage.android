@@ -29,33 +29,30 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
-import android.app.Activity;
 import android.app.TabActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.*;
 import com.janrain.android.engage.R;
-import com.janrain.android.engage.session.JRAuthenticatedUser;
-import com.janrain.android.engage.session.JRProvider;
-import com.janrain.android.engage.session.JRSessionData;
-import com.janrain.android.engage.types.JRActivityObject;
+import com.janrain.android.engage.session.*;
+import com.janrain.android.engage.types.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Publishing UI
  */
 public class JRPublishActivity extends TabActivity
-        implements View.OnClickListener, AdapterView.OnItemSelectedListener, TabHost.OnTabChangeListener {
+        implements View.OnClickListener, TabHost.OnTabChangeListener {
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -156,7 +153,17 @@ public class JRPublishActivity extends TabActivity
                         R.color.bg_clr_linkedin,
                         R.drawable.button_linkedin_280x40));
     }
-    
+
+    private static final Map<String, Integer> icon_resources = new HashMap<String, Integer>(){
+       {
+           put("facebook", R.drawable.ic_facebook_tab);
+           put("linkedin", R.drawable.ic_linkedin_tab);
+           put("myspace", R.drawable.ic_myspace_tab);
+           put("twitter", R.drawable.ic_twitter_tab);
+           put("yahoo", R.drawable.ic_yahoo_tab);
+       }
+    };
+
     // ------------------------------------------------------------------------
     // STATIC METHODS
     // ------------------------------------------------------------------------
@@ -166,22 +173,21 @@ public class JRPublishActivity extends TabActivity
     // ------------------------------------------------------------------------
 
     private FinishReceiver mFinishReceiver;
-    private SharedLayoutHelper mLayoutHelper;
 
     private JRSessionData mSessionData;
     private JRProvider mSelectedProvider;
     private JRAuthenticatedUser mLoggedInUser;
+    private int max_characters;
     
     private JRActivityObject mActivityObject;
 
-//    private Spinner mSpinner;
-
     private RelativeLayout mMediaContentView;
+    private TextView mCharacterCountView;
+    private TextView mActionLabelView;
     private ImageView mProviderIcon;
     private LinearLayout mShareButtonContainer;
     private Button mShareButton;
-
-
+    private EditText mUserCommentView;
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -190,10 +196,6 @@ public class JRPublishActivity extends TabActivity
     // ------------------------------------------------------------------------
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
-
-    public JRPublishActivity() {
-
-    }
 
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
@@ -211,18 +213,6 @@ public class JRPublishActivity extends TabActivity
         mSessionData = JRSessionData.getInstance();
         mActivityObject = mSessionData.getActivity();
 
-        mLayoutHelper = new SharedLayoutHelper(this);
-
-//        mSpinner = (Spinner) findViewById(R.id.provider_spinner);
-
-//        Set<String> keySet = PROVIDER_MAP.keySet();
-//        String[] keyArray = keySet.toArray(new String[keySet.size()]);
-
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, keyArray);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        mSpinner.setAdapter(adapter);
-//        mSpinner.setOnItemSelectedListener(this);
-
         if (mSessionData.getHidePoweredBy()) {
             TextView poweredBy = (TextView)findViewById(R.id.powered_by_text);
             poweredBy.setVisibility(View.GONE);
@@ -232,12 +222,22 @@ public class JRPublishActivity extends TabActivity
         title.setText(getString(R.string.publish_activity_title));
 
         mMediaContentView = (RelativeLayout) findViewById(R.id.media_content_view);
+        mCharacterCountView = (TextView) findViewById(R.id.character_count_view);
         mProviderIcon = (ImageView) findViewById(R.id.provider_icon);
         mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
         mShareButton = (Button) findViewById(R.id.share_button);
         mShareButton.setOnClickListener(this);
+        mUserCommentView = (EditText) findViewById(R.id.edit_comment);
+        mActionLabelView = (TextView) findViewById(R.id.action_label_view);
 
         configureTabs();
+
+        mUserCommentView.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keycode, KeyEvent event) {
+                updateCharacterCount();
+                return false;
+            }
+        });
     }
 
     @Override
@@ -248,6 +248,8 @@ public class JRPublishActivity extends TabActivity
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
+
+        loadActivityObjectToView();
     }
 
     @Override
@@ -265,36 +267,75 @@ public class JRPublishActivity extends TabActivity
         finish();
     }
 
+    public void onTabChanged(String tabId) {
+        Log.d(TAG, "[onTabChange]: " + tabId);
+
+        mSessionData.setCurrentProviderByName(tabId);
+
+        mSelectedProvider = mSessionData.getCurrentProvider();
+
+        String can_share_media = (String)mSelectedProvider.getSocialSharingProperties().get("can_share_media");
+
+        if (can_share_media.equals("YES"))
+            mMediaContentView.setVisibility(View.VISIBLE);
+        else
+            mMediaContentView.setVisibility(View.GONE);
+
+        max_characters = mSelectedProvider.getSocialSharingProperties().getAsInt("max_characters");
+
+        if (max_characters != -1) {
+            mCharacterCountView.setVisibility(View.VISIBLE);
+        } else
+            mCharacterCountView.setVisibility(View.GONE);
+
+        //XXX TabHost is setting our FrameLayout's only child to GONE when loading
+        //XXX could be a bug in the TabHost, or could be a misuse of the TabHost system, this is a workaround
+        findViewById(R.id.tab_view_content).setVisibility(View.VISIBLE);
+
+        updateCharacterCount();
+
+        JRDictionary socialSharingProperties = mSelectedProvider.getSocialSharingProperties();
+
+        //switch on or off the media content view based on the presence of media and ability to display it
+        boolean canShareMedia = socialSharingProperties.getAsBoolean("can_share_media");
+        boolean showMediaContentView = mActivityObject.getMedia().size() > 0 && canShareMedia;
+        mMediaContentView.setVisibility(showMediaContentView ? View.VISIBLE : View.GONE);
+
+        //switch on or off the action label view based on the provider accepting an action
+        boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
+        mActionLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
+
+    }
+
+    //
+    // callback handler to update our character count
+    //
+
+    public void updateCharacterCount() {
+        //TODO make negative numbers red, verify correctness of the 0 remaining characters edge case
+        int comment_length = mUserCommentView.getText().length();
+        mCharacterCountView.setText("Remaining characters: " + (max_characters - comment_length));
+    }
+
     //
     // View.OnClickListener
+    // used to handle clicks on the share button
     //
 
     public void onClick(View view) {
+        //todo execute the publish
     }
 
-
     //
-    // AdapterView.OnItemSelectedListener
+    // Helper methods
     //
-
-    private static final Map<String, Integer> icon_resources = new HashMap<String, Integer>(){
-       {
-           put("facebook", R.drawable.ic_facebook_tab);
-           put("linkedin", R.drawable.ic_linkedin_tab);
-           put("myspace", R.drawable.ic_myspace_tab);
-           put("twitter", R.drawable.ic_twitter_tab);
-           put("yahoo", R.drawable.ic_yahoo_tab);
-       }
-    };
 
     private void configureTabs() {
-
         // TODO: If no providers
 
-
         Resources res = getResources(); // Resource object to get Drawables
-        TabHost tabHost = getTabHost();  // The activity TabHost
-        TabHost.TabSpec spec;  // Resusable TabSpec for each tab
+        TabHost tabHost = getTabHost(); // The activity TabHost
+        TabHost.TabSpec spec;           // Reused TabSpec for each tab
 
         int currentIndex = 0, indexOfLastUsedProvider = 0;
         for (JRProvider provider : mSessionData.getSocialProviders())
@@ -312,68 +353,37 @@ public class JRPublishActivity extends TabActivity
             currentIndex++;
         }
 
-        tabHost.setCurrentTab(indexOfLastUsedProvider);
-
         tabHost.setOnTabChangedListener(this);
-    }
-
-    public void onTabChanged(String tabId) {
-        Log.d(TAG, "[onTabChange]: " + tabId);
-
-        mSessionData.setCurrentProviderByName(tabId);
-
-        mSelectedProvider = mSessionData.getCurrentProvider();
-
-        String can_share_media = (String)mSelectedProvider.getSocialSharingProperties().get("can_share_media");
-
-        if (can_share_media.equals("YES"))
-            mMediaContentView.setVisibility(View.VISIBLE);
-        else
-            mMediaContentView.setVisibility(View.GONE);
-
-    }
-
-    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        String selected = parent.getItemAtPosition(pos).toString();
-        ProviderDisplayInfo item = PROVIDER_MAP.get(selected);
-
-        mMediaContentView.setVisibility(item.getIsMediaContentVisible()
-                ? View.VISIBLE : View.GONE);
-        mProviderIcon.setImageResource(item.getIconResId());
-        mShareButtonContainer.setBackgroundResource(item.getShareBgColorResId());
-        mShareButton.setBackgroundResource(item.getShareBtnResId());
-    }
-
-    public void onNothingSelected(AdapterView parent) {
-        // Do nothing.
+        tabHost.setCurrentTab(indexOfLastUsedProvider);
+        onTabChanged(tabHost.getCurrentTabTag());
     }
 
     //
-    // Helper methods
+    //populates the UI elements with the properties of the activity object
     //
 
     private void loadActivityObjectToView() {
-
         // TODO:  check "hasEditedUserContentForActivityAlready"
 
-        if (/*(weAreReady) && */ (mActivityObject.getMedia().size() > 0)
-                && providerCanShareMedia(mSelectedProvider.getName())) {
+        // TODO: make this match the docs for the iphone activity object:
+        // https://rpxnow.com/docs/iphone_api/interface_j_r_activity_object.html#a2e4ff78f83d0f353f8e0c17ed48ce0ab
+        JRMediaObject mo = null;
+        if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
 
-            showHideMediaContentView(true);
+        ImageView mci = (ImageView) findViewById(R.id.media_content_image);
+        TextView  mcd = (TextView)  findViewById(R.id.media_content_description);
+        TextView  mct = (TextView)  findViewById(R.id.media_content_title);
 
+        mActionLabelView.setText(mActivityObject.getAction());
 
-        } else {
-            showHideMediaContentView(false);
-        }
+        //set the media_content_view = a thumbnail of the media
+        if (mo != null) if (mo.hasThumbnail()) mci.setImageURI(Uri.parse(mo.getThumbnail()));
 
-    }
+        //set the media content description
+        mcd.setText(mActivityObject.getDescription());
 
-    private boolean providerCanShareMedia(String providerName) {
-        return (!TextUtils.isEmpty(providerName)) && ("facebook".equalsIgnoreCase(providerName));
-    }
-
-    private void showHideMediaContentView(boolean show) {
-        mMediaContentView.setVisibility(show ? View.VISIBLE : View.GONE);
+        //set the media content title
+        mct.setText(mActivityObject.getTitle());
     }
 
 }

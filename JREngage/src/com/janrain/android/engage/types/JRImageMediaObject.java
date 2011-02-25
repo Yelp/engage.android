@@ -99,4 +99,12 @@ public class JRImageMediaObject extends JRMediaObject {
     // ------------------------------------------------------------------------
     // METHODS
     // ------------------------------------------------------------------------
+    public boolean hasThumbnail() {
+        return true;
+    }
+
+    public String getThumbnail() {
+        return mHref;
+    }
+    
 }

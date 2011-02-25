@@ -63,16 +63,22 @@ public class JRFlashMediaObject extends JRMediaObject {
 
     /** The URL of the Flash object to be rendered */
     private String mSwfSrc;
+
     /** The URL of an photo that should be displayed in place of the flash object */
     private String mImgSrc;
+
     /** Used to override the default width */
     private int mWidth;
+
     /** Used to override the default height */
     private int mHeight;
+
     /** Width the video will resize to once the user clicks it */
     private int mExpandedWidth;
+
     /** Height the video will resize to once the user clicks it */
     private int mExpandedHeight;
+
     /**
      * [internal] Contains the downloaded preview of the image for display in the publish
      * activity dialog
@@ -154,4 +160,12 @@ public class JRFlashMediaObject extends JRMediaObject {
     // ------------------------------------------------------------------------
     // METHODS
     // ------------------------------------------------------------------------
+
+    public boolean hasThumbnail() {
+        return true;
+    }
+
+    public String getThumbnail() {
+        return mImgSrc;
+    }
 }
