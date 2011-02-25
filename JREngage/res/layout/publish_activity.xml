@@ -34,6 +34,7 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
+                android:padding="5dp"
                 >
 
                 <EditText
@@ -57,14 +58,24 @@
                     android:textColor="#ff333333"
                     />
 
+                <TextView
+                    android:id="@+id/action_label_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/character_count_view"
+                    android:singleLine="true"
+                    android:visibility="gone"
+                    />
+
                 <RelativeLayout
                     android:id="@+id/media_content_view"
                     android:layout_width="fill_parent"
                     android:layout_height="120dip"
-                    android:layout_below="@id/character_count_view"
+                    android:layout_below="@id/action_label_view"
                     android:layout_marginTop="10dip"
                     android:layout_marginRight="7dip"
                     android:layout_marginLeft="7dip"
+                    android:padding="5dp"
                     android:gravity="top|left"
                     android:background="@drawable/bg_provider_activity_info"
                     >

@@ -112,23 +112,6 @@ public class JRUserInterfaceMaestro {
     // METHODS
     // ------------------------------------------------------------------------
 
-    public void setUpSocialPublishing() {
-        mSessionData.setSocial(true);
-
-        // TODO:
-        // if (myPublishActivityController)
-        //      [sessionData addDelegate:myPublishActivityController];
-    }
-
-    public void tearDownSocialPublishing() {
-        mSessionData.setSocial(false);
-        mSessionData.setActivity(null);
-
-        // TODO:
-        // if (myPublishActivityController)
-        //      [sessionData removeDelegate:myPublishActivityController];
-    }
-
     /**
      * Displays the provider list for authentication.
      */
@@ -141,18 +124,6 @@ public class JRUserInterfaceMaestro {
         }
 
 
-    }
-
-    public void authenticationRestarted() {
-        popToOriginal();
-    }
-
-    public void authenticationCompleted() {
-        if (!mSessionData.getSocial()) {
-            popAll();
-        } else {
-            popToOriginal();
-        }
     }
 
     /**
@@ -169,9 +140,25 @@ public class JRUserInterfaceMaestro {
         startActivity(JRWebViewActivity.class);
     }
 
+    /**
+     * Shows the social publishing activity.
+     */
     public void showPublishingDialogWithActivity() {
         startActivity(JRPublishActivity.class);
     }
+
+    public void authenticationRestarted() {
+        popToOriginal();
+    }
+
+    public void authenticationCompleted() {
+        if (!mSessionData.getSocial()) {
+            popAll();
+        } else {
+            popToOriginal();
+        }
+    }
+
 
     public void authenticationFailed() {
         popToOriginal();
@@ -179,6 +166,23 @@ public class JRUserInterfaceMaestro {
 
     public void authenticationCanceled() {
         popAll();
+    }
+
+    public void setUpSocialPublishing() {
+        mSessionData.setSocial(true);
+
+        // TODO:
+        // if (myPublishActivityController)
+        //      [sessionData addDelegate:myPublishActivityController];
+    }
+
+    public void tearDownSocialPublishing() {
+        mSessionData.setSocial(false);
+        mSessionData.setActivity(null);
+
+        // TODO:
+        // if (myPublishActivityController)
+        //      [sessionData removeDelegate:myPublishActivityController];
     }
 
     public void publishingRestarted() {

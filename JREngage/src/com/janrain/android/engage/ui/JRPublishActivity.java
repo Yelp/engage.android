@@ -34,6 +34,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Config;
 import android.util.Log;
@@ -41,10 +42,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.*;
 import com.janrain.android.engage.R;
-import com.janrain.android.engage.session.JRAuthenticatedUser;
-import com.janrain.android.engage.session.JRProvider;
-import com.janrain.android.engage.session.JRSessionData;
-import com.janrain.android.engage.types.JRActivityObject;
+import com.janrain.android.engage.session.*;
+import com.janrain.android.engage.types.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -184,6 +183,7 @@ public class JRPublishActivity extends TabActivity
 
     private RelativeLayout mMediaContentView;
     private TextView mCharacterCountView;
+    private TextView mActionLabelView;
     private ImageView mProviderIcon;
     private LinearLayout mShareButtonContainer;
     private Button mShareButton;
@@ -228,6 +228,7 @@ public class JRPublishActivity extends TabActivity
         mShareButton = (Button) findViewById(R.id.share_button);
         mShareButton.setOnClickListener(this);
         mUserCommentView = (EditText) findViewById(R.id.edit_comment);
+        mActionLabelView = (TextView) findViewById(R.id.action_label_view);
 
         configureTabs();
 
@@ -248,6 +249,7 @@ public class JRPublishActivity extends TabActivity
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
 
+        loadActivityObjectToView();
     }
 
     @Override
@@ -265,13 +267,68 @@ public class JRPublishActivity extends TabActivity
         finish();
     }
 
+    public void onTabChanged(String tabId) {
+        Log.d(TAG, "[onTabChange]: " + tabId);
+
+        mSessionData.setCurrentProviderByName(tabId);
+
+        mSelectedProvider = mSessionData.getCurrentProvider();
+
+        String can_share_media = (String)mSelectedProvider.getSocialSharingProperties().get("can_share_media");
+
+        if (can_share_media.equals("YES"))
+            mMediaContentView.setVisibility(View.VISIBLE);
+        else
+            mMediaContentView.setVisibility(View.GONE);
+
+        max_characters = mSelectedProvider.getSocialSharingProperties().getAsInt("max_characters");
+
+        if (max_characters != -1) {
+            mCharacterCountView.setVisibility(View.VISIBLE);
+        } else
+            mCharacterCountView.setVisibility(View.GONE);
+
+        //XXX TabHost is setting our FrameLayout's only child to GONE when loading
+        //XXX could be a bug in the TabHost, or could be a misuse of the TabHost system, this is a workaround
+        findViewById(R.id.tab_view_content).setVisibility(View.VISIBLE);
+
+        updateCharacterCount();
+
+        JRDictionary socialSharingProperties = mSelectedProvider.getSocialSharingProperties();
+
+        //switch on or off the media content view based on the presence of media and ability to display it
+        boolean canShareMedia = socialSharingProperties.getAsBoolean("can_share_media");
+        boolean showMediaContentView = mActivityObject.getMedia().size() > 0 && canShareMedia;
+        mMediaContentView.setVisibility(showMediaContentView ? View.VISIBLE : View.GONE);
+
+        //switch on or off the action label view based on the provider accepting an action
+        boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
+        mActionLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
+
+    }
+
+    //
+    // callback handler to update our character count
+    //
+
+    public void updateCharacterCount() {
+        //TODO make negative numbers red, verify correctness of the 0 remaining characters edge case
+        int comment_length = mUserCommentView.getText().length();
+        mCharacterCountView.setText("Remaining characters: " + (max_characters - comment_length));
+    }
+
     //
     // View.OnClickListener
     // used to handle clicks on the share button
     //
 
     public void onClick(View view) {
+        //todo execute the publish
     }
+
+    //
+    // Helper methods
+    //
 
     private void configureTabs() {
         // TODO: If no providers
@@ -301,65 +358,31 @@ public class JRPublishActivity extends TabActivity
         onTabChanged(tabHost.getCurrentTabTag());
     }
 
-    public void onTabChanged(String tabId) {
-        Log.d(TAG, "[onTabChange]: " + tabId);
-
-        mSessionData.setCurrentProviderByName(tabId);
-
-        mSelectedProvider = mSessionData.getCurrentProvider();
-
-        String can_share_media = (String)mSelectedProvider.getSocialSharingProperties().get("can_share_media");
-
-        if (can_share_media.equals("YES"))
-            mMediaContentView.setVisibility(View.VISIBLE);
-        else
-            mMediaContentView.setVisibility(View.GONE);
-
-        max_characters = mSelectedProvider.getSocialSharingProperties().getAsInt("max_characters");
-
-        if (max_characters != -1) {
-            mCharacterCountView.setVisibility(View.VISIBLE);
-        } else
-            mCharacterCountView.setVisibility(View.GONE);
-
-        //XXX TabHost is setting our FrameLayout's only child to GONE when loading
-        //XXX could be a bug in the TabHost, or could be a misuse of the TabHost system, this is a workaround
-        findViewById(R.id.tab_view_content).setVisibility(View.VISIBLE);
-
-        updateCharacterCount();
-    }
-
-    void updateCharacterCount() {
-        int comment_length = mUserCommentView.getText().length();
-        mCharacterCountView.setText("Remaining characters: " + (max_characters - comment_length));
-    }
-
-//    public void onNothingSelected(AdapterView parent) {
-//        // Do nothing.
-//    }
-
-    //
-    // Helper methods
-    //
-
+    /**
+     * populates the UI elements with the properties of the activity object
+     */
     private void loadActivityObjectToView() {
         // TODO:  check "hasEditedUserContentForActivityAlready"
-        boolean canShareMedia = mSelectedProvider.getSocialSharingProperties().getAsBoolean("can_share_media");
 
-        if (mActivityObject.getMedia().size() > 0 && canShareMedia) {
+        // TODO: make this match the docs for the iphone activity object:
+        // https://rpxnow.com/docs/iphone_api/interface_j_r_activity_object.html#a2e4ff78f83d0f353f8e0c17ed48ce0ab
+        JRMediaObject mo = null;
+        if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
 
-            showHideMediaContentView(true);
+        ImageView mci = (ImageView) findViewById(R.id.media_content_image);
+        TextView  mcd = (TextView)  findViewById(R.id.media_content_description);
+        TextView  mct = (TextView)  findViewById(R.id.media_content_title);
 
-        } else {
+        mActionLabelView.setText(mActivityObject.getAction());
 
-            showHideMediaContentView(false);
+        //set the media_content_view = a thumbnail of the media
+        if (mo != null) if (mo.hasThumbnail()) mci.setImageURI(Uri.parse(mo.getThumbnail()));
 
-        }
+        //set the media content description
+        mcd.setText(mActivityObject.getDescription());
 
-    }
-
-    private void showHideMediaContentView(boolean show) {
-        mMediaContentView.setVisibility(show ? View.VISIBLE : View.GONE);
+        //set the media content title
+        mct.setText(mActivityObject.getTitle());
     }
 
 }
