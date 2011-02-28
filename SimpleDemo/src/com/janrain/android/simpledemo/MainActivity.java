@@ -32,35 +32,23 @@ package com.janrain.android.simpledemo;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.JREngageDelegate;
-import com.janrain.android.engage.JREngageError;
+import com.janrain.android.engage.*;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.types.JRActivityObject;
-import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.types.JRImageMediaObject;
+import com.janrain.android.engage.types.*;
 import com.janrain.android.engage.ui.JRLandingActivity;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 import java.io.InputStream;
-import java.net.ContentHandler;
 import java.net.URL;
 
 public class MainActivity extends Activity implements View.OnClickListener, JREngageDelegate {
@@ -97,7 +85,9 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                 try {
                     String blogurl = "http://www.janrain.com/feed/blogs";
                     InputStream is = (new URL(blogurl)).openStream();
-                    Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    dbf.setCoalescing(true);
+                    Document d = dbf.newDocumentBuilder().parse(is);
                     Element rss = (Element) d.getElementsByTagName("rss").item(0);
                     Element channel = (Element) rss.getElementsByTagName("channel").item(0);
                     Element item = (Element) channel.getElementsByTagName("item").item(1);
@@ -108,6 +98,9 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                     titleText = title.getFirstChild().getNodeValue();
                     linkText = link.getFirstChild().getNodeValue();
                     descriptionText = description.getFirstChild().getNodeValue();
+
+                    //need to concatenate all the children of descriptionText (which has ~100s of TextElement children)
+                    //in order to come up with the complete text body of the description tag.  
 
 //                    Html.fromHtml(Html.fromHtml(descriptionText).toString(), new Html.ImageGetter() {
 //                        public Drawable getDrawable(String s) {
@@ -131,7 +124,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         } else if (view == mBtnTestPub) {
             JRActivityObject jra = new JRActivityObject(titleText, linkText);
             jra.setDescription(descriptionText);
-            //jra.setMedia(new JRImageMediaObject(imageUrl, ""));
+            jra.setMedia(new JRImageMediaObject(imageUrl, ""));
             mEngage.showSocialPublishingDialogWithActivity(jra);
         } else if (view == mBtnTestLand) {
             Intent intent = new Intent(this, JRLandingActivity.class);
