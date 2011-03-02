@@ -32,11 +32,13 @@ package com.janrain.android.simpledemo;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.UrlInterceptHandler;
 import android.widget.Button;
 import android.widget.Toast;
 import com.janrain.android.engage.*;
@@ -46,7 +48,10 @@ import com.janrain.android.engage.ui.JRLandingActivity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.net.URL;
@@ -60,7 +65,11 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     private Button mBtnTestAuth;
     private Button mBtnTestPub;
     private Button mBtnTestLand;
+
+    //blog fetching variables
     String titleText, linkText, descriptionText, imageUrl;
+    final Uri blogurl = Uri.parse("http://www.janrain.com/feed/blogs");
+
 
     /** Called when the activity is first created. */
     @Override
@@ -83,11 +92,11 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         new AsyncTask<Void, Void, Void>() {
             protected Void doInBackground(Void... v) {
                 try {
-                    String blogurl = "http://www.janrain.com/feed/blogs";
-                    InputStream is = (new URL(blogurl)).openStream();
+                    InputStream is = (new URL(blogurl.toString())).openStream();
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     dbf.setCoalescing(true);
-                    Document d = dbf.newDocumentBuilder().parse(is);
+                    DocumentBuilder db = dbf.newDocumentBuilder();
+                    Document d = db.parse(is);
                     Element rss = (Element) d.getElementsByTagName("rss").item(0);
                     Element channel = (Element) rss.getElementsByTagName("channel").item(0);
                     Element item = (Element) channel.getElementsByTagName("item").item(1);
@@ -97,17 +106,20 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
                     titleText = title.getFirstChild().getNodeValue();
                     linkText = link.getFirstChild().getNodeValue();
-                    descriptionText = description.getFirstChild().getNodeValue();
+
+                    NodeList nl = description.getChildNodes();
+                    descriptionText = new String();
+                    for (int x=0; x<nl.getLength(); x++) { descriptionText += nl.item(x).getNodeValue(); }
 
                     //need to concatenate all the children of descriptionText (which has ~100s of TextElement children)
                     //in order to come up with the complete text body of the description tag.  
 
-//                    Html.fromHtml(Html.fromHtml(descriptionText).toString(), new Html.ImageGetter() {
-//                        public Drawable getDrawable(String s) {
-//                            imageUrl = s;
-//                            return null;
-//                        }
-//                    }, null);
+                    Html.fromHtml(descriptionText, new Html.ImageGetter() {
+                        public Drawable getDrawable(String s) {
+                            imageUrl = s;
+                            return null;
+                        }
+                    }, null);
                 } catch (Exception e) { throw new RuntimeException(e); }
                 return null;
             }
@@ -122,9 +134,10 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         if (view == mBtnTestAuth) {
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
-            JRActivityObject jra = new JRActivityObject(titleText, linkText);
+            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", linkText);
             jra.setDescription(descriptionText);
-            jra.setMedia(new JRImageMediaObject(imageUrl, ""));
+            jra.setMedia(new JRImageMediaObject(blogurl.getHost() + imageUrl, ""));
+            //JRActivityObject jra = new JRActivityObject("blah", "blah");
             mEngage.showSocialPublishingDialogWithActivity(jra);
         } else if (view == mBtnTestLand) {
             Intent intent = new Intent(this, JRLandingActivity.class);

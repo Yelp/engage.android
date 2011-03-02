@@ -56,29 +56,29 @@
                     android:layout_below="@id/edit_comment"
                     android:singleLine="true"
                     android:textColor="#ff333333"
+                    android:text="@string/calculating_remaining_characters"
                     />
 
                 <TextView
-                    android:id="@+id/action_label_view"
+                    android:id="@+id/preview_label_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/character_count_view"
-                    android:singleLine="true"
-                    android:visibility="gone"
                     />
+                <!--android:singleLine="true"-->
 
                 <RelativeLayout
                     android:id="@+id/media_content_view"
                     android:layout_width="fill_parent"
-                    android:layout_height="120dip"
-                    android:layout_below="@id/action_label_view"
-                    android:layout_marginTop="10dip"
-                    android:layout_marginRight="7dip"
-                    android:layout_marginLeft="7dip"
-                    android:padding="5dp"
+                    android:layout_height="122dip"
+                    android:layout_below="@id/preview_label_view"
                     android:gravity="top|left"
                     android:background="@drawable/bg_provider_activity_info"
                     >
+                    <!--android:layout_marginTop="10dip"-->
+                    <!--android:layout_marginRight="7dip"-->
+                    <!--android:layout_marginLeft="7dip"-->
+                    <!--android:padding="5dp"-->
 
                     <ImageView
                         android:id="@+id/media_content_image"
@@ -160,9 +160,9 @@
                     android:layout_alignParentBottom="true"
                     android:gravity="top|center_horizontal"
                     android:paddingTop="0dip"
-                    android:paddingBottom="22dip"
                     android:background="#333b5999"
                     >
+                    <!-- android:paddingBottom="22dip" -->
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -176,16 +176,16 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:gravity="center_horizontal|center_vertical"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginRight="4dp"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginLeft="4dp"
                         android:background="@drawable/sel_iosblue_280x40"
                         android:text="Connect and Share"
                         android:textSize="20dip"
                         android:textColor="#ffffffff"
                         android:textStyle="bold"
                         />
+                    <!-- android:layout_marginTop="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp" -->
                 </LinearLayout>
 
             </RelativeLayout>>

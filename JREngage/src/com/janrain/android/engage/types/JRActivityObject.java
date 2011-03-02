@@ -74,7 +74,7 @@ public class JRActivityObject {
     private String mAction;
 
     /** The URL of the resource being mentioned in the activity update */
-    private String mUrl;
+    private String mUrl; //url associated with the action
 
     /**
      * A string containing user-supplied content, such as a comment or the first paragraph of

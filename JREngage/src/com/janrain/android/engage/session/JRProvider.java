@@ -29,13 +29,11 @@
 */
 package com.janrain.android.engage.session;
 
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
-import sun.tools.tree.ThisExpression;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -81,7 +79,7 @@ public class JRProvider implements Serializable {
     private String mShortText;
     private boolean mRequiresInput;
     private String mOpenIdentifier;
-    private String mUrl;
+    private String mStartAuthenticationUrl;
     private boolean mForceReauth;   // <- these three user parameters get preserved
     private String mUserInput;      // <- across cached provider reloads
     private String mWelcomeString;  // <-
@@ -90,10 +88,6 @@ public class JRProvider implements Serializable {
     // ------------------------------------------------------------------------
     // INITIALIZERS
     // ------------------------------------------------------------------------
-
-    {
-        Log.d(null, "");
-    }
 
     // ------------------------------------------------------------------------
     // CONSTRUCTORS
@@ -105,7 +99,7 @@ public class JRProvider implements Serializable {
     		mFriendlyName = dictionary.getAsString(KEY_FRIENDLY_NAME);
     		mPlaceholderText = dictionary.getAsString(KEY_INPUT_PROMPT);
     		mOpenIdentifier = dictionary.getAsString(KEY_OPENID_IDENTIFIER);
-    		mUrl = dictionary.getAsString(KEY_URL);
+    		mStartAuthenticationUrl = dictionary.getAsString(KEY_URL);
     		mRequiresInput = dictionary.getAsBoolean(KEY_REQUIRES_INPUT);
     		if (mRequiresInput) {
     			String[] arr = mPlaceholderText.split(" ");
@@ -152,8 +146,8 @@ public class JRProvider implements Serializable {
         return mOpenIdentifier;
     }
 
-    public String getUrl() { /* (readonly) */
-        return mUrl;
+    public String getStartAuthenticationUrl() { /* (readonly) */
+        return mStartAuthenticationUrl;
     }
 
     public JRDictionary getSocialSharingProperties() { /* (readonly) */
@@ -205,7 +199,7 @@ public class JRProvider implements Serializable {
 //		mPlaceholderText = coder.getAsString(KEY_PLACEHOLDER_TEXT);
 //		mShortText = coder.getAsString(KEY_SHORT_TEXT);
 //		mOpenIdentifier = coder.getAsString(KEY_OPENID_IDENTIFIER);
-//		mUrl = coder.getAsString(KEY_URL);
+//		mStartAuthenticationUrl = coder.getAsString(KEY_URL);
 //		mRequiresInput = coder.getAsBoolean(KEY_REQUIRES_INPUT);
 //
 //        this.loadDynamicVariables();
@@ -217,7 +211,7 @@ public class JRProvider implements Serializable {
 //		coder.put(KEY_PLACEHOLDER_TEXT, mPlaceholderText);
 //		coder.put(KEY_SHORT_TEXT, mShortText);
 //		coder.put(KEY_OPENID_IDENTIFIER, mOpenIdentifier);
-//		coder.put(KEY_URL, mUrl);
+//		coder.put(KEY_URL, mStartAuthenticationUrl);
 //		coder.put(KEY_REQUIRES_INPUT, mRequiresInput);
 //    }
 //

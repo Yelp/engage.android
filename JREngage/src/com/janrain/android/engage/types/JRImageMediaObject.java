@@ -104,7 +104,7 @@ public class JRImageMediaObject extends JRMediaObject {
     }
 
     public String getThumbnail() {
-        return mHref;
+        return mSrc;
     }
     
 }

@@ -833,7 +833,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         //str = String.format("%s%s?%s%sversion=android_one&device=android",
         str = String.format("%s%s?%s%sdevice=android&extended=true",
                 mBaseUrl,
-                mCurrentProvider.getUrl(),
+                mCurrentProvider.getStartAuthenticationUrl(),
                 oid,
                 ((mAlwaysForceReauth || mCurrentProvider.getForceReauth()) ? "force_reauth=true&" : "")
         );

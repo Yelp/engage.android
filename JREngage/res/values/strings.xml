@@ -44,4 +44,7 @@
       -->
     <string name="publish_activity_title">Share</string>
     <string name="provider_spinner_prompt">Select a provider</string>
+    <string name="calculating_remaining_characters">Calculating Remaining Characters</string>
+    <string name="please_enter_text">Please enter text</string>
+    <string name="shortening_url">shortening url...</string>
 </resources>
