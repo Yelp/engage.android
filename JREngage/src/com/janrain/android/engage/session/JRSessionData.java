@@ -377,8 +377,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 for (JRSessionDelegate delegate : delegatesCopy) {
                     JREngageError error = new JREngageError(
                         "Session error", JREngageError.CODE_UNKNOWN, "", ex
-                    );
-                    delegate.publishingActivityDidFail(mActivity, error, mCurrentProvider.getName());
+                    );// TODO: Fix the mCurrentProvider equaling null issue
+                    delegate.publishingActivityDidFail(mActivity, error, "foo");//mCurrentProvider.getName());
                 }
             } else {
 
@@ -497,10 +497,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                         }
                     }
 
+                    // TODO: Fix the issue w mCurrentProvider equaling null
                     List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
                     for (JRSessionDelegate delegate : delegatesCopy) {
                         delegate.publishingActivityDidFail(mActivity, publishError,
-                                mCurrentProvider.getName());
+                                "foo"/*mCurrentProvider.getName()*/);
                     }
                 }
             } else if (tag.equals("emailSuccess")) {
@@ -873,7 +874,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mCurrentProvider.requiresInput();
     }*/
 
-    private JRAuthenticatedUser authenticatedUserForProvider(JRProvider provider) {
+    public JRAuthenticatedUser authenticatedUserForProvider(JRProvider provider) {
         if (Config.LOGD) {
             Log.d(TAG, "[authenticatedUserForProvider]");
         }
@@ -937,7 +938,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mAllProviders.getAsProvider(name);
     }
 
-    private void shareActivityForUser(JRAuthenticatedUser user) {
+    public void shareActivityForUser(JRAuthenticatedUser user) {
         if (Config.LOGD) {
             Log.d(TAG, "[shareActivityForUser]");
         }
@@ -950,6 +951,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         body.append("device_token=").append(deviceToken);
         body.append("&activity=").append(activityContent);
         body.append("&options={\"urlShortening\":\"true\"}");
+        body.append("&device=android");
 
         byte[] postData = null;
         try {
@@ -958,13 +960,15 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.w(TAG, "[shareActivityForUser] problem loading encoder (UTF-8).", ignore);
         }
 
-        String url = ENVIRONMENT.getServerUrl() + "/api/v2/activity?";
+        String url = ENVIRONMENT.getServerUrl() + "/api/v2/activity";
+
+        Log.d(TAG, "[shareActivityForUser]: " + url + "data: " + body.toString());
 
         final String tag = "shareActivity";
-        JRConnectionManager.createConnection(url, postData, this, true, tag);
+        JRConnectionManager.createConnection(url, postData, this, false, tag);
 
         if (Config.LOGD) {
-            Log.d(TAG, "[shareActivityForUser] connection started");
+            Log.d(TAG, "[shareActivityForUser] connection started for url: " + url);
         }
     }
 

@@ -42,7 +42,8 @@ public interface JRSessionDelegate {
     void authenticationDidRestart();
 
     void authenticationDidCancel();
-    
+
+    // TODO: Wasn't this deprecated!?
     void authenticationDidComplete(String token, String provider);
     
     void authenticationDidComplete(JRDictionary profile, String provider);
@@ -62,6 +63,5 @@ public interface JRSessionDelegate {
     void publishingActivityDidSucceed(JRActivityObject activity, String provider);
 
     void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
-
 }
 
