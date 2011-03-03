@@ -111,8 +111,8 @@ public class JRWebViewActivity extends Activity
             /*
              * Check for mobile endpoint URL.
              */
-            final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
-            if ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl))) {
+            final String mobileEndpointUrl = mSessionData.getBaseUrl() + "/signin/device";
+            if ((!TextUtils.isEmpty(url)) && (url.startsWith(mobileEndpointUrl))) {
                 Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
             }
 

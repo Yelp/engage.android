@@ -29,11 +29,14 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
+import android.app.Activity;
 import android.app.TabActivity;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -251,7 +254,7 @@ public class JRPublishActivity extends TabActivity
             TextView poweredBy = (TextView)findViewById(R.id.powered_by_text);
             poweredBy.setVisibility(View.GONE);
         }
-        
+
         TextView title = (TextView)findViewById(R.id.header_text);
         title.setText(getString(R.string.publish_activity_title));
 
@@ -276,12 +279,12 @@ public class JRPublishActivity extends TabActivity
 
         // TODO: When focus leaves the usercontentview and the text is empty, go back to setting the
         // previewlabel to action (if applicable) and the usercontentview's default text to "please enter text"
-        mUserCommentView.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keycode, KeyEvent event) {
-                Log.d(TAG, "onKey: " + keycode);
+        mUserCommentView.addTextChangedListener(new TextWatcher(){
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            public void afterTextChanged(Editable editable) {
                 updateUserCommentView();
                 updateCharacterCount();
-                return false;
             }
         });
 
@@ -291,6 +294,38 @@ public class JRPublishActivity extends TabActivity
         // TODO consider the case of the first usage of the library when the config call hasn't yet returned
         // and display an noninteractive view of the activity or something like the iOS lib
         configureTabs();
+    }
+
+    private void configureTabs() {
+        // TODO: If no providers
+
+        Resources res = getResources(); // Resource object to get Drawables
+        TabHost tabHost = getTabHost(); // The activity TabHost
+        tabHost.setup();
+        TabHost.TabSpec spec;           // Reused TabSpec for each tab
+
+        int currentIndex = 0, indexOfLastUsedProvider = 0;
+        for (JRProvider provider : mSessionData.getSocialProviders())
+        {
+            // TODO: If provider is NULL
+
+            spec = tabHost.newTabSpec(provider.getName()).setIndicator(provider.getFriendlyName(),
+                              res.getDrawable(icon_resources.get(provider.getName())))
+                          .setContent(R.id.tab_view_content);
+            tabHost.addTab(spec);
+
+            if (provider.getName().equals(mSessionData.getReturningSocialProvider()))
+                indexOfLastUsedProvider = currentIndex;
+
+            currentIndex++;
+        }
+
+        tabHost.setOnTabChangedListener(this);
+        tabHost.setCurrentTab(indexOfLastUsedProvider);
+        onTabChanged(tabHost.getCurrentTabTag()); //when TabHost is constructed it defaults to tab 0, so if
+                                                  //indexOfLastUsedProvider is 0, the tab change listener won't be
+                                                  //invoked, so we call it manually to ensure it is called.  (it's
+                                                  //idempotent)
     }
 
     @Override
@@ -444,9 +479,12 @@ public class JRPublishActivity extends TabActivity
 
             //set the media_content_view = a thumbnail of the media
             try {
-                //if (mo != null) if (mo.hasThumbnail()) mci.setImageBitmap(BitmapFactory.decodeStream((new URL("http://" + mo.getThumbnail())).openStream()));
+                if (mo != null) if (mo.hasThumbnail()) {
+                    mci.setImageBitmap(BitmapFactory.decodeStream((new URL(mo.getThumbnail())).openStream()));
+                    Log.d(TAG, "media image url: " + mo.getThumbnail());
+                }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                //throw new RuntimeException(e);
             }
 
             //set the media content description
@@ -504,37 +542,6 @@ public class JRPublishActivity extends TabActivity
     //
     // Helper methods
     //
-
-    private void configureTabs() {
-        // TODO: If no providers
-
-        Resources res = getResources(); // Resource object to get Drawables
-        TabHost tabHost = getTabHost(); // The activity TabHost
-        TabHost.TabSpec spec;           // Reused TabSpec for each tab
-
-        int currentIndex = 0, indexOfLastUsedProvider = 0;
-        for (JRProvider provider : mSessionData.getSocialProviders())
-        {
-            // TODO: If provider is NULL
-            
-            spec = tabHost.newTabSpec(provider.getName()).setIndicator(provider.getFriendlyName(),
-                              res.getDrawable(icon_resources.get(provider.getName())))
-                          .setContent(R.id.tab_view_content);
-            tabHost.addTab(spec);
-
-            if (provider.getName().equals(mSessionData.getReturningSocialProvider()))
-                indexOfLastUsedProvider = currentIndex;
-
-            currentIndex++;
-        }
-
-        tabHost.setOnTabChangedListener(this);
-        tabHost.setCurrentTab(indexOfLastUsedProvider);
-        onTabChanged(tabHost.getCurrentTabTag()); //when TabHost is constructed it defaults to tab 0, so if
-                                                  //indexOfLastUsedProvider is 0, the tab change listener won't be
-                                                  //invoked, so we call it manually to ensure it is called.  (it's
-                                                  //idempotent)
-    }
 
     //
     //populates the UI elements with the properties of the activity object
@@ -612,6 +619,7 @@ public class JRPublishActivity extends TabActivity
                         jso = jso.getJSONObject("urls");
                         mShortenedActivityURL = jso.getString(mActivityObject.getUrl());
                     } catch (JSONException e) {
+                        //todo fail more gracefully when we don't get a good result from rpx?
                         throw new RuntimeException(e);
                     }
 

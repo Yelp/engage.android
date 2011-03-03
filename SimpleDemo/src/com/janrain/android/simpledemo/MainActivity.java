@@ -37,8 +37,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
-import android.webkit.UrlInterceptHandler;
 import android.widget.Button;
 import android.widget.Toast;
 import com.janrain.android.engage.*;
@@ -48,7 +48,6 @@ import com.janrain.android.engage.ui.JRLandingActivity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -57,6 +56,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 public class MainActivity extends Activity implements View.OnClickListener, JREngageDelegate {
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final String ENGAGE_APP_ID = "appcfamhnpkagijaeinl";
     private static final String ENGAGE_TOKEN_URL = null;//"http://jrengage-for-android.appspot.com/login";
@@ -67,8 +67,11 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     private Button mBtnTestLand;
 
     //blog fetching variables
-    String titleText, linkText, descriptionText, imageUrl;
-    final Uri blogurl = Uri.parse("http://www.janrain.com/feed/blogs");
+    String mTitleText = "title text",
+           mLinkText = "http://www.janrain.com/feed/blogs",
+           mDescriptionText = "description text",
+           mImageUrl = "http://www.janrain.com/sites/default/themes/janrain/logo.png";
+    final Uri BLOGURL = Uri.parse("http://www.janrain.com/feed/blogs");
 
 
     /** Called when the activity is first created. */
@@ -82,61 +85,95 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
         mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
         mBtnTestPub.setOnClickListener(this);
-        mBtnTestPub.setEnabled(false);
 
         mBtnTestLand = (Button)findViewById(R.id.btn_test_land);
         mBtnTestLand.setOnClickListener(this);
 
         mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
 
-        new AsyncTask<Void, Void, Void>() {
-            protected Void doInBackground(Void... v) {
-                try {
-                    InputStream is = (new URL(blogurl.toString())).openStream();
-                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                    dbf.setCoalescing(true);
-                    DocumentBuilder db = dbf.newDocumentBuilder();
-                    Document d = db.parse(is);
-                    Element rss = (Element) d.getElementsByTagName("rss").item(0);
-                    Element channel = (Element) rss.getElementsByTagName("channel").item(0);
-                    Element item = (Element) channel.getElementsByTagName("item").item(1);
-                    Element title = (Element) item.getElementsByTagName("title").item(0);
-                    Element link = (Element) item.getElementsByTagName("link").item(0);
-                    Element description = (Element) item.getElementsByTagName("description").item(0);
+        mBtnTestPub.setText("loading blog");
 
-                    titleText = title.getFirstChild().getNodeValue();
-                    linkText = link.getFirstChild().getNodeValue();
+        if (savedInstanceState != null) {
+            mTitleText = savedInstanceState.getString("a");
+            mDescriptionText = savedInstanceState.getString("b");
+            mImageUrl = savedInstanceState.getString("c");
+            mLinkText = savedInstanceState.getString("d");
+            mBtnTestPub.setText("Test Publishing");
+        } else {
+            //mBtnTestPub.setEnabled(false);
 
-                    NodeList nl = description.getChildNodes();
-                    descriptionText = new String();
-                    for (int x=0; x<nl.getLength(); x++) { descriptionText += nl.item(x).getNodeValue(); }
+            new AsyncTask<Void, Void, Void>() {
+                protected Void doInBackground(Void... v) {
+                    try {
+                        Log.d(TAG, "blogload");
+                        InputStream is = (new URL(BLOGURL.toString())).openStream();
+                        Log.d(TAG, "blogload steam open");
+                        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                        dbf.setCoalescing(true);
+                        dbf.setValidating(false);
+                        dbf.setNamespaceAware(false);
+                        DocumentBuilder db = dbf.newDocumentBuilder();
+                        Log.d(TAG, "blogload factory instantiated");
+                        //the following parse call takes an astonishing ten seconds on a nexus s.
+                        //XMLPullParser is said to be a faster way to go.
+                        //thread with sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
+                        Document d = db.parse(is);
+                        Log.d(TAG, "blogload parsed");
+                        Element rss = (Element) d.getElementsByTagName("rss").item(0);
+                        Element channel = (Element) rss.getElementsByTagName("channel").item(0);
+                        Element item = (Element) channel.getElementsByTagName("item").item(0);
+                        Element title = (Element) item.getElementsByTagName("title").item(0);
+                        Element link = (Element) item.getElementsByTagName("link").item(0);
+                        Element description = (Element) item.getElementsByTagName("description").item(0);
+                        Log.d(TAG, "blogload walked");
 
-                    //need to concatenate all the children of descriptionText (which has ~100s of TextElement children)
-                    //in order to come up with the complete text body of the description tag.  
+                        mTitleText = title.getFirstChild().getNodeValue();
+                        mLinkText = link.getFirstChild().getNodeValue();
 
-                    Html.fromHtml(descriptionText, new Html.ImageGetter() {
-                        public Drawable getDrawable(String s) {
-                            imageUrl = s;
-                            return null;
-                        }
-                    }, null);
-                } catch (Exception e) { throw new RuntimeException(e); }
-                return null;
-            }
+                        NodeList nl = description.getChildNodes();
+                        mDescriptionText = new String();
+                        for (int x=0; x<nl.getLength(); x++) { mDescriptionText += nl.item(x).getNodeValue(); }
 
-            protected void onPostExecute(Void v) {
-                mBtnTestPub.setEnabled(true);
-            }
-        }.execute();
+                        //need to concatenate all the children of mDescriptionText (which has ~100s of TextElement children)
+                        //in order to come up with the complete text body of the description tag.
+
+                        Html.fromHtml(mDescriptionText, new Html.ImageGetter() {
+                            public Drawable getDrawable(String s) {
+                                mImageUrl = BLOGURL.getScheme() + "://" + BLOGURL.getHost() + s;
+                                return null;
+                            }
+                        }, null);
+                    } catch (Exception e) { throw new RuntimeException(e); }
+                    return null;
+                }
+
+                protected void onPostExecute(Void v) {
+                    //mBtnTestPub.setEnabled(true);
+                    Log.d(TAG, "blog loader onPostExecute");
+                    mBtnTestPub.setText("Test Publishing");
+                }
+            }.execute();
+        }
+    }
+
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (!mBtnTestPub.getText().equals("loading blog")) {
+            outState.putString("a", mTitleText);
+            outState.putString("b", mDescriptionText);
+            outState.putString("c", mImageUrl);
+            outState.putString("d", mLinkText);
+        }
     }
 
     public void onClick(View view) {
         if (view == mBtnTestAuth) {
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
-            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", linkText);
-            jra.setDescription(descriptionText);
-            jra.setMedia(new JRImageMediaObject(blogurl.getHost() + imageUrl, ""));
+            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", mLinkText);
+            jra.setDescription(mDescriptionText);
+            jra.setMedia(new JRImageMediaObject(mImageUrl, ""));
             //JRActivityObject jra = new JRActivityObject("blah", "blah");
             mEngage.showSocialPublishingDialogWithActivity(jra);
         } else if (view == mBtnTestLand) {
