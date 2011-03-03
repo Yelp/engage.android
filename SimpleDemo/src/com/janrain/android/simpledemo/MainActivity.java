@@ -73,7 +73,6 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
            mImageUrl = "http://www.janrain.com/sites/default/themes/janrain/logo.png";
     final Uri BLOGURL = Uri.parse("http://www.janrain.com/feed/blogs");
 
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,8 +90,6 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
         mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
 
-        mBtnTestPub.setText("loading blog");
-
         if (savedInstanceState != null) {
             mTitleText = savedInstanceState.getString("a");
             mDescriptionText = savedInstanceState.getString("b");
@@ -100,8 +97,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
             mLinkText = savedInstanceState.getString("d");
             mBtnTestPub.setText("Test Publishing");
         } else {
-            //mBtnTestPub.setEnabled(false);
-
+            mBtnTestPub.setText("loading blog");
             new AsyncTask<Void, Void, Void>() {
                 protected Void doInBackground(Void... v) {
                     try {

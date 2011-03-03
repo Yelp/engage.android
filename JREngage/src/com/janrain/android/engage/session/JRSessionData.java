@@ -75,8 +75,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     
 	private static JRSessionData sInstance;
 
-    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
-//  private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
+//    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
+    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
 //  private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
 
     private static final String ARCHIVE_USERS = "users";

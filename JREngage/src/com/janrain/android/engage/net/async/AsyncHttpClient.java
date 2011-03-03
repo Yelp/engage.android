@@ -105,6 +105,7 @@ public final class AsyncHttpClient {
                     // HTTP POST OPERATION
                     if (Config.LOGD) { Log.d(TAG, "[run] HTTP POST"); }
                     prepareConnectionForHttpPost(connection);
+                    connection.connect();
                     doHttpPost(connection);
                 }
 

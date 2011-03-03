@@ -266,7 +266,11 @@ public class JRActivityObject {
      * TODO: revisit visibility/usage
      */
     public Map<String, String> dictionaryForObject() {
-        Map<String, String> map = new HashMap<String, String>(1);
+        //todo store media object, action links, user generated content, description, title, text,
+        //-> all of the things that comprise the fundament of an activity
+
+        Map<String, String> map = new HashMap<String, String>();
+        //should be a key here called action, i think this boils down into the parameters for rpxnow.com/.../activity
         map.put(mAction, mUrl);
         return map;
     }

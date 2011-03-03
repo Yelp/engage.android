@@ -29,18 +29,14 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
-import android.app.Activity;
 import android.app.TabActivity;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.UrlInterceptHandler;
 import android.widget.*;
 import android.widget.Button;
 import com.janrain.android.engage.JREngageError;
@@ -65,8 +61,7 @@ import java.util.Map;
 /**
  * Publishing UI
  */
-public class JRPublishActivity extends TabActivity
-        implements View.OnClickListener, TabHost.OnTabChangeListener {
+public class JRPublishActivity extends TabActivity implements TabHost.OnTabChangeListener {
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -273,7 +268,7 @@ public class JRPublishActivity extends TabActivity
         mSignOutButton = (Button) findViewById(R.id.sign_out_button);
         mJustShareButton = (Button) findViewById(R.id.just_share_button);
         mConnectAndShareButton = (Button) findViewById(R.id.connect_and_share_button);
-        mConnectAndShareButton.setOnClickListener(this);
+        mConnectAndShareButton.setOnClickListener(mShareButtonListener);
 
         mLayoutHelper = new SharedLayoutHelper(this);
 
@@ -345,6 +340,26 @@ public class JRPublishActivity extends TabActivity
 //        unregisterReceiver(mFinishReceiver);
     }
 
+    private View.OnClickListener mShareButtonListener = new View.OnClickListener() {
+        public void onClick(View view) {
+        //    weAreCurrentlyPostingSomething = true;
+
+            if (!mUserCommentView.getText().equals(""))
+                mActivityObject.setUserGeneratedContent(mUserCommentView.getText().toString());
+
+            // Current Provider is a variable within session data and contains the provider we are currently authenticating with
+            // TODO: Rename this to be more meaningful
+            //mSessionData.setCurrentProvider(mSelectedProvider);
+            showViewIsLoading(true);
+
+            if (mLoggedInUser == null) {
+                authenticateUser();
+            } else {
+                shareActivity();
+            }
+        }
+    };
+
     /**
      * Invoked by JRUserInterfaceMaestro via FinishReceiver to close this activity.
      */
@@ -362,12 +377,10 @@ public class JRPublishActivity extends TabActivity
     }
 
     public void updateUserCommentView() {
-        if (!mUserHasEditedText)
-            mUserHasEditedText = true;
+        if (!mUserHasEditedText) mUserHasEditedText = true;
 
         if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action"))
             updatePreviewLabelWhenContentReplacesAction();
-
     }
 
     public void updatePreviewLabelWhenContentReplacesAction() {
@@ -466,64 +479,64 @@ public class JRPublishActivity extends TabActivity
     }
 
     private void loadViewElementPropertiesWithActivityObject() {
-            mUserCommentView.setHint(R.string.please_enter_text);
+        mUserCommentView.setHint(R.string.please_enter_text);
 
-            mPreviewLabelView.setText(mActivityObject.getAction());
+        mPreviewLabelView.setText(mActivityObject.getAction());
 
-            JRMediaObject mo = null;
-            if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
+        JRMediaObject mo = null;
+        if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
 
-            ImageView mci = (ImageView) findViewById(R.id.media_content_image);
-            TextView  mcd = (TextView)  findViewById(R.id.media_content_description);
-            TextView  mct = (TextView)  findViewById(R.id.media_content_title);
+        ImageView mci = (ImageView) findViewById(R.id.media_content_image);
+        TextView  mcd = (TextView)  findViewById(R.id.media_content_description);
+        TextView  mct = (TextView)  findViewById(R.id.media_content_title);
 
-            //set the media_content_view = a thumbnail of the media
-            try {
-                if (mo != null) if (mo.hasThumbnail()) {
-                    mci.setImageBitmap(BitmapFactory.decodeStream((new URL(mo.getThumbnail())).openStream()));
-                    Log.d(TAG, "media image url: " + mo.getThumbnail());
-                }
-            } catch (Exception e) {
-                //throw new RuntimeException(e);
+        //set the media_content_view = a thumbnail of the media
+        try {
+            if (mo != null) if (mo.hasThumbnail()) {
+                mci.setImageBitmap(BitmapFactory.decodeStream((new URL(mo.getThumbnail())).openStream()));
+                Log.d(TAG, "media image url: " + mo.getThumbnail());
             }
-
-            //set the media content description
-            mcd.setText(mActivityObject.getDescription());
-
-            //set the media content title
-            mct.setText(mActivityObject.getTitle());
+        } catch (Exception e) {
+            //throw new RuntimeException(e);
         }
+
+        //set the media content description
+        mcd.setText(mActivityObject.getDescription());
+
+        //set the media content title
+        mct.setText(mActivityObject.getTitle());
+    }
 
     private void configureViewElementsBasedOnProvider() {
-            // TODO:  check "hasEditedUserContentForActivityAlready"
+        // TODO:  check "hasEditedUserContentForActivityAlready"
 
-            // TODO: make this match the docs for the iphone activity object:
-            // https://rpxnow.com/docs/iphone_api/interface_j_r_activity_object.html#a2e4ff78f83d0f353f8e0c17ed48ce0ab
-            JRDictionary socialSharingProperties = mSelectedProvider.getSocialSharingProperties();
+        // TODO: make this match the docs for the iphone activity object:
+        // https://rpxnow.com/docs/iphone_api/interface_j_r_activity_object.html#a2e4ff78f83d0f353f8e0c17ed48ce0ab
+        JRDictionary socialSharingProperties = mSelectedProvider.getSocialSharingProperties();
 
-            if (socialSharingProperties.getAsBoolean("content_replaces_action"))
-                updatePreviewLabelWhenContentReplacesAction();
-            else
-                mPreviewLabelView.setText("mcspilli " + mActivityObject.getAction());
+        if (socialSharingProperties.getAsBoolean("content_replaces_action"))
+            updatePreviewLabelWhenContentReplacesAction();
+        else
+            mPreviewLabelView.setText("mcspilli " + mActivityObject.getAction());
 
-            mMaxCharacters = mSelectedProvider.getSocialSharingProperties().getAsInt("max_characters");
-            if (mMaxCharacters != -1) {
-                mCharacterCountView.setVisibility(View.VISIBLE);
-            } else
-                mCharacterCountView.setVisibility(View.GONE);
+        mMaxCharacters = mSelectedProvider.getSocialSharingProperties().getAsInt("max_characters");
+        if (mMaxCharacters != -1) {
+            mCharacterCountView.setVisibility(View.VISIBLE);
+        } else
+            mCharacterCountView.setVisibility(View.GONE);
 
-            updateCharacterCount();
+        updateCharacterCount();
 
-            boolean can_share_media = mSelectedProvider.getSocialSharingProperties().getAsBoolean("can_share_media");
+        boolean can_share_media = mSelectedProvider.getSocialSharingProperties().getAsBoolean("can_share_media");
 
-            //switch on or off the media content view based on the presence of media and ability to display it
-            boolean showMediaContentView = mActivityObject.getMedia().size() > 0 && can_share_media;
-            mMediaContentView.setVisibility(showMediaContentView ? View.VISIBLE : View.GONE);
+        //switch on or off the media content view based on the presence of media and ability to display it
+        boolean showMediaContentView = mActivityObject.getMedia().size() > 0 && can_share_media;
+        mMediaContentView.setVisibility(showMediaContentView ? View.VISIBLE : View.GONE);
 
-            //switch on or off the action label view based on the provider accepting an action
+        //switch on or off the action label view based on the provider accepting an action
 //        boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
 //        mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
-        }
+    }
 
     private void configureLoggedInUserBasedOnProvider() {
         mLoggedInUser = mSessionData.authenticatedUserForProvider(mSelectedProvider);
@@ -564,26 +577,7 @@ public class JRPublishActivity extends TabActivity
         //updateCharacterCount();
     }
 
-    public void onClick(View view) {
-    //    weAreCurrentlyPostingSomething = true;
-
-        if (!mUserCommentView.getText().equals(""))
-            mActivityObject.setUserGeneratedContent(mUserCommentView.getText().toString());
-
-        // Current Provider is a variable within session data and contains the provider we are currently authenticating with
-        // TODO: Rename this to be more meaningful
-        //mSessionData.setCurrentProvider(mSelectedProvider);
-        showViewIsLoading(true);
-
-        if (mLoggedInUser == null) {
-            authenticateUser();
-        } else {
-            shareActivity();
-        }
-    }
-
     private void authenticateUser() {
-
      /* Set weHaveJustAuthenticated to true, so that when this view returns (for whatever reason... successful auth
         user canceled, etc), the view will know that we just went through the authentication process. */
         mWeHaveJustAuthenticated = true;
@@ -599,7 +593,7 @@ public class JRPublishActivity extends TabActivity
     }
 
     private void shareActivity() {
-        Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
+        Log.d(TAG, Thread.currentThread().getStackTrace()[0].toString());
         mSessionData.setCurrentProvider(mSelectedProvider);
         mSessionData.shareActivityForUser(mLoggedInUser);
     }
@@ -639,53 +633,58 @@ public class JRPublishActivity extends TabActivity
     }
 
     private JRSessionDelegate createSessionDelegate() {
-            return new JRSD() {
-                public void authenticationDidRestart() {
-                    Log.d(TAG, "[authenticationDidRestart]");
+        return new JRSD() {
+            public void authenticationDidRestart() {
+                Log.d(TAG, "[authenticationDidRestart]");
 
-                    mWeAreCurrentlyPostingSomething = false;
-                    mWeHaveJustAuthenticated = false;
-                }
-                public void authenticationDidCancel() {
-                    Log.d(TAG, "[authenticationDidCancel]");
-                    mWeAreCurrentlyPostingSomething = false;
-                    mWeHaveJustAuthenticated = false;
-                }
-                public void authenticationDidFail(JREngageError error, String provider) {
-                    Log.d(TAG, "[authenticationDidFail]");
-                    mWeHaveJustAuthenticated = false;
-                    mWeAreCurrentlyPostingSomething = false;
-                }
-                public void authenticationDidComplete(JRDictionary profile, String provider) {
-                    Log.d(TAG, "[authenticationDidComplete]");
-                    //myLoadingLabel.text = @"Sharing...";
+                mWeAreCurrentlyPostingSomething = false;
+                mWeHaveJustAuthenticated = false;
+            }
 
-                    mLoggedInUser = mSessionData.authenticatedUserForProvider(mSelectedProvider);
+            public void authenticationDidCancel() {
+                Log.d(TAG, "[authenticationDidCancel]");
+                mWeAreCurrentlyPostingSomething = false;
+                mWeHaveJustAuthenticated = false;
+            }
 
-                    // QTS: Would we ever expect this to not be the case?
-                    if (mLoggedInUser != null) {
-                        showViewIsLoading(true);
-                        loadUserNameAndProfilePicForUserForProvider(mLoggedInUser, provider);
-                        showUserAsLoggedIn(true);
+            public void authenticationDidFail(JREngageError error, String provider) {
+                Log.d(TAG, "[authenticationDidFail]");
+                mWeHaveJustAuthenticated = false;
+                mWeAreCurrentlyPostingSomething = false;
+            }
 
-                        shareActivity();
-                    } else {
+            public void authenticationDidComplete(JRDictionary profile, String provider) {
+                Log.d(TAG, "[authenticationDidComplete]");
+                //myLoadingLabel.text = @"Sharing...";
+
+                mLoggedInUser = mSessionData.authenticatedUserForProvider(mSelectedProvider);
+
+                // QTS: Would we ever expect this to not be the case?
+                if (mLoggedInUser != null) {
+                    showViewIsLoading(true);
+                    loadUserNameAndProfilePicForUserForProvider(mLoggedInUser, provider);
+                    showUserAsLoggedIn(true);
+
+                    shareActivity();
+                } else {
 //                    UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Shared"
 //                                                                     message:@"There was an error while sharing this activity."
 //                                                                    delegate:nil
 //                                                           cancelButtonTitle:@"OK"
 //                                                           otherButtonTitles:nil] autorelease];
 //                    [alert show];
-                        showViewIsLoading(false);
-                        mWeAreCurrentlyPostingSomething = false;
-                        mWeHaveJustAuthenticated = false;
-                    }
+                    showViewIsLoading(false);
+                    mWeAreCurrentlyPostingSomething = false;
+                    mWeHaveJustAuthenticated = false;
                 }
-                public void publishingDidRestart() { mWeAreCurrentlyPostingSomething = false; }
-                public void publishingDidCancel() { mWeAreCurrentlyPostingSomething = false; }
-                public void publishingDidComplete() { mWeAreCurrentlyPostingSomething = false; }
-                public void publishingActivityDidSucceed(JRActivityObject activity, String provider) {
-                    Log.d(TAG, "[publishingActivityDidSucceed]");
+            }
+
+            public void publishingDidRestart() { mWeAreCurrentlyPostingSomething = false; }
+            public void publishingDidCancel() { mWeAreCurrentlyPostingSomething = false; }
+            public void publishingDidComplete() { mWeAreCurrentlyPostingSomething = false; }
+
+            public void publishingActivityDidSucceed(JRActivityObject activity, String provider) {
+                Log.d(TAG, "[publishingActivityDidSucceed]");
 //                UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Shared"
 //                                                                 message:[String stringWithFormat:
 //                                                                          @"You have successfully shared this activity."]
@@ -696,60 +695,61 @@ public class JRPublishActivity extends TabActivity
 
 //                [alreadyShared addObject:provider];
 
-                    showViewIsLoading(false);
-                    showActivityAsShared(true);
+                showViewIsLoading(false);
+                showActivityAsShared(true);
 
-                    mWeAreCurrentlyPostingSomething = false;
-                    mWeHaveJustAuthenticated = false;
+                mWeAreCurrentlyPostingSomething = false;
+                mWeHaveJustAuthenticated = false;
+            }
+
+            public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
+                Log.d(TAG, "[publishingActivityDidFail]");
+                String errorMessage = null;
+                boolean reauthenticate = false;
+
+                showViewIsLoading(false);
+
+                switch (error.getCode())
+                {// TODO: add strings to string resource file
+                    case JREngageError.SocialPublishingError.FAILED:
+                        errorMessage = "There was an error while sharing this activity.";
+                        break;
+                    case JREngageError.SocialPublishingError.DUPLICATE_TWITTER:
+                        errorMessage = "There was an error while sharing this activity: Twitter does not allow duplicate status updates.";
+                        break;
+                    case JREngageError.SocialPublishingError.LINKEDIN_CHARACTER_EXCEEDED:
+                        errorMessage = "There was an error while sharing this activity: Status was too long.";
+                        break;
+                    case JREngageError.SocialPublishingError.MISSING_API_KEY:
+                        errorMessage = "There was an error while sharing this activity.";
+                        reauthenticate = true;
+                        break;
+                    case JREngageError.SocialPublishingError.INVALID_OAUTH_TOKEN:
+                        errorMessage = "There was an error while sharing this activity.";
+                        reauthenticate = true;
+                        break;
+                    default:
+                        errorMessage = "There was an error while sharing this activity.";
+                        break;
                 }
-                public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
-                    Log.d(TAG, "[publishingActivityDidFail]");
-                    String errorMessage = null;
-                    boolean reauthenticate = false;
 
-                    showViewIsLoading(false);
+             /* OK, if this gets called right after authentication succeeds, then the navigation controller won't be done
+                animating back to this view.  If this view isn't loaded yet, and we call shareButtonPressed, then the library
+                will end up trying to push the webview controller onto the navigation controller while the navigation controller
+                is still trying to pop the webview.  This creates craziness, hence we check for [self isViewLoaded].
+                Also, this prevents an infinite loop of reauthing-failed publishing-reauthing-failed publishing.
+                So, only try and reauthenticate is the publishing activity view is already loaded, which will only happen if we didn't
+                JUST try and authorize, or if sharing took longer than the time it takes to pop the view controller. */
+                if (reauthenticate && !mWeHaveJustAuthenticated)
+                {
+                    logUserOutForProvider(provider);
+                    //shareButtonPressed(null);
 
-                    switch (error.getCode())
-                    {// TODO: add strings to string resource file
-                        case JREngageError.SocialPublishingError.FAILED:
-                            errorMessage = "There was an error while sharing this activity.";
-                            break;
-                        case JREngageError.SocialPublishingError.DUPLICATE_TWITTER:
-                            errorMessage = "There was an error while sharing this activity: Twitter does not allow duplicate status updates.";
-                            break;
-                        case JREngageError.SocialPublishingError.LINKEDIN_CHARACTER_EXCEEDED:
-                            errorMessage = "There was an error while sharing this activity: Status was too long.";
-                            break;
-                        case JREngageError.SocialPublishingError.MISSING_API_KEY:
-                            errorMessage = "There was an error while sharing this activity.";
-                            reauthenticate = true;
-                            break;
-                        case JREngageError.SocialPublishingError.INVALID_OAUTH_TOKEN:
-                            errorMessage = "There was an error while sharing this activity.";
-                            reauthenticate = true;
-                            break;
-                        default:
-                            errorMessage = "There was an error while sharing this activity.";
-                            break;
-                    }
+                    return;
+                }
 
-                 /* OK, if this gets called right after authentication succeeds, then the navigation controller won't be done
-                    animating back to this view.  If this view isn't loaded yet, and we call shareButtonPressed, then the library
-                    will end up trying to push the webview controller onto the navigation controller while the navigation controller
-                    is still trying to pop the webview.  This creates craziness, hence we check for [self isViewLoaded].
-                    Also, this prevents an infinite loop of reauthing-failed publishing-reauthing-failed publishing.
-                    So, only try and reauthenticate is the publishing activity view is already loaded, which will only happen if we didn't
-                    JUST try and authorize, or if sharing took longer than the time it takes to pop the view controller. */
-                    if (reauthenticate && !mWeHaveJustAuthenticated)
-                    {
-                        logUserOutForProvider(provider);
-                        //shareButtonPressed(null);
-
-                        return;
-                    }
-
-                    mWeAreCurrentlyPostingSomething = false;
-                    mWeHaveJustAuthenticated = false;
+                mWeAreCurrentlyPostingSomething = false;
+                mWeHaveJustAuthenticated = false;
 
 //                UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Error"
 //                                                                 message:errorMessage
@@ -758,9 +758,9 @@ public class JRPublishActivity extends TabActivity
 //                                                       otherButtonTitles:nil] autorelease];
 //                [alert show];
 
-                }
-            };
-        }
+            }
+        };
+    }
 
     private abstract class JRCMD implements JRConnectionManagerDelegate {
 
@@ -785,8 +785,6 @@ public class JRPublishActivity extends TabActivity
         public void publishingActivityDidSucceed(JRActivityObject activity, String provider) {}
         public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {}
     }
-
-
 }
 
 //            (new AsyncTask<String, Void, String>() {
