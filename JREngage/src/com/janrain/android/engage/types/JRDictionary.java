@@ -127,18 +127,15 @@ public final class JRDictionary extends HashMap<String,Object> {
     /**
      * Serializes the specified dictionary object to a JSON string.
      *
-     * @param dictionary
-     *      The JRDictionary object to serialize.
-     *
      * @return
      *      JSON representation of the specified JRDictionary object.
      */
-    public static String toJSON(JRDictionary dictionary) {
+    public String toJSON() {
         String retval = "";
 
         try {
             ObjectMapper mapper = new ObjectMapper();
-            retval = mapper.writeValueAsString(dictionary);
+            retval = mapper.writeValueAsString(this);
         } catch (IOException e) {
             Log.w(TAG, "[toJSON] problem serializing JSON string: ", e);
         }
@@ -197,12 +194,12 @@ public final class JRDictionary extends HashMap<String,Object> {
     /**
      * Copy constructor (for base type).
      *
-     * @param hashMap
+     * @param map
      *      The HashMap instance to clone.
      */
-    public JRDictionary(HashMap<String,Object> hashMap) {
-        if (hashMap != null) {
-            putAll(hashMap);
+    public JRDictionary(Map<String,Object> map) {
+        if (map != null) {
+            putAll(map);
         }
     }
 

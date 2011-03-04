@@ -144,6 +144,7 @@ public class JRUserInterfaceMaestro {
      * Shows the social publishing activity.
      */
     public void showPublishingDialogWithActivity() {
+        setUpSocialPublishing();
         startActivity(JRPublishActivity.class);
     }
 

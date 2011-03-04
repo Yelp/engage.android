@@ -75,8 +75,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     
 	private static JRSessionData sInstance;
 
-//    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
-    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
+    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
+//    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
 //  private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
 
     private static final String ARCHIVE_USERS = "users";
@@ -943,29 +943,26 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[shareActivityForUser]");
         }
 
-        Map<String,String> activityDictionary = mActivity.dictionaryForObject();
-        String activityContent = StringUtils.toJSON(activityDictionary.get("activity"));
+        StringBuilder body = new StringBuilder();
         String deviceToken = user.getDeviceToken();
 
-        StringBuilder body = new StringBuilder();
-        body.append("device_token=").append(deviceToken);
-        body.append("&activity=").append(activityContent);
-        body.append("&options={\"urlShortening\":\"true\"}");
-        body.append("&device=android");
-
-        byte[] postData = null;
+        String activityContent;
+        JRDictionary activityDictionary = mActivity.dictionaryForObject();
         try {
-            postData = URLEncoder.encode(body.toString(), "UTF-8").getBytes();
-        } catch (UnsupportedEncodingException ignore) {
-            Log.w(TAG, "[shareActivityForUser] problem loading encoder (UTF-8).", ignore);
-        }
+            activityContent = URLEncoder.encode(activityDictionary.toJSON(), "UTF-8");
+            body.append("device_token=").append(deviceToken);
+            body.append("&activity=").append(activityContent);
+            body.append("&options={\"urlShortening\":\"true\"}"); //this is an undocumented parameter available to the mobile library?
+            //TODO include truncate parameter here?
+            body.append("&device=android");
+        } catch (UnsupportedEncodingException e) { throw new RuntimeException(e); }
 
         String url = ENVIRONMENT.getServerUrl() + "/api/v2/activity";
 
-        Log.d(TAG, "[shareActivityForUser]: " + url + "data: " + body.toString());
+        Log.d(TAG, "[shareActivityForUser]: " + url + " data: " + body.toString());
 
         final String tag = "shareActivity";
-        JRConnectionManager.createConnection(url, postData, this, false, tag);
+        JRConnectionManager.createConnection(url, body.toString().getBytes(), this, false, tag);
 
         if (Config.LOGD) {
             Log.d(TAG, "[shareActivityForUser] connection started for url: " + url);

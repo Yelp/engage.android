@@ -29,7 +29,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
-import android.app.TabActivity;
+import android.app.*;
+import android.app.Dialog;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -62,6 +63,8 @@ import java.util.Map;
  * Publishing UI
  */
 public class JRPublishActivity extends TabActivity implements TabHost.OnTabChangeListener {
+    private static final int FAILURE_DIALOG = 1;
+    private static final int SUCCESS_DIALOG = 2;
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -186,26 +189,30 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     //private FinishReceiver mFinishReceiver;
 
+    //reference to the library model
     private JRSessionData mSessionData;
+
+    //
     private JRProvider mSelectedProvider;
     private JRAuthenticatedUser mLoggedInUser;
+    private JRSessionDelegate mSessionDelegate;
+    private JRActivityObject mActivityObject;
+
+    //
+    private String mShortenedActivityURL = null;//"http://fakeshort"; //null if it hasn't been shortened
     private int mMaxCharacters;
 
-    JRSessionDelegate mSessionDelegate;
-
-    private JRActivityObject mActivityObject;
-    private String mShortenedActivityURL = null;//"http://fakeshort"; //null if it hasn't been shortened
-
+    //UI state variables
     private boolean mUserHasEditedText = false;
     private boolean mWeHaveJustAuthenticated = false;
     private boolean mWeAreCurrentlyPostingSomething = false;
 
+    //UI views
     private RelativeLayout mMediaContentView;
     private TextView mCharacterCountView;
     private TextView mPreviewLabelView;
     private ImageView mProviderIcon;
     private EditText mUserCommentView;
-
     private LinearLayout mShareButtonContainer;
     private LinearLayout mProfilePicAndButtonsHorizontalLayout;
     private ImageView mProfilePicImage;
@@ -215,8 +222,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private Button mJustShareButton;
     private Button mConnectAndShareButton;
 
+    //
     private SharedLayoutHelper mLayoutHelper;
-
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -259,7 +266,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
         mUserCommentView = (EditText) findViewById(R.id.edit_comment);
         mPreviewLabelView = (TextView) findViewById(R.id.preview_label_view);
-
         mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
         mProfilePicAndButtonsHorizontalLayout = (LinearLayout) findViewById(R.id.profile_pic_and_buttons_horizontal_layout);
         mProfilePicImage = (ImageView) findViewById(R.id.profile_pic);
@@ -268,20 +274,26 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSignOutButton = (Button) findViewById(R.id.sign_out_button);
         mJustShareButton = (Button) findViewById(R.id.just_share_button);
         mConnectAndShareButton = (Button) findViewById(R.id.connect_and_share_button);
+
         mConnectAndShareButton.setOnClickListener(mShareButtonListener);
+        mJustShareButton.setOnClickListener(mShareButtonListener);
+        mUserCommentView.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
-        mLayoutHelper = new SharedLayoutHelper(this);
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
-        // TODO: When focus leaves the usercontentview and the text is empty, go back to setting the
-        // previewlabel to action (if applicable) and the usercontentview's default text to "please enter text"
-        mUserCommentView.addTextChangedListener(new TextWatcher(){
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
             public void afterTextChanged(Editable editable) {
                 updateUserCommentView();
                 updateCharacterCount();
             }
         });
+
+        mLayoutHelper = new SharedLayoutHelper(this);
+
+        // TODO: When focus leaves the usercontentview and the text is empty, go back to setting the
+        // previewlabel to action (if applicable) and the usercontentview's default text to "please enter text"
 
         fetchShortenedURLs();
         loadViewElementPropertiesWithActivityObject();
@@ -593,7 +605,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void shareActivity() {
-        Log.d(TAG, Thread.currentThread().getStackTrace()[0].toString());
+        Log.d(TAG, Thread.currentThread().getStackTrace()[0].getLineNumber() + "");
         mSessionData.setCurrentProvider(mSelectedProvider);
         mSessionData.shareActivityForUser(mLoggedInUser);
     }
@@ -630,6 +642,21 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Dialog onCreateDialog(int id) {
+        switch (id) {
+            case SUCCESS_DIALOG:
+                return new AlertDialog.Builder(JRPublishActivity.this).setMessage("Success!")
+                                         .setCancelable(false)
+                                         .setPositiveButton("Dismiss", null)
+                                         .create();
+            case FAILURE_DIALOG:
+                return new AlertDialog.Builder(JRPublishActivity.this).setMessage("Error: ")
+                                         .setPositiveButton("Dismiss", null)
+                                         .create();
+        }
+        return null;
     }
 
     private JRSessionDelegate createSessionDelegate() {
@@ -700,6 +727,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
                 mWeAreCurrentlyPostingSomething = false;
                 mWeHaveJustAuthenticated = false;
+
+                showDialog(SUCCESS_DIALOG);
             }
 
             public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
@@ -750,6 +779,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
                 mWeAreCurrentlyPostingSomething = false;
                 mWeHaveJustAuthenticated = false;
+
+                showDialog(FAILURE_DIALOG);
 
 //                UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Error"
 //                                                                 message:errorMessage

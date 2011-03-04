@@ -175,6 +175,7 @@
                         android:orientation="horizontal"
                         android:layout_height="fill_parent"
                         android:layout_width="fill_parent"
+                        android:gravity="center_horizontal|center_vertical"
                         >
                         <!--android:layout_height="wrap_content"-->
                         <!--android:layout_alignParentBottom="true"-->
@@ -191,12 +192,13 @@
                         <LinearLayout
                             android:id="@+id/name_and_sign_out_container"
                             android:orientation="vertical"
-                            android:layout_width="130dip"
                             android:layout_height="wrap_content"
-                            android:paddingTop="0dip"
-                            android:background="#330000ff"
+                            android:layout_width="wrap_content"
                             android:visibility="gone"
                             >
+                            <!--android:layout_width="130dip"-->
+                            <!--android:paddingTop="0dip"-->
+                            <!--android:background="#330000ff"-->
                             <!--android:layout_width="fill_parent"-->
                             <!--android:layout_alignParentBottom="true"-->
                             <!--android:gravity="top|center_horizontal"-->
@@ -207,9 +209,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentLeft="true"
                                 android:singleLine="true"
-                                android:textColor="#ffdedede"
-                                android:textStyle="normal"
                                 />
+                            <!--android:textStyle="normal"-->
+                            <!--android:textColor="#ffdedede"-->
                             <!--android:layout_marginLeft="7dip"-->
                             <!--android:layout_marginBottom="10dip"-->
                             <!--android:paddingRight="6dip"-->
@@ -220,11 +222,11 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:text="Sign Out"
-                                android:textSize="8dip"
-                                android:textColor="#ffffffff"
-                                android:textStyle="bold"
                                 />
-                                <!--android:gravity="center_horizontal|center_vertical"-->
+                            <!--android:textSize="8dip"-->
+                            <!--android:textColor="#ffffffff"-->
+                            <!--android:textStyle="bold"-->
+                            <!--android:gravity="center_horizontal|center_vertical"-->
 
                         </LinearLayout>
 
@@ -234,13 +236,13 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:gravity="center_horizontal|center_vertical"
-                            android:background="@drawable/sel_iosblue_135x40"
                             android:text="Share"
                             android:textSize="20dip"
-                            android:textColor="#ffffffff"
                             android:textStyle="bold"
                             android:visibility="gone"
                             />
+                        <!--android:textColor="#ffffffff"-->
+                        <!--android:background="@drawable/sel_iosblue_135x40"-->
 
                         <Button
                             android:id="@+id/connect_and_share_button"
@@ -248,16 +250,16 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:gravity="center_horizontal|center_vertical"
-                            android:background="@drawable/sel_iosblue_280x40"
                             android:text="Connect and Share"
                             android:textSize="20dip"
-                            android:textColor="#ffffffff"
                             android:textStyle="bold"
                             />
-                        <!-- android:layout_marginTop="4dp"
-                        android:layout_marginRight="4dp"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginLeft="4dp" -->
+                        <!--android:textColor="#ffffffff"-->
+                        <!--android:background="@drawable/sel_iosblue_280x40"-->
+                        <!--android:layout_marginTop="4dp"-->
+                        <!--android:layout_marginRight="4dp"-->
+                        <!--android:layout_marginBottom="4dp"-->
+                        <!--android:layout_marginLeft="4dp"-->
 
                     </LinearLayout>
 
