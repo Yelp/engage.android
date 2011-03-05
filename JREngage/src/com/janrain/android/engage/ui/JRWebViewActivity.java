@@ -53,14 +53,10 @@ import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.utils.IOUtils;
 import com.janrain.android.engage.utils.StringUtils;
 //import com.sun.tools.corba.se.idl.ExceptionEntry;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 import java.net.URL;
-import java.util.ArrayList;
 
 /**
  * Container for authentication web view.  Mimics JRWebViewController iPhone interface.
@@ -209,7 +205,7 @@ public class JRWebViewActivity extends Activity
         CookieSyncManager.createInstance(this);
 
         mSessionData = JRSessionData.getInstance();
-        JRProvider provider = mSessionData.getCurrentProvider();
+        JRProvider provider = mSessionData.getCurrentlyAuthenticatingProvider();
 
         if (Config.LOGD) {
             Log.d(TAG, "[onCreate] provider: " + provider.getName());
@@ -232,7 +228,7 @@ public class JRWebViewActivity extends Activity
         webSettings.setJavaScriptCanOpenWindowsAutomatically(false);
         webSettings.setSupportZoom(true);
 
-        URL startUrl = mSessionData.startUrlForCurrentProvider();
+        URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
         if (startUrl == null) {
             // PROBLEM
         } else {
@@ -248,6 +244,11 @@ public class JRWebViewActivity extends Activity
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
+    }
+
+    protected void onStop() {
+        super.onStop();
+        mSessionData.triggerAuthenticationDidCancel();
     }
 
     @Override
@@ -364,7 +365,7 @@ public class JRWebViewActivity extends Activity
 
         mLayoutHelper.dismissProgressDialog();
 
-        if ((userdata != null) && (userdata instanceof String)) {
+        if (userdata instanceof String) {
             final String tag = (String)userdata;
             if (tag.equals(RPX_RESULT_TAG)) {
                 JRDictionary payloadDictionary = JRDictionary.fromJSON(payload);
@@ -372,15 +373,15 @@ public class JRWebViewActivity extends Activity
                 final String result = resultDictionary.getAsString("stat");
                 if ("ok".equals(result)) {
                     // back button?
-                    mSessionData.triggerAuthenticationDidCompleteWithPayload(payloadDictionary);
+                    mSessionData.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
                 } else {
                     final String error = resultDictionary.getAsString("error");
                     String alertTitle, alertMessage, logMessage;
                     if ("Discovery failed for the OpenID you entered".equals(error)) {
                         alertTitle = "Invalid Input";
-                        alertMessage = (mSessionData.getCurrentProvider().requiresInput())
+                        alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
                                 ? String.format("The %s you entered was not valid. Please try again.",
-                                    mSessionData.getCurrentProvider().getShortText())
+                                    mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
                                 : "There was a problem authenticating with this provider. Please try again.";
                         logMessage = "Discovery failed for the OpenID you entered: ";
 
@@ -396,9 +397,9 @@ public class JRWebViewActivity extends Activity
                         showAlertDialog(alertTitle, alertMessage);
                     } else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
                         alertTitle = "Invalid Input";
-                        alertMessage = (mSessionData.getCurrentProvider().requiresInput())
+                        alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
                                 ? String.format("The %s you entered was not valid. Please try again.",
-                                    mSessionData.getCurrentProvider().getShortText())
+                                    mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
                                 : "There was a problem authenticating with this provider. Please try again.";
                         logMessage = "The URL you entered does not appear to be an OpenID: ";
 

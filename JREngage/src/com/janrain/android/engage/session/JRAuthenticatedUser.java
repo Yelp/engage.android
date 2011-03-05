@@ -29,10 +29,12 @@
 */
 package com.janrain.android.engage.session;
 
+import android.graphics.Bitmap;
 import com.janrain.android.engage.types.JRDictionary;
 
 import android.text.TextUtils;
 
+import java.awt.*;
 import java.io.Serializable;
 
 /**
@@ -49,7 +51,6 @@ public class JRAuthenticatedUser implements Serializable {
     // ------------------------------------------------------------------------
 
     public static final String KEY_AUTH_INFO = "auth_info";
-	public static final String KEY_PROVIDER_NAME = "provider_name";
 	public static final String KEY_DEVICE_TOKEN = "device_token";
     public static final String KEY_PHOTO = "photo";
     public static final String KEY_PREFERRED_USERNAME = "preferred_username";
@@ -73,6 +74,7 @@ public class JRAuthenticatedUser implements Serializable {
     private String mDeviceToken;
     private JRDictionary mAuthInfo;
     private String mProviderName;
+    transient private Bitmap mCachedProfilePic; //transient marks this field as not serialized
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -82,17 +84,15 @@ public class JRAuthenticatedUser implements Serializable {
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
 
-    public JRAuthenticatedUser() {
+    private JRAuthenticatedUser() {
     }
     
-    public JRAuthenticatedUser(JRDictionary dictionary, String providerName) {
-    	if ((dictionary != null) && (!TextUtils.isEmpty(providerName)) 
-    			&& dictionary.containsKey(KEY_DEVICE_TOKEN)) {
-            mDeviceToken = dictionary.getAsString(KEY_DEVICE_TOKEN);
-    		mProviderName = providerName;
-    		mPhoto = dictionary.getAsString(KEY_PHOTO);
-			mPreferredUsername = dictionary.getAsString(KEY_PREFERRED_USERNAME);
-    	}
+    public JRAuthenticatedUser(JRDictionary mobileEndPointResponse, String providerName) {
+        mProviderName = providerName;
+        mDeviceToken = mobileEndPointResponse.getAsString(KEY_DEVICE_TOKEN);
+        mPhoto = mobileEndPointResponse.getAsString(KEY_PHOTO);
+        mPreferredUsername = mobileEndPointResponse.getAsString(KEY_PREFERRED_USERNAME);
+        mAuthInfo = mobileEndPointResponse.getAsDictionary(KEY_AUTH_INFO);
     }
 
     // ------------------------------------------------------------------------
@@ -122,21 +122,29 @@ public class JRAuthenticatedUser implements Serializable {
     // ------------------------------------------------------------------------
     // METHODS
     // ------------------------------------------------------------------------
-    
-    public void encodeWithCoder(JRDictionary coder) {
-    	coder.put(KEY_PROVIDER_NAME, mProviderName);
-    	coder.put(KEY_PHOTO, mPhoto);
-    	coder.put(KEY_PREFERRED_USERNAME, mPreferredUsername);
-    	coder.put(KEY_DEVICE_TOKEN, mDeviceToken);
-        coder.put(KEY_AUTH_INFO, mAuthInfo);
+
+//    public void encodeWithCoder(JRDictionary coder) {
+//    	coder.put(KEY_PROVIDER_NAME, mProviderName);
+//    	coder.put(KEY_PHOTO, mPhoto);
+//    	coder.put(KEY_PREFERRED_USERNAME, mPreferredUsername);
+//    	coder.put(KEY_DEVICE_TOKEN, mDeviceToken);
+//        coder.put(KEY_AUTH_INFO, mAuthInfo);
+//    }
+//
+//    public void initWithCoder(JRDictionary coder) {
+//    	mProviderName = coder.getAsString(KEY_PROVIDER_NAME);
+//    	mPhoto = coder.getAsString(KEY_PHOTO);
+//    	mPreferredUsername = coder.getAsString(KEY_PREFERRED_USERNAME);
+//    	mDeviceToken = coder.getAsString(KEY_DEVICE_TOKEN);
+//        mAuthInfo = coder.getAsDictionary(KEY_AUTH_INFO);
+//    }
+
+    public Bitmap getCachedProfilePic() {
+        return mCachedProfilePic;  //To change body of created methods use File | Settings | File Templates.
     }
 
-    public void initWithCoder(JRDictionary coder) {
-    	mProviderName = coder.getAsString(KEY_PROVIDER_NAME);
-    	mPhoto = coder.getAsString(KEY_PHOTO);
-    	mPreferredUsername = coder.getAsString(KEY_PREFERRED_USERNAME);
-    	mDeviceToken = coder.getAsString(KEY_DEVICE_TOKEN);
-        mAuthInfo = coder.getAsDictionary(KEY_AUTH_INFO);
+    public void setCachedProfilePic(Bitmap b) {
+        //todo implement the caching
+        mCachedProfilePic = b;
     }
- 
 }

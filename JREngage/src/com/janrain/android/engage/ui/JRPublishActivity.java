@@ -31,8 +31,11 @@ package com.janrain.android.engage.ui;
 
 import android.app.*;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -52,7 +55,6 @@ import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
 
-import java.awt.*;
 import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -193,16 +195,17 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private JRSessionData mSessionData;
 
     //
-    private JRProvider mSelectedProvider;
-    private JRAuthenticatedUser mLoggedInUser;
+    private JRProvider mSelectedProvider; //the provider for the selected tab
+    private JRAuthenticatedUser mLoggedInUser; //the user (if logged in) for the selected tab
     private JRSessionDelegate mSessionDelegate;
     private JRActivityObject mActivityObject;
 
-    //
-    private String mShortenedActivityURL = null;//"http://fakeshort"; //null if it hasn't been shortened
+    //UI properties
+    private String mShortenedActivityURL = null; //null if it hasn't been shortened
     private int mMaxCharacters;
+    private String mDialogErrorMessage;
 
-    //UI state variables
+    //UI state transitioning variables
     private boolean mUserHasEditedText = false;
     private boolean mWeHaveJustAuthenticated = false;
     private boolean mWeAreCurrentlyPostingSomething = false;
@@ -211,18 +214,18 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private RelativeLayout mMediaContentView;
     private TextView mCharacterCountView;
     private TextView mPreviewLabelView;
-    private ImageView mProviderIcon;
+    private ImageView mProviderIcon; //todo update this icon onTabChange
     private EditText mUserCommentView;
-    private LinearLayout mShareButtonContainer;
-    private LinearLayout mProfilePicAndButtonsHorizontalLayout;
-    private ImageView mProfilePicImage;
+    //private LinearLayout mProfilePicAndButtonsHorizontalLayout; //I think we don't need a handle to this
+    //private LinearLayout mShareButtonContainer; //or a handle to this
+    private ImageView mUserProfilePic;
     private LinearLayout mNameAndSignOutContainer;
     private TextView mUserName;
-    private Button mSignOutButton;
+    private Button mSignOutButton; //todo add an onClickListener and implement sign out
     private Button mJustShareButton;
     private Button mConnectAndShareButton;
 
-    //
+    //a helper class used to control display of a nice loading dialog
     private SharedLayoutHelper mLayoutHelper;
 
     // ------------------------------------------------------------------------
@@ -244,6 +247,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.publish_activity);
 
         mSessionData = JRSessionData.getInstance();
@@ -260,21 +264,23 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         TextView title = (TextView)findViewById(R.id.header_text);
         title.setText(getString(R.string.publish_activity_title));
 
+        //View References
         mMediaContentView = (RelativeLayout) findViewById(R.id.media_content_view);
         mCharacterCountView = (TextView) findViewById(R.id.character_count_view);
         mProviderIcon = (ImageView) findViewById(R.id.provider_icon);
-        mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
         mUserCommentView = (EditText) findViewById(R.id.edit_comment);
         mPreviewLabelView = (TextView) findViewById(R.id.preview_label_view);
-        mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
-        mProfilePicAndButtonsHorizontalLayout = (LinearLayout) findViewById(R.id.profile_pic_and_buttons_horizontal_layout);
-        mProfilePicImage = (ImageView) findViewById(R.id.profile_pic);
+        //mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
+        //mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
+        //mProfilePicAndButtonsHorizontalLayout = (LinearLayout) findViewById(R.id.profile_pic_and_buttons_horizontal_layout);
+        mUserProfilePic = (ImageView) findViewById(R.id.profile_pic);
         mNameAndSignOutContainer = (LinearLayout) findViewById(R.id.name_and_sign_out_container);
         mUserName = (TextView) findViewById(R.id.user_name);
         mSignOutButton = (Button) findViewById(R.id.sign_out_button);
         mJustShareButton = (Button) findViewById(R.id.just_share_button);
         mConnectAndShareButton = (Button) findViewById(R.id.connect_and_share_button);
 
+        //View listeners
         mConnectAndShareButton.setOnClickListener(mShareButtonListener);
         mJustShareButton.setOnClickListener(mShareButtonListener);
         mUserCommentView.addTextChangedListener(new TextWatcher() {
@@ -289,12 +295,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 updateCharacterCount();
             }
         });
+        mSignOutButton.setOnClickListener(mSignoutButtonListener);
 
+        //ShareLayoutHelper is a spinner dialog class
         mLayoutHelper = new SharedLayoutHelper(this);
 
         // TODO: When focus leaves the usercontentview and the text is empty, go back to setting the
         // previewlabel to action (if applicable) and the usercontentview's default text to "please enter text"
 
+        //configure the state of the UI
         fetchShortenedURLs();
         loadViewElementPropertiesWithActivityObject();
 
@@ -352,16 +361,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 //        unregisterReceiver(mFinishReceiver);
     }
 
+    //UI listeners
+
     private View.OnClickListener mShareButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
-        //    weAreCurrentlyPostingSomething = true;
+//            weAreCurrentlyPostingSomething = true;
 
             if (!mUserCommentView.getText().equals(""))
                 mActivityObject.setUserGeneratedContent(mUserCommentView.getText().toString());
 
-            // Current Provider is a variable within session data and contains the provider we are currently authenticating with
-            // TODO: Rename this to be more meaningful
-            //mSessionData.setCurrentProvider(mSelectedProvider);
             showViewIsLoading(true);
 
             if (mLoggedInUser == null) {
@@ -372,21 +380,56 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         }
     };
 
-    /**
-     * Invoked by JRUserInterfaceMaestro via FinishReceiver to close this activity.
-     */
+    private View.OnClickListener mSignoutButtonListener = new View.OnClickListener() {
+        public void onClick(View view) {
+            mLoggedInUser = null;
+            logUserOutForProvider(mSelectedProvider.getName());
+            showUserAsLoggedIn(false);
+        }
+    };
 
+    public void updateCharacterCount() {
+        //TODO make negative numbers red, verify correctness of the 0 remaining characters edge case
+
+        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) { //twitter, myspace, linkedin
+            if (activityUrlAffectsCharacterCountForSelectedProvider() && mShortenedActivityURL == null) { //twitter, myspace
+                // Do nothing yet...
+            } else {
+                int preview_length = mPreviewLabelView.getText().length();
+                mCharacterCountView.setText("Remaining characters: " + (mMaxCharacters - preview_length));
+                Log.d(TAG, "uCC1: " + (mMaxCharacters - preview_length));
+            }
+        } else { //facebook, yahoo
+            int comment_length = mUserCommentView.getText().length();
+            mCharacterCountView.setText("Remaining characters: " + (mMaxCharacters - comment_length));
+        }
+    }
+
+    public void onTabChanged(String tabId) {
+        Log.d(TAG, "[onTabChange]: " + tabId);
+
+        mSelectedProvider = mSessionData.getProviderByName(tabId);
+
+        //XXX TabHost is setting our FrameLayout's only child to GONE when loading
+        //XXX could be a bug in the TabHost, or could be a misuse of the TabHost system, this is a workaround
+        findViewById(R.id.tab_view_content).setVisibility(View.VISIBLE);
+
+        configureViewElementsBasedOnProvider();
+        configureLoggedInUserBasedOnProvider();
+
+        //updateCharacterCount();
+    }
+
+//    /**
+//     * Invoked by JRUserInterfaceMaestro via FinishReceiver to close this activity.
+//     */
+//
 //    public void tryToFinishActivity() {
 //        Log.i(TAG, "[tryToFinishActivity]");
 //        finish();
 //    }
 
-
-    public boolean activityUrlAffectsCharacterCountForSelectedProvider() {
-        //twitter + myspace -> true
-        return (mSelectedProvider.getSocialSharingProperties().getAsBoolean("url_reduces_max_chars") &&
-            mSelectedProvider.getSocialSharingProperties().getAsString("shows_url_as").equals("url"));
-    }
+    //UI property updaters
 
     public void updateUserCommentView() {
         if (!mUserHasEditedText) mUserHasEditedText = true;
@@ -408,38 +451,49 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         }
     }
 
-    //
-    // callback handler to update our character count
-    //
-
-    public void updateCharacterCount() {
-        //TODO make negative numbers red, verify correctness of the 0 remaining characters edge case
-
-        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) { //twitter, myspace, linkedin
-            if (activityUrlAffectsCharacterCountForSelectedProvider() && mShortenedActivityURL == null) { //twitter, myspace
-                // Do nothing yet...
-            } else {
-                int preview_length = mPreviewLabelView.getText().length();
-                mCharacterCountView.setText("Remaining characters: " + (mMaxCharacters - preview_length));
-                Log.d(TAG, "uCC1: " + (mMaxCharacters - preview_length));
-            }
-        } else { //facebook, yahoo
-            int comment_length = mUserCommentView.getText().length();
-            mCharacterCountView.setText("Remaining characters: " + (mMaxCharacters - comment_length));
-        }
-    }
-
-    //
-    // View.OnClickListener
-    // used to handle clicks on the share button
-    //
-
-    private void logUserOutForProvider(String provider) {
+    private void loadUserNameAndProfilePicForUserForProvider(final JRAuthenticatedUser user, String providerName) {
         Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
+
+        if (user == null || providerName == null) {
+            mUserName.setText("");
+            //todo set muserprofilepic
+            //[self setButtonImage:myProfilePic toData:null andSetLoading:myProfilePicActivityIndicator toLoading:NO];
+            return;
+        }
+
+        mUserName.setText(user.getPreferredUsername());
+
+        // TODO
+        ///NSData *cachedProfilePic = [cachedProfilePics objectForKey:providerName];
+        Bitmap cachedProfilePic = user.getCachedProfilePic();
+
+        if (cachedProfilePic instanceof Bitmap) {
+            mUserProfilePic.setImageBitmap(cachedProfilePic);
+        } else if (user.getPhoto() != null) {
+            new AsyncTask<Void, Void, Bitmap>() {
+                protected Bitmap doInBackground(Void... voids) {
+                    try {
+                        return BitmapFactory.decodeStream((new URL(user.getPhoto())).openStream());
+                    } catch (IOException e) {
+                        //do absolutely nothing.  If the picture doesn't load, SO BE IT, NO PICTURE.
+                        return null;
+                    }
+                }
+
+                protected void onPostExecute(Bitmap b) {
+                    mUserProfilePic.setImageBitmap(b);
+                    user.setCachedProfilePic(b);
+                }
+            }.execute();
+        } else {
+            //todo
+            //[self setProfilePicToDefaultPic];
+        }
     }
 
     private void showActivityAsShared(boolean shared) {
         Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
+        //todo
     }
 
     private void showUserAsLoggedIn(boolean loggedIn) {
@@ -449,36 +503,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         int visibleIfNotLoggedIn = !loggedIn ? View.VISIBLE : View.GONE;
 
         mJustShareButton.setVisibility(visibleIfLoggedIn);
-        mProfilePicImage.setVisibility(visibleIfLoggedIn);
+        mUserProfilePic.setVisibility(visibleIfLoggedIn);
         mNameAndSignOutContainer.setVisibility(visibleIfLoggedIn);
 
         mConnectAndShareButton.setVisibility(visibleIfNotLoggedIn);
 
+        //todo replicate this iOS UI bit?
         //[myTriangleIcon setFrame:CGRectMake(loggedIn ? 230 : 151, 0, 18, 18)];
-    }
-
-    private void loadUserNameAndProfilePicForUserForProvider(JRAuthenticatedUser user, String providerName) {
-        Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
-
-        if (user == null || providerName == null) {
-            mUserName.setText("");
-            //[self setButtonImage:myProfilePic toData:null andSetLoading:myProfilePicActivityIndicator toLoading:NO];
-            return;
-        }
-
-        mUserName.setText(user.getPreferredUsername());
-
-        // TODO
-        ///NSData *cachedProfilePic = [cachedProfilePics objectForKey:providerName];
-        Image cachedProfilePic = null;
-
-        if (cachedProfilePic != null)
-            ;//[self setButtonImage:myProfilePic toData:cachedProfilePic andSetLoading:myProfilePicActivityIndicator toLoading:NO];
-        else if (user.getPhoto() != null)
-            ;//[self fetchProfilePicFromUrl:user.photo forProvider:providerName];
-        else
-            ;//[self setProfilePicToDefaultPic];
-
     }
 
     private void showViewIsLoading(boolean loading) {
@@ -561,38 +592,40 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             showUserAsLoggedIn(false);
         }
     }
-//    shareButtonPressed(Button button) {
-//    }
 
-    //
-    // Helper methods
-    //
+    //UI ~state updaters
 
-    //
-    //populates the UI elements with the properties of the activity object
-    //
+    public Dialog onCreateDialog(int id) {
+        DialogInterface.OnClickListener successDismiss = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finish();
+            }
+        };
 
-    public void onTabChanged(String tabId) {
-        Log.d(TAG, "[onTabChange]: " + tabId);
+        switch (id) {
+            case SUCCESS_DIALOG:
+                return new AlertDialog.Builder(JRPublishActivity.this).setMessage("Success!")
+                                         .setCancelable(false)
+                                         .setPositiveButton("Dismiss", successDismiss)
+                                         .create();
+            case FAILURE_DIALOG:
+                return new AlertDialog.Builder(JRPublishActivity.this).setMessage(mDialogErrorMessage)
+                                         .setPositiveButton("Dismiss", null)
+                                         .create();
+        }
+        return null;
+    }
 
-        mSessionData.setCurrentProviderByName(tabId);
-
-        mSelectedProvider = mSessionData.getCurrentProvider();
-
-        //XXX TabHost is setting our FrameLayout's only child to GONE when loading
-        //XXX could be a bug in the TabHost, or could be a misuse of the TabHost system, this is a workaround
-        findViewById(R.id.tab_view_content).setVisibility(View.VISIBLE);
-
-        configureViewElementsBasedOnProvider();
-        configureLoggedInUserBasedOnProvider();
-
-        //updateCharacterCount();
+    private void logUserOutForProvider(String provider) {
+        Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
+        mSessionData.forgetAuthenticatedUserForProvider(provider);
     }
 
     private void authenticateUser() {
      /* Set weHaveJustAuthenticated to true, so that when this view returns (for whatever reason... successful auth
         user canceled, etc), the view will know that we just went through the authentication process. */
         mWeHaveJustAuthenticated = true;
+        mSessionData.setCurrentlyAuthenticatingProvider(mSelectedProvider);
 
      /* If the selected provider requires input from the user, go to the user landing view. Or if
         the user started on the user landing page, went back to the list of providers, then selected
@@ -606,7 +639,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private void shareActivity() {
         Log.d(TAG, Thread.currentThread().getStackTrace()[0].getLineNumber() + "");
-        mSessionData.setCurrentProvider(mSelectedProvider);
+
         mSessionData.shareActivityForUser(mLoggedInUser);
     }
 
@@ -644,20 +677,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         }
     }
 
-    public Dialog onCreateDialog(int id) {
-        switch (id) {
-            case SUCCESS_DIALOG:
-                return new AlertDialog.Builder(JRPublishActivity.this).setMessage("Success!")
-                                         .setCancelable(false)
-                                         .setPositiveButton("Dismiss", null)
-                                         .create();
-            case FAILURE_DIALOG:
-                return new AlertDialog.Builder(JRPublishActivity.this).setMessage("Error: ")
-                                         .setPositiveButton("Dismiss", null)
-                                         .create();
-        }
-        return null;
+    //helper functions
+
+    public boolean activityUrlAffectsCharacterCountForSelectedProvider() {
+        //twitter + myspace -> true
+        return (mSelectedProvider.getSocialSharingProperties().getAsBoolean("url_reduces_max_chars") &&
+            mSelectedProvider.getSocialSharingProperties().getAsString("shows_url_as").equals("url"));
     }
+
+    //JRSessionDelegate definition
 
     private JRSessionDelegate createSessionDelegate() {
         return new JRSD() {
@@ -672,12 +700,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 Log.d(TAG, "[authenticationDidCancel]");
                 mWeAreCurrentlyPostingSomething = false;
                 mWeHaveJustAuthenticated = false;
+                mLayoutHelper.dismissProgressDialog();
             }
 
             public void authenticationDidFail(JREngageError error, String provider) {
                 Log.d(TAG, "[authenticationDidFail]");
                 mWeHaveJustAuthenticated = false;
                 mWeAreCurrentlyPostingSomething = false;
+                //todo
             }
 
             public void authenticationDidComplete(JRDictionary profile, String provider) {
@@ -687,23 +717,23 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 mLoggedInUser = mSessionData.authenticatedUserForProvider(mSelectedProvider);
 
                 // QTS: Would we ever expect this to not be the case?
-                if (mLoggedInUser != null) {
+//                if (mLoggedInUser != null) {
                     showViewIsLoading(true);
                     loadUserNameAndProfilePicForUserForProvider(mLoggedInUser, provider);
                     showUserAsLoggedIn(true);
 
                     shareActivity();
-                } else {
-//                    UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Shared"
-//                                                                     message:@"There was an error while sharing this activity."
-//                                                                    delegate:nil
-//                                                           cancelButtonTitle:@"OK"
-//                                                           otherButtonTitles:nil] autorelease];
-//                    [alert show];
-                    showViewIsLoading(false);
-                    mWeAreCurrentlyPostingSomething = false;
-                    mWeHaveJustAuthenticated = false;
-                }
+//                } else {
+////                    UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Shared"
+////                                                                     message:@"There was an error while sharing this activity."
+////                                                                    delegate:nil
+////                                                           cancelButtonTitle:@"OK"
+////                                                           otherButtonTitles:nil] autorelease];
+////                    [alert show];
+//                    showViewIsLoading(false);
+//                    mWeAreCurrentlyPostingSomething = false;
+//                    mWeHaveJustAuthenticated = false;
+//                }
             }
 
             public void publishingDidRestart() { mWeAreCurrentlyPostingSomething = false; }
@@ -733,7 +763,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
                 Log.d(TAG, "[publishingActivityDidFail]");
-                String errorMessage = null;
                 boolean reauthenticate = false;
 
                 showViewIsLoading(false);
@@ -741,24 +770,24 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 switch (error.getCode())
                 {// TODO: add strings to string resource file
                     case JREngageError.SocialPublishingError.FAILED:
-                        errorMessage = "There was an error while sharing this activity.";
+                        mDialogErrorMessage = "There was an error while sharing this activity.";
                         break;
                     case JREngageError.SocialPublishingError.DUPLICATE_TWITTER:
-                        errorMessage = "There was an error while sharing this activity: Twitter does not allow duplicate status updates.";
+                        mDialogErrorMessage = "There was an error while sharing this activity: Twitter does not allow duplicate status updates.";
                         break;
                     case JREngageError.SocialPublishingError.LINKEDIN_CHARACTER_EXCEEDED:
-                        errorMessage = "There was an error while sharing this activity: Status was too long.";
+                        mDialogErrorMessage = "There was an error while sharing this activity: Status was too long.";
                         break;
                     case JREngageError.SocialPublishingError.MISSING_API_KEY:
-                        errorMessage = "There was an error while sharing this activity.";
+                        mDialogErrorMessage = "There was an error while sharing this activity.";
                         reauthenticate = true;
                         break;
                     case JREngageError.SocialPublishingError.INVALID_OAUTH_TOKEN:
-                        errorMessage = "There was an error while sharing this activity.";
+                        mDialogErrorMessage = "There was an error while sharing this activity.";
                         reauthenticate = true;
                         break;
                     default:
-                        errorMessage = "There was an error while sharing this activity.";
+                        mDialogErrorMessage = "There was an error while sharing this activity.";
                         break;
                 }
 
@@ -769,10 +798,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 Also, this prevents an infinite loop of reauthing-failed publishing-reauthing-failed publishing.
                 So, only try and reauthenticate is the publishing activity view is already loaded, which will only happen if we didn't
                 JUST try and authorize, or if sharing took longer than the time it takes to pop the view controller. */
-                if (reauthenticate && !mWeHaveJustAuthenticated)
-                {
+                if (reauthenticate && !mWeHaveJustAuthenticated) {
                     logUserOutForProvider(provider);
-                    //shareButtonPressed(null);
+                    authenticateUser();
 
                     return;
                 }
@@ -781,14 +809,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 mWeHaveJustAuthenticated = false;
 
                 showDialog(FAILURE_DIALOG);
-
-//                UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Error"
-//                                                                 message:errorMessage
-//                                                                delegate:nil
-//                                                       cancelButtonTitle:@"OK"
-//                                                       otherButtonTitles:nil] autorelease];
-//                [alert show];
-
             }
         };
     }

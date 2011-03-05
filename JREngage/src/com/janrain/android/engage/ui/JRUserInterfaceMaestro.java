@@ -29,9 +29,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.text.TextUtils;
@@ -115,15 +113,13 @@ public class JRUserInterfaceMaestro {
     /**
      * Displays the provider list for authentication.
      */
-    public void showAuthenticationDialog() {
+    public void showProviderSelectionDialog() {
         startActivity(JRProvidersActivity.class);
 
         if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
-            mSessionData.setCurrentProviderByName(mSessionData.getReturningBasicProvider());
+            mSessionData.setCurrentlyAuthenticatingProvider(mSessionData.getReturningBasicProvider());
             showUserLanding();
         }
-
-
     }
 
     /**
@@ -160,13 +156,14 @@ public class JRUserInterfaceMaestro {
         }
     }
 
-
     public void authenticationFailed() {
+        //todo what's this doing, what should it be doing?
         popToOriginal();
     }
 
     public void authenticationCanceled() {
-        popAll();
+        //todo what's this doing, what should it be doing?
+        //popAll();
     }
 
     public void setUpSocialPublishing() {
@@ -177,31 +174,31 @@ public class JRUserInterfaceMaestro {
         //      [sessionData addDelegate:myPublishActivityController];
     }
 
-    public void tearDownSocialPublishing() {
-        mSessionData.setSocial(false);
-        mSessionData.setActivity(null);
+//    public void tearDownSocialPublishing() {
+//        mSessionData.setSocial(false);
+//        mSessionData.setActivity(null);
+//
+//        // TODO:
+//        // if (myPublishActivityController)
+//        //      [sessionData removeDelegate:myPublishActivityController];
+//    }
+//
+//    public void publishingRestarted() {
+//        popToOriginal();
+//    }
+//
+//    public void publishingCompleted() {
+//        popAll();
+//    }
 
-        // TODO:
-        // if (myPublishActivityController)
-        //      [sessionData removeDelegate:myPublishActivityController];
-    }
+//    public void publishingFailed() {
+//        // TODO: commented out on iPhone?
+//        // popToOriginal();
+//    }
 
-    public void publishingRestarted() {
-        popToOriginal();
-    }
-
-    public void publishingCompleted() {
-        popAll();
-    }
-
-    public void publishingFailed() {
-        // TODO: commented out on iPhone?
-        // popToOriginal();
-    }
-
-    public void publishingCanceled() {
-        popAll();
-    }
+//    public void publishingCanceled() {
+//        popAll();
+//    }
 
     /**
      * Helper method used to launch a new display managedActivity.

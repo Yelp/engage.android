@@ -63,13 +63,12 @@ public final class IOUtils {
 	 * 		The object as a byte array, null if the specified object was null.
 	 */
 	public static byte[] objectToBytes(Object obj) {
-		byte[] retval = null;
 		try {
-			retval = objectToBytes(obj, false);
-		} catch (IOException ignore) {
+			return objectToBytes(obj, false);
+		} catch (IOException e) {
 			// will never happen because we're sending 'false', but need for compilation
 		}
-		return retval;
+        throw new RuntimeException("sanity failure");
 	}
 	
 	/**
@@ -90,7 +89,6 @@ public final class IOUtils {
 	 * 		occurred.
 	 */
 	public static byte[] objectToBytes(Object obj, boolean shouldThrowOnError) throws IOException {
-		byte[] retval = null;
 		if (obj != null) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ObjectOutputStream oos;
@@ -98,7 +96,7 @@ public final class IOUtils {
 				oos = new ObjectOutputStream(baos);
 				oos.writeObject(obj);
 				oos.close();
-				retval = baos.toByteArray();
+				return baos.toByteArray();
 			} catch (IOException e) {
 				Log.e(TAG, "[objectToBytes] IOException encountered", e);
 				if (shouldThrowOnError) {
@@ -106,7 +104,8 @@ public final class IOUtils {
 				}
 			}
 		}
-		return retval;
+        //this is a good byte[] representation of null that won't cause the file writer to crash
+		return new byte[0];
 	}
 	
 	/**

@@ -35,7 +35,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 import android.view.*;
@@ -228,7 +227,7 @@ public class JRProvidersActivity extends ListActivity {
         super.onResume();
 
 //        if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
-//                    mSessionData.setCurrentProviderByName(mSessionData.getReturningBasicProvider());
+//                    mSessionData.setCurrentlyAuthenticatingProvider(mSessionData.getReturningBasicProvider());
 //                    JRUserInterfaceMaestro.getInstance().showUserLanding();
 //        }
     }
@@ -256,7 +255,7 @@ public class JRProvidersActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int pos, long id) {
         JRProvider provider = mAdapter.getItem(pos);
-        mSessionData.setCurrentProvider(provider);
+        mSessionData.setCurrentlyAuthenticatingProvider(provider);
         if (provider.requiresInput() || provider.getName().equals(mSessionData.getReturningBasicProvider())) {
             JRUserInterfaceMaestro.getInstance().showUserLanding();
         } else {

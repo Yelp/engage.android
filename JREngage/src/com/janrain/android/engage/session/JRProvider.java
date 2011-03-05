@@ -161,6 +161,8 @@ public class JRProvider implements Serializable {
     public void setForceReauth(boolean forceReauth) {
         this.mForceReauth = forceReauth;
 
+        //XXX shouldn't we clear the users cookie too?
+
         Prefs.putBoolean(Prefs.KEY_JR_FORCE_REAUTH + this.mName, this.mForceReauth);
     }
 

@@ -59,7 +59,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class JRSessionData implements JRConnectionManagerDelegate {
 
@@ -129,7 +128,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
 	private ArrayList<JRSessionDelegate> mDelegates;
 	
-	private JRProvider mCurrentProvider;
+	private JRProvider mCurrentlyAuthenticatingProvider;
+    private JRProvider mCurrentlyPublishingProvider;
 
     private String mReturningBasicProvider;
 	private String mReturningSocialProvider;
@@ -254,6 +254,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mActivity = activity;
 
         // TODO: Add function equiv. to [self startGetShortenedUrlsForActivity:activity];
+        //JRPublishActivity now shortens URLs, don't need to follow TODO?
     }
 
     public boolean getAlwaysForceReauth() {
@@ -276,17 +277,21 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mTokenUrl = tokenUrl;
     }
 
-    public JRProvider getCurrentProvider() {
-        return mCurrentProvider;
+    public JRProvider getCurrentlyAuthenticatingProvider() {
+        return mCurrentlyAuthenticatingProvider;
     }
 
-    public void setCurrentProvider(JRProvider provider) {
-        mCurrentProvider = provider;
+    public void setCurrentlyAuthenticatingProvider(JRProvider provider) {
+        Log.d(TAG, "setCurrentlyAuthenticatingProvider: " +
+                (provider instanceof JRProvider ? provider.getName() : null));
+        
+        mCurrentlyAuthenticatingProvider = provider;
     }
 
-    public void setCurrentProviderByName(String providerName) {
+    public void setCurrentlyAuthenticatingProvider(String providerName) {
         Object provider = mAllProviders.get(providerName);
-        setCurrentProvider((JRProvider)provider);
+
+        setCurrentlyAuthenticatingProvider((JRProvider) provider);
     }
 
     public ArrayList<JRProvider> getBasicProviders() {
@@ -377,8 +382,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 for (JRSessionDelegate delegate : delegatesCopy) {
                     JREngageError error = new JREngageError(
                         "Session error", JREngageError.CODE_UNKNOWN, "", ex
-                    );// TODO: Fix the mCurrentProvider equaling null issue
-                    delegate.publishingActivityDidFail(mActivity, error, "foo");//mCurrentProvider.getName());
+                    );// TODO: Fix the mCurrentlyAuthenticatingProvider equaling null issue
+                    delegate.publishingActivityDidFail(mActivity, error, "foo");//mCurrentlyAuthenticatingProvider.getName());
                 }
             } else {
 
@@ -427,10 +432,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             String tag = (String) userdata;
 
             if (tag.equals("shareActivity")) {
-                // TODO: ShareActivity user data should be a dictionary, not a string
+                // TODO shareActivity should be a JRDictionary?
                 // TODO: Move all of this code out of the connection delegate function
                 JRDictionary responseDict = JRDictionary.fromJSON(payload);
+                String providerName = getCurrentlyPublishingProvider().getName();
+
                 if (responseDict == null) {
+                    setCurrentlyPublishingProvider(null);
                     List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
                     for (JRSessionDelegate delegate : delegatesCopy) {
                         delegate.publishingActivityDidFail(
@@ -438,18 +446,19 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                                 new JREngageError(payload,
                                         SocialPublishingError.FAILED,
                                         ErrorType.PUBLISH_FAILED),
-                                mCurrentProvider.getName());
+                                providerName);
                     }
                 } else if (responseDict.containsKey("stat") && ("ok".equals(responseDict.get("stat")))) {
                     saveLastUsedSocialProvider();
+                    setCurrentlyPublishingProvider(null);
                     List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
                     for (JRSessionDelegate delegate : delegatesCopy) {
                         delegate.publishingActivityDidSucceed(
                                 mActivity,
-                                mCurrentProvider.getName()
-                        );
+                                providerName);
                     }
                 } else {
+                    setCurrentlyPublishingProvider(null);
                     JRDictionary errorDict = responseDict.getAsDictionary("err");
                     JREngageError publishError;
 
@@ -497,19 +506,18 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                         }
                     }
 
-                    // TODO: Fix the issue w mCurrentProvider equaling null
+                    // TODO: Fix the issue w mCurrentlyPublishingProvider equaling null
                     List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
                     for (JRSessionDelegate delegate : delegatesCopy) {
-                        delegate.publishingActivityDidFail(mActivity, publishError,
-                                "foo"/*mCurrentProvider.getName()*/);
+                        delegate.publishingActivityDidFail(mActivity, publishError, providerName);
                     }
                 }
             } else if (tag.equals("emailSuccess")) {
-
+                //todo
             } else if (tag.equals("smsSuccess")) {
-
+                //todo
             } else {
-
+                //todo
             }
         } else if (userdata instanceof JRDictionary) {
             JRDictionary dictionary = (JRDictionary) userdata;
@@ -517,14 +525,15 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 if (dictionary.containsKey("shareActivity")) {
                     // TODO: ShareActivity user data should be a dictionary, not a string
                 } else if (dictionary.containsKey("shortenUrls")) {
-
+                    //todo
                 } else {
-
+                    //todo
                 }
             }
         }
 	}
 
+    //todo experiment with commenting this out to consolidate to only String type payload handler function
     public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload,
                                            String requestUrl, Object userdata) {
         Log.i(TAG, "[connectionDidFinishLoading-full]");
@@ -768,7 +777,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         if (Config.LOGD) {
             Log.d(TAG, "[saveLastUsedSocialProvider]");
         }
-        mReturningSocialProvider = mCurrentProvider.getName();
+        mReturningSocialProvider = getCurrentlyPublishingProvider().getName();
         Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, mReturningSocialProvider);
     }
 
@@ -780,9 +789,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         //CookieHelper doesn't interact with our WebView's cookies :(
         String cookies = CookieManager.getInstance().getCookie(getBaseUrl());
         String welcome_info = cookies.replaceAll(".*welcome_info=([^;]*).*", "$1");
-        mCurrentProvider.setWelcomeString(getWelcomeMessageFromCookieString(welcome_info));
+        mCurrentlyAuthenticatingProvider.setWelcomeString(getWelcomeMessageFromCookieString(welcome_info));
 
-        mReturningBasicProvider = mCurrentProvider.getName();
+        mReturningBasicProvider = mCurrentlyAuthenticatingProvider.getName();
         Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, mReturningBasicProvider);
     }
 
@@ -794,22 +803,22 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         CookieHelper.deleteCookiesByUrl("http://live.com");
     }
 
-    //public String startUrlForCurrentProvider() {
-    public URL startUrlForCurrentProvider() {
+    //public String startUrlForCurrentlyAuthenticatingProvider() {
+    public URL startUrlForCurrentlyAuthenticatingProvider() {
         if (Config.LOGD) {
-            Log.d(TAG, "[startUrlForCurrentProvider]");
+            Log.d(TAG, "[startUrlForCurrentlyAuthenticatingProvider]");
         }
 
-        if (mCurrentProvider == null) {
+        if (mCurrentlyAuthenticatingProvider == null) {
             return null;
         }
 
         String oid;
 
-        if (!TextUtils.isEmpty(mCurrentProvider.getOpenIdentifier())) {
-            oid = String.format("openid_identifier=%s&", mCurrentProvider.getOpenIdentifier());
-            if (mCurrentProvider.requiresInput()) {
-                oid = oid.replaceAll("%@", mCurrentProvider.getUserInput());
+        if (!TextUtils.isEmpty(mCurrentlyAuthenticatingProvider.getOpenIdentifier())) {
+            oid = String.format("openid_identifier=%s&", mCurrentlyAuthenticatingProvider.getOpenIdentifier());
+            if (mCurrentlyAuthenticatingProvider.requiresInput()) {
+                oid = oid.replaceAll("%@", mCurrentlyAuthenticatingProvider.getUserInput());
             } else {
                 oid = oid.replaceAll("%@", "");
             }
@@ -819,12 +828,12 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         String str;
 
-        if ("facebook".equals(mCurrentProvider.getName())) {
-            if (mAlwaysForceReauth || mCurrentProvider.getForceReauth()) {
+        if ("facebook".equals(mCurrentlyAuthenticatingProvider.getName())) {
+            if (mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) {
                 deleteFacebookCookies();
             }
-        } else if ("live_id".equals(mCurrentProvider.getName())) {
-            if (mAlwaysForceReauth || mCurrentProvider.getForceReauth()) {
+        } else if ("live_id".equals(mCurrentlyAuthenticatingProvider.getName())) {
+            if (mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) {
                 deleteLiveCookies();
             }
         }
@@ -834,22 +843,22 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         //str = String.format("%s%s?%s%sversion=android_one&device=android",
         str = String.format("%s%s?%s%sdevice=android&extended=true",
                 mBaseUrl,
-                mCurrentProvider.getStartAuthenticationUrl(),
+                mCurrentlyAuthenticatingProvider.getStartAuthenticationUrl(),
                 oid,
-                ((mAlwaysForceReauth || mCurrentProvider.getForceReauth()) ? "force_reauth=true&" : "")
+                ((mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) ? "force_reauth=true&" : "")
         );
 
-        mCurrentProvider.setForceReauth(false);
+        mCurrentlyAuthenticatingProvider.setForceReauth(false);
 
         if (Config.LOGD) {
-            Log.d(TAG, "[startUrlForCurrentProvider] startUrl: " + str);
+            Log.d(TAG, "[startUrlForCurrentlyAuthenticatingProvider] startUrl: " + str);
         }
 
         URL url = null;
         try {
             url = new URL(str);
         } catch (MalformedURLException e) {
-            Log.e(TAG, "[startUrlForCurrentProvider] URL create failed for string: " + str);
+            Log.e(TAG, "[startUrlForCurrentlyAuthenticatingProvider] URL create failed for string: " + str);
         }
         return url;
     }
@@ -864,14 +873,14 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         /* If we're authenticating with a provider for social publishing, then don't worry about the return experience
          * for basic authentication. *//*
         if (mSocialSharing)
-            return mCurrentProvider.requiresInput();
+            return mCurrentlyAuthenticatingProvider.requiresInput();
 
         /* If we're authenticating with a basic provider, then we don't need to gather infomation if we're displaying
          * return screen. *//*
-        if (mCurrentProvider.isEqualToReturningProvider(mReturningBasicProvider))
+        if (mCurrentlyAuthenticatingProvider.isEqualToReturningProvider(mReturningBasicProvider))
             return false;
 
-        return mCurrentProvider.requiresInput();
+        return mCurrentlyAuthenticatingProvider.requiresInput();
     }*/
 
     public JRAuthenticatedUser authenticatedUserForProvider(JRProvider provider) {
@@ -891,6 +900,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     public void forgetAuthenticatedUserForProvider(String providerName) {
+        //todo XXX if you forget a user, then click connect and share, it shows the webview with the page for logging
+        //in, as expected.  if you hit back without logging in, and then hit connect and share, you're automatically
+        //logged in? need to clear the browser cookie? if not then there's no point in showing the webview to begin
+        //with (since you can just hit back and then connect again, instead of, you know, typing your password.)
         if (Config.LOGD) {
             Log.d(TAG, "[forgetAuthenticatedUserForProvider]");
         }
@@ -943,6 +956,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[shareActivityForUser]");
         }
 
+        setCurrentlyPublishingProvider(user.getProviderName());
+        setSocial(true);
+
         StringBuilder body = new StringBuilder();
         String deviceToken = user.getDeviceToken();
 
@@ -994,42 +1010,39 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
-    public void triggerAuthenticationDidCompleteWithPayload(JRDictionary payloadDict) {
+    public void triggerAuthenticationDidCompleteWithPayload(JRDictionary rpx_result) {
         if (Config.LOGD) {
             Log.d(TAG, "[triggerAuthenticationDidCompleteWithPayload]");
         }
 
-        if (mCurrentProvider == null) {
+        if (mCurrentlyAuthenticatingProvider == null) {
             return;
         }
 
-        JRDictionary goodies = payloadDict.getAsDictionary("rpx_result");
-        String token = goodies.getAsString("token");
-
-        JRAuthenticatedUser user = new JRAuthenticatedUser(goodies, mCurrentProvider.getName());
-        mAuthenticatedUsersByProvider.put(mCurrentProvider.getName(), user);
+        JRAuthenticatedUser user = new JRAuthenticatedUser(rpx_result, mCurrentlyAuthenticatingProvider.getName());
+        mAuthenticatedUsersByProvider.put(mCurrentlyAuthenticatingProvider.getName(), user);
         JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
 
-        if (mBasicProviders.contains(mCurrentProvider.getName())) {
+        if (mBasicProviders.contains(mCurrentlyAuthenticatingProvider.getName())) {
             saveLastUsedBasicProvider();
         }
 
-        if (mSocialProviders.contains(mCurrentProvider.getName())) {
-            saveLastUsedSocialProvider();
-        }
+//        if (mSocialProviders.contains(mCurrentlyPublishingProvider.getName())) {
+//            saveLastUsedSocialProvider();
+//        }
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.authenticationDidComplete(
-                    goodies.getAsDictionary("auth_info"),
-                    mCurrentProvider.getName());
+                    rpx_result.getAsDictionary("auth_info"),
+                    mCurrentlyAuthenticatingProvider.getName());
         }
 
+        String auth_info_token_for_token_url = rpx_result.getAsString("auth_info_token_for_token_url");
         if (!TextUtils.isEmpty(mTokenUrl)) {
-            makeCallToTokenUrl(mTokenUrl, token, mCurrentProvider.getName());
+            makeCallToTokenUrl(mTokenUrl, auth_info_token_for_token_url, mCurrentlyAuthenticatingProvider.getName());
         }
 
-        // mCurrentProvider = null;
-        setCurrentProvider(null);
+        setCurrentlyAuthenticatingProvider((String) null);
     }
 
     public void triggerAuthenticationDidFail(JREngageError error) {
@@ -1037,12 +1050,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[triggerAuthenticationDidFailWithError]");
         }
 
-        //todo if we've reached this point from JRLandingActivity.prepareUserInterface mCurrentProvider will definitely
+        //todo if we've reached this point from JRLandingActivity.prepareUserInterface mCurrentlyAuthenticatingProvider will definitely
         //be null and this will raise a null pointer exception.
-        String providerName = mCurrentProvider.getName();
+        String providerName = mCurrentlyAuthenticatingProvider.getName();
 
-        //mCurrentProvider = null;
-        setCurrentProvider(null);
+        setCurrentlyAuthenticatingProvider((String) null);
         mReturningBasicProvider = null;
         mReturningSocialProvider = null;
 
@@ -1056,9 +1068,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[triggerAuthenticationDidCancel]");
         }
 
-        //mCurrentProvider = null;
-        setCurrentProvider(null);
-                 setCurrentProvider(null);
+        setCurrentlyAuthenticatingProvider((String) null);
         mReturningBasicProvider = null;
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
@@ -1070,10 +1080,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         if (Config.LOGD) {
             Log.d(TAG, "[triggerPublishingDidComplete]");
         }
-
-        //mCurrentProvider = null;
-        setCurrentProvider(null);
-
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.publishingDidComplete();
@@ -1088,7 +1094,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
-            delegate.publishingActivityDidFail(mActivity, error, mCurrentProvider.getName());
+            delegate.publishingActivityDidFail(mActivity, error, mCurrentlyAuthenticatingProvider.getName());
         }
     }
 
@@ -1132,5 +1138,14 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return (mDelegates == null)
                 ? new ArrayList<JRSessionDelegate>()
                 : new ArrayList<JRSessionDelegate>(mDelegates);
+    }
+
+    public JRProvider getCurrentlyPublishingProvider() {
+        return mCurrentlyPublishingProvider;
+    }
+
+    public void setCurrentlyPublishingProvider(String provider) {
+        Log.d(TAG, "[setCurrentlyPublishingProvider]: " + provider);
+        mCurrentlyPublishingProvider = getProviderByName(provider);
     }
 }

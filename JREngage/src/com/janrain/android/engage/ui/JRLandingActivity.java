@@ -196,7 +196,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
     }
 
     private void handlePrimaryButtonClick() {
-        if (mSessionData.getCurrentProvider().requiresInput())
+        if (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
         {
             //TODO validate OpenID URLs so they don't hang the WebView
             String text = mEditText.getText().toString();
@@ -205,7 +205,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
                         "The input you have entered is not valid. Please try again.");
             } else {
                 showHideKeyboard(false);
-                mSessionData.getCurrentProvider().setUserInput(text);
+                mSessionData.getCurrentlyAuthenticatingProvider().setUserInput(text);
                 JRUserInterfaceMaestro.getInstance().showWebView();
             }
         }
@@ -218,7 +218,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
 
     private void handleSecondaryButtonClick() {
         Log.i(TAG, "[handleSecondaryButtonClick]");
-        mSessionData.getCurrentProvider().setForceReauth(true);
+        mSessionData.getCurrentlyAuthenticatingProvider().setForceReauth(true);
         mSessionData.setReturningBasicProvider("");
         finish();
     }
@@ -253,7 +253,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
 
     private boolean prepareUserInterface() {
 
-        if (mSessionData.getCurrentProvider() == null) {
+        if (mSessionData.getCurrentlyAuthenticatingProvider() == null) {
             JREngageError error = new JREngageError(
                 "There was an error authenticating with the selected provider.",
                 JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
@@ -267,18 +267,18 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
             return false;
         }
 
-        JRProvider currentProvider = mSessionData.getCurrentProvider();
+        JRProvider currentlyAuthenticatingProvider = mSessionData.getCurrentlyAuthenticatingProvider();
 
         mLayoutHelper.setHeaderText(getCustomTitle());
 
         mImageView.setImageResource(
-                ResourceHelper.providerNameToLogoResourceId(currentProvider.getName()));
+                ResourceHelper.providerNameToLogoResourceId(currentlyAuthenticatingProvider.getName()));
 
 
-        if (currentProvider.getName().equals(mSessionData.getReturningBasicProvider())) {
+        if (currentlyAuthenticatingProvider.getName().equals(mSessionData.getReturningBasicProvider())) {
             configureButtonVisibility(false);
 
-            if (currentProvider.requiresInput()) {
+            if (currentlyAuthenticatingProvider.requiresInput()) {
                 if (Config.LOGD) {
                     Log.d(TAG, "[prepareUserInterface] current provider requires input");
                 }
@@ -286,7 +286,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
                 mEditText.setVisibility(View.VISIBLE);
                 mWelcomeLabel.setVisibility(View.GONE);
 
-                String userInput = currentProvider.getUserInput();
+                String userInput = currentlyAuthenticatingProvider.getUserInput();
                 if (!TextUtils.isEmpty(userInput)) {
                     mEditText.setText(userInput);
                     //configureButtonVisibility(false);
@@ -295,7 +295,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
                     configureButtonVisibility(true);
                 }
 
-                mEditText.setHint(currentProvider.getPlaceholderText());
+                mEditText.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
 
             } else {
                 if (Config.LOGD) {
@@ -305,12 +305,12 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
                 mEditText.setVisibility(View.GONE);
                 mWelcomeLabel.setVisibility(View.VISIBLE);
 
-                mWelcomeLabel.setText(currentProvider.getWelcomeString());
+                mWelcomeLabel.setText(currentlyAuthenticatingProvider.getWelcomeString());
             }
         } else {
              configureButtonVisibility(true);
 
-            if (currentProvider.requiresInput()) {
+            if (currentlyAuthenticatingProvider.requiresInput()) {
                 if (Config.LOGD) {
                     Log.d(TAG, "[prepareUserInterface] current provider requires input");
                 }
@@ -318,14 +318,14 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
                 mEditText.setVisibility(View.VISIBLE);
                 mWelcomeLabel.setVisibility(View.GONE);
 
-                String userInput = currentProvider.getUserInput();
+                String userInput = currentlyAuthenticatingProvider.getUserInput();
                 if (!TextUtils.isEmpty(userInput)) {
                     mEditText.setText(userInput);
                 } else {
                     mEditText.setText("");
                 }
 
-                mEditText.setHint(currentProvider.getPlaceholderText());
+                mEditText.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
 
             } else { // Will never happen
 
@@ -348,7 +348,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
     }
 
     private String getCustomTitle() {
-        JRProvider provider = mSessionData.getCurrentProvider();
+        JRProvider provider = mSessionData.getCurrentlyAuthenticatingProvider();
         return provider.requiresInput()
                 ? provider.getShortText()
                 : getString(R.string.landing_default_custom_title);

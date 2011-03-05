@@ -421,7 +421,7 @@ public class JREngage implements JRSessionDelegate {
 
 	public void showAuthenticationDialog() {
 		if (Config.LOGD) { 
-			Log.d(TAG, "[showAuthenticationDialog]"); 
+			Log.d(TAG, "[showProviderSelectionDialog]");
 		}
 
         /* If there was error configuring the library, sessionData.error will not be null. */
@@ -441,7 +441,7 @@ public class JREngage implements JRSessionDelegate {
             }
         }
 
-        mInterfaceMaestro.showAuthenticationDialog();
+        mInterfaceMaestro.showProviderSelectionDialog();
 	}
 
     public void showSocialPublishingDialogWithActivity(JRActivityObject activity) {
