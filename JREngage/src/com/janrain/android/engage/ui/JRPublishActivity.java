@@ -428,7 +428,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         configureViewElementsBasedOnProvider();
         configureLoggedInUserBasedOnProvider();
-        configureSharedStatusBasedOnProvider(); // TODO: Should probably combine last two functions...
+        configureSharedStatusBasedOnProvider();
 
 
         //updateCharacterCount();

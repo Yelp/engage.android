@@ -184,9 +184,15 @@
 
                         <ImageView
                             android:id="@+id/profile_pic"
+                            android:src="@drawable/profilepic_placeholder"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/icon"
+                            android:adjustViewBounds="true"
+                            android:maxHeight="45dip"
+                            android:maxWidth="45dip"
+                            android:minHeight="45dip"
+                            android:minWidth="45dip"
+                            android:scaleType="centerCrop"
                             android:visibility="gone"
                             />
 
