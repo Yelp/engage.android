@@ -171,6 +171,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                         R.drawable.button_linkedin_280x40));
     }
 
+    // TODO: We need to make this dynamic for forward compatibility
     private static final Map<String, Integer> icon_resources = new HashMap<String, Integer>(){
        {
            put("facebook", R.drawable.ic_facebook_tab);
@@ -224,9 +225,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private Button mSignOutButton; //todo add an onClickListener and implement sign out
     private Button mJustShareButton;
     private Button mConnectAndShareButton;
+    private LinearLayout mSharedTextAndCheckMarkContainer;
 
     //a helper class used to control display of a nice loading dialog
     private SharedLayoutHelper mLayoutHelper;
+
+    private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -279,6 +283,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSignOutButton = (Button) findViewById(R.id.sign_out_button);
         mJustShareButton = (Button) findViewById(R.id.just_share_button);
         mConnectAndShareButton = (Button) findViewById(R.id.connect_and_share_button);
+        mSharedTextAndCheckMarkContainer = (LinearLayout) findViewById(R.id.shared_text_and_check_mark_horizontal_layout);
 
         //View listeners
         mConnectAndShareButton.setOnClickListener(mShareButtonListener);
@@ -296,6 +301,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             }
         });
         mSignOutButton.setOnClickListener(mSignoutButtonListener);
+
+
+        mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
 
         //ShareLayoutHelper is a spinner dialog class
         mLayoutHelper = new SharedLayoutHelper(this);
@@ -329,6 +337,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                               res.getDrawable(icon_resources.get(provider.getName())))
                           .setContent(R.id.tab_view_content);
             tabHost.addTab(spec);
+
+            mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
 
             if (provider.getName().equals(mSessionData.getReturningSocialProvider()))
                 indexOfLastUsedProvider = currentIndex;
@@ -418,8 +428,17 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         configureViewElementsBasedOnProvider();
         configureLoggedInUserBasedOnProvider();
+        configureSharedStatusBasedOnProvider(); // TODO: Should probably combine last two functions...
+
 
         //updateCharacterCount();
+    }
+
+    private void configureSharedStatusBasedOnProvider() {
+        if (mProvidersThatHaveAlreadyShared.get(mSelectedProvider.getName()))
+            showActivityAsShared(true);
+        else
+            showActivityAsShared(false);
     }
 
 //    /**
@@ -500,7 +519,16 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private void showActivityAsShared(boolean shared) {
         Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
-        //todo
+
+        int visibleIfShared = shared ? View.VISIBLE : View.GONE;
+        int visibleIfNotShared = !shared ? View.VISIBLE : View.GONE;
+
+        mSharedTextAndCheckMarkContainer.setVisibility(visibleIfShared);
+
+        if (mLoggedInUser != null)
+            mJustShareButton.setVisibility(visibleIfNotShared);
+        else
+            mConnectAndShareButton.setVisibility(visibleIfNotShared);
     }
 
     private void showUserAsLoggedIn(boolean loggedIn) {
@@ -609,7 +637,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             case SUCCESS_DIALOG:
                 return new AlertDialog.Builder(JRPublishActivity.this).setMessage("Success!")
                                          .setCancelable(false)
-                                         .setPositiveButton("Dismiss", successDismiss)
+                                         .setPositiveButton("Dismiss", null)
                                          .create();
             case FAILURE_DIALOG:
                 return new AlertDialog.Builder(JRPublishActivity.this).setMessage(mDialogErrorMessage)
@@ -754,6 +782,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 //                [alert show];
 
 //                [alreadyShared addObject:provider];
+
+                mProvidersThatHaveAlreadyShared.put(provider, true);
 
                 showViewIsLoading(false);
                 showActivityAsShared(true);
