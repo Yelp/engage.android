@@ -59,6 +59,7 @@
                     android:text="@string/calculating_remaining_characters"
                     />
 
+
                 <TextView
                     android:id="@+id/preview_label_view"
                     android:layout_width="wrap_content"
