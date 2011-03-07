@@ -193,11 +193,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     //reference to the library model
     private JRSessionData mSessionData;
+    private JRSessionDelegate mSessionDelegate; //call backs for JRSessionData
 
-    //
+    //JREngage objects we're operating with
     private JRProvider mSelectedProvider; //the provider for the selected tab
     private JRAuthenticatedUser mLoggedInUser; //the user (if logged in) for the selected tab
-    private JRSessionDelegate mSessionDelegate;
     private JRActivityObject mActivityObject;
 
     //UI properties
@@ -220,7 +220,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     //private LinearLayout mShareButtonContainer; //or a handle to this
     private ImageView mUserProfilePic;
     private LinearLayout mNameAndSignOutContainer;
-    private TextView mUserName;
+    private TextView mUserNameView;
     private Button mSignOutButton; //todo add an onClickListener and implement sign out
     private Button mJustShareButton;
     private Button mConnectAndShareButton;
@@ -275,7 +275,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //mProfilePicAndButtonsHorizontalLayout = (LinearLayout) findViewById(R.id.profile_pic_and_buttons_horizontal_layout);
         mUserProfilePic = (ImageView) findViewById(R.id.profile_pic);
         mNameAndSignOutContainer = (LinearLayout) findViewById(R.id.name_and_sign_out_container);
-        mUserName = (TextView) findViewById(R.id.user_name);
+        mUserNameView = (TextView) findViewById(R.id.user_name);
         mSignOutButton = (Button) findViewById(R.id.sign_out_button);
         mJustShareButton = (Button) findViewById(R.id.just_share_button);
         mConnectAndShareButton = (Button) findViewById(R.id.connect_and_share_button);
@@ -373,7 +373,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             showViewIsLoading(true);
 
             if (mLoggedInUser == null) {
-                authenticateUser();
+                authenticateUserForSharing();
             } else {
                 shareActivity();
             }
@@ -391,9 +391,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     public void updateCharacterCount() {
         //TODO make negative numbers red, verify correctness of the 0 remaining characters edge case
 
-        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) { //twitter, myspace, linkedin
-            if (activityUrlAffectsCharacterCountForSelectedProvider() && mShortenedActivityURL == null) { //twitter, myspace
-                // Do nothing yet...
+        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
+            //twitter, myspace, linkedin
+            if (activityUrlAffectsCharacterCountForSelectedProvider() && mShortenedActivityURL == null) {
+                //twitter, myspace
+                // Do nothing yet... because we're waiting to see how long the shortened URL will be
             } else {
                 int preview_length = mPreviewLabelView.getText().length();
                 mCharacterCountView.setText("Remaining characters: " + (mMaxCharacters - preview_length));
@@ -434,20 +436,25 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     public void updateUserCommentView() {
         if (!mUserHasEditedText) mUserHasEditedText = true;
 
-        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action"))
+        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
+            //twitter, myspace, linkedin
             updatePreviewLabelWhenContentReplacesAction();
+        } //else yahoo, facebook
     }
 
     public void updatePreviewLabelWhenContentReplacesAction() {
-        CharSequence newText = (!mUserCommentView.getText().toString().equals("")) ?
-                  mUserCommentView.getText()
+        String newText = (!mUserCommentView.getText().toString().equals("")) ?
+                  mUserCommentView.getText().toString()
                 : mActivityObject.getAction();
 
-        if (activityUrlAffectsCharacterCountForSelectedProvider()) {
-            mPreviewLabelView.setText("mcspilli " + newText + " "
+        String userNameForPreview = "You";
+        if (mLoggedInUser != null) userNameForPreview = mLoggedInUser.getPreferredUsername();
+
+        if (activityUrlAffectsCharacterCountForSelectedProvider()) { //twitter/myspace -> true
+            mPreviewLabelView.setText(userNameForPreview + " " + newText + "\n"
                     + ((mShortenedActivityURL != null) ? mShortenedActivityURL : R.string.shortening_url));
         } else {
-            mPreviewLabelView.setText("mcspilli " + newText);
+            mPreviewLabelView.setText(userNameForPreview + " " + newText);
         }
     }
 
@@ -455,13 +462,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
 
         if (user == null || providerName == null) {
-            mUserName.setText("");
+            mUserNameView.setText("");
             //todo set muserprofilepic
             //[self setButtonImage:myProfilePic toData:null andSetLoading:myProfilePicActivityIndicator toLoading:NO];
             return;
         }
 
-        mUserName.setText(user.getPreferredUsername());
+        mUserNameView.setText(user.getPreferredUsername());
 
         // TODO
         ///NSData *cachedProfilePic = [cachedProfilePics objectForKey:providerName];
@@ -584,13 +591,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private void configureLoggedInUserBasedOnProvider() {
         mLoggedInUser = mSessionData.authenticatedUserForProvider(mSelectedProvider);
 
-        if (mLoggedInUser != null) {
-            loadUserNameAndProfilePicForUserForProvider(mLoggedInUser, mSelectedProvider.getName());
-            showUserAsLoggedIn(true);
-        } else {
-            loadUserNameAndProfilePicForUserForProvider(null, null);
-            showUserAsLoggedIn(false);
-        }
+        loadUserNameAndProfilePicForUserForProvider(mLoggedInUser, mSelectedProvider.getName());
+
+        showUserAsLoggedIn(mLoggedInUser != null);
     }
 
     //UI ~state updaters
@@ -621,7 +624,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSessionData.forgetAuthenticatedUserForProvider(provider);
     }
 
-    private void authenticateUser() {
+    private void authenticateUserForSharing() {
      /* Set weHaveJustAuthenticated to true, so that when this view returns (for whatever reason... successful auth
         user canceled, etc), the view will know that we just went through the authentication process. */
         mWeHaveJustAuthenticated = true;
@@ -664,8 +667,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
                     if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
                         updatePreviewLabelWhenContentReplacesAction();
-                        updateCharacterCount();
                     }
+                    updateCharacterCount();
                 }
             };
 
@@ -800,7 +803,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 JUST try and authorize, or if sharing took longer than the time it takes to pop the view controller. */
                 if (reauthenticate && !mWeHaveJustAuthenticated) {
                     logUserOutForProvider(provider);
-                    authenticateUser();
+                    authenticateUserForSharing();
 
                     return;
                 }

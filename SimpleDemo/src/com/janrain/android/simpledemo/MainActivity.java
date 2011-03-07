@@ -68,7 +68,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
     //blog fetching variables
     String mTitleText = "title text",
-           mLinkText = "http://www.janrain.com/feed/blogs",
+           mActionLink = "http://www.janrain.com/feed/blogs",
            mDescriptionText = "description text",
            mImageUrl = "http://www.janrain.com/sites/default/themes/janrain/logo.png";
     final Uri BLOGURL = Uri.parse("http://www.janrain.com/feed/blogs");
@@ -94,7 +94,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
             mTitleText = savedInstanceState.getString("a");
             mDescriptionText = savedInstanceState.getString("b");
             mImageUrl = savedInstanceState.getString("c");
-            mLinkText = savedInstanceState.getString("d");
+            mActionLink = savedInstanceState.getString("d");
             mBtnTestPub.setText("Test Publishing");
         } else {
             mBtnTestPub.setText("loading blog");
@@ -113,6 +113,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                         //the following parse call takes an astonishing ten seconds on a nexus s.
                         //XMLPullParser is said to be a faster way to go.
                         //thread with sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
+                        //another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser
                         Document d = db.parse(is);
                         Log.d(TAG, "blogload parsed");
                         Element rss = (Element) d.getElementsByTagName("rss").item(0);
@@ -124,7 +125,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                         Log.d(TAG, "blogload walked");
 
                         mTitleText = title.getFirstChild().getNodeValue();
-                        mLinkText = link.getFirstChild().getNodeValue();
+                        mActionLink = link.getFirstChild().getNodeValue();
 
                         NodeList nl = description.getChildNodes();
                         mDescriptionText = new String();
@@ -133,12 +134,12 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                         //need to concatenate all the children of mDescriptionText (which has ~100s of TextElement children)
                         //in order to come up with the complete text body of the description tag.
 
-                        Html.fromHtml(mDescriptionText, new Html.ImageGetter() {
+                        mDescriptionText = Html.fromHtml(mDescriptionText, new Html.ImageGetter() {
                             public Drawable getDrawable(String s) {
                                 mImageUrl = BLOGURL.getScheme() + "://" + BLOGURL.getHost() + s;
                                 return null;
                             }
-                        }, null);
+                        }, null).toString();
                     } catch (Exception e) { throw new RuntimeException(e); }
                     return null;
                 }
@@ -159,7 +160,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
             outState.putString("a", mTitleText);
             outState.putString("b", mDescriptionText);
             outState.putString("c", mImageUrl);
-            outState.putString("d", mLinkText);
+            outState.putString("d", mActionLink);
         }
     }
 
@@ -167,9 +168,9 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         if (view == mBtnTestAuth) {
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
-            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", mLinkText);
+            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", mActionLink);
             jra.setDescription(mDescriptionText);
-            jra.setMedia(new JRImageMediaObject(mImageUrl, ""));
+            jra.setMedia(new JRImageMediaObject(mImageUrl, mActionLink));
             //JRActivityObject jra = new JRActivityObject("blah", "blah");
             mEngage.showSocialPublishingDialogWithActivity(jra);
         } else if (view == mBtnTestLand) {

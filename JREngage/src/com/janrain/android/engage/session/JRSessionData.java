@@ -828,6 +828,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         String str;
 
+        //todo why not other providers too?
         if ("facebook".equals(mCurrentlyAuthenticatingProvider.getName())) {
             if (mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) {
                 deleteFacebookCookies();
@@ -837,8 +838,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 deleteLiveCookies();
             }
         }
-
-//        mAlwaysForceReauth = true;
 
         //str = String.format("%s%s?%s%sversion=android_one&device=android",
         str = String.format("%s%s?%s%sdevice=android&extended=true",
@@ -911,6 +910,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         JRProvider provider = mAllProviders.getAsProvider(providerName);
         if (provider == null) {
             Log.w(TAG, "[forgetAuthenticatedUserForProvider] provider not found: " + providerName);
+            throw new RuntimeException();
         } else {
             provider.setForceReauth(true);
             mAuthenticatedUsersByProvider.remove(provider.getName());

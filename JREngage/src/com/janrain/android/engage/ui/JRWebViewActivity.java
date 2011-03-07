@@ -45,6 +45,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.*;
 import android.widget.Toast;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -229,11 +230,7 @@ public class JRWebViewActivity extends Activity
         webSettings.setSupportZoom(true);
 
         URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
-        if (startUrl == null) {
-            // PROBLEM
-        } else {
-            mWebView.loadUrl(startUrl.toString());
-        }
+        mWebView.loadUrl(startUrl.toString());
     }
 
     @Override
@@ -316,27 +313,16 @@ public class JRWebViewActivity extends Activity
     }
 
     private void loadMobileEndpointUrl(String url) {
-        if (isMobileEndpointUrl(url)) {
-            mIsMobileEndpointUrlLoading = true;
+        mIsMobileEndpointUrlLoading = true;
 
-            mLayoutHelper.showProgressDialog();
+        mLayoutHelper.showProgressDialog();
 
-            String urlToLoad = url + "&auth_info=true";
-            if (Config.LOGD) {
-                Log.d(TAG, "[loadMobileEndpointUrl] loading url: " + urlToLoad);
-            }
-
-            if (!JRConnectionManager.createConnection(
-                    urlToLoad, JRWebViewActivity.this, false, RPX_RESULT_TAG)) {
-
-                mLayoutHelper.dismissProgressDialog();
-                // TODO:  handle error case
-
-            }
-
-            // return;
+        String urlToLoad = url + "&auth_info=true";
+        if (Config.LOGD) {
+            Log.d(TAG, "[loadMobileEndpointUrl] loading url: " + urlToLoad);
         }
 
+        JRConnectionManager.createConnection(urlToLoad, JRWebViewActivity.this, false, RPX_RESULT_TAG);
         // TODO:  is windows live hack necessary here, as it is on iPhone?
     }
 
@@ -352,13 +338,8 @@ public class JRWebViewActivity extends Activity
                 + " | length: " + contentLength);
         }
 
-        /*
-         * Download data from mobile endpoint url call.
-         */
-        loadMobileEndpointUrl(url);
+        if (isMobileEndpointUrl(url)) loadMobileEndpointUrl(url);
     }
-
-    ////
 
     public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
         Log.d(TAG, "[connectionDidFinishLoading] userdata: " + userdata + " | payload: " + payload);
@@ -390,10 +371,10 @@ public class JRWebViewActivity extends Activity
                         /*
                         TODO:  iPhone does this:
                         [[self navigationController] popViewControllerAnimated:YES];
-
-                        Should we do this:
-                        finish();
                          */
+
+                        //mSessionData.triggerAuthenticationDidFail();                        
+                        mIsFinishPending = true;
                         showAlertDialog(alertTitle, alertMessage);
                     } else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
                         alertTitle = "Invalid Input";
@@ -409,9 +390,8 @@ public class JRWebViewActivity extends Activity
                         TODO:  iPhone does this:
                         [[self navigationController] popViewControllerAnimated:YES];
 
-                        Should we do this:
-                        finish();
                          */
+                        mIsFinishPending = true;
                         showAlertDialog(alertTitle, alertMessage);
                     } else if ("Please enter your OpenID".equals(error)) {
                         JREngageError err = new JREngageError(
