@@ -244,6 +244,33 @@
                         <!--android:textColor="#ffffffff"-->
                         <!--android:background="@drawable/sel_iosblue_135x40"-->
 
+                        <LinearLayout
+                            android:id="@+id/shared_text_and_check_mark_horizontal_layout"
+                            android:orientation="horizontal"
+                            android:layout_height="fill_parent"
+                            android:layout_width="fill_parent"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:visibility="gone"
+                            >
+
+                            <TextView
+                                android:id="@+id/shared"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:singleLine="true"
+                                />
+
+
+                            <ImageView
+                                android:id="@+id/check_mark"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/check_mark"
+                                />
+
+                        </LinearLayout>
+
                         <Button
                             android:id="@+id/connect_and_share_button"
                             android:layout_width="wrap_content"
