@@ -80,9 +80,9 @@ public class JRProvider implements Serializable {
     private boolean mRequiresInput;
     private String mOpenIdentifier;
     private String mStartAuthenticationUrl;
-    private boolean mForceReauth;   // <- these three user parameters get preserved
-    private String mUserInput;      // <- across cached provider reloads
-    private String mWelcomeString;  // <-
+    private transient boolean mForceReauth;   // <- these three user parameters get preserved
+    private transient String mUserInput;      // <- across cached provider reloads
+    private transient String mWelcomeString;  // <-
     private JRDictionary mSocialSharingProperties;
 
     // ------------------------------------------------------------------------

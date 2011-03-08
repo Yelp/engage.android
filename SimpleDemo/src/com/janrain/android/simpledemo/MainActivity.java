@@ -170,8 +170,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         } else if (view == mBtnTestPub) {
             JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", mActionLink);
             jra.setDescription(mDescriptionText);
-            jra.setMedia(new JRImageMediaObject(mImageUrl, mActionLink));
-            //JRActivityObject jra = new JRActivityObject("blah", "blah");
+            jra.setMedia(new JRImageMediaObject(mImageUrl, null));
             mEngage.showSocialPublishingDialogWithActivity(jra);
         } else if (view == mBtnTestLand) {
             Intent intent = new Intent(this, JRLandingActivity.class);

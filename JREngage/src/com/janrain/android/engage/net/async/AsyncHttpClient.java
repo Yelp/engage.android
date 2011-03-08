@@ -96,6 +96,8 @@ public final class AsyncHttpClient {
                 // XYZ
                 addRequestHeaders(connection);
 
+                //todo fail gracefully when there's no net connection
+
                 if (mPostData == null) {
                     // HTTP GET OPERATION
                     if (Config.LOGD) { Log.d(TAG, "[run] HTTP GET"); }

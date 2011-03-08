@@ -106,6 +106,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 		if (sInstance != null) {
             if (Config.LOGD) {
                 Log.d(TAG, "[getInstance] returning existing instance.");
+                //todo this should probably be an error, as it ignores the parameters instead of
+                //reinstantiating the library
             }
 			return sInstance;
 		}
@@ -183,8 +185,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 		mAppId = appId;
 		mTokenUrl = tokenUrl;
 
-        mAuthenticatedUsersByProvider = new JRDictionary();
-        mAllProviders = new JRDictionary();
+//        mAuthenticatedUsersByProvider = new JRDictionary();
+//        mAllProviders = new JRDictionary();
 
         // Load dictionary of authenticated users.  If the dictionary is not found, the
         // archiver will return a new (empty) list.

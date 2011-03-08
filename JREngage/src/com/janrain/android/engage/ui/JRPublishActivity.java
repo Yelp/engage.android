@@ -35,6 +35,7 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -50,6 +51,7 @@ import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.*;
 import com.janrain.android.engage.types.*;
+import com.janrain.android.engage.utils.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
@@ -57,6 +59,7 @@ import org.json.JSONTokener;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -466,15 +469,20 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                   mUserCommentView.getText().toString()
                 : mActivityObject.getAction();
 
-        String userNameForPreview = "You";
-        if (mLoggedInUser != null) userNameForPreview = mLoggedInUser.getPreferredUsername();
+        String userNameForPreview = getUIDisplayName();
 
         if (activityUrlAffectsCharacterCountForSelectedProvider()) { //twitter/myspace -> true
-            mPreviewLabelView.setText(userNameForPreview + " " + newText + "\n"
+            mPreviewLabelView.setText(userNameForPreview + ": " + newText + "\n"
                     + ((mShortenedActivityURL != null) ? mShortenedActivityURL : R.string.shortening_url));
         } else {
-            mPreviewLabelView.setText(userNameForPreview + " " + newText);
+            mPreviewLabelView.setText(userNameForPreview + ": " + newText);
         }
+    }
+
+    private String getUIDisplayName() {
+        String userNameForPreview = "You";
+        if (mLoggedInUser != null) userNameForPreview = mLoggedInUser.getPreferredUsername();
+        return userNameForPreview;
     }
 
     private void loadUserNameAndProfilePicForUserForProvider(final JRAuthenticatedUser user, String providerName) {
@@ -499,8 +507,17 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             new AsyncTask<Void, Void, Bitmap>() {
                 protected Bitmap doInBackground(Void... voids) {
                     try {
-                        return BitmapFactory.decodeStream((new URL(user.getPhoto())).openStream());
+                        URL url = new URL(user.getPhoto());
+                        URLConnection urlc = url.openConnection();
+                        InputStream is = urlc.getInputStream();
+                        BufferedInputStream bis = new BufferedInputStream(is);
+                        bis.mark(urlc.getContentLength());
+                        FileOutputStream fos = openFileOutput("test", MODE_PRIVATE);
+                        while (bis.available() > 0) fos.write(bis.read());
+                        bis.reset();
+                        return BitmapFactory.decodeStream(bis);
                     } catch (IOException e) {
+                        Log.d(TAG, "profile pic image loader exception: " + e.toString());
                         //do absolutely nothing.  If the picture doesn't load, SO BE IT, NO PICTURE.
                         return null;
                     }
@@ -595,7 +612,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         if (socialSharingProperties.getAsBoolean("content_replaces_action"))
             updatePreviewLabelWhenContentReplacesAction();
         else
-            mPreviewLabelView.setText("mcspilli " + mActivityObject.getAction());
+            mPreviewLabelView.setText(getUIDisplayName() + " " + mActivityObject.getAction());
 
         mMaxCharacters = mSelectedProvider.getSocialSharingProperties().getAsInt("max_characters");
         if (mMaxCharacters != -1) {
