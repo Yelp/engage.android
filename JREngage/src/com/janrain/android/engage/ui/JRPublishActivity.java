@@ -38,8 +38,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.*;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
@@ -276,7 +277,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mCharacterCountView = (TextView) findViewById(R.id.character_count_view);
         mProviderIcon = (ImageView) findViewById(R.id.provider_icon);
         mUserCommentView = (EditText) findViewById(R.id.edit_comment);
-        mPreviewLabelView = (TextView) findViewById(R.id.preview_label_view);
+        mPreviewLabelView = (TextView) findViewById(R.id.preview_text_view);
         //mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
         //mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
         //mProfilePicAndButtonsHorizontalLayout = (LinearLayout) findViewById(R.id.profile_pic_and_buttons_horizontal_layout);
@@ -472,8 +473,18 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         String userNameForPreview = getUIDisplayName();
 
         if (activityUrlAffectsCharacterCountForSelectedProvider()) { //twitter/myspace -> true
-            mPreviewLabelView.setText(userNameForPreview + ": " + newText + "\n"
-                    + ((mShortenedActivityURL != null) ? mShortenedActivityURL : R.string.shortening_url));
+            mPreviewLabelView.setText(Html.fromHtml("<b>" + userNameForPreview + "</b> " + newText + " <font color=\"#808080\">" +
+                                        ((mShortenedActivityURL != null) ? mShortenedActivityURL : R.string.shortening_url) + "</font>"));
+
+//            SpannableStringBuilder str = new SpannableStringBuilder(userNameForPreview + " " + newText + " " +
+//                                            ((mShortenedActivityURL != null) ? mShortenedActivityURL : R.string.shortening_url));//mPreviewLabelView.getText();//.getText();
+//
+//            // Create our span sections, and assign a format to each.
+//            str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, userNameForPreview.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            str.setSpan(new ColorSpan(android.graphics.Typeface. 0xFFFFFF00), 8, 19, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 21, str.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//
+//            mPreviewLabelView.setText(,);
         } else {
             mPreviewLabelView.setText(userNameForPreview + ": " + newText);
         }

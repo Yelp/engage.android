@@ -41,11 +41,11 @@
                     android:id="@+id/edit_comment"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dip"
-                    android:layout_marginRight="7dip"
-                    android:layout_marginLeft="7dip"
+                    android:layout_marginTop="5dip"
+                    android:layout_marginRight="4dip"
+                    android:layout_marginLeft="4dip"
                     android:gravity="top|left"
-                    android:lines="4"
+                    android:lines="3"
                     />
 
                 <TextView
@@ -57,74 +57,134 @@
                     android:singleLine="true"
                     android:textColor="#ff333333"
                     android:text="@string/calculating_remaining_characters"
+                    android:layout_marginRight="4dip"
+                    android:layout_marginLeft="4dip"
+                    android:layout_marginBottom="5dip"
+                    android:textSize="10dip"
                     />
-
-
-                <TextView
-                    android:id="@+id/preview_label_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/character_count_view"
-                    />
-                <!--android:singleLine="true"-->
 
                 <RelativeLayout
-                    android:id="@+id/media_content_view"
+                    android:id="@+id/preview_box"
                     android:layout_width="fill_parent"
-                    android:layout_height="122dip"
-                    android:layout_below="@id/preview_label_view"
-                    android:gravity="top|left"
-                    android:background="@drawable/bg_provider_activity_info"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/character_count_view"
+                    android:background="@drawable/bg_publish_preview"
+                    android:paddingBottom="4dip"
                     >
-                    <!--android:layout_marginTop="10dip"-->
-                    <!--android:layout_marginRight="7dip"-->
-                    <!--android:layout_marginLeft="7dip"-->
-                    <!--android:padding="5dp"-->
-
-                    <ImageView
-                        android:id="@+id/media_content_image"
-                        android:layout_width="60dip"
-                        android:layout_height="60dip"
+                    <!--android:gravity="top|left"-->
+                    
+                    <RelativeLayout
+                        android:id="@+id/preview_box_border"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_margin="5dip"
-                        android:src="@drawable/media60x60"
-                        />
+                        android:background="@drawable/bg_publish_preview_border"
+                        android:layout_marginTop="8dip"
+                        android:layout_marginRight="4dip"
+                        android:layout_marginBottom="4dip"
+                        android:layout_marginLeft="4dip"
+                        >
+                        <!--android:gravity="top|left"-->
+
+                        <TextView
+                            android:id="@+id/preview_text_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:bufferType="spannable"
+                            android:layout_marginTop="2dip"
+                            android:layout_marginLeft="4dip"
+                            android:layout_marginBottom="2dip"
+                            android:layout_marginRight="4dip"
+                            android:textSize="12dip"
+                            />
+                            <!--android:layout_below="@id/character_count_view"-->
+                            <!--android:singleLine="true"-->
+
+                        <RelativeLayout
+                            android:id="@+id/media_content_view"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/preview_text_view"
+                            android:layout_marginTop="4dip"
+                            android:layout_marginLeft="4dip"
+                            android:layout_marginBottom="4dip"
+                            android:layout_marginRight="4dip"
+                            android:background="@drawable/bg_provider_activity_info"
+                            >
+                            <!--android:layout_height="122dip"-->
+                            <!--android:layout_marginTop="10dip"-->
+                            <!--android:layout_marginRight="7dip"-->
+                            <!--android:layout_marginLeft="7dip"-->
+                            <!--android:padding="5dp"-->
+                            <!--android:gravity="top|left|bottom|right"-->
+                            
+                            <ImageView
+                                android:id="@+id/media_content_image"
+                                android:layout_width="60dip"
+                                android:layout_height="60dip"
+                                android:layout_alignParentLeft="true"
+                                android:layout_alignParentTop="true"
+                                android:layout_margin="5dip"
+                                android:src="@drawable/media60x60"
+                                />
+
+                            <TextView
+                                android:id="@+id/media_content_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="0dip"
+                                android:layout_marginRight="5dip"
+                                android:layout_marginBottom="1dip"
+                                android:layout_marginLeft="5dip"
+                                android:layout_alignParentTop="true"
+                                android:layout_toRightOf="@id/media_content_image"
+                                android:singleLine="true"
+                                android:ellipsize="end"
+                                android:textStyle="bold"
+                                />
+
+                            <!--
+                               - NOTE:  In order to get the text to extend more than two lines, had to use the 'inputType=...'
+                               -        property.  Unfortunately, doing so breaks the ellipsize function.  Android BUG.
+                              -->
+                            <TextView
+                                android:id="@+id/media_content_description"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dip"
+                                android:layout_marginRight="5dip"
+                                android:layout_marginBottom="0dip"
+                                android:layout_marginLeft="5dip"
+                                android:layout_below="@id/media_content_title"
+                                android:layout_toRightOf="@id/media_content_image"
+                                android:ellipsize="end"
+                                android:textStyle="normal"
+                                android:maxLines="4"
+                                android:inputType="textMultiLine"
+                                />
+                                <!--android:maxHeight="150dip"-->
+
+                        </RelativeLayout>
+
+                    </RelativeLayout>
 
                     <TextView
-                        android:id="@+id/media_content_title"
+                        android:id="@+id/preview_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="0dip"
-                        android:layout_marginRight="5dip"
-                        android:layout_marginBottom="1dip"
-                        android:layout_marginLeft="5dip"
-                        android:layout_alignParentTop="true"
-                        android:layout_toRightOf="@id/media_content_image"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginLeft="8dip"
                         android:singleLine="true"
-                        android:ellipsize="end"
-                        android:textStyle="bold"
-                        />
-
-                    <!--
-                       - NOTE:  In order to get the text to extend more than two lines, had to use the 'inputType=...'
-                       -        property.  Unfortunately, doing so breaks the ellipsize function.  Android BUG.
-                      -->
-                    <TextView
-                        android:id="@+id/media_content_description"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="1dip"
-                        android:layout_marginRight="5dip"
-                        android:layout_marginBottom="0dip"
-                        android:layout_marginLeft="5dip"
-                        android:layout_below="@id/media_content_title"
-                        android:layout_toRightOf="@id/media_content_image"
-                        android:inputType="textMultiLine"
-                        android:ellipsize="end"
+                        android:text="@string/preview"
+                        android:textColor="#ff666666"
+                        android:background="#ffeeeeee"
                         android:textStyle="normal"
+                        android:paddingLeft="4dip"
+                        android:paddingRight="6dip"
+                        android:textSize="10dip"
                         />
-
+                        <!--android:layout_marginBottom="10dip"-->
+                        
                 </RelativeLayout>
 
                 <TextView

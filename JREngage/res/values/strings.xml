@@ -48,4 +48,5 @@
     <string name="please_enter_text">Please enter text</string>
     <string name="shortening_url">shortening url...</string>
     <string name="shared">Shared</string>
+    <string name="preview">Preview</string>
 </resources>
