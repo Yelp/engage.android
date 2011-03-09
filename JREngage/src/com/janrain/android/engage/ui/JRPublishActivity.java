@@ -379,7 +379,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private View.OnClickListener mShareButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
-//            weAreCurrentlyPostingSomething = true;
+            mWeAreCurrentlyPostingSomething = true;
 
             if (!mUserCommentView.getText().equals(""))
                 mActivityObject.setUserGeneratedContent(mUserCommentView.getText().toString());
@@ -571,6 +571,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         mConnectAndShareButton.setVisibility(visibleIfNotLoggedIn);
 
+        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action"))
+            updatePreviewLabelWhenContentReplacesAction();
+        else
+            mPreviewLabelView.setText(getUIDisplayName() + " " + mActivityObject.getAction());
+
         //todo replicate this iOS UI bit?
         //[myTriangleIcon setFrame:CGRectMake(loggedIn ? 230 : 151, 0, 18, 18)];
     }
@@ -755,11 +760,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 mWeHaveJustAuthenticated = false;
             }
 
+            // TODO: Probably need to comment this out, as authenticationDidCancel is something that publish activity
+            // should never have to worry about
             public void authenticationDidCancel() {
                 Log.d(TAG, "[authenticationDidCancel]");
                 mWeAreCurrentlyPostingSomething = false;
                 mWeHaveJustAuthenticated = false;
-                mLayoutHelper.dismissProgressDialog();
             }
 
             public void authenticationDidFail(JREngageError error, String provider) {
