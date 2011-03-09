@@ -455,5 +455,4 @@ public final class JRDictionary extends HashMap<String,Object> {
             ? new ArrayList<String>()
             : retval;
     }
-
 }

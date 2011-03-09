@@ -62,6 +62,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -221,8 +222,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private TextView mPreviewLabelView;
     private ImageView mProviderIcon; //todo update this icon onTabChange
     private EditText mUserCommentView;
-    //private LinearLayout mProfilePicAndButtonsHorizontalLayout; //I think we don't need a handle to this
-    //private LinearLayout mShareButtonContainer; //or a handle to this
+    private LinearLayout mProfilePicAndButtonsHorizontalLayout; //I think we don't need a handle to this
+    private LinearLayout mShareButtonContainer; //or a handle to this
     private ImageView mUserProfilePic;
     private LinearLayout mNameAndSignOutContainer;
     private TextView mUserNameView;
@@ -269,8 +270,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             poweredBy.setVisibility(View.GONE);
         }
 
-        TextView title = (TextView)findViewById(R.id.header_text);
-        title.setText(getString(R.string.publish_activity_title));
+//        TextView title = (TextView)findViewById(R.id.header_text);
+//        title.setText(getString(R.string.publish_activity_title));
 
         //View References
         mMediaContentView = (RelativeLayout) findViewById(R.id.media_content_view);
@@ -278,9 +279,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mProviderIcon = (ImageView) findViewById(R.id.provider_icon);
         mUserCommentView = (EditText) findViewById(R.id.edit_comment);
         mPreviewLabelView = (TextView) findViewById(R.id.preview_text_view);
-        //mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
-        //mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
-        //mProfilePicAndButtonsHorizontalLayout = (LinearLayout) findViewById(R.id.profile_pic_and_buttons_horizontal_layout);
+        mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
+        mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
+        mProfilePicAndButtonsHorizontalLayout = (LinearLayout) findViewById(R.id.profile_pic_and_buttons_horizontal_layout);
         mUserProfilePic = (ImageView) findViewById(R.id.profile_pic);
         mNameAndSignOutContainer = (LinearLayout) findViewById(R.id.name_and_sign_out_container);
         mUserNameView = (TextView) findViewById(R.id.user_name);
@@ -461,11 +462,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
             //twitter, myspace, linkedin
-            updatePreviewLabelWhenContentReplacesAction();
+            updatePreviewTextWhenContentReplacesAction();
         } //else yahoo, facebook
     }
 
-    public void updatePreviewLabelWhenContentReplacesAction() {
+    private void updatePreviewTextWhenContentReplacesAction() {
         String newText = (!mUserCommentView.getText().toString().equals("")) ?
                   mUserCommentView.getText().toString()
                 : mActivityObject.getAction();
@@ -486,8 +487,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 //
 //            mPreviewLabelView.setText(,);
         } else {
-            mPreviewLabelView.setText(userNameForPreview + ": " + newText);
+            mPreviewLabelView.setText(Html.fromHtml("<b> " + userNameForPreview + "</b> " + newText));
         }
+    }
+
+    private void updatePreviewTextWhenContentDoesNotReplaceAction() {
+        mPreviewLabelView.setText(Html.fromHtml("<b>" + getUIDisplayName() + "</b> " + mActivityObject.getAction()));
     }
 
     private String getUIDisplayName() {
@@ -572,9 +577,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mConnectAndShareButton.setVisibility(visibleIfNotLoggedIn);
 
         if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action"))
-            updatePreviewLabelWhenContentReplacesAction();
+            updatePreviewTextWhenContentReplacesAction();
         else
-            mPreviewLabelView.setText(getUIDisplayName() + " " + mActivityObject.getAction());
+            updatePreviewTextWhenContentDoesNotReplaceAction();
 
         //todo replicate this iOS UI bit?
         //[myTriangleIcon setFrame:CGRectMake(loggedIn ? 230 : 151, 0, 18, 18)];
@@ -626,9 +631,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         JRDictionary socialSharingProperties = mSelectedProvider.getSocialSharingProperties();
 
         if (socialSharingProperties.getAsBoolean("content_replaces_action"))
-            updatePreviewLabelWhenContentReplacesAction();
+            updatePreviewTextWhenContentReplacesAction();
         else
-            mPreviewLabelView.setText(getUIDisplayName() + " " + mActivityObject.getAction());
+            updatePreviewTextWhenContentDoesNotReplaceAction();
 
         mMaxCharacters = mSelectedProvider.getSocialSharingProperties().getAsInt("max_characters");
         if (mMaxCharacters != -1) {
@@ -647,6 +652,41 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //switch on or off the action label view based on the provider accepting an action
 //        boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
 //        mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
+
+
+
+        mShareButtonContainer.setBackgroundColor(colorForProviderFromArray(socialSharingProperties.get("color_values")));
+
+    }
+    private int colorForProviderFromArray(Object arrayOfColorStrings) {
+
+        if (!(arrayOfColorStrings instanceof ArrayList))
+            return 0x33074764; // If there's ever an error, just return Janrain blue (at 20% opacity)
+
+        @SuppressWarnings("unchecked")
+        ArrayList<Double> colorArray = new ArrayList<Double>((ArrayList<Double>)arrayOfColorStrings);
+
+        /* We need to reorder the array (which is RGBA, the color format returned by Engage) to the color format
+           used by Android (which is ARGB), by moving the last element (alpha) to the front */
+        Double alphaValue = colorArray.remove(3);
+        colorArray.add(0, alphaValue);
+        
+        int finalColor = 0;
+        for (Object colorValue : colorArray) {
+            if(!(colorValue instanceof Double))
+                return 0x33074764; // If there's ever an error, just return Janrain blue (at 20% opacity)
+
+            double colorValue_Fraction = (Double)colorValue;
+
+            /* First, get an int from the double, which is the decimal percentage of 255 */
+            int colorValue_Int = (int)(colorValue_Fraction * 255.0);
+
+            finalColor *= 256;
+            finalColor += colorValue_Int;
+
+        }
+
+        return finalColor;
     }
 
     private void configureLoggedInUserBasedOnProvider() {
@@ -727,7 +767,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                     }
 
                     if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
-                        updatePreviewLabelWhenContentReplacesAction();
+                        updatePreviewTextWhenContentReplacesAction();
                     }
                     updateCharacterCount();
                 }

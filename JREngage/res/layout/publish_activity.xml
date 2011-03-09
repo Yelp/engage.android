@@ -15,7 +15,7 @@
         android:layout_height="fill_parent"
         >
 
-        <include layout="@layout/shared_header" />
+        <!--<include layout="@layout/shared_header" />-->
 
         <TabWidget
             android:id="@android:id/tabs"
@@ -221,7 +221,7 @@
                     android:layout_alignParentBottom="true"
                     android:gravity="top|center_horizontal"
                     android:paddingTop="0dip"
-                    android:background="#333b5999"
+                    android:background="#33074764"
                     >
                     <!-- android:paddingBottom="22dip" -->
 
@@ -307,9 +307,9 @@
                             android:textSize="20dip"
                             android:textStyle="bold"
                             android:visibility="gone"
+                            android:background="@drawable/sel_janrain_135x40"
                             />
                         <!--android:textColor="#ffffffff"-->
-                        <!--android:background="@drawable/sel_iosblue_135x40"-->
 
                         <LinearLayout
                             android:id="@+id/shared_text_and_check_mark_horizontal_layout"
@@ -347,9 +347,9 @@
                             android:text="Connect and Share"
                             android:textSize="20dip"
                             android:textStyle="bold"
+                            android:background="@drawable/sel_janrain_280x40"
                             />
                         <!--android:textColor="#ffffffff"-->
-                        <!--android:background="@drawable/sel_iosblue_280x40"-->
                         <!--android:layout_marginTop="4dp"-->
                         <!--android:layout_marginRight="4dp"-->
                         <!--android:layout_marginBottom="4dp"-->
