@@ -245,7 +245,7 @@ public class JRWebViewActivity extends Activity
 
     protected void onStop() {
         super.onStop();
-        mSessionData.triggerAuthenticationDidCancel();
+        //mSessionData.triggerAuthenticationDidCancel();
     }
 
     @Override
