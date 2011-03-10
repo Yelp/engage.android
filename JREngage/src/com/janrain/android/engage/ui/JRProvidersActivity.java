@@ -81,14 +81,12 @@ public class JRProvidersActivity extends ListActivity {
      * Array adapter used to render individual providers in list view.
      */
     private class ProviderAdapter extends ArrayAdapter<JRProvider> {
-
         private int mResourceId;
-        private ArrayList<JRProvider> mItems;
 
         public ProviderAdapter(Context context, int resId, ArrayList<JRProvider> items) {
-            super(context, resId, items);
+            super(context, -1, items);
+
             mResourceId = resId;
-            mItems = items;
         }
 
         @Override
@@ -100,22 +98,18 @@ public class JRProvidersActivity extends ListActivity {
                 Log.i(TAG, "[getView] with null converView");
             } else Log.i(TAG, "[getView] with non null convertView");
 
-            JRProvider provider = mItems.get(position);
-            if (provider != null) {
-                ImageView icon = (ImageView)v.findViewById(R.id.rowIcon);
-                if (icon != null) {
-                    icon.setImageResource(
-                            ResourceHelper.providerNameToIconResourceId(provider.getName()));
-                }
+            ImageView icon = (ImageView)v.findViewById(R.id.rowIcon);
+            TextView label = (TextView)v.findViewById(R.id.rowLabel);
 
-                TextView label = (TextView)v.findViewById(R.id.rowLabel);
-                if (label != null)
-                    label.setText(provider.getFriendlyName());
-            }
+            JRProvider provider = getItem(position);
+
+            //ResourceHelper.providerNameToIconResourceId(provider.getName())
+            //icon.setImageResource();
+            icon.setImageDrawable(provider.getProviderListIconDrawable(getContext()));
+            label.setText(provider.getFriendlyName());
 
             return v;
         }
-
     }
 
     // ------------------------------------------------------------------------

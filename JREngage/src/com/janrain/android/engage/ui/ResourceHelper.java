@@ -55,46 +55,46 @@ public final class ResourceHelper {
     /**
      * Gets the icon resource id for the specified provider.
      */
-    public static int providerNameToIconResourceId(String providerName) {
-        if ("aol".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_aol_30x30;
-        } else if ("blogger".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_blogger_30x30;
-        } else if ("facebook".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_facebook_30x30;
-        } else if ("flickr".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_flickr_30x30;
-        } else if ("google".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_google_30x30;
-        } else if ("hyves".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_hyves_30x30;
-        } else if ("linkedin".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_linkedin_30x30;
-        } else if ("live".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_live_id_30x30;
-        } else if ("livejournal".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_livejournal_30x30;
-        } else if ("myopenid".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_myopenid_30x30;
-        } else if ("myspace".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_myspace_30x30;
-        } else if ("netlog".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_netlog_30x30;
-        } else if ("openid".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_openid_30x30;
-        } else if ("paypal".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_paypal_30x30;
-        } else if ("twitter".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_twitter_30x30;
-        } else if ("verisign".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_verisign_30x30;
-        } else if ("wordpress".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_wordpress_30x30;
-        } else if ("yahoo".equalsIgnoreCase(providerName)) {
-            return R.drawable.icon_yahoo_30x30;
-        }
-        return R.drawable.icon_unknown;
-    }
+//    public static int providerNameToIconResourceId(String providerName) {
+//        if ("aol".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_aol_30x30;
+//        } else if ("blogger".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_blogger_30x30;
+//        } else if ("facebook".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_facebook_30x30;
+//        } else if ("flickr".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_flickr_30x30;
+//        } else if ("google".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_google_30x30;
+//        } else if ("hyves".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_hyves_30x30;
+//        } else if ("linkedin".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_linkedin_30x30;
+//        } else if ("live".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_live_id_30x30;
+//        } else if ("livejournal".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_livejournal_30x30;
+//        } else if ("myopenid".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_myopenid_30x30;
+//        } else if ("myspace".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_myspace_30x30;
+//        } else if ("netlog".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_netlog_30x30;
+//        } else if ("openid".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_openid_30x30;
+//        } else if ("paypal".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_paypal_30x30;
+//        } else if ("twitter".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_twitter_30x30;
+//        } else if ("verisign".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_verisign_30x30;
+//        } else if ("wordpress".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_wordpress_30x30;
+//        } else if ("yahoo".equalsIgnoreCase(providerName)) {
+//            return R.drawable.icon_yahoo_30x30;
+//        }
+//        return R.drawable.icon_unknown;
+//    }
 
     /**
      * Gets the logo image resource id for the specified provider.

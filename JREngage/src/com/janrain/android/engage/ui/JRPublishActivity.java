@@ -313,7 +313,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private void configureTabs() {
         // TODO: If no providers
 
-        Resources res = getResources(); // Resource object to get Drawables
+        //Resources res = getResources(); // Resource object to get Drawables
         TabHost tabHost = getTabHost(); // The activity TabHost
         tabHost.setup();
         TabHost.TabSpec spec;           // Reused TabSpec for each tab

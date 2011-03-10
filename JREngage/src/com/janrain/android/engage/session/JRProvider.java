@@ -43,10 +43,7 @@ import com.janrain.android.engage.R;
 import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -75,9 +72,9 @@ public class JRProvider implements Serializable {
 
     private static final String TAG = JRProvider.class.getSimpleName();
 
-    private static HashMap<String, Drawable> icon_drawables = new HashMap<String, Drawable>();
+    private static HashMap<String, Drawable> tab_spec_drawables = new HashMap<String, Drawable>();
 
-    private final static HashMap<String, Integer> icon_resources = new HashMap<String, Integer>(){
+    private final static HashMap<String, Integer> tab_spec_resources = new HashMap<String, Integer>(){
         {
             //put("facebook", getResources().getDrawable(R.drawable.ic_facebook_tab));
             put("linkedin", R.drawable.ic_linkedin_tab);
@@ -86,7 +83,55 @@ public class JRProvider implements Serializable {
             put("yahoo", R.drawable.ic_yahoo_tab);
         }
     };
+    
+    private static HashMap<String, Drawable> provider_list_icon_drawables = new HashMap<String, Drawable>();
 
+    private final static HashMap<String, Integer> provider_list_icon_resources = new HashMap<String, Integer>(){
+        {
+            put("aol", R.drawable.icon_aol_30x30);
+            put("blogger", R.drawable.icon_blogger_30x30);
+//            put("facebook", R.drawable.icon_facebook_30x30);
+            put("flickr", R.drawable.icon_flickr_30x30);
+            put("google", R.drawable.icon_google_30x30);
+            put("hyves", R.drawable.icon_hyves_30x30);
+            put("linkedin", R.drawable.icon_linkedin_30x30);
+            put("live_id", R.drawable.icon_live_id_30x30);
+            put("livejournal", R.drawable.icon_livejournal_30x30);
+            put("myopenid", R.drawable.icon_myopenid_30x30);
+            put("myspace", R.drawable.icon_myspace_30x30);
+            put("netlog", R.drawable.icon_netlog_30x30);
+            put("openid", R.drawable.icon_openid_30x30);
+            put("paypal", R.drawable.icon_paypal_30x30);
+            put("twitter", R.drawable.icon_twitter_30x30);
+            put("verisign", R.drawable.icon_verisign_30x30);
+            put("wordpress", R.drawable.icon_wordpress_30x30);
+            put("yahoo", R.drawable.icon_yahoo_30x30);
+        }
+    };
+
+    private static HashMap<String, Drawable> provider_logo_drawables = new HashMap<String, Drawable>();
+
+    private final static HashMap<String, Integer> provider_logo_resources = new HashMap<String, Integer>(){
+        {
+            put("aol", R.drawable.logo_aol_280x65);
+            put("blogger", R.drawable.logo_blogger_280x65);
+//            put("facebook", R.drawable.logo_facebook_280x65);
+            put("flickr", R.drawable.logo_flickr_280x65);
+            put("google", R.drawable.logo_google_280x65);
+            put("hyves", R.drawable.logo_hyves_280x65);
+            put("linkedin", R.drawable.logo_linkedin_280x65);
+            put("live_id", R.drawable.logo_live_id_280x65);
+            put("livejournal", R.drawable.logo_livejournal_280x65);
+            put("myopenid", R.drawable.logo_myopenid_280x65);
+            put("myspace", R.drawable.logo_myspace_280x65);
+            put("netlog", R.drawable.logo_netlog_280x65);
+            put("openid", R.drawable.logo_openid_280x65);
+            put("paypal", R.drawable.logo_paypal_280x65);
+            put("twitter", R.drawable.logo_twitter_280x65);
+            put("verisign", R.drawable.logo_verisign_280x65);
+            put("yahoo", R.drawable.logo_yahoo_280x65);
+        }
+    };
 
 
     // ------------------------------------------------------------------------
@@ -203,7 +248,6 @@ public class JRProvider implements Serializable {
             Log.d("JRProvider", "[prov] user input: [" + Prefs.KEY_JR_USER_INPUT + mName + "]");
             }
 
-
         this.mUserInput = userInput;
 
         Prefs.putString(Prefs.KEY_JR_USER_INPUT + this.mName, this.mUserInput);
@@ -219,17 +263,92 @@ public class JRProvider implements Serializable {
         Prefs.putString(Prefs.KEY_JR_WELCOME_STRING + this.mName, this.mWelcomeString);
     }
 
-    public Drawable getTabSpecIndicatorDrawable(final Context c) {
-        if (icon_drawables.containsKey(mName)) return icon_drawables.get(mName);
+    public Drawable getProviderListIconDrawable(Context c) {
+        if (provider_list_icon_drawables.containsKey(mName)) return provider_list_icon_drawables.get(mName);
 
-        if (icon_resources.containsKey(mName)) {
-            Drawable r = c.getResources().getDrawable(icon_resources.get(mName));
-            icon_drawables.put(mName, r);
+        if (provider_list_icon_resources.containsKey(mName)) {
+            //that static hash is actually by friendly name not by name <- legacy artifact
+            Drawable r = c.getResources().getDrawable(provider_list_icon_resources.get(mName));
+            provider_list_icon_drawables.put(mName, r);
             return r;
         }
 
-        //download the icons
+        try {
+            String iconFileName = "providericon~" + "icon_" + mName + "_30x30.png";
 
+            Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
+            if (icon == null) c.deleteFile(iconFileName);
+
+            return new BitmapDrawable(icon);
+        } catch (FileNotFoundException e) {
+            downloadIcons(c);
+
+            return new BitmapDrawable(BitmapFactory.decodeResource(c.getResources(), R.drawable.icon_unknown));
+        }
+    }
+
+    public Drawable getProviderLogo(Context c) {
+        if (provider_logo_drawables.containsKey(mName)) return provider_logo_drawables.get(mName);
+
+        if (provider_logo_resources.containsKey(mName)) {
+            //that static hash is actually by friendly name not by name <- legacy artifact
+            Drawable r = c.getResources().getDrawable(provider_logo_resources.get(mName));
+            provider_logo_drawables.put(mName, r);
+            return r;
+        }
+
+        try {
+            String iconFileName = "providericon~" + "logo_" + mName + "_280x65.png";
+
+            Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
+            if (icon == null) c.deleteFile(iconFileName);
+
+            return new BitmapDrawable(icon);
+        } catch (FileNotFoundException e) {
+            downloadIcons(c);
+
+            return new BitmapDrawable(BitmapFactory.decodeResource(c.getResources(), R.drawable.icon_unknown));
+        }
+    }
+
+    public Drawable getTabSpecIndicatorDrawable(final Context c) {
+        if (tab_spec_drawables.containsKey(mName)) return tab_spec_drawables.get(mName);
+
+        if (tab_spec_resources.containsKey(mName)) {
+            Drawable r = c.getResources().getDrawable(tab_spec_resources.get(mName));
+            tab_spec_drawables.put(mName, r);
+            return r;
+        }
+
+        StateListDrawable sld = new StateListDrawable();
+        tab_spec_drawables.put(mName, sld);
+        
+        try{
+            String colorIconFileName = "providericon~" + "icon_" + mName + "_30x30.png";
+            String bwIconFileName = "providericon~" + "icon_bw_" + mName + "_30x30.png";
+
+            Bitmap colorIcon = BitmapFactory.decodeStream(c.openFileInput(colorIconFileName));
+            if (colorIcon == null) c.deleteFile(colorIconFileName);
+
+            Bitmap bwIcon = BitmapFactory.decodeStream(c.openFileInput(bwIconFileName));
+            if (bwIcon == null) c.deleteFile(bwIconFileName);
+
+            sld.addState(new int[]{android.R.attr.state_selected}, new BitmapDrawable(colorIcon));
+            sld.addState(new int[]{}, new BitmapDrawable(bwIcon));
+
+            return sld;
+        } catch (FileNotFoundException e) {
+            Drawable missingIconIcon = c.getResources().getDrawable(R.drawable.icon_unknown);
+            sld.addState(new int[]{android.R.attr.state_selected}, missingIconIcon);
+            sld.addState(new int[]{}, missingIconIcon);
+
+            downloadIcons(c);
+
+            return sld;
+        }
+    }
+
+    private void downloadIcons(final Context c) {
         final String[] iconFileNames = {
             "icon_" + mName + "_30x30.png",
             "icon_" + mName + "_30x30@2x.png",
@@ -243,18 +362,14 @@ public class JRProvider implements Serializable {
             "button_" + mName + "_280x40@2x.png"
         };
 
-        final StateListDrawable sld = new StateListDrawable();
-        icon_drawables.put(mName, sld);
-
-        //todo optionally set an animation drawable here to indicate the icon is loading?
-
         new AsyncTask<Void, Void, Void>(){
             public Void doInBackground(Void... s) {
                 for (String iconFileName : iconFileNames) {
                     try {
                         if (Arrays.asList(c.fileList()).contains("providericon~" + iconFileName)) continue;
 
-                        URL url = new URL("https://rpxnow.com/cdn/image/android/" + iconFileName);
+                        //todo fixme to use the library compile time configured baseurl
+                        URL url = new URL("http://10.0.0.115:8080/cdn/images/mobile_icons/android/" + iconFileName);
                         InputStream is = url.openStream();
                         FileOutputStream fos = c.openFileOutput("providericon~" + iconFileName, Context.MODE_PRIVATE);
                         while (is.available() > 0) fos.write(is.read());
@@ -267,23 +382,7 @@ public class JRProvider implements Serializable {
                 }
                 return null;
             }
-
-            public void onPostExecute(Void v) {
-                String colorIconFileName = "providericon~" + "icon_" + mName + "_30x30.png";
-                String bwIconFileName = "providericon~" + "icon_bw_" + mName + "_30x30.png";
-
-                Bitmap colorIcon = BitmapFactory.decodeFile(colorIconFileName);
-                if (colorIcon == null) c.deleteFile(colorIconFileName);
-
-                Bitmap bwIcon = BitmapFactory.decodeFile(bwIconFileName);
-                if (bwIcon == null) c.deleteFile(bwIconFileName);
-                
-                sld.addState(new int[]{android.R.attr.state_selected}, new BitmapDrawable(colorIcon));
-                sld.addState(new int[]{}, new BitmapDrawable(bwIcon));
-            }
         }.execute();
-
-        return sld;
     }
 
     // ------------------------------------------------------------------------
