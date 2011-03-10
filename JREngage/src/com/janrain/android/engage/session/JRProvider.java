@@ -276,7 +276,7 @@ public class JRProvider implements Serializable {
                 if (colorIcon == null) c.deleteFile(colorIconFileName);
 
                 Bitmap bwIcon = BitmapFactory.decodeFile(bwIconFileName);
-                if (bwIcon == null) c.deleteFile(bwIconFileName)
+                if (bwIcon == null) c.deleteFile(bwIconFileName);
                 
                 sld.addState(new int[]{android.R.attr.state_selected}, new BitmapDrawable(colorIcon));
                 sld.addState(new int[]{}, new BitmapDrawable(bwIcon));
