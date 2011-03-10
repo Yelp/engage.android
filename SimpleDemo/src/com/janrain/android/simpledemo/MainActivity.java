@@ -46,6 +46,7 @@ import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.*;
 import com.janrain.android.engage.ui.JRLandingActivity;
 
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -53,6 +54,8 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.ResponseCache;
 import java.net.URL;
 
 public class MainActivity extends Activity implements View.OnClickListener, JREngageDelegate {

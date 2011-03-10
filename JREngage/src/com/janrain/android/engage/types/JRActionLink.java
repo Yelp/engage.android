@@ -120,6 +120,7 @@ public class JRActionLink {
      * JREngage library.
      * 
      * TODO: revisit visibility/usage
+     * specifically, is this the right jsonification
      */
     public Map<String, String> dictionaryForObject() {
         Map<String, String> map = new HashMap<String, String>(1);

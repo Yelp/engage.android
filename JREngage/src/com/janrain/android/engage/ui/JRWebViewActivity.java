@@ -256,6 +256,10 @@ public class JRWebViewActivity extends Activity
         unregisterReceiver(mFinishReceiver);
     }
 
+    public void onBackPressed() {
+        mSessionData.triggerAuthenticationDidRestart();
+    }
+
     /**
      * Initialize the contents of the Activity's standard options menu.
      */
@@ -399,7 +403,8 @@ public class JRWebViewActivity extends Activity
                                 JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
                                 JREngageError.ErrorType.AUTHENTICATION_FAILED);
 
-                        mSessionData.triggerAuthenticationDidFail(err);
+                        throw new RuntimeException("unhandled OpenID error");
+                        //mSessionData.triggerAuthenticationDidFail(err);
                     } else {
                         JREngageError err = new JREngageError(
                                 "Authentication failed: " + payload,
@@ -426,6 +431,7 @@ public class JRWebViewActivity extends Activity
         Log.d(TAG, "[connectionDidFinishLoading-2] userdata: " + userdata + " | payload: "
                 + StringUtils.decodeUtf8(payload, null));
         // Not used
+        throw new RuntimeException("unexpected JRConnectionmanager callback invoked");
     }
 
     public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {

@@ -29,6 +29,7 @@
 */
 package com.janrain.android.engage.session;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import com.janrain.android.engage.types.JRDictionary;
 
@@ -36,6 +37,8 @@ import android.text.TextUtils;
 
 import java.awt.*;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * TODO:DOC
@@ -74,7 +77,7 @@ public class JRAuthenticatedUser implements Serializable {
     private String mDeviceToken;
     private JRDictionary mAuthInfo;
     private String mProviderName;
-    transient private Bitmap mCachedProfilePic; //transient marks this field as not serialized
+    transient private Bitmap mCachedProfilePic;
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -111,9 +114,9 @@ public class JRAuthenticatedUser implements Serializable {
         return mDeviceToken;
     }
 
-    public JRDictionary getAuthInfo() {     /* (readonly) */
-        return mAuthInfo;
-    }
+//    public JRDictionary getAuthInfo() {     /* (readonly) */
+//        return mAuthInfo;
+//    }
 
     public String getProviderName() {       /* (readonly) */
         return mProviderName;
@@ -139,12 +142,24 @@ public class JRAuthenticatedUser implements Serializable {
 //        mAuthInfo = coder.getAsDictionary(KEY_AUTH_INFO);
 //    }
 
-    public Bitmap getCachedProfilePic() {
-        return mCachedProfilePic;  //To change body of created methods use File | Settings | File Templates.
-    }
+//    public Bitmap getCachedProfilePic() {
+//        return mCachedProfilePic;  //To change body of created methods use File | Settings | File Templates.
+//        if (mCachedProfilePic != null) return mCachedProfilePic;
+//        else {
+//            if (
+//        }
+//    }
 
-    public void setCachedProfilePic(Bitmap b) {
-        //todo implement the caching
-        mCachedProfilePic = b;
+//    public void setCachedProfilePic(Bitmap b) {
+//        //todo implement the caching
+//        mCachedProfilePic = b;
+//    }
+
+    public String getCachedProfilePicKey() {
+        try {
+            return URLEncoder.encode(mPhoto, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

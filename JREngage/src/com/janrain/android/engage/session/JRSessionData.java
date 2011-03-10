@@ -668,7 +668,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         // Get the providers out of the provider_info section.  These are likely to have changed.
         JRDictionary providerInfo = jsonDict.getAsDictionary("provider_info");
-        mAllProviders = new JRDictionary(providerInfo.size());
+        mAllProviders = new JRDictionary();
 
         // For each provider
         for (String name : providerInfo.keySet()) {
@@ -805,7 +805,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         CookieHelper.deleteCookiesByUrl("http://live.com");
     }
 
-    //public String startUrlForCurrentlyAuthenticatingProvider() {
     public URL startUrlForCurrentlyAuthenticatingProvider() {
         if (Config.LOGD) {
             Log.d(TAG, "[startUrlForCurrentlyAuthenticatingProvider]");
@@ -884,9 +883,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mCurrentlyAuthenticatingProvider.requiresInput();
     }*/
 
-    public JRAuthenticatedUser authenticatedUserForProvider(JRProvider provider) {
+    public JRAuthenticatedUser getAuthenticatedUserForProvider(JRProvider provider) {
         if (Config.LOGD) {
-            Log.d(TAG, "[authenticatedUserForProvider]");
+            Log.d(TAG, "[getAuthenticatedUserForProvider]");
         }
 
         return (JRAuthenticatedUser) mAuthenticatedUsersByProvider.get(provider.getName());
@@ -1075,6 +1074,16 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.authenticationDidCancel();
+        }
+    }
+
+    public void triggerAuthenticationDidRestart() {
+        if (Config.LOGD) {
+            Log.d(TAG, "[triggerAuthenticationDidCancel]");
+        }
+
+        for (JRSessionDelegate delegate : getDelegatesCopy()) {
+            delegate.authenticationDidRestart();
         }
     }
 

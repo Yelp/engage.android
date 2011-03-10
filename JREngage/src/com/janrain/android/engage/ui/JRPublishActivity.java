@@ -35,16 +35,13 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapShader;
+import android.graphics.drawable.*;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.*;
-import android.text.style.BackgroundColorSpan;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
-import android.widget.Button;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -52,13 +49,13 @@ import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.*;
 import com.janrain.android.engage.types.*;
-import com.janrain.android.engage.utils.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -177,15 +174,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     // TODO: We need to make this dynamic for forward compatibility
-    private static final Map<String, Integer> icon_resources = new HashMap<String, Integer>(){
-       {
-           put("facebook", R.drawable.ic_facebook_tab);
-           put("linkedin", R.drawable.ic_linkedin_tab);
-           put("myspace", R.drawable.ic_myspace_tab);
-           put("twitter", R.drawable.ic_twitter_tab);
-           put("yahoo", R.drawable.ic_yahoo_tab);
-       }
-    };
+    private Map<String, Drawable> icon_drawables;
 
     // ------------------------------------------------------------------------
     // STATIC METHODS
@@ -227,7 +216,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private ImageView mUserProfilePic;
     private LinearLayout mNameAndSignOutContainer;
     private TextView mUserNameView;
-    private Button mSignOutButton; //todo add an onClickListener and implement sign out
+    private Button mSignOutButton;
     private Button mJustShareButton;
     private Button mConnectAndShareButton;
     private LinearLayout mSharedTextAndCheckMarkContainer;
@@ -307,21 +296,17 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         });
         mSignOutButton.setOnClickListener(mSignoutButtonListener);
 
-
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
 
         //ShareLayoutHelper is a spinner dialog class
         mLayoutHelper = new SharedLayoutHelper(this);
-
-        // TODO: When focus leaves the usercontentview and the text is empty, go back to setting the
-        // previewlabel to action (if applicable) and the usercontentview's default text to "please enter text"
 
         //configure the state of the UI
         fetchShortenedURLs();
         loadViewElementPropertiesWithActivityObject();
 
         // TODO consider the case of the first usage of the library when the config call hasn't yet returned
-        // and display an noninteractive view of the activity or something like the iOS lib
+        // and display a noninteractive view of the activity or something like the iOS lib
         configureTabs();
     }
 
@@ -336,11 +321,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         int currentIndex = 0, indexOfLastUsedProvider = 0;
         for (JRProvider provider : mSessionData.getSocialProviders())
         {
-            // TODO: If provider is NULL
+            // TODO: If provider is NULL -> there should not be any null elements in the set of social providers.
 
-            spec = tabHost.newTabSpec(provider.getName()).setIndicator(provider.getFriendlyName(),
-                              res.getDrawable(icon_resources.get(provider.getName())))
-                          .setContent(R.id.tab_view_content);
+            Drawable providerIconSet = provider.getTabSpecIndicatorDrawable(getApplicationContext());
+
+            spec = tabHost.newTabSpec(provider.getName())
+                                .setIndicator(provider.getFriendlyName(), providerIconSet)
+                                .setContent(R.id.tab_view_content);
             tabHost.addTab(spec);
 
             mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
@@ -359,7 +346,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                                                   //idempotent)
     }
 
-    @Override
     protected void onStart() {
         super.onStart();
 //        if (mFinishReceiver == null) {
@@ -382,7 +368,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         public void onClick(View view) {
             mWeAreCurrentlyPostingSomething = true;
 
-            if (!mUserCommentView.getText().equals(""))
+            if (!mUserCommentView.getText().toString().equals(""))
                 mActivityObject.setUserGeneratedContent(mUserCommentView.getText().toString());
 
             showViewIsLoading(true);
@@ -397,7 +383,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private View.OnClickListener mSignoutButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
-            mLoggedInUser = null;
+            //mLoggedInUser = null;
             logUserOutForProvider(mSelectedProvider.getName());
             showUserAsLoggedIn(false);
         }
@@ -515,11 +501,16 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         // TODO
         ///NSData *cachedProfilePic = [cachedProfilePics objectForKey:providerName];
-        Bitmap cachedProfilePic = user.getCachedProfilePic();
+        FileInputStream fis = null;
+        try {
+            fis = openFileInput("userpic~" + user.getCachedProfilePicKey());
+        } catch (FileNotFoundException e) {}
+        Bitmap cachedProfilePic = BitmapFactory.decodeStream(fis);
 
-        if (cachedProfilePic instanceof Bitmap) {
+        if (cachedProfilePic != null) {
             mUserProfilePic.setImageBitmap(cachedProfilePic);
         } else if (user.getPhoto() != null) {
+            //todo set profile pic view to a spinner or something?
             new AsyncTask<Void, Void, Bitmap>() {
                 protected Bitmap doInBackground(Void... voids) {
                     try {
@@ -528,24 +519,24 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                         InputStream is = urlc.getInputStream();
                         BufferedInputStream bis = new BufferedInputStream(is);
                         bis.mark(urlc.getContentLength());
-                        FileOutputStream fos = openFileOutput("test", MODE_PRIVATE);
+                        FileOutputStream fos = openFileOutput("userpic~" + user.getCachedProfilePicKey(), MODE_PRIVATE);
                         while (bis.available() > 0) fos.write(bis.read());
                         bis.reset();
                         return BitmapFactory.decodeStream(bis);
                     } catch (IOException e) {
                         Log.d(TAG, "profile pic image loader exception: " + e.toString());
-                        //do absolutely nothing.  If the picture doesn't load, SO BE IT, NO PICTURE.
+                        //todo set default profile pic?
                         return null;
                     }
                 }
 
                 protected void onPostExecute(Bitmap b) {
                     mUserProfilePic.setImageBitmap(b);
-                    user.setCachedProfilePic(b);
                 }
             }.execute();
         } else {
             //todo
+            //display default icon
             //[self setProfilePicToDefaultPic];
         }
     }
@@ -690,7 +681,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void configureLoggedInUserBasedOnProvider() {
-        mLoggedInUser = mSessionData.authenticatedUserForProvider(mSelectedProvider);
+        mLoggedInUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
 
         loadUserNameAndProfilePicForUserForProvider(mLoggedInUser, mSelectedProvider.getName());
 
@@ -723,6 +714,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private void logUserOutForProvider(String provider) {
         Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
         mSessionData.forgetAuthenticatedUserForProvider(provider);
+        mLoggedInUser = null;
     }
 
     private void authenticateUserForSharing() {
@@ -742,7 +734,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void shareActivity() {
-        Log.d(TAG, Thread.currentThread().getStackTrace()[0].getLineNumber() + "");
+        Log.d(TAG, "shareActivity mLoggedInUser: " + mLoggedInUser.toString());
 
         mSessionData.shareActivityForUser(mLoggedInUser);
     }
@@ -798,6 +790,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
                 mWeAreCurrentlyPostingSomething = false;
                 mWeHaveJustAuthenticated = false;
+                mLayoutHelper.dismissProgressDialog();
             }
 
             // TODO: Probably need to comment this out, as authenticationDidCancel is something that publish activity
@@ -812,14 +805,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 Log.d(TAG, "[authenticationDidFail]");
                 mWeHaveJustAuthenticated = false;
                 mWeAreCurrentlyPostingSomething = false;
-                //todo
+                //todo display an error?
             }
 
             public void authenticationDidComplete(JRDictionary profile, String provider) {
                 Log.d(TAG, "[authenticationDidComplete]");
                 //myLoadingLabel.text = @"Sharing...";
 
-                mLoggedInUser = mSessionData.authenticatedUserForProvider(mSelectedProvider);
+                mLoggedInUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
 
                 // QTS: Would we ever expect this to not be the case?
 //                if (mLoggedInUser != null) {
@@ -906,6 +899,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 So, only try and reauthenticate is the publishing activity view is already loaded, which will only happen if we didn't
                 JUST try and authorize, or if sharing took longer than the time it takes to pop the view controller. */
                 if (reauthenticate && !mWeHaveJustAuthenticated) {
+                    Log.d(TAG, "reauthenticating user for sharing");
                     logUserOutForProvider(provider);
                     authenticateUserForSharing();
 

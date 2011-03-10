@@ -38,6 +38,7 @@ import android.util.Config;
 import android.util.Log;
 
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
+import com.janrain.android.engage.session.JRAuthenticatedUser;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
@@ -331,11 +332,11 @@ public class JREngage implements JRSessionDelegate {
      */
 
 
-    public JRDictionary getUserForProvider(String provider) {
+    public JRAuthenticatedUser getUserForProvider(String provider) {
         if (Config.LOGD) {
             Log.d(TAG, "[getUserForProvider]");
         }
-        return mSessionData.authenticatedUserForProviderNamed(provider).getAuthInfo();
+        return mSessionData.authenticatedUserForProviderNamed(provider);
     }
 
     public void signoutUserForProvider(String provider) {
