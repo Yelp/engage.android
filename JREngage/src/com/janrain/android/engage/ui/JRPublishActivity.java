@@ -644,11 +644,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 //        boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
 //        mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
 
-
-
         mShareButtonContainer.setBackgroundColor(colorForProviderFromArray(socialSharingProperties.get("color_values")));
 
+        mJustShareButton.setBackgroundDrawable(mSelectedProvider.getProviderButtonShort(getApplicationContext()));
+        mConnectAndShareButton.setBackgroundDrawable(mSelectedProvider.getProviderButtonLong(getApplicationContext()));
+
+        mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(getApplicationContext()));
     }
+
     private int colorForProviderFromArray(Object arrayOfColorStrings) {
 
         if (!(arrayOfColorStrings instanceof ArrayList))

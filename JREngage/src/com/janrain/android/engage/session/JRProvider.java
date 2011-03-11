@@ -133,6 +133,30 @@ public class JRProvider implements Serializable {
         }
     };
 
+    private static HashMap<String, Drawable> provider_button_short_drawables = new HashMap<String, Drawable>();
+
+    private final static HashMap<String, Integer> provider_button_short_resources = new HashMap<String, Integer>(){
+        {
+//            put("facebook", R.drawable.button_facebook_135x40);
+            put("linkedin", R.drawable.button_linkedin_135x40);
+            put("myspace", R.drawable.button_myspace_135x40);
+            put("twitter", R.drawable.button_twitter_135x40);
+            put("yahoo", R.drawable.button_yahoo_135x40);
+        }
+    };
+
+    private static HashMap<String, Drawable> provider_button_long_drawables = new HashMap<String, Drawable>();
+
+    private final static HashMap<String, Integer> provider_button_long_resources = new HashMap<String, Integer>(){
+        {
+//            put("facebook", R.drawable.button_facebook_280x40);
+            put("linkedin", R.drawable.button_linkedin_280x40);
+            put("myspace", R.drawable.button_myspace_280x40);
+            put("twitter", R.drawable.button_twitter_280x40);
+            put("yahoo", R.drawable.button_yahoo_280x40);
+        }
+    };
+
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -263,18 +287,17 @@ public class JRProvider implements Serializable {
         Prefs.putString(Prefs.KEY_JR_WELCOME_STRING + this.mName, this.mWelcomeString);
     }
 
-    public Drawable getProviderListIconDrawable(Context c) {
-        if (provider_list_icon_drawables.containsKey(mName)) return provider_list_icon_drawables.get(mName);
+    private Drawable getDrawable(Context c, String drawableName, HashMap<String, Drawable> drawableHashMap, HashMap<String, Integer> resourceHashMap) {
+        if (drawableHashMap.containsKey(mName)) return drawableHashMap.get(mName);
 
-        if (provider_list_icon_resources.containsKey(mName)) {
-            //that static hash is actually by friendly name not by name <- legacy artifact
-            Drawable r = c.getResources().getDrawable(provider_list_icon_resources.get(mName));
-            provider_list_icon_drawables.put(mName, r);
+        if (resourceHashMap.containsKey(mName)) {
+            Drawable r = c.getResources().getDrawable(resourceHashMap.get(mName));
+            drawableHashMap.put(mName, r);
             return r;
         }
 
         try {
-            String iconFileName = "providericon~" + "icon_" + mName + "_30x30.png";
+            String iconFileName = "providericon~" + drawableName;
 
             Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
             if (icon == null) c.deleteFile(iconFileName);
@@ -287,28 +310,65 @@ public class JRProvider implements Serializable {
         }
     }
 
+
+    public Drawable getProviderListIconDrawable(Context c) {
+        return getDrawable(c, "icon_" + mName + "_30x30.png", provider_list_icon_drawables, provider_list_icon_resources);
+
+//        if (provider_list_icon_drawables.containsKey(mName)) return provider_list_icon_drawables.get(mName);
+//
+//        if (provider_list_icon_resources.containsKey(mName)) {
+//            //that static hash is actually by friendly name not by name <- legacy artifact
+//            Drawable r = c.getResources().getDrawable(provider_list_icon_resources.get(mName));
+//            provider_list_icon_drawables.put(mName, r);
+//            return r;
+//        }
+//
+//        try {
+//            String iconFileName = "providericon~" + "icon_" + mName + "_30x30.png";
+//
+//            Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
+//            if (icon == null) c.deleteFile(iconFileName);
+//
+//            return new BitmapDrawable(icon);
+//        } catch (FileNotFoundException e) {
+//            downloadIcons(c);
+//
+//            return new BitmapDrawable(BitmapFactory.decodeResource(c.getResources(), R.drawable.icon_unknown));
+//        }
+    }
+
     public Drawable getProviderLogo(Context c) {
-        if (provider_logo_drawables.containsKey(mName)) return provider_logo_drawables.get(mName);
+        return getDrawable(c, "logo_" + mName + "_280x65.png", provider_logo_drawables, provider_logo_resources);
 
-        if (provider_logo_resources.containsKey(mName)) {
-            //that static hash is actually by friendly name not by name <- legacy artifact
-            Drawable r = c.getResources().getDrawable(provider_logo_resources.get(mName));
-            provider_logo_drawables.put(mName, r);
-            return r;
-        }
+//        if (provider_logo_drawables.containsKey(mName)) return provider_logo_drawables.get(mName);
+//
+//        if (provider_logo_resources.containsKey(mName)) {
+//            //that static hash is actually by friendly name not by name <- legacy artifact
+//            Drawable r = c.getResources().getDrawable(provider_logo_resources.get(mName));
+//            provider_logo_drawables.put(mName, r);
+//            return r;
+//        }
+//
+//        try {
+//            String iconFileName = "providericon~" + "logo_" + mName + "_280x65.png";
+//
+//            Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
+//            if (icon == null) c.deleteFile(iconFileName);
+//
+//            return new BitmapDrawable(icon);
+//        } catch (FileNotFoundException e) {
+//            downloadIcons(c);
+//
+//            return new BitmapDrawable(BitmapFactory.decodeResource(c.getResources(), R.drawable.icon_unknown));
+//        }
+    }
 
-        try {
-            String iconFileName = "providericon~" + "logo_" + mName + "_280x65.png";
+    public Drawable getProviderButtonShort (Context c) {
+        return getDrawable(c, "button_" + mName + "_135x40.png", provider_button_short_drawables, provider_button_short_resources);
+    }
 
-            Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
-            if (icon == null) c.deleteFile(iconFileName);
-
-            return new BitmapDrawable(icon);
-        } catch (FileNotFoundException e) {
-            downloadIcons(c);
-
-            return new BitmapDrawable(BitmapFactory.decodeResource(c.getResources(), R.drawable.icon_unknown));
-        }
+    public Drawable getProviderButtonLong (Context c) {
+        return getDrawable(c, "button_" + mName + "_280x40.png", provider_button_long_drawables, provider_button_long_resources);
     }
 
     public Drawable getTabSpecIndicatorDrawable(final Context c) {
