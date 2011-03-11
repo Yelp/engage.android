@@ -622,7 +622,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         final String tag = "getConfiguration";
 
-        if (!JRConnectionManager.createConnection(urlString, this, true, tag)) {
+//        if (!JRConnectionManager.createConnection(urlString, this, true, tag)) {
+        if (!JRConnectionManager.createConnection(urlString, this, false, tag)) {
             Log.w(TAG, "[startGetConfiguration] createConnection failed.");
             return new JREngageError(
                     "There was a problem connecting to the Janrain server while configuring authentication.",
@@ -966,7 +967,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         String activityContent;
         JRDictionary activityDictionary = mActivity.dictionaryForObject();
         try {
-            activityContent = URLEncoder.encode(activityDictionary.toJSON(), "UTF-8");
+            String activityJSON = activityDictionary.toJSON();
+            activityContent = URLEncoder.encode(activityJSON, "UTF-8");
             body.append("device_token=").append(deviceToken);
             body.append("&activity=").append(activityContent);
             body.append("&options={\"urlShortening\":\"true\"}"); //this is an undocumented parameter available to the mobile library?
@@ -999,7 +1001,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         tag.put("tokenUrl", tokenUrl);
         tag.put("providerName", providerName);
 
-        if (!JRConnectionManager.createConnection(tokenUrl, postData, this, true, tag)) {
+//        if (!JRConnectionManager.createConnection(tokenUrl, postData, this, true, tag)) {
+        if (!JRConnectionManager.createConnection(tokenUrl, postData, this, false, tag)) {
             JREngageError error = new JREngageError(
                     "Problem initializing the connection to the token url",
                     AuthenticationError.AUTHENTICATION_FAILED,

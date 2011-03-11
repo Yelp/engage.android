@@ -74,6 +74,7 @@ public class JRMp3MediaObject extends JRMediaObject {
      */
     public JRMp3MediaObject(String src) {
         // TODO: if null/empty should we throw?
+        if (src == null) throw new IllegalArgumentException("illegal src for JRMp3MediaObject constructor");
         mSrc = src;
     }
 
@@ -107,6 +108,10 @@ public class JRMp3MediaObject extends JRMediaObject {
 
     public void setAlbum(String album) {
         mAlbum = album;
+    }
+
+    public String getType() {
+        return "music";
     }
 
     // ------------------------------------------------------------------------
