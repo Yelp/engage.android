@@ -275,9 +275,9 @@ public class JRActivityObject {
         map.put("user_generated_content", mUserGeneratedContent);
         map.put("title", mTitle);
         map.put("description", mDescription);
-        //map.put("action_links", )  TODO fixme
-        //map.put("media", )
-        //map.put("properties", )
+        map.put("action_links", mActionLinks);
+        map.put("media", mMedia);
+        map.put("properties", mProperties);
         return map;
     }
 }

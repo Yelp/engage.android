@@ -29,13 +29,16 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.types;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 /**
  * Base class for JRImageMediaObject, JRFlashMediaObject, and JRMp3MediaObject.
  */
 public abstract class JRMediaObject {
-
     public boolean hasThumbnail() { return false; }
 
+    @JsonIgnore
     public String getThumbnail() {return null; }
 
+    public abstract String getType();
 }

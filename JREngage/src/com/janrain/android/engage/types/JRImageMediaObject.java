@@ -31,6 +31,7 @@ package com.janrain.android.engage.types;
 
 
 import android.graphics.Bitmap;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * Image object to be included in a post to a user's stream.
@@ -46,7 +47,8 @@ import android.graphics.Bitmap;
  * href="http://developers.facebook.com/docs/guides/attachments">Facebook Developer page on
  * Attachments</a>.
  */
-public class JRImageMediaObject extends JRMediaObject {
+public class
+        JRImageMediaObject extends JRMediaObject {
 
     // ------------------------------------------------------------------------
     // FIELDS
@@ -72,6 +74,7 @@ public class JRImageMediaObject extends JRMediaObject {
      */
     public JRImageMediaObject(String src, String href) {
         // TODO: if null/empty should we throw?
+        if (src == null || href == null) throw new IllegalArgumentException("illegal null src or href");
         mSrc = src;
         mHref = href;
     }
@@ -88,6 +91,7 @@ public class JRImageMediaObject extends JRMediaObject {
         return mHref;
     }
 
+    @JsonIgnore
     public Bitmap getPreview() {
         return mPreview;
     }
@@ -105,6 +109,10 @@ public class JRImageMediaObject extends JRMediaObject {
 
     public String getThumbnail() {
         return mSrc;
+    }
+
+    public String getType() {
+        return "image";
     }
     
 }

@@ -101,6 +101,7 @@ public class JRFlashMediaObject extends JRMediaObject {
      */
     public JRFlashMediaObject(String swfSrc, String imgSrc) {
         // TODO: if null/empty should we throw?
+        if (swfSrc == null || imgSrc == null) throw new IllegalArgumentException("illegal null parameter");
         mSwfSrc = swfSrc;
         mImgSrc = imgSrc;
     }
@@ -167,5 +168,9 @@ public class JRFlashMediaObject extends JRMediaObject {
 
     public String getThumbnail() {
         return mImgSrc;
+    }
+
+    public String getType() {
+        return "flash";
     }
 }
