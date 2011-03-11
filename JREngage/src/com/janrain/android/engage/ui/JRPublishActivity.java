@@ -210,7 +210,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private ImageView mProviderIcon; //todo update this icon onTabChange
     private EditText mUserCommentView;
     private LinearLayout mProfilePicAndButtonsHorizontalLayout; //I think we don't need a handle to this
-    private LinearLayout mShareButtonContainer; //or a handle to this
+    private LinearLayout mUserProfileInformationAndShareButtonContainer; //or a handle to this
     private ImageView mUserProfilePic;
     private LinearLayout mNameAndSignOutContainer;
     private TextView mUserNameView;
@@ -267,8 +267,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mProviderIcon = (ImageView) findViewById(R.id.provider_icon);
         mUserCommentView = (EditText) findViewById(R.id.edit_comment);
         mPreviewLabelView = (TextView) findViewById(R.id.preview_text_view);
-        mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
-        mShareButtonContainer = (LinearLayout) findViewById(R.id.share_button_container);
+        mUserProfileInformationAndShareButtonContainer = (LinearLayout) findViewById(R.id.user_profile_information_and_share_button_container);
         mProfilePicAndButtonsHorizontalLayout = (LinearLayout) findViewById(R.id.profile_pic_and_buttons_horizontal_layout);
         mUserProfilePic = (ImageView) findViewById(R.id.profile_pic);
         mNameAndSignOutContainer = (LinearLayout) findViewById(R.id.name_and_sign_out_container);
@@ -674,7 +673,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 //        boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
 //        mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
 
-        mShareButtonContainer.setBackgroundColor(colorForProviderFromArray(socialSharingProperties.get("color_values")));
+        mUserProfileInformationAndShareButtonContainer.setBackgroundColor(colorForProviderFromArray(socialSharingProperties.get("color_values")));
 
         mJustShareButton.setBackgroundDrawable(mSelectedProvider.getProviderButtonShort(getApplicationContext()));
         mConnectAndShareButton.setBackgroundDrawable(mSelectedProvider.getProviderButtonLong(getApplicationContext()));
