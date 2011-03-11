@@ -41,12 +41,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Utility class which performs HTTP operations asynchronously.
  */
 public final class AsyncHttpClient {
-
     // ------------------------------------------------------------------------
     // TYPES
     // ------------------------------------------------------------------------
@@ -55,7 +55,15 @@ public final class AsyncHttpClient {
 	 * Sends HTTP request in background, loads header and response, and returns via handler.
 	 */
 	private static class HttpSender extends Thread {
-		
+        static {
+            //HttpURLConnection has a known bug discussed:
+            //here: http://code.google.com/p/android/issues/detail?id=7786
+            //here: http://stackoverflow.com/questions/1440957/httpurlconnection-getresponsecode-returns-1-on-second-invocation/1441491#1441491
+            //and here: http://stackoverflow.com/questions/2792843/httpurlconnection-whats-the-deal-with-having-to-read-the-whole-response
+            //the following is a workaround:
+            System.setProperty("http.keepAlive", "false");
+        }
+
 		private static final String TAG = HttpSender.class.getSimpleName();
 
         private String mUrl;
@@ -106,12 +114,17 @@ public final class AsyncHttpClient {
                 } else {
                     // HTTP POST OPERATION
                     if (Config.LOGD) { Log.d(TAG, "[run] HTTP POST"); }
+                    //following is an attempted fix for -1 responsecode HttpURLConnection known bug
+                    //connection.setFixedLengthStreamingMode(mPostData.length);
                     prepareConnectionForHttpPost(connection);
                     connection.connect();
                     doHttpPost(connection);
                 }
 
-                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                //debugging hack to test connection failures.
+                //boolean random = (new Random()).nextBoolean();
+
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {//  && random) {
                     HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
                     byte[] data = IOUtils.readFromStream(connection.getInputStream(), true);
 
@@ -141,10 +154,7 @@ public final class AsyncHttpClient {
                 mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, e));
                 mHandler.post(mWrapper);
             } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                    connection = null;
-                }
+                if (connection != null) connection.disconnect();
             }
 		}
 
@@ -190,7 +200,6 @@ public final class AsyncHttpClient {
                 }
             }
         }
-
 	}
 	
 	/*

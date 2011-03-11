@@ -226,6 +226,7 @@ public final class IOUtils {
 	 */
 	public static byte[] readFromStream(InputStream in, boolean shouldThrowOnError) 
 			throws IOException {
+        ///todo XXX audit this code.
 		byte[] retval = null;
 		if (in != null) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();

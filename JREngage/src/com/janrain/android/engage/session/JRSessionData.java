@@ -82,8 +82,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
     private static final String ARCHIVE_BASIC_PROVIDERS = "basicProviders";
     private static final String ARCHIVE_SOCIAL_PROVIDERS = "socialProviders";
-    private static final String ARCHIVE_ICONS_STILL_NEEDED = "iconsStillNeeded";
-    private static final String ARCHIVE_PROVIDERS_WITH_ICONS = "providersWithIcons";
+    //private static final String ARCHIVE_ICONS_STILL_NEEDED = "iconsStillNeeded";
+    //private static final String ARCHIVE_PROVIDERS_WITH_ICONS = "providersWithIcons";
     private static final String ARCHIVE_AUTH_USERS_BY_PROVIDER = "jrAuthenticatedUsersByProvider";
 
     private static final String FMT_CONFIG_URL =
@@ -145,8 +145,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	private String mNewEtag;
     private String mGitCommit;
 
-    private JRProviderList mProvidersWithIcons;
-    private JRDictionary mIconsStillNeeded;
+    //private JRProviderList mProvidersWithIcons;
+    //private JRDictionary mIconsStillNeeded;
 
 	private JRActivityObject mActivity;
 	
@@ -221,11 +221,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         // Load the list of icons that the library should re-attempt to download, in case
         // previous attempts failed for whatever reason
-        mIconsStillNeeded = JRDictionary.unarchive(ARCHIVE_ICONS_STILL_NEEDED);
+        //mIconsStillNeeded = JRDictionary.unarchive(ARCHIVE_ICONS_STILL_NEEDED);
 
         // Load the set of providers that already have all of their icons; checking this list
         // is faster than checking for the icons themselves
-        mProvidersWithIcons = JRProviderList.unarchive(ARCHIVE_PROVIDERS_WITH_ICONS);
+        //mProvidersWithIcons = JRProviderList.unarchive(ARCHIVE_PROVIDERS_WITH_ICONS);
 
         // Load the base url
         mBaseUrl = Prefs.getAsString(Prefs.KEY_JR_BASE_URL, "");
@@ -622,8 +622,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         final String tag = "getConfiguration";
 
-//        if (!JRConnectionManager.createConnection(urlString, this, true, tag)) {
-        if (!JRConnectionManager.createConnection(urlString, this, false, tag)) {
+        if (!JRConnectionManager.createConnection(urlString, this, true, tag)) {
             Log.w(TAG, "[startGetConfiguration] createConnection failed.");
             return new JREngageError(
                     "There was a problem connecting to the Janrain server while configuring authentication.",
@@ -1001,8 +1000,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         tag.put("tokenUrl", tokenUrl);
         tag.put("providerName", providerName);
 
-//        if (!JRConnectionManager.createConnection(tokenUrl, postData, this, true, tag)) {
-        if (!JRConnectionManager.createConnection(tokenUrl, postData, this, false, tag)) {
+        if (!JRConnectionManager.createConnection(tokenUrl, postData, this, true, tag)) {
             JREngageError error = new JREngageError(
                     "Problem initializing the connection to the token url",
                     AuthenticationError.AUTHENTICATION_FAILED,

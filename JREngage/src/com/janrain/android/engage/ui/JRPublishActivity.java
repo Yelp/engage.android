@@ -32,7 +32,6 @@ package com.janrain.android.engage.ui;
 import android.app.*;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.*;
@@ -55,7 +54,6 @@ import org.json.JSONStringer;
 import org.json.JSONTokener;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -67,8 +65,8 @@ import java.util.Map;
  * Publishing UI
  */
 public class JRPublishActivity extends TabActivity implements TabHost.OnTabChangeListener {
-    private static final int FAILURE_DIALOG = 1;
-    private static final int SUCCESS_DIALOG = 2;
+    private static final int DIALOG_FAILURE = 1;
+    private static final int DIALOG_SUCCESS = 2;
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -139,39 +137,39 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private static final String TAG = JRPublishActivity.class.getSimpleName();
 
-    private static HashMap<String, ProviderDisplayInfo> PROVIDER_MAP;
+//    private static HashMap<String, ProviderDisplayInfo> PROVIDER_MAP;
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
     // ------------------------------------------------------------------------
 
-    static {
-        PROVIDER_MAP = new HashMap<String, ProviderDisplayInfo>();
-        PROVIDER_MAP.put("Facebook",
-                new ProviderDisplayInfo(
-                        true,
-                        R.drawable.icon_facebook_30x30,
-                        R.color.bg_clr_facebook,
-                        R.drawable.button_facebook_280x40));
-        PROVIDER_MAP.put("Twitter",
-                new ProviderDisplayInfo(
-                        false,
-                        R.drawable.icon_twitter_30x30,
-                        R.color.bg_clr_twitter,
-                        R.drawable.button_twitter_280x40));
-        PROVIDER_MAP.put("MySpace",
-                new ProviderDisplayInfo(
-                        false,
-                        R.drawable.icon_myspace_30x30,
-                        R.color.bg_clr_myspace,
-                        R.drawable.button_myspace_280x40));
-        PROVIDER_MAP.put("LinkedIn",
-                new ProviderDisplayInfo(
-                        false,
-                        R.drawable.icon_linkedin_30x30,
-                        R.color.bg_clr_linkedin,
-                        R.drawable.button_linkedin_280x40));
-    }
+//    static {
+//        PROVIDER_MAP = new HashMap<String, ProviderDisplayInfo>();
+//        PROVIDER_MAP.put("Facebook",
+//                new ProviderDisplayInfo(
+//                        true,
+//                        R.drawable.icon_facebook_30x30,
+//                        R.color.bg_clr_facebook,
+//                        R.drawable.button_facebook_280x40));
+//        PROVIDER_MAP.put("Twitter",
+//                new ProviderDisplayInfo(
+//                        false,
+//                        R.drawable.icon_twitter_30x30,
+//                        R.color.bg_clr_twitter,
+//                        R.drawable.button_twitter_280x40));
+//        PROVIDER_MAP.put("MySpace",
+//                new ProviderDisplayInfo(
+//                        false,
+//                        R.drawable.icon_myspace_30x30,
+//                        R.color.bg_clr_myspace,
+//                        R.drawable.button_myspace_280x40));
+//        PROVIDER_MAP.put("LinkedIn",
+//                new ProviderDisplayInfo(
+//                        false,
+//                        R.drawable.icon_linkedin_30x30,
+//                        R.color.bg_clr_linkedin,
+//                        R.drawable.button_linkedin_280x40));
+//    }
 
     // TODO: We need to make this dynamic for forward compatibility
     private Map<String, Drawable> icon_drawables;
@@ -245,6 +243,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "Activity lifecycle onCreate");
 
         setContentView(R.layout.publish_activity);
 
@@ -348,15 +347,45 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "Activity lifecycle onStart");
+
 //        if (mFinishReceiver == null) {
 //            mFinishReceiver = new FinishReceiver();
 //            registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
 //        }
     }
 
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "Activity lifecycle onRestart");
+
+        if (mLayoutHelper.getProgressDialogShowing()) {
+            //mLayoutHelper.dismissProgressDialog();  this is wrong because we can be restarted after the webview is finished but while the async activity post is still operating
+            //throw new RuntimeException("onRestart while progress dialog is still showing");
+        }
+    }
+
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "Activity lifecycle onResume");
+    }
+
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "Activity lifecycle onStop");
+    }
+
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "Activity lifecycle onPause");
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        Log.d(TAG, "Activity lifecycle onDestroy");
+
 
         mSessionData.removeDelegate(mSessionDelegate);
 //        unregisterReceiver(mFinishReceiver);
@@ -371,7 +400,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             if (!mUserCommentView.getText().toString().equals(""))
                 mActivityObject.setUserGeneratedContent(mUserCommentView.getText().toString());
 
-            showViewIsLoading(true);
+            //showViewIsLoading(true);
+            mLayoutHelper.showProgressDialog();
 
             if (mLoggedInUser == null) {
                 authenticateUserForSharing();
@@ -576,14 +606,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //[myTriangleIcon setFrame:CGRectMake(loggedIn ? 230 : 151, 0, 18, 18)];
     }
 
-    private void showViewIsLoading(boolean loading) {
-        Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
-
-        if (loading)
-            mLayoutHelper.showProgressDialog();
-        else
-            mLayoutHelper.dismissProgressDialog();
-    }
+//    private void showViewIsLoading(boolean loading) {
+//        Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
+//
+//        if (loading)
+//            mLayoutHelper.showProgressDialog();
+//        else
+//            mLayoutHelper.dismissProgressDialog();
+//    }
 
     private void loadViewElementPropertiesWithActivityObject() {
         mUserCommentView.setHint(R.string.please_enter_text);
@@ -698,12 +728,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         };
 
         switch (id) {
-            case SUCCESS_DIALOG:
+            case DIALOG_SUCCESS:
                 return new AlertDialog.Builder(JRPublishActivity.this).setMessage("Success!")
                                          .setCancelable(false)
                                          .setPositiveButton("Dismiss", null)
                                          .create();
-            case FAILURE_DIALOG:
+            case DIALOG_FAILURE:
                 return new AlertDialog.Builder(JRPublishActivity.this).setMessage(mDialogErrorMessage)
                                          .setPositiveButton("Dismiss", null)
                                          .create();
@@ -790,7 +820,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
                 mWeAreCurrentlyPostingSomething = false;
                 mWeHaveJustAuthenticated = false;
-                mLayoutHelper.dismissProgressDialog();
+                mLayoutHelper.dismissProgressDialog();//this is wrong because that just means they're back to the landing page?
+                                                      //or does the landing page not trigger authDidRestart?
             }
 
             // TODO: Probably need to comment this out, as authenticationDidCancel is something that publish activity
@@ -799,6 +830,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 Log.d(TAG, "[authenticationDidCancel]");
                 mWeAreCurrentlyPostingSomething = false;
                 mWeHaveJustAuthenticated = false;
+                //mLayoutHelper.dismissProgressDialog();//this is wrong because there will never be an authDidCancel message from auth started by publish?
             }
 
             public void authenticationDidFail(JREngageError error, String provider) {
@@ -806,6 +838,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 mWeHaveJustAuthenticated = false;
                 mWeAreCurrentlyPostingSomething = false;
                 //todo display an error?
+                //todo
+                //does this ever happen? why aren't we clearing the progress dialog? is this a reentry point for publish activity?
+                //yes, this can happen if the mobile endpoint URL fails to be read correctly
+                mLayoutHelper.dismissProgressDialog();
+                mDialogErrorMessage = error.getMessage();
+                showDialog(DIALOG_FAILURE);
             }
 
             public void authenticationDidComplete(JRDictionary profile, String provider) {
@@ -816,11 +854,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
                 // QTS: Would we ever expect this to not be the case?
 //                if (mLoggedInUser != null) {
-                    showViewIsLoading(true);
-                    loadUserNameAndProfilePicForUserForProvider(mLoggedInUser, provider);
-                    showUserAsLoggedIn(true);
 
-                    shareActivity();
+                //showViewIsLoading(true);
+                mLayoutHelper.showProgressDialog();
+                loadUserNameAndProfilePicForUserForProvider(mLoggedInUser, provider);
+                showUserAsLoggedIn(true);
+
+                shareActivity();
+
 //                } else {
 ////                    UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Shared"
 ////                                                                     message:@"There was an error while sharing this activity."
@@ -834,9 +875,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 //                }
             }
 
-            public void publishingDidRestart() { mWeAreCurrentlyPostingSomething = false; }
-            public void publishingDidCancel() { mWeAreCurrentlyPostingSomething = false; }
-            public void publishingDidComplete() { mWeAreCurrentlyPostingSomething = false; }
+            public void publishingDidRestart() { mWeAreCurrentlyPostingSomething = false; } //when is this triggered?
+            public void publishingDidCancel() { mWeAreCurrentlyPostingSomething = false; }  //when this?
+            public void publishingDidComplete() { mWeAreCurrentlyPostingSomething = false; } //when this?
 
             public void publishingActivityDidSucceed(JRActivityObject activity, String provider) {
                 Log.d(TAG, "[publishingActivityDidSucceed]");
@@ -852,20 +893,22 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
                 mProvidersThatHaveAlreadyShared.put(provider, true);
 
-                showViewIsLoading(false);
+                //showViewIsLoading(false);
+                mLayoutHelper.dismissProgressDialog();
                 showActivityAsShared(true);
 
                 mWeAreCurrentlyPostingSomething = false;
                 mWeHaveJustAuthenticated = false;
 
-                showDialog(SUCCESS_DIALOG);
+                showDialog(DIALOG_SUCCESS);
             }
 
             public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
                 Log.d(TAG, "[publishingActivityDidFail]");
                 boolean reauthenticate = false;
 
-                showViewIsLoading(false);
+                //showViewIsLoading(false);
+                mLayoutHelper.dismissProgressDialog();
 
                 switch (error.getCode())
                 {// TODO: add strings to string resource file
@@ -909,7 +952,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 mWeAreCurrentlyPostingSomething = false;
                 mWeHaveJustAuthenticated = false;
 
-                showDialog(FAILURE_DIALOG);
+                mDialogErrorMessage += error.getMessage();
+                showDialog(DIALOG_FAILURE);
             }
         };
     }

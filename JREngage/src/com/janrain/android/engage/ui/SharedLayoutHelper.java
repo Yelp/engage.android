@@ -185,5 +185,7 @@ public class SharedLayoutHelper {
         return dialog;
     }
 
-
+    public boolean getProgressDialogShowing() {
+        return (mProgressDialog != null) && mProgressDialog.isShowing();
+    }
 }
