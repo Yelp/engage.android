@@ -115,11 +115,12 @@ public class JREngage {
             }
 
             sInstance = new JREngage();
-            sInstance.initialize(context, appId, tokenUrl, delegate);
         } //else throw new IllegalComponentStateException("illegal reinitialization in JREngage.initInstance");
+
         //todo this can happen if the user exits the activity via the home button or something and the phone
         //doesn't kill the app, so it shouldn't be an error, but there's suspect statefulness here regardless
         //since we're just discarding the parameters
+        sInstance.initialize(context, appId, tokenUrl, delegate);
 
         return sInstance;
     }
@@ -188,13 +189,31 @@ public class JREngage {
 //        mSessionData = JRSessionData.getInstance(mAppId, mTokenUrl, this);
 //        mInterfaceMaestro = JRUserInterfaceMaestro.getInstance();
 //	}
-    
+
     /*
      * Hide default constructor (singleton pattern).
      */
 	private JREngage() {
 	}
-	
+
+
+	/*
+	 * Initializer.
+	 */
+	private void initialize(Context context, String appId, String tokenUrl, JREngageDelegate delegate) {
+        mContext = context;
+        mAppId = appId;
+        mTokenUrl = tokenUrl;
+        mDelegates = new ArrayList<JREngageDelegate>();
+        if (delegate != null) {
+            mDelegates.add(delegate);
+        }
+        mSessionData = JRSessionData.getInstance(mAppId, mTokenUrl, mJRSD);
+        mInterfaceMaestro = JRUserInterfaceMaestro.getInstance();
+	}
+
+
+
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
     // ------------------------------------------------------------------------
@@ -498,21 +517,4 @@ public class JREngage {
                 ? new ArrayList<JREngageDelegate>()
                 : new ArrayList<JREngageDelegate>(mDelegates);
     }
-
-	/*
-	 * Initializer.
-	 */
-	private void initialize(Context context, String appId, String tokenUrl, JREngageDelegate delegate) {
-        mContext = context;
-        mAppId = appId;
-        mTokenUrl = tokenUrl;
-        mDelegates = new ArrayList<JREngageDelegate>();
-        if (delegate != null) {
-            mDelegates.add(delegate);
-        }
-        mSessionData = JRSessionData.getInstance(mAppId, mTokenUrl, mJRSD);
-        mInterfaceMaestro = JRUserInterfaceMaestro.getInstance();
-	}
-
-
 }

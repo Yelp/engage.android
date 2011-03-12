@@ -118,7 +118,7 @@ public interface JREngageDelegate {
      * please see the <a href="https://rpxnow.com/docs#api_auth_info_response">auth_info 
      * response</a> section of the Janrain Engage API documentation.
      **/
-    void jrAuthenticationDidSucceedForUser(JRDictionary authInfo, String provider);
+    void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider);
 
     /**
      * Sent when authentication failed and could not be recovered by the library

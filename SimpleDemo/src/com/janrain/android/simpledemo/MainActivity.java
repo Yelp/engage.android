@@ -172,6 +172,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
             JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", mActionLink);
+            jra.setTitle(mTitleText);
             jra.setDescription(mDescriptionText);
             jra.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
             mEngage.showSocialPublishingDialogWithActivity(jra);

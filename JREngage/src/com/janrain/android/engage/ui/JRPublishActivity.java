@@ -300,13 +300,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //ShareLayoutHelper is a spinner dialog class
         mLayoutHelper = new SharedLayoutHelper(this);
 
-        //configure the state of the UI
+        //configure the properties of the UI
         fetchShortenedURLs();
-        loadViewElementPropertiesWithActivityObject();
 
         // TODO consider the case of the first usage of the library when the config call hasn't yet returned
         // and display a noninteractive view of the activity or something like the iOS lib
         configureTabs();
+        loadViewElementPropertiesWithActivityObject();
     }
 
     private void configureTabs() {
@@ -420,22 +420,33 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     };
 
     public void updateCharacterCount() {
-        //TODO make negative numbers red, verify correctness of the 0 remaining characters edge case
+        //todo verify correctness of the 0 remaining characters edge case
+        CharSequence characterCountText;
 
         if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
             //twitter, myspace, linkedin
             if (activityUrlAffectsCharacterCountForSelectedProvider() && mShortenedActivityURL == null) {
                 //twitter, myspace
-                // Do nothing yet... because we're waiting to see how long the shortened URL will be
+                characterCountText = getText(R.string.calculating_remaining_characters);
             } else {
                 int preview_length = mPreviewLabelView.getText().length();
-                mCharacterCountView.setText("Remaining characters: " + (mMaxCharacters - preview_length));
-                Log.d(TAG, "uCC1: " + (mMaxCharacters - preview_length));
+                int chars_remaining = mMaxCharacters - preview_length;
+                if (chars_remaining < 0)
+                    characterCountText = Html.fromHtml("Remaining characters: <font color=red>" + chars_remaining + "</font>");
+                else
+                    characterCountText = Html.fromHtml("Remaining characters: " + chars_remaining);
             }
         } else { //facebook, yahoo
             int comment_length = mUserCommentView.getText().length();
-            mCharacterCountView.setText("Remaining characters: " + (mMaxCharacters - comment_length));
+            int chars_remaining = mMaxCharacters - comment_length;
+            if (chars_remaining < 0)
+                characterCountText = Html.fromHtml("Remaining characters: <font color=red>" + chars_remaining + "</font>");
+            else
+                characterCountText = Html.fromHtml("Remaining characters: " + chars_remaining);
         }
+
+        mCharacterCountView.setText(characterCountText);
+        Log.d(TAG, "updateCharacterCount: " + characterCountText);
     }
 
     public void onTabChanged(String tabId) {
@@ -518,7 +529,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void loadUserNameAndProfilePicForUserForProvider(final JRAuthenticatedUser user, String providerName) {
-        Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
+        Log.d(TAG, "loadUserNameAndProfilePicForUserForProvider");
 
         if (user == null || providerName == null) {
             mUserNameView.setText("");
@@ -572,7 +583,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void showActivityAsShared(boolean shared) {
-        Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
+        Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
 
         int visibleIfShared = shared ? View.VISIBLE : View.GONE;
         int visibleIfNotShared = !shared ? View.VISIBLE : View.GONE;
@@ -586,7 +597,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void showUserAsLoggedIn(boolean loggedIn) {
-        Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
+        Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
 
         int visibleIfLoggedIn = loggedIn ? View.VISIBLE : View.GONE;
         int visibleIfNotLoggedIn = !loggedIn ? View.VISIBLE : View.GONE;
@@ -607,7 +618,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
 //    private void showViewIsLoading(boolean loading) {
-//        Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
+//        Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
 //
 //        if (loading)
 //            mLayoutHelper.showProgressDialog();
@@ -616,9 +627,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 //    }
 
     private void loadViewElementPropertiesWithActivityObject() {
-        mUserCommentView.setHint(R.string.please_enter_text);
+        //todo shouldn't this be the action if content replaces action?
+//        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action"))
+//            mUserCommentView.setHint(mActivityObject.getAction());
+//        else
+            mUserCommentView.setHint(R.string.please_enter_text);
 
-        mPreviewLabelView.setText(mActivityObject.getAction());
+        //mPreviewLabelView.setText(mActivityObject.getAction());
 
         JRMediaObject mo = null;
         if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
@@ -745,7 +760,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void logUserOutForProvider(String provider) {
-        Log.d(TAG, Thread.currentThread().getStackTrace()[0].getMethodName());
+        Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
         mSessionData.forgetAuthenticatedUserForProvider(provider);
         mLoggedInUser = null;
     }
@@ -780,7 +795,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             JRConnectionManagerDelegate jrcmd = new JRCMD() {
                 public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
-                    //Log.d(TAG, "Thread: " + Thread.currentThread().toString());
                     try {
                         Log.d(TAG, "short " + payload);
                         JSONObject jso = (JSONObject) (new JSONTokener(payload)).nextValue();

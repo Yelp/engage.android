@@ -13,7 +13,7 @@
 
     <!-- List view (list) -->
     <ListView
-        android:id="@+id/android:list"
+        android:id="@id/android:list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/header"
@@ -22,7 +22,7 @@
 
     <!-- List view (empty state) -->
     <TextView
-        android:id="@+id/android:empty"
+        android:id="@id/android:empty"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:text="@string/provider_list_empty"
