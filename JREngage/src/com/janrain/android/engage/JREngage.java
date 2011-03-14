@@ -29,7 +29,6 @@
 */
 package com.janrain.android.engage;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -342,13 +341,13 @@ public class JREngage {
             }
         }
 
-        public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
+        public void publishingActivityDidFail(JRDictionary activity, JREngageError error, String provider) {
             if (Config.LOGD) {
                 Log.d(TAG, "[publishingActivityDidFail]");
             }
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrSocialPublisingActivityDidFail(activity, error, provider);
+                delegate.jrSocialPublishingActivityDidFail(activity, error, provider);
             }
         }
     };

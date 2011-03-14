@@ -428,6 +428,7 @@ public class JRProvider implements Serializable {
                     try {
                         if (Arrays.asList(c.fileList()).contains("providericon~" + iconFileName)) continue;
 
+                        Log.d(TAG, "Downloading icon: " + iconFileName);
                         //todo fixme to use the library compile time configured baseurl
                         URL url = new URL("http://10.0.0.115:8080/cdn/images/mobile_icons/android/" + iconFileName);
                         InputStream is = url.openStream();

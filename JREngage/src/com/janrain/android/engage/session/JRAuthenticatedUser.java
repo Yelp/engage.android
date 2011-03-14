@@ -156,6 +156,7 @@ public class JRAuthenticatedUser implements Serializable {
 //    }
 
     public String getCachedProfilePicKey() {
+        if (mPhoto == null) throw new UnsupportedOperationException("JRAuthenticatedUser has no photo");
         try {
             return URLEncoder.encode(mPhoto, "UTF-8");
         } catch (UnsupportedEncodingException e) {
