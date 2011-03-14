@@ -341,7 +341,7 @@ public class JREngage {
             }
         }
 
-        public void publishingActivityDidFail(JRDictionary activity, JREngageError error, String provider) {
+        public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
             if (Config.LOGD) {
                 Log.d(TAG, "[publishingActivityDidFail]");
             }

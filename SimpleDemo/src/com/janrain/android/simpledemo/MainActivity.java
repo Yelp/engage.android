@@ -237,7 +237,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void jrSocialPublishingActivityDidFail(JRDictionary activity, JREngageError error, String provider) {
+    public void jrSocialPublishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 }

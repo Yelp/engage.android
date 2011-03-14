@@ -922,7 +922,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 showDialog(DIALOG_SUCCESS);
             }
 
-            public void publishingActivityDidFail(JRDictionary activity, JREngageError error, String provider) {
+            public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
                 Log.d(TAG, "[publishingActivityDidFail]");
                 boolean reauthenticate = false;
 

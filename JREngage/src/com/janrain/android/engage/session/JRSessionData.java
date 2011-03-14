@@ -397,7 +397,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
                 JREngageError error = new JREngageError("Session error", JREngageError.CODE_UNKNOWN, "", ex);
                 for (JRSessionDelegate delegate : delegatesCopy) {
-                    delegate.publishingActivityDidFail(dictionary.getAsDictionary("activity"),
+                    delegate.publishingActivityDidFail(
+                            (JRActivityObject) dictionary.get("activity"),
                             error,
                             dictionary.getAsString("providerName"));
                 }
@@ -451,7 +452,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
             for (JRSessionDelegate delegate : delegatesCopy) {
                 delegate.publishingActivityDidFail(
-                        userDataTag.getAsDictionary("activity"),
+                        (JRActivityObject) userDataTag.get("activity"),
                         new JREngageError(payload,
                                 SocialPublishingError.FAILED,
                                 ErrorType.PUBLISH_FAILED),
@@ -528,7 +529,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
             List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
             for (JRSessionDelegate delegate : delegatesCopy) {
-                delegate.publishingActivityDidFail(userDataTag.getAsDictionary("activity"), publishError, providerName);
+                delegate.publishingActivityDidFail((JRActivityObject) userDataTag.get("activity"), publishError, providerName);
             }
         }
     }
@@ -984,7 +985,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         JRDictionary tag = new JRDictionary();
         tag.put("action", "shareActivity");
-        tag.put("activity", activityDictionary);
+        tag.put("activity", mActivity);
         tag.put("providerName", mCurrentlyPublishingProvider.getName());
         JRConnectionManager.createConnection(url, body.toString().getBytes(), this, false, tag);
 

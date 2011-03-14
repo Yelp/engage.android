@@ -62,6 +62,6 @@ public interface JRSessionDelegate {
     
     void publishingActivityDidSucceed(JRActivityObject activity, String provider);
 
-    void publishingActivityDidFail(JRDictionary activity, JREngageError error, String provider);
+    void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
 }
 
