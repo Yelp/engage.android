@@ -245,6 +245,6 @@ public interface JREngageDelegate {
      *   The name of the provider on which the user attempted to publish the activity.  For a list 
      *   of possible strings, please see the \ref socialProviders "List of Social Providers"
      **/
-    void jrSocialPublisingActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
+    void jrSocialPublishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
     /*@}*/
 }

@@ -42,6 +42,7 @@
             android:src="@drawable/logo_aol_280x65"
             />
 
+        <!--todo make url restrict for openid-->
         <EditText
             android:id="@+id/landing_edit"
             android:layout_width="280dp"

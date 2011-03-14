@@ -47,6 +47,7 @@ import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.Archiver;
+import com.janrain.android.engage.utils.IOUtils;
 import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.StringUtils;
 import org.apache.http.util.EncodingUtils;
@@ -77,16 +78,12 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 //    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
 //  private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
 
-    //private static final String ARCHIVE_USERS = "users";
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
     private static final String ARCHIVE_BASIC_PROVIDERS = "basicProviders";
     private static final String ARCHIVE_SOCIAL_PROVIDERS = "socialProviders";
-    //private static final String ARCHIVE_ICONS_STILL_NEEDED = "iconsStillNeeded";
-    //private static final String ARCHIVE_PROVIDERS_WITH_ICONS = "providersWithIcons";
     private static final String ARCHIVE_AUTH_USERS_BY_PROVIDER = "jrAuthenticatedUsersByProvider";
 
-    private static final String FMT_CONFIG_URL =
-            "%s/openid/mobile_config_and_baseurl?appId=%s&device=android";
+    private static final String FMT_CONFIG_URL = "%s/openid/mobile_config_and_baseurl?appId=%s&device=android";
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -377,15 +374,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 // TODO: Implement notifications for email/sms sharing
             } else if (s.equals("smsSuccess")) {
                 // TODO: Implement notifications for email/sms sharing
-            } else if (s.equals("shareActivity")) {
-                // TODO: ShareActivity user data should be a dictionary, not a string
-                List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-                for (JRSessionDelegate delegate : delegatesCopy) {
-                    JREngageError error = new JREngageError(
-                        "Session error", JREngageError.CODE_UNKNOWN, "", ex
-                    );// TODO: Fix the mCurrentlyAuthenticatingProvider equaling null issue
-                    delegate.publishingActivityDidFail(mActivity, error, "foo");//mCurrentlyAuthenticatingProvider.getName());
-                }
             } else {
 
             }
@@ -393,6 +381,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         } else if (userdata instanceof JRDictionary) {
             JRDictionary dictionary = (JRDictionary) userdata;
             // TODO: Should "tokenUrl" be a key, and if so, to what?  In iPhone lib, it's a value to key "action"
+            //todo
             if (dictionary.containsKey("tokenUrl")) {
                 List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
                 for (JRSessionDelegate delegate : delegatesCopy) {
@@ -405,11 +394,14 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                             dictionary.getAsString("providerName"));
                 }
             } else if (dictionary.containsKey("shareActivity")) {
-                // TODO: ShareActivity user data should be a dictionary, not a string
-            } else if (dictionary.containsKey("shortenUrls")) {
-
-            } else {
-
+                List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
+                JREngageError error = new JREngageError("Session error", JREngageError.CODE_UNKNOWN, "", ex);
+                for (JRSessionDelegate delegate : delegatesCopy) {
+                    delegate.publishingActivityDidFail(
+                            (JRActivityObject) dictionary.get("activity"),
+                            error,
+                            dictionary.getAsString("providerName"));
+                }
             }
         }
 	}
@@ -460,7 +452,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
             for (JRSessionDelegate delegate : delegatesCopy) {
                 delegate.publishingActivityDidFail(
-                        mActivity,
+                        (JRActivityObject) userDataTag.get("activity"),
                         new JREngageError(payload,
                                 SocialPublishingError.FAILED,
                                 ErrorType.PUBLISH_FAILED),
@@ -497,10 +489,21 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                                 ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
                         break;
                     case 4: /* "Facebook Error: Invalid OAuth 2.0 Access Token" */
-                        publishError = new JREngageError(
-                                errorDict.getAsString("msg"),
-                                SocialPublishingError.INVALID_OAUTH_TOKEN,
-                                ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
+                        if (errorDict.getAsString("msg").matches(".*nvalid ..uth.*"))
+                            publishError = new JREngageError(
+                                    errorDict.getAsString("msg"),
+                                    SocialPublishingError.INVALID_OAUTH_TOKEN,
+                                    ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
+                        else if (errorDict.getAsString("msg").matches(".*eed action request limit.*"))
+                            publishError = new JREngageError(
+                                    errorDict.getAsString("msg"),
+                                    SocialPublishingError.FEED_ACTION_REQUEST_LIMIT,
+                                    ErrorType.PUBLISH_FAILED);
+                        else
+                            publishError = new JREngageError(
+                                    errorDict.getAsString("msg"),
+                                    SocialPublishingError.FAILED,
+                                    ErrorType.PUBLISH_FAILED);
                         break;
                     case 100: // TODO LinkedIn character limit error
                         publishError = new JREngageError(
@@ -526,7 +529,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
             List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
             for (JRSessionDelegate delegate : delegatesCopy) {
-                delegate.publishingActivityDidFail(mActivity, publishError, providerName);
+                delegate.publishingActivityDidFail((JRActivityObject) userDataTag.get("activity"), publishError, providerName);
             }
         }
     }
@@ -902,6 +905,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[forgetAuthenticatedUserForProvider]");
         }
 
+        //todo delete cookies here.
+
         JRProvider provider = mAllProviders.getAsProvider(providerName);
         if (provider == null) {
             Log.w(TAG, "[forgetAuthenticatedUserForProvider] provider not found: " + providerName);
@@ -919,6 +924,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[forgetAllAuthenticatedUsers]");
         }
 
+
+        //todo this should call the above function, "forgetAuthenticatedUserForProvider" eh? abstraction?
         for (String providerName : mAllProviders.keySet()) {
             JRProvider provider = mAllProviders.getAsProvider(providerName);
             provider.setForceReauth(true);
@@ -978,7 +985,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         JRDictionary tag = new JRDictionary();
         tag.put("action", "shareActivity");
-        tag.put("activity", activityDictionary);
+        tag.put("activity", mActivity);
         tag.put("providerName", mCurrentlyPublishingProvider.getName());
         JRConnectionManager.createConnection(url, body.toString().getBytes(), this, false, tag);
 
@@ -1101,15 +1108,17 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mSocialSharing = false;
     }
 
-    public void triggerPublishingDidFail(JREngageError error) {
-        if (Config.LOGD) {
-            Log.d(TAG, "[triggerPublishingDidFail]");
-        }
-
-        for (JRSessionDelegate delegate : getDelegatesCopy()) {
-            delegate.publishingActivityDidFail(mActivity, error, mCurrentlyAuthenticatingProvider.getName());
-        }
-    }
+//    public void triggerPublishingDidFail(JREngageError error) {
+//        if (Config.LOGD) {
+//            Log.d(TAG, "[triggerPublishingDidFail]");
+//        }
+//
+//        //todo null on the next line should be a JRDictionary for the activity but there's no way to
+//        //get one which makes me question the wisdom of it being passed around as a JRDictionary to begin with
+//        for (JRSessionDelegate delegate : getDelegatesCopy()) {
+//            delegate.publishingActivityDidFail(null, error, mCurrentlyAuthenticatingProvider.getName());
+//        }
+//    }
 
     public void triggerPublishingDidCancel() {
         if (Config.LOGD) {

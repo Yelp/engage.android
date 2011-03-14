@@ -278,7 +278,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 		if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
 			Object value = get(key);
 			if (value instanceof Integer) {
-				retval = ((Integer)value).intValue();
+				retval = (Integer) value;
 			} else if (value instanceof String) {
 				String strValue = (String)value;
 				if (!TextUtils.isEmpty(strValue)) {

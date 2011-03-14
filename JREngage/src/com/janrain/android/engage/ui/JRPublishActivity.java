@@ -172,7 +172,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 //    }
 
     // TODO: We need to make this dynamic for forward compatibility
-    private Map<String, Drawable> icon_drawables;
+    //private Map<String, Drawable> icon_drawables;
 
     // ------------------------------------------------------------------------
     // STATIC METHODS
@@ -544,12 +544,16 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         FileInputStream fis = null;
         try {
             fis = openFileInput("userpic~" + user.getCachedProfilePicKey());
-        } catch (FileNotFoundException e) {}
+        } catch (FileNotFoundException e) {
+        } catch (UnsupportedOperationException e) {
+        }
+
         Bitmap cachedProfilePic = BitmapFactory.decodeStream(fis);
 
         if (cachedProfilePic != null) {
             mUserProfilePic.setImageBitmap(cachedProfilePic);
         } else if (user.getPhoto() != null) {
+            mUserProfilePic.setImageResource(R.drawable.profilepic_placeholder);
             //todo set profile pic view to a spinner or something?
             new AsyncTask<Void, Void, Bitmap>() {
                 protected Bitmap doInBackground(Void... voids) {
@@ -575,9 +579,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 }
             }.execute();
         } else {
-            //todo
-            //display default icon
-            //[self setProfilePicToDefaultPic];
+            //todo is this right?
+            mUserProfilePic.setImageResource(R.drawable.profilepic_placeholder);
         }
     }
 

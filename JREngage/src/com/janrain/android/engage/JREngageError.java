@@ -75,6 +75,7 @@ public class JREngageError extends Exception {
         public static final int INVALID_OAUTH_TOKEN = START + 3;
         public static final int DUPLICATE_TWITTER = START + 4;
         public static final int LINKEDIN_CHARACTER_EXCEEDED = START + 5;
+        public static final int FEED_ACTION_REQUEST_LIMIT = START + 6;
     }
 
     // ------------------------------------------------------------------------

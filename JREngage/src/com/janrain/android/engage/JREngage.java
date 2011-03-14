@@ -29,7 +29,6 @@
 */
 package com.janrain.android.engage;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -348,7 +347,7 @@ public class JREngage {
             }
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrSocialPublisingActivityDidFail(activity, error, provider);
+                delegate.jrSocialPublishingActivityDidFail(activity, error, provider);
             }
         }
     };
