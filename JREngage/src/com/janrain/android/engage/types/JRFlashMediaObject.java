@@ -100,7 +100,7 @@ public class JRFlashMediaObject extends JRMediaObject {
      *   cannot be <code>null</code>.
      *
      * @throws IllegalArgumentException
-     *   if swfSrc or imgSrc are null
+     *   if swfSrc or imgSrc is null
      */
     public JRFlashMediaObject(String swfSrc, String imgSrc) {
         // TODO: if null/empty should we throw?

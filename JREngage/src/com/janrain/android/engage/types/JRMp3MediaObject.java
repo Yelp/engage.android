@@ -71,6 +71,9 @@ public class JRMp3MediaObject extends JRMediaObject {
      *
      * @param src
      *   The URL of the MP3 file to be rendered.  This value cannot be <code>null</code>.
+     *
+     * @throws IllegalArgumentException
+     *   if src is null
      */
     public JRMp3MediaObject(String src) {
         // TODO: if null/empty should we throw?

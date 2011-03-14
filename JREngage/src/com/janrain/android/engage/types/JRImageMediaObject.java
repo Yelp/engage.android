@@ -73,7 +73,7 @@ public class
      *   be <code>null</code>.
      *
      * @throws IllegalArgumentException
-     *   if swfSrc or imgSrc are null
+     *   if src or href is null
      */
     public JRImageMediaObject(String src, String href) {
         // TODO: if null/empty should we throw?

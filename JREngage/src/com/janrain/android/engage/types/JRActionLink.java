@@ -80,8 +80,11 @@ public class JRActionLink {
      * @param href
      *   A link a user can use to take action on an activity update on the provider.  This value
      *   cannot be <code>null</code>.
+     * @throws IllegalArgumentException
+     *   if text or href is null
      */
     public JRActionLink(String text, String href) {
+        if (text == null || href == null) throw new IllegalArgumentException("illegal null text or null href");
         mText = text;
         mHref = href;
     }

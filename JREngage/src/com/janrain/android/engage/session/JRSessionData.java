@@ -392,7 +392,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                             error,
                             dictionary.getAsString("providerName"));
                 }
-            } else if (dictionary.containsKey("shareActivity")) {
+            } else if (dictionary.getAsString("action").equals("shareActivity")) {
                 List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
                 JREngageError error = new JREngageError("Session error", JREngageError.CODE_UNKNOWN, "", ex);
                 for (JRSessionDelegate delegate : delegatesCopy) {
