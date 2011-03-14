@@ -72,9 +72,9 @@ public class JRProvider implements Serializable {
 
     private static final String TAG = JRProvider.class.getSimpleName();
 
-    private static HashMap<String, Drawable> tab_spec_drawables = new HashMap<String, Drawable>();
+    private static HashMap<String, Drawable> provider_tabspec_drawables = new HashMap<String, Drawable>();
 
-    private final static HashMap<String, Integer> tab_spec_resources = new HashMap<String, Integer>(){
+    private final static HashMap<String, Integer> provider_tabspec_resources = new HashMap<String, Integer>(){
         {
             //put("facebook", getResources().getDrawable(R.drawable.ic_facebook_tab));
             put("linkedin", R.drawable.ic_linkedin_tab);
@@ -177,11 +177,12 @@ public class JRProvider implements Serializable {
     private boolean mRequiresInput;
     private String mOpenIdentifier;
     private String mStartAuthenticationUrl;
+    private JRDictionary mSocialSharingProperties;
+
     private transient boolean mForceReauth;   // <- these three user parameters get preserved
     private transient String mUserInput;      // <- across cached provider reloads
     private transient String mWelcomeString;  // <-
-    private JRDictionary mSocialSharingProperties;
-
+    private transient boolean mCurrentlyDownloading;
     // ------------------------------------------------------------------------
     // INITIALIZERS
     // ------------------------------------------------------------------------
@@ -313,54 +314,11 @@ public class JRProvider implements Serializable {
 
     public Drawable getProviderListIconDrawable(Context c) {
         return getDrawable(c, "icon_" + mName + "_30x30.png", provider_list_icon_drawables, provider_list_icon_resources);
-
-//        if (provider_list_icon_drawables.containsKey(mName)) return provider_list_icon_drawables.get(mName);
-//
-//        if (provider_list_icon_resources.containsKey(mName)) {
-//            //that static hash is actually by friendly name not by name <- legacy artifact
-//            Drawable r = c.getResources().getDrawable(provider_list_icon_resources.get(mName));
-//            provider_list_icon_drawables.put(mName, r);
-//            return r;
-//        }
-//
-//        try {
-//            String iconFileName = "providericon~" + "icon_" + mName + "_30x30.png";
-//
-//            Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
-//            if (icon == null) c.deleteFile(iconFileName);
-//
-//            return new BitmapDrawable(icon);
-//        } catch (FileNotFoundException e) {
-//            downloadIcons(c);
-//
-//            return new BitmapDrawable(BitmapFactory.decodeResource(c.getResources(), R.drawable.icon_unknown));
-//        }
     }
 
     public Drawable getProviderLogo(Context c) {
         return getDrawable(c, "logo_" + mName + "_280x65.png", provider_logo_drawables, provider_logo_resources);
 
-//        if (provider_logo_drawables.containsKey(mName)) return provider_logo_drawables.get(mName);
-//
-//        if (provider_logo_resources.containsKey(mName)) {
-//            //that static hash is actually by friendly name not by name <- legacy artifact
-//            Drawable r = c.getResources().getDrawable(provider_logo_resources.get(mName));
-//            provider_logo_drawables.put(mName, r);
-//            return r;
-//        }
-//
-//        try {
-//            String iconFileName = "providericon~" + "logo_" + mName + "_280x65.png";
-//
-//            Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
-//            if (icon == null) c.deleteFile(iconFileName);
-//
-//            return new BitmapDrawable(icon);
-//        } catch (FileNotFoundException e) {
-//            downloadIcons(c);
-//
-//            return new BitmapDrawable(BitmapFactory.decodeResource(c.getResources(), R.drawable.icon_unknown));
-//        }
     }
 
     public Drawable getProviderButtonShort (Context c) {
@@ -371,44 +329,62 @@ public class JRProvider implements Serializable {
         return getDrawable(c, "button_" + mName + "_280x40.png", provider_button_long_drawables, provider_button_long_resources);
     }
 
-    public Drawable getTabSpecIndicatorDrawable(final Context c) {
-        if (tab_spec_drawables.containsKey(mName)) return tab_spec_drawables.get(mName);
-
-        if (tab_spec_resources.containsKey(mName)) {
-            Drawable r = c.getResources().getDrawable(tab_spec_resources.get(mName));
-            tab_spec_drawables.put(mName, r);
-            return r;
-        }
+    public Drawable getTabSpecIndicatorDrawable(Context c) {
+        Drawable colorIcon = getDrawable(c, "icon_" + mName + "_30x30.png", provider_list_icon_drawables, provider_list_icon_resources);
+        Drawable bwIcon = getDrawable(c, "icon_bw_" + mName + "_30x30.png", provider_list_icon_drawables, provider_list_icon_resources);
 
         StateListDrawable sld = new StateListDrawable();
-        tab_spec_drawables.put(mName, sld);
-        
-        try{
-            String colorIconFileName = "providericon~" + "icon_" + mName + "_30x30.png";
-            String bwIconFileName = "providericon~" + "icon_bw_" + mName + "_30x30.png";
+        sld.addState(new int[]{android.R.attr.state_selected}, colorIcon);
+        sld.addState(new int[]{}, bwIcon);
 
-            Bitmap colorIcon = BitmapFactory.decodeStream(c.openFileInput(colorIconFileName));
-            if (colorIcon == null) c.deleteFile(colorIconFileName);
-
-            Bitmap bwIcon = BitmapFactory.decodeStream(c.openFileInput(bwIconFileName));
-            if (bwIcon == null) c.deleteFile(bwIconFileName);
-
-            sld.addState(new int[]{android.R.attr.state_selected}, new BitmapDrawable(colorIcon));
-            sld.addState(new int[]{}, new BitmapDrawable(bwIcon));
-
-            return sld;
-        } catch (FileNotFoundException e) {
-            Drawable missingIconIcon = c.getResources().getDrawable(R.drawable.icon_unknown);
-            sld.addState(new int[]{android.R.attr.state_selected}, missingIconIcon);
-            sld.addState(new int[]{}, missingIconIcon);
-
-            downloadIcons(c);
-
-            return sld;
-        }
+        return sld;
     }
 
+
+//        if (provider_tabspec_drawables.containsKey(mName)) return provider_tabspec_drawables.get(mName);
+//
+//        if (provider_tabspec_resources.containsKey(mName)) {
+//            Drawable r = c.getResources().getDrawable(provider_tabspec_resources.get(mName));
+//            provider_tabspec_drawables.put(mName, r);
+//            return r;
+//        }
+//
+//        StateListDrawable sld = new StateListDrawable();
+//        provider_tabspec_drawables.put(mName, sld);
+//
+//        try{
+//            String colorIconFileName = "providericon~" + "icon_" + mName + "_30x30.png";
+//            String bwIconFileName = "providericon~" + "icon_bw_" + mName + "_30x30.png";
+//
+//            Bitmap colorIcon = BitmapFactory.decodeStream(c.openFileInput(colorIconFileName));
+//            if (colorIcon == null) c.deleteFile(colorIconFileName);
+//
+//            Bitmap bwIcon = BitmapFactory.decodeStream(c.openFileInput(bwIconFileName));
+//            if (bwIcon == null) c.deleteFile(bwIconFileName);
+//
+//            sld.addState(new int[]{android.R.attr.state_selected}, new BitmapDrawable(colorIcon));
+//            sld.addState(new int[]{}, new BitmapDrawable(bwIcon));
+//
+//            return sld;
+//        } catch (FileNotFoundException e) {
+//            Drawable missingIconIcon = c.getResources().getDrawable(R.drawable.icon_unknown);
+//            sld.addState(new int[]{android.R.attr.state_selected}, missingIconIcon);
+//            sld.addState(new int[]{}, missingIconIcon);
+//
+//            downloadIcons(c);
+//
+//            return sld;
+//        }
+//    }
+
     private void downloadIcons(final Context c) {
+        Log.d(TAG, "downloadIcons: " + mName);
+
+        synchronized (this) {
+            if (mCurrentlyDownloading) return;
+            else mCurrentlyDownloading = true;
+        }
+
         final String[] iconFileNames = {
             "icon_" + mName + "_30x30.png",
             "icon_" + mName + "_30x30@2x.png",
@@ -426,7 +402,7 @@ public class JRProvider implements Serializable {
             public Void doInBackground(Void... s) {
                 for (String iconFileName : iconFileNames) {
                     try {
-                        if (Arrays.asList(c.fileList()).contains("providericon~" + iconFileName)) continue;
+                        if (Arrays.asList(c.fileList()).contains("providericons~" + iconFileName)) continue;
 
                         Log.d(TAG, "Downloading icon: " + iconFileName);
                         //todo fixme to use the library compile time configured baseurl
@@ -441,6 +417,7 @@ public class JRProvider implements Serializable {
                         Log.d(TAG, e.toString());
                     }
                 }
+                mCurrentlyDownloading = false;
                 return null;
             }
         }.execute();

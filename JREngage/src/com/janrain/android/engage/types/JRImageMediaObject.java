@@ -71,6 +71,9 @@ public class
      * @param href
      *   The URL where a user should be taken if he or she clicks the photo.  This value cannot
      *   be <code>null</code>.
+     *
+     * @throws IllegalArgumentException
+     *   if swfSrc or imgSrc are null
      */
     public JRImageMediaObject(String src, String href) {
         // TODO: if null/empty should we throw?

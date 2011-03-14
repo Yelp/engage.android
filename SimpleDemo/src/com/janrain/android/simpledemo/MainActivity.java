@@ -61,7 +61,8 @@ import java.net.URL;
 public class MainActivity extends Activity implements View.OnClickListener, JREngageDelegate {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final String ENGAGE_APP_ID = "appcfamhnpkagijaeinl";
+    //private static final String ENGAGE_APP_ID = "appcfamhnpkagijaeinl";
+    private static final String ENGAGE_APP_ID = "aehecdnjkodopeijgjgo";
     private static final String ENGAGE_TOKEN_URL = null;//"http://jrengage-for-android.appspot.com/login";
 
     private JREngage mEngage;
@@ -204,7 +205,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     }
 
     public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-        String message = "Authentication failed to show, error: " +
+        String message = "JREngage dialog failed to show, error: " +
                 ((error == null) ? "unknown" : error.getMessage());
 
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

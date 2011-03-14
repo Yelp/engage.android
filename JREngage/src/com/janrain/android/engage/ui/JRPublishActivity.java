@@ -499,9 +499,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         String userNameForPreview = getUIDisplayName();
 
+        String shorteningText = getString(R.string.shortening_url);
+
         if (activityUrlAffectsCharacterCountForSelectedProvider()) { //twitter/myspace -> true
-            mPreviewLabelView.setText(Html.fromHtml("<b>" + userNameForPreview + "</b> " + newText + " <font color=\"#808080\">" +
-                                        ((mShortenedActivityURL != null) ? mShortenedActivityURL : R.string.shortening_url) + "</font>"));
+            mPreviewLabelView.setText(Html.fromHtml(
+                    "<b>" + userNameForPreview + "</b> " + newText + " <font color=\"#808080\">" +
+                    ((mShortenedActivityURL != null) ? mShortenedActivityURL : shorteningText) + "</font>"));
 
 //            SpannableStringBuilder str = new SpannableStringBuilder(userNameForPreview + " " + newText + " " +
 //                                            ((mShortenedActivityURL != null) ? mShortenedActivityURL : R.string.shortening_url));//mPreviewLabelView.getText();//.getText();
@@ -554,7 +557,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             mUserProfilePic.setImageBitmap(cachedProfilePic);
         } else if (user.getPhoto() != null) {
             mUserProfilePic.setImageResource(R.drawable.profilepic_placeholder);
-            //todo set profile pic view to a spinner or something?
             new AsyncTask<Void, Void, Bitmap>() {
                 protected Bitmap doInBackground(Void... voids) {
                     try {
@@ -579,7 +581,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 }
             }.execute();
         } else {
-            //todo is this right?
             mUserProfilePic.setImageResource(R.drawable.profilepic_placeholder);
         }
     }
@@ -798,17 +799,19 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             JRConnectionManagerDelegate jrcmd = new JRCMD() {
                 public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
                     try {
-                        Log.d(TAG, "short " + payload);
+                        Log.d(TAG, "fetchShortenedURLs connectionDidFinishLoading: " + payload);
                         JSONObject jso = (JSONObject) (new JSONTokener(payload)).nextValue();
                         jso = jso.getJSONObject("urls");
                         mShortenedActivityURL = jso.getString(mActivityObject.getUrl());
                     } catch (JSONException e) {
-                        //todo fail more gracefully when we don't get a good result from rpx?
-                        throw new RuntimeException(e);
+                        //todo fail more gracefully when we don't get a good result from rpx
+                        //throw new RuntimeException(e);
                     }
 
                     if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
                         updatePreviewTextWhenContentReplacesAction();
+                    } else {
+                        updatePreviewTextWhenContentDoesNotReplaceAction();
                     }
                     updateCharacterCount();
                 }

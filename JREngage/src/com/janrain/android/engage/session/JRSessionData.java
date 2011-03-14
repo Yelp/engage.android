@@ -74,9 +74,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     
 	private static JRSessionData sInstance;
 
-    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
+//    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
 //    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
-//  private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
+    private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
 
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
     private static final String ARCHIVE_BASIC_PROVIDERS = "basicProviders";
@@ -377,7 +377,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             } else {
 
             }
-
         } else if (userdata instanceof JRDictionary) {
             JRDictionary dictionary = (JRDictionary) userdata;
             // TODO: Should "tokenUrl" be a key, and if so, to what?  In iPhone lib, it's a value to key "action"

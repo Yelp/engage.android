@@ -29,6 +29,9 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.types;
 
+import android.text.Html;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +65,7 @@ import java.util.Map;
  * href="https://rpxnow.com/docs#api_activity">the activity section</a> of our API Documentation.
  */
 public class JRActivityObject {
+    private static final String TAG = JRActivityObject.class.getSimpleName();
 
     // ------------------------------------------------------------------------
     // FIELDS
@@ -176,6 +180,7 @@ public class JRActivityObject {
      *   be <code>null</code>.
      */
     public JRActivityObject(String action, String url) {
+        Log.d(TAG, "created with action: " + action + " url: " + url);
         mAction = action;
         mUrl = url;
     }

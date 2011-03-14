@@ -98,6 +98,9 @@ public class JRFlashMediaObject extends JRMediaObject {
      * @param imgSrc
      *   The URL of an photo that should be displayed in place of the flash object.  This value
      *   cannot be <code>null</code>.
+     *
+     * @throws IllegalArgumentException
+     *   if swfSrc or imgSrc are null
      */
     public JRFlashMediaObject(String swfSrc, String imgSrc) {
         // TODO: if null/empty should we throw?
