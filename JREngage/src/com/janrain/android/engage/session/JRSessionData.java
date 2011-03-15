@@ -39,7 +39,7 @@ import com.janrain.android.engage.JREngageError.ConfigurationError;
 import com.janrain.android.engage.JREngageError.ErrorType;
 import com.janrain.android.engage.JREngageError.SocialPublishingError;
 import com.janrain.android.engage.JREnvironment;
-import com.janrain.android.engage.net.CookieHelper;
+//import com.janrain.android.engage.net.CookieHelper;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
@@ -47,7 +47,6 @@ import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.Archiver;
-import com.janrain.android.engage.utils.IOUtils;
 import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.StringUtils;
 import org.apache.http.util.EncodingUtils;
@@ -548,7 +547,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                     delegate.authenticationDidReachTokenUrl(
                             dictionary.getAsString("tokenUrl"),
                             headers,
-                            payload,
+                            new String(payload),
                             dictionary.getAsString("providerName"));
                 }
             } //else if (dictionary.containsKey("downloadPicture")) {
@@ -793,14 +792,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, mReturningBasicProvider);
     }
 
-    private void deleteFacebookCookies() {
-        CookieHelper.deleteCookiesByUrl("http://login.facebook.com");
-    }
-
-    private void deleteLiveCookies() {
-        CookieHelper.deleteCookiesByUrl("http://live.com");
-    }
-
     public URL startUrlForCurrentlyAuthenticatingProvider() {
         if (Config.LOGD) {
             Log.d(TAG, "[startUrlForCurrentlyAuthenticatingProvider]");
@@ -825,15 +816,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         String str;
 
-        //todo why not other providers too?
-        if ("facebook".equals(mCurrentlyAuthenticatingProvider.getName())) {
-            if (mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) {
-                deleteFacebookCookies();
-            }
-        } else if ("live_id".equals(mCurrentlyAuthenticatingProvider.getName())) {
-            if (mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) {
-                deleteLiveCookies();
-            }
+        //todo check on forcereauth
+        if (mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) {
+            //CookieHelper.deleteCookiesByUrl(mCurrentlyAuthenticatingProvider.getCookieDomain());
         }
 
         //str = String.format("%s%s?%s%sversion=android_one&device=android",
@@ -904,15 +889,17 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[forgetAuthenticatedUserForProvider]");
         }
 
-        //todo delete cookies here.
-
         JRProvider provider = mAllProviders.getAsProvider(providerName);
         if (provider == null) {
-            Log.w(TAG, "[forgetAuthenticatedUserForProvider] provider not found: " + providerName);
-            throw new RuntimeException();
+            Log.e(TAG, "[forgetAuthenticatedUserForProvider] provider not found: " + providerName);
+            //throw new RuntimeException(); /? if they hit the signout button twice, this could happen I guess
         } else {
             provider.setForceReauth(true);
             mAuthenticatedUsersByProvider.remove(provider.getName());
+            //cookies are stored by domain, and are not different for different schemes (i.e. http vs https)
+//            CookieHelper.deleteCookiesByUrl("http://" + provider.getCookieDomain());
+            String cookies = CookieManager.getInstance().getCookie(getBaseUrl());
+            String welcome_info = cookies.replaceAll(".*welcome_info=([^;]*).*", "$1");
 
             JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
         }

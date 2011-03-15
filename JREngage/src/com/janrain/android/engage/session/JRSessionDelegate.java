@@ -50,7 +50,7 @@ public interface JRSessionDelegate {
     
     void authenticationDidFail(JREngageError error, String provider);
     
-    void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, byte[] payload, String provider);
+    void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String payload, String provider);
     
     void authenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider);
     

@@ -146,8 +146,11 @@ public final class AsyncHttpClient {
                             + "]";
 
                     Log.e(TAG, message);
+                    //byte[] data = IOUtils.readFromStream(connection.getInputStream(), true);
+                    //Log.e(TAG, "[run] response: " + new String(data));
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, new Exception(message)));
                     mHandler.post(mWrapper);
+
                 }
             } catch (IOException e) {
                 Log.e(TAG, "[run] Problem executing HTTP request.", e);

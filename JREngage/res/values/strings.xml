@@ -6,7 +6,7 @@
     <!--
        - Server URL strings for each of the three typical environments.
       -->
-    <string name="server_url_local">http://10.0.0.115:8080</string>
+    <string name="server_url_local">http://lilli.janrain.com:8080</string>
     <string name="server_url_staging">https://rpxstaging.com</string>
     <string name="server_url_production">https://rpxnow.com</string>
 
