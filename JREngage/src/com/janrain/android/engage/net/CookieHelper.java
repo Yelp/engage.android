@@ -29,6 +29,7 @@
 */
 package com.janrain.android.engage.net;
 
+import android.util.Log;
 import org.apache.http.client.CookieStore;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.cookie.CookieOrigin;
@@ -157,6 +158,7 @@ public final class CookieHelper {
                 }
             }
         } catch (MalformedURLException ignore) {
+            Log.e(TAG, "[getCookiesByUrl] malformed URL: " + url);
             // send a bad url, get an empty list in return
         }
         
