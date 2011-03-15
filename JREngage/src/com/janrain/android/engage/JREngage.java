@@ -275,14 +275,14 @@ public class JREngage {
             mInterfaceMaestro.authenticationFailed();
         }
 
-        public void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, byte[] payload, String provider) {
+        public void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders headers, String payload, String provider) {
             if (Config.LOGD) {
                 Log.d(TAG, "[authenticationDidReachTokenUrl]");
             }
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
                 delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, payload, provider);
-                delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, response, payload, provider);
+                delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, headers, payload, provider);
             }
         }
 

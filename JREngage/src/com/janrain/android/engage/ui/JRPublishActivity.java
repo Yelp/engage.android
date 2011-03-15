@@ -530,11 +530,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         return userNameForPreview;
     }
 
-    private void loadUserNameAndProfilePicForUserForProvider(final JRAuthenticatedUser user, String providerName) {
+    private void loadUserNameAndProfilePicForUserForProvider(final JRAuthenticatedUser user, final String providerName) {
         Log.d(TAG, "loadUserNameAndProfilePicForUserForProvider");
 
         if (user == null || providerName == null) {
             mUserNameView.setText("");
+            mUserProfilePic.setImageResource(R.drawable.profilepic_placeholder);
             //todo set muserprofilepic
             //[self setButtonImage:myProfilePic toData:null andSetLoading:myProfilePicActivityIndicator toLoading:NO];
             return;
@@ -566,7 +567,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                         BufferedInputStream bis = new BufferedInputStream(is);
                         bis.mark(urlc.getContentLength());
                         FileOutputStream fos = openFileOutput("userpic~" + user.getCachedProfilePicKey(), MODE_PRIVATE);
-                        while (bis.available() > 0) fos.write(bis.read());
+                        int x;
+                        while ((x = bis.read()) != -1) fos.write(x);
+                        fos.close();
                         bis.reset();
                         return BitmapFactory.decodeStream(bis);
                     } catch (IOException e) {
@@ -577,7 +580,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 }
 
                 protected void onPostExecute(Bitmap b) {
-                    mUserProfilePic.setImageBitmap(b);
+                    if (mSelectedProvider.getName().equals(providerName))
+                        mUserProfilePic.setImageBitmap(b);
                 }
             }.execute();
         } else {
@@ -995,7 +999,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         public void authenticationDidComplete(String token, String provider) {}
         public void authenticationDidComplete(JRDictionary profile, String provider) {}
         public void authenticationDidFail(JREngageError error, String provider) {}
-        public void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, byte[] payload, String provider) {}
+        public void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String payload, String provider) {}
         public void authenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {}
         public void publishingDidRestart() {}
         public void publishingDidCancel() {}

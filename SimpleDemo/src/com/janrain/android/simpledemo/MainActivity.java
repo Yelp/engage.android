@@ -195,11 +195,11 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, byte[] tokenUrlPayload, String provider) {
+    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, String tokenUrlPayload, String provider) {
         Toast.makeText(this, "Authentication did reach token url", Toast.LENGTH_SHORT).show();
     }
 
-    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, byte[] tokenUrlPayload, String provider) {
+    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
         Toast.makeText(this, "Authentication did reach token url", Toast.LENGTH_SHORT).show();
     }
 

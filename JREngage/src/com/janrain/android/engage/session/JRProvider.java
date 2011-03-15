@@ -177,8 +177,10 @@ public class JRProvider implements Serializable {
     private boolean mRequiresInput;
     private String mOpenIdentifier;
     private String mStartAuthenticationUrl;
+    private String mCookieDomain;
     private JRDictionary mSocialSharingProperties;
 
+    //private transient JRDictionary dictionary;
     private transient boolean mForceReauth;   // <- these three user parameters get preserved
     private transient String mUserInput;      // <- across cached provider reloads
     private transient String mWelcomeString;  // <-
@@ -194,12 +196,14 @@ public class JRProvider implements Serializable {
     private JRProvider() {}
 
     public JRProvider(String name, JRDictionary dictionary) {
+        //this.dictionary = dictionary;
         mName = name;
         mFriendlyName = dictionary.getAsString(KEY_FRIENDLY_NAME);
         mPlaceholderText = dictionary.getAsString(KEY_INPUT_PROMPT);
         mOpenIdentifier = dictionary.getAsString(KEY_OPENID_IDENTIFIER);
         mStartAuthenticationUrl = dictionary.getAsString(KEY_URL);
         mRequiresInput = dictionary.getAsBoolean(KEY_REQUIRES_INPUT);
+        mCookieDomain = dictionary.getAsString("cookie_domain", "");
         mSocialSharingProperties = dictionary.getAsDictionary("social_sharing_properties");
 
         loadDynamicVariables();
@@ -219,6 +223,10 @@ public class JRProvider implements Serializable {
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
     // ------------------------------------------------------------------------
+
+    public String getCookieDomain () { /* (readonly) */
+        return mCookieDomain;
+    }
 
     public String getName() {  /* (readonly) */
         return mName;

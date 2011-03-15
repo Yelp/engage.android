@@ -155,7 +155,7 @@ public interface JREngageDelegate {
      *
      * \sa \ref tokenUrlReached "- (void)jrAuthenticationDidReachTokenUrl:withResponse:andPayload:forProvider:"
      **/
-    void jrAuthenticationDidReachTokenUrl(String tokenUrl, byte[] tokenUrlPayload, String provider);
+    void jrAuthenticationDidReachTokenUrl(String tokenUrl, String tokenUrlPayload, String provider);
 
     /**
      * \anchor tokenUrlReached
@@ -177,7 +177,7 @@ public interface JREngageDelegate {
      *   please see the \ref basicProviders "List of Providers"
      **/
     void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response,
-                                          byte[] tokenUrlPayload, String provider);
+                                          String tokenUrlPayload, String provider);
 
     /**
      * Sent when the call to the token URL has failed
