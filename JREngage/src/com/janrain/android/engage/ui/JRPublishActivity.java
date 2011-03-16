@@ -296,7 +296,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
 
-        //ShareLayoutHelper is a spinner dialog class
+        //SharedLayoutHelper is a spinner dialog class
         mLayoutHelper = new SharedLayoutHelper(this);
 
         //configure the properties of the UI

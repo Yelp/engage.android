@@ -33,6 +33,8 @@ import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.JREngageError.AuthenticationError;
 import com.janrain.android.engage.JREngageError.ConfigurationError;
@@ -896,13 +898,26 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         } else {
             provider.setForceReauth(true);
             mAuthenticatedUsersByProvider.remove(provider.getName());
-            //cookies are stored by domain, and are not different for different schemes (i.e. http vs https)
-//            CookieHelper.deleteCookiesByUrl("http://" + provider.getCookieDomain());
-            String cookies = CookieManager.getInstance().getCookie(getBaseUrl());
-            String welcome_info = cookies.replaceAll(".*welcome_info=([^;]*).*", "$1");
+
+            String domain = provider.getCookieDomain();
+            deleteWebviewCookiesForDomain(domain);
 
             JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
         }
+    }
+
+    private void deleteWebviewCookiesForDomain(String domain) {
+        CookieSyncManager csm = CookieSyncManager.createInstance(JREngage.getContext());
+        CookieManager cm = CookieManager.getInstance();
+        //cookies are stored by domain, and are not different for different schemes (i.e. http vs https)
+        //(although they sort of, ...)
+        String cookieGlob = cm.getCookie("http://" + domain);
+        String[] cookies = cookieGlob.split(";");
+        for (String cookieTuple : cookies) {
+            String[] cookieParts = cookieTuple.split("=");
+            CookieManager.getInstance().setCookie(domain, cookieParts[0] + "=;domain=" + domain);
+        }
+        csm.sync();
     }
 
     public void forgetAllAuthenticatedUsers() {
@@ -910,16 +925,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[forgetAllAuthenticatedUsers]");
         }
 
-
-        //todo this should call the above function, "forgetAuthenticatedUserForProvider" eh? abstraction?
-        for (String providerName : mAllProviders.keySet()) {
-            JRProvider provider = mAllProviders.getAsProvider(providerName);
-            provider.setForceReauth(true);
-        }
-
-        mAuthenticatedUsersByProvider.clear();
-
-        JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
+        for (String providerName : mAllProviders.keySet()) forgetAuthenticatedUserForProvider(providerName);
     }
 
     public JRProvider getProviderAtIndex(int index, List<String> fromList) {

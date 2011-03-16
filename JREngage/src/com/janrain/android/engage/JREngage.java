@@ -364,6 +364,8 @@ public class JREngage {
         return mSessionData.authenticatedUserForProviderNamed(provider);
     }
 
+
+    //todo xxx the following four functions all call the same JRSessionData methods but they should do different things.
     public void signoutUserForProvider(String provider) {
         if (Config.LOGD) {
             Log.d(TAG, "[signoutUserForProvider]");

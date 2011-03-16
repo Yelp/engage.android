@@ -203,7 +203,7 @@ public class JRProvider implements Serializable {
         mOpenIdentifier = dictionary.getAsString(KEY_OPENID_IDENTIFIER);
         mStartAuthenticationUrl = dictionary.getAsString(KEY_URL);
         mRequiresInput = dictionary.getAsBoolean(KEY_REQUIRES_INPUT);
-        mCookieDomain = dictionary.getAsString("cookie_domain", "");
+        mCookieDomain = dictionary.getAsString("cookie_domain", "twitter.com");
         mSocialSharingProperties = dictionary.getAsDictionary("social_sharing_properties");
 
         loadDynamicVariables();
