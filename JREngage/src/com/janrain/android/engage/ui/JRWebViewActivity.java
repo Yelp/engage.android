@@ -45,7 +45,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.*;
 import android.widget.Toast;
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -55,15 +54,19 @@ import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.StringUtils;
-//import com.sun.tools.corba.se.idl.ExceptionEntry;
 
 import java.net.URL;
 
 /**
  * Container for authentication web view.  Mimics JRWebViewController iPhone interface.
  */
-public class JRWebViewActivity extends Activity
-        implements DownloadListener, JRConnectionManagerDelegate {
+public class JRWebViewActivity extends Activity {
+    // ------------------------------------------------------------------------
+    // STATIC FIELDS
+    // ------------------------------------------------------------------------
+
+    private static final String TAG = JRWebViewActivity.class.getSimpleName();
+    private static final String RPX_RESULT_TAG = "rpx_result";
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -89,65 +92,6 @@ public class JRWebViewActivity extends Activity
             }
         }
     }
-
-    /**
-     * Handler for webkit events, etc.
-     */
-    private class JRWebViewClient extends WebViewClient {
-
-        private final String TAG = JRWebViewClient.class.getSimpleName();
-
-        @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[onPageStarted] url: " + url);
-            }
-
-            mLayoutHelper.showProgressDialog();
-
-            /*
-             * Check for mobile endpoint URL.
-             */
-            final String mobileEndpointUrl = mSessionData.getBaseUrl() + "/signin/device";
-            if ((!TextUtils.isEmpty(url)) && (url.startsWith(mobileEndpointUrl))) {
-                Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
-            }
-
-            super.onPageStarted(view, url, favicon);
-        }
-
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[onPageFinished] url: " + url);
-            }
-
-            if (!mIsMobileEndpointUrlLoading) {
-                mLayoutHelper.dismissProgressDialog();
-            }
-
-            super.onPageFinished(view, url);
-        }
-
-        @Override
-        public void onReceivedError(WebView view, int errorCode, String description, String url) {
-            Log.e(TAG, "[onReceivedError] code: " + errorCode + " | description: " + description
-                + " | url: " + url);
-
-            mLayoutHelper.dismissProgressDialog();
-            Toast.makeText(JRWebViewActivity.this, description, Toast.LENGTH_LONG).show();
-
-            super.onReceivedError(view, errorCode, description, url);
-        }
-    }
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
-    private static final String TAG = JRWebViewActivity.class.getSimpleName();
-
-    private static final String RPX_RESULT_TAG = "rpx_result";
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -218,8 +162,8 @@ public class JRWebViewActivity extends Activity
 
         mWebView = (WebView)findViewById(R.id.webview);
         mWebView.clearView();
-        mWebView.setWebViewClient(new JRWebViewClient());
-        mWebView.setDownloadListener(this);
+        mWebView.setWebViewClient(mWebviewClient);
+        mWebView.setDownloadListener(mWebviewDownloadListener);
         mWebView.setInitialScale(100);
 
         WebSettings webSettings = mWebView.getSettings();
@@ -245,7 +189,6 @@ public class JRWebViewActivity extends Activity
 
     protected void onStop() {
         super.onStop();
-        //mSessionData.triggerAuthenticationDidCancel();
     }
 
     @Override
@@ -326,138 +269,191 @@ public class JRWebViewActivity extends Activity
             Log.d(TAG, "[loadMobileEndpointUrl] loading url: " + urlToLoad);
         }
 
-        JRConnectionManager.createConnection(urlToLoad, JRWebViewActivity.this, false, RPX_RESULT_TAG);
+        JRConnectionManager.createConnection(urlToLoad, mConnectionManagerDelegate, false, RPX_RESULT_TAG);
         // TODO:  is windows live hack necessary here, as it is on iPhone?
     }
 
+    DownloadListener mWebviewDownloadListener = new DownloadListener() {
+        /**
+         * Invoked by WebKit when there is something to be downloaded that it does not
+         * typically handle (e.g. result of post, mobile endpoint url results, etc).
+         */
+        public void onDownloadStart(String url, String userAgent,
+                String contentDisposition, String mimetype, long contentLength) {
+
+            if (Config.LOGD) {
+                Log.d(TAG, "[onDownloadStart] url: " + url + " | mimetype: " + mimetype
+                    + " | length: " + contentLength);
+            }
+
+            if (isMobileEndpointUrl(url)) loadMobileEndpointUrl(url);
+        }
+    };
+
     /**
-     * Invoked by WebKit when there is something to be downloaded that it does not
-     * typically handle (e.g. result of post, mobile endpoint url results, etc).
+     * Handler for webkit events, etc.
      */
-    public void onDownloadStart(String url, String userAgent,
-            String contentDisposition, String mimetype, long contentLength) {
+    private WebViewClient mWebviewClient = new WebViewClient(){
+        private final String TAG = this.getClass().getSimpleName();
 
-        if (Config.LOGD) {
-            Log.d(TAG, "[onDownloadStart] url: " + url + " | mimetype: " + mimetype
-                + " | length: " + contentLength);
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            if (Config.LOGD) {
+                Log.d(TAG, "[onPageStarted] url: " + url);
+            }
+
+            mLayoutHelper.showProgressDialog();
+
+            /*
+             * Check for mobile endpoint URL.
+             */
+            final String mobileEndpointUrl = mSessionData.getBaseUrl() + "/signin/device";
+            if ((!TextUtils.isEmpty(url)) && (url.startsWith(mobileEndpointUrl))) {
+                Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
+            }
+
+            super.onPageStarted(view, url, favicon);
         }
 
-        if (isMobileEndpointUrl(url)) loadMobileEndpointUrl(url);
-    }
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            if (Config.LOGD) {
+                Log.d(TAG, "[onPageFinished] url: " + url);
+            }
 
-    public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
-        Log.d(TAG, "[connectionDidFinishLoading] userdata: " + userdata + " | payload: " + payload);
+            if (!mIsMobileEndpointUrlLoading) {
+                mLayoutHelper.dismissProgressDialog();
+            }
 
-        mLayoutHelper.dismissProgressDialog();
+            super.onPageFinished(view, url);
+        }
 
-        if (userdata instanceof String) {
-            final String tag = (String)userdata;
-            if (tag.equals(RPX_RESULT_TAG)) {
-                JRDictionary payloadDictionary = JRDictionary.fromJSON(payload);
-                JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
-                final String result = resultDictionary.getAsString("stat");
-                if ("ok".equals(result)) {
-                    // back button?
-                    mSessionData.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
-                } else {
-                    final String error = resultDictionary.getAsString("error");
-                    String alertTitle, alertMessage, logMessage;
-                    if ("Discovery failed for the OpenID you entered".equals(error)) {
-                        alertTitle = "Invalid Input";
-                        alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
-                                ? String.format("The %s you entered was not valid. Please try again.",
-                                    mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
-                                : "There was a problem authenticating with this provider. Please try again.";
-                        logMessage = "Discovery failed for the OpenID you entered: ";
+        @Override
+        public void onReceivedError(WebView view, int errorCode, String description, String url) {
+            Log.e(TAG, "[onReceivedError] code: " + errorCode + " | description: " + description
+                + " | url: " + url);
 
-                        Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
+            mLayoutHelper.dismissProgressDialog();
+            Toast.makeText(JRWebViewActivity.this, description, Toast.LENGTH_LONG).show();
 
-                        /*
-                        TODO:  iPhone does this:
-                        [[self navigationController] popViewControllerAnimated:YES];
-                         */
+            super.onReceivedError(view, errorCode, description, url);
+        }
+    };
 
-                        //mSessionData.triggerAuthenticationDidFail();                        
-                        mIsFinishPending = true;
-                        showAlertDialog(alertTitle, alertMessage);
-                    } else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
-                        alertTitle = "Invalid Input";
-                        alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
-                                ? String.format("The %s you entered was not valid. Please try again.",
-                                    mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
-                                : "There was a problem authenticating with this provider. Please try again.";
-                        logMessage = "The URL you entered does not appear to be an OpenID: ";
+    private JRConnectionManagerDelegate mConnectionManagerDelegate = new JRConnectionManagerDelegate() {
+        public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
+            Log.d(TAG, "[connectionDidFinishLoading] userdata: " + userdata + " | payload: " + payload);
 
-                        Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
+            mLayoutHelper.dismissProgressDialog();
 
-                        /*
-                        TODO:  iPhone does this:
-                        [[self navigationController] popViewControllerAnimated:YES];
-
-                         */
-                        mIsFinishPending = true;
-                        showAlertDialog(alertTitle, alertMessage);
-                    } else if ("Please enter your OpenID".equals(error)) {
-                        JREngageError err = new JREngageError(
-                                "Authentication failed: " + payload,
-                                JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                                JREngageError.ErrorType.AUTHENTICATION_FAILED);
-
-                        throw new RuntimeException("unhandled OpenID error");
-                        //mSessionData.triggerAuthenticationDidFail(err);
+            if (userdata instanceof String) {
+                final String tag = (String)userdata;
+                if (tag.equals(RPX_RESULT_TAG)) {
+                    JRDictionary payloadDictionary = JRDictionary.fromJSON(payload);
+                    JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
+                    final String result = resultDictionary.getAsString("stat");
+                    if ("ok".equals(result)) {
+                        // back button?
+                        mSessionData.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
                     } else {
-                        JREngageError err = new JREngageError(
-                                "Authentication failed: " + payload,
-                                JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                                JREngageError.ErrorType.AUTHENTICATION_FAILED);
+                        final String error = resultDictionary.getAsString("error");
+                        String alertTitle, alertMessage, logMessage;
+                        if ("Discovery failed for the OpenID you entered".equals(error)) {
+                            alertTitle = "Invalid Input";
+                            alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
+                                    ? String.format("The %s you entered was not valid. Please try again.",
+                                        mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
+                                    : "There was a problem authenticating with this provider. Please try again.";
+                            logMessage = "Discovery failed for the OpenID you entered: ";
 
-                        showAlertDialog(
-                                "Log In Failed",
-                                "An error occurred while attempting to sign you in.  Please try again."
-                            );
+                            Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
 
-                        mSessionData.triggerAuthenticationDidFail(err);
+                            /*
+                            TODO:  iPhone does this:
+                            [[self navigationController] popViewControllerAnimated:YES];
+                             */
+
+                            //mSessionData.triggerAuthenticationDidFail();
+                            mIsFinishPending = true;
+                            showAlertDialog(alertTitle, alertMessage);
+                        } else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
+                            alertTitle = "Invalid Input";
+                            alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
+                                    ? String.format("The %s you entered was not valid. Please try again.",
+                                        mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
+                                    : "There was a problem authenticating with this provider. Please try again.";
+                            logMessage = "The URL you entered does not appear to be an OpenID: ";
+
+                            Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
+
+                            /*
+                            TODO:  iPhone does this:
+                            [[self navigationController] popViewControllerAnimated:YES];
+
+                             */
+                            mIsFinishPending = true;
+                            showAlertDialog(alertTitle, alertMessage);
+                        } else if ("Please enter your OpenID".equals(error)) {
+                            JREngageError err = new JREngageError(
+                                    "Authentication failed: " + payload,
+                                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
+
+                            //todo verify nearby behavior
+                            throw new RuntimeException("unhandled OpenID error");
+                            //mSessionData.triggerAuthenticationDidFail(err);
+                        } else {
+                            JREngageError err = new JREngageError(
+                                    "Authentication failed: " + payload,
+                                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
+
+                            showAlertDialog(
+                                    "Log In Failed",
+                                    "An error occurred while attempting to sign you in.  Please try again."
+                                );
+
+                            mSessionData.triggerAuthenticationDidFail(err);
+                        }
                     }
+
+                } else if (tag.equals("request")) {
+                    // connectionDataAlreadyDownloadedThis???
+                    mWebView.loadDataWithBaseURL(requestUrl, payload, null, "utf-8", null);
                 }
-
-            } else if (tag.equals("request")) {
-                // connectionDataAlreadyDownloadedThis???
-                mWebView.loadDataWithBaseURL(requestUrl, payload, null, "utf-8", null);
             }
         }
-    }
 
-    public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object userdata) {
-        Log.d(TAG, "[connectionDidFinishLoading-2] userdata: " + userdata + " | payload: "
-                + StringUtils.decodeUtf8(payload, null));
-        // Not used
-        throw new RuntimeException("unexpected JRConnectionmanager callback invoked");
-    }
+        public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object userdata) {
+            Log.d(TAG, "[connectionDidFinishLoading-2] userdata: " + userdata + " | payload: "
+                    + StringUtils.decodeUtf8(payload, null));
+            // Not used
+            throw new RuntimeException("unexpected JRConnectionmanager callback invoked");
+        }
 
-    public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
-        Log.i(TAG, "[connectionDidFail] userdata: " + userdata, ex);
+        public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
+            Log.i(TAG, "[connectionDidFail] userdata: " + userdata, ex);
 
-        if ((userdata != null) && (userdata instanceof String)) {
-            final JREngageError error = new JREngageError(
-                    "Authentication failed",
-                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                    JREngageError.ErrorType.AUTHENTICATION_FAILED,
-                    ex);
+            if ((userdata != null) && (userdata instanceof String)) {
+                final JREngageError error = new JREngageError(
+                        "Authentication failed",
+                        JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                        JREngageError.ErrorType.AUTHENTICATION_FAILED,
+                        ex);
 
-            final String tag = (String)userdata;
-            if (tag.equals(RPX_RESULT_TAG)) {
-                // Back button?
-                mSessionData.triggerAuthenticationDidFail(error);
-            } else if (tag.equals("request")) {
-                // Back button?
-                mSessionData.triggerAuthenticationDidFail(error);
+                final String tag = (String)userdata;
+                if (tag.equals(RPX_RESULT_TAG)) {
+                    // Back button?
+                    mSessionData.triggerAuthenticationDidFail(error);
+                } else if (tag.equals("request")) {
+                    // Back button?
+                    mSessionData.triggerAuthenticationDidFail(error);
+                }
             }
         }
-    }
 
-    public void connectionWasStopped(Object userdata) {
-        Log.i(TAG, "[connectionWasStopped] userdata: " + userdata);
-    }
-
-
+        public void connectionWasStopped(Object userdata) {
+            Log.i(TAG, "[connectionWasStopped] userdata: " + userdata);
+        }
+    };
 }

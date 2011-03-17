@@ -2,6 +2,7 @@
 <resources>
     <string name="hello">Hello World, Lop!</string>
     <string name="app_name"></string>
+    <string name="JREngageVersion">0.9a</string>
 
     <!--
        - Server URL strings for each of the three typical environments.

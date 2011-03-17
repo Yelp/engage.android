@@ -114,7 +114,7 @@ public class JREngage {
             }
 
             sInstance = new JREngage();
-        } //else throw new IllegalComponentStateException("illegal reinitialization in JREngage.initInstance");
+        } //else throw new IllegalArgumentException("illegal reinitialization in JREngage.initInstance");
 
         //todo this can happen if the user exits the activity via the home button or something and the phone
         //doesn't kill the app, so it shouldn't be an error, but there's suspect statefulness here regardless

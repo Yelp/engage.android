@@ -39,29 +39,74 @@ import com.janrain.android.engage.types.JRDictionary;
  */
 public interface JRSessionDelegate {
 
+    /**
+     * triggered when
+     */
     void authenticationDidRestart();
 
+    /**
+     * triggered when
+     */
+    //For now this is only triggered by the calling application via JREngage.cancelAuthentication
     void authenticationDidCancel();
 
     // TODO: Wasn't this deprecated!?
+    /**
+     * triggered when
+     */
     void authenticationDidComplete(String token, String provider);
     
+    /**
+     * triggered when
+     */
     void authenticationDidComplete(JRDictionary profile, String provider);
     
+    /**
+     * triggered when
+     */
+    //For now this is only triggered by a network error loading the mobile endpoint URL from within the JRWebViewActivity
     void authenticationDidFail(JREngageError error, String provider);
     
+    /**
+     * triggered when
+     */
     void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String payload, String provider);
     
+    /**
+     * triggered when
+     */
     void authenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider);
     
+    /**
+     * triggered when
+     */
     void publishingDidRestart();
     
+    /**
+     * triggered when
+     */
+    //For now this is only triggered by the calling application via JREngage.cancelPublishing
     void publishingDidCancel();
     
+    /**
+     * triggered when
+     */
+    //what's the different between publishDidComplete and publishingActivityDidSucceed?
+    //nothing is triggering this
     void publishingDidComplete();
     
+    /**
+     * triggered when
+     */
+    //this is triggered by the connection started by JRSessionData.shareActivity completing
+    //successfully, in the JRSessionData.processShareActivityResponse
     void publishingActivityDidSucceed(JRActivityObject activity, String provider);
 
+    /**
+     * triggered when
+     */
+    //this is triggered by the connection response handlers for share activity (either by a network
+    //error or by an errorful response from RPX
     void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
 }
 

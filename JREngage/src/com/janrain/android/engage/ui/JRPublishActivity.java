@@ -41,6 +41,7 @@ import android.text.*;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import android.widget.Button;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -59,7 +60,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Publishing UI
@@ -67,6 +68,7 @@ import java.util.Map;
 public class JRPublishActivity extends TabActivity implements TabHost.OnTabChangeListener {
     private static final int DIALOG_FAILURE = 1;
     private static final int DIALOG_SUCCESS = 2;
+    private static final int DIALOG_CONFIRM_SIGNOUT = 3;
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -209,6 +211,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private TextView mPreviewLabelView;
     private ImageView mProviderIcon; //todo update this icon onTabChange
     private EditText mUserCommentView;
+    private TextView mUneditableUserCommentView;
+    private ImageView mTriangleIconView;
     private LinearLayout mProfilePicAndButtonsHorizontalLayout; //I think we don't need a handle to this
     private LinearLayout mUserProfileInformationAndShareButtonContainer; //or a handle to this
     private ImageView mUserProfilePic;
@@ -266,7 +270,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mCharacterCountView = (TextView) findViewById(R.id.character_count_view);
         mProviderIcon = (ImageView) findViewById(R.id.provider_icon);
         mUserCommentView = (EditText) findViewById(R.id.edit_comment);
+        mUneditableUserCommentView = (TextView) findViewById(R.id.uneditable_comment);
         mPreviewLabelView = (TextView) findViewById(R.id.preview_text_view);
+        mTriangleIconView = (ImageView) findViewById(R.id.triangle_icon_view);
         mUserProfileInformationAndShareButtonContainer = (LinearLayout) findViewById(R.id.user_profile_information_and_share_button_container);
         mProfilePicAndButtonsHorizontalLayout = (LinearLayout) findViewById(R.id.profile_pic_and_buttons_horizontal_layout);
         mUserProfilePic = (ImageView) findViewById(R.id.profile_pic);
@@ -276,6 +282,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mJustShareButton = (Button) findViewById(R.id.just_share_button);
         mConnectAndShareButton = (Button) findViewById(R.id.connect_and_share_button);
         mSharedTextAndCheckMarkContainer = (LinearLayout) findViewById(R.id.shared_text_and_check_mark_horizontal_layout);
+
+        //configure the uneditableusercomment to be uneditable
+        //having two Views for the user comment is a workaround for bug
+        //http://code.google.com/p/android/issues/detail?id=2771
+        mUneditableUserCommentView.setEnabled(false);
+        mUneditableUserCommentView.setFocusable(false);
+        mUneditableUserCommentView.setClickable(false);
 
         //View listeners
         mConnectAndShareButton.setOnClickListener(mShareButtonListener);
@@ -316,8 +329,17 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         tabHost.setup();
         TabHost.TabSpec spec;           // Reused TabSpec for each tab
 
+        List<JRProvider> socialProviders = mSessionData.getSocialProviders();
+
+        //todo fixme, verify error handling chain back to calling app
+        if (socialProviders == null || socialProviders.size() == 0) {
+            mSessionData.setError(new JREngageError("Cannot load the Publish Activity, no social providers are configured.",
+                JREngageError.ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
+                JREngageError.ErrorType.CONFIGURATION_INFORMATION_MISSING));
+        }
+
         int currentIndex = 0, indexOfLastUsedProvider = 0;
-        for (JRProvider provider : mSessionData.getSocialProviders())
+        for (JRProvider provider : socialProviders)
         {
             // TODO: If provider is NULL -> there should not be any null elements in the set of social providers.
 
@@ -412,9 +434,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private View.OnClickListener mSignoutButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
-            //mLoggedInUser = null;
-            logUserOutForProvider(mSelectedProvider.getName());
-            showUserAsLoggedIn(false);
+           showDialog(DIALOG_CONFIRM_SIGNOUT);
         }
     };
 
@@ -461,7 +481,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         configureLoggedInUserBasedOnProvider();
         configureSharedStatusBasedOnProvider();
 
-
         //updateCharacterCount();
     }
 
@@ -497,7 +516,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                   mUserCommentView.getText().toString()
                 : mActivityObject.getAction();
 
-        String userNameForPreview = getUIDisplayName();
+        String userNameForPreview = getUserDisplayName();
 
         String shorteningText = getString(R.string.shortening_url);
 
@@ -521,10 +540,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void updatePreviewTextWhenContentDoesNotReplaceAction() {
-        mPreviewLabelView.setText(Html.fromHtml("<b>" + getUIDisplayName() + "</b> " + mActivityObject.getAction()));
+        mPreviewLabelView.setText(Html.fromHtml("<b>" + getUserDisplayName() + "</b> " + mActivityObject.getAction()));
     }
 
-    private String getUIDisplayName() {
+    private String getUserDisplayName() {
         String userNameForPreview = "You";
         if (mLoggedInUser != null) userNameForPreview = mLoggedInUser.getPreferredUsername();
         return userNameForPreview;
@@ -590,12 +609,17 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void showActivityAsShared(boolean shared) {
-        Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
+        Log.d(TAG, new Exception().getStackTrace()[0].getMethodName() + ": " + shared);
 
         int visibleIfShared = shared ? View.VISIBLE : View.GONE;
         int visibleIfNotShared = !shared ? View.VISIBLE : View.GONE;
 
         mSharedTextAndCheckMarkContainer.setVisibility(visibleIfShared);
+
+        mUneditableUserCommentView.setText(mUserCommentView.getText());
+
+        mUserCommentView.setVisibility(visibleIfNotShared);
+        mUneditableUserCommentView.setVisibility(visibleIfShared);
 
         if (mLoggedInUser != null)
             mJustShareButton.setVisibility(visibleIfNotShared);
@@ -620,18 +644,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         else
             updatePreviewTextWhenContentDoesNotReplaceAction();
 
-        //todo replicate this iOS UI bit?
-        //[myTriangleIcon setFrame:CGRectMake(loggedIn ? 230 : 151, 0, 18, 18)];
+        if (loggedIn) mTriangleIconView.setPadding(145,0,0,0);
+        else mTriangleIconView.setPadding(0,0,0,0);
     }
-
-//    private void showViewIsLoading(boolean loading) {
-//        Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
-//
-//        if (loading)
-//            mLayoutHelper.showProgressDialog();
-//        else
-//            mLayoutHelper.dismissProgressDialog();
-//    }
 
     private void loadViewElementPropertiesWithActivityObject() {
         //todo shouldn't this be the action if content replaces action?
@@ -751,17 +766,35 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 finish();
             }
         };
+        //todo make resources out of these strings
 
         switch (id) {
             case DIALOG_SUCCESS:
-                return new AlertDialog.Builder(JRPublishActivity.this).setMessage("Success!")
-                                         .setCancelable(false)
-                                         .setPositiveButton("Dismiss", null)
-                                         .create();
+                return new AlertDialog.Builder(JRPublishActivity.this)
+                        .setMessage("Success!")
+                        .setCancelable(false)
+                        .setPositiveButton("Dismiss", null)
+                        .create();
             case DIALOG_FAILURE:
-                return new AlertDialog.Builder(JRPublishActivity.this).setMessage(mDialogErrorMessage)
-                                         .setPositiveButton("Dismiss", null)
-                                         .create();
+                return new AlertDialog.Builder(JRPublishActivity.this)
+                        .setMessage(mDialogErrorMessage)
+                        .setPositiveButton("Dismiss", null)
+                        .create();
+            case DIALOG_CONFIRM_SIGNOUT:
+                return new AlertDialog.Builder(JRPublishActivity.this)
+                        .setMessage("Sign out of " + mSelectedProvider.getName() + "?")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                logUserOutForProvider(mSelectedProvider.getName());
+                                showUserAsLoggedIn(false);
+                                mLoggedInUser = null; //todo do this? or don't? not sure which, may have side effects
+                                                      //on the preview
+                                mProvidersThatHaveAlreadyShared.put(mSelectedProvider.getName(), false);
+                                onTabChanged(getTabHost().getCurrentTabTag());
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create();
         }
         return null;
     }
@@ -795,22 +828,30 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void fetchShortenedURLs() {
+        //todo fixme app_name
         try {
             final String jsonEncodedActivityUrl = (new JSONStringer()).array().value(mActivityObject.getUrl()).endArray().toString();
             String htmlEncodedJsonEncodedUrl = URLEncoder.encode(jsonEncodedActivityUrl, "UTF8");
-            final String urlString = mSessionData.getBaseUrl() + "/openid/get_urls?urls=" + htmlEncodedJsonEncodedUrl;
+            final String urlString = mSessionData.getBaseUrl() + "/openid/get_urls?urls=" + htmlEncodedJsonEncodedUrl + "&app_name=whatever&device=android";
 
             JRConnectionManagerDelegate jrcmd = new JRCMD() {
                 public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
+                    String retval = mActivityObject.getUrl();
+
                     try {
                         Log.d(TAG, "fetchShortenedURLs connectionDidFinishLoading: " + payload);
                         JSONObject jso = (JSONObject) (new JSONTokener(payload)).nextValue();
                         jso = jso.getJSONObject("urls");
-                        mShortenedActivityURL = jso.getString(mActivityObject.getUrl());
+                        retval = jso.getString(mActivityObject.getUrl());
                     } catch (JSONException e) {
-                        //todo fail more gracefully when we don't get a good result from rpx
-                        //throw new RuntimeException(e);
+                    } catch (ClassCastException e) {
                     }
+
+                    updateUI(retval);
+                }
+
+                private void updateUI(String shortenedURL) {
+                    mShortenedActivityURL = shortenedURL;
 
                     if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
                         updatePreviewTextWhenContentReplacesAction();
@@ -818,6 +859,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                         updatePreviewTextWhenContentDoesNotReplaceAction();
                     }
                     updateCharacterCount();
+                }
+
+                public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
+                    updateUI(mActivityObject.getUrl());
+                }
+
+                public void connectionWasStopped(Object userdata) {
+                    updateUI(mActivityObject.getUrl());
                 }
             };
 
@@ -901,9 +950,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 //                }
             }
 
-            public void publishingDidRestart() { mWeAreCurrentlyPostingSomething = false; } //when is this triggered?
-            public void publishingDidCancel() { mWeAreCurrentlyPostingSomething = false; }  //when this?
-            public void publishingDidComplete() { mWeAreCurrentlyPostingSomething = false; } //when this?
+            public void publishingDidRestart() { mWeAreCurrentlyPostingSomething = false; }
+            public void publishingDidCancel() { mWeAreCurrentlyPostingSomething = false; }
+            public void publishingDidComplete() { mWeAreCurrentlyPostingSomething = false; }  //nothing triggers this yet
 
             public void publishingActivityDidSucceed(JRActivityObject activity, String provider) {
                 Log.d(TAG, "[publishingActivityDidSucceed]");
@@ -986,10 +1035,18 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private abstract class JRCMD implements JRConnectionManagerDelegate {
 
-        public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {}
-        public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object userdata) {}
-        public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {}
-        public void connectionWasStopped(Object userdata) {}
+        public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
+            Log.d(TAG, "default connectionDidFinishLoading");
+        }
+        public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object userdata) {
+            Log.d(TAG, "default connectionDidFinishLoading full");
+        }
+        public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
+            Log.d(TAG, "default connectionDidFail");
+        }
+        public void connectionWasStopped(Object userdata) {
+            Log.d(TAG, "default connectionWasStopped");
+        }
 
     }
 

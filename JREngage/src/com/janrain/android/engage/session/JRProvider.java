@@ -203,7 +203,7 @@ public class JRProvider implements Serializable {
         mOpenIdentifier = dictionary.getAsString(KEY_OPENID_IDENTIFIER);
         mStartAuthenticationUrl = dictionary.getAsString(KEY_URL);
         mRequiresInput = dictionary.getAsBoolean(KEY_REQUIRES_INPUT);
-        mCookieDomain = dictionary.getAsString("cookie_domain", "twitter.com");
+        mCookieDomain = dictionary.getAsString("cookie_domain", mName + ".com");
         mSocialSharingProperties = dictionary.getAsDictionary("social_sharing_properties");
 
         loadDynamicVariables();
@@ -315,6 +315,8 @@ public class JRProvider implements Serializable {
         } catch (FileNotFoundException e) {
             downloadIcons(c);
 
+            //todo this icon isn't suitable for returning for buttons and stuff, because it gets way
+            //stretched out and looks bad.
             return new BitmapDrawable(BitmapFactory.decodeResource(c.getResources(), R.drawable.icon_unknown));
         }
     }

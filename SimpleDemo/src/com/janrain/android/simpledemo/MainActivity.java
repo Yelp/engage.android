@@ -61,7 +61,8 @@ import java.net.URL;
 public class MainActivity extends Activity implements View.OnClickListener, JREngageDelegate {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final String ENGAGE_APP_ID = "aehecdnjkodopeijgjgo";//"appcfamhnpkagijaeinl";
+    //private static final String ENGAGE_APP_ID = "aehecdnjkodopeijgjgo"; //lilli's rpx dev environment RP
+    private static final String ENGAGE_APP_ID = "appcfamhnpkagijaeinl"; //rpxnow.com RP
     private static final String ENGAGE_TOKEN_URL = null;//"http://jrengage-for-android.appspot.com/login";
 
     private JREngage mEngage;

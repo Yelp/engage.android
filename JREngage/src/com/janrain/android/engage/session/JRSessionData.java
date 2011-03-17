@@ -41,7 +41,6 @@ import com.janrain.android.engage.JREngageError.ConfigurationError;
 import com.janrain.android.engage.JREngageError.ErrorType;
 import com.janrain.android.engage.JREngageError.SocialPublishingError;
 import com.janrain.android.engage.JREnvironment;
-//import com.janrain.android.engage.net.CookieHelper;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
@@ -75,9 +74,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     
 	private static JRSessionData sInstance;
 
-//    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
+    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
 //    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
-    private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
+//    private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
 
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
     private static final String ARCHIVE_BASIC_PROVIDERS = "basicProviders";
@@ -161,7 +160,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	private boolean mSocialSharing;
 	
 	private boolean mDialogIsShowing;
-	private JREngageError mError;
+
+    private JREngageError mError;
 	
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -181,6 +181,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 		
 		mAppId = appId;
 		mTokenUrl = tokenUrl;
+
+        //we may not need to discard cached data by library version number explicitly
+        //because the java serialization mechanism implements version control itself
+        //and will refuse to load serialized data from old versions of a class
+        String diskVersion = Prefs.getAsString("JREngageVersion", "");
 
 //        mAuthenticatedUsersByProvider = new JRDictionary();
 //        mAllProviders = new JRDictionary();
@@ -243,6 +248,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public JREngageError getError() {
         return mError;
+    }
+
+    public void setError(JREngageError mError) {
+        this.mError = mError;
     }
 
     public JRActivityObject getActivity() {
@@ -442,15 +451,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	}
 
     private void processShareActivityResponse(String payload, JRDictionary userDataTag) {
-        // TODO: Move all of this code out of the connection delegate function
         String providerName = userDataTag.getAsString("providerName");
 
         JRDictionary responseDict = JRDictionary.fromJSON(payload);
 
         if (responseDict == null) {
             setCurrentlyPublishingProvider(null);
-            List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-            for (JRSessionDelegate delegate : delegatesCopy) {
+            for (JRSessionDelegate delegate : getDelegatesCopy()) {
                 delegate.publishingActivityDidFail(
                         (JRActivityObject) userDataTag.get("activity"),
                         new JREngageError(payload,
@@ -458,15 +465,16 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                                 ErrorType.PUBLISH_FAILED),
                         providerName);
             }
+
         } else if (responseDict.containsKey("stat") && ("ok".equals(responseDict.get("stat")))) {
             saveLastUsedSocialProvider();
             setCurrentlyPublishingProvider(null);
-            List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-            for (JRSessionDelegate delegate : delegatesCopy) {
+            for (JRSessionDelegate delegate : getDelegatesCopy()) {
                 delegate.publishingActivityDidSucceed(
                         mActivity,
                         providerName);
             }
+
         } else {
             setCurrentlyPublishingProvider(null);
             JRDictionary errorDict = responseDict.getAsDictionary("err");
@@ -527,8 +535,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 }
             }
 
-            List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-            for (JRSessionDelegate delegate : delegatesCopy) {
+            for (JRSessionDelegate delegate : getDelegatesCopy()) {
                 delegate.publishingActivityDidFail((JRActivityObject) userDataTag.get("activity"), publishError, providerName);
             }
         }
@@ -933,13 +940,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mAllProviders.getAsProvider(key);
     }
 
-    public JRProvider getBasicProviderAtIndex(int index) {
-        return getProviderAtIndex(index, mBasicProviders);
-    }
-
-    public JRProvider getSocialProviderAtIndex(int index) {
-        return getProviderAtIndex(index, mSocialProviders);
-    }
+//    public JRProvider getBasicProviderAtIndex(int index) {
+//        return getProviderAtIndex(index, mBasicProviders);
+//    }
+//
+//    public JRProvider getSocialProviderAtIndex(int index) {
+//        return getProviderAtIndex(index, mSocialProviders);
+//    }
 
     public JRProvider getProviderByName(String name) {
         return mAllProviders.getAsProvider(name);
@@ -966,6 +973,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             body.append("&options={\"urlShortening\":\"true\"}"); //this is an undocumented parameter available to the mobile library?
             //TODO include truncate parameter here?
             body.append("&device=android");
+            //todo fixme app_name
+            body.append("&app_name=whatever2");
         } catch (UnsupportedEncodingException e) { throw new RuntimeException(e); }
 
         String url = ENVIRONMENT.getServerUrl() + "/api/v2/activity";
@@ -993,7 +1002,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         String body = "token=" + token;
-        byte[] postData = body.getBytes();  // URL encode necessary?
+        byte[] postData = body.getBytes();  //todo URL encode necessary?
 
         JRDictionary tag = new JRDictionary();
         tag.put("action", "callTokenUrl");
@@ -1054,6 +1063,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         //todo if we've reached this point from JRLandingActivity.prepareUserInterface mCurrentlyAuthenticatingProvider will definitely
         //be null and this will raise a null pointer exception.
+        //why? how do you show the landing page without a provider being the one we're currently authenticating with?
         String providerName = mCurrentlyAuthenticatingProvider.getName();
 
         setCurrentlyAuthenticatingProvider((String) null);
@@ -1088,6 +1098,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
+    //todo nothing is triggering this?
     public void triggerPublishingDidComplete() {
         if (Config.LOGD) {
             Log.d(TAG, "[triggerPublishingDidComplete]");

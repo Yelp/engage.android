@@ -180,6 +180,10 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
         prepareUserInterface();
     }
 
+    public void onBackPressed() {
+        mSessionData.triggerAuthenticationDidRestart();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -201,6 +205,7 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
             //TODO validate OpenID URLs so they don't hang the WebView
             String text = mEditText.getText().toString();
             if (TextUtils.isEmpty(text)) {
+                //todo turn this string into a resource
                 showAlertDialog("Invalid Input",
                         "The input you have entered is not valid. Please try again.");
             } else {
@@ -208,15 +213,14 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
                 mSessionData.getCurrentlyAuthenticatingProvider().setUserInput(text);
                 JRUserInterfaceMaestro.getInstance().showWebView();
             }
-        }
-        else
-        {
+        } else {
             showHideKeyboard(false);
             JRUserInterfaceMaestro.getInstance().showWebView();
         }
     }
 
     private void handleSecondaryButtonClick() {
+        //todo this should also call the forget function or no ... ?
         Log.i(TAG, "[handleSecondaryButtonClick]");
         mSessionData.getCurrentlyAuthenticatingProvider().setForceReauth(true);
         mSessionData.setReturningBasicProvider("");
