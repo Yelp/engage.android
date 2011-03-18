@@ -65,6 +65,7 @@ public interface JRSessionDelegate {
      * triggered when
      */
     //For now this is only triggered by a network error loading the mobile endpoint URL from within the JRWebViewActivity
+    //maybe it should also be triggered by http errors from inside the JRWebView
     void authenticationDidFail(JREngageError error, String provider);
     
     /**
@@ -91,7 +92,7 @@ public interface JRSessionDelegate {
     /**
      * triggered when
      */
-    //what's the different between publishDidComplete and publishingActivityDidSucceed?
+    //what's the different between publishDidComplete and publishingJRActivityDidSucceed?
     //nothing is triggering this
     void publishingDidComplete();
     
@@ -100,13 +101,23 @@ public interface JRSessionDelegate {
      */
     //this is triggered by the connection started by JRSessionData.shareActivity completing
     //successfully, in the JRSessionData.processShareActivityResponse
-    void publishingActivityDidSucceed(JRActivityObject activity, String provider);
+    void publishingJRActivityDidSucceed(JRActivityObject activity, String provider);
 
     /**
      * triggered when
      */
     //this is triggered by the connection response handlers for share activity (either by a network
     //error or by an errorful response from RPX
-    void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
+    void publishingJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
+
+    /**
+     * triggered when the JRPublishActivity fails to load
+     */
+    void publishingDialogDidFail(JREngageError err);
+
+    /**
+     * triggered when JRSessionData has finished loading the mobile configuration
+     */
+    void mobileConfigDidFinish();
 }
 

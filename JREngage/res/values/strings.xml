@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, Lop!</string>
-    <string name="app_name"></string>
-    <string name="JREngageVersion">0.9a</string>
+    <string name="jr_engage_version">0.9a</string>
 
     <!--
        - Server URL strings for each of the three typical environments.
@@ -14,7 +12,7 @@
     <!--
        - Shared/common strings.
       -->
-    <string name="powered_by">Powered by Janrain </string>
+    <string name="powered_by">Powered by Janrain</string>
     <string name="progress_loading">Loading. Please wait...</string>
 
     <!--

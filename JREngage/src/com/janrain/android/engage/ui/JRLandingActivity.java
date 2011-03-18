@@ -368,20 +368,18 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
         }
     }
 
-    private void focusEditAndPopKeyboard() {
-        if ((TextUtils.isEmpty(mEditText.getText()) && (mEditText.requestFocus()))) {
-            if (SHOW_KEYBOARD_ON_LAUNCH) {
-                InputMethodManager imm =
-                    (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                imm.toggleSoftInput(
-                    InputMethodManager.SHOW_FORCED,
-                    InputMethodManager.HIDE_IMPLICIT_ONLY);
-            }
-        } else {
-            Log.d(TAG, "[focusEditAndPopKeyboard] FAIL");
-        }
-    }
-
-
+//    private void focusEditAndPopKeyboard() {
+//        if ((TextUtils.isEmpty(mEditText.getText()) && (mEditText.requestFocus()))) {
+//            if (SHOW_KEYBOARD_ON_LAUNCH) {
+//                InputMethodManager imm =
+//                    (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//
+//                imm.toggleSoftInput(
+//                    InputMethodManager.SHOW_FORCED,
+//                    InputMethodManager.HIDE_IMPLICIT_ONLY);
+//            }
+//        } else {
+//            Log.d(TAG, "[focusEditAndPopKeyboard] FAIL");
+//        }
+//    }
 }

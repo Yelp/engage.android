@@ -214,7 +214,7 @@ public interface JREngageDelegate {
     /**
      * Sent after the social publishing dialog is closed (e.g., the user hits the "Close" button) 
      * and publishing is complete. You can receive multiple 
-     * \ref didPublish "- (void)jrSocialDidPublishActivity:forProvider:" 
+     * \ref didPublish "- (void)jrSocialDidPublishJRActivity:forProvider:"
      * messages before the dialog is closed and publishing is complete.
      **/
     void jrSocialDidCompletePublishing();
@@ -230,7 +230,7 @@ public interface JREngageDelegate {
      *   The name of the provider on which the user published the activity.  For a list of possible
      *   strings, please see the \ref socialProviders "List of Social Providers"
      **/
-    void jrSocialDidPublishActivity(JRActivityObject activity, String provider);
+    void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider);
     
     /**
      * Sent when publishing an activity failed and could not be recovered by the library
@@ -245,6 +245,6 @@ public interface JREngageDelegate {
      *   The name of the provider on which the user attempted to publish the activity.  For a list 
      *   of possible strings, please see the \ref socialProviders "List of Social Providers"
      **/
-    void jrSocialPublishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
+    void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
     /*@}*/
 }

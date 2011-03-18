@@ -174,31 +174,37 @@ public class JRUserInterfaceMaestro {
         //      [sessionData addDelegate:myPublishActivityController];
     }
 
-//    public void tearDownSocialPublishing() {
-//        mSessionData.setSocial(false);
-//        mSessionData.setActivity(null);
-//
-//        // TODO:
-//        // if (myPublishActivityController)
-//        //      [sessionData removeDelegate:myPublishActivityController];
-//    }
-//
-//    public void publishingRestarted() {
-//        popToOriginal();
-//    }
-//
-//    public void publishingCompleted() {
-//        popAll();
-//    }
+    public void tearDownSocialPublishing() {
+        mSessionData.setSocial(false);
+        mSessionData.setActivity(null);
 
-//    public void publishingFailed() {
-//        // TODO: commented out on iPhone?
-//        // popToOriginal();
-//    }
+        // TODO:
+        // if (myPublishActivityController)
+        //      [sessionData removeDelegate:myPublishActivityController];
+    }
 
-//    public void publishingCanceled() {
-//        popAll();
-//    }
+    public void publishingRestarted() {
+        popToOriginal();
+    }
+
+    public void publishingCompleted() {
+        popAll();
+    }
+
+    public void publishingJRActivityFailed() {
+        Log.d(TAG, "publishingJRActivityFailed");
+        popAll();
+    }
+
+    public void publishingDialogFailed() {
+        Log.d(TAG, "publishingDialogFailed");
+        popAll();
+    }
+
+    public void publishingCanceled() {
+        Log.d(TAG, "publishingCanceled");
+        popAll();
+    }
 
     /**
      * Helper method used to launch a new display managedActivity.
@@ -271,5 +277,4 @@ public class JRUserInterfaceMaestro {
         intent.putExtra(EXTRA_FINISH_ACTIVITY_TARGET, managedActivity.toString());
         context.sendBroadcast(intent);
     }
-
 }

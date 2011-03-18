@@ -96,6 +96,9 @@ public final class AsyncHttpClient {
             URL url;
             HttpURLConnection connection = null;
 
+            //new Random().nextFloat();
+            try { Thread.sleep(10000); } catch (InterruptedException e) {}
+
             try {
                 url = new URL(mUrl);
 

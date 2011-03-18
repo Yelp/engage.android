@@ -31,17 +31,22 @@ package com.janrain.android.engage.ui;
 
 import android.app.*;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.*;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.*;
+import android.util.Config;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import android.widget.Button;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -79,58 +84,58 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
      * for iPhone-like ability to close this activity from the maestro class.
      */
 
-//    private class FinishReceiver extends BroadcastReceiver {
-//
-//        private final String TAG = JRPublishActivity.TAG + "-" + FinishReceiver.class.getSimpleName();
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String target = intent.getStringExtra(
-//                    JRUserInterfaceMaestro.EXTRA_FINISH_ACTIVITY_TARGET);
-//            if (JRPublishActivity.class.toString().equals(target)) {
-//                tryToFinishActivity();
-//                Log.i(TAG, "[onReceive] handled");
-//            } else if (Config.LOGD) {
-//                Log.i(TAG, "[onReceive] ignored");
-//            }
-//        }
-//    }
+    private class FinishReceiver extends BroadcastReceiver {
+
+        private final String TAG = JRPublishActivity.TAG + "-" + FinishReceiver.class.getSimpleName();
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String target = intent.getStringExtra(
+                    JRUserInterfaceMaestro.EXTRA_FINISH_ACTIVITY_TARGET);
+            if (JRPublishActivity.class.toString().equals(target)) {
+                tryToFinishActivity();
+                Log.i(TAG, "[onReceive] handled");
+            } else if (Config.LOGD) {
+                Log.i(TAG, "[onReceive] ignored");
+            }
+        }
+    }
 
     /**
      * UI display attributes for for each of the supported providers.
      * Used to map between
      */
 
-    private static class ProviderDisplayInfo {
-        // whether or not activity info section is displayed
-        private boolean mIsMediaContentVisible;
-        // provider icon resource id
-        private int mIconResId;
-        // share section background color
-        private int mShareBgColorResId;
-        // share button resource id
-        private int mShareButtonResId;
-
-        ProviderDisplayInfo(boolean isInfoVisible, int iconResId, int shareBgColorResId, int shareBtnResId) {
-            mIsMediaContentVisible = isInfoVisible;
-            mIconResId = iconResId;
-            mShareBgColorResId = shareBgColorResId;
-            mShareButtonResId = shareBtnResId;
-        }
-
-        boolean getIsMediaContentVisible() {
-            return mIsMediaContentVisible;
-        }
-        int getIconResId() {
-            return mIconResId;
-        }
-        int getShareBgColorResId() {
-            return mShareBgColorResId;
-        }
-        int getShareBtnResId() {
-            return mShareButtonResId;
-        }
-    }
+//    private static class ProviderDisplayInfo {
+//        // whether or not activity info section is displayed
+//        private boolean mIsMediaContentVisible;
+//        // provider icon resource id
+//        private int mIconResId;
+//        // share section background color
+//        private int mShareBgColorResId;
+//        // share button resource id
+//        private int mShareButtonResId;
+//
+//        ProviderDisplayInfo(boolean isInfoVisible, int iconResId, int shareBgColorResId, int shareBtnResId) {
+//            mIsMediaContentVisible = isInfoVisible;
+//            mIconResId = iconResId;
+//            mShareBgColorResId = shareBgColorResId;
+//            mShareButtonResId = shareBtnResId;
+//        }
+//
+//        boolean getIsMediaContentVisible() {
+//            return mIsMediaContentVisible;
+//        }
+//        int getIconResId() {
+//            return mIconResId;
+//        }
+//        int getShareBgColorResId() {
+//            return mShareBgColorResId;
+//        }
+//        int getShareBtnResId() {
+//            return mShareButtonResId;
+//        }
+//    }
 
 
     // ------------------------------------------------------------------------
@@ -204,12 +209,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private boolean mUserHasEditedText = false;
     private boolean mWeHaveJustAuthenticated = false;
     private boolean mWeAreCurrentlyPostingSomething = false;
+    private boolean mWeAreWaitingForMobileConfig = false;
 
     //UI views
     private RelativeLayout mMediaContentView;
     private TextView mCharacterCountView;
     private TextView mPreviewLabelView;
-    private ImageView mProviderIcon; //todo update this icon onTabChange
+    private ImageView mProviderIcon;
     private EditText mUserCommentView;
     private TextView mUneditableUserCommentView;
     private ImageView mTriangleIconView;
@@ -225,6 +231,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     //a helper class used to control display of a nice loading dialog
     private SharedLayoutHelper mLayoutHelper;
+
+    //a helper class for the JRUserInterfaceMaestro
+    private FinishReceiver mFinishReceiver;
 
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
 
@@ -312,6 +321,32 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //SharedLayoutHelper is a spinner dialog class
         mLayoutHelper = new SharedLayoutHelper(this);
 
+        //JRUserInterfaceMaestro's hook into calling this.finish()
+        if (mFinishReceiver == null) {
+            mFinishReceiver = new FinishReceiver();
+            registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
+        }
+
+        List<JRProvider>socialProviders = mSessionData.getSocialProviders();
+
+        if ((socialProviders == null || socialProviders.size() == 0) && !mSessionData.isGetMobileConfigDone()) {
+            mWeAreWaitingForMobileConfig = true;
+            mLayoutHelper.showProgressDialog();
+        } else {
+            asldkfj();
+        }
+    }
+
+    private void asldkfj() {
+        List<JRProvider> socialProviders = mSessionData.getSocialProviders();
+        if (socialProviders == null || socialProviders.size() == 0) {
+            JREngageError err = new JREngageError("Cannot load the Publish Activity, no social providers are configured.",
+                    JREngageError.ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
+                    JREngageError.ErrorType.CONFIGURATION_INFORMATION_MISSING);
+            mSessionData.triggerPublishingDialogDidFail(err);
+            return;
+        }
+
         //configure the properties of the UI
         fetchShortenedURLs();
 
@@ -331,18 +366,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         List<JRProvider> socialProviders = mSessionData.getSocialProviders();
 
-        //todo fixme, verify error handling chain back to calling app
-        if (socialProviders == null || socialProviders.size() == 0) {
-            mSessionData.setError(new JREngageError("Cannot load the Publish Activity, no social providers are configured.",
-                JREngageError.ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
-                JREngageError.ErrorType.CONFIGURATION_INFORMATION_MISSING));
-        }
-
         int currentIndex = 0, indexOfLastUsedProvider = 0;
-        for (JRProvider provider : socialProviders)
-        {
-            // TODO: If provider is NULL -> there should not be any null elements in the set of social providers.
-
+        for (JRProvider provider : socialProviders) {
             Drawable providerIconSet = provider.getTabSpecIndicatorDrawable(getApplicationContext());
 
             spec = tabHost.newTabSpec(provider.getName())
@@ -369,11 +394,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "Activity lifecycle onStart");
-
-//        if (mFinishReceiver == null) {
-//            mFinishReceiver = new FinishReceiver();
-//            registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
-//        }
     }
 
     protected void onRestart() {
@@ -381,6 +401,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         Log.d(TAG, "Activity lifecycle onRestart");
 
         if (mLayoutHelper.getProgressDialogShowing()) {
+            Log.e(TAG, "onRestart: progress dialog still showing");
             //mLayoutHelper.dismissProgressDialog();  this is wrong because we can be restarted after the webview is finished but while the async activity post is still operating
             //throw new RuntimeException("onRestart while progress dialog is still showing");
         }
@@ -491,14 +512,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             showActivityAsShared(false);
     }
 
-//    /**
-//     * Invoked by JRUserInterfaceMaestro via FinishReceiver to close this activity.
-//     */
-//
-//    public void tryToFinishActivity() {
-//        Log.i(TAG, "[tryToFinishActivity]");
-//        finish();
-//    }
+    /**
+     * Invoked by JRUserInterfaceMaestro via FinishReceiver to close this activity.
+     */
+
+    public void tryToFinishActivity() {
+        Log.i(TAG, "[tryToFinishActivity]");
+        finish();
+    }
 
     //UI property updaters
 
@@ -853,6 +874,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 private void updateUI(String shortenedURL) {
                     mShortenedActivityURL = shortenedURL;
 
+                    if (mSelectedProvider == null) return;
+
                     if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
                         updatePreviewTextWhenContentReplacesAction();
                     } else {
@@ -954,8 +977,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             public void publishingDidCancel() { mWeAreCurrentlyPostingSomething = false; }
             public void publishingDidComplete() { mWeAreCurrentlyPostingSomething = false; }  //nothing triggers this yet
 
-            public void publishingActivityDidSucceed(JRActivityObject activity, String provider) {
-                Log.d(TAG, "[publishingActivityDidSucceed]");
+            public void publishingJRActivityDidSucceed(JRActivityObject activity, String provider) {
+                Log.d(TAG, "[publishingJRActivityDidSucceed]");
 //                UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Shared"
 //                                                                 message:[String stringWithFormat:
 //                                                                          @"You have successfully shared this activity."]
@@ -978,8 +1001,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 showDialog(DIALOG_SUCCESS);
             }
 
-            public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
-                Log.d(TAG, "[publishingActivityDidFail]");
+            public void publishingJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
+                Log.d(TAG, "[publishingJRActivityDidFail]");
                 boolean reauthenticate = false;
 
                 //showViewIsLoading(false);
@@ -1030,6 +1053,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 mDialogErrorMessage += error.getMessage();
                 showDialog(DIALOG_FAILURE);
             }
+
+            public void mobileConfigDidFinish() {
+                if (mWeAreWaitingForMobileConfig) {
+                    mLayoutHelper.dismissProgressDialog();
+                    mWeAreCurrentlyPostingSomething = false;
+                    asldkfj();
+                }
+            }
         };
     }
 
@@ -1047,7 +1078,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         public void connectionWasStopped(Object userdata) {
             Log.d(TAG, "default connectionWasStopped");
         }
-
     }
 
     private abstract class JRSD implements JRSessionDelegate {
@@ -1061,27 +1091,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         public void publishingDidRestart() {}
         public void publishingDidCancel() {}
         public void publishingDidComplete() {}
-        public void publishingActivityDidSucceed(JRActivityObject activity, String provider) {}
-        public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {}
+        public void publishingJRActivityDidSucceed(JRActivityObject activity, String provider) {}
+        public void publishingDialogDidFail(JREngageError error) {}
+        public void publishingJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {}
+        public void mobileConfigDidFinish() {}
     }
 }
-
-//            (new AsyncTask<String, Void, String>() {
-//                protected String doInBackground(String... v) {
-//                    try {
-//                        InputStream is = (new DefaultHttpClient()).execute(new HttpGet(v[0])).getEntity().getContent();
-//                        BufferedReader r = new BufferedReader(new InputStreamReader(is));
-//                        StringBuilder total = new StringBuilder();
-//                        String line;
-//                        while ((line = r.readLine()) != null) { total.append(line); }
-//                        Log.d(TAG, total.toString());
-//                        return "short";
-//                    } catch (Exception e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                }
-//
-//                protected void onPostExecute(String s) {
-//                    mActionLabelView.setText(s);
-//                }
-//            }).execute(urlString);
