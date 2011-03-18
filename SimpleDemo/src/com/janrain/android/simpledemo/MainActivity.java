@@ -52,13 +52,15 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.image.ImagingOpException;
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.ResponseCache;
-import java.net.URL;
+import java.net.*;
 
 public class MainActivity extends Activity implements View.OnClickListener, JREngageDelegate {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -115,8 +117,10 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
             protected Void doInBackground(Void... v) {
                 try {
                     Log.d(TAG, "blogload");
-                    InputStream is = (new URL(BLOGURL.toString())).openStream();
-                    Log.d(TAG, "blogload steam open");
+                    URL u = (new URL(BLOGURL.toString()));
+                    URLConnection uc = u.openConnection();
+                    InputStream is = uc.getInputStream();
+                    Log.d(TAG, "blogload stream open");
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     dbf.setCoalescing(true);
                     dbf.setValidating(false);
@@ -129,6 +133,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                     //another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser
                     Document d = db.parse(is);
                     Log.d(TAG, "blogload parsed");
+
                     Element rss = (Element) d.getElementsByTagName("rss").item(0);
                     Element channel = (Element) rss.getElementsByTagName("channel").item(0);
                     Element item = (Element) channel.getElementsByTagName("item").item(0);
@@ -140,12 +145,12 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                     mTitleText = title.getFirstChild().getNodeValue();
                     mActionLink = link.getFirstChild().getNodeValue();
 
+                    mDescriptionText = "";
                     NodeList nl = description.getChildNodes();
-                    mDescriptionText = new String();
                     for (int x=0; x<nl.getLength(); x++) { mDescriptionText += nl.item(x).getNodeValue(); }
 
                     //need to concatenate all the children of mDescriptionText (which has ~100s of TextElement children)
-                    //in order to come up with the complete text body of the description tag.
+                    //in order to come up with the complete text body of the description element.
 
                     mDescriptionText = Html.fromHtml(mDescriptionText, new Html.ImageGetter() {
                         public Drawable getDrawable(String s) {
@@ -153,7 +158,10 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                             return null;
                         }
                     }, null).toString();
-                } catch (Exception e) { throw new RuntimeException(e); }
+                } catch (MalformedURLException e) { throw new RuntimeException(e); }
+                catch (IOException e) { throw new RuntimeException(e); }
+                catch (ParserConfigurationException e) { throw new RuntimeException(e); }
+                catch (SAXException e) { throw new RuntimeException(e); }
                 return null;
             }
 

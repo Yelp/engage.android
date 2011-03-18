@@ -46,7 +46,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import android.widget.Button;
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -328,6 +327,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
 
+        loadViewElementPropertiesWithActivityObject();
+
         List<JRProvider>socialProviders = mSessionData.getSocialProviders();
 
         if ((socialProviders == null || socialProviders.size() == 0) && !mSessionData.isGetMobileConfigDone()) {
@@ -335,11 +336,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             //mLayoutHelper.showProgressDialog();
             showDialog(DIALOG_MOBILE_CONFIG_LOADING);
         } else {
-            asldkfj();
+            initializeWithProviderConfiguration();
         }
     }
 
-    private void asldkfj() {
+    private void initializeWithProviderConfiguration() {
         List<JRProvider> socialProviders = mSessionData.getSocialProviders();
         if (socialProviders == null || socialProviders.size() == 0) {
             JREngageError err = new JREngageError("Cannot load the Publish Activity, no social providers are configured.",
@@ -355,13 +356,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         // TODO consider the case of the first usage of the library when the config call hasn't yet returned
         // and display a noninteractive view of the activity or something like the iOS lib
         configureTabs();
-        loadViewElementPropertiesWithActivityObject();
     }
 
     private void configureTabs() {
-        // TODO: If no providers
-
-        //Resources res = getResources(); // Resource object to get Drawables
         TabHost tabHost = getTabHost(); // The activity TabHost
         tabHost.setup();
         TabHost.TabSpec spec;           // Reused TabSpec for each tab
@@ -432,7 +429,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
 
         mSessionData.removeDelegate(mSessionDelegate);
-//        unregisterReceiver(mFinishReceiver);
+        unregisterReceiver(mFinishReceiver);
     }
 
     //UI listeners
@@ -672,13 +669,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void loadViewElementPropertiesWithActivityObject() {
-        //todo shouldn't this be the action if content replaces action?
-//        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action"))
-//            mUserCommentView.setHint(mActivityObject.getAction());
-//        else
-            mUserCommentView.setHint(R.string.please_enter_text);
+        //this sets up pieces of the UI when the provider configuration information
+        //hasn't yet been loaded
 
-        //mPreviewLabelView.setText(mActivityObject.getAction());
+        mUserCommentView.setHint(R.string.please_enter_text);
 
         JRMediaObject mo = null;
         if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
@@ -1067,7 +1061,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 if (mWeAreWaitingForMobileConfig) {
                     dismissDialog(DIALOG_MOBILE_CONFIG_LOADING);
                     mWeAreWaitingForMobileConfig = false;
-                    asldkfj();
+                    initializeWithProviderConfiguration();
                 }
             }
         };

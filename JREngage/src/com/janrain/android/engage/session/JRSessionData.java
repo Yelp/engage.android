@@ -29,6 +29,8 @@
 */
 package com.janrain.android.engage.session;
 
+import android.content.pm.ApplicationInfo;
+import android.net.UrlQuerySanitizer;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
@@ -84,8 +86,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private static final String ARCHIVE_SOCIAL_PROVIDERS = "socialProviders";
     private static final String ARCHIVE_AUTH_USERS_BY_PROVIDER = "jrAuthenticatedUsersByProvider";
 
-    private static final String FMT_CONFIG_URL = "%s/openid/mobile_config_and_baseurl?appId=%s&device=android";
+    private static final String FMT_CONFIG_URL = "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s";
     private boolean mGetConfigDone = false;
+    private String mOldEtag;
+    private String mUrlEncodedAppName;
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -139,7 +143,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	private ArrayList<String> mSocialProviders;
 	private JRDictionary mAuthenticatedUsersByProvider;
 	
-	//private String mSavedConfigurationBlock;
+	private String mSavedConfigurationBlock = "";
 	private String mNewEtag;
     private String mGitCommit;
 
@@ -160,8 +164,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     //private boolean mForceReauth;
 
 	private boolean mSocialSharing;
-	
-	private boolean mDialogIsShowing;
+
+    private boolean mDialogIsShowing = false;
 
     private JREngageError mError;
 	
@@ -184,11 +188,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 		mAppId = appId;
 		mTokenUrl = tokenUrl;
 
-        //we may not need to discard cached data by library version number explicitly
-        //because the java serialization mechanism implements version control itself
-        //and will refuse to load serialized data from old versions of a class
-        String diskVersion = Prefs.getAsString("JREngageVersion", "");
+        ApplicationInfo ai = JREngage.getContext().getApplicationInfo();
+        String appName = JREngage.getContext().getPackageManager().getApplicationLabel(ai).toString();
+        try { mUrlEncodedAppName = URLEncoder.encode(appName, "UTF-8"); }
+        catch (UnsupportedEncodingException e) { Log.e(TAG, e.toString()); }
+
         String libraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
+        String diskVersion = Prefs.getAsString("JREngageVersion", "");
         if (diskVersion.equals(libraryVersion)) {
             // Load dictionary of authenticated users.  If the dictionary is not found, the
             // archiver will return a new (empty) list.
@@ -230,6 +236,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             // And load the last used basic and social providers
             mReturningSocialProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
             mReturningBasicProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
+
+            /* If the configuration for this rp has changed, the etag will have changed, and we need
+             * to update our current configuration information. */
+            mOldEtag = Prefs.getAsString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
         } else {
             mAuthenticatedUsersByProvider = new JRDictionary();
             mAllProviders = new JRDictionary();
@@ -239,6 +249,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             mHidePoweredBy = false;
             mReturningSocialProvider = "";
             mReturningBasicProvider = "";
+            mOldEtag = "";
         }
 
         mError = startGetConfiguration();
@@ -358,6 +369,15 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mHidePoweredBy;
     }
 
+    public void setDialogIsShowing(boolean mDialogIsShowing) {
+        this.mDialogIsShowing = mDialogIsShowing;
+        if (!mDialogIsShowing & !mSavedConfigurationBlock.equals("")) {
+            String s = mSavedConfigurationBlock;
+            mSavedConfigurationBlock = "";
+            mError = finishGetConfiguration(s);
+        }
+    }
+
     // ------------------------------------------------------------------------
     // DELEGATE METHODS
     // ------------------------------------------------------------------------
@@ -366,14 +386,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         Log.i(TAG, "[connectionDidFail]");
 
         if (userdata == null) {
-            /*
-            As of right now, this should not happen.  We specify the tag/userdata in all calls.
-            Leave check here for future/possible use.
-             */
-            Log.w(TAG, "[connectionDidFail] userdata is null, this is unexpected.");
+            Log.e(TAG, "[connectionDidFail] unexpected null userdata");
         } else if (userdata instanceof String) {
             String s = (String)userdata;
             if (s.equals("getConfiguration")) {
+                Log.e(TAG, "connectionDidFail for getConfiguration");
                 mError = new JREngageError(
                         "There was a problem communicating with the Janrain server while configuring authentication.",
                         ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
@@ -423,11 +440,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         if (userdata == null) {
-            /*
-            As of right now, this should not happen.  We specify the tag/userdata in all calls.
-            Leave check here for future/possible use.
-             */
-            Log.w(TAG, "[connectionDidFinishLoading] userdata is null, this is unexpected.");
+            Log.e(TAG, "[connectionDidFinishLoading] unexpected null userdata");
         } else if (userdata instanceof String) {
             String tag = (String) userdata;
 
@@ -556,25 +569,25 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                             new String(payload),
                             dictionary.getAsString("providerName"));
                 }
-            } //else todo
+            } else Log.e(TAG, "unexpected userdata found in ConnectionDidFinishLoading full");
         } else if (userdata instanceof String) {
             String s = (String)userdata;
+
             if (s.equals("getConfiguration")) {
+                //todo this is probably UTF-8 encoded, not ascii encoded, review this function
                 String payloadString = EncodingUtils.getAsciiString(payload);
-                if (Config.LOGD) {
-                    Log.d(TAG, "[connectionDidFinishLoading-full] payload string: " + payloadString);
-                }
+                Log.d(TAG, "[connectionDidFinishLoading-full] payload string: " + payloadString);
 
                 if (payloadString.contains("\"provider_info\":{")) {
                     mError = finishGetConfiguration(payloadString, headers.getETag());
                 } else {
+                    Log.e(TAG, "connectionDidFail full for getConfiguration");
                     mError = new JREngageError(
                             "There was a problem communicating with the Janrain server while configuring authentication.",
                             ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
                             ErrorType.CONFIGURATION_FAILED);
                 }
-
-            }
+            } else Log.e(TAG, "unexpected userdata found in ConnectionDidFinishLoading full");
         }
 	}
 
@@ -611,7 +624,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     private JREngageError startGetConfiguration() {
-        String urlString = String.format(FMT_CONFIG_URL, ENVIRONMENT.getServerUrl(), mAppId);
+        String urlString = String.format(FMT_CONFIG_URL, ENVIRONMENT.getServerUrl(), mAppId, mUrlEncodedAppName);
         if (Config.LOGD) {
             Log.d(TAG, "[startGetConfiguration] url: " + urlString);
         }
@@ -646,7 +659,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         // If the parsed dictionary object is null or an exception has occurred, return.
         if ((jsonDict == null) || (jsonEx != null)) {
-            Log.w(TAG, "[finishGetConfiguration] failed.");
+            Log.e(TAG, "[finishGetConfiguration] failed.");
             return new JREngageError(
                     "There was a problem communicating with the Janrain server while configuring authentication.",
                     ConfigurationError.JSON_ERROR,
@@ -695,6 +708,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         // Once we know everything is parsed and saved, save the new etag
         Prefs.putString(Prefs.KEY_JR_CONFIGURATION_ETAG, mNewEtag);
 
+        // 'git-tag'-like library version tag to prevent reloading stale data from disk
+        String libraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
+        Prefs.putString("JREngageVersion", libraryVersion);
+
         mGetConfigDone = true;
         triggerMobileConfigDidFinish();
 
@@ -706,12 +723,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[finishGetConfiguration-etag]");
         }
 
-        /* If the configuration for this rp has changed, the etag will have changed, and we need
-         * to update our current configuration information. */
-        String oldEtag = Prefs.getAsString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
         //todo implement git commit checking for cache reloading
-        if (!oldEtag.equals(etag) || true) {
-            mNewEtag = etag;
+        if (!mOldEtag.equals(etag) || true) {
+            mNewEtag = etag;  //todo verify that this is written out
 
             /* We can only update all of our data if the UI isn't currently using that
              * information.  Otherwise, the library may crash/behave inconsistently.  If a
@@ -719,8 +733,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
              * where a dialog is showing but there isn't any data that it could be using (that
              * is, the lists of basic and social providers are nil), go ahead and update it too.
              * The dialogs won't try and do anything until we're done updating the lists. */
-            if (!mDialogIsShowing || (ListUtils.isEmpty(mBasicProviders)
-                    && ListUtils.isEmpty(mSocialProviders))) {
+            if (!mDialogIsShowing || (ListUtils.isEmpty(mBasicProviders) && ListUtils.isEmpty(mSocialProviders))) {
                 return finishGetConfiguration(dataStr);
             }
 
@@ -729,7 +742,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
              * setting the boolean dialogIsShowing to "NO". In the setter function, sessionData
              * checks to see if there's anything stored in the savedConfigurationBlock, and
              * updates it then. */
-            //mSavedConfigurationBlock = dataStr;
+            mSavedConfigurationBlock = dataStr;
         }
 
         mGetConfigDone = true;
@@ -972,15 +985,12 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             //TODO include truncate parameter here?
             body.append("&device=android");
             //todo fixme app_name
-            body.append("&app_name=whatever2");
+            body.append("&app_name=").append(mUrlEncodedAppName);
         } catch (UnsupportedEncodingException e) { throw new RuntimeException(e); }
 
         String url = ENVIRONMENT.getServerUrl() + "/api/v2/activity";
 
         Log.d(TAG, "[shareActivityForUser]: " + url + " data: " + body.toString());
-
-        //final String tag = "shareActivity";
-        //JRConnectionManager.createConnection(url, body.toString().getBytes(), this, false, tag);
 
         JRDictionary tag = new JRDictionary();
         tag.put("action", "shareActivity");
@@ -1150,7 +1160,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     TODO RESPONSE: Um... pretty sure it just moved to a spot higher in the iPhone version of the file?
 
     private String appNameAndVersion() {
-        final String FMT = "appName=%s.%s&version=%d_%s";
+        final String FMT = "mUrlEncodedAppName=%s.%s&version=%d_%s";
 
         Context ctx = JREngage.getContext();
         PackageManager pkgMgr = ctx.getPackageManager();
