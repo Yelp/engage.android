@@ -74,6 +74,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private static final int DIALOG_FAILURE = 1;
     private static final int DIALOG_SUCCESS = 2;
     private static final int DIALOG_CONFIRM_SIGNOUT = 3;
+    private static final int DIALOG_MOBILE_CONFIG_LOADING = 4;
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -331,7 +332,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if ((socialProviders == null || socialProviders.size() == 0) && !mSessionData.isGetMobileConfigDone()) {
             mWeAreWaitingForMobileConfig = true;
-            mLayoutHelper.showProgressDialog();
+            //mLayoutHelper.showProgressDialog();
+            showDialog(DIALOG_MOBILE_CONFIG_LOADING);
         } else {
             asldkfj();
         }
@@ -816,6 +818,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                         })
                         .setNegativeButton("Cancel", null)
                         .create();
+            case DIALOG_MOBILE_CONFIG_LOADING:
+                ProgressDialog pd = new ProgressDialog(JRPublishActivity.this);
+                pd.setCancelable(false);
+                pd.setTitle("");
+                pd.setMessage("Loading. Please wait...");
+                pd.setIndeterminate(false);
+                return pd;
         }
         return null;
     }
@@ -1056,8 +1065,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             public void mobileConfigDidFinish() {
                 if (mWeAreWaitingForMobileConfig) {
-                    mLayoutHelper.dismissProgressDialog();
-                    mWeAreCurrentlyPostingSomething = false;
+                    dismissDialog(DIALOG_MOBILE_CONFIG_LOADING);
+                    mWeAreWaitingForMobileConfig = false;
                     asldkfj();
                 }
             }
