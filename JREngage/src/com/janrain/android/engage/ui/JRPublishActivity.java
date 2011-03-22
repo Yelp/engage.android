@@ -106,38 +106,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
      * Used to map between
      */
 
-//    private static class ProviderDisplayInfo {
-//        // whether or not activity info section is displayed
-//        private boolean mIsMediaContentVisible;
-//        // provider icon resource id
-//        private int mIconResId;
-//        // share section background color
-//        private int mShareBgColorResId;
-//        // share button resource id
-//        private int mShareButtonResId;
-//
-//        ProviderDisplayInfo(boolean isInfoVisible, int iconResId, int shareBgColorResId, int shareBtnResId) {
-//            mIsMediaContentVisible = isInfoVisible;
-//            mIconResId = iconResId;
-//            mShareBgColorResId = shareBgColorResId;
-//            mShareButtonResId = shareBtnResId;
-//        }
-//
-//        boolean getIsMediaContentVisible() {
-//            return mIsMediaContentVisible;
-//        }
-//        int getIconResId() {
-//            return mIconResId;
-//        }
-//        int getShareBgColorResId() {
-//            return mShareBgColorResId;
-//        }
-//        int getShareBtnResId() {
-//            return mShareButtonResId;
-//        }
-//    }
-
-
     // ------------------------------------------------------------------------
     // STATIC FIELDS
     // ------------------------------------------------------------------------
@@ -824,6 +792,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         return null;
     }
 
+    protected void onPrepareDialog(int id, Dialog d) {
+        switch (id) {
+            case DIALOG_FAILURE:
+                ((AlertDialog) d).setMessage(mDialogErrorMessage);
+                break;
+        }
+    }
+
     private void logUserOutForProvider(String provider) {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
         mSessionData.forgetAuthenticatedUserForProvider(provider);
@@ -849,7 +825,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private void shareActivity() {
         Log.d(TAG, "shareActivity mAuthenticatedUser: " + mAuthenticatedUser.toString());
 
-        if (mActivityObject.getUrl().equals(""))
+        boolean thunk = mSelectedProvider.getSocialSharingProperties()
+                .getAsBoolean("uses_set_status_if_no_url");
+
+        if (mActivityObject.getUrl().equals("") & thunk)
             mSessionData.setStatusForUser(mAuthenticatedUser);
         else
             mSessionData.shareActivityForUser(mAuthenticatedUser);
@@ -932,14 +911,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                                                       //or does the landing page not trigger authDidRestart?
             }
 
-            // TODO: Probably need to comment this out, as authenticationDidCancel is something that publish activity
             // should never have to worry about
-            public void authenticationDidCancel() {
-                Log.d(TAG, "[authenticationDidCancel]");
-                mWeAreCurrentlyPostingSomething = false;
-                mWeHaveJustAuthenticated = false;
-                //mLayoutHelper.dismissProgressDialog();//this is wrong because there will never be an authDidCancel message from auth started by publish?
-            }
+//            public void authenticationDidCancel() {
+//                Log.d(TAG, "[authenticationDidCancel]");
+//                mWeAreCurrentlyPostingSomething = false;
+//                mWeHaveJustAuthenticated = false;
+//            }
 
             public void authenticationDidFail(JREngageError error, String provider) {
                 Log.d(TAG, "[authenticationDidFail]");
@@ -1014,14 +991,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             public void publishingJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
                 Log.d(TAG, "[publishingJRActivityDidFail]");
                 boolean reauthenticate = false;
+                mDialogErrorMessage = "";
 
-                //showViewIsLoading(false);
                 mLayoutHelper.dismissProgressDialog();
 
                 switch (error.getCode())
                 {// TODO: add strings to string resource file
                     case JREngageError.SocialPublishingError.FAILED:
-                        mDialogErrorMessage = "There was an error while sharing this activity.";
+                        //mDialogErrorMessage = "There was an error while sharing this activity.";
+                        mDialogErrorMessage = error.getMessage();
                         break;
                     case JREngageError.SocialPublishingError.DUPLICATE_TWITTER:
                         mDialogErrorMessage = "There was an error while sharing this activity: Twitter does not allow duplicate status updates.";
@@ -1038,7 +1016,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                         reauthenticate = true;
                         break;
                     default:
-                        mDialogErrorMessage = "There was an error while sharing this activity.";
+                        //mDialogErrorMessage = "There was an error while sharing this activity.";
+                        mDialogErrorMessage = error.getMessage();
                         break;
                 }
 
@@ -1060,7 +1039,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 mWeAreCurrentlyPostingSomething = false;
                 mWeHaveJustAuthenticated = false;
 
-                mDialogErrorMessage += error.getMessage();
                 showDialog(DIALOG_FAILURE);
             }
 

@@ -499,41 +499,48 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 int code = (errorDict.containsKey("code"))
                         ? errorDict.getAsInt("code") : 1000;
 
+                String msg = errorDict.getAsString("msg", "");
+
                 switch (code) {
                     case 0: /* "Missing parameter: apiKey" */
                         publishError = new JREngageError(
-                                errorDict.getAsString("msg"),
+                                msg,
                                 SocialPublishingError.MISSING_API_KEY,
                                 ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
                         break;
                     case 4: /* "Facebook Error: Invalid OAuth 2.0 Access Token" */
-                        if (errorDict.getAsString("msg").matches(".*nvalid ..uth.*"))
+                        if (msg.matches(".*nvalid ..uth.*"))
                             publishError = new JREngageError(
-                                    errorDict.getAsString("msg"),
+                                    msg,
                                     SocialPublishingError.INVALID_OAUTH_TOKEN,
                                     ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
-                        else if (errorDict.getAsString("msg").matches(".*eed action request limit.*"))
+                        else if (msg.matches(".*eed action request limit.*"))
                             publishError = new JREngageError(
-                                    errorDict.getAsString("msg"),
+                                    msg,
                                     SocialPublishingError.FEED_ACTION_REQUEST_LIMIT,
                                     ErrorType.PUBLISH_FAILED);
                         else
                             publishError = new JREngageError(
-                                    errorDict.getAsString("msg"),
+                                    msg,
                                     SocialPublishingError.FAILED,
                                     ErrorType.PUBLISH_FAILED);
                         break;
                     case 100: // TODO LinkedIn character limit error
                         publishError = new JREngageError(
-                                errorDict.getAsString("msg"),
+                                msg,
                                 SocialPublishingError.LINKEDIN_CHARACTER_EXCEEDED,
                                 ErrorType.PUBLISH_INVALID_ACTIVITY);
                         break;
-                    case 6: // TODO Twitter duplicate error
-                        publishError = new JREngageError(
-                                errorDict.getAsString("msg"),
+                    case 6:
+                        if (msg.matches(".*witter.*")) publishError = new JREngageError(
+                                msg,
                                 SocialPublishingError.DUPLICATE_TWITTER,
-                                ErrorType.PUBLISH_INVALID_ACTIVITY);
+                                ErrorType.PUBLISH_INVALID_ACTIVITY
+                        ); else publishError = new JREngageError(
+                                msg,
+                                JREngageError.SocialPublishingError.FAILED,
+                                ErrorType.PUBLISH_INVALID_ACTIVITY
+                        );
                         break;
                     case 1000: /* Extracting code failed; Fall through. */
                     default: // TODO Other errors (find them)
@@ -949,11 +956,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         for (String providerName : mAllProviders.keySet()) forgetAuthenticatedUserForProvider(providerName);
     }
 
-    public JRProvider getProviderAtIndex(int index, List<String> fromList) {
-        String key = fromList.get(index);
-        return mAllProviders.getAsProvider(key);
-    }
-
 //    public JRProvider getBasicProviderAtIndex(int index) {
 //        return getProviderAtIndex(index, mBasicProviders);
 //    }
@@ -1017,6 +1019,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         String deviceToken = user.getDeviceToken();
         String status = mActivity.getUserGeneratedContent();
+        //todo this should also include other pieces of the activity
 
         StringBuilder body = new StringBuilder();
         //TODO include truncate parameter here?
