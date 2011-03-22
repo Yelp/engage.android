@@ -197,7 +197,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     //JREngage objects we're operating with
     private JRProvider mSelectedProvider; //the provider for the selected tab
-    private JRAuthenticatedUser mLoggedInUser; //the user (if logged in) for the selected tab
+    private JRAuthenticatedUser mAuthenticatedUser; //the user (if logged in) for the selected tab
     private JRActivityObject mActivityObject;
 
     //UI properties
@@ -441,10 +441,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             if (!mUserCommentView.getText().toString().equals(""))
                 mActivityObject.setUserGeneratedContent(mUserCommentView.getText().toString());
 
-            //showViewIsLoading(true);
             mLayoutHelper.showProgressDialog();
 
-            if (mLoggedInUser == null) {
+            if (mAuthenticatedUser == null) {
                 authenticateUserForSharing();
             } else {
                 shareActivity();
@@ -479,7 +478,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             int comment_length = mUserCommentView.getText().length();
             int chars_remaining = mMaxCharacters - comment_length;
             if (chars_remaining < 0)
-                characterCountText = Html.fromHtml("Remaining characters: <font color=red>" + chars_remaining + "</font>");
+                characterCountText = Html.fromHtml(
+                        "Remaining characters: <font color=red>" + chars_remaining + "</font>");
             else
                 characterCountText = Html.fromHtml("Remaining characters: " + chars_remaining);
         }
@@ -565,7 +565,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private String getUserDisplayName() {
         String userNameForPreview = "You";
-        if (mLoggedInUser != null) userNameForPreview = mLoggedInUser.getPreferredUsername();
+        if (mAuthenticatedUser != null) userNameForPreview = mAuthenticatedUser.getPreferredUsername();
         return userNameForPreview;
     }
 
@@ -641,7 +641,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mUserCommentView.setVisibility(visibleIfNotShared);
         mUneditableUserCommentView.setVisibility(visibleIfShared);
 
-        if (mLoggedInUser != null)
+        if (mAuthenticatedUser != null)
             mJustShareButton.setVisibility(visibleIfNotShared);
         else
             mConnectAndShareButton.setVisibility(visibleIfNotShared);
@@ -768,11 +768,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void configureLoggedInUserBasedOnProvider() {
-        mLoggedInUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
+        mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
 
-        loadUserNameAndProfilePicForUserForProvider(mLoggedInUser, mSelectedProvider.getName());
+        loadUserNameAndProfilePicForUserForProvider(mAuthenticatedUser, mSelectedProvider.getName());
 
-        showUserAsLoggedIn(mLoggedInUser != null);
+        showUserAsLoggedIn(mAuthenticatedUser != null);
     }
 
     //UI ~state updaters
@@ -804,8 +804,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 logUserOutForProvider(mSelectedProvider.getName());
                                 showUserAsLoggedIn(false);
-                                mLoggedInUser = null; //todo do this? or don't? not sure which, may have side effects
-                                                      //on the preview
+
+                                //todo does this have bad side effects on the preview?
+                                mAuthenticatedUser = null;
                                 mProvidersThatHaveAlreadyShared.put(mSelectedProvider.getName(), false);
                                 onTabChanged(getTabHost().getCurrentTabTag());
                             }
@@ -816,7 +817,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 ProgressDialog pd = new ProgressDialog(JRPublishActivity.this);
                 pd.setCancelable(false);
                 pd.setTitle("");
-                pd.setMessage("Loading. Please wait...");
+                pd.setMessage("Loading first run configuration data. Please wait...");
                 pd.setIndeterminate(false);
                 return pd;
         }
@@ -826,7 +827,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private void logUserOutForProvider(String provider) {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
         mSessionData.forgetAuthenticatedUserForProvider(provider);
-        mLoggedInUser = null;
+        mAuthenticatedUser = null;
     }
 
     private void authenticateUserForSharing() {
@@ -846,17 +847,23 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void shareActivity() {
-        Log.d(TAG, "shareActivity mLoggedInUser: " + mLoggedInUser.toString());
+        Log.d(TAG, "shareActivity mAuthenticatedUser: " + mAuthenticatedUser.toString());
 
-        mSessionData.shareActivityForUser(mLoggedInUser);
+        if (mActivityObject.getUrl().equals(""))
+            mSessionData.setStatusForUser(mAuthenticatedUser);
+        else
+            mSessionData.shareActivityForUser(mAuthenticatedUser);
     }
 
     private void fetchShortenedURLs() {
-        //todo fixme app_name
         try {
             final String jsonEncodedActivityUrl = (new JSONStringer()).array().value(mActivityObject.getUrl()).endArray().toString();
             String htmlEncodedJsonEncodedUrl = URLEncoder.encode(jsonEncodedActivityUrl, "UTF8");
-            final String urlString = mSessionData.getBaseUrl() + "/openid/get_urls?urls=" + htmlEncodedJsonEncodedUrl + "&app_name=whatever&device=android";
+            final String urlString =
+                    mSessionData.getBaseUrl() + "/openid/get_urls?"
+                    + "urls=" + htmlEncodedJsonEncodedUrl
+                    + "&app_name=" + mSessionData.getUrlEncodedAppName()
+                    + "&device=android";
 
             JRConnectionManagerDelegate jrcmd = new JRCMD() {
                 public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
@@ -951,14 +958,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 Log.d(TAG, "[authenticationDidComplete]");
                 //myLoadingLabel.text = @"Sharing...";
 
-                mLoggedInUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
+                mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
 
                 // QTS: Would we ever expect this to not be the case?
-//                if (mLoggedInUser != null) {
+//                if (mAuthenticatedUser != null) {
 
                 //showViewIsLoading(true);
                 mLayoutHelper.showProgressDialog();
-                loadUserNameAndProfilePicForUserForProvider(mLoggedInUser, provider);
+                loadUserNameAndProfilePicForUserForProvider(mAuthenticatedUser, provider);
                 showUserAsLoggedIn(true);
 
                 shareActivity();

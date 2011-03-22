@@ -39,6 +39,7 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
+import com.janrain.android.engage.JREnvironment;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
@@ -177,7 +178,7 @@ public class JRProvider implements Serializable {
     private boolean mRequiresInput;
     private String mOpenIdentifier;
     private String mStartAuthenticationUrl;
-    private String mCookieDomain;
+    private List<String> mCookieDomains;
     private JRDictionary mSocialSharingProperties;
 
     //private transient JRDictionary dictionary;
@@ -203,8 +204,13 @@ public class JRProvider implements Serializable {
         mOpenIdentifier = dictionary.getAsString(KEY_OPENID_IDENTIFIER);
         mStartAuthenticationUrl = dictionary.getAsString(KEY_URL);
         mRequiresInput = dictionary.getAsBoolean(KEY_REQUIRES_INPUT);
-        mCookieDomain = dictionary.getAsString("cookie_domain", mName + ".com");
+        mCookieDomains = dictionary.getAsListOfStrings("cookie_domains", true);
         mSocialSharingProperties = dictionary.getAsDictionary("social_sharing_properties");
+
+//        if (mCookieDomains.size() == 0) {
+//            mCookieDomains.add(mName + ".com");
+//            mCookieDomains.add("www." + mName + ".com");
+//        }
 
         loadDynamicVariables();
 
@@ -224,8 +230,8 @@ public class JRProvider implements Serializable {
     // GETTERS/SETTERS
     // ------------------------------------------------------------------------
 
-    public String getCookieDomain () { /* (readonly) */
-        return mCookieDomain;
+    public List<String> getCookieDomains () { /* (readonly) */
+        return mCookieDomains;
     }
 
     public String getName() {  /* (readonly) */
@@ -416,7 +422,8 @@ public class JRProvider implements Serializable {
 
                         Log.d(TAG, "Downloading icon: " + iconFileName);
                         //todo fixme to use the library compile time configured baseurl
-                        URL url = new URL("http://10.0.0.115:8080/cdn/images/mobile_icons/android/" + iconFileName);
+                        URL url = new URL(JRSessionData.getEnvironment().getServerUrl()
+                                + "/cdn/images/mobile_icons/android/" + iconFileName);
                         InputStream is = url.openStream();
                         FileOutputStream fos = c.openFileOutput("providericon~" + iconFileName, Context.MODE_PRIVATE);
                         while (is.available() > 0) fos.write(is.read());

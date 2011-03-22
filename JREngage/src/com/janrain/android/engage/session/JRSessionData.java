@@ -30,7 +30,6 @@
 package com.janrain.android.engage.session;
 
 import android.content.pm.ApplicationInfo;
-import android.net.UrlQuerySanitizer;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
@@ -89,6 +88,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private static final String FMT_CONFIG_URL = "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s";
     private boolean mGetConfigDone = false;
     private String mOldEtag;
+
     private String mUrlEncodedAppName;
 
     // ------------------------------------------------------------------------
@@ -821,7 +821,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             return null;
         }
 
-        String oid;
+        String oid;  //open identifier
 
         if (!TextUtils.isEmpty(mCurrentlyAuthenticatingProvider.getOpenIdentifier())) {
             oid = String.format("openid_identifier=%s&", mCurrentlyAuthenticatingProvider.getOpenIdentifier());
@@ -917,8 +917,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             provider.setForceReauth(true);
             mAuthenticatedUsersByProvider.remove(provider.getName());
 
-            String domain = provider.getCookieDomain();
-            deleteWebviewCookiesForDomain(domain);
+            List<String> domains = provider.getCookieDomains();
+            for (String s : domains) deleteWebviewCookiesForDomain(s);
 
             JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
         }
@@ -927,13 +927,16 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private void deleteWebviewCookiesForDomain(String domain) {
         CookieSyncManager csm = CookieSyncManager.createInstance(JREngage.getContext());
         CookieManager cm = CookieManager.getInstance();
+
+        //new android.net.WebAddress();
+
         //cookies are stored by domain, and are not different for different schemes (i.e. http vs https)
         //(although they sort of, ...)
         String cookieGlob = cm.getCookie("http://" + domain);
         String[] cookies = cookieGlob.split(";");
         for (String cookieTuple : cookies) {
             String[] cookieParts = cookieTuple.split("=");
-            CookieManager.getInstance().setCookie(domain, cookieParts[0] + "=;domain=" + domain);
+            cm.setCookie(domain, cookieParts[0] + "=");//;domain=" + domain);
         }
         csm.sync();
     }
@@ -979,12 +982,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         try {
             String activityJSON = activityDictionary.toJSON();
             activityContent = URLEncoder.encode(activityJSON, "UTF-8");
-            body.append("device_token=").append(deviceToken);
-            body.append("&activity=").append(activityContent);
-            body.append("&options={\"urlShortening\":\"true\"}"); //this is an undocumented parameter available to the mobile library?
             //TODO include truncate parameter here?
+            body.append("activity=").append(activityContent);
+
+            //these are undocumented parameters available to the mobile library.
+            body.append("&device_token=").append(deviceToken);
+            body.append("&options={\"urlShortening\":\"true\"}");
             body.append("&device=android");
-            //todo fixme app_name
             body.append("&app_name=").append(mUrlEncodedAppName);
         } catch (UnsupportedEncodingException e) { throw new RuntimeException(e); }
 
@@ -992,6 +996,42 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         Log.d(TAG, "[shareActivityForUser]: " + url + " data: " + body.toString());
 
+        JRDictionary tag = new JRDictionary();
+        tag.put("action", "shareActivity");
+        tag.put("activity", mActivity);
+        tag.put("providerName", mCurrentlyPublishingProvider.getName());
+        JRConnectionManager.createConnection(url, body.toString().getBytes(), this, false, tag);
+
+        if (Config.LOGD) {
+            Log.d(TAG, "[shareActivityForUser] connection started for url: " + url);
+        }
+    }
+
+    public void setStatusForUser(JRAuthenticatedUser user) {
+        if (Config.LOGD) {
+            Log.d(TAG, "[shareActivityForUser]");
+        }
+
+        setCurrentlyPublishingProvider(user.getProviderName());
+        setSocial(true);
+
+        String deviceToken = user.getDeviceToken();
+        String status = mActivity.getUserGeneratedContent();
+
+        StringBuilder body = new StringBuilder();
+        //TODO include truncate parameter here?
+        body.append("status=").append(status);
+        //these are undocumented parameters available to the mobile library.
+        body.append("&device_token=").append(deviceToken);
+        body.append("&options={\"urlShortening\":\"true\"}");
+        body.append("&device=android");
+        body.append("&app_name=").append(mUrlEncodedAppName);
+
+        String url = ENVIRONMENT.getServerUrl() + "/api/v2/set_status";
+
+        Log.d(TAG, "[setStatusForUser]: " + url + " data: " + body.toString());
+
+        //todo same callback handler for status as activity?
         JRDictionary tag = new JRDictionary();
         tag.put("action", "shareActivity");
         tag.put("activity", mActivity);
@@ -1198,5 +1238,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public boolean isGetMobileConfigDone() {
         return mGetConfigDone;
+    }
+
+    public static JREnvironment getEnvironment() {
+        return ENVIRONMENT;
+    }
+
+    public String getUrlEncodedAppName() {
+        return mUrlEncodedAppName;
     }
 }

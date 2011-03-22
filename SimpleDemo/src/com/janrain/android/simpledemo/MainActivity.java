@@ -127,9 +127,9 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                     dbf.setNamespaceAware(false);
                     DocumentBuilder db = dbf.newDocumentBuilder();
                     Log.d(TAG, "blogload factory instantiated");
-                    //the following parse call takes an astonishing ten seconds on a nexus s.
+                    //the following parse call takes ten seconds on fast phone.
                     //XMLPullParser is said to be a faster way to go.
-                    //thread with sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
+                    //sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
                     //another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser
                     Document d = db.parse(is);
                     Log.d(TAG, "blogload parsed");
@@ -201,7 +201,8 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         if (view == mBtnTestAuth) {
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
-            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", mActionLink);
+            //JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", mActionLink);
+            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", "");
             jra.setTitle(mTitleText);
             jra.setDescription(mDescriptionText);
             jra.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
@@ -216,10 +217,9 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     // JREngage DELEGATE METHODS
     // ------------------------------------------------------------------------
     public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-        String message = "JREngage dialog failed to show, error: " +
+        mDialogErrorMessage = "JREngage dialog failed to show, error: " +
                 ((error == null) ? "unknown" : error.getMessage());
 
-        mDialogErrorMessage = message;
         showDialog(DIALOG_JRENGAGE_ERROR);
     }
 

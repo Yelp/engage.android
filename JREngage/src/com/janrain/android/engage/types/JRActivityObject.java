@@ -94,10 +94,10 @@ public class JRActivityObject {
      * NOTE: No length restriction on the status is imposed by Janrain Engage, however Yahoo
      * truncates this value to 256 characters.
      */
-    private String mTitle;
+    private String mTitle = "";
 
     /** A description of the resource mentioned in the activity update */
-    private String mDescription;
+    private String mDescription = "";
 
     /**
      * An array of <code>JRActionLink</code> objects, each having two attributes: text and href.
