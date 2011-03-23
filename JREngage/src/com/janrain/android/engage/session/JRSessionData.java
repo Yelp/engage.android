@@ -957,7 +957,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             activityContent = URLEncoder.encode(activityJSON, "UTF-8");
             body.append("device_token=").append(deviceToken);
             body.append("&activity=").append(activityContent);
-            body.append("&options={\"urlShortening\":\"true\"}"); //this is an undocumented parameter available to the mobile library?
+            body.append("&url_shortening=true"); //this is an undocumented parameter available to the mobile library?
+            body.append("&provider=").append(user.getProviderName());
             //TODO include truncate parameter here?
             body.append("&device=android");
         } catch (UnsupportedEncodingException e) { throw new RuntimeException(e); }
