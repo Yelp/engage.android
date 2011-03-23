@@ -982,9 +982,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         try {
             String activityJSON = activityDictionary.toJSON();
             activityContent = URLEncoder.encode(activityJSON, "UTF-8");
+            
             body.append("device_token=").append(deviceToken);
             body.append("&activity=").append(activityContent);
-            body.append("&url_shortening=true"); //this is an undocumented parameter available to the mobile library?
+            body.append("&url_shortening=true");
             body.append("&provider=").append(user.getProviderName());
             body.append("&device=android");
             body.append("&app_name=").append(mUrlEncodedAppName);

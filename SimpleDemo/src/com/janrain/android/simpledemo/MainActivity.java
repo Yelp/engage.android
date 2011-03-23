@@ -33,6 +33,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -91,6 +92,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         setContentView(R.layout.main);
 
         mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
+        //mBtnTestAuth.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
         mBtnTestAuth.setOnClickListener(this);
 
         mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);

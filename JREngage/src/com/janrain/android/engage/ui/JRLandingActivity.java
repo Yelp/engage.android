@@ -35,6 +35,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Config;
@@ -161,11 +162,20 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
         mWelcomeLabel = (TextView)findViewById(R.id.landing_welcome_label);
 
         mSwitchAccountButton = (Button)findViewById(R.id.landing_switch_account_button);
+        mSwitchAccountButton.getBackground().setColorFilter(0xAA000000, PorterDuff.Mode.MULTIPLY);
         mSwitchAccountButton.setOnClickListener(this);
+
         mBigSigninButton = (Button)findViewById(R.id.landing_big_signin_button);
+        mBigSigninButton .getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
         mBigSigninButton.setOnClickListener(this);
+
         mSmallSigninButton = (Button)findViewById(R.id.landing_small_signin_button);
+        mSmallSigninButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
         mSmallSigninButton.setOnClickListener(this);
+
+//        mSmallSigninButton.setVisibility(View.VISIBLE);//(View.GONE);
+//        mBigSigninButton.setVisibility(View.GONE);//(View.VISIBLE);
+
     }
 
     @Override
@@ -341,11 +351,13 @@ public class JRLandingActivity extends Activity implements View.OnClickListener 
 
     private void configureButtonVisibility(boolean isSingleButtonLayout) {
         if (isSingleButtonLayout) {
-            mSwitchAccountButton.setVisibility(View.GONE);
-            mSmallSigninButton.setVisibility(View.GONE);
-            mBigSigninButton.setVisibility(View.VISIBLE);
+            // TODO: If we go with Gabe/Alexis's suggestions, big button will always be gone and small button
+            // will always be visible... Clean this code up...
+            mSwitchAccountButton.setVisibility(View.INVISIBLE);//(View.GONE);
+            mSmallSigninButton.setVisibility(View.VISIBLE);//(View.GONE);
+//            mBigSigninButton.setVisibility(View.VISIBLE);
         } else {
-            mBigSigninButton.setVisibility(View.GONE);
+//            mBigSigninButton.setVisibility(View.GONE);
             mSwitchAccountButton.setVisibility(View.VISIBLE);
             mSmallSigninButton.setVisibility(View.VISIBLE);
         }
