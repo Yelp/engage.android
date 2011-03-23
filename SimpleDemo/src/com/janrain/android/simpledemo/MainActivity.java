@@ -67,8 +67,8 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
     private static final int DIALOG_JRENGAGE_ERROR = 1;
 
-    //private static final String ENGAGE_APP_ID = "aehecdnjkodopeijgjgo"; //lilli's rpx dev environment RP
-    private static final String ENGAGE_APP_ID = "appcfamhnpkagijaeinl"; //rpxnow.com RP
+    private static final String ENGAGE_APP_ID = "aehecdnjkodopeijgjgo"; //lilli's rpx dev environment RP
+//    private static final String ENGAGE_APP_ID = "appcfamhnpkagijaeinl"; //rpxnow.com RP
     private static final String ENGAGE_TOKEN_URL = null;//"http://jrengage-for-android.appspot.com/login";
 
     private JREngage mEngage;

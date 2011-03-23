@@ -115,7 +115,7 @@ public final class AsyncHttpClient {
                     connection.connect();
                 } else {
                     // HTTP POST OPERATION
-                    if (Config.LOGD) { Log.d(TAG, "[run] HTTP POST"); }
+                    if (Config.LOGD) { Log.d(TAG, "[run] HTTP POST data: " + new String(mPostData)); }
                     prepareConnectionForHttpPost(connection);
                     connection.connect();
                     doHttpPost(connection);
@@ -138,10 +138,14 @@ public final class AsyncHttpClient {
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
                     mHandler.post(mWrapper);
                 } else {
+                    //todo maybe this shouldn't be globbed together, but instead be structured
+                    //to allow the error response handler to make meaninful use of the web
+                    //servers response (here read into String r)
+                    String r = new String(IOUtils.readFromStream(connection.getErrorStream()));
                     String message = "[run] Unexpected HTTP response:  [code: "
                             + connection.getResponseCode() + " | message: "
-                            + connection.getResponseMessage()
-                            + "]";
+                            + connection.getResponseMessage() + " error: "
+                            + r + "]";
 
                     Log.e(TAG, message);
 

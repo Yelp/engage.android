@@ -76,16 +76,17 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     
 	private static JRSessionData sInstance;
 
-    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
+//    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
 //    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
-//    private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
+    private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
 
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
     private static final String ARCHIVE_BASIC_PROVIDERS = "basicProviders";
     private static final String ARCHIVE_SOCIAL_PROVIDERS = "socialProviders";
     private static final String ARCHIVE_AUTH_USERS_BY_PROVIDER = "jrAuthenticatedUsersByProvider";
 
-    private static final String FMT_CONFIG_URL = "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s";
+    private static final String FMT_CONFIG_URL =
+            "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s";
     private boolean mGetConfigDone = false;
     private String mOldEtag;
 

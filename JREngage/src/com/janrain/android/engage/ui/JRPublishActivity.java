@@ -185,7 +185,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private TextView mPreviewLabelView;
     private ImageView mProviderIcon;
     private EditText mUserCommentView;
-    private TextView mUneditableUserCommentView;
     private ImageView mTriangleIconView;
     private LinearLayout mProfilePicAndButtonsHorizontalLayout; //I think we don't need a handle to this
     private LinearLayout mUserProfileInformationAndShareButtonContainer; //or a handle to this
@@ -247,7 +246,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mCharacterCountView = (TextView) findViewById(R.id.character_count_view);
         mProviderIcon = (ImageView) findViewById(R.id.provider_icon);
         mUserCommentView = (EditText) findViewById(R.id.edit_comment);
-        mUneditableUserCommentView = (TextView) findViewById(R.id.uneditable_comment);
         mPreviewLabelView = (TextView) findViewById(R.id.preview_text_view);
         mTriangleIconView = (ImageView) findViewById(R.id.triangle_icon_view);
         mUserProfileInformationAndShareButtonContainer = (LinearLayout) findViewById(R.id.user_profile_information_and_share_button_container);
@@ -260,28 +258,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mConnectAndShareButton = (Button) findViewById(R.id.connect_and_share_button);
         mSharedTextAndCheckMarkContainer = (LinearLayout) findViewById(R.id.shared_text_and_check_mark_horizontal_layout);
 
-        //configure the uneditableusercomment to be uneditable
-        //having two Views for the user comment is a workaround for bug
-        //http://code.google.com/p/android/issues/detail?id=2771
-        mUneditableUserCommentView.setEnabled(false);
-        mUneditableUserCommentView.setFocusable(false);
-        mUneditableUserCommentView.setClickable(false);
-
         //View listeners
         mConnectAndShareButton.setOnClickListener(mShareButtonListener);
         mJustShareButton.setOnClickListener(mShareButtonListener);
-        mUserCommentView.addTextChangedListener(new TextWatcher() {
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            public void afterTextChanged(Editable editable) {
-                updateUserCommentView();
-                updateCharacterCount();
-            }
-        });
+        mUserCommentView.addTextChangedListener(mUserCommentTextWatcher);
         mSignOutButton.setOnClickListener(mSignoutButtonListener);
 
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
@@ -406,8 +386,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         public void onClick(View view) {
             mWeAreCurrentlyPostingSomething = true;
 
-            if (!mUserCommentView.getText().toString().equals(""))
-                mActivityObject.setUserGeneratedContent(mUserCommentView.getText().toString());
+            mActivityObject.setUserGeneratedContent(mUserCommentView.getText().toString());
 
             mLayoutHelper.showProgressDialog();
 
@@ -424,6 +403,22 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
            showDialog(DIALOG_CONFIRM_SIGNOUT);
         }
     };
+
+    private TextWatcher mUserCommentTextWatcher = new TextWatcher() {
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        public void afterTextChanged(Editable editable) {
+            updateUserCommentView();
+            updateCharacterCount();
+            mProvidersThatHaveAlreadyShared.put(mSelectedProvider.getName(), false);
+            showActivityAsShared(false);
+        }
+    };
+
 
     public void updateCharacterCount() {
         //todo verify correctness of the 0 remaining characters edge case
@@ -473,10 +468,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void configureSharedStatusBasedOnProvider() {
-        if (mProvidersThatHaveAlreadyShared.get(mSelectedProvider.getName()))
-            showActivityAsShared(true);
-        else
-            showActivityAsShared(false);
+        showActivityAsShared(mProvidersThatHaveAlreadyShared.get(mSelectedProvider.getName()));
     }
 
     /**
@@ -491,7 +483,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     //UI property updaters
 
     public void updateUserCommentView() {
-        if (!mUserHasEditedText) mUserHasEditedText = true;
+        mUserHasEditedText = true;
 
         if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
             //twitter, myspace, linkedin
@@ -537,7 +529,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         return userNameForPreview;
     }
 
-    private void loadUserNameAndProfilePicForUserForProvider(final JRAuthenticatedUser user, final String providerName) {
+    private void loadUserNameAndProfilePicForUserForProvider(
+            final JRAuthenticatedUser user,
+            final String providerName) {
         Log.d(TAG, "loadUserNameAndProfilePicForUserForProvider");
 
         if (user == null || providerName == null) {
@@ -603,11 +597,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         int visibleIfNotShared = !shared ? View.VISIBLE : View.GONE;
 
         mSharedTextAndCheckMarkContainer.setVisibility(visibleIfShared);
-
-        mUneditableUserCommentView.setText(mUserCommentView.getText());
-
-        mUserCommentView.setVisibility(visibleIfNotShared);
-        mUneditableUserCommentView.setVisibility(visibleIfShared);
 
         if (mAuthenticatedUser != null)
             mJustShareButton.setVisibility(visibleIfNotShared);
@@ -770,13 +759,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                         .setMessage("Sign out of " + mSelectedProvider.getName() + "?")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                logUserOutForProvider(mSelectedProvider.getName());
-                                showUserAsLoggedIn(false);
-
-                                //todo does this have bad side effects on the preview?
-                                mAuthenticatedUser = null;
-                                mProvidersThatHaveAlreadyShared.put(mSelectedProvider.getName(), false);
-                                onTabChanged(getTabHost().getCurrentTabTag());
+                                signOutButtonHandler();
                             }
                         })
                         .setNegativeButton("Cancel", null)
@@ -790,6 +773,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 return pd;
         }
         return null;
+    }
+
+    private void signOutButtonHandler() {
+        logUserOutForProvider(mSelectedProvider.getName());
+        showUserAsLoggedIn(false);
+
+        mAuthenticatedUser = null;
+        mProvidersThatHaveAlreadyShared.put(mSelectedProvider.getName(), false);
+        onTabChanged(getTabHost().getCurrentTabTag());
     }
 
     protected void onPrepareDialog(int id, Dialog d) {
@@ -978,7 +970,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
                 mProvidersThatHaveAlreadyShared.put(provider, true);
 
-                //showViewIsLoading(false);
                 mLayoutHelper.dismissProgressDialog();
                 showActivityAsShared(true);
 

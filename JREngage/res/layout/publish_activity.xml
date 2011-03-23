@@ -37,43 +37,22 @@
                 android:padding="5dp"
                 >
 
-                <LinearLayout
-                    android:id="@+id/edit_comment_layout"
+                <EditText
+                    android:id="@+id/edit_comment"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    >
-
-                    <EditText
-                        android:id="@+id/edit_comment"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dip"
-                        android:layout_marginRight="4dip"
-                        android:layout_marginLeft="4dip"
-                        android:gravity="top|left"
-                        android:lines="3"
-                        />
-
-                    <EditText
-                        android:id="@+id/uneditable_comment"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dip"
-                        android:layout_marginRight="4dip"
-                        android:layout_marginLeft="4dip"
-                        android:gravity="top|left"
-                        android:lines="3"
-                        android:visibility="gone"
-                        android:editable="false"
-                        />
-
-                </LinearLayout>
+                    android:layout_marginTop="5dip"
+                    android:layout_marginRight="4dip"
+                    android:layout_marginLeft="4dip"
+                    android:gravity="top|left"
+                    android:lines="3"
+                    />
 
                 <TextView
                     android:id="@+id/character_count_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/edit_comment_layout"
+                    android:layout_below="@id/edit_comment"
                     android:layout_alignParentRight="true"
                     android:singleLine="true"
                     android:textColor="#ff333333"
