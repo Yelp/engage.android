@@ -114,6 +114,7 @@ public class JRUserInterfaceMaestro {
      * Displays the provider list for authentication.
      */
     public void showProviderSelectionDialog() {
+        mSessionData.setDialogIsShowing(true);
         startActivity(JRProvidersActivity.class);
 
         if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
@@ -141,6 +142,7 @@ public class JRUserInterfaceMaestro {
      */
     public void showPublishingDialogWithActivity() {
         setUpSocialPublishing();
+        mSessionData.setDialogIsShowing(true);
         startActivity(JRPublishActivity.class);
     }
 
@@ -151,6 +153,7 @@ public class JRUserInterfaceMaestro {
     public void authenticationCompleted() {
         if (!mSessionData.getSocial()) {
             popAll();
+            mSessionData.setDialogIsShowing(false);
         } else {
             popToOriginal();
         }
@@ -174,31 +177,41 @@ public class JRUserInterfaceMaestro {
         //      [sessionData addDelegate:myPublishActivityController];
     }
 
-//    public void tearDownSocialPublishing() {
-//        mSessionData.setSocial(false);
-//        mSessionData.setActivity(null);
-//
-//        // TODO:
-//        // if (myPublishActivityController)
-//        //      [sessionData removeDelegate:myPublishActivityController];
-//    }
-//
-//    public void publishingRestarted() {
-//        popToOriginal();
-//    }
-//
-//    public void publishingCompleted() {
-//        popAll();
-//    }
+    public void tearDownSocialPublishing() {
+        mSessionData.setSocial(false);
+        mSessionData.setActivity(null);
 
-//    public void publishingFailed() {
-//        // TODO: commented out on iPhone?
-//        // popToOriginal();
-//    }
+        // TODO:
+        // if (myPublishActivityController)
+        //      [sessionData removeDelegate:myPublishActivityController];
+    }
 
-//    public void publishingCanceled() {
-//        popAll();
-//    }
+    public void publishingRestarted() {
+        popToOriginal();
+    }
+
+    public void publishingCompleted() {
+        popAll();
+        mSessionData.setDialogIsShowing(false);
+    }
+
+    public void publishingJRActivityFailed() {
+        Log.d(TAG, "publishingJRActivityFailed");
+        //popAll(); //why does this popAll(), isn't that a bug?
+        popToOriginal();
+    }
+
+    public void publishingDialogFailed() {
+        Log.d(TAG, "publishingDialogFailed");
+        popAll();
+        mSessionData.setDialogIsShowing(false);
+    }
+
+    public void publishingCanceled() {
+        Log.d(TAG, "publishingCanceled");
+        popAll();
+        mSessionData.setDialogIsShowing(false);
+    }
 
     /**
      * Helper method used to launch a new display managedActivity.
@@ -271,5 +284,4 @@ public class JRUserInterfaceMaestro {
         intent.putExtra(EXTRA_FINISH_ACTIVITY_TARGET, managedActivity.toString());
         context.sendBroadcast(intent);
     }
-
 }

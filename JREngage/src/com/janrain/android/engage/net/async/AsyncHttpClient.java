@@ -96,12 +96,14 @@ public final class AsyncHttpClient {
             URL url;
             HttpURLConnection connection = null;
 
+            //float f = new Random().nextFloat();
+            //try { Thread.sleep((int) (20000 * f)); } catch (InterruptedException e) {}
+
             try {
                 url = new URL(mUrl);
 
                 connection = (HttpURLConnection) url.openConnection();
 
-                // XYZ
                 addRequestHeaders(connection);
 
                 //todo fail gracefully when there's no net connection
@@ -114,27 +116,23 @@ public final class AsyncHttpClient {
                 } else {
                     // HTTP POST OPERATION
                     if (Config.LOGD) { Log.d(TAG, "[run] HTTP POST"); }
-                    //following is an attempted fix for -1 responsecode HttpURLConnection known bug
-                    //connection.setFixedLengthStreamingMode(mPostData.length);
                     prepareConnectionForHttpPost(connection);
                     connection.connect();
                     doHttpPost(connection);
                 }
 
-                //debugging hack to test connection failures.
+                //debugging to test connection failures.
                 //boolean random = (new Random()).nextBoolean();
 
                 if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {//  && random) {
                     HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
                     byte[] data = IOUtils.readFromStream(connection.getInputStream(), true);
 
-                    if (Config.LOGD) {
-                        Log.d(TAG, "[run] " + headers.toString());
-                        if (data == null) {
-                            Log.d(TAG, "[run] data is null");
-                        } else {
-                            Log.d(TAG, "[run] data: " + StringUtils.decodeUtf8(data, ""));
-                        }
+                    Log.d(TAG, "[run] " + headers.toString());
+                    if (data == null) {
+                        Log.d(TAG, "[run] data is null");
+                    } else {
+                        Log.d(TAG, "[run] data: " + StringUtils.decodeUtf8(data, ""));
                     }
 
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
@@ -146,11 +144,9 @@ public final class AsyncHttpClient {
                             + "]";
 
                     Log.e(TAG, message);
-                    //byte[] data = IOUtils.readFromStream(connection.getInputStream(), true);
-                    //Log.e(TAG, "[run] response: " + new String(data));
+
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, new Exception(message)));
                     mHandler.post(mWrapper);
-
                 }
             } catch (IOException e) {
                 Log.e(TAG, "[run] Problem executing HTTP request.", e);

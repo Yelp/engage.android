@@ -30,6 +30,8 @@
 package com.janrain.android.simpledemo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -50,18 +52,23 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.image.ImagingOpException;
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.ResponseCache;
-import java.net.URL;
+import java.net.*;
 
 public class MainActivity extends Activity implements View.OnClickListener, JREngageDelegate {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final String ENGAGE_APP_ID = "aehecdnjkodopeijgjgo";//"appcfamhnpkagijaeinl";
+    private static final int DIALOG_JRENGAGE_ERROR = 1;
+
+    //private static final String ENGAGE_APP_ID = "aehecdnjkodopeijgjgo"; //lilli's rpx dev environment RP
+    private static final String ENGAGE_APP_ID = "appcfamhnpkagijaeinl"; //rpxnow.com RP
     private static final String ENGAGE_TOKEN_URL = null;//"http://jrengage-for-android.appspot.com/login";
 
     private JREngage mEngage;
@@ -75,6 +82,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
            mDescriptionText = "description text",
            mImageUrl = "http://www.janrain.com/sites/default/themes/janrain/logo.png";
     final Uri BLOGURL = Uri.parse("http://www.janrain.com/feed/blogs");
+    private String mDialogErrorMessage;
 
     /** Called when the activity is first created. */
     @Override
@@ -99,61 +107,83 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
             mImageUrl = savedInstanceState.getString("c");
             mActionLink = savedInstanceState.getString("d");
             mBtnTestPub.setText("Test Publishing");
-        } else {
-            mBtnTestPub.setText("loading blog");
-            new AsyncTask<Void, Void, Void>() {
-                protected Void doInBackground(Void... v) {
-                    try {
-                        Log.d(TAG, "blogload");
-                        InputStream is = (new URL(BLOGURL.toString())).openStream();
-                        Log.d(TAG, "blogload steam open");
-                        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                        dbf.setCoalescing(true);
-                        dbf.setValidating(false);
-                        dbf.setNamespaceAware(false);
-                        DocumentBuilder db = dbf.newDocumentBuilder();
-                        Log.d(TAG, "blogload factory instantiated");
-                        //the following parse call takes an astonishing ten seconds on a nexus s.
-                        //XMLPullParser is said to be a faster way to go.
-                        //thread with sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
-                        //another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser
-                        Document d = db.parse(is);
-                        Log.d(TAG, "blogload parsed");
-                        Element rss = (Element) d.getElementsByTagName("rss").item(0);
-                        Element channel = (Element) rss.getElementsByTagName("channel").item(0);
-                        Element item = (Element) channel.getElementsByTagName("item").item(0);
-                        Element title = (Element) item.getElementsByTagName("title").item(0);
-                        Element link = (Element) item.getElementsByTagName("link").item(0);
-                        Element description = (Element) item.getElementsByTagName("description").item(0);
-                        Log.d(TAG, "blogload walked");
+        } else asyncLoadJanrainBlog();
+    }
 
-                        mTitleText = title.getFirstChild().getNodeValue();
-                        mActionLink = link.getFirstChild().getNodeValue();
+    private void asyncLoadJanrainBlog() {
+        mBtnTestPub.setText("loading blog");
 
-                        NodeList nl = description.getChildNodes();
-                        mDescriptionText = new String();
-                        for (int x=0; x<nl.getLength(); x++) { mDescriptionText += nl.item(x).getNodeValue(); }
+        new AsyncTask<Void, Void, Void>() {
+            protected Void doInBackground(Void... v) {
+                try {
+                    Log.d(TAG, "blogload");
+                    URL u = (new URL(BLOGURL.toString()));
+                    URLConnection uc = u.openConnection();
+                    InputStream is = uc.getInputStream();
+                    Log.d(TAG, "blogload stream open");
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    dbf.setCoalescing(true);
+                    dbf.setValidating(false);
+                    dbf.setNamespaceAware(false);
+                    DocumentBuilder db = dbf.newDocumentBuilder();
+                    Log.d(TAG, "blogload factory instantiated");
+                    //the following parse call takes ten seconds on fast phone.
+                    //XMLPullParser is said to be a faster way to go.
+                    //sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
+                    //another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser
+                    Document d = db.parse(is);
+                    Log.d(TAG, "blogload parsed");
 
-                        //need to concatenate all the children of mDescriptionText (which has ~100s of TextElement children)
-                        //in order to come up with the complete text body of the description tag.
+                    Element rss = (Element) d.getElementsByTagName("rss").item(0);
+                    Element channel = (Element) rss.getElementsByTagName("channel").item(0);
+                    Element item = (Element) channel.getElementsByTagName("item").item(0);
+                    Element title = (Element) item.getElementsByTagName("title").item(0);
+                    Element link = (Element) item.getElementsByTagName("link").item(0);
+                    Element description = (Element) item.getElementsByTagName("description").item(0);
+                    Log.d(TAG, "blogload walked");
 
-                        mDescriptionText = Html.fromHtml(mDescriptionText, new Html.ImageGetter() {
-                            public Drawable getDrawable(String s) {
-                                mImageUrl = BLOGURL.getScheme() + "://" + BLOGURL.getHost() + s;
-                                return null;
-                            }
-                        }, null).toString();
-                    } catch (Exception e) { throw new RuntimeException(e); }
-                    return null;
-                }
+                    mTitleText = title.getFirstChild().getNodeValue();
+                    mActionLink = link.getFirstChild().getNodeValue();
 
-                protected void onPostExecute(Void v) {
-                    //mBtnTestPub.setEnabled(true);
-                    Log.d(TAG, "blog loader onPostExecute");
-                    mBtnTestPub.setText("Test Publishing");
-                }
-            }.execute();
+                    mDescriptionText = "";
+                    NodeList nl = description.getChildNodes();
+                    for (int x=0; x<nl.getLength(); x++) { mDescriptionText += nl.item(x).getNodeValue(); }
+
+                    //need to concatenate all the children of mDescriptionText (which has ~100s of TextElement children)
+                    //in order to come up with the complete text body of the description element.
+
+                    mDescriptionText = Html.fromHtml(mDescriptionText, new Html.ImageGetter() {
+                        public Drawable getDrawable(String s) {
+                            mImageUrl = BLOGURL.getScheme() + "://" + BLOGURL.getHost() + s;
+                            return null;
+                        }
+                    }, null).toString();
+                } catch (MalformedURLException e) { throw new RuntimeException(e); }
+                catch (IOException e) { throw new RuntimeException(e); }
+                catch (ParserConfigurationException e) { throw new RuntimeException(e); }
+                catch (SAXException e) { throw new RuntimeException(e); }
+                return null;
+            }
+
+            protected void onPostExecute(Void v) {
+                //mBtnTestPub.setEnabled(true);
+                Log.d(TAG, "blog loader onPostExecute");
+                mBtnTestPub.setText("Test Publishing");
+            }
+        }.execute();
+    }
+
+    public Dialog onCreateDialog(int dialogId) {
+        switch (dialogId) {
+            case DIALOG_JRENGAGE_ERROR:
+                return new AlertDialog.Builder(this)
+                    .setPositiveButton("Dismiss", null)
+                    .setCancelable(false)
+                    .setMessage(mDialogErrorMessage)
+                    .create();
         }
+
+        throw new RuntimeException("unknown dialogId");
     }
 
     public void onSaveInstanceState(Bundle outState) {
@@ -171,7 +201,8 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         if (view == mBtnTestAuth) {
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
-            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", mActionLink);
+            //JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", mActionLink);
+            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", "");
             jra.setTitle(mTitleText);
             jra.setDescription(mDescriptionText);
             jra.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
@@ -185,6 +216,12 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     // ------------------------------------------------------------------------
     // JREngage DELEGATE METHODS
     // ------------------------------------------------------------------------
+    public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
+        mDialogErrorMessage = "JREngage dialog failed to show, error: " +
+                ((error == null) ? "unknown" : error.getMessage());
+
+        showDialog(DIALOG_JRENGAGE_ERROR);
+    }
 
     public void jrAuthenticationDidSucceedForUser(JRDictionary authInfo, String provider) {
         JRDictionary profile = (authInfo == null) ? null : authInfo.getAsDictionary("profile");
@@ -203,13 +240,6 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         Toast.makeText(this, "Authentication did reach token url", Toast.LENGTH_SHORT).show();
     }
 
-    public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-        String message = "JREngage dialog failed to show, error: " +
-                ((error == null) ? "unknown" : error.getMessage());
-
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
     public void jrAuthenticationDidNotComplete() {
         Toast.makeText(this, "Authentication did not complete", Toast.LENGTH_SHORT).show();
     }
@@ -226,18 +256,14 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     }
 
     public void jrSocialDidNotCompletePublishing() {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void jrSocialDidCompletePublishing() {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void jrSocialDidPublishActivity(JRActivityObject activity, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
     }
 
-    public void jrSocialPublishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
     }
 }

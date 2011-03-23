@@ -114,7 +114,7 @@ public class JREngage {
             }
 
             sInstance = new JREngage();
-        } //else throw new IllegalComponentStateException("illegal reinitialization in JREngage.initInstance");
+        } //else throw new IllegalArgumentException("illegal reinitialization in JREngage.initInstance");
 
         //todo this can happen if the user exits the activity via the home button or something and the phone
         //doesn't kill the app, so it shouldn't be an error, but there's suspect statefulness here regardless
@@ -314,8 +314,7 @@ public class JREngage {
                 delegate.jrSocialDidNotCompletePublishing();
             }
 
-            // TODO:  implement UI stuff
-            // interfaceMaestro.publishingCanceled();
+            mInterfaceMaestro.publishingCanceled();
         }
 
         public void publishingDidComplete() {
@@ -331,25 +330,34 @@ public class JREngage {
             // interfaceMaestro.publishingCompleted();
         }
 
-        public void publishingActivityDidSucceed(JRActivityObject activity, String provider) {
+        public void publishingDialogDidFail(JREngageError err) {
+            mInterfaceMaestro.publishingDialogFailed();
+            engageDidFailWithError(err);
+        }
+
+        public void publishingJRActivityDidSucceed(JRActivityObject activity, String provider) {
             if (Config.LOGD) {
-                Log.d(TAG, "[publishingActivityDidSucceed]");
+                Log.d(TAG, "[publishingJRActivityDidSucceed]");
             }
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrSocialDidPublishActivity(activity, provider);
+                delegate.jrSocialDidPublishJRActivity(activity, provider);
             }
         }
 
-        public void publishingActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
+        public void publishingJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
             if (Config.LOGD) {
-                Log.d(TAG, "[publishingActivityDidFail]");
+                Log.d(TAG, "[publishingJRActivityDidFail]");
             }
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrSocialPublishingActivityDidFail(activity, error, provider);
+                delegate.jrSocialPublishJRActivityDidFail(activity, error, provider);
             }
+
+            mInterfaceMaestro.publishingJRActivityFailed();
         }
+
+        public void mobileConfigDidFinish() {}
     };
 
     /*
@@ -364,6 +372,8 @@ public class JREngage {
         return mSessionData.authenticatedUserForProviderNamed(provider);
     }
 
+
+    //todo xxx the following four functions all call the same JRSessionData methods but they should do different things.
     public void signoutUserForProvider(String provider) {
         if (Config.LOGD) {
             Log.d(TAG, "[signoutUserForProvider]");
@@ -439,7 +449,7 @@ public class JREngage {
 		mDelegates.remove(delegate);
 	}
 
-    public void engageDidFailWithError(JREngageError error) {
+    private void engageDidFailWithError(JREngageError error) {
         for (JREngageDelegate delegate : getDelegatesCopy()) {
             delegate.jrEngageDialogDidFailToShowWithError(error);
         }
@@ -504,6 +514,7 @@ public class JREngage {
         mSessionData.setActivity(activity);
 
         mInterfaceMaestro.showPublishingDialogWithActivity();
+
     }
 	
 	@Override

@@ -29,17 +29,20 @@
 */
 package com.janrain.android.engage.session;
 
+import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.JREngageError.AuthenticationError;
 import com.janrain.android.engage.JREngageError.ConfigurationError;
 import com.janrain.android.engage.JREngageError.ErrorType;
 import com.janrain.android.engage.JREngageError.SocialPublishingError;
 import com.janrain.android.engage.JREnvironment;
-//import com.janrain.android.engage.net.CookieHelper;
+import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
@@ -73,16 +76,20 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     
 	private static JRSessionData sInstance;
 
-//    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
+    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
 //    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
-    private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
+//    private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
 
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
     private static final String ARCHIVE_BASIC_PROVIDERS = "basicProviders";
     private static final String ARCHIVE_SOCIAL_PROVIDERS = "socialProviders";
     private static final String ARCHIVE_AUTH_USERS_BY_PROVIDER = "jrAuthenticatedUsersByProvider";
 
-    private static final String FMT_CONFIG_URL = "%s/openid/mobile_config_and_baseurl?appId=%s&device=android";
+    private static final String FMT_CONFIG_URL = "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s";
+    private boolean mGetConfigDone = false;
+    private String mOldEtag;
+
+    private String mUrlEncodedAppName;
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -136,7 +143,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	private ArrayList<String> mSocialProviders;
 	private JRDictionary mAuthenticatedUsersByProvider;
 	
-	//private String mSavedConfigurationBlock;
+	private String mSavedConfigurationBlock = "";
 	private String mNewEtag;
     private String mGitCommit;
 
@@ -157,9 +164,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     //private boolean mForceReauth;
 
 	private boolean mSocialSharing;
-	
-	private boolean mDialogIsShowing;
-	private JREngageError mError;
+
+    private boolean mDialogIsShowing = false;
+
+    private JREngageError mError;
 	
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -180,57 +188,69 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 		mAppId = appId;
 		mTokenUrl = tokenUrl;
 
-//        mAuthenticatedUsersByProvider = new JRDictionary();
-//        mAllProviders = new JRDictionary();
+        ApplicationInfo ai = JREngage.getContext().getApplicationInfo();
+        String appName = JREngage.getContext().getPackageManager().getApplicationLabel(ai).toString();
+        try { mUrlEncodedAppName = URLEncoder.encode(appName, "UTF-8"); }
+        catch (UnsupportedEncodingException e) { Log.e(TAG, e.toString()); }
 
-        // Load dictionary of authenticated users.  If the dictionary is not found, the
-        // archiver will return a new (empty) list.
-        mAuthenticatedUsersByProvider = JRDictionary.unarchive(ARCHIVE_AUTH_USERS_BY_PROVIDER);
+        String libraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
+        String diskVersion = Prefs.getAsString("JREngageVersion", "");
+        if (diskVersion.equals(libraryVersion)) {
+            // Load dictionary of authenticated users.  If the dictionary is not found, the
+            // archiver will return a new (empty) list.
+            mAuthenticatedUsersByProvider = JRDictionary.unarchive(ARCHIVE_AUTH_USERS_BY_PROVIDER);
 
-        // Load the list of all providers
-        mAllProviders = JRDictionary.unarchive(ARCHIVE_ALL_PROVIDERS);
+            // Load the list of all providers
+            mAllProviders = JRDictionary.unarchive(ARCHIVE_ALL_PROVIDERS);
 
-        for (Object provider : mAllProviders.values()) {
-            ((JRProvider)provider).loadDynamicVariables();
-        }
-
-        // Load the list of basic providers
-        mBasicProviders = (ArrayList<String>)Archiver.load(ARCHIVE_BASIC_PROVIDERS);
-        if (Config.LOGD) {
-            if (ListUtils.isEmpty(mBasicProviders)) {
-                Log.d(TAG, "[ctor] basic providers is empty");
-            } else {
-                Log.d(TAG, "[ctor] basic providers: [" + TextUtils.join(",", mBasicProviders) + "]");
+            for (Object provider : mAllProviders.values()) {
+                ((JRProvider)provider).loadDynamicVariables();
             }
-        }
 
-        // Load the list of social providers
-        mSocialProviders = (ArrayList<String>)Archiver.load(ARCHIVE_SOCIAL_PROVIDERS);
-        if (Config.LOGD) {
-            if (ListUtils.isEmpty(mSocialProviders)) {
-                Log.d(TAG, "[ctor] social providers is empty");
-            } else {
-                Log.d(TAG, "[ctor] social providers: [" + TextUtils.join(",", mSocialProviders) + "]");
+            // Load the list of basic providers
+            mBasicProviders = (ArrayList<String>)Archiver.load(ARCHIVE_BASIC_PROVIDERS);
+            if (Config.LOGD) {
+                if (ListUtils.isEmpty(mBasicProviders)) {
+                    Log.d(TAG, "[ctor] basic providers is empty");
+                } else {
+                    Log.d(TAG, "[ctor] basic providers: [" + TextUtils.join(",", mBasicProviders) + "]");
+                }
             }
+
+            // Load the list of social providers
+            mSocialProviders = (ArrayList<String>)Archiver.load(ARCHIVE_SOCIAL_PROVIDERS);
+            if (Config.LOGD) {
+                if (ListUtils.isEmpty(mSocialProviders)) {
+                    Log.d(TAG, "[ctor] social providers is empty");
+                } else {
+                    Log.d(TAG, "[ctor] social providers: [" + TextUtils.join(",", mSocialProviders) + "]");
+                }
+            }
+
+            // Load the base url
+            mBaseUrl = Prefs.getAsString(Prefs.KEY_JR_BASE_URL, "");
+
+            // Figure out of we're suppose to hide the powered by line
+            mHidePoweredBy = Prefs.getAsBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, false);
+
+            // And load the last used basic and social providers
+            mReturningSocialProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
+            mReturningBasicProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
+
+            /* If the configuration for this rp has changed, the etag will have changed, and we need
+             * to update our current configuration information. */
+            mOldEtag = Prefs.getAsString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
+        } else {
+            mAuthenticatedUsersByProvider = new JRDictionary();
+            mAllProviders = new JRDictionary();
+            mBasicProviders = new ArrayList<String>();
+            mSocialProviders = new ArrayList<String>();
+            mBaseUrl = "";
+            mHidePoweredBy = false;
+            mReturningSocialProvider = "";
+            mReturningBasicProvider = "";
+            mOldEtag = "";
         }
-
-        // Load the list of icons that the library should re-attempt to download, in case
-        // previous attempts failed for whatever reason
-        //mIconsStillNeeded = JRDictionary.unarchive(ARCHIVE_ICONS_STILL_NEEDED);
-
-        // Load the set of providers that already have all of their icons; checking this list
-        // is faster than checking for the icons themselves
-        //mProvidersWithIcons = JRProviderList.unarchive(ARCHIVE_PROVIDERS_WITH_ICONS);
-
-        // Load the base url
-        mBaseUrl = Prefs.getAsString(Prefs.KEY_JR_BASE_URL, "");
-
-        // Figure out of we're suppose to hide the powered by line
-        mHidePoweredBy = Prefs.getAsBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, false);
-
-        // And load the last used basic and social providers
-        mReturningSocialProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
-        mReturningBasicProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
 
         mError = startGetConfiguration();
 	}
@@ -243,6 +263,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mError;
     }
 
+//    public void setError(JREngageError mError) {
+//        this.mError = mError;
+//    }
+
     public JRActivityObject getActivity() {
         return mActivity;
     }
@@ -254,17 +278,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         //JRPublishActivity now shortens URLs, don't need to follow TODO?
     }
 
-    public boolean getAlwaysForceReauth() {
-        return mAlwaysForceReauth;
-    }
+//    public boolean getAlwaysForceReauth() {
+//        return mAlwaysForceReauth;
+//    }
 
     public void setAlwaysForceReauth(boolean force) {
         mAlwaysForceReauth = force;
     }
-
-//    public void setForceReauth(boolean mForceReauth) {
-//        this.mForceReauth = mForceReauth;
-//    }
 
     public String getTokenUrl() {
         return mTokenUrl;
@@ -349,6 +369,15 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mHidePoweredBy;
     }
 
+    public void setDialogIsShowing(boolean mDialogIsShowing) {
+        this.mDialogIsShowing = mDialogIsShowing;
+        if (!mDialogIsShowing & !mSavedConfigurationBlock.equals("")) {
+            String s = mSavedConfigurationBlock;
+            mSavedConfigurationBlock = "";
+            mError = finishGetConfiguration(s);
+        }
+    }
+
     // ------------------------------------------------------------------------
     // DELEGATE METHODS
     // ------------------------------------------------------------------------
@@ -357,18 +386,17 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         Log.i(TAG, "[connectionDidFail]");
 
         if (userdata == null) {
-            /*
-            As of right now, this should not happen.  We specify the tag/userdata in all calls.
-            Leave check here for future/possible use.
-             */
-            Log.w(TAG, "[connectionDidFail] userdata is null, this is unexpected.");
+            Log.e(TAG, "[connectionDidFail] unexpected null userdata");
         } else if (userdata instanceof String) {
             String s = (String)userdata;
             if (s.equals("getConfiguration")) {
+                Log.e(TAG, "connectionDidFail for getConfiguration");
                 mError = new JREngageError(
                         "There was a problem communicating with the Janrain server while configuring authentication.",
                         ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
                         JREngageError.ErrorType.CONFIGURATION_FAILED);
+                mGetConfigDone = true;
+                triggerMobileConfigDidFinish();
             } else if (s.equals("emailSuccess")) {
                 // TODO: Implement notifications for email/sms sharing
             } else if (s.equals("smsSuccess")) {
@@ -395,7 +423,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
                 JREngageError error = new JREngageError("Session error", JREngageError.CODE_UNKNOWN, "", ex);
                 for (JRSessionDelegate delegate : delegatesCopy) {
-                    delegate.publishingActivityDidFail(
+                    delegate.publishingJRActivityDidFail(
                             (JRActivityObject) dictionary.get("activity"),
                             error,
                             dictionary.getAsString("providerName"));
@@ -412,11 +440,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         if (userdata == null) {
-            /*
-            As of right now, this should not happen.  We specify the tag/userdata in all calls.
-            Leave check here for future/possible use.
-             */
-            Log.w(TAG, "[connectionDidFinishLoading] userdata is null, this is unexpected.");
+            Log.e(TAG, "[connectionDidFinishLoading] unexpected null userdata");
         } else if (userdata instanceof String) {
             String tag = (String) userdata;
 
@@ -432,39 +456,35 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
             if (dictionary.getAsString("action").equals("shareActivity"))
                 processShareActivityResponse(payload, dictionary);
-//            } else if (dicitonary.containsKey("shortenUrls")) {
-//                //todo
-//            } else {
-//                //todo
+            //else todo
         }
 	}
 
     private void processShareActivityResponse(String payload, JRDictionary userDataTag) {
-        // TODO: Move all of this code out of the connection delegate function
         String providerName = userDataTag.getAsString("providerName");
 
         JRDictionary responseDict = JRDictionary.fromJSON(payload);
 
         if (responseDict == null) {
             setCurrentlyPublishingProvider(null);
-            List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-            for (JRSessionDelegate delegate : delegatesCopy) {
-                delegate.publishingActivityDidFail(
+            for (JRSessionDelegate delegate : getDelegatesCopy()) {
+                delegate.publishingJRActivityDidFail(
                         (JRActivityObject) userDataTag.get("activity"),
                         new JREngageError(payload,
                                 SocialPublishingError.FAILED,
                                 ErrorType.PUBLISH_FAILED),
                         providerName);
             }
+
         } else if (responseDict.containsKey("stat") && ("ok".equals(responseDict.get("stat")))) {
             saveLastUsedSocialProvider();
             setCurrentlyPublishingProvider(null);
-            List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-            for (JRSessionDelegate delegate : delegatesCopy) {
-                delegate.publishingActivityDidSucceed(
+            for (JRSessionDelegate delegate : getDelegatesCopy()) {
+                delegate.publishingJRActivityDidSucceed(
                         mActivity,
                         providerName);
             }
+
         } else {
             setCurrentlyPublishingProvider(null);
             JRDictionary errorDict = responseDict.getAsDictionary("err");
@@ -525,9 +545,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 }
             }
 
-            List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-            for (JRSessionDelegate delegate : delegatesCopy) {
-                delegate.publishingActivityDidFail((JRActivityObject) userDataTag.get("activity"), publishError, providerName);
+            for (JRSessionDelegate delegate : getDelegatesCopy()) {
+                delegate.publishingJRActivityDidFail((JRActivityObject) userDataTag.get("activity"), publishError, providerName);
             }
         }
     }
@@ -550,30 +569,25 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                             new String(payload),
                             dictionary.getAsString("providerName"));
                 }
-            } //else if (dictionary.containsKey("downloadPicture")) {
-              //  // TODO: Add icon downloading code
-            //}
+            } else Log.e(TAG, "unexpected userdata found in ConnectionDidFinishLoading full");
         } else if (userdata instanceof String) {
             String s = (String)userdata;
-//            if (TextUtils.isEmpty(s)) {
-//                // TODO:  tag string is null or empty...not handled on iPhone, is it possible?
-//            } else
+
             if (s.equals("getConfiguration")) {
+                //todo this is probably UTF-8 encoded, not ascii encoded, review this function
                 String payloadString = EncodingUtils.getAsciiString(payload);
-                if (Config.LOGD) {
-                    Log.d(TAG, "[connectionDidFinishLoading-full] payload string: " + payloadString);
-                }
+                Log.d(TAG, "[connectionDidFinishLoading-full] payload string: " + payloadString);
 
                 if (payloadString.contains("\"provider_info\":{")) {
                     mError = finishGetConfiguration(payloadString, headers.getETag());
                 } else {
+                    Log.e(TAG, "connectionDidFail full for getConfiguration");
                     mError = new JREngageError(
                             "There was a problem communicating with the Janrain server while configuring authentication.",
                             ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
                             ErrorType.CONFIGURATION_FAILED);
                 }
-
-            }
+            } else Log.e(TAG, "unexpected userdata found in ConnectionDidFinishLoading full");
         }
 	}
 
@@ -610,7 +624,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     private JREngageError startGetConfiguration() {
-        String urlString = String.format(FMT_CONFIG_URL, ENVIRONMENT.getServerUrl(), mAppId);
+        String urlString = String.format(FMT_CONFIG_URL, ENVIRONMENT.getServerUrl(), mAppId, mUrlEncodedAppName);
         if (Config.LOGD) {
             Log.d(TAG, "[startGetConfiguration] url: " + urlString);
         }
@@ -645,7 +659,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         // If the parsed dictionary object is null or an exception has occurred, return.
         if ((jsonDict == null) || (jsonEx != null)) {
-            Log.w(TAG, "[finishGetConfiguration] failed.");
+            Log.e(TAG, "[finishGetConfiguration] failed.");
             return new JREngageError(
                     "There was a problem communicating with the Janrain server while configuring authentication.",
                     ConfigurationError.JSON_ERROR,
@@ -694,6 +708,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         // Once we know everything is parsed and saved, save the new etag
         Prefs.putString(Prefs.KEY_JR_CONFIGURATION_ETAG, mNewEtag);
 
+        // 'git-tag'-like library version tag to prevent reloading stale data from disk
+        String libraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
+        Prefs.putString("JREngageVersion", libraryVersion);
+
+        mGetConfigDone = true;
+        triggerMobileConfigDidFinish();
+
         return null;
     }
 
@@ -702,12 +723,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[finishGetConfiguration-etag]");
         }
 
-        /* If the configuration for this rp has changed, the etag will have changed, and we need
-         * to update our current configuration information. */
-        String oldEtag = Prefs.getAsString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
         //todo implement git commit checking for cache reloading
-        if (!oldEtag.equals(etag) || true) {
-            mNewEtag = etag;
+        if (!mOldEtag.equals(etag) || true) {
+            mNewEtag = etag;  //todo verify that this is written out
 
             /* We can only update all of our data if the UI isn't currently using that
              * information.  Otherwise, the library may crash/behave inconsistently.  If a
@@ -715,8 +733,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
              * where a dialog is showing but there isn't any data that it could be using (that
              * is, the lists of basic and social providers are nil), go ahead and update it too.
              * The dialogs won't try and do anything until we're done updating the lists. */
-            if (!mDialogIsShowing || (ListUtils.isEmpty(mBasicProviders)
-                    && ListUtils.isEmpty(mSocialProviders))) {
+            if (!mDialogIsShowing || (ListUtils.isEmpty(mBasicProviders) && ListUtils.isEmpty(mSocialProviders))) {
                 return finishGetConfiguration(dataStr);
             }
 
@@ -725,8 +742,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
              * setting the boolean dialogIsShowing to "NO". In the setter function, sessionData
              * checks to see if there's anything stored in the savedConfigurationBlock, and
              * updates it then. */
-            //mSavedConfigurationBlock = dataStr;
+            mSavedConfigurationBlock = dataStr;
         }
+
+        mGetConfigDone = true;
+        triggerMobileConfigDidFinish();
 
         return null;
     }
@@ -801,7 +821,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             return null;
         }
 
-        String oid;
+        String oid;  //open identifier
 
         if (!TextUtils.isEmpty(mCurrentlyAuthenticatingProvider.getOpenIdentifier())) {
             oid = String.format("openid_identifier=%s&", mCurrentlyAuthenticatingProvider.getOpenIdentifier());
@@ -896,13 +916,29 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         } else {
             provider.setForceReauth(true);
             mAuthenticatedUsersByProvider.remove(provider.getName());
-            //cookies are stored by domain, and are not different for different schemes (i.e. http vs https)
-//            CookieHelper.deleteCookiesByUrl("http://" + provider.getCookieDomain());
-            String cookies = CookieManager.getInstance().getCookie(getBaseUrl());
-            String welcome_info = cookies.replaceAll(".*welcome_info=([^;]*).*", "$1");
+
+            List<String> domains = provider.getCookieDomains();
+            for (String s : domains) deleteWebviewCookiesForDomain(s);
 
             JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
         }
+    }
+
+    private void deleteWebviewCookiesForDomain(String domain) {
+        CookieSyncManager csm = CookieSyncManager.createInstance(JREngage.getContext());
+        CookieManager cm = CookieManager.getInstance();
+
+        //new android.net.WebAddress();
+
+        //cookies are stored by domain, and are not different for different schemes (i.e. http vs https)
+        //(although they sort of, ...)
+        String cookieGlob = cm.getCookie("http://" + domain);
+        String[] cookies = cookieGlob.split(";");
+        for (String cookieTuple : cookies) {
+            String[] cookieParts = cookieTuple.split("=");
+            cm.setCookie(domain, cookieParts[0] + "=");//;domain=" + domain);
+        }
+        csm.sync();
     }
 
     public void forgetAllAuthenticatedUsers() {
@@ -910,16 +946,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[forgetAllAuthenticatedUsers]");
         }
 
-
-        //todo this should call the above function, "forgetAuthenticatedUserForProvider" eh? abstraction?
-        for (String providerName : mAllProviders.keySet()) {
-            JRProvider provider = mAllProviders.getAsProvider(providerName);
-            provider.setForceReauth(true);
-        }
-
-        mAuthenticatedUsersByProvider.clear();
-
-        JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
+        for (String providerName : mAllProviders.keySet()) forgetAuthenticatedUserForProvider(providerName);
     }
 
     public JRProvider getProviderAtIndex(int index, List<String> fromList) {
@@ -927,13 +954,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mAllProviders.getAsProvider(key);
     }
 
-    public JRProvider getBasicProviderAtIndex(int index) {
-        return getProviderAtIndex(index, mBasicProviders);
-    }
-
-    public JRProvider getSocialProviderAtIndex(int index) {
-        return getProviderAtIndex(index, mSocialProviders);
-    }
+//    public JRProvider getBasicProviderAtIndex(int index) {
+//        return getProviderAtIndex(index, mBasicProviders);
+//    }
+//
+//    public JRProvider getSocialProviderAtIndex(int index) {
+//        return getProviderAtIndex(index, mSocialProviders);
+//    }
 
     public JRProvider getProviderByName(String name) {
         return mAllProviders.getAsProvider(name);
@@ -959,17 +986,50 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             body.append("&activity=").append(activityContent);
             body.append("&url_shortening=true"); //this is an undocumented parameter available to the mobile library?
             body.append("&provider=").append(user.getProviderName());
-            //TODO include truncate parameter here?
             body.append("&device=android");
+            body.append("&app_name=").append(mUrlEncodedAppName);
         } catch (UnsupportedEncodingException e) { throw new RuntimeException(e); }
 
         String url = ENVIRONMENT.getServerUrl() + "/api/v2/activity";
 
         Log.d(TAG, "[shareActivityForUser]: " + url + " data: " + body.toString());
 
-        //final String tag = "shareActivity";
-        //JRConnectionManager.createConnection(url, body.toString().getBytes(), this, false, tag);
+        JRDictionary tag = new JRDictionary();
+        tag.put("action", "shareActivity");
+        tag.put("activity", mActivity);
+        tag.put("providerName", mCurrentlyPublishingProvider.getName());
+        JRConnectionManager.createConnection(url, body.toString().getBytes(), this, false, tag);
 
+        if (Config.LOGD) {
+            Log.d(TAG, "[shareActivityForUser] connection started for url: " + url);
+        }
+    }
+
+    public void setStatusForUser(JRAuthenticatedUser user) {
+        if (Config.LOGD) {
+            Log.d(TAG, "[shareActivityForUser]");
+        }
+
+        setCurrentlyPublishingProvider(user.getProviderName());
+        setSocial(true);
+
+        String deviceToken = user.getDeviceToken();
+        String status = mActivity.getUserGeneratedContent();
+
+        StringBuilder body = new StringBuilder();
+        //TODO include truncate parameter here?
+        body.append("status=").append(status);
+        //these are undocumented parameters available to the mobile library.
+        body.append("&device_token=").append(deviceToken);
+        body.append("&options={\"urlShortening\":\"true\"}");
+        body.append("&device=android");
+        body.append("&app_name=").append(mUrlEncodedAppName);
+
+        String url = ENVIRONMENT.getServerUrl() + "/api/v2/set_status";
+
+        Log.d(TAG, "[setStatusForUser]: " + url + " data: " + body.toString());
+
+        //todo same callback handler for status as activity?
         JRDictionary tag = new JRDictionary();
         tag.put("action", "shareActivity");
         tag.put("activity", mActivity);
@@ -988,7 +1048,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         String body = "token=" + token;
-        byte[] postData = body.getBytes();  // URL encode necessary?
+        byte[] postData = body.getBytes();  //todo URL encode necessary?
 
         JRDictionary tag = new JRDictionary();
         tag.put("action", "callTokenUrl");
@@ -1049,6 +1109,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         //todo if we've reached this point from JRLandingActivity.prepareUserInterface mCurrentlyAuthenticatingProvider will definitely
         //be null and this will raise a null pointer exception.
+        //why? how do you show the landing page without a provider being the one we're currently authenticating with?
         String providerName = mCurrentlyAuthenticatingProvider.getName();
 
         setCurrentlyAuthenticatingProvider((String) null);
@@ -1083,6 +1144,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
+    //todo nothing is triggering this?
     public void triggerPublishingDidComplete() {
         if (Config.LOGD) {
             Log.d(TAG, "[triggerPublishingDidComplete]");
@@ -1095,17 +1157,27 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mSocialSharing = false;
     }
 
-//    public void triggerPublishingDidFail(JREngageError error) {
-//        if (Config.LOGD) {
-//            Log.d(TAG, "[triggerPublishingDidFail]");
-//        }
-//
-//        //todo null on the next line should be a JRDictionary for the activity but there's no way to
-//        //get one which makes me question the wisdom of it being passed around as a JRDictionary to begin with
-//        for (JRSessionDelegate delegate : getDelegatesCopy()) {
-//            delegate.publishingActivityDidFail(null, error, mCurrentlyAuthenticatingProvider.getName());
-//        }
-//    }
+    public void triggerPublishingJRActivityDidFail(JREngageError error) {
+        if (Config.LOGD) {
+            Log.d(TAG, "[triggerPublishingJRActivityDidFail]");
+        }
+
+        for (JRSessionDelegate delegate : getDelegatesCopy()) {
+            String provider = "";
+            if (mCurrentlyPublishingProvider != null) provider = mCurrentlyPublishingProvider.getName();
+            delegate.publishingJRActivityDidFail(mActivity, error, provider);
+        }
+    }
+
+    public void triggerPublishingDialogDidFail(JREngageError err) {
+       if (Config.LOGD) {
+            Log.d(TAG, "[triggerPublishingDialogDidFail]");
+        }
+
+        for (JRSessionDelegate delegate : getDelegatesCopy()) {
+            delegate.publishingDialogDidFail(err);
+        }
+    }
 
     public void triggerPublishingDidCancel() {
         if (Config.LOGD) {
@@ -1117,12 +1189,16 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
+    private void triggerMobileConfigDidFinish() {
+        for (JRSessionDelegate d : getDelegatesCopy()) d.mobileConfigDidFinish();
+    }
+
     /*
     TODO:  This method appears to have gone away.
     TODO RESPONSE: Um... pretty sure it just moved to a spot higher in the iPhone version of the file?
 
     private String appNameAndVersion() {
-        final String FMT = "appName=%s.%s&version=%d_%s";
+        final String FMT = "mUrlEncodedAppName=%s.%s&version=%d_%s";
 
         Context ctx = JREngage.getContext();
         PackageManager pkgMgr = ctx.getPackageManager();
@@ -1156,5 +1232,17 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     public void setCurrentlyPublishingProvider(String provider) {
         Log.d(TAG, "[setCurrentlyPublishingProvider]: " + provider);
         mCurrentlyPublishingProvider = getProviderByName(provider);
+    }
+
+    public boolean isGetMobileConfigDone() {
+        return mGetConfigDone;
+    }
+
+    public static JREnvironment getEnvironment() {
+        return ENVIRONMENT;
+    }
+
+    public String getUrlEncodedAppName() {
+        return mUrlEncodedAppName;
     }
 }
