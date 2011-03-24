@@ -37,12 +37,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.*;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.*;
 import android.util.Config;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
 import android.widget.Button;
@@ -212,6 +214,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private boolean mWeAreWaitingForMobileConfig = false;
 
     //UI views
+    private RelativeLayout mPreviewBorder;
     private RelativeLayout mMediaContentView;
     private TextView mCharacterCountView;
     private TextView mPreviewLabelView;
@@ -221,6 +224,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private ImageView mTriangleIconView;
     private LinearLayout mProfilePicAndButtonsHorizontalLayout; //I think we don't need a handle to this
     private LinearLayout mUserProfileInformationAndShareButtonContainer; //or a handle to this
+    private LinearLayout mUserProfileContainer;
     private ImageView mUserProfilePic;
     private LinearLayout mNameAndSignOutContainer;
     private TextView mUserNameView;
@@ -275,6 +279,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 //        title.setText(getString(R.string.publish_activity_title));
 
         //View References
+        mPreviewBorder = (RelativeLayout) findViewById(R.id.preview_box_border);
         mMediaContentView = (RelativeLayout) findViewById(R.id.media_content_view);
         mCharacterCountView = (TextView) findViewById(R.id.character_count_view);
         mProviderIcon = (ImageView) findViewById(R.id.provider_icon);
@@ -284,8 +289,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mTriangleIconView = (ImageView) findViewById(R.id.triangle_icon_view);
         mUserProfileInformationAndShareButtonContainer = (LinearLayout) findViewById(R.id.user_profile_information_and_share_button_container);
         mProfilePicAndButtonsHorizontalLayout = (LinearLayout) findViewById(R.id.profile_pic_and_buttons_horizontal_layout);
+        mUserProfileContainer = (LinearLayout) findViewById(R.id.user_profile_container);
         mUserProfilePic = (ImageView) findViewById(R.id.profile_pic);
-        mNameAndSignOutContainer = (LinearLayout) findViewById(R.id.name_and_sign_out_container);
+        //mNameAndSignOutContainer = (LinearLayout) findViewById(R.id.name_and_sign_out_container);
         mUserNameView = (TextView) findViewById(R.id.user_name);
         mSignOutButton = (Button) findViewById(R.id.sign_out_button);
         mJustShareButton = (Button) findViewById(R.id.just_share_button);
@@ -300,8 +306,18 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mUneditableUserCommentView.setClickable(false);
 
         //View listeners
+        ButtonEventColorChangingListener colorChangingListener = new ButtonEventColorChangingListener();
+        mConnectAndShareButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
+        mJustShareButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
+
         mConnectAndShareButton.setOnClickListener(mShareButtonListener);
+        mConnectAndShareButton.setOnFocusChangeListener(colorChangingListener);
+        mConnectAndShareButton.setOnTouchListener(colorChangingListener);
+
         mJustShareButton.setOnClickListener(mShareButtonListener);
+        mJustShareButton.setOnFocusChangeListener(colorChangingListener);
+        mJustShareButton.setOnTouchListener(colorChangingListener);
+
         mUserCommentView.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -433,6 +449,32 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     //UI listeners
+
+    private class ButtonEventColorChangingListener implements
+            View.OnFocusChangeListener, View.OnTouchListener {
+
+        public void onFocusChange(View view, boolean hasFocus) {
+            if (hasFocus)
+                view.getBackground().clearColorFilter();
+            else
+                view.getBackground().setColorFilter(
+                        colorForProviderFromArray(
+                                mSelectedProvider.getSocialSharingProperties().get("color_values"), false),
+                        PorterDuff.Mode.MULTIPLY);
+        }
+
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            view.getBackground().setColorFilter(
+                    colorForProviderFromArray(
+                            mSelectedProvider.getSocialSharingProperties().get("color_values"), false),
+                    PorterDuff.Mode.MULTIPLY);
+
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN)
+                view.getBackground().clearColorFilter();
+
+            return false;
+        }
+    }
 
     private View.OnClickListener mShareButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
@@ -654,8 +696,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         int visibleIfNotLoggedIn = !loggedIn ? View.VISIBLE : View.GONE;
 
         mJustShareButton.setVisibility(visibleIfLoggedIn);
-        mUserProfilePic.setVisibility(visibleIfLoggedIn);
-        mNameAndSignOutContainer.setVisibility(visibleIfLoggedIn);
+        mUserProfileContainer.setVisibility(visibleIfLoggedIn);
+
+        //mUserProfilePic.setVisibility(visibleIfLoggedIn);
+        //mNameAndSignOutContainer.setVisibility(visibleIfLoggedIn);
 
         mConnectAndShareButton.setVisibility(visibleIfNotLoggedIn);
 
@@ -728,18 +772,29 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 //        boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
 //        mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
 
-        mUserProfileInformationAndShareButtonContainer.setBackgroundColor(colorForProviderFromArray(socialSharingProperties.get("color_values")));
+        mUserProfileInformationAndShareButtonContainer.setBackgroundColor(
+                colorForProviderFromArray(socialSharingProperties.get("color_values"), true));
 
-        mJustShareButton.setBackgroundDrawable(mSelectedProvider.getProviderButtonShort(getApplicationContext()));
-        mConnectAndShareButton.setBackgroundDrawable(mSelectedProvider.getProviderButtonLong(getApplicationContext()));
+        int colorWithNoAlpha = colorForProviderFromArray(
+                mSelectedProvider.getSocialSharingProperties().get("color_values"), false);
+
+        mJustShareButton.getBackground().setColorFilter(colorWithNoAlpha, PorterDuff.Mode.MULTIPLY);
+        mConnectAndShareButton.getBackground().setColorFilter(colorWithNoAlpha, PorterDuff.Mode.MULTIPLY);
+        mPreviewBorder.getBackground().setColorFilter(colorWithNoAlpha, PorterDuff.Mode.SRC_ATOP);
+
+//        mJustShareButton.setBackgroundDrawable(mSelectedProvider.getProviderButtonShort(getApplicationContext()));
+//        mConnectAndShareButton.setBackgroundDrawable(mSelectedProvider.getProviderButtonLong(getApplicationContext()));
 
         mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(getApplicationContext()));
     }
 
-    private int colorForProviderFromArray(Object arrayOfColorStrings) {
+    private int colorForProviderFromArray(Object arrayOfColorStrings, boolean withAlpha) {
 
         if (!(arrayOfColorStrings instanceof ArrayList))
-            return 0x33074764; // If there's ever an error, just return Janrain blue (at 20% opacity)
+            if (withAlpha)
+                return 0x33074764; // If there's ever an error, just return Janrain blue (at 20% opacity)
+            else
+                return 0xFF074764;
 
         @SuppressWarnings("unchecked")
         ArrayList<Double> colorArray = new ArrayList<Double>((ArrayList<Double>)arrayOfColorStrings);
@@ -747,7 +802,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         /* We need to reorder the array (which is RGBA, the color format returned by Engage) to the color format
            used by Android (which is ARGB), by moving the last element (alpha) to the front */
         Double alphaValue = colorArray.remove(3);
-        colorArray.add(0, alphaValue);
+        if (withAlpha)
+            colorArray.add(0, alphaValue);
+        else
+            colorArray.add(0, 1.0);
         
         int finalColor = 0;
         for (Object colorValue : colorArray) {
