@@ -281,11 +281,40 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if ((socialProviders == null || socialProviders.size() == 0) && !mSessionData.isGetMobileConfigDone()) {
             mWeAreWaitingForMobileConfig = true;
-            //mLayoutHelper.showProgressDialog();
             showDialog(DIALOG_MOBILE_CONFIG_LOADING);
         } else {
             initializeWithProviderConfiguration();
         }
+    }
+
+    private void loadViewElementPropertiesWithActivityObject() {
+        //this sets up pieces of the UI when the provider configuration information
+        //hasn't yet been loaded
+
+        mUserCommentView.setHint(R.string.please_enter_text);
+
+        JRMediaObject mo = null;
+        if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
+
+        ImageView mci = (ImageView) findViewById(R.id.media_content_image);
+        TextView  mcd = (TextView)  findViewById(R.id.media_content_description);
+        TextView  mct = (TextView)  findViewById(R.id.media_content_title);
+
+        //set the media_content_view = a thumbnail of the media
+        try {
+            if (mo != null) if (mo.hasThumbnail()) {
+                mci.setImageBitmap(BitmapFactory.decodeStream((new URL(mo.getThumbnail())).openStream()));
+                Log.d(TAG, "media image url: " + mo.getThumbnail());
+            }
+        } catch (Exception e) {
+            //throw new RuntimeException(e);
+        }
+
+        //set the media content description
+        mcd.setText(mActivityObject.getDescription());
+
+        //set the media content title
+        mct.setText(mActivityObject.getTitle());
     }
 
     private void initializeWithProviderConfiguration() {
@@ -621,38 +650,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         else
             updatePreviewTextWhenContentDoesNotReplaceAction();
 
-        if (loggedIn) mTriangleIconView.setPadding(145,0,0,0);
+        if (loggedIn) mTriangleIconView.setPadding(0,0,240,0);
         else mTriangleIconView.setPadding(0,0,0,0);
-    }
-
-    private void loadViewElementPropertiesWithActivityObject() {
-        //this sets up pieces of the UI when the provider configuration information
-        //hasn't yet been loaded
-
-        mUserCommentView.setHint(R.string.please_enter_text);
-
-        JRMediaObject mo = null;
-        if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
-
-        ImageView mci = (ImageView) findViewById(R.id.media_content_image);
-        TextView  mcd = (TextView)  findViewById(R.id.media_content_description);
-        TextView  mct = (TextView)  findViewById(R.id.media_content_title);
-
-        //set the media_content_view = a thumbnail of the media
-        try {
-            if (mo != null) if (mo.hasThumbnail()) {
-                mci.setImageBitmap(BitmapFactory.decodeStream((new URL(mo.getThumbnail())).openStream()));
-                Log.d(TAG, "media image url: " + mo.getThumbnail());
-            }
-        } catch (Exception e) {
-            //throw new RuntimeException(e);
-        }
-
-        //set the media content description
-        mcd.setText(mActivityObject.getDescription());
-
-        //set the media content title
-        mct.setText(mActivityObject.getTitle());
     }
 
     private void configureViewElementsBasedOnProvider() {
@@ -828,7 +827,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private void fetchShortenedURLs() {
         try {
-            final String jsonEncodedActivityUrl = (new JSONStringer()).array().value(mActivityObject.getUrl()).endArray().toString();
+            final String jsonEncodedActivityUrl = (new JSONStringer())
+                    .array()
+                    .value(mActivityObject.getUrl())
+                    .endArray()
+                    .toString();
             String htmlEncodedJsonEncodedUrl = URLEncoder.encode(jsonEncodedActivityUrl, "UTF8");
             final String urlString =
                     mSessionData.getBaseUrl() + "/openid/get_urls?"

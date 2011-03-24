@@ -158,7 +158,7 @@ public class JRWebViewActivity extends Activity {
 
         mLayoutHelper = new SharedLayoutHelper(this);
         mLayoutHelper.setHeaderText(provider.getFriendlyName());
-        mLayoutHelper.showProgressDialog();
+//        mLayoutHelper.showProgressDialog();
 
         mWebView = (WebView)findViewById(R.id.webview);
         mWebView.clearView();
@@ -269,7 +269,8 @@ public class JRWebViewActivity extends Activity {
             Log.d(TAG, "[loadMobileEndpointUrl] loading url: " + urlToLoad);
         }
 
-        JRConnectionManager.createConnection(urlToLoad, mConnectionManagerDelegate, false, RPX_RESULT_TAG);
+        JRConnectionManager.createConnection(
+                urlToLoad, mMobileEndPointConnectionDelegate, false, RPX_RESULT_TAG);
         // TODO:  is windows live hack necessary here, as it is on iPhone?
     }
 
@@ -302,7 +303,7 @@ public class JRWebViewActivity extends Activity {
                 Log.d(TAG, "[onPageStarted] url: " + url);
             }
 
-            mLayoutHelper.showProgressDialog();
+//            mLayoutHelper.showProgressDialog();
 
             /*
              * Check for mobile endpoint URL.
@@ -320,10 +321,10 @@ public class JRWebViewActivity extends Activity {
             if (Config.LOGD) {
                 Log.d(TAG, "[onPageFinished] url: " + url);
             }
-
-            if (!mIsMobileEndpointUrlLoading) {
-                mLayoutHelper.dismissProgressDialog();
-            }
+//
+//            if (!mIsMobileEndpointUrlLoading) {
+//                mLayoutHelper.dismissProgressDialog();
+//            }
 
             super.onPageFinished(view, url);
         }
@@ -333,14 +334,14 @@ public class JRWebViewActivity extends Activity {
             Log.e(TAG, "[onReceivedError] code: " + errorCode + " | description: " + description
                 + " | url: " + url);
 
-            mLayoutHelper.dismissProgressDialog();
-            Toast.makeText(JRWebViewActivity.this, description, Toast.LENGTH_LONG).show();
+//            mLayoutHelper.dismissProgressDialog();
+//            Toast.makeText(JRWebViewActivity.this, description, Toast.LENGTH_LONG).show();
 
             super.onReceivedError(view, errorCode, description, url);
         }
     };
 
-    private JRConnectionManagerDelegate mConnectionManagerDelegate = new JRConnectionManagerDelegate() {
+    private JRConnectionManagerDelegate mMobileEndPointConnectionDelegate = new JRConnectionManagerDelegate() {
         public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
             Log.d(TAG, "[connectionDidFinishLoading] userdata: " + userdata + " | payload: " + payload);
 

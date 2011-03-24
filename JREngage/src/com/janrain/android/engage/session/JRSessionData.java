@@ -76,9 +76,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     
 	private static JRSessionData sInstance;
 
-//    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
+    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
 //    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
-    private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
+//    private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
 
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
     private static final String ARCHIVE_BASIC_PROVIDERS = "basicProviders";
@@ -732,7 +732,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         //todo implement git commit checking for cache reloading
-        if (!mOldEtag.equals(etag) || true) {
+        if (!mOldEtag.equals(etag)) {
             mNewEtag = etag;  //todo verify that this is written out
 
             /* We can only update all of our data if the UI isn't currently using that
@@ -985,9 +985,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         try {
             String activityJSON = activityDictionary.toJSON();
             activityContent = URLEncoder.encode(activityJSON, "UTF-8");
-            body.append("device_token=").append(deviceToken);
-            body.append("&activity=").append(activityContent);
-            body.append("&url_shortening=true"); //this is an undocumented parameter available to the mobile library?
+            body.append("activity=").append(activityContent);
+
+            //these are undocumented parameters available to the mobile library.
+            body.append("&device_token=").append(deviceToken);
+            body.append("&url_shortening=true");
             body.append("&provider=").append(user.getProviderName());
             body.append("&device=android");
             body.append("&app_name=").append(mUrlEncodedAppName);
@@ -1023,9 +1025,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         StringBuilder body = new StringBuilder();
         //TODO include truncate parameter here?
         body.append("status=").append(status);
+
         //these are undocumented parameters available to the mobile library.
         body.append("&device_token=").append(deviceToken);
-        body.append("&options={\"urlShortening\":\"true\"}");
         body.append("&device=android");
         body.append("&app_name=").append(mUrlEncodedAppName);
 
@@ -1053,6 +1055,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         String body = "token=" + token;
         byte[] postData = body.getBytes();  //todo URL encode necessary?
+        //it probably isn't required, the token is all alphanumerics or something.
 
         JRDictionary tag = new JRDictionary();
         tag.put("action", "callTokenUrl");
