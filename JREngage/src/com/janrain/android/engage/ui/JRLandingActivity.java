@@ -326,8 +326,6 @@ public class JRLandingActivity extends Activity {
 
         mLayoutHelper.setHeaderText(getCustomTitle());
 
-        //mImageView.setImageResource(
-        //        ResourceHelper.providerNameToLogoResourceId(currentlyAuthenticatingProvider.getName()));
         mImageView.setImageDrawable(currentlyAuthenticatingProvider.getProviderLogo(getApplicationContext()));
 
         if (currentlyAuthenticatingProvider.getName().equals(mSessionData.getReturningBasicProvider())) {

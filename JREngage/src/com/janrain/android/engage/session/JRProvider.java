@@ -72,91 +72,99 @@ public class JRProvider implements Serializable {
 	public static final String KEY_REQUIRES_INPUT = "requires_input";
 
     private static final String TAG = JRProvider.class.getSimpleName();
-
-    private static HashMap<String, Drawable> provider_tabspec_drawables = new HashMap<String, Drawable>();
-
-    private final static HashMap<String, Integer> provider_tabspec_resources = new HashMap<String, Integer>(){
-        {
-            //put("facebook", getResources().getDrawable(R.drawable.ic_facebook_tab));
-            put("linkedin", R.drawable.ic_linkedin_tab);
-            put("myspace", R.drawable.ic_myspace_tab);
-            put("twitter", R.drawable.ic_twitter_tab);
-            put("yahoo", R.drawable.ic_yahoo_tab);
-        }
-    };
+//
+//    private static HashMap<String, Drawable> provider_tabspec_drawables = new HashMap<String, Drawable>();
+//
+//    private final static HashMap<String, Integer> provider_tabspec_resources = new HashMap<String, Integer>(){
+//        {
+//            //put("facebook", getResources().getDrawable(R.drawable.ic_facebook_tab));
+//            put("linkedin", R.drawable.ic_linkedin_tab);
+//            put("myspace", R.drawable.ic_myspace_tab);
+//            put("twitter", R.drawable.ic_twitter_tab);
+//            put("yahoo", R.drawable.ic_yahoo_tab);
+//        }
+//    };
     
-    private static HashMap<String, Drawable> provider_list_icon_drawables = new HashMap<String, Drawable>();
+    private static HashMap<String, Drawable> provider_list_icon_drawables =
+            new HashMap<String, Drawable>();
 
-    private final static HashMap<String, Integer> provider_list_icon_resources = new HashMap<String, Integer>(){
-        {
-            put("aol", R.drawable.icon_aol_30x30);
-            put("blogger", R.drawable.icon_blogger_30x30);
-//            put("facebook", R.drawable.icon_facebook_30x30);
-            put("flickr", R.drawable.icon_flickr_30x30);
-            put("google", R.drawable.icon_google_30x30);
-            put("hyves", R.drawable.icon_hyves_30x30);
-            put("linkedin", R.drawable.icon_linkedin_30x30);
-            put("live_id", R.drawable.icon_live_id_30x30);
-            put("livejournal", R.drawable.icon_livejournal_30x30);
-            put("myopenid", R.drawable.icon_myopenid_30x30);
-            put("myspace", R.drawable.icon_myspace_30x30);
-            put("netlog", R.drawable.icon_netlog_30x30);
-            put("openid", R.drawable.icon_openid_30x30);
-            put("paypal", R.drawable.icon_paypal_30x30);
-            put("twitter", R.drawable.icon_twitter_30x30);
-            put("verisign", R.drawable.icon_verisign_30x30);
-            put("wordpress", R.drawable.icon_wordpress_30x30);
-            put("yahoo", R.drawable.icon_yahoo_30x30);
-        }
+    private final static HashMap<String, Integer> provider_list_icon_resources
+            = new HashMap<String, Integer>(){
+                    {
+            //            put("icon_bw_facebook_30x30", R.drawable.icon_bw_facebook_30x30);
+                        put("icon_bw_linkedin_30x30", R.drawable.icon_bw_linkedin_30x30);
+                        put("icon_bw_myspace_30x30", R.drawable.icon_bw_myspace_30x30);
+                        put("icon_bw_twitter_30x30", R.drawable.icon_bw_twitter_30x30);
+                        put("icon_bw_yahoo_30x30", R.drawable.icon_bw_yahoo_30x30);
+                        put("icon_aol_30x30", R.drawable.icon_aol_30x30);
+                        put("icon_blogger_30x30", R.drawable.icon_blogger_30x30);
+            //            put("icon_facebook_30x30", R.drawable.icon_facebook_30x30);
+                        put("icon_flickr_30x30", R.drawable.icon_flickr_30x30);
+                        put("icon_google_30x30", R.drawable.icon_google_30x30);
+                        put("icon_hyves_30x30", R.drawable.icon_hyves_30x30);
+                        put("icon_linkedin_30x30", R.drawable.icon_linkedin_30x30);
+                        put("icon_live_id_30x30", R.drawable.icon_live_id_30x30);
+                        put("icon_livejournal_30x30", R.drawable.icon_livejournal_30x30);
+                        put("icon_myopenid_30x30", R.drawable.icon_myopenid_30x30);
+                        put("icon_myspace_30x30", R.drawable.icon_myspace_30x30);
+                        put("icon_netlog_30x30", R.drawable.icon_netlog_30x30);
+                        put("icon_openid_30x30", R.drawable.icon_openid_30x30);
+                        put("icon_paypal_30x30", R.drawable.icon_paypal_30x30);
+                        put("icon_twitter_30x30", R.drawable.icon_twitter_30x30);
+                        put("icon_verisign_30x30", R.drawable.icon_verisign_30x30);
+                        put("icon_wordpress_30x30", R.drawable.icon_wordpress_30x30);
+                        put("icon_yahoo_30x30", R.drawable.icon_yahoo_30x30);
+                    }
     };
 
     private static HashMap<String, Drawable> provider_logo_drawables = new HashMap<String, Drawable>();
 
-    private final static HashMap<String, Integer> provider_logo_resources = new HashMap<String, Integer>(){
-        {
-            put("aol", R.drawable.logo_aol_280x65);
-            put("blogger", R.drawable.logo_blogger_280x65);
-//            put("facebook", R.drawable.logo_facebook_280x65);
-            put("flickr", R.drawable.logo_flickr_280x65);
-            put("google", R.drawable.logo_google_280x65);
-            put("hyves", R.drawable.logo_hyves_280x65);
-            put("linkedin", R.drawable.logo_linkedin_280x65);
-            put("live_id", R.drawable.logo_live_id_280x65);
-            put("livejournal", R.drawable.logo_livejournal_280x65);
-            put("myopenid", R.drawable.logo_myopenid_280x65);
-            put("myspace", R.drawable.logo_myspace_280x65);
-            put("netlog", R.drawable.logo_netlog_280x65);
-            put("openid", R.drawable.logo_openid_280x65);
-            put("paypal", R.drawable.logo_paypal_280x65);
-            put("twitter", R.drawable.logo_twitter_280x65);
-            put("verisign", R.drawable.logo_verisign_280x65);
-            put("yahoo", R.drawable.logo_yahoo_280x65);
-        }
+    private final static HashMap<String, Integer> provider_logo_resources =
+            new HashMap<String, Integer>(){
+                    {
+                        put("logo_aol_280x65", R.drawable.logo_aol_280x65);
+                        put("logo_blogger_280x65", R.drawable.logo_blogger_280x65);
+            //            put("logo_facebook_280x65", R.drawable.logo_facebook_280x65);
+                        put("logo_flickr_280x65", R.drawable.logo_flickr_280x65);
+                        put("logo_google_280x65", R.drawable.logo_google_280x65);
+                        put("logo_hyves_280x65", R.drawable.logo_hyves_280x65);
+                        put("logo_linkedin_280x65", R.drawable.logo_linkedin_280x65);
+                        put("logo_live_id_280x65", R.drawable.logo_live_id_280x65);
+                        put("logo_livejournal_280x65", R.drawable.logo_livejournal_280x65);
+                        put("logo_myopenid_280x65", R.drawable.logo_myopenid_280x65);
+                        put("logo_myspace_280x65", R.drawable.logo_myspace_280x65);
+                        put("logo_netlog_280x65", R.drawable.logo_netlog_280x65);
+                        put("logo_openid_280x65", R.drawable.logo_openid_280x65);
+                        put("logo_paypal_280x65", R.drawable.logo_paypal_280x65);
+                        put("logo_twitter_280x65", R.drawable.logo_twitter_280x65);
+                        put("logo_verisign_280x65", R.drawable.logo_verisign_280x65);
+                        put("logo_yahoo_280x65", R.drawable.logo_yahoo_280x65);
+                    }
     };
 
-    private static HashMap<String, Drawable> provider_button_short_drawables = new HashMap<String, Drawable>();
+//    private static HashMap<String, Drawable> provider_button_short_drawables = new HashMap<String, Drawable>();
 
-    private final static HashMap<String, Integer> provider_button_short_resources = new HashMap<String, Integer>(){
-        {
-//            put("facebook", R.drawable.button_facebook_135x40);
-            put("linkedin", R.drawable.button_linkedin_135x40);
-            put("myspace", R.drawable.button_myspace_135x40);
-            put("twitter", R.drawable.button_twitter_135x40);
-            put("yahoo", R.drawable.button_yahoo_135x40);
-        }
-    };
+//    private final static HashMap<String, Integer> provider_button_short_resources = new HashMap<String, Integer>(){
+//        {
+////            put("button_facebook_135x40", R.drawable.button_facebook_135x40);
+//            put("button_linkedin_135x40", R.drawable.button_linkedin_135x40);
+//            put("button_myspace_135x40", R.drawable.button_myspace_135x40);
+//            put("button_twitter_135x40", R.drawable.button_twitter_135x40);
+//            put("button_yahoo_135x40", R.drawable.button_yahoo_135x40);
+//        }
+//    };
 
-    private static HashMap<String, Drawable> provider_button_long_drawables = new HashMap<String, Drawable>();
+//    private static HashMap<String, Drawable> provider_button_long_drawables = new HashMap<String, Drawable>();
 
-    private final static HashMap<String, Integer> provider_button_long_resources = new HashMap<String, Integer>(){
-        {
-//            put("facebook", R.drawable.button_facebook_280x40);
-            put("linkedin", R.drawable.button_linkedin_280x40);
-            put("myspace", R.drawable.button_myspace_280x40);
-            put("twitter", R.drawable.button_twitter_280x40);
-            put("yahoo", R.drawable.button_yahoo_280x40);
-        }
-    };
+//    private final static HashMap<String, Integer> provider_button_long_resources = new HashMap<String, Integer>(){
+//        {
+////            put("button_facebook_280x40", R.drawable.button_facebook_280x40);
+//            put("button_linkedin_280x40", R.drawable.button_linkedin_280x40);
+//            put("button_myspace_280x40", R.drawable.button_myspace_280x40);
+//            put("button_twitter_280x40", R.drawable.button_twitter_280x40);
+//            put("button_yahoo_280x40", R.drawable.button_yahoo_280x40);
+//        }
+//    };
 
 
     // ------------------------------------------------------------------------
@@ -303,51 +311,57 @@ public class JRProvider implements Serializable {
     }
 
     private Drawable getDrawable(Context c, String drawableName, HashMap<String, Drawable> drawableHashMap, HashMap<String, Integer> resourceHashMap) {
-        if (drawableHashMap.containsKey(mName)) return drawableHashMap.get(mName);
+        if (drawableHashMap.containsKey(drawableName)) return drawableHashMap.get(drawableName);
 
-        if (resourceHashMap.containsKey(mName)) {
-            Drawable r = c.getResources().getDrawable(resourceHashMap.get(mName));
-            drawableHashMap.put(mName, r);
+        if (resourceHashMap.containsKey(drawableName)) {
+            Drawable r = c.getResources().getDrawable(resourceHashMap.get(drawableName));
+            drawableHashMap.put(drawableName, r);
             return r;
         }
 
         try {
-            String iconFileName = "providericon~" + drawableName;
+            String iconFileName = "providericon~" + drawableName + ".png";
 
             Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
-            if (icon == null) c.deleteFile(iconFileName);
+            if (icon != null) {
+                icon.setDensity(android.util.DisplayMetrics.DENSITY_MEDIUM);
+            }
+            else {
+                c.deleteFile(iconFileName);
+                downloadIcons(c);
+                return c.getResources().getDrawable(R.drawable.icon_unknown);
+            }
 
-            return new BitmapDrawable(icon);
-        } catch (FileNotFoundException e) {
+            return new BitmapDrawable(c.getResources(), icon);
+        }
+        catch (FileNotFoundException e) {
             downloadIcons(c);
 
-            //todo this icon isn't suitable for returning for buttons and stuff, because it gets way
-            //stretched out and looks bad.
-            return new BitmapDrawable(BitmapFactory.decodeResource(c.getResources(), R.drawable.icon_unknown));
+            return c.getResources().getDrawable(R.drawable.icon_unknown);
         }
     }
 
 
     public Drawable getProviderListIconDrawable(Context c) {
-        return getDrawable(c, "icon_" + mName + "_30x30.png", provider_list_icon_drawables, provider_list_icon_resources);
+        return getDrawable(c, "icon_" + mName + "_30x30", provider_list_icon_drawables, provider_list_icon_resources);
     }
 
     public Drawable getProviderLogo(Context c) {
-        return getDrawable(c, "logo_" + mName + "_280x65.png", provider_logo_drawables, provider_logo_resources);
+        return getDrawable(c, "logo_" + mName + "_280x65", provider_logo_drawables, provider_logo_resources);
 
     }
 
-    public Drawable getProviderButtonShort (Context c) {
-        return getDrawable(c, "button_" + mName + "_135x40.png", provider_button_short_drawables, provider_button_short_resources);
-    }
-
-    public Drawable getProviderButtonLong (Context c) {
-        return getDrawable(c, "button_" + mName + "_280x40.png", provider_button_long_drawables, provider_button_long_resources);
-    }
+//    public Drawable getProviderButtonShort (Context c) {
+//        return getDrawable(c, "button_" + mName + "_135x40.png", provider_button_short_drawables, provider_button_short_resources);
+//    }
+//
+//    public Drawable getProviderButtonLong (Context c) {
+//        return getDrawable(c, "button_" + mName + "_280x40.png", provider_button_long_drawables, provider_button_long_resources);
+//    }
 
     public Drawable getTabSpecIndicatorDrawable(Context c) {
-        Drawable colorIcon = getDrawable(c, "icon_" + mName + "_30x30.png", provider_list_icon_drawables, provider_list_icon_resources);
-        Drawable bwIcon = getDrawable(c, "icon_bw_" + mName + "_30x30.png", provider_list_icon_drawables, provider_list_icon_resources);
+        Drawable colorIcon = getDrawable(c, "icon_" + mName + "_30x30", provider_list_icon_drawables, provider_list_icon_resources);
+        Drawable bwIcon = getDrawable(c, "icon_bw_" + mName + "_30x30", provider_list_icon_drawables, provider_list_icon_resources);
 
         StateListDrawable sld = new StateListDrawable();
         sld.addState(new int[]{android.R.attr.state_selected}, colorIcon);

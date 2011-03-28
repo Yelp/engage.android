@@ -35,6 +35,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
@@ -44,6 +45,7 @@ import android.os.Bundle;
 import android.text.*;
 import android.util.Config;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
@@ -61,6 +63,8 @@ import org.json.JSONStringer;
 import org.json.JSONTokener;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -103,53 +107,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         }
     }
 
-    /**
-     * UI display attributes for for each of the supported providers.
-     * Used to map between
-     */
-
     // ------------------------------------------------------------------------
     // STATIC FIELDS
     // ------------------------------------------------------------------------
 
     private static final String TAG = JRPublishActivity.class.getSimpleName();
 
-//    private static HashMap<String, ProviderDisplayInfo> PROVIDER_MAP;
-
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
     // ------------------------------------------------------------------------
-
-//    static {
-//        PROVIDER_MAP = new HashMap<String, ProviderDisplayInfo>();
-//        PROVIDER_MAP.put("Facebook",
-//                new ProviderDisplayInfo(
-//                        true,
-//                        R.drawable.icon_facebook_30x30,
-//                        R.color.bg_clr_facebook,
-//                        R.drawable.button_facebook_280x40));
-//        PROVIDER_MAP.put("Twitter",
-//                new ProviderDisplayInfo(
-//                        false,
-//                        R.drawable.icon_twitter_30x30,
-//                        R.color.bg_clr_twitter,
-//                        R.drawable.button_twitter_280x40));
-//        PROVIDER_MAP.put("MySpace",
-//                new ProviderDisplayInfo(
-//                        false,
-//                        R.drawable.icon_myspace_30x30,
-//                        R.color.bg_clr_myspace,
-//                        R.drawable.button_myspace_280x40));
-//        PROVIDER_MAP.put("LinkedIn",
-//                new ProviderDisplayInfo(
-//                        false,
-//                        R.drawable.icon_linkedin_30x30,
-//                        R.color.bg_clr_linkedin,
-//                        R.drawable.button_linkedin_280x40));
-//    }
-
-    // TODO: We need to make this dynamic for forward compatibility
-    //private Map<String, Drawable> icon_drawables;
 
     // ------------------------------------------------------------------------
     // STATIC METHODS
@@ -196,7 +162,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private LinearLayout mNameAndSignOutContainer;
     private TextView mUserNameView;
     private Button mSignOutButton;
-    private Button mJustShareButton;
+    private Button mShareButton;
     private Button mConnectAndShareButton;
     private LinearLayout mSharedTextAndCheckMarkContainer;
 
@@ -260,26 +226,27 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //mNameAndSignOutContainer = (LinearLayout) findViewById(R.id.name_and_sign_out_container);
         mUserNameView = (TextView) findViewById(R.id.user_name);
         mSignOutButton = (Button) findViewById(R.id.sign_out_button);
-        mJustShareButton = (Button) findViewById(R.id.just_share_button);
+        mShareButton = (Button) findViewById(R.id.just_share_button);
         mConnectAndShareButton = (Button) findViewById(R.id.connect_and_share_button);
         mSharedTextAndCheckMarkContainer = (LinearLayout) findViewById(R.id.shared_text_and_check_mark_horizontal_layout);
 
         //View listeners
+        mUserCommentView.addTextChangedListener(mUserCommentTextWatcher);
+        mSignOutButton.setOnClickListener(mSignoutButtonListener);
+
         ButtonEventColorChangingListener colorChangingListener = new ButtonEventColorChangingListener();
         mConnectAndShareButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
-        mJustShareButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
+        mShareButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
 
         mConnectAndShareButton.setOnClickListener(mShareButtonListener);
         mConnectAndShareButton.setOnFocusChangeListener(colorChangingListener);
         mConnectAndShareButton.setOnTouchListener(colorChangingListener);
 
-        mJustShareButton.setOnClickListener(mShareButtonListener);
-        mUserCommentView.addTextChangedListener(mUserCommentTextWatcher);
-        mJustShareButton.setOnFocusChangeListener(colorChangingListener);
-        mJustShareButton.setOnTouchListener(colorChangingListener);
+        mShareButton.setOnClickListener(mShareButtonListener);
+        mShareButton.setOnFocusChangeListener(colorChangingListener);
+        mShareButton.setOnTouchListener(colorChangingListener);
 
-        mSignOutButton.setOnClickListener(mSignoutButtonListener);
-
+        //initialize the provider shared-ness state map.
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
 
         //SharedLayoutHelper is a spinner dialog class
@@ -351,6 +318,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         configureTabs();
     }
 
+    private int scaleDipPixels(int dip) {
+        final float scale = getResources().getDisplayMetrics().density;
+        return (int) (((float) dip) * scale);
+    }
+
     private void configureTabs() {
         TabHost tabHost = getTabHost(); // The activity TabHost
         tabHost.setup();
@@ -363,8 +335,40 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             Drawable providerIconSet = provider.getTabSpecIndicatorDrawable(getApplicationContext());
 
             spec = tabHost.newTabSpec(provider.getName())
-                                .setIndicator(provider.getFriendlyName(), providerIconSet)
                                 .setContent(R.id.tab_view_content);
+
+            LinearLayout ll = new LinearLayout(this);
+            ll.setOrientation(LinearLayout.VERTICAL);
+
+            ImageView ib = new ImageView(this);
+            ib.setImageDrawable(providerIconSet);
+            ib.setPadding(
+                    scaleDipPixels(10),
+                    scaleDipPixels(10),
+                    scaleDipPixels(10),
+                    scaleDipPixels(3)
+            );
+            ll.addView(ib);
+
+            StateListDrawable tabBackground = new StateListDrawable();
+            tabBackground.addState(new int[]{android.R.attr.state_selected},
+                    getResources().getDrawable(android.R.color.transparent));
+            tabBackground.addState(new int[]{},
+                    getResources().getDrawable(android.R.color.darker_gray));
+            ll.setBackgroundDrawable(tabBackground);
+            
+            TextView tv = new TextView(this);
+            tv.setText(provider.getFriendlyName());
+            tv.setGravity(Gravity.CENTER);
+            tv.setPadding(
+                    scaleDipPixels(0),
+                    scaleDipPixels(0),
+                    scaleDipPixels(0),
+                    scaleDipPixels(4)
+            );
+            ll.addView(tv);
+
+            spec.setIndicator(ll);
             tabHost.addTab(spec);
 
             mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
@@ -374,13 +378,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             currentIndex++;
         }
-
+    
         tabHost.setOnTabChangedListener(this);
         tabHost.setCurrentTab(indexOfLastUsedProvider);
-        onTabChanged(tabHost.getCurrentTabTag()); //when TabHost is constructed it defaults to tab 0, so if
-                                                  //indexOfLastUsedProvider is 0, the tab change listener won't be
-                                                  //invoked, so we call it manually to ensure it is called.  (it's
-                                                  //idempotent)
+
+        //when TabHost is constructed it defaults to tab 0, so if
+        //indexOfLastUsedProvider is 0, the tab change listener won't be
+        //invoked, so we call it manually to ensure it is called.  (it's
+        //idempotent)
+        onTabChanged(tabHost.getCurrentTabTag());
     }
 
     protected void onStart() {
@@ -394,8 +400,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (mLayoutHelper.getProgressDialogShowing()) {
             Log.e(TAG, "onRestart: progress dialog still showing");
-            //mLayoutHelper.dismissProgressDialog();  this is wrong because we can be restarted after the webview is finished but while the async activity post is still operating
-            //throw new RuntimeException("onRestart while progress dialog is still showing");
         }
     }
 
@@ -528,7 +532,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSelectedProvider = mSessionData.getProviderByName(tabId);
 
         //XXX TabHost is setting our FrameLayout's only child to GONE when loading
-        //XXX could be a bug in the TabHost, or could be a misuse of the TabHost system, this is a workaround
+        //XXX could be a bug in the TabHost, or could be a misuse of the TabHost system, this is a
+        //workaround
         findViewById(R.id.tab_view_content).setVisibility(View.VISIBLE);
 
         configureViewElementsBasedOnProvider();
@@ -608,15 +613,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         if (user == null || providerName == null) {
             mUserNameView.setText("");
             mUserProfilePic.setImageResource(R.drawable.profilepic_placeholder);
-            //todo set muserprofilepic
-            //[self setButtonImage:myProfilePic toData:null andSetLoading:myProfilePicActivityIndicator toLoading:NO];
             return;
         }
 
         mUserNameView.setText(user.getPreferredUsername());
 
-        // TODO
-        ///NSData *cachedProfilePic = [cachedProfilePics objectForKey:providerName];
         FileInputStream fis = null;
         try {
             fis = openFileInput("userpic~" + user.getCachedProfilePicKey());
@@ -670,7 +671,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSharedTextAndCheckMarkContainer.setVisibility(visibleIfShared);
 
         if (mAuthenticatedUser != null)
-            mJustShareButton.setVisibility(visibleIfNotShared);
+            mShareButton.setVisibility(visibleIfNotShared);
         else
             mConnectAndShareButton.setVisibility(visibleIfNotShared);
     }
@@ -681,7 +682,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         int visibleIfLoggedIn = loggedIn ? View.VISIBLE : View.GONE;
         int visibleIfNotLoggedIn = !loggedIn ? View.VISIBLE : View.GONE;
 
-        mJustShareButton.setVisibility(visibleIfLoggedIn);
+        mShareButton.setVisibility(visibleIfLoggedIn);
         mUserProfileContainer.setVisibility(visibleIfLoggedIn);
 
         //mUserProfilePic.setVisibility(visibleIfLoggedIn);
@@ -694,13 +695,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         else
             updatePreviewTextWhenContentDoesNotReplaceAction();
 
-        if (loggedIn) mTriangleIconView.setPadding(0,0,240,0);
+        int scaledPadding = scaleDipPixels(240);
+        if (loggedIn) mTriangleIconView.setPadding(0,0,scaledPadding,0);
         else mTriangleIconView.setPadding(0,0,0,0);
     }
 
     private void configureViewElementsBasedOnProvider() {
-        // TODO:  check "hasEditedUserContentForActivityAlready"
-
         // TODO: make this match the docs for the iphone activity object:
         // https://rpxnow.com/docs/iphone_api/interface_j_r_activity_object.html#a2e4ff78f83d0f353f8e0c17ed48ce0ab
         JRDictionary socialSharingProperties = mSelectedProvider.getSocialSharingProperties();
@@ -734,11 +734,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         int colorWithNoAlpha = colorForProviderFromArray(
                 mSelectedProvider.getSocialSharingProperties().get("color_values"), false);
 
-        mJustShareButton.getBackground().setColorFilter(colorWithNoAlpha, PorterDuff.Mode.MULTIPLY);
+        mShareButton.getBackground().setColorFilter(colorWithNoAlpha, PorterDuff.Mode.MULTIPLY);
         mConnectAndShareButton.getBackground().setColorFilter(colorWithNoAlpha, PorterDuff.Mode.MULTIPLY);
         mPreviewBorder.getBackground().setColorFilter(colorWithNoAlpha, PorterDuff.Mode.SRC_ATOP);
 
-//        mJustShareButton.setBackgroundDrawable(mSelectedProvider.getProviderButtonShort(getApplicationContext()));
+//        mShareButton.setBackgroundDrawable(mSelectedProvider.getProviderButtonShort(getApplicationContext()));
 //        mConnectAndShareButton.setBackgroundDrawable(mSelectedProvider.getProviderButtonLong(getApplicationContext()));
 
         mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(getApplicationContext()));
@@ -885,6 +885,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private void fetchShortenedURLs() {
         try {
+            //todo fixme to handle email/sms objects as well and refactor into activity
+            //object and invoke when the activity object is created (or maybe when publish is
+            //called?)
             final String jsonEncodedActivityUrl = (new JSONStringer())
                     .array()
                     .value(mActivityObject.getUrl())

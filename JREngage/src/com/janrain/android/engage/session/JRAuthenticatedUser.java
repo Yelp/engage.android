@@ -29,13 +29,7 @@
 */
 package com.janrain.android.engage.session;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import com.janrain.android.engage.types.JRDictionary;
-
-import android.text.TextUtils;
-
-import java.awt.*;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

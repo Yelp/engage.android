@@ -14,20 +14,23 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         >
-
-        <!--<include layout="@layout/shared_header" />-->
+        <!--android:padding="0dp"-->
 
         <TabWidget
             android:id="@android:id/tabs"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             />
+        <!--android:background="#888888"-->
 
         <FrameLayout
             android:id="@android:id/tabcontent"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             >
+            <!--android:paddingTop="0dp"-->
+            <!--According to http://code.google.com/p/foursquared/source/browse/main/res/layout/main_activity.xml
+                paddingTop of 0 should obscure the tabStrip, but it doesn't work here for some reason-->
 
             <RelativeLayout
                 android:id="@+id/tab_view_content"

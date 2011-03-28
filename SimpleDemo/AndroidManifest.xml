@@ -5,16 +5,28 @@
           android:versionName="1.0">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7" />
+    <!--on the Nexus S: -->
+    <!--Sdk 7, 6, 5 is a brushed aluminum looking halftone with a slightly darker selected tab
+        and no tab separators between unselected tabs and a tab strip at the bottom-->
+    <!--4 is a very dark grey gradient with a much lighter selected tab and a tab strip at the
+        bottom that looks bad with our white background below the tab strip because it has a
+        black line at the bottom.  and very slight tab separators between unselected tabs-->
+
+    <!--on the 2.1 emulator:-->
+    <!--Sdk 7 is black unselected tabs with a halftone selected tab, a tab strip at the bottom,
+        and a light separator between selected tabs.-->
+    <!--4 is halftone unselected tabs with separators and a tab strip at the bottom and a light
+        gray selected tab. -->
 
     <application
             android:icon="@drawable/icon"
             android:label="@string/app_name"
             android:debuggable="true">
-        
-        <activity
-                android:name="MainActivity"
-                android:theme="@android:style/Theme.Light">
-            <!--android:label="@string/app_name"-->
+
+        <activity android:name="MainActivity">
+        <!--android:label="@string/app_name"-->
+        <!--android:theme="@android:style/Theme.Light">-->
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -23,19 +35,19 @@
 
         </activity>
 
-        <!-- For Janrain -->
+        <!-- For Janrain Engage library -->
         <activity android:name="com.janrain.android.engage.ui.JRProvidersActivity"
-                  android:configChanges="orientation|keyboardHidden"
-                  android:theme="@android:style/Theme.Light.NoTitleBar"/>
+                android:theme="@android:style/Theme.Light"/>
+                  <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRLandingActivity"
-                  android:configChanges="orientation|keyboardHidden"
-                  android:theme="@android:style/Theme.Light.NoTitleBar"/>
+                android:theme="@android:style/Theme.Light"/>
+                  <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRWebViewActivity"
-                  android:configChanges="orientation|keyboardHidden"
-                  android:theme="@android:style/Theme.Light.NoTitleBar"/>
+                android:theme="@android:style/Theme.Light"/>
+                  <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRPublishActivity"
-                  android:configChanges="orientation|keyboardHidden"
-                  android:theme="@android:style/Theme.Light.NoTitleBar"/>
+                android:theme="@android:style/Theme.Light.NoTitleBar"/>
+                  <!--android:configChanges="orientation|keyboardHidden"-->
     </application>
 
 </manifest>

@@ -54,6 +54,8 @@ import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.StringUtils;
 import org.apache.http.util.EncodingUtils;
 
+import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -241,7 +243,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             /* If the configuration for this rp has changed, the etag will have changed, and we need
              * to update our current configuration information. */
             mOldEtag = Prefs.getAsString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
-        } else {
+        }
+        else {
             mAuthenticatedUsersByProvider = new JRDictionary();
             mAllProviders = new JRDictionary();
             mBasicProviders = new ArrayList<String>();
@@ -639,6 +642,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         final String tag = "getConfiguration";
 
+        //todo if we're storing the last response's Etag then presumably we should be providing it
+        //for future requests so the server may forgo resending the cached data.  
+
         if (!JRConnectionManager.createConnection(urlString, this, true, tag)) {
             Log.w(TAG, "[startGetConfiguration] createConnection failed.");
             return new JREngageError(
@@ -731,8 +737,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[finishGetConfiguration-etag]");
         }
 
-        //todo implement git commit checking for cache reloading
-        if (!mOldEtag.equals(etag)) {
+        if (!mOldEtag.equals(etag) | true) {
             mNewEtag = etag;  //todo verify that this is written out
 
             /* We can only update all of our data if the UI isn't currently using that
