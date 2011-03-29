@@ -37,6 +37,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
@@ -304,10 +305,7 @@ public class JRLandingActivity extends Activity {
         }
     }
 
-
-
     private boolean prepareUserInterface() {
-
         if (mSessionData.getCurrentlyAuthenticatingProvider() == null) {
             JREngageError error = new JREngageError(
                 "There was an error authenticating with the selected provider.",
@@ -349,6 +347,7 @@ public class JRLandingActivity extends Activity {
                 }
 
                 mEditText.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
+                //mEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
 
             } else {
                 if (Config.LOGD) {

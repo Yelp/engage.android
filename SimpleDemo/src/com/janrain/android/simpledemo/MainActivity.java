@@ -90,7 +90,6 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         setContentView(R.layout.main);
 
         mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
-        //mBtnTestAuth.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
         mBtnTestAuth.setOnClickListener(this);
 
         mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
@@ -127,7 +126,8 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                     dbf.setNamespaceAware(false);
                     DocumentBuilder db = dbf.newDocumentBuilder();
                     Log.d(TAG, "blogload factory instantiated");
-                    //the following parse call takes ten seconds on fast phone.
+
+                    //the following parse call takes ten seconds on a fast phone.
                     //XMLPullParser is said to be a faster way to go.
                     //sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
                     //another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser
@@ -158,15 +158,14 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                             return null;
                         }
                     }, null).toString();
-                } catch (MalformedURLException e) { throw new RuntimeException(e); }
-                catch (IOException e) { throw new RuntimeException(e); }
-                catch (ParserConfigurationException e) { throw new RuntimeException(e); }
-                catch (SAXException e) { throw new RuntimeException(e); }
+                } catch (MalformedURLException e) { }
+                catch (IOException e) { }
+                catch (ParserConfigurationException e) { }
+                catch (SAXException e) { }
                 return null;
             }
 
             protected void onPostExecute(Void v) {
-                //mBtnTestPub.setEnabled(true);
                 Log.d(TAG, "blog loader onPostExecute");
                 mBtnTestPub.setText("Test Publishing");
             }

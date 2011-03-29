@@ -176,8 +176,7 @@ public class JRActivityObject {
      *   be <code>null</code>.
      *
      * @param url
-     *   The URL of the resource being mentioned in the activity update.  This value cannot
-     *   be <code>null</code>.
+     *   The URL of the resource being mentioned in the activity update.
      */
     public JRActivityObject(String action, String url) {
         Log.d(TAG, "created with action: " + action + " url: " + url);
@@ -229,7 +228,7 @@ public class JRActivityObject {
         mActionLinks = actionLinks;
     }
 
-    public void setActionLink(JRActionLink al) {
+    public void addActionLink(JRActionLink al) {
         mActionLinks = new ArrayList<JRActionLink>();
         mActionLinks.add(al);
     }

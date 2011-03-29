@@ -685,9 +685,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mShareButton.setVisibility(visibleIfLoggedIn);
         mUserProfileContainer.setVisibility(visibleIfLoggedIn);
 
-        //mUserProfilePic.setVisibility(visibleIfLoggedIn);
-        //mNameAndSignOutContainer.setVisibility(visibleIfLoggedIn);
-
         mConnectAndShareButton.setVisibility(visibleIfNotLoggedIn);
 
         if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action"))

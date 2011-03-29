@@ -162,8 +162,6 @@ public class JRWebViewActivity extends Activity {
 
         mWebView = (WebView)findViewById(R.id.webview);
         mWebView.clearView();
-        mWebView.setWebViewClient(mWebviewClient);
-        mWebView.setDownloadListener(mWebviewDownloadListener);
         mWebView.setInitialScale(100);
 
         WebSettings webSettings = mWebView.getSettings();
@@ -185,10 +183,21 @@ public class JRWebViewActivity extends Activity {
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
+
+        mWebView.setWebViewClient(mWebviewClient);
+        mWebView.setDownloadListener(mWebviewDownloadListener);
     }
 
     protected void onStop() {
         super.onStop();
+
+//        mWebView.setWebViewClient(null);
+
+        //this listener's callback assumes the activity is being shown, but if the user presses
+        //the back button while the webview is transitioning between pages the activity may
+        //not be shown when this listener is fired, which would cause a crash, so we unset
+        //the listener here.
+//        mWebView.setDownloadListener(null);
     }
 
     @Override

@@ -55,6 +55,7 @@
             android:layout_marginLeft="4dp"
             android:singleLine="true"
             />
+        <!--android:inputType="textUri"-->
 
         <TextView
             android:id="@+id/landing_welcome_label"
