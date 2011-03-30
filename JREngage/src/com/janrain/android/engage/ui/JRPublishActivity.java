@@ -816,12 +816,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //todo make resources out of these strings
 
         switch (id) {
-            case DIALOG_SUCCESS:
-                return new AlertDialog.Builder(JRPublishActivity.this)
-                        .setMessage("Success!")
-                        .setCancelable(false)
-                        .setPositiveButton("Dismiss", null)
-                        .create();
+//            case DIALOG_SUCCESS:
+//                return new AlertDialog.Builder(JRPublishActivity.this)
+//                        .setMessage("Success!")
+//                        .setCancelable(false)
+//                        .setPositiveButton("Dismiss", null)
+//                        .create();
             case DIALOG_FAILURE:
                 return new AlertDialog.Builder(JRPublishActivity.this)
                         .setMessage(mDialogErrorMessage)
@@ -1055,7 +1055,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 mWeAreCurrentlyPostingSomething = false;
                 mWeHaveJustAuthenticated = false;
 
-                showDialog(DIALOG_SUCCESS);
+//                showDialog(DIALOG_SUCCESS);
             }
 
             public void publishingJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {

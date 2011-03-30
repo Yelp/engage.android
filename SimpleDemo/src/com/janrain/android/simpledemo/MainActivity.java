@@ -258,9 +258,11 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     }
 
     public void jrSocialDidCompletePublishing() {
+        Toast.makeText(this, "Sharing did complete", Toast.LENGTH_SHORT).show();
     }
 
     public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
+        Toast.makeText(this, "Activity shared", Toast.LENGTH_SHORT).show();
     }
 
     public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
