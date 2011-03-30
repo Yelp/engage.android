@@ -224,7 +224,7 @@ public class JRProvider implements Serializable {
         if (mRequiresInput) {
             String[] arr = mPlaceholderText.split(" ");
             ArrayList<String> shortList = new ArrayList<String>();
-            for (int i = 2; i < (arr.length - 2); i++) {
+            for (int i = (arr.length - 2); i < arr.length; i++) {
                 shortList.add(arr[i]);
             }
             mShortText = TextUtils.join(" ", shortList);
