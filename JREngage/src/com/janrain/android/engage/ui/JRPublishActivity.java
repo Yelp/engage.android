@@ -979,8 +979,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
                 mWeAreCurrentlyPostingSomething = false;
                 mWeHaveJustAuthenticated = false;
-                mLayoutHelper.dismissProgressDialog();//this is wrong because that just means they're back to the landing page?
-                                                      //or does the landing page not trigger authDidRestart?
+                mLayoutHelper.dismissProgressDialog();
             }
 
             // should never have to worry about
