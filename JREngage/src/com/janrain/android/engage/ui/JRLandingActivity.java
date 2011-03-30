@@ -37,7 +37,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
@@ -91,7 +90,7 @@ public class JRLandingActivity extends Activity {
         public void onClick(View view) {
             Log.i(TAG, "[onClick] handled");
 
-            if (view.equals(mSmallSigninButton)) {// || view.equals(mBigSigninButton)) {
+            if (view.equals(mSigninButton)) {// || view.equals(mBigSigninButton)) {
                 handlePrimaryButtonClick();
             } else if (view.equals(mSwitchAccountButton)) {
                 handleSecondaryButtonClick();
@@ -106,7 +105,7 @@ public class JRLandingActivity extends Activity {
             else
                 if (view == mSwitchAccountButton)
                     view.getBackground().setColorFilter(0xFFAAAAAA, PorterDuff.Mode.MULTIPLY);
-                else if (view == mSmallSigninButton)
+                else if (view == mSigninButton)
                     view.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
         }
 
@@ -115,8 +114,8 @@ public class JRLandingActivity extends Activity {
 
             if (view == mSwitchAccountButton)
                 mSwitchAccountButton.getBackground().setColorFilter(0xFFAAAAAA, PorterDuff.Mode.MULTIPLY);
-            else if (view == mSmallSigninButton)
-                mSmallSigninButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
+            else if (view == mSigninButton)
+                mSigninButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
 
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN)
                 view.getBackground().clearColorFilter();
@@ -160,9 +159,8 @@ public class JRLandingActivity extends Activity {
 
     private TextView mWelcomeLabel;
 
-    private Button mSwitchAccountButton;     // iPhone: signInButton
-    //private Button mBigSigninButton;   // iPhone: bigSignInButton
-    private Button mSmallSigninButton;    // iPhone: backToProvidersButton
+    private Button mSwitchAccountButton;
+    private Button mSigninButton;
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -212,32 +210,24 @@ public class JRLandingActivity extends Activity {
         mSwitchAccountButton.setOnClickListener(bel);
         mSwitchAccountButton.setOnFocusChangeListener(bel);
         mSwitchAccountButton.setOnTouchListener(bel);
-
-//        mBigSigninButton = (Button)findViewById(R.id.landing_big_signin_button);
-//        mBigSigninButton .getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.DST_ATOP);//.SRC_ATOP);//.MULTIPLY);
-//        mBigSigninButton.setOnClickListener(this);
-
-        mSmallSigninButton = (Button)findViewById(R.id.landing_small_signin_button);
-        mSmallSigninButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
-        mSmallSigninButton.setOnClickListener(bel);
-        mSmallSigninButton.setOnFocusChangeListener(bel);
-        mSmallSigninButton.setOnTouchListener(bel);
-
-//        mSmallSigninButton.setVisibility(View.VISIBLE);//(View.GONE);
-//        mBigSigninButton.setVisibility(View.GONE);//(View.VISIBLE);
+        mSigninButton = (Button)findViewById(R.id.landing_small_signin_button);
+        mSigninButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
+        mSigninButton.setOnClickListener(bel);
+        mSigninButton.setOnFocusChangeListener(bel);
+        mSigninButton.setOnTouchListener(bel);
 
     }
 
     @Override
     protected void onStart() {
-        super.onResume();
+        super.onStart();
+
+        prepareUserInterface();
 
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
-
-        prepareUserInterface();
     }
 
     public void onBackPressed() {
@@ -392,12 +382,12 @@ public class JRLandingActivity extends Activity {
             // TODO: If we go with Gabe/Alexis's suggestions, big button will always be gone and small button
             // will always be visible... Clean this code up...
             mSwitchAccountButton.setVisibility(View.INVISIBLE);//(View.GONE);
-            mSmallSigninButton.setVisibility(View.VISIBLE);//(View.GONE);
+            mSigninButton.setVisibility(View.VISIBLE);//(View.GONE);
 //            mBigSigninButton.setVisibility(View.VISIBLE);
         } else {
 //            mBigSigninButton.setVisibility(View.GONE);
             mSwitchAccountButton.setVisibility(View.VISIBLE);
-            mSmallSigninButton.setVisibility(View.VISIBLE);
+            mSigninButton.setVisibility(View.VISIBLE);
         }
     }
 
