@@ -350,10 +350,10 @@ public class JRWebViewActivity extends Activity {
 
             mIsFinishPending = true;
 
-            JREngageError err = new JREngageError(
-                    "Authentication failed: " + description,
-                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
+//            JREngageError err = new JREngageError(
+//                    "Authentication failed: " + description,
+//                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+//                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
 
             showAlertDialog(
                     "Log In Failed",
