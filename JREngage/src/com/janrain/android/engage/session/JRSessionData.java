@@ -1150,7 +1150,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public void triggerAuthenticationDidRestart() {
         if (Config.LOGD) {
-            Log.d(TAG, "[triggerAuthenticationDidCancel]");
+            Log.d(TAG, "[triggerAuthenticationDidRestart]");
         }
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {

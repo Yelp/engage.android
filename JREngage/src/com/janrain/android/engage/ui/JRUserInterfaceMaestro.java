@@ -115,6 +115,7 @@ public class JRUserInterfaceMaestro {
      */
     public void showProviderSelectionDialog() {
         mSessionData.setDialogIsShowing(true);
+        mSessionData.setSocial(false);
         startActivity(JRProvidersActivity.class);
 
 //        if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
