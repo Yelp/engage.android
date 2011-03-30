@@ -343,32 +343,24 @@ public class JRWebViewActivity extends Activity {
             Log.e(TAG, "[onReceivedError] code: " + errorCode + " | description: " + description
                 + " | url: " + url);
 
-//            mLayoutHelper.dismissProgressDialog();
-//            Toast.makeText(JRWebViewActivity.this, description, Toast.LENGTH_LONG).show();
-
-            // TODO: Handle this error like we handle other errors
-
-//            if (error.code != NSURLErrorCancelled) /* Error code -999 */
-//            {
-//                [self stopProgress];
-//
-//                NSError *_error = [JRError setError:[NSString stringWithFormat:@"Authentication failed: %@", [error localizedDescription]]
-//                                           withCode:JRAuthenticationFailedError];
-//
-//                UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Log In Failed"
-//                                                                 message:@"An error occurred while attempting to sign you in.  Please try again."
-//                                                                delegate:self
-//                                                       cancelButtonTitle:@"OK"
-//                                                       otherButtonTitles:nil] autorelease];
-//                [alert show];
-//
-//                userHitTheBackButton = NO; /* Because authentication failed for whatever reason. */
-//                [sessionData triggerAuthenticationDidFailWithError:_error];
-//            }
-
-
-
             super.onReceivedError(view, errorCode, description, url);
+
+//          mLayoutHelper.dismissProgressDialog();
+//          Toast.makeText(JRWebViewActivity.this, description, Toast.LENGTH_LONG).show();
+
+            mIsFinishPending = true;
+
+            JREngageError err = new JREngageError(
+                    "Authentication failed: " + description,
+                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
+
+            showAlertDialog(
+                    "Log In Failed",
+                    "An error occurred while attempting to sign you in.  Please try again."
+                );
+
+            //mSessionData.triggerAuthenticationDidFail(err);
         }
     };
 
@@ -432,6 +424,7 @@ public class JRWebViewActivity extends Activity {
                                     JREngageError.ErrorType.AUTHENTICATION_FAILED);
 
                             //todo verify nearby behavior
+                            // TODO: Is this really what we want to do here?
                             throw new RuntimeException("unhandled OpenID error");
                             //mSessionData.triggerAuthenticationDidFail(err);
                         } else {
