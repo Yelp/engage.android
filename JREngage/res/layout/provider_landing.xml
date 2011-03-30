@@ -10,8 +10,8 @@
     >
 
     <!-- Header (title) area -->
-    <include android:id="@+id/header_include" layout="@layout/shared_header" />
-
+    <!--<include android:id="@+id/header_include" layout="@layout/shared_header" />-->
+<!---->
     <!--
        - Bordered box/container.
        -
@@ -20,15 +20,17 @@
     <LinearLayout
         android:id="@+id/landing_dialog"
         android:orientation="vertical"
-        android:layout_below="@id/header_include"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         >
+        <!--android:layout_below="@id/header_include"-->
         <!--android:background="@drawable/shape_landing_box"-->
         
         <ImageView
