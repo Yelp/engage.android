@@ -35,6 +35,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 import android.view.*;
@@ -220,20 +221,36 @@ public class JRProvidersActivity extends ListActivity {
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
+
+        //XXX hack
+        //TODO Fix this to be more consistent with the rest of the library
+        //What's happening is that we need to start the landing activity from this onCreate method
+        //So that this activities FinishHandler is registered (which happens in this onCreate)
+        //otherwise (if the activity is started from the UI maestro) this activity isn't created
+        //until it's popped into view, at which point the FinishHandler is registered, but by
+        //which time this activity has already missed it's finish message.  The getStack call
+        //allows us to add the LandingActivity to the managed activity stack after we start it with
+        //startActivityForResult which has a special case for >= 0 requestCodes that makes this
+        //activities window not draw.  That method can only be called from within an Activity,
+        //however, so the UI maestro would have to jump through some hoops to use it.
+        if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
+            mSessionData.setCurrentlyAuthenticatingProvider(
+                    mSessionData.getReturningBasicProvider());
+            startActivityForResult(new Intent(this, JRLandingActivity.class), 0);
+            JRUserInterfaceMaestro.getInstance()
+                    .getManagedActivityStack().push(JRLandingActivity.class);
+        }
     }
 
     public void onResume () {
         super.onResume();
-
-//        if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
-//                    mSessionData.setCurrentlyAuthenticatingProvider(mSessionData.getReturningBasicProvider());
-//                    JRUserInterfaceMaestro.getInstance().showUserLanding();
-//        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
+        Log.d(TAG, "onStart");
     }
 
     @Override

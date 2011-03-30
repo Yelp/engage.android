@@ -117,10 +117,10 @@ public class JRUserInterfaceMaestro {
         mSessionData.setDialogIsShowing(true);
         startActivity(JRProvidersActivity.class);
 
-        if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
-            mSessionData.setCurrentlyAuthenticatingProvider(mSessionData.getReturningBasicProvider());
-            showUserLanding();
-        }
+//        if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
+//            mSessionData.setCurrentlyAuthenticatingProvider(mSessionData.getReturningBasicProvider());
+//            showUserLanding();
+//        }
     }
 
     /**
@@ -224,6 +224,10 @@ public class JRUserInterfaceMaestro {
         context.startActivity(new Intent(context, managedActivity));
         mActivityStack.push(managedActivity);
         Log.i(TAG, "[startActivity] pushed and started: " + managedActivity);
+    }
+
+    protected Stack<Class> getManagedActivityStack() {
+        return mActivityStack;
     }
 
     private void popAll() {
