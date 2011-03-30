@@ -330,6 +330,7 @@ public class JRWebViewActivity extends Activity {
             if (Config.LOGD) {
                 Log.d(TAG, "[onPageFinished] url: " + url);
             }
+
 //
 //            if (!mIsMobileEndpointUrlLoading) {
 //                mLayoutHelper.dismissProgressDialog();

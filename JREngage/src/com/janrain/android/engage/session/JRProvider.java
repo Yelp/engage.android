@@ -91,14 +91,14 @@ public class JRProvider implements Serializable {
     private final static HashMap<String, Integer> provider_list_icon_resources
             = new HashMap<String, Integer>(){
                     {
-            //            put("icon_bw_facebook_30x30", R.drawable.icon_bw_facebook_30x30);
+                        put("icon_bw_facebook_30x30", R.drawable.icon_bw_facebook_30x30);
                         put("icon_bw_linkedin_30x30", R.drawable.icon_bw_linkedin_30x30);
                         put("icon_bw_myspace_30x30", R.drawable.icon_bw_myspace_30x30);
                         put("icon_bw_twitter_30x30", R.drawable.icon_bw_twitter_30x30);
                         put("icon_bw_yahoo_30x30", R.drawable.icon_bw_yahoo_30x30);
                         put("icon_aol_30x30", R.drawable.icon_aol_30x30);
                         put("icon_blogger_30x30", R.drawable.icon_blogger_30x30);
-            //            put("icon_facebook_30x30", R.drawable.icon_facebook_30x30);
+                        put("icon_facebook_30x30", R.drawable.icon_facebook_30x30);
                         put("icon_flickr_30x30", R.drawable.icon_flickr_30x30);
                         put("icon_google_30x30", R.drawable.icon_google_30x30);
                         put("icon_hyves_30x30", R.drawable.icon_hyves_30x30);
@@ -124,7 +124,7 @@ public class JRProvider implements Serializable {
                     {
                         put("logo_aol_280x65", R.drawable.logo_aol_280x65);
                         put("logo_blogger_280x65", R.drawable.logo_blogger_280x65);
-            //            put("logo_facebook_280x65", R.drawable.logo_facebook_280x65);
+                        put("logo_facebook_280x65", R.drawable.logo_facebook_280x65);
                         put("logo_flickr_280x65", R.drawable.logo_flickr_280x65);
                         put("logo_google_280x65", R.drawable.logo_google_280x65);
                         put("logo_hyves_280x65", R.drawable.logo_hyves_280x65);
@@ -205,7 +205,6 @@ public class JRProvider implements Serializable {
     private JRProvider() {}
 
     public JRProvider(String name, JRDictionary dictionary) {
-        //this.dictionary = dictionary;
         mName = name;
         mFriendlyName = dictionary.getAsString(KEY_FRIENDLY_NAME);
         mPlaceholderText = dictionary.getAsString(KEY_INPUT_PROMPT);
@@ -486,10 +485,6 @@ public class JRProvider implements Serializable {
 //    		isEqual = ((!TextUtils.isEmpty(mName)) && (mName.equals(provider.getName())));
 //    	}
 //    	return isEqual;
-//    }
-
-//    public boolean isEqualToReturningProvider(String returningProvider) {
-//    	return ((!TextUtils.isEmpty(mName)) && (mName.equals(returningProvider)));
 //    }
 
     public void loadDynamicVariables() {

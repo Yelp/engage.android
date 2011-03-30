@@ -65,6 +65,7 @@ import org.json.JSONTokener;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -201,15 +202,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mActivityObject = mSessionData.getActivity();
 
         mSessionDelegate = createSessionDelegate();
-        mSessionData.addDelegate(mSessionDelegate);
 
         if (mSessionData.getHidePoweredBy()) {
             TextView poweredBy = (TextView)findViewById(R.id.powered_by_text);
             poweredBy.setVisibility(View.GONE);
         }
-
-//        TextView title = (TextView)findViewById(R.id.header_text);
-//        title.setText(getString(R.string.publish_activity_title));
 
         //View References
         mPreviewBorder = (RelativeLayout) findViewById(R.id.preview_box_border);
@@ -257,12 +254,20 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
+    }   
+
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "Activity lifecycle onStart");
+
+        mSessionData.addDelegate(mSessionDelegate);
 
         loadViewElementPropertiesWithActivityObject();
 
         List<JRProvider>socialProviders = mSessionData.getSocialProviders();
 
-        if ((socialProviders == null || socialProviders.size() == 0) && !mSessionData.isGetMobileConfigDone()) {
+        if ((socialProviders == null || socialProviders.size() == 0)
+                && !mSessionData.isGetMobileConfigDone()) {
             mWeAreWaitingForMobileConfig = true;
             showDialog(DIALOG_MOBILE_CONFIG_LOADING);
         } else {
@@ -279,18 +284,33 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         JRMediaObject mo = null;
         if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
 
-        ImageView mci = (ImageView) findViewById(R.id.media_content_image);
-        TextView  mcd = (TextView)  findViewById(R.id.media_content_description);
-        TextView  mct = (TextView)  findViewById(R.id.media_content_title);
+        final ImageView mci = (ImageView) findViewById(R.id.media_content_image);
+        final TextView  mcd = (TextView)  findViewById(R.id.media_content_description);
+        final TextView  mct = (TextView)  findViewById(R.id.media_content_title);
 
         //set the media_content_view = a thumbnail of the media
-        try {
-            if (mo != null) if (mo.hasThumbnail()) {
-                mci.setImageBitmap(BitmapFactory.decodeStream((new URL(mo.getThumbnail())).openStream()));
-                Log.d(TAG, "media image url: " + mo.getThumbnail());
-            }
-        } catch (Exception e) {
-            //throw new RuntimeException(e);
+        if (mo != null) if (mo.hasThumbnail()) {
+            Log.d(TAG, "media image url: " + mo.getThumbnail());
+            //there was a bug here, openstream is IO blocking, so moved that call into an asynctask
+            new AsyncTask<JRMediaObject, Void, Bitmap>(){
+                protected Bitmap doInBackground(JRMediaObject... mo_) {
+                    try {
+                        return BitmapFactory.decodeStream(
+                                (new URL(mo_[0].getThumbnail())).openStream());
+                    } catch (MalformedURLException e) {
+                        //throw new RuntimeException(e);
+                        return null;
+                    } catch (IOException e) {
+                        return null;
+                    }
+                }
+
+                protected void onPostExecute(Bitmap bitmap) {
+                    if (bitmap == null) mci.setVisibility(View.INVISIBLE);
+                    else mci.setVisibility(View.VISIBLE);
+                    mci.setImageBitmap(bitmap);
+                }
+            }.execute(mo);
         }
 
         //set the media content description
@@ -389,11 +409,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         onTabChanged(tabHost.getCurrentTabTag());
     }
 
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "Activity lifecycle onStart");
-    }
-
     protected void onRestart() {
         super.onRestart();
         Log.d(TAG, "Activity lifecycle onRestart");
@@ -411,6 +426,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "Activity lifecycle onStop");
+
+        mSessionData.removeDelegate(mSessionDelegate);
     }
 
     protected void onPause() {
@@ -499,16 +516,19 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //todo verify correctness of the 0 remaining characters edge case
         CharSequence characterCountText;
 
-        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
+        if (mSelectedProvider.getSocialSharingProperties()
+                .getAsBoolean("content_replaces_action")) {
             //twitter, myspace, linkedin
-            if (activityUrlAffectsCharacterCountForSelectedProvider() && mShortenedActivityURL == null) {
+            if (activityUrlAffectsCharacterCountForSelectedProvider()
+                    && mShortenedActivityURL == null) {
                 //twitter, myspace
                 characterCountText = getText(R.string.calculating_remaining_characters);
             } else {
                 int preview_length = mPreviewLabelView.getText().length();
                 int chars_remaining = mMaxCharacters - preview_length;
                 if (chars_remaining < 0)
-                    characterCountText = Html.fromHtml("Remaining characters: <font color=red>" + chars_remaining + "</font>");
+                    characterCountText = Html.fromHtml("Remaining characters: <font color=red>"
+                            + chars_remaining + "</font>");
                 else
                     characterCountText = Html.fromHtml("Remaining characters: " + chars_remaining);
             }

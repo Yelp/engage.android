@@ -250,7 +250,8 @@ public class JRProvidersActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int pos, long id) {
         JRProvider provider = mAdapter.getItem(pos);
         mSessionData.setCurrentlyAuthenticatingProvider(provider);
-        if (provider.requiresInput() || provider.getName().equals(mSessionData.getReturningBasicProvider())) {
+        if (provider.requiresInput()
+                || provider.getName().equals(mSessionData.getReturningBasicProvider())) {
             JRUserInterfaceMaestro.getInstance().showUserLanding();
         } else {
             JRUserInterfaceMaestro.getInstance().showWebView();
