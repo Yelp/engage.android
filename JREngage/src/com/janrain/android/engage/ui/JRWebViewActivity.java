@@ -344,10 +344,24 @@ public class JRWebViewActivity extends Activity {
             Log.e(TAG, "[onReceivedError] code: " + errorCode + " | description: " + description
                 + " | url: " + url);
 
-//            mLayoutHelper.dismissProgressDialog();
-//            Toast.makeText(JRWebViewActivity.this, description, Toast.LENGTH_LONG).show();
-
             super.onReceivedError(view, errorCode, description, url);
+
+//          mLayoutHelper.dismissProgressDialog();
+//          Toast.makeText(JRWebViewActivity.this, description, Toast.LENGTH_LONG).show();
+
+            mIsFinishPending = true;
+
+            JREngageError err = new JREngageError(
+                    "Authentication failed: " + description,
+                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
+
+            showAlertDialog(
+                    "Log In Failed",
+                    "An error occurred while attempting to sign you in.  Please try again."
+                );
+
+            //mSessionData.triggerAuthenticationDidFail(err);
         }
     };
 
@@ -411,6 +425,7 @@ public class JRWebViewActivity extends Activity {
                                     JREngageError.ErrorType.AUTHENTICATION_FAILED);
 
                             //todo verify nearby behavior
+                            // TODO: Is this really what we want to do here?
                             throw new RuntimeException("unhandled OpenID error");
                             //mSessionData.triggerAuthenticationDidFail(err);
                         } else {
