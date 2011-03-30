@@ -199,7 +199,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         setContentView(R.layout.publish_activity);
 
         mSessionData = JRSessionData.getInstance();
-        mActivityObject = mSessionData.getActivity();
 
         mSessionDelegate = createSessionDelegate();
 
@@ -254,11 +253,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
-    }   
 
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "Activity lifecycle onStart");
+        mActivityObject = mSessionData.getActivity();
 
         mSessionData.addDelegate(mSessionDelegate);
 
@@ -273,6 +269,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         } else {
             initializeWithProviderConfiguration();
         }
+    }
+
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "Activity lifecycle onStart");
     }
 
     private void loadViewElementPropertiesWithActivityObject() {
@@ -426,8 +427,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "Activity lifecycle onStop");
-
-        mSessionData.removeDelegate(mSessionDelegate);
     }
 
     protected void onPause() {
@@ -830,7 +829,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                         .create();
             case DIALOG_CONFIRM_SIGNOUT:
                 return new AlertDialog.Builder(JRPublishActivity.this)
-                        .setMessage("Sign out of " + mSelectedProvider.getName() + "?")
+                        .setMessage("Sign out of " + mSelectedProvider.getFriendlyName() + "?")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 signOutButtonHandler();

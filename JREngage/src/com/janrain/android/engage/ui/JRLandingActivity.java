@@ -216,18 +216,18 @@ public class JRLandingActivity extends Activity {
         mSigninButton.setOnFocusChangeListener(bel);
         mSigninButton.setOnTouchListener(bel);
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
         prepareUserInterface();
 
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     public void onBackPressed() {

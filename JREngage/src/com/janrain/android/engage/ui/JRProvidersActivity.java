@@ -215,6 +215,11 @@ public class JRProvidersActivity extends ListActivity {
                 }
             }, 0, 1000);
         }
+
+        if (mFinishReceiver == null) {
+            mFinishReceiver = new FinishReceiver();
+            registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
+        }
     }
 
     public void onResume () {
@@ -229,11 +234,6 @@ public class JRProvidersActivity extends ListActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        if (mFinishReceiver == null) {
-            mFinishReceiver = new FinishReceiver();
-            registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
-        }
     }
 
     @Override

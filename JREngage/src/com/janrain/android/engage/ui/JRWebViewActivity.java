@@ -150,14 +150,12 @@ public class JRWebViewActivity extends Activity {
         CookieSyncManager.createInstance(this);
 
         mSessionData = JRSessionData.getInstance();
-        JRProvider provider = mSessionData.getCurrentlyAuthenticatingProvider();
 
-        if (Config.LOGD) {
-            Log.d(TAG, "[onCreate] provider: " + provider.getName());
-        }
+//        if (Config.LOGD) {
+//            Log.d(TAG, "[onCreate] provider: " + provider.getName());
+//        }
 
         mLayoutHelper = new SharedLayoutHelper(this);
-        mLayoutHelper.setHeaderText(provider.getFriendlyName());
 //        mLayoutHelper.showProgressDialog();
 
         mWebView = (WebView)findViewById(R.id.webview);
@@ -173,11 +171,9 @@ public class JRWebViewActivity extends Activity {
 
         URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
         mWebView.loadUrl(startUrl.toString());
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+        JRProvider provider = mSessionData.getCurrentlyAuthenticatingProvider();
+        mLayoutHelper.setHeaderText(provider.getFriendlyName());
 
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
@@ -188,16 +184,15 @@ public class JRWebViewActivity extends Activity {
         mWebView.setDownloadListener(mWebviewDownloadListener);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
     protected void onStop() {
         super.onStop();
 
-//        mWebView.setWebViewClient(null);
-
-        //this listener's callback assumes the activity is being shown, but if the user presses
-        //the back button while the webview is transitioning between pages the activity may
-        //not be shown when this listener is fired, which would cause a crash, so we unset
-        //the listener here.
-//        mWebView.setDownloadListener(null);
     }
 
     @Override
@@ -206,6 +201,14 @@ public class JRWebViewActivity extends Activity {
 
         mLayoutHelper.dismissProgressDialog();
         unregisterReceiver(mFinishReceiver);
+
+
+        //this listener's callback assumes the activity is running, but if the user presses
+        //the back button while the webview is transitioning between pages the activity may
+        //not be shown when this listener is fired, which would cause a crash, so we unset
+        //the listener here.
+        mWebView.setWebViewClient(null);
+        mWebView.setDownloadListener(null);
     }
 
     public void onBackPressed() {

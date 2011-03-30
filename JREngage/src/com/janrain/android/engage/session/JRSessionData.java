@@ -946,12 +946,14 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         //cookies are stored by domain, and are not different for different schemes (i.e. http vs https)
         //(although they sort of, ...)
         String cookieGlob = cm.getCookie("http://" + domain);
-        String[] cookies = cookieGlob.split(";");
-        for (String cookieTuple : cookies) {
-            String[] cookieParts = cookieTuple.split("=");
-            cm.setCookie(domain, cookieParts[0] + "=");//;domain=" + domain);
+        if (cookieGlob != null) {
+            String[] cookies = cookieGlob.split(";");
+            for (String cookieTuple : cookies) {
+                String[] cookieParts = cookieTuple.split("=");
+                cm.setCookie(domain, cookieParts[0] + "=");//;domain=" + domain);
+            }
+            csm.sync();
         }
-        csm.sync();
     }
 
     public void forgetAllAuthenticatedUsers() {
