@@ -19,3 +19,4 @@ nbproject/
 #.idea/
 #*.iml
 
+proguard.cfg
