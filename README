@@ -1,5 +1,5 @@
 Welcome to the Janrain Engage library for the Android platform.  This library is available open-source under a Berkeley 
-license, as found in the LICENSE file.
+license, as found in the LICENSE file.  This is an alpha release, do not go live with it.  
 
 Getting Started
 You will need git, the Android SDK with API level 7 (Android 2.1).  You can optionally use IntelliJ with the 
@@ -92,11 +92,16 @@ Using JREngage to enable a user to easily share news from your Android app --
 - instantiate and (optionally) populate the fields of a JRActivity object
 - call JREngage.showSocialPublishingDialogWithActivity
 
-What's Coming
+What's Coming:
+
 -Better support for device orientation change
 -Better support for task resumption after a process kill
+-UI tweaks
+-Email and SMS support
+
 
 Reporting Bugs and asking questions:
+
 Please report bugs via the forum, or via github issues.
 A Q&A forum has been set up for this alpha release at 
 https://support.janrain.com/forums/315745-android-library-open-alpha-q-a
