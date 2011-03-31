@@ -18,29 +18,29 @@ Compiling SimpleDemo with IntelliJ:
 	In the Project Structure dialog:
 		-	Select "Modules" from the leftmost Project Settings list
 		-	In the Modules window (to the right of the Project Settings window), select the Android facet 
-			of JREngage (you may need to expand the turndown in the list of modules)
+			of JREngage (you may need to expand the turn-down in the list of modules)
 			
 		If you don't already have an Android Platform configured:
 			-	Select New to configure a new "Android Platform"
 			-	Browse to the "android-7" directory found in your Android SDK directory, and click OK
 		
-		- Choose "Android 2.1 Platform" as you Android Platform	
+		-	Choose "Android 2.1 Platform" as you Android Platform
 		-	Select the Android facet of the SimpleDemo module and make sure it is also using the "Android 2.1 Platform".
 			(If not click Refresh and select the Android 2.1 Platform from the drop down) 
 			
 		When you configure the the IntelliJ to use the Android 2.1 platform it may have named 
 		the Android Platform "Android 2.1-update1 Platform" instead of "Android 2.1 Platform", in which case 
 		you will need to fix this for both the JREngage module and the SimpleDemo module. For both modules:
-			- In the Modules window (to the right of the Project Settings window), select the JREngage or 
+			-	In the Modules window (to the right of the Project Settings window), select the JREngage or
 				SimpleDemo module
 			-	Go to the Dependencies tab
 			-	Remove the "Android 2.1 Platform" dependency
 			-	Click Add and then choose Library from the drop down
-			- In the Choose Libraries dialog, select the "Android 2.1-update1 Platform" library
+            -	In the Choose Libraries dialog, select the "Android 2.1-update1 Platform" library
 
 		If you do not have IntelliJ configured with JDK 1.6:
-			- Select "Project" from the leftmost Project Settings list; you will see "1.6 Invalid" in the drop down
-			- Click the New button, choose JSDK, then browse to your installation of the 1.6 JDK. 
+			-	Select "Project" from the leftmost Project Settings list; you will see "1.6 Invalid" in the drop down
+			-	Click the New button, choose JSDK, then browse to your installation of the 1.6 JDK.
 				(On a Mac find it under System/Library/Java/JavaVirtualMachines/1.6.0jdk/Contents)  
 			
 		Once you are done, click the OK button to apply your changes
@@ -61,7 +61,7 @@ Compiling SimpleDemo with IntelliJ:
 	You can rebuild R.java by right-clicking anywhere in the MainActivity.java file and selecting 
 	"Force Regenerate R.java file". 
 	
-	The SimpleDemo module should now compile and run.  Press shift+F10 to run, then select your Android device.
+	The SimpleDemo module should now compile and run.  Press shift+F10 to run.
 
 
 Compiling/Installing SimpleDemo with ant:
@@ -77,7 +77,7 @@ Compiling/Installing SimpleDemo with ant:
 
 Adding the JREngage library to an Existing IntelliJ Project:
 	-	Open your project in IntelliJ
-	- From the project tree, right-click your module select "Open Module Settings" to open the Project Structure dialog
+	-	From the project tree, right-click your module select "Open Module Settings" to open the Project Structure dialog
 
 	In the Project Structure dialog:
 		
@@ -122,18 +122,18 @@ Adding the JREngage library to an Existing IntelliJ Project:
 				
 Interfacing With the Library:
 	The library exposes a public class, com.janrain.android.engage.JREngage, through which calling applications can 
-  interact.  Interaction begins by calling the JREngage.initInstance(Context context, String appId, String tokenUrl, 
-  JREngageDelegate delegate) method.  
-	- The context is your application's Android Context (retrievable with Activity.getApplicationContext(), 
-	- the appId is the application ID of your Janrain Engage application (from rpxnow.com), 
-	- the tokenUrl (optional) is the token URL that authentication from your application will post to,
-	- the delegate is an interface you must implement which serves to receive responses and information from the library. 
-    (See SimpleDemo's delegate implementation for a good idea where to start.)
+	interact.  Interaction begins by calling the JREngage.initInstance(Context context, String appId, String tokenUrl,
+	JREngageDelegate delegate) method.
+	-	The context is your application's Android Context (retrievable with Activity.getApplicationContext(),
+	-	the appId is the application ID of your Janrain Engage application (from rpxnow.com),
+	-	the tokenUrl (optional) is the token URL that authentication from your application will post to,
+	-	the delegate is an interface you must implement which serves to receive responses and information from the library.
+    	(See SimpleDemo's delegate implementation for a good idea where to start.)
 
 	Once initialized user interaction with the JREngage library can be started by calling 
-  JREngage.showAuthenticationDialog() or JREngage.showSocialPublishingDialogWithActivity(JRActivity activity).  
+	JREngage.showAuthenticationDialog() or JREngage.showSocialPublishingDialogWithActivity(JRActivity activity).
   
-  Successful authentications will invoke the delegate.jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String 
+	Successful authentications will invoke the delegate.jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String
     provider).
 
 
@@ -143,7 +143,7 @@ Interfacing With the Library:
 			-	Initialize the library with a token URL hosted on your service's web server
 			-	Have the web page served at the token URL create a session with your service and put a session token in the response
 			-	Implement the jrAuthenticationDidReachTokenUrl delegate method, pulling the session token out of the tokenUrlPayload 
-		    parameter
+		    	parameter
 			-	Invoke your internet services features with that session token
 
 		Using JREngage to enable a user to easily share news from your Android app --
