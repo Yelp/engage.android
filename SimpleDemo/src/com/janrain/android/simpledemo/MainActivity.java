@@ -66,8 +66,8 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
     private static final int DIALOG_JRENGAGE_ERROR = 1;
 
-//    private static final String ENGAGE_APP_ID = ""; //lilli's rpx dev environment RP
-    private static final String ENGAGE_APP_ID = ""; //rpxnow.com RP
+//    private static final String ENGAGE_APP_ID = "aehecdnjkodopeijgjgo"; //lilli's rpx dev environment RP
+    private static final String ENGAGE_APP_ID = "appcfamhnpkagijaeinl"; //rpxnow.com RP
     private static final String ENGAGE_TOKEN_URL = null;//"http://jrengage-for-android.appspot.com/login";
 
     private JREngage mEngage;
@@ -145,12 +145,15 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                     mTitleText = title.getFirstChild().getNodeValue();
                     mActionLink = link.getFirstChild().getNodeValue();
 
+                    //need to concatenate all the children of the description element (which has
+                    // ~100s of TextElement children) in order to come up with the complete
+                    //description text
                     mDescriptionText = "";
                     NodeList nl = description.getChildNodes();
-                    for (int x=0; x<nl.getLength(); x++) { mDescriptionText += nl.item(x).getNodeValue(); }
+                    for (int x=0; x<nl.getLength(); x++) {
+                        mDescriptionText += nl.item(x).getNodeValue();
+                    }
 
-                    //need to concatenate all the children of mDescriptionText (which has ~100s of TextElement children)
-                    //in order to come up with the complete text body of the description element.
 
                     mDescriptionText = Html.fromHtml(mDescriptionText, new Html.ImageGetter() {
                         public Drawable getDrawable(String s) {
