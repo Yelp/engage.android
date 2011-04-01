@@ -114,11 +114,13 @@ public class JREngage {
             }
 
             sInstance = new JREngage();
-        } //else throw new IllegalArgumentException("illegal reinitialization in JREngage.initInstance");
+        }
+        //else throw new IllegalArgumentException(
+        //      "illegal reinitialization in JREngage.initInstance");
 
-        //todo this can happen if the user exits the activity via the home button or something and the phone
-        //doesn't kill the app, so it shouldn't be an error, but there's suspect statefulness here regardless
-        //since we're just discarding the parameters
+        //todo this can happen if the user exits the activity via the home button and the phone
+        //doesn't kill the app, so it shouldn't be an error, but there's suspect statefulness here
+        //regardless since we're just discarding the parameters
         sInstance.initialize(context, appId, tokenUrl, delegate);
 
         return sInstance;
@@ -199,7 +201,10 @@ public class JREngage {
 	/*
 	 * Initializer.
 	 */
-	private void initialize(Context context, String appId, String tokenUrl, JREngageDelegate delegate) {
+	private void initialize(Context context,
+                            String appId,
+                            String tokenUrl,
+                            JREngageDelegate delegate) {
         mContext = context;
         mAppId = appId;
         mTokenUrl = tokenUrl;
@@ -275,7 +280,10 @@ public class JREngage {
             mInterfaceMaestro.authenticationFailed();
         }
 
-        public void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders headers, String payload, String provider) {
+        public void authenticationDidReachTokenUrl(String tokenUrl,
+                                                   HttpResponseHeaders headers,
+                                                   String payload,
+                                                   String provider) {
             if (Config.LOGD) {
                 Log.d(TAG, "[authenticationDidReachTokenUrl]");
             }
@@ -286,7 +294,9 @@ public class JREngage {
             }
         }
 
-        public void authenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
+        public void authenticationCallToTokenUrlDidFail(String tokenUrl,
+                                                        JREngageError error,
+                                                        String provider) {
             if (Config.LOGD) {
                 Log.d(TAG, "[authenticationCallToTokenUrlDidFail]");
             }
@@ -345,7 +355,9 @@ public class JREngage {
             }
         }
 
-        public void publishingJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
+        public void publishingJRActivityDidFail(JRActivityObject activity,
+                                                JREngageError error,
+                                                String provider) {
             if (Config.LOGD) {
                 Log.d(TAG, "[publishingJRActivityDidFail]");
             }
@@ -373,7 +385,8 @@ public class JREngage {
     }
 
 
-    //todo xxx the following four functions all call the same JRSessionData methods but they should do different things.
+    //todo xxx the following four functions all call the same JRSessionData methods but they should
+    //do different things.
     public void signoutUserForProvider(String provider) {
         if (Config.LOGD) {
             Log.d(TAG, "[signoutUserForProvider]");
