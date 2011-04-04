@@ -146,6 +146,10 @@ public class JREngage {
         return (sInstance == null) ? null : sInstance.mContext;
 	}
 
+    public static void setContext(Context c) {
+        sInstance.mContext = c;
+    }
+
     // ------------------------------------------------------------------------
     // FIELDS
     // ------------------------------------------------------------------------

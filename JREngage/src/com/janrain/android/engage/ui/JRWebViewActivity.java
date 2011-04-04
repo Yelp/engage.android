@@ -43,8 +43,10 @@ import android.util.Config;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.webkit.*;
 import android.widget.Toast;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -145,10 +147,14 @@ public class JRWebViewActivity extends Activity {
      */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Request progress bar
+        //Log.d(TAG, "RWF: " + );
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.provider_webview);
 
         CookieSyncManager.createInstance(this);
-
+        
         mSessionData = JRSessionData.getInstance();
 
 //        if (Config.LOGD) {
@@ -187,7 +193,11 @@ public class JRWebViewActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+    }
 
+    protected void onResume() {
+        super.onResume();
+        JREngage.setContext(this);
     }
 
     protected void onStop() {
@@ -325,6 +335,8 @@ public class JRWebViewActivity extends Activity {
                 Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
             }
 
+            setProgressBarIndeterminateVisibility(true);
+
             super.onPageStarted(view, url, favicon);
         }
 
@@ -338,6 +350,8 @@ public class JRWebViewActivity extends Activity {
 //            if (!mIsMobileEndpointUrlLoading) {
 //                mLayoutHelper.dismissProgressDialog();
 //            }
+
+            setProgressBarIndeterminateVisibility(false);
 
             super.onPageFinished(view, url);
         }

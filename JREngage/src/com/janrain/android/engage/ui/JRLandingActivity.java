@@ -47,6 +47,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
@@ -227,8 +228,13 @@ public class JRLandingActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-
     }
+
+    protected void onResume() {
+        super.onResume();
+        JREngage.setContext(this);
+    }
+
 
     public void onBackPressed() {
         mSessionData.triggerAuthenticationDidRestart();

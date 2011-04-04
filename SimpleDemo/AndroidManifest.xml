@@ -35,13 +35,13 @@
 
         <!-- For Janrain Engage library -->
         <activity android:name="com.janrain.android.engage.ui.JRProvidersActivity"
-                android:theme="@android:style/Theme.Light"/>
+                  android:theme="@android:style/Theme.Light"/>
                   <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRLandingActivity"
-                android:theme="@android:style/Theme.Light"/>
+                  android:theme="@android:style/Theme.Light"/>
                   <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRWebViewActivity"
-                android:theme="@android:style/Theme.Light"/>
+                  android:theme="@android:style/Theme.Light"/>
                   <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRPublishActivity"
                   android:screenOrientation="portrait"

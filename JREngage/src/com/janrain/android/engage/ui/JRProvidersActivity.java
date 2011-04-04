@@ -40,6 +40,7 @@ import android.util.Config;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
@@ -244,6 +245,7 @@ public class JRProvidersActivity extends ListActivity {
 
     public void onResume () {
         super.onResume();
+        JREngage.setContext(this);
     }
 
     @Override

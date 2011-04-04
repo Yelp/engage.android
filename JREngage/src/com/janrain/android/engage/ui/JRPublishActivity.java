@@ -49,6 +49,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
 import android.widget.Button;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -192,7 +193,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Activity lifecycle onCreate");
-
         setContentView(R.layout.publish_activity);
 
         mSessionData = JRSessionData.getInstance();
@@ -419,6 +419,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "Activity lifecycle onResume");
+
+        JREngage.setContext(this);
     }
 
     protected void onStop() {
