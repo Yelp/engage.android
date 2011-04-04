@@ -161,10 +161,12 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                             return null;
                         }
                     }, null).toString();
-                } catch (MalformedURLException e) { }
+                }
+                catch (MalformedURLException e) { }
                 catch (IOException e) { }
                 catch (ParserConfigurationException e) { }
                 catch (SAXException e) { }
+                catch (NullPointerException e) {}
                 return null;
             }
 

@@ -35,7 +35,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
@@ -63,8 +62,6 @@ import org.json.JSONStringer;
 import org.json.JSONTokener;
 
 import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -163,7 +160,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private LinearLayout mNameAndSignOutContainer;
     private TextView mUserNameView;
     private Button mSignOutButton;
-    private Button mShareButton;
+    private Button mJustShareButton;
     private Button mConnectAndShareButton;
     private LinearLayout mSharedTextAndCheckMarkContainer;
 
@@ -222,7 +219,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //mNameAndSignOutContainer = (LinearLayout) findViewById(R.id.name_and_sign_out_container);
         mUserNameView = (TextView) findViewById(R.id.user_name);
         mSignOutButton = (Button) findViewById(R.id.sign_out_button);
-        mShareButton = (Button) findViewById(R.id.just_share_button);
+        mJustShareButton = (Button) findViewById(R.id.just_share_button);
         mConnectAndShareButton = (Button) findViewById(R.id.connect_and_share_button);
         mSharedTextAndCheckMarkContainer = (LinearLayout) findViewById(R.id.shared_text_and_check_mark_horizontal_layout);
 
@@ -232,15 +229,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         ButtonEventColorChangingListener colorChangingListener = new ButtonEventColorChangingListener();
         mConnectAndShareButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
-        mShareButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
+        mJustShareButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
 
         mConnectAndShareButton.setOnClickListener(mShareButtonListener);
         mConnectAndShareButton.setOnFocusChangeListener(colorChangingListener);
         mConnectAndShareButton.setOnTouchListener(colorChangingListener);
 
-        mShareButton.setOnClickListener(mShareButtonListener);
-        mShareButton.setOnFocusChangeListener(colorChangingListener);
-        mShareButton.setOnTouchListener(colorChangingListener);
+        mJustShareButton.setOnClickListener(mShareButtonListener);
+        mJustShareButton.setOnFocusChangeListener(colorChangingListener);
+        mJustShareButton.setOnTouchListener(colorChangingListener);
 
         //initialize the provider shared-ness state map.
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
@@ -505,11 +502,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         public void afterTextChanged(Editable editable) {
             updateUserCommentView();
             updateCharacterCount();
-            mProvidersThatHaveAlreadyShared.put(mSelectedProvider.getName(), false);
+
+            for (String k : mProvidersThatHaveAlreadyShared.keySet())
+                mProvidersThatHaveAlreadyShared.put(k, false);
+            
             showActivityAsShared(false);
         }
     };
-
 
     public void updateCharacterCount() {
         //todo verify correctness of the 0 remaining characters edge case
@@ -690,7 +689,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSharedTextAndCheckMarkContainer.setVisibility(visibleIfShared);
 
         if (mAuthenticatedUser != null)
-            mShareButton.setVisibility(visibleIfNotShared);
+            mJustShareButton.setVisibility(visibleIfNotShared);
         else
             mConnectAndShareButton.setVisibility(visibleIfNotShared);
     }
@@ -701,7 +700,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         int visibleIfLoggedIn = loggedIn ? View.VISIBLE : View.GONE;
         int visibleIfNotLoggedIn = !loggedIn ? View.VISIBLE : View.GONE;
 
-        mShareButton.setVisibility(visibleIfLoggedIn);
+        mJustShareButton.setVisibility(visibleIfLoggedIn);
         mUserProfileContainer.setVisibility(visibleIfLoggedIn);
 
         mConnectAndShareButton.setVisibility(visibleIfNotLoggedIn);
@@ -750,13 +749,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         int colorWithNoAlpha = colorForProviderFromArray(
                 mSelectedProvider.getSocialSharingProperties().get("color_values"), false);
 
-        mShareButton.getBackground().setColorFilter(colorWithNoAlpha, PorterDuff.Mode.MULTIPLY);
+        mJustShareButton.getBackground().setColorFilter(colorWithNoAlpha, PorterDuff.Mode.MULTIPLY);
         mConnectAndShareButton.getBackground().setColorFilter(colorWithNoAlpha, PorterDuff.Mode.MULTIPLY);
         mPreviewBorder.getBackground().setColorFilter(colorWithNoAlpha, PorterDuff.Mode.SRC_ATOP);
 
-//        mShareButton.setBackgroundDrawable(mSelectedProvider.getProviderButtonShort(getApplicationContext()));
-//        mConnectAndShareButton.setBackgroundDrawable(mSelectedProvider.getProviderButtonLong(getApplicationContext()));
-
+//        Drawable providerIcon = mSelectedProvider.getProviderListIconDrawable(this);
+//
+//        mConnectAndShareButton.setCompoundDrawables(null, null, providerIcon, null);
+//        mJustShareButton.setCompoundDrawables(null, null, providerIcon, null);
         mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(getApplicationContext()));
     }
 
@@ -1017,18 +1017,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 showUserAsLoggedIn(true);
 
                 shareActivity();
-
-//                } else {
-////                    UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Shared"
-////                                                                     message:@"There was an error while sharing this activity."
-////                                                                    delegate:nil
-////                                                           cancelButtonTitle:@"OK"
-////                                                           otherButtonTitles:nil] autorelease];
-////                    [alert show];
-//                    showViewIsLoading(false);
-//                    mWeAreCurrentlyPostingSomething = false;
-//                    mWeHaveJustAuthenticated = false;
-//                }
             }
 
             public void publishingDidRestart() { mWeAreCurrentlyPostingSomething = false; }

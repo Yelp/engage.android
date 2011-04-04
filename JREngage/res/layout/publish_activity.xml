@@ -29,8 +29,10 @@
             android:layout_height="fill_parent"
             >
             <!--android:paddingTop="0dp"-->
-            <!--According to http://code.google.com/p/foursquared/source/browse/main/res/layout/main_activity.xml
-                paddingTop of 0 should obscure the tabStrip, but it doesn't work here for some reason-->
+            <!--According to
+                http://code.google.com/p/foursquared/source/browse/main/res/layout/main_activity.xml
+                paddingTop of 0 should obscure the tabStrip, but it doesn't work here for some
+                reason-->
 
             <RelativeLayout
                 android:id="@+id/tab_view_content"
@@ -359,6 +361,7 @@
                             android:layout_marginLeft="5dp"
                             android:layout_weight="1"
                             />
+                        <!--android:drawableRight="@drawable/icon_facebook"-->
                         <!--android:layout_width="135dip"-->
                         <!--android:background="@drawable/sel_janrain_135x40"-->
                         <!--android:layout_alignParentRight="true"-->
@@ -412,6 +415,7 @@
                             android:layout_marginRight="10dp"
                             android:layout_marginLeft="10dp"
                             />
+                        <!--android:drawableRight="@drawable/icon_facebook"-->
                         <!--android:paddingBottom="5dip"-->
                         <!--android:background="@drawable/sel_janrain_280x40"-->
                         <!--android:textColor="#ffffffff"-->

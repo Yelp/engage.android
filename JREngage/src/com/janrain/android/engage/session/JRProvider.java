@@ -273,13 +273,13 @@ public class JRProvider implements Serializable {
 
     private Drawable getDrawable(Context c,
                                  String drawableName,
-                                 HashMap<String, Drawable> drawableHashMap,
-                                 HashMap<String, Integer> resourceHashMap) {
-        if (drawableHashMap.containsKey(drawableName)) return drawableHashMap.get(drawableName);
+                                 HashMap<String, Drawable> drawableMap,
+                                 HashMap<String, Integer> resourceMap) {
+        if (drawableMap.containsKey(drawableName)) return drawableMap.get(drawableName);
 
-        if (resourceHashMap.containsKey(drawableName)) {
-            Drawable r = c.getResources().getDrawable(resourceHashMap.get(drawableName));
-            drawableHashMap.put(drawableName, r);
+        if (resourceMap.containsKey(drawableName)) {
+            Drawable r = c.getResources().getDrawable(resourceMap.get(drawableName));
+            drawableMap.put(drawableName, r);
             return r;
         }
 
