@@ -33,7 +33,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -66,9 +65,16 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
     private static final int DIALOG_JRENGAGE_ERROR = 1;
 
-//    private static final String ENGAGE_APP_ID = "aehecdnjkodopeijgjgo"; //lilli's rpx dev environment RP
-    private static final String ENGAGE_APP_ID = "appcfamhnpkagijaeinl"; //rpxnow.com RP
-    private static final String ENGAGE_TOKEN_URL = null;//"http://jrengage-for-android.appspot.com/login";
+    private String readAsset(String fileName) {
+        try {
+            InputStream is = getAssets().open(fileName);
+            byte[] buffer = new byte[is.available()];
+            is.read(buffer);
+            return new String(buffer);
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
     private JREngage mEngage;
     private Button mBtnTestAuth;
@@ -98,7 +104,10 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         mBtnTestLand = (Button)findViewById(R.id.btn_test_land);
         mBtnTestLand.setOnClickListener(this);
 
-        mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
+        String engageAppId = readAsset("app_id.txt");
+        String engageTokenUrl = readAsset("token_url.txt");
+
+        mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, this);
 
         if (savedInstanceState != null) {
             mTitleText = savedInstanceState.getString("a");
@@ -193,12 +202,12 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if (!mBtnTestPub.getText().equals("loading blog")) {
+//        if (!mBtnTestPub.getText().equals("loading blog")) {
             outState.putString("a", mTitleText);
             outState.putString("b", mDescriptionText);
             outState.putString("c", mImageUrl);
             outState.putString("d", mActionLink);
-        }
+//        }
     }
 
     public void onClick(View view) {

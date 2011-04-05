@@ -157,11 +157,11 @@ public class JREngage {
     // Application context
     private Context mContext;
 
-    // Application ID string
-    private String mAppId;
-
-    // Token URL
-    private String mTokenUrl;
+//    // Application ID string
+//    private String mAppId;
+//
+//    // Token URL
+//    private String mTokenUrl;
 
 	// Holds configuration and state for the JREngage library
 	private JRSessionData mSessionData;
@@ -210,13 +210,14 @@ public class JREngage {
                             String tokenUrl,
                             JREngageDelegate delegate) {
         mContext = context;
-        mAppId = appId;
-        mTokenUrl = tokenUrl;
+//        mAppId = appId;
+//        mTokenUrl = tokenUrl;
         mDelegates = new ArrayList<JREngageDelegate>();
         if (delegate != null) {
             mDelegates.add(delegate);
         }
-        mSessionData = JRSessionData.getInstance(mAppId, mTokenUrl, mJRSD);
+//        mSessionData = JRSessionData.getInstance(mAppId, mTokenUrl, mJRSD);
+        mSessionData = JRSessionData.getInstance(appId, tokenUrl, mJRSD);
         mInterfaceMaestro = JRUserInterfaceMaestro.getInstance();
 	}
 

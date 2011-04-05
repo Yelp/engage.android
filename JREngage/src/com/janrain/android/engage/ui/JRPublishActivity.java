@@ -29,34 +29,44 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
-import android.app.*;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.app.TabActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.*;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.*;
+import android.text.Editable;
+import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Config;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
-import android.widget.Button;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.session.*;
-import com.janrain.android.engage.types.*;
+import com.janrain.android.engage.session.JRAuthenticatedUser;
+import com.janrain.android.engage.session.JRProvider;
+import com.janrain.android.engage.session.JRSessionData;
+import com.janrain.android.engage.session.JRSessionDelegate;
+import com.janrain.android.engage.types.JRActivityObject;
+import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.types.JRMediaObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
@@ -148,6 +158,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     //UI views
     private RelativeLayout mPreviewBorder;
+    private RelativeLayout mPreviewBox;
     private RelativeLayout mMediaContentView;
     private TextView mCharacterCountView;
     private TextView mPreviewLabelView;
@@ -205,6 +216,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         }
 
         //View References
+        mPreviewBox = (RelativeLayout) findViewById(R.id.preview_box);
         mPreviewBorder = (RelativeLayout) findViewById(R.id.preview_box_border);
         mMediaContentView = (RelativeLayout) findViewById(R.id.media_content_view);
         mCharacterCountView = (TextView) findViewById(R.id.character_count_view);
@@ -421,16 +433,38 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         Log.d(TAG, "Activity lifecycle onResume");
 
         JREngage.setContext(this);
+//        if (!mJustShareButton.isPressed())
+        mJustShareButton.getBackground().setColorFilter(
+                colorForProviderFromArray(
+                        mSelectedProvider.getSocialSharingProperties().get("color_values"),
+                        false),
+                PorterDuff.Mode.MULTIPLY);
+//        if (!mConnectAndShareButton.isPressed())
+        mConnectAndShareButton.getBackground().setColorFilter(
+                colorForProviderFromArray(
+                        mSelectedProvider.getSocialSharingProperties().get("color_values"),
+                        false),
+                PorterDuff.Mode.MULTIPLY);
     }
 
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "Activity lifecycle onStop");
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            mPreviewBox.setVisibility(View.GONE);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            mPreviewBox.setVisibility(View.VISIBLE);
+        }
     }
 
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "Activity lifecycle onPause");
+    }
+
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "Activity lifecycle onStop");
     }
 
     @Override
@@ -460,14 +494,95 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         }
 
         public boolean onTouch(View view, MotionEvent motionEvent) {
-            view.getBackground().setColorFilter(
-                    colorForProviderFromArray(
-                            mSelectedProvider.getSocialSharingProperties().get("color_values"), false),
-                    PorterDuff.Mode.MULTIPLY);
+//            view.getBackground().setColorFilter(
+//                    colorForProviderFromArray(
+//                            mSelectedProvider.getSocialSharingProperties().get("color_values"),
+//                            false),
+//                    PorterDuff.Mode.MULTIPLY);
+//
+//            int historySize = motionEvent.getHistorySize();
 
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN)
-                view.getBackground().clearColorFilter();
+//            if (((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) |
+//                    ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_CANCEL))
+//                return false;
 
+//            if (((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_DOWN) |
+//                    ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_MOVE))
+//                view.getBackground().clearColorFilter();
+
+//            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+//                view.getBackground().clearColorFilter();
+//                return true;
+//            }
+
+//            TouchDelegate td = view.getTouchDelegate();
+//            td.onTouchEvent(motionEvent);
+//            if (view.isPressed()) {
+//                view.getBackground().clearColorFilter();
+//            } else {
+//                view.getBackground().setColorFilter(
+//                        colorForProviderFromArray(
+//                                mSelectedProvider.getSocialSharingProperties().get("color_values"),
+//                                false),
+//                        PorterDuff.Mode.MULTIPLY);
+//            }
+//            view.invalidate();
+//            return true;
+
+            boolean onButton = (motionEvent.getX() >= view.getLeft()) &&
+                    (motionEvent.getX() <= view.getLeft() + view.getWidth()) &&
+                    (motionEvent.getY() >= view.getTop()) &&
+                    (motionEvent.getY() <= view.getTop() + view.getHeight());
+
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_UP:
+                    if (!view.isPressed())
+                        view.getBackground().setColorFilter(
+                                colorForProviderFromArray(
+                                        mSelectedProvider.getSocialSharingProperties().get("color_values"),
+                                        false),
+                                PorterDuff.Mode.MULTIPLY);
+//                    view.invalidate();
+//                    view.refreshDrawableState();
+//                    view.postInvalidate();
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    view.getBackground().setColorFilter(
+                            colorForProviderFromArray(
+                                    mSelectedProvider.getSocialSharingProperties().get("color_values"),
+                                    false),
+                            PorterDuff.Mode.MULTIPLY);
+                    break;
+                case MotionEvent.ACTION_DOWN:
+                    view.getBackground().clearColorFilter();
+//                    view.postInvalidate();
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    //view.
+//                    if (!view.isPressed()) {
+                    if (!onButton & !view.isPressed()) {
+                        view.getBackground().setColorFilter(
+                                colorForProviderFromArray(
+                                        mSelectedProvider.getSocialSharingProperties().get("color_values"),
+                                        false),
+                                PorterDuff.Mode.MULTIPLY);
+                    } else view.getBackground().clearColorFilter();
+                    view.invalidate();
+                    break;
+                case MotionEvent.ACTION_OUTSIDE:
+//                     view.getBackground().setColorFilter(
+//                            colorForProviderFromArray(
+//                                    mSelectedProvider.getSocialSharingProperties().get("color_values"),
+//                                    false),
+//                            PorterDuff.Mode.MULTIPLY);
+                    break;
+            }
+
+            Log.d(TAG, "asd " + motionEvent.getAction() + " " + motionEvent.getAction() + " " + view.toString()
+                    + " " + onButton + " " + view.isPressed());
+
+//            view.dispatchTouchEvent(motionEvent);
+//            return false;
             return false;
         }
     }
@@ -713,8 +828,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             updatePreviewTextWhenContentDoesNotReplaceAction();
 
         int scaledPadding = scaleDipPixels(240);
-        if (loggedIn) mTriangleIconView.setPadding(0,0,scaledPadding,0);
-        else mTriangleIconView.setPadding(0,0,0,0);
+        if (loggedIn) mTriangleIconView.setPadding(0, 0, scaledPadding, 0);
+        else mTriangleIconView.setPadding(0, 0, 0, 0);
     }
 
     private void configureViewElementsBasedOnProvider() {

@@ -35,17 +35,21 @@
 
         <!-- For Janrain Engage library -->
         <activity android:name="com.janrain.android.engage.ui.JRProvidersActivity"
-                  android:theme="@android:style/Theme.Light"/>
+                  android:theme="@android:style/Theme.Light"
+                  android:configChanges="orientation"/>
                   <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRLandingActivity"
-                  android:theme="@android:style/Theme.Light"/>
+                  android:theme="@android:style/Theme.Light"
+                  android:configChanges="orientation"/>
                   <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRWebViewActivity"
-                  android:theme="@android:style/Theme.Light"/>
+                  android:theme="@android:style/Theme.Light"
+                  android:configChanges="orientation"/>
                   <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRPublishActivity"
-                  android:screenOrientation="portrait"
-                  android:theme="@android:style/Theme.Light.NoTitleBar"/>
+                  android:theme="@android:style/Theme.Light.NoTitleBar"
+                  android:configChanges="orientation"/>
+        android:screenOrientation="portrait"
                   <!--android:configChanges="orientation|keyboardHidden"-->
     </application>
 
