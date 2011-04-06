@@ -29,7 +29,8 @@
                   <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRPublishActivity"
                 android:theme="@android:style/Theme.Light.NoTitleBar"/>
-                  <!--android:configChanges="orientation|keyboardHidden"-->
+        <activity android:name=".ProfilesActivity" android:label="profiles_activity"/>
+        <!--android:configChanges="orientation|keyboardHidden"-->
     
     </application>
 </manifest>
