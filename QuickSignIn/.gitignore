@@ -18,5 +18,5 @@ tmp/*
 nbproject/
 #.idea/
 #*.iml
-SimpleDemo/local.properties
-QuickSignIn/local.properties
+
+proguard.cfg
