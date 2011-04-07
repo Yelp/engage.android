@@ -110,10 +110,10 @@ public class JRWebViewActivity extends Activity {
     private SharedLayoutHelper mLayoutHelper;
     private JRSessionData mSessionData;
     private WebView mWebView;
-    private boolean mIsAlertShowing;
-    private boolean mIsFinishPending;
+    private boolean mIsAlertShowing = false;
+    private boolean mIsFinishPending = false;
+    private boolean mIsMobileEndpointUrlLoading = false;
     private FinishReceiver mFinishReceiver;
-    private boolean mIsMobileEndpointUrlLoading;
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -122,12 +122,6 @@ public class JRWebViewActivity extends Activity {
     // ------------------------------------------------------------------------
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
-
-    public JRWebViewActivity() {
-        mIsAlertShowing = false;
-        mIsFinishPending = false;
-        mIsMobileEndpointUrlLoading = false;
-    }
 
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
@@ -147,22 +141,22 @@ public class JRWebViewActivity extends Activity {
      */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
 
         // Request progress bar
-        //Log.d(TAG, "RWF: " + );
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.provider_webview);
 
         CookieSyncManager.createInstance(this);
         
         mSessionData = JRSessionData.getInstance();
-
-//        if (Config.LOGD) {
-//            Log.d(TAG, "[onCreate] provider: " + provider.getName());
-//        }
-
         mLayoutHelper = new SharedLayoutHelper(this);
-//        mLayoutHelper.showProgressDialog();
+
+//        for the case when this activity is relaunched after the process was killed
+        if (mSessionData == null) {
+            finish();
+            return;
+        }
 
         mWebView = (WebView)findViewById(R.id.webview);
         mWebView.clearView();
@@ -175,9 +169,6 @@ public class JRWebViewActivity extends Activity {
         webSettings.setJavaScriptCanOpenWindowsAutomatically(false);
         webSettings.setSupportZoom(true);
 
-        URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
-        mWebView.loadUrl(startUrl.toString());
-
         JRProvider provider = mSessionData.getCurrentlyAuthenticatingProvider();
         mLayoutHelper.setHeaderText(provider.getFriendlyName());
 
@@ -188,6 +179,9 @@ public class JRWebViewActivity extends Activity {
 
         mWebView.setWebViewClient(mWebviewClient);
         mWebView.setDownloadListener(mWebviewDownloadListener);
+
+        URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
+        mWebView.loadUrl(startUrl.toString());
     }
 
     @Override
@@ -210,15 +204,18 @@ public class JRWebViewActivity extends Activity {
         super.onDestroy();
 
         mLayoutHelper.dismissProgressDialog();
-        unregisterReceiver(mFinishReceiver);
+
+        if (mFinishReceiver != null) unregisterReceiver(mFinishReceiver);
 
 
         //this listener's callback assumes the activity is running, but if the user presses
         //the back button while the webview is transitioning between pages the activity may
         //not be shown when this listener is fired, which would cause a crash, so we unset
         //the listener here.
-        mWebView.setWebViewClient(null);
-        mWebView.setDownloadListener(null);
+        if (mWebView != null) {
+            mWebView.setWebViewClient(null);
+            mWebView.setDownloadListener(null);
+        }
     }
 
     public void onBackPressed() {
@@ -361,6 +358,8 @@ public class JRWebViewActivity extends Activity {
         public void onReceivedError(WebView view, int errorCode, String description, String url) {
             Log.e(TAG, "[onReceivedError] code: " + errorCode + " | description: " + description
                 + " | url: " + url);
+
+            setProgressBarIndeterminateVisibility(false);
 
             super.onReceivedError(view, errorCode, description, url);
 

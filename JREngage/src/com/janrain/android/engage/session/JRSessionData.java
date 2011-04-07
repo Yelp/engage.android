@@ -89,9 +89,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     private static final String FMT_CONFIG_URL =
             "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s";
+
     private boolean mGetConfigDone = false;
     private String mOldEtag;
-
     private String mUrlEncodedAppName;
 
     // ------------------------------------------------------------------------
@@ -103,19 +103,26 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     // ------------------------------------------------------------------------
 
 	public static JRSessionData getInstance() {
-		return sInstance;
+//        if (sInstance == null) {
+//            String appId = Prefs.getAsString("JR~appId", "");
+//            String tokenUrl = Prefs.getAsString("JR~tokenUrl", "");
+//            sInstance = new JRSessionData(appId, tokenUrl, null);
+//        }
+
+        return sInstance;
 	}
 	
-	public static JRSessionData getInstance(String appId, String tokenUrl, JRSessionDelegate delegate) {
-		
-		if (sInstance != null) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[getInstance] returning existing instance.");
-                //todo this should probably be an error, as it ignores the parameters instead of
-                //reinstantiating the library
-            }
-			return sInstance;
-		}
+	public static JRSessionData getInstance(String appId,
+                                            String tokenUrl,
+                                            JRSessionDelegate delegate) {
+//		if (sInstance != null) {
+//            if (Config.LOGD) {
+//                Log.d(TAG, "[getInstance] returning existing instance.");
+//                //todo this should probably be an error, as it ignores the parameters instead of
+//                //reinstantiating the library
+//            }
+//			return sInstance;
+//        }
 		
 		if (TextUtils.isEmpty(appId)) {
             Log.w(TAG, "[getInstance] null instance w/ null appId specified.");
@@ -149,9 +156,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	private String mSavedConfigurationBlock = "";
 	private String mNewEtag;
     private String mGitCommit;
-
-    //private JRProviderList mProvidersWithIcons;
-    //private JRDictionary mIconsStillNeeded;
 
 	private JRActivityObject mActivity;
 	
@@ -192,7 +196,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 		mTokenUrl = tokenUrl;
 
         ApplicationInfo ai = JREngage.getContext().getApplicationInfo();
-        String appName = JREngage.getContext().getPackageManager().getApplicationLabel(ai).toString();
+        String appName = JREngage.getContext().getPackageManager().getApplicationLabel(ai)
+                .toString();
         try { mUrlEncodedAppName = URLEncoder.encode(appName, "UTF-8"); }
         catch (UnsupportedEncodingException e) { Log.e(TAG, e.toString()); }
 
@@ -216,7 +221,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 if (ListUtils.isEmpty(mBasicProviders)) {
                     Log.d(TAG, "[ctor] basic providers is empty");
                 } else {
-                    Log.d(TAG, "[ctor] basic providers: [" + TextUtils.join(",", mBasicProviders) + "]");
+                    Log.d(TAG, "[ctor] basic providers: [" + TextUtils.join(",", mBasicProviders)
+                            + "]");
                 }
             }
 
@@ -271,20 +277,17 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 //        this.mError = mError;
 //    }
 
-    public JRActivityObject getActivity() {
+    public JRActivityObject getJRActivity() {
         return mActivity;
     }
 
-    public void setActivity(JRActivityObject activity) {
+    public void setJRActivity(JRActivityObject activity) {
         mActivity = activity;
-
-        // TODO: Add function equiv. to [self startGetShortenedUrlsForActivity:activity];
-        //JRPublishActivity now shortens URLs, don't need to follow TODO?
     }
 
-//    public boolean getAlwaysForceReauth() {
-//        return mAlwaysForceReauth;
-//    }
+    public boolean getAlwaysForceReauth() {
+        return mAlwaysForceReauth;
+    }
 
     public void setAlwaysForceReauth(boolean force) {
         mAlwaysForceReauth = force;
@@ -328,12 +331,12 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public ArrayList<JRProvider> getSocialProviders() {
         ArrayList<JRProvider> providerList = new ArrayList<JRProvider>();
+
         if ((mSocialProviders != null) && (mSocialProviders.size() > 0)) {
-            for (String name : mSocialProviders) {
-                JRProvider provider = mAllProviders.getAsProvider(name);
-                providerList.add(provider);
-            }
+            for (String name : mSocialProviders)
+                providerList.add(mAllProviders.getAsProvider(name));
         }
+
         return providerList;
     }
 

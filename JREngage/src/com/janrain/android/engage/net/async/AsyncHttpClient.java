@@ -142,7 +142,9 @@ public final class AsyncHttpClient {
                     //todo maybe this shouldn't be globbed together, but instead be structured
                     //to allow the error response handler to make meaninful use of the web
                     //servers response (here read into String r)
-                    String r = new String(IOUtils.readFromStream(connection.getErrorStream()));
+                    byte[] b = IOUtils.readFromStream(connection.getErrorStream());
+                    String r = null;
+                    if (b != null) r = new String(b);
                     String message = "[run] Unexpected HTTP response:  [code: "
                             + connection.getResponseCode() + " | message: "
                             + connection.getResponseMessage() + " error: "

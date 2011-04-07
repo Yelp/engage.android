@@ -32,7 +32,6 @@ package com.janrain.android.engage.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
@@ -180,7 +179,7 @@ public class JRUserInterfaceMaestro {
 
     public void tearDownSocialPublishing() {
         mSessionData.setSocial(false);
-        mSessionData.setActivity(null);
+        mSessionData.setJRActivity(null);
 
         // TODO:
         // if (myPublishActivityController)
@@ -220,6 +219,10 @@ public class JRUserInterfaceMaestro {
      * @param managedActivity
      *      The ManagedActivity to be started/displayed.
      */
+    //10600000
+    //FLAG_ACTIVITY_BROUGHT_TO_FRONT 0x00400000
+    //FLAG_ACTIVITY_NEW_TASK 0x10000000
+    //FLAG_ACTIVITY_RESET_TASK_IF_NEEDED 0x00200000
     private void startActivity(Class managedActivity) {
         Context context = JREngage.getContext();
         context.startActivity(new Intent(context, managedActivity));

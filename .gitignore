@@ -2,8 +2,8 @@
 .DS_Store
 
 # Ignore generated files, compiled files, etc.
-bin/*
-gen/*
+#bin/*
+#gen/*
 out/*
 
 # Editor backup and swap files
@@ -11,12 +11,13 @@ out/*
 *.swp
 
 # Other common ignores
-log/*
-tmp/*
+#log/*
+#tmp/*
 
 # IDE stuff
-nbproject/
+#nbproject/
 #.idea/
 #*.iml
+
 SimpleDemo/local.properties
 QuickSignIn/local.properties

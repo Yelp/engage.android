@@ -80,19 +80,22 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     private Button mBtnTestAuth;
     private Button mBtnTestPub;
     private Button mBtnTestLand;
+    private String mDialogErrorMessage;
 
     //blog fetching variables
-    String mTitleText = "title text",
+    private String mTitleText = "title text",
            mActionLink = "http://www.janrain.com/feed/blogs",
            mDescriptionText = "description text",
            mImageUrl = "http://www.janrain.com/sites/default/themes/janrain/logo.png";
-    final Uri BLOGURL = Uri.parse("http://www.janrain.com/feed/blogs");
-    private String mDialogErrorMessage;
+    private final Uri BLOGURL = Uri.parse("http://www.janrain.com/feed/blogs");
+
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
+
         setContentView(R.layout.main);
 
         mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
@@ -104,25 +107,33 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         mBtnTestLand = (Button)findViewById(R.id.btn_test_land);
         mBtnTestLand.setOnClickListener(this);
 
-        String engageAppId = readAsset("app_id.txt");
-        String engageTokenUrl = readAsset("token_url.txt");
+        String engageAppId = readAsset("app_id.txt").trim();
+        String engageTokenUrl = readAsset("token_url.txt").trim();
 
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, this);
 
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null && savedInstanceState.containsKey("a")) {
             mTitleText = savedInstanceState.getString("a");
             mDescriptionText = savedInstanceState.getString("b");
             mImageUrl = savedInstanceState.getString("c");
             mActionLink = savedInstanceState.getString("d");
             mBtnTestPub.setText("Test Publishing");
+            Log.d(TAG, "restoring savedInstanceState: (" + mTitleText + ", " + mDescriptionText +
+                ", " + mImageUrl + ", " + mActionLink + ")");
         } else asyncLoadJanrainBlog();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart");
     }
 
     private void asyncLoadJanrainBlog() {
         mBtnTestPub.setText("loading blog");
 
-        new AsyncTask<Void, Void, Void>() {
-            protected Void doInBackground(Void... v) {
+        new AsyncTask<Void, Void, Boolean>() {
+            protected Boolean doInBackground(Void... v) {
                 try {
                     Log.d(TAG, "blogload");
                     URL u = (new URL(BLOGURL.toString()));
@@ -148,7 +159,8 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                     Element item = (Element) channel.getElementsByTagName("item").item(0);
                     Element title = (Element) item.getElementsByTagName("title").item(0);
                     Element link = (Element) item.getElementsByTagName("link").item(0);
-                    Element description = (Element) item.getElementsByTagName("description").item(0);
+                    Element description = (Element) item.getElementsByTagName("description")
+                            .item(0);
                     Log.d(TAG, "blogload walked");
 
                     mTitleText = title.getFirstChild().getNodeValue();
@@ -163,25 +175,32 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                         mDescriptionText += nl.item(x).getNodeValue();
                     }
 
-
+                    //the description is in html, so we decode it to display it as plain text
+                    //and while decoding it we yoink out a link to an image if there is one.
                     mDescriptionText = Html.fromHtml(mDescriptionText, new Html.ImageGetter() {
                         public Drawable getDrawable(String s) {
                             mImageUrl = BLOGURL.getScheme() + "://" + BLOGURL.getHost() + s;
                             return null;
                         }
                     }, null).toString();
+
+                    //no exceptions -> success
+                    return true;
                 }
                 catch (MalformedURLException e) { }
                 catch (IOException e) { }
                 catch (ParserConfigurationException e) { }
                 catch (SAXException e) { }
                 catch (NullPointerException e) {}
-                return null;
+
+                //exceptions -> failure
+                return false;
             }
 
-            protected void onPostExecute(Void v) {
+            protected void onPostExecute(Boolean loadSuccess) {
                 Log.d(TAG, "blog loader onPostExecute");
-                mBtnTestPub.setText("Test Publishing");
+                if (loadSuccess) mBtnTestPub.setText("Test Publishing");
+                else mBtnTestPub.setText("Failed to load blog");
             }
         }.execute();
     }
@@ -202,20 +221,24 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-//        if (!mBtnTestPub.getText().equals("loading blog")) {
+        Log.d(TAG, "onSaveInstanceState");
+
+        if (!mBtnTestPub.getText().toString().equals("loading blog")) {
             outState.putString("a", mTitleText);
             outState.putString("b", mDescriptionText);
             outState.putString("c", mImageUrl);
             outState.putString("d", mActionLink);
-//        }
+        }
     }
 
     public void onClick(View view) {
         if (view == mBtnTestAuth) {
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
-            //JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", mActionLink);
-            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!", "");
+            //JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!",
+            //  mActionLink);
+            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!",
+                    "");
             jra.setTitle(mTitleText);
             jra.setDescription(mDescriptionText);
             jra.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
@@ -242,43 +265,54 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         String message = "Authentication successful" + ((TextUtils.isEmpty(displayName))
                 ? "" : (" for user: " + displayName));
 
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
-    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, String tokenUrlPayload, String provider) {
-        Toast.makeText(this, "Authentication did reach token url", Toast.LENGTH_SHORT).show();
+    public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
+                                                 String tokenUrlPayload,
+                                                 String provider) {
+        Toast.makeText(this, "Authentication did reach token URL", Toast.LENGTH_LONG).show();
     }
 
-    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
-        Toast.makeText(this, "Authentication did reach token url", Toast.LENGTH_SHORT).show();
+    public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
+                                                 HttpResponseHeaders response,
+                                                 String tokenUrlPayload,
+                                                 String provider) {
+        Toast.makeText(this, "Authentication did reach token URL", Toast.LENGTH_LONG).show();
     }
 
     public void jrAuthenticationDidNotComplete() {
-        Toast.makeText(this, "Authentication did not complete", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Authentication did not complete", Toast.LENGTH_LONG).show();
     }
 
     public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
         String message = "Authentication failed, error: " +
                 ((error == null) ? "unknown" : error.getMessage());
 
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
-    public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
-        Toast.makeText(this, "Authentication failed to reach token url", Toast.LENGTH_SHORT).show();
+    public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl,
+                                                      JREngageError error,
+                                                      String provider) {
+        Toast.makeText(this, "Authentication failed to reach token URL", Toast.LENGTH_LONG).show();
     }
 
     public void jrSocialDidNotCompletePublishing() {
+        Toast.makeText(this, "Sharing did not complete", Toast.LENGTH_LONG).show();
     }
 
     public void jrSocialDidCompletePublishing() {
-        Toast.makeText(this, "Sharing did complete", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Sharing did complete", Toast.LENGTH_LONG).show();
     }
 
     public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
-        Toast.makeText(this, "Activity shared", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Activity shared", Toast.LENGTH_LONG).show();
     }
 
-    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
+    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity,
+                                                 JREngageError error,
+                                                 String provider) {
+        Toast.makeText(this, "Activity failed to share", Toast.LENGTH_LONG).show();
     }
 }
