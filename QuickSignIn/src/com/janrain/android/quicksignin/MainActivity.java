@@ -3,6 +3,7 @@ package com.janrain.android.quicksignin;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -60,9 +61,12 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     public void onClick(View view) {
         Log.d(TAG, "[onClick]");
 
-        if (view == mBtnTestAuth) {
-            mEngage.showAuthenticationDialog();
-        } 
+        this.startActivity(new Intent(this, ProfilesActivity.class));
+        
+
+//        if (view == mBtnTestAuth) {
+//            mEngage.showAuthenticationDialog();
+//        }
     }
 
 
