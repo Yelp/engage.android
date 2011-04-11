@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="95e8eb14-2471-4586-a671-fa75991ca375" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" afterPath="$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/ui/JRPublishActivity.java" afterPath="$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/ui/JRPublishActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/ui/JRWebViewActivity.java" afterPath="$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/ui/JRWebViewActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="QuickSignIn.iws" />
@@ -63,102 +60,7 @@
     <favorites_list name="QuickSignIn" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="MainActivity.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/MainActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="31" selection-start="596" selection-end="596" vertical-scroll-proportion="0.028744327">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JREngage.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/JREngage.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="13" selection-start="2260" selection-end="2260" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JRUserInterfaceMaestro.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/ui/JRUserInterfaceMaestro.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="225" column="13" selection-start="7873" selection-end="7878" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ProfilesActivity.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="15" selection-start="545" selection-end="545" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="provider_listview_row.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../JREngage/res/layout/provider_listview_row.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="1317" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="profiles_listview_row.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/res/layout/profiles_listview_row.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="30" selection-start="175" selection-end="175" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ProfileData.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileData.java">
-          <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-            <state line="41" column="33" selection-start="1381" selection-end="1381" vertical-scroll-proportion="0.5701754">
-=======
-            <state line="27" column="0" selection-start="741" selection-end="741" vertical-scroll-proportion="0.0">
->>>>>>> 4c0c36a0e12e9be62b76a374a2c2b0c34c814825
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JRProvidersActivity.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/ui/JRProvidersActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="203" column="52" selection-start="8061" selection-end="8061" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="profiles.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/res/layout/profiles.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="0" selection-start="40" selection-end="40" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="provider_listview.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../JREngage/res/layout/provider_listview.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="32" selection-start="280" selection-end="280" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -216,7 +118,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="Favorites" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -236,33 +137,21 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-<<<<<<< HEAD
-=======
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="QuickSignIn" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="JREngage" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
->>>>>>> 4c0c36a0e12e9be62b76a374a2c2b0c34c814825
         </subPane>
       </pane>
+      <pane id="Favorites" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="project.structure.last.edited" value="Project" />
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.last.edited" value="Project" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
-    <property name="recentsLimit" value="5" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="MemberChooser.sorted" value="false" />
+    <property name="recentsLimit" value="5" />
     <property name="MemberChooser.showClasses" value="true" />
-    <property name="project.structure.side.proportion" value="0.2" />
     <property name="GoToClass.includeLibraries" value="false" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
   </component>
   <component name="RunManager" selected="Android Application.QuickSignIn">
@@ -433,45 +322,26 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-<<<<<<< HEAD
     <frame x="0" y="22" width="1440" height="874" extended-state="6" />
-    <editor active="true" />
-=======
-    <frame x="0" y="22" width="1920" height="1178" extended-state="6" />
     <editor active="false" />
->>>>>>> 4c0c36a0e12e9be62b76a374a2c2b0c34c814825
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-<<<<<<< HEAD
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-=======
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
->>>>>>> 4c0c36a0e12e9be62b76a374a2c2b0c34c814825
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-<<<<<<< HEAD
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24946082" sideWeight="0.50928384" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24946082" sideWeight="0.6710775" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32891247" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4907162" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-=======
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24959914" sideWeight="0.6710775" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3289225" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3277635" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Android Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289225" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
->>>>>>> 4c0c36a0e12e9be62b76a374a2c2b0c34c814825
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -515,11 +385,7 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state line="33" column="0" selection-start="1742" selection-end="1742" vertical-scroll-proportion="0.0" />
-=======
         <state line="34" column="0" selection-start="1819" selection-end="1819" vertical-scroll-proportion="0.0" />
->>>>>>> 4c0c36a0e12e9be62b76a374a2c2b0c34c814825
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/res/layout/main.xml">
@@ -527,45 +393,39 @@
         <state line="17" column="45" selection-start="606" selection-end="606" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-<<<<<<< HEAD
-    <entry file="file://$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/JREngage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="100" column="27" selection-start="4414" selection-end="4414" vertical-scroll-proportion="0.03661972">
-=======
     <entry file="file://$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/session/JRSessionData.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="201" column="8" selection-start="7513" selection-end="8055" vertical-scroll-proportion="0.0">
->>>>>>> 4c0c36a0e12e9be62b76a374a2c2b0c34c814825
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state line="41" column="33" selection-start="1381" selection-end="1381" vertical-scroll-proportion="0.5701754">
-=======
-        <state line="19" column="31" selection-start="596" selection-end="596" vertical-scroll-proportion="0.028744327">
+        <state line="33" column="13" selection-start="1124" selection-end="1124" vertical-scroll-proportion="0.3251445">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/JREngage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="13" selection-start="2260" selection-end="2260" vertical-scroll-proportion="0.0" />
+        <state line="51" column="13" selection-start="2260" selection-end="2260" vertical-scroll-proportion="0.021276595">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/ui/JRUserInterfaceMaestro.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="225" column="13" selection-start="7873" selection-end="7878" vertical-scroll-proportion="0.0">
->>>>>>> 4c0c36a0e12e9be62b76a374a2c2b0c34c814825
+        <state line="225" column="13" selection-start="7873" selection-end="7878" vertical-scroll-proportion="0.021276595">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="15" selection-start="545" selection-end="545" vertical-scroll-proportion="0.0" />
+        <state line="22" column="15" selection-start="545" selection-end="545" vertical-scroll-proportion="0.021276595">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../JREngage/res/layout/provider_listview_row.xml">
@@ -575,29 +435,37 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/res/layout/profiles_listview_row.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="30" selection-start="175" selection-end="175" vertical-scroll-proportion="0.0" />
+        <state line="4" column="30" selection-start="175" selection-end="175" vertical-scroll-proportion="0.08275862">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="0" selection-start="741" selection-end="741" vertical-scroll-proportion="0.0" />
+        <state line="27" column="0" selection-start="741" selection-end="741" vertical-scroll-proportion="0.020689655">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/ui/JRProvidersActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="203" column="52" selection-start="8061" selection-end="8061" vertical-scroll-proportion="0.0">
+        <state line="203" column="0" selection-start="7958" selection-end="7958" vertical-scroll-proportion="0.020689655">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/res/layout/profiles.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="0" selection-start="40" selection-end="40" vertical-scroll-proportion="0.0" />
+        <state line="2" column="0" selection-start="40" selection-end="40" vertical-scroll-proportion="0.04137931">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../JREngage/res/layout/provider_listview.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="32" selection-start="280" selection-end="280" vertical-scroll-proportion="0.0" />
+        <state line="10" column="32" selection-start="280" selection-end="280" vertical-scroll-proportion="0.20689656">
+          <folding />
+        </state>
       </provider>
     </entry>
   </component>
