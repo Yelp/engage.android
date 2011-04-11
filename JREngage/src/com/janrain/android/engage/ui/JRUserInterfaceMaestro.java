@@ -161,6 +161,8 @@ public class JRUserInterfaceMaestro {
 
     public void authenticationFailed() {
         //todo what's this doing, what should it be doing?
+//        if (mSessionData.getSocial()) popToOriginal();
+//        else popAll();
         popToOriginal();
     }
 

@@ -52,15 +52,14 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.Archiver;
 import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EncodingUtils;
 
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,15 +114,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	public static JRSessionData getInstance(String appId,
                                             String tokenUrl,
                                             JRSessionDelegate delegate) {
-//		if (sInstance != null) {
-//            if (Config.LOGD) {
-//                Log.d(TAG, "[getInstance] returning existing instance.");
-//                //todo this should probably be an error, as it ignores the parameters instead of
-//                //reinstantiating the library
-//            }
-//			return sInstance;
-//        }
-		
+
 		if (TextUtils.isEmpty(appId)) {
             Log.w(TAG, "[getInstance] null instance w/ null appId specified.");
 			return null;
@@ -232,7 +223,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 if (ListUtils.isEmpty(mSocialProviders)) {
                     Log.d(TAG, "[ctor] social providers is empty");
                 } else {
-                    Log.d(TAG, "[ctor] social providers: [" + TextUtils.join(",", mSocialProviders) + "]");
+                    Log.d(TAG, "[ctor] social providers: [" + TextUtils.join(",", mSocialProviders)
+                            + "]");
                 }
             }
 
@@ -243,7 +235,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             mHidePoweredBy = Prefs.getAsBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, false);
 
             // And load the last used basic and social providers
-            mReturningSocialProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
+            mReturningSocialProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER,
+                    "");
             mReturningBasicProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
 
             /* If the configuration for this rp has changed, the etag will have changed, and we need
@@ -588,14 +581,21 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             String s = (String)userdata;
 
             if (s.equals("getConfiguration")) {
-                //todo this is probably UTF-8 encoded, not ascii encoded, review this function
+                //if the ETag matched, we're done.
+                if (headers.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
+                    Log.d(TAG,
+                            "[connectionDidFinishLoading] found HTTP_NOT_MODIFIED -> matched ETag");
+                    return;
+                }
+
+                //todo this is probably UTF-8 encoded, not ASCII encoded, review this function
                 String payloadString = EncodingUtils.getAsciiString(payload);
                 Log.d(TAG, "[connectionDidFinishLoading-full] payload string: " + payloadString);
 
                 if (payloadString.contains("\"provider_info\":{")) {
                     mError = finishGetConfiguration(payloadString, headers.getETag());
                 } else {
-                    Log.e(TAG, "connectionDidFail full for getConfiguration");
+                    Log.e(TAG, "failed to parse response for getConfiguration");
                     mError = new JREngageError(
                             "There was a problem communicating with the Janrain server while configuring authentication.",
                             ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
@@ -645,10 +645,12 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         final String tag = "getConfiguration";
 
-        //todo if we're storing the last response's Etag then presumably we should be providing it
-        //for future requests so the server may forgo resending the cached data.  
+        BasicNameValuePair etagHeader = new BasicNameValuePair("If-None-Match", mOldEtag);
+//                "\"" + mOldEtag + "\"");
+        List<NameValuePair> headerList = new ArrayList<NameValuePair>();
+        headerList.add(etagHeader);
 
-        if (!JRConnectionManager.createConnection(urlString, this, true, tag)) {
+        if (!JRConnectionManager.createConnection(urlString, this, true, headerList, tag)) {
             Log.w(TAG, "[startGetConfiguration] createConnection failed.");
             return new JREngageError(
                     "There was a problem connecting to the Janrain server while configuring authentication.",
@@ -740,7 +742,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[finishGetConfiguration-etag]");
         }
 
-        if (!mOldEtag.equals(etag) | true) {
+        if (!mOldEtag.equals(etag)) {
             mNewEtag = etag;  //todo verify that this is written out
 
             /* We can only update all of our data if the UI isn't currently using that
@@ -749,7 +751,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
              * where a dialog is showing but there isn't any data that it could be using (that
              * is, the lists of basic and social providers are nil), go ahead and update it too.
              * The dialogs won't try and do anything until we're done updating the lists. */
-            if (!mDialogIsShowing || (ListUtils.isEmpty(mBasicProviders) && ListUtils.isEmpty(mSocialProviders))) {
+            if (!mDialogIsShowing ||
+                    (ListUtils.isEmpty(mBasicProviders) && ListUtils.isEmpty(mSocialProviders))) {
                 return finishGetConfiguration(dataStr);
             }
 
@@ -792,19 +795,19 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return retval;
     }
 
-    private void loadLastUsedSocialProvider() {
-        if (Config.LOGD) {
-            Log.d(TAG, "[loadLastUsedSocialProvider]");
-        }
-        mReturningSocialProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
-    }
-
-    private void loadLastUsedBasicProvider() {
-        if (Config.LOGD) {
-            Log.d(TAG, "[loadLastUsedBasicProvider]");
-        }
-        mReturningBasicProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
-    }
+//    private void loadLastUsedSocialProvider() {
+//        if (Config.LOGD) {
+//            Log.d(TAG, "[loadLastUsedSocialProvider]");
+//        }
+//        mReturningSocialProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
+//    }
+//
+//    private void loadLastUsedBasicProvider() {
+//        if (Config.LOGD) {
+//            Log.d(TAG, "[loadLastUsedBasicProvider]");
+//        }
+//        mReturningBasicProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
+//    }
 
     private void saveLastUsedSocialProvider() {
         if (Config.LOGD) {
@@ -822,7 +825,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         //CookieHelper doesn't interact with our WebView's cookies :(
         String cookies = CookieManager.getInstance().getCookie(getBaseUrl());
         String welcome_info = cookies.replaceAll(".*welcome_info=([^;]*).*", "$1");
-        mCurrentlyAuthenticatingProvider.setWelcomeString(getWelcomeMessageFromCookieString(welcome_info));
+        mCurrentlyAuthenticatingProvider.setWelcomeString(
+                getWelcomeMessageFromCookieString(welcome_info));
 
         mReturningBasicProvider = mCurrentlyAuthenticatingProvider.getName();
         Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, mReturningBasicProvider);
@@ -917,10 +921,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     public void forgetAuthenticatedUserForProvider(String providerName) {
-        //todo XXX if you forget a user, then click connect and share, it shows the webview with the page for logging
-        //in, as expected.  if you hit back without logging in, and then hit connect and share, you're automatically
-        //logged in? need to clear the browser cookie? if not then there's no point in showing the webview to begin
-        //with (since you can just hit back and then connect again, instead of, you know, typing your password.)
         if (Config.LOGD) {
             Log.d(TAG, "[forgetAuthenticatedUserForProvider]");
         }
@@ -934,7 +934,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             mAuthenticatedUsersByProvider.remove(provider.getName());
 
             List<String> domains = provider.getCookieDomains();
-            for (String s : domains) deleteWebviewCookiesForDomain(s);
+            for (String d : domains) deleteWebviewCookiesForDomain(d);
 
             JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
         }
@@ -944,16 +944,22 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         CookieSyncManager csm = CookieSyncManager.createInstance(JREngage.getContext());
         CookieManager cm = CookieManager.getInstance();
 
-        //new android.net.WebAddress();
+        //cookies are stored by domain, and are not different for different schemes (i.e. http vs
+        //https) (although they do have an optional 'secure' flag.)
+        if (domain.startsWith(".")) domain = domain.substring(1);
 
-        //cookies are stored by domain, and are not different for different schemes (i.e. http vs https)
-        //(although they sort of, ...)
         String cookieGlob = cm.getCookie("http://" + domain);
         if (cookieGlob != null) {
             String[] cookies = cookieGlob.split(";");
             for (String cookieTuple : cookies) {
                 String[] cookieParts = cookieTuple.split("=");
-                cm.setCookie(domain, cookieParts[0] + "=");//;domain=" + domain);
+
+                // setCookie changed a lot in the context of how it handles cookies like we're
+                //setting in order to clear a specific cookie, so spam all reasonable similar
+                //request in an effort to be compatible with different versions of setCookie
+                cm.setCookie(domain, cookieParts[0] + "=;");
+//                cm.setCookie(domain, cookieParts[0] + "=");
+//                cm.setCookie(domain, cookieParts[0]);
             }
             csm.sync();
         }
@@ -964,7 +970,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[forgetAllAuthenticatedUsers]");
         }
 
-        for (String providerName : mAllProviders.keySet()) forgetAuthenticatedUserForProvider(providerName);
+        for (String providerName : mAllProviders.keySet())
+            forgetAuthenticatedUserForProvider(providerName);
     }
 
 //    public JRProvider getBasicProviderAtIndex(int index) {
@@ -1097,13 +1104,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mAuthenticatedUsersByProvider.put(mCurrentlyAuthenticatingProvider.getName(), user);
         JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
 
-        if (mBasicProviders.contains(mCurrentlyAuthenticatingProvider.getName())) {
-            saveLastUsedBasicProvider();
-        }
-
-//        if (mSocialProviders.contains(mCurrentlyPublishingProvider.getName())) {
-//            saveLastUsedSocialProvider();
-//        }
+        if (!mSocialSharing) saveLastUsedBasicProvider();
+        //todo
+        //else saveLastUsedSocialProvider();
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.authenticationDidComplete(
@@ -1124,14 +1127,16 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[triggerAuthenticationDidFailWithError]");
         }
 
-        //todo if we've reached this point from JRLandingActivity.prepareUserInterface mCurrentlyAuthenticatingProvider will definitely
-        //be null and this will raise a null pointer exception.
-        //why? how do you show the landing page without a provider being the one we're currently authenticating with?
         String providerName = mCurrentlyAuthenticatingProvider.getName();
 
         setCurrentlyAuthenticatingProvider((String) null);
         mReturningBasicProvider = null;
         mReturningSocialProvider = null;
+
+        //This method is only called by JRWebViewActivity at the moment, when Engage returns an
+        //error or there is a networking problem.  I think that clearing the cookies might be a
+        //good thing to do here.
+        forgetAuthenticatedUserForProvider(providerName);
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.authenticationDidFail(error, providerName);
@@ -1181,7 +1186,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             String provider = "";
-            if (mCurrentlyPublishingProvider != null) provider = mCurrentlyPublishingProvider.getName();
+
+            if (mCurrentlyPublishingProvider != null)
+                provider = mCurrentlyPublishingProvider.getName();
+
             delegate.publishingJRActivityDidFail(mActivity, error, provider);
         }
     }
@@ -1191,9 +1199,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[triggerPublishingDialogDidFail]");
         }
 
-        for (JRSessionDelegate delegate : getDelegatesCopy()) {
-            delegate.publishingDialogDidFail(err);
-        }
+        for (JRSessionDelegate delegate : getDelegatesCopy()) delegate.publishingDialogDidFail(err);
     }
 
     public void triggerPublishingDidCancel() {
@@ -1201,9 +1207,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[triggerPublishingDidCancel]");
         }
 
-        for (JRSessionDelegate delegate : getDelegatesCopy()) {
-            delegate.publishingDidCancel();
-        }
+        for (JRSessionDelegate delegate : getDelegatesCopy()) delegate.publishingDidCancel();
     }
 
     private void triggerMobileConfigDidFinish() {

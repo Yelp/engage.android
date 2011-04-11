@@ -271,7 +271,8 @@ public class JRProvidersActivity extends ListActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        if (mFinishReceiver != null) unregisterReceiver(mFinishReceiver);
+        if (mFinishReceiver != null)
+        unregisterReceiver(mFinishReceiver);
     }
 
     /**
@@ -281,8 +282,16 @@ public class JRProvidersActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int pos, long id) {
         JRProvider provider = mAdapter.getItem(pos);
         mSessionData.setCurrentlyAuthenticatingProvider(provider);
-        if (provider.requiresInput()
-                || provider.getName().equals(mSessionData.getReturningBasicProvider())) {
+
+        //todo
+        // || provider.getName().equals(mSessionData.getReturningBasicProvider())
+        //used to be part of the if conditional, seems to be related to giving the user an
+        //opportunity to switch accounts if they already have credentials, however if that's the
+        //intention mSessionData.getAuthenticatedUserForProvider() != null or something should be
+        //used so that providers that aren't the returning basic provider are also afforded the same
+        //possibility.
+
+        if (provider.requiresInput()) {
             JRUserInterfaceMaestro.getInstance().showUserLanding();
         } else {
             JRUserInterfaceMaestro.getInstance().showWebView();

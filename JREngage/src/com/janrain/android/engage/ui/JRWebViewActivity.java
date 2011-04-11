@@ -219,8 +219,9 @@ public class JRWebViewActivity extends Activity {
     }
 
     public void onBackPressed() {
-        mSessionData.triggerAuthenticationDidRestart();
         mWebView.stopLoading();
+        mSessionData.triggerAuthenticationDidRestart();
+//        finish();
     }
 
     /**
@@ -230,6 +231,7 @@ public class JRWebViewActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // use the shared menu
         mLayoutHelper.inflateAboutMenu(menu);
+        menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "Refresh");
         return true;
     }
 
@@ -238,6 +240,12 @@ public class JRWebViewActivity extends Activity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getTitle().toString().equals("Refresh")) {
+            Log.d(TAG, "refreshing WebView");
+            mWebView.reload();
+            return true;
+        }
+        
         return mLayoutHelper.handleAboutMenu(item) || super.onOptionsItemSelected(item);
     }
 
@@ -356,29 +364,20 @@ public class JRWebViewActivity extends Activity {
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String url) {
+            super.onReceivedError(view, errorCode, description, url);
             Log.e(TAG, "[onReceivedError] code: " + errorCode + " | description: " + description
                 + " | url: " + url);
 
             setProgressBarIndeterminateVisibility(false);
 
-            super.onReceivedError(view, errorCode, description, url);
+//            mIsFinishPending = true;
+            showAlertDialog("Log In Failed", "An error occurred while attempting to sign in.");
 
-//          mLayoutHelper.dismissProgressDialog();
-//          Toast.makeText(JRWebViewActivity.this, description, Toast.LENGTH_LONG).show();
-
-            mIsFinishPending = true;
-
-//            JREngageError err = new JREngageError(
-//                    "Authentication failed: " + description,
-//                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-//                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
-
-            showAlertDialog(
-                    "Log In Failed",
-                    "An error occurred while attempting to sign you in.  Please try again."
-                );
-
-            //mSessionData.triggerAuthenticationDidFail(err);
+            JREngageError err = new JREngageError(
+                    "Authentication failed: " + description,
+                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
+            mSessionData.triggerAuthenticationDidFail(err);
         }
     };
 
@@ -388,82 +387,79 @@ public class JRWebViewActivity extends Activity {
 
             mLayoutHelper.dismissProgressDialog();
 
-            if (userdata instanceof String) {
-                final String tag = (String)userdata;
-                if (tag.equals(RPX_RESULT_TAG)) {
-                    JRDictionary payloadDictionary = JRDictionary.fromJSON(payload);
-                    JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
-                    final String result = resultDictionary.getAsString("stat");
-                    if ("ok".equals(result)) {
-                        // back button?
-                        mSessionData.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
+            if (userdata.equals(RPX_RESULT_TAG)) {
+                JRDictionary payloadDictionary = JRDictionary.fromJSON(payload);
+                JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
+                final String result = resultDictionary.getAsString("stat");
+                if ("ok".equals(result)) {
+                    // back button?
+                    mSessionData.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
+                } else {
+                    //todo for OpenID errors we're just firing a dialog and then calling
+                    //finish when it's dismissed in order to get back to the landing page
+                    //instead of calling triggerAuthenticationDidRestart because that would
+                    //return us to the provider selection activity, when the user probably just
+                    //wants to correct a minor OpenID typo.
+                    final String error = resultDictionary.getAsString("error");
+                    String alertTitle, alertMessage, logMessage;
+                    if ("Discovery failed for the OpenID you entered".equals(error) ||
+                            "Your OpenID must be a URL".equals(error)) {
+                        alertTitle = "Invalid Input";
+                        alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
+                                ? String.format("The %s you entered was not valid. Please try again.",
+                                    mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
+                                : "There was a problem authenticating with this provider. Please try again.";
+                        logMessage = "Discovery failed for the OpenID you entered: ";
+
+                        Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
+
+                        mIsFinishPending = true;
+                        showAlertDialog(alertTitle, alertMessage);
+//                            mSessionData.triggerAuthenticationDidRestart();
+                    } else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
+                        alertTitle = "Invalid Input";
+                        alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
+                                ? String.format("The %s you entered was not valid. Please try again.",
+                                mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
+                                : "There was a problem authenticating with this provider. Please try again.";
+                        logMessage = "The URL you entered does not appear to be an OpenID: ";
+
+                        Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
+
+                        mIsFinishPending = true;
+                        showAlertDialog(alertTitle, alertMessage);
+//                            mSessionData.triggerAuthenticationDidRestart();
+                    } else if ("Please enter your OpenID".equals(error)) {
+                        //todo what case is causing this?
+                        //entering a ~blank OpenID URL
+                        //todo verify
+//                            JREngageError err = new JREngageError(
+//                                    "Authentication failed: " + payload,
+//                                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+//                                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
+
+                        mIsFinishPending = true;
+                        showAlertDialog("OpenID Error",
+                                "The URL you entered does not appear to be an OpenID");
+
+//                            mSessionData.triggerAuthenticationDidRestart();
                     } else {
-                        final String error = resultDictionary.getAsString("error");
-                        String alertTitle, alertMessage, logMessage;
-                        if ("Discovery failed for the OpenID you entered".equals(error)) {
-                            alertTitle = "Invalid Input";
-                            alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
-                                    ? String.format("The %s you entered was not valid. Please try again.",
-                                        mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
-                                    : "There was a problem authenticating with this provider. Please try again.";
-                            logMessage = "Discovery failed for the OpenID you entered: ";
+                        Log.e(TAG, "unrecognized error");
+                        JREngageError err = new JREngageError(
+                                "Authentication failed: " + payload,
+                                JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                                JREngageError.ErrorType.AUTHENTICATION_FAILED);
 
-                            Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
+                        showAlertDialog(
+                                "Log In Failed",
+                                "An error occurred while attempting to sign in."
+                            );
 
-                            /*
-                            TODO:  iPhone does this:
-                            [[self navigationController] popViewControllerAnimated:YES];
-                             */
-
-                            //mSessionData.triggerAuthenticationDidFail();
-                            mIsFinishPending = true;
-                            showAlertDialog(alertTitle, alertMessage);
-                        } else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
-                            alertTitle = "Invalid Input";
-                            alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
-                                    ? String.format("The %s you entered was not valid. Please try again.",
-                                        mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
-                                    : "There was a problem authenticating with this provider. Please try again.";
-                            logMessage = "The URL you entered does not appear to be an OpenID: ";
-
-                            Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
-
-                            /*
-                            TODO:  iPhone does this:
-                            [[self navigationController] popViewControllerAnimated:YES];
-
-                             */
-                            mIsFinishPending = true;
-                            showAlertDialog(alertTitle, alertMessage);
-                        } else if ("Please enter your OpenID".equals(error)) {
-                            JREngageError err = new JREngageError(
-                                    "Authentication failed: " + payload,
-                                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
-
-                            //todo verify nearby behavior
-                            // TODO: Is this really what we want to do here?
-                            throw new RuntimeException("unhandled OpenID error");
-                            //mSessionData.triggerAuthenticationDidFail(err);
-                        } else {
-                            JREngageError err = new JREngageError(
-                                    "Authentication failed: " + payload,
-                                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
-
-                            showAlertDialog(
-                                    "Log In Failed",
-                                    "An error occurred while attempting to sign you in.  Please try again."
-                                );
-
-                            mSessionData.triggerAuthenticationDidFail(err);
-                        }
+                        mSessionData.triggerAuthenticationDidFail(err);
                     }
-
-                } else if (tag.equals("request")) {
-                    // connectionDataAlreadyDownloadedThis???
-                    mWebView.loadDataWithBaseURL(requestUrl, payload, null, "utf-8", null);
                 }
+            } else if (userdata.equals("request")) {
+                mWebView.loadDataWithBaseURL(requestUrl, payload, null, "utf-8", null);
             }
         }
 

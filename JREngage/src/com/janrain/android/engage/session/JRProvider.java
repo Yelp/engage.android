@@ -396,5 +396,9 @@ public class JRProvider implements Serializable {
     	mWelcomeString = Prefs.getAsString(Prefs.KEY_JR_WELCOME_STRING + mName, "");
     	mForceReauth = Prefs.getAsBoolean(Prefs.KEY_JR_FORCE_REAUTH + mName, false);
     }
+
+    public String toString() {
+        return mName;
+    }
 }
 

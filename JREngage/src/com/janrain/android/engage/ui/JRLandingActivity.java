@@ -256,7 +256,7 @@ public class JRLandingActivity extends Activity {
         if (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
         {
             //TODO validate OpenID URLs so they don't hang the WebView
-            String text = mEditText.getText().toString();
+            String text = mEditText.getText().toString().trim();
             if (TextUtils.isEmpty(text)) {
                 //todo turn this string into a resource
                 showAlertDialog("Invalid Input",
@@ -307,20 +307,6 @@ public class JRLandingActivity extends Activity {
     }
 
     private boolean prepareUserInterface() {
-        if (mSessionData.getCurrentlyAuthenticatingProvider() == null) {
-            JREngageError error = new JREngageError(
-                "There was an error authenticating with the selected provider.",
-                JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                JREngageError.ErrorType.AUTHENTICATION_FAILED);
-
-            mSessionData.triggerAuthenticationDidFail(error);
-
-            // TODO:  toast or error dialog???
-            // call finish?
-
-            return false;
-        }
-
         JRProvider currentlyAuthenticatingProvider =
                 mSessionData.getCurrentlyAuthenticatingProvider();
 

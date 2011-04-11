@@ -43,6 +43,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.net.UrlQuerySanitizer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -317,8 +318,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             new AsyncTask<JRMediaObject, Void, Bitmap>(){
                 protected Bitmap doInBackground(JRMediaObject... mo_) {
                     try {
-                        return BitmapFactory.decodeStream(
-                                (new URL(mo_[0].getThumbnail())).openStream());
+                        //todo experiment with this code, see if we can get it to cache the image
+                        URL url = new URL(mo_[0].getThumbnail());
+                        URLConnection urlc = url.openConnection();
+                        urlc.setUseCaches(true);
+                        urlc.setDefaultUseCaches(true);
+                        InputStream is = urlc.getInputStream();
+                        return BitmapFactory.decodeStream(is);
                     } catch (MalformedURLException e) {
                         return null;
                     } catch (IOException e) {
@@ -1094,22 +1100,21 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             public void authenticationDidFail(JREngageError error, String provider) {
                 Log.d(TAG, "[authenticationDidFail]");
+                //this happens if the mobile endpoint URL fails to be read correctly
+                //or if Engage completes with an error (like rpxstaging via facebook) or maybe if
+                //a provider is down.
+
                 mWeHaveJustAuthenticated = false;
                 mWeAreCurrentlyPostingSomething = false;
-                //todo display an error?
-                //todo
-                //does this ever happen? why aren't we clearing the progress dialog? is this a
-                //reentry point for publish activity?
-                //yes, this can happen if the mobile endpoint URL fails to be read correctly
                 mLayoutHelper.dismissProgressDialog();
-                mDialogErrorMessage = error.getMessage();
-                showDialog(DIALOG_FAILURE);
+
+                //we don't need to show a dialog because the WebView has already shown one.
+                //mDialogErrorMessage = error.getMessage();
+                //showDialog(DIALOG_FAILURE);
             }
 
             public void authenticationDidComplete(JRDictionary profile, String provider) {
                 Log.d(TAG, "[authenticationDidComplete]");
-                //myLoadingLabel.text = @"Sharing...";
-
                 mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(
                         mSelectedProvider);
 
