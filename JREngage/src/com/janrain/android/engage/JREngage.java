@@ -98,29 +98,21 @@ public class JREngage {
      *   	<code>appId</code>, <code>tokenUrl</code>, and <code>delegate</code>.  If the given
      *   	<code>appId</code> is <code>null</code>, returns <code>null</code>.
      */
-    public static JREngage initInstance(Context context, String appId, String tokenUrl,
-            JREngageDelegate delegate) {
-
-        if (sInstance == null) {
-
-            if (context == null) {
-                Log.e(TAG, "[initialize] context parameter cannot be null.");
-                return null;
-            }
-
-            if (TextUtils.isEmpty(appId)) {
-                Log.e(TAG, "[initialize] appId parameter cannot be null.");
-                return null;
-            }
-
-            sInstance = new JREngage();
+    public static JREngage initInstance(Context context,
+                                        String appId,
+                                        String tokenUrl,
+                                        JREngageDelegate delegate) {
+        if (context == null) {
+            Log.e(TAG, "[initialize] context parameter cannot be null.");
+            return null;
         }
-        //else throw new IllegalArgumentException(
-        //      "illegal reinitialization in JREngage.initInstance");
 
-        //todo this can happen if the user exits the activity via the home button and the phone
-        //doesn't kill the app, so it shouldn't be an error, but there's suspect statefulness here
-        //regardless since we're just discarding the parameters
+        if (TextUtils.isEmpty(appId)) {
+            Log.e(TAG, "[initialize] appId parameter cannot be null.");
+            return null;
+        }
+
+        if (sInstance == null) sInstance = new JREngage();
         sInstance.initialize(context, appId, tokenUrl, delegate);
 
         return sInstance;
@@ -216,12 +208,10 @@ public class JREngage {
         if (delegate != null) {
             mDelegates.add(delegate);
         }
-//        mSessionData = JRSessionData.getInstance(mAppId, mTokenUrl, mJRSD);
+
         mSessionData = JRSessionData.getInstance(appId, tokenUrl, mJRSD);
         mInterfaceMaestro = JRUserInterfaceMaestro.getInstance();
 	}
-
-
 
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
@@ -381,14 +371,12 @@ public class JREngage {
      * TODO:  See setCustomNavigationController in iPhone code.  Do we need this?
      */
 
-
     public JRAuthenticatedUser getUserForProvider(String provider) {
         if (Config.LOGD) {
             Log.d(TAG, "[getUserForProvider]");
         }
         return mSessionData.authenticatedUserForProviderNamed(provider);
     }
-
 
     //todo xxx the following four functions all call the same JRSessionData methods but they should
     //do different things.
@@ -447,7 +435,6 @@ public class JREngage {
         }
         mSessionData.setTokenUrl(newTokenUrl);
     }
-
 
     // ------------------------------------------------------------------------
     // METHODS
@@ -529,7 +516,7 @@ public class JREngage {
             ));
         }
 
-        mSessionData.setActivity(activity);
+        mSessionData.setJRActivity(activity);
 
         mInterfaceMaestro.showPublishingDialogWithActivity();
 

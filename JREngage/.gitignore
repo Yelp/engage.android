@@ -3,7 +3,6 @@
 
 # Ignore generated files, compiled files, etc.
 bin/*
-classes/*
 gen/*
 out/*
 
@@ -19,5 +18,3 @@ tmp/*
 nbproject/
 #.idea/
 #*.iml
-
-local.properties

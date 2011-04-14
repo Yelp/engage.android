@@ -64,7 +64,9 @@ public class JRProvidersActivity extends ListActivity {
      */
     private class FinishReceiver extends BroadcastReceiver {
 
-        private final String TAG = JRProvidersActivity.TAG + "-" + FinishReceiver.class.getSimpleName();
+        private final String TAG = JRProvidersActivity.TAG
+                + "-"
+                + FinishReceiver.class.getSimpleName();
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -95,7 +97,8 @@ public class JRProvidersActivity extends ListActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = convertView;
             if (v == null) {
-                LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater li = (LayoutInflater) getSystemService(
+                        Context.LAYOUT_INFLATER_SERVICE);
                 v = li.inflate(mResourceId, null);
                 Log.i(TAG, "[getView] with null converView");
             } else Log.i(TAG, "[getView] with non null convertView");
@@ -151,7 +154,9 @@ public class JRProvidersActivity extends ListActivity {
     private Runnable mNoProvidersFoundRunner = new Runnable() {
         public void run() {
             mLayoutHelper.dismissProgressDialog();
-            Toast.makeText(JRProvidersActivity.this, "No providers found.", Toast.LENGTH_LONG).show();
+            Toast.makeText(JRProvidersActivity.this,
+                    "No providers found.",
+                    Toast.LENGTH_LONG).show();
         }
     };
 
@@ -198,6 +203,13 @@ public class JRProvidersActivity extends ListActivity {
         mLayoutHelper = new SharedLayoutHelper(this);
 
         mSessionData = JRSessionData.getInstance();
+
+        //for the case when this activity is relaunched after the process was killed
+        if (mSessionData == null) {
+            finish();
+            return;
+        }
+
         mProviderList = mSessionData.getBasicProviders();
 
         if (mProviderList == null) {
@@ -259,6 +271,7 @@ public class JRProvidersActivity extends ListActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        if (mFinishReceiver != null)
         unregisterReceiver(mFinishReceiver);
     }
 
@@ -269,8 +282,16 @@ public class JRProvidersActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int pos, long id) {
         JRProvider provider = mAdapter.getItem(pos);
         mSessionData.setCurrentlyAuthenticatingProvider(provider);
-        if (provider.requiresInput()
-                || provider.getName().equals(mSessionData.getReturningBasicProvider())) {
+
+        //todo
+        // || provider.getName().equals(mSessionData.getReturningBasicProvider())
+        //used to be part of the if conditional, seems to be related to giving the user an
+        //opportunity to switch accounts if they already have credentials, however if that's the
+        //intention mSessionData.getAuthenticatedUserForProvider() != null or something should be
+        //used so that providers that aren't the returning basic provider are also afforded the same
+        //possibility.
+
+        if (provider.requiresInput()) {
             JRUserInterfaceMaestro.getInstance().showUserLanding();
         } else {
             JRUserInterfaceMaestro.getInstance().showWebView();

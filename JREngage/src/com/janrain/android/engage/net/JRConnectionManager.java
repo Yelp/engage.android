@@ -150,7 +150,6 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 		AsyncHttpClient.executeHttpGet(requestUrl, requestHeaders, instance);
 
 		return true;
-
     }
 
     /**
