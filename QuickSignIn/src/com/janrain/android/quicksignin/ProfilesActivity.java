@@ -34,10 +34,10 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     /**
      * Array adapter used to render individual providers in list view.
      */
-    private class ProfileAdapter extends ArrayAdapter<String> {
+    private class ProfileAdapter extends ArrayAdapter<LoginSnapshot> {
         private int mResourceId;
 
-        public ProfileAdapter(Context context, int resId, ArrayList<String> items) {
+        public ProfileAdapter(Context context, int resId, ArrayList<LoginSnapshot> items) {
             super(context, -1, items);
 
             mResourceId = resId;
@@ -55,9 +55,9 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
             ImageView icon = (ImageView)v.findViewById(R.id.rowIcon);
             TextView label = (TextView)v.findViewById(R.id.rowLabel);
 
-            String profile = getItem(position);
+            LoginSnapshot snapshot = getItem(position);
 
-            label.setText(profile);
+            label.setText(snapshot.getDisplayName());
 
             return v;
         }
@@ -84,7 +84,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     // FIELDS
     // ------------------------------------------------------------------------
 
-    private ArrayList<String> mProfilesList;
+    private ArrayList<LoginSnapshot> mProfilesList;
     private ProfileAdapter mAdapter;
     private ProfileData mProfileData;
 
@@ -127,7 +127,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         mProfilesList = mProfileData.getProfilesList();
 
         if (mProfilesList == null) {
-            mProfilesList = new ArrayList<String>();
+            mProfilesList = new ArrayList<LoginSnapshot>();
         }
 
         mAdapter = new ProfileAdapter(this, R.layout.profiles_listview_row, mProfilesList);
@@ -159,8 +159,8 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
      */
     @Override
     protected void onListItemClick(ListView l, View v, int pos, long id) {
-        String profile = mAdapter.getItem(pos);
-        mProfileData.setCurrentProfile(profile);
+        LoginSnapshot snapshot = mAdapter.getItem(pos);
+        mProfileData.setCurrentProfile(snapshot.getIdentifier());
 
 
     }
@@ -209,7 +209,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         String message = "Authentication successful" + ((TextUtils.isEmpty(displayName))
                 ? "" : (" for user: " + displayName));
 
-        mProfileData.addProfile(displayName);
+        mProfileData.addProfile(auth_info, provider);
         mAdapter.notifyDataSetChanged();
                     
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

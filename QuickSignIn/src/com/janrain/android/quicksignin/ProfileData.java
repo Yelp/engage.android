@@ -4,12 +4,14 @@ import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
+import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.Archiver;
 import com.janrain.android.engage.utils.ListUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -48,7 +50,8 @@ public class ProfileData {
     // FIELDS
     // ------------------------------------------------------------------------
 
-    private ArrayList<String> mProfiles;
+    private ArrayList<LoginSnapshot> mLoginSnapshots;
+    private HashMap<String, JRDictionary> mProfiles;
     private String mCurrentProfile;
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -86,24 +89,33 @@ public class ProfileData {
 //                mProfiles = new ArrayList<String>();
 //            }
 
-        mProfiles = new ArrayList<String>();
-        mProfiles.add("Alice");
-        mProfiles.add("Bob");
-        mProfiles.add("Carol");
-        mProfiles.add("Dave");
-        mProfiles.add("Edith");
+        mLoginSnapshots = new ArrayList<LoginSnapshot>();
+//        mProfiles.add("Alice");
+//        mProfiles.add("Bob");
+//        mProfiles.add("Carol");
+//        mProfiles.add("Dave");
+//        mProfiles.add("Edith");
     }
 
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
     // ------------------------------------------------------------------------
 
-    public ArrayList<String> getProfilesList() {
-        return mProfiles;
+    public ArrayList<LoginSnapshot> getProfilesList() {
+        return mLoginSnapshots;
     }
 
-    public void addProfile(String profile) {
-        mProfiles.add(profile);
+    public void addProfile(JRDictionary auth_info, String provider) {
+        String timestamp = "12:00 PM April 14th, 2011";
+
+        JRDictionary profile = (auth_info == null) ? null : auth_info.getAsDictionary("profile");
+        String identifier = (auth_info == null) ? null : auth_info.getAsString("identifier");
+        String displayName = (profile == null) ? null : profile.getAsString("displayName");
+
+        LoginSnapshot snapshot = new LoginSnapshot(timestamp, identifier, provider, displayName);
+        mLoginSnapshots.add(snapshot);
+
+//        mProfiles.put(identifier, auth_info);
     }
 
     public void setCurrentProfile(String profile) {
@@ -113,4 +125,9 @@ public class ProfileData {
     public String getCurrentProfile() {
         return mCurrentProfile;
     }
+
+    public JRDictionary getProfileForIdentifier(String identifier) {
+        return mProfiles.get(identifier);
+    }
 }
+
