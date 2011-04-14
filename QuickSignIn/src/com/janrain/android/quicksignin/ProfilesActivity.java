@@ -12,6 +12,12 @@ import android.util.Config;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.JREngageDelegate;
+import com.janrain.android.engage.JREngageError;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
+import com.janrain.android.engage.types.JRActivityObject;
+import com.janrain.android.engage.types.JRDictionary;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -24,8 +30,7 @@ import java.util.TimerTask;
  * Time: 3:46 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ProfilesActivity extends ListActivity {
-
+public class ProfilesActivity extends ListActivity implements View.OnClickListener, JREngageDelegate {
     /**
      * Array adapter used to render individual providers in list view.
      */
@@ -63,7 +68,9 @@ public class ProfilesActivity extends ListActivity {
     // ------------------------------------------------------------------------
 
     private static final String TAG = ProfilesActivity.class.getSimpleName();
-    private static final int TIMER_MAX_ITERATIONS = 30;
+
+    private static final String ENGAGE_APP_ID = "";
+    private static final String ENGAGE_TOKEN_URL = null;//"http://jrengage-for-android.appspot.com/login";
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -81,6 +88,9 @@ public class ProfilesActivity extends ListActivity {
     private ProfileAdapter mAdapter;
     private ProfileData mProfileData;
 
+    private JREngage mEngage;
+
+    private Button mAddProfile;
     // ------------------------------------------------------------------------
     // INITIALIZERS
     // ------------------------------------------------------------------------
@@ -106,8 +116,12 @@ public class ProfilesActivity extends ListActivity {
      */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.provider_listview);
+        setContentView(R.layout.profiles_listview);
 
+        mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);        
+
+        mAddProfile = (Button)findViewById(R.id.btn_add_profile);
+        mAddProfile.setOnClickListener(this);
 
         mProfileData = ProfileData.getInstance();
         mProfilesList = mProfileData.getProfilesList();
@@ -178,5 +192,62 @@ public class ProfilesActivity extends ListActivity {
     public void tryToFinishActivity() {
         Log.i(TAG, "[tryToFinishActivity]");
         finish();
+    }
+
+
+    public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrAuthenticationDidNotComplete() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
+        JRDictionary profile = (auth_info == null) ? null : auth_info.getAsDictionary("profile");
+        String displayName = (profile == null) ? null : profile.getAsString("displayName");
+        String message = "Authentication successful" + ((TextUtils.isEmpty(displayName))
+                ? "" : (" for user: " + displayName));
+
+        mProfileData.addProfile(displayName);
+        mAdapter.notifyDataSetChanged();
+                    
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, String tokenUrlPayload, String provider) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrSocialDidNotCompletePublishing() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrSocialDidCompletePublishing() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void onClick(View view) {
+        mEngage.showAuthenticationDialog();
     }
 }
