@@ -6,6 +6,10 @@ import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Config;
@@ -19,7 +23,9 @@ import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,6 +37,35 @@ import java.util.TimerTask;
  * To change this template use File | Settings | File Templates.
  */
 public class ProfilesActivity extends ListActivity implements View.OnClickListener, JREngageDelegate {
+
+    private static HashMap<String, Drawable> provider_list_icon_drawables =
+            new HashMap<String, Drawable>();
+
+    private final static HashMap<String, Integer> provider_list_icon_resources =
+            new HashMap<String, Integer>(){
+            {
+                    put("icon_aol", com.janrain.android.engage.R.drawable.icon_aol);
+                    put("icon_blogger", com.janrain.android.engage.R.drawable.icon_blogger);
+                    put("icon_facebook", com.janrain.android.engage.R.drawable.icon_facebook);
+                    put("icon_flickr", com.janrain.android.engage.R.drawable.icon_flickr);
+                    put("icon_google", com.janrain.android.engage.R.drawable.icon_google);
+                    put("icon_hyves", com.janrain.android.engage.R.drawable.icon_hyves);
+                    put("icon_linkedin", com.janrain.android.engage.R.drawable.icon_linkedin);
+                    put("icon_live_id", com.janrain.android.engage.R.drawable.icon_live_id);
+                    put("icon_livejournal", com.janrain.android.engage.R.drawable.icon_livejournal);
+                    put("icon_myopenid", com.janrain.android.engage.R.drawable.icon_myopenid);
+                    put("icon_myspace", com.janrain.android.engage.R.drawable.icon_myspace);
+                    put("icon_netlog", com.janrain.android.engage.R.drawable.icon_netlog);
+                    put("icon_openid", com.janrain.android.engage.R.drawable.icon_openid);
+                    put("icon_paypal", com.janrain.android.engage.R.drawable.icon_paypal);
+                    put("icon_twitter", com.janrain.android.engage.R.drawable.icon_twitter);
+                    put("icon_verisign", com.janrain.android.engage.R.drawable.icon_verisign);
+                    put("icon_wordpress", com.janrain.android.engage.R.drawable.icon_wordpress);
+                    put("icon_yahoo", com.janrain.android.engage.R.drawable.icon_yahoo);
+           }
+    };
+
+
     /**
      * Array adapter used to render individual providers in list view.
      */
@@ -43,6 +78,41 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
             mResourceId = resId;
         }
 
+        private Drawable getProviderIconDrawable(Context c, String providerName) {
+            String drawableName = "icon_" + providerName;
+            HashMap<String, Drawable> drawableMap = provider_list_icon_drawables;
+            HashMap<String, Integer> resourceMap = provider_list_icon_resources;
+
+            if (drawableMap.containsKey(drawableName)) return drawableMap.get(drawableName);
+
+            if (resourceMap.containsKey(drawableName)) {
+                Drawable r = c.getResources().getDrawable(resourceMap.get(drawableName));
+                drawableMap.put(drawableName, r);
+                return r;
+            }
+
+            try {
+                String iconFileName = "providericon~" + drawableName + ".png";
+
+                Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
+                if (icon != null) {
+                    icon.setDensity(android.util.DisplayMetrics.DENSITY_MEDIUM);
+                }
+                else {
+                    c.deleteFile(iconFileName);
+                    //downloadIcons(c);
+                    return c.getResources().getDrawable(com.janrain.android.engage.R.drawable.icon_unknown);
+                }
+
+                return new BitmapDrawable(c.getResources(), icon);
+            }
+            catch (FileNotFoundException e) {
+                //downloadIcons(c);
+
+                return c.getResources().getDrawable(com.janrain.android.engage.R.drawable.icon_unknown);
+            }
+    }
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = convertView;
@@ -52,12 +122,17 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
                 Log.i(TAG, "[getView] with null converView");
             } else Log.i(TAG, "[getView] with non null convertView");
 
-            ImageView icon = (ImageView)v.findViewById(R.id.rowIcon);
-            TextView label = (TextView)v.findViewById(R.id.rowLabel);
+            ImageView icon = (ImageView)v.findViewById(R.id.row_profile_provider_icon);
+            TextView name = (TextView)v.findViewById(R.id.row_profile_preferred_username_label);
+            TextView timestamp = (TextView)v.findViewById(R.id.row_profile_timestamp_label);
 
             LoginSnapshot snapshot = getItem(position);
 
-            label.setText(snapshot.getDisplayName());
+            Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " + snapshot.getDisplayName());
+
+            icon.setImageDrawable(getProviderIconDrawable(getContext(), snapshot.getProvider()));
+            name.setText(snapshot.getDisplayName());
+            timestamp.setText(snapshot.getTimeStamp());
 
             return v;
         }
@@ -160,7 +235,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     @Override
     protected void onListItemClick(ListView l, View v, int pos, long id) {
         LoginSnapshot snapshot = mAdapter.getItem(pos);
-        mProfileData.setCurrentProfile(snapshot.getIdentifier());
+        mProfileData.setCurrentProfileByIdentifier(snapshot.getIdentifier());
 
 
     }

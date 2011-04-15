@@ -103,8 +103,8 @@ public class JRProvidersActivity extends ListActivity {
                 Log.i(TAG, "[getView] with null converView");
             } else Log.i(TAG, "[getView] with non null convertView");
 
-            ImageView icon = (ImageView)v.findViewById(R.id.rowIcon);
-            TextView label = (TextView)v.findViewById(R.id.rowLabel);
+            ImageView icon = (ImageView)v.findViewById(R.id.row_provider_icon);
+            TextView label = (TextView)v.findViewById(R.id.row_provider_label);
 
             JRProvider provider = getItem(position);
 

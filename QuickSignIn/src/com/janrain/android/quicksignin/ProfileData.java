@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -52,7 +53,7 @@ public class ProfileData {
 
     private ArrayList<LoginSnapshot> mLoginSnapshots;
     private HashMap<String, JRDictionary> mProfiles;
-    private String mCurrentProfile;
+    private JRDictionary mCurrentProfile;
     // ------------------------------------------------------------------------
     // INITIALIZERS
     // ------------------------------------------------------------------------
@@ -90,6 +91,7 @@ public class ProfileData {
 //            }
 
         mLoginSnapshots = new ArrayList<LoginSnapshot>();
+        mProfiles = new HashMap<String, JRDictionary>();
 //        mProfiles.add("Alice");
 //        mProfiles.add("Bob");
 //        mProfiles.add("Carol");
@@ -115,14 +117,14 @@ public class ProfileData {
         LoginSnapshot snapshot = new LoginSnapshot(timestamp, identifier, provider, displayName);
         mLoginSnapshots.add(snapshot);
 
-//        mProfiles.put(identifier, auth_info);
+        mProfiles.put(identifier, auth_info);
     }
 
-    public void setCurrentProfile(String profile) {
-        mCurrentProfile = profile;
+    public void setCurrentProfileByIdentifier(String identifier) {
+        mCurrentProfile = mProfiles.get(identifier);
     }
 
-    public String getCurrentProfile() {
+    public JRDictionary getCurrentProfile() {
         return mCurrentProfile;
     }
 

@@ -39,6 +39,7 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
@@ -75,8 +76,8 @@ public class JRProvider implements Serializable {
     private static HashMap<String, Drawable> provider_list_icon_drawables =
             new HashMap<String, Drawable>();
 
-    private final static HashMap<String, Integer> provider_list_icon_resources
-            = new HashMap<String, Integer>(){
+    private final static HashMap<String, Integer> provider_list_icon_resources =
+            new HashMap<String, Integer>(){
                     {
                         put("icon_bw_facebook", R.drawable.icon_bw_facebook);
                         put("icon_bw_linkedin", R.drawable.icon_bw_linkedin);
@@ -102,7 +103,7 @@ public class JRProvider implements Serializable {
                         put("icon_wordpress", R.drawable.icon_wordpress);
                         put("icon_yahoo", R.drawable.icon_yahoo);
                     }
-    };
+            };
 
     private static HashMap<String, Drawable> provider_logo_drawables =
             new HashMap<String, Drawable>();
@@ -128,7 +129,7 @@ public class JRProvider implements Serializable {
                         put("logo_verisign", R.drawable.logo_verisign);
                         put("logo_yahoo", R.drawable.logo_yahoo);
                     }
-    };
+            };
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -193,6 +194,10 @@ public class JRProvider implements Serializable {
         } else {
             mShortText = "";
         }
+
+        /* We call this function in the constructor, simply to preemptively download the icons
+         if they aren't already there. */
+        getProviderLogo(JREngage.getContext());
     }
 
     // ------------------------------------------------------------------------
@@ -346,16 +351,9 @@ public class JRProvider implements Serializable {
 
         //todo verify the naming of these downloaded icons
         final String[] iconFileNames = {
-            "icon_" + mName + "_30x30.png",
-            "icon_" + mName + "_30x30@2x.png",
-            "logo_" + mName + "_280x65.png",
-            "logo_" + mName + "_280x65@2x.png",
-            "icon_bw_" + mName + "_30x30.png",
-            "icon_bw_" + mName + "_30x30@2x.png",
-            "button_" + mName + "_135x40.png",
-            "button_" + mName + "_135x40@2x.png",
-            "button_" + mName + "_280x40.png",
-            "button_" + mName + "_280x40@2x.png"
+            "icon_" + mName + ".png",
+            "icon_bw_" + mName + ".png",
+            "logo_" + mName + ".png"
         };
 
         new AsyncTask<Void, Void, Void>(){
