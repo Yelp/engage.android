@@ -9,13 +9,19 @@
     <uses-sdk android:minSdkVersion="7" />
 
     <application android:label="QuickSignIn" android:icon="@drawable/icon">
-        <activity android:name="MainActivity"
+        <activity android:name=".MainActivity"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ProfilesActivity"
+                  android:label="Profiles"/>
+
+        <activity android:name=".ProfileDetailActivity"/>
+
 
         <!-- For Janrain Engage library -->
         <activity android:name="com.janrain.android.engage.ui.JRProvidersActivity"
@@ -29,7 +35,6 @@
                   <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRPublishActivity"
                 android:theme="@android:style/Theme.Light.NoTitleBar"/>
-        <activity android:name=".ProfilesActivity" android:label="profiles_activity"/>
         <!--android:configChanges="orientation|keyboardHidden"-->
     
     </application>

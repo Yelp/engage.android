@@ -1,9 +1,7 @@
 package com.janrain.android.quicksignin;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ListActivity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,7 +10,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Config;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -26,8 +23,6 @@ import com.janrain.android.engage.types.JRDictionary;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by IntelliJ IDEA.
@@ -236,8 +231,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     protected void onListItemClick(ListView l, View v, int pos, long id) {
         LoginSnapshot snapshot = mAdapter.getItem(pos);
         mProfileData.setCurrentProfileByIdentifier(snapshot.getIdentifier());
-
-
+        this.startActivity(new Intent(this, ProfileDetailActivity.class));
     }
 
     /**

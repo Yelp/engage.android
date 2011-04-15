@@ -8,9 +8,11 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../JREngage/res/layout/provider_listview_row.xml" afterPath="$PROJECT_DIR$/../JREngage/res/layout/provider_listview_row.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/session/JRProvider.java" afterPath="$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/session/JRProvider.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/ui/JRProvidersActivity.java" afterPath="$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/ui/JRProvidersActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AndroidManifest.xml" afterPath="$PROJECT_DIR$/AndroidManifest.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/profiles_listview_row.xml" afterPath="$PROJECT_DIR$/res/layout/profiles_listview_row.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/MainActivity.java" afterPath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/MainActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileData.java" afterPath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileData.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileDetailActivity.java" afterPath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileDetailActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java" afterPath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java" />
     </list>
     <ignored path="QuickSignIn.iws" />
@@ -79,19 +81,30 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="JRProvider.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/session/JRProvider.java">
+      <file leaf-file-name="ProfilesActivity.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="391" column="0" selection-start="15825" selection-end="15825" vertical-scroll-proportion="0.0">
+            <state line="141" column="51" selection-start="6400" selection-end="6400" vertical-scroll-proportion="-11.692307">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AndroidManifest.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="23" column="0" selection-start="964" selection-end="964" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ProfilesActivity.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java">
+      <file leaf-file-name="MainActivity.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="146" column="49" selection-start="6549" selection-end="6549" vertical-scroll-proportion="0.34358048">
+            <state line="2" column="0" selection-start="42" selection-end="42" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -115,15 +128,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="profile_detail_listview.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/res/layout/profile_detail_listview.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="23" column="0" selection-start="767" selection-end="767" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="provider_listview_row.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../JREngage/res/layout/provider_listview_row.xml">
           <provider selected="true" editor-type-id="text-editor">
@@ -142,11 +146,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ProfileDetailActivity.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="ProfileDetailActivity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileDetailActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="56" column="88" selection-start="2011" selection-end="2011" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="12" column="0" selection-start="316" selection-end="316" vertical-scroll-proportion="0.39378238">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -174,7 +180,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/res/layout/main.xml" />
         <option value="$PROJECT_DIR$/res/layout/profiles.xml" />
         <option value="$PROJECT_DIR$/.idea/workspace.xml" />
         <option value="$PROJECT_DIR$/src/com/janrain/android/quicksignin/MainActivity.java" />
@@ -188,8 +193,9 @@
         <option value="$PROJECT_DIR$/res/layout/profile_detail_listview_row.xml" />
         <option value="$PROJECT_DIR$/../JREngage/res/layout/provider_listview_row.xml" />
         <option value="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileData.java" />
-        <option value="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileDetailActivity.java" />
+        <option value="$PROJECT_DIR$/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java" />
+        <option value="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileDetailActivity.java" />
       </list>
     </option>
   </component>
@@ -277,6 +283,10 @@
               <option name="myItemId" value="res" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="values" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -293,6 +303,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="layout" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="QuickSignIn" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="QuickSignIn" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -597,7 +621,7 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32976446" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32976446" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
@@ -606,7 +630,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17958312" sideWeight="0.6723769" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32762313" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.55781585" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37259102" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -651,20 +675,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/res/layout/main.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="93" column="0" selection-start="3318" selection-end="3914" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="91" column="0" selection-start="2779" selection-end="3178" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/LoginSnapshot.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="29" column="5" selection-start="716" selection-end="716" vertical-scroll-proportion="0.0">
@@ -742,13 +752,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileDetailActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="88" selection-start="2011" selection-end="2011" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileData.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="119" column="0" selection-start="4480" selection-end="4480" vertical-scroll-proportion="0.0">
@@ -756,10 +759,35 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="0" selection-start="42" selection-end="42" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="146" column="49" selection-start="6549" selection-end="6549" vertical-scroll-proportion="0.34358048">
+        <state line="141" column="51" selection-start="6400" selection-end="6400" vertical-scroll-proportion="-11.692307">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="0" selection-start="964" selection-end="964" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileDetailActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="0" selection-start="316" selection-end="316" vertical-scroll-proportion="0.39378238">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

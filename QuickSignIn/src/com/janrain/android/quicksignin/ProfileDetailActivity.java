@@ -1,28 +1,15 @@
 package com.janrain.android.quicksignin;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ListActivity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Config;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
-import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.JREngageDelegate;
-import com.janrain.android.engage.JREngageError;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by IntelliJ IDEA.
