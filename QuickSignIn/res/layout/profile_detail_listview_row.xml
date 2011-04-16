@@ -17,11 +17,11 @@
         android:layout_centerVertical="true"
         android:gravity="left|center_vertical"
         android:singleLine="true"
-        android:text="@string/provider_unknown"
-        android:textColor="#333333"
+        android:text="unknown"
         android:textSize="20dip"
         android:padding="6dip"
         />
+    <!--android:textColor="#333333"-->
 
     <TextView
         android:id="@+id/row_profile_detail_value"
@@ -32,8 +32,7 @@
         android:layout_centerVertical="true"
         android:gravity="left|center_vertical"
         android:singleLine="true"
-        android:text="@string/provider_unknown"
-        android:textColor="#333333"
+        android:text="unknown"
         android:textSize="20dip"
         android:padding="6dip"
         />

@@ -21,4 +21,5 @@ out/*
 
 SimpleDemo/local.properties
 QuickSignIn/local.properties
-*app_id.txt
+SimpleDemo/app_id.txt
+QuickSignIn/app_id.txt

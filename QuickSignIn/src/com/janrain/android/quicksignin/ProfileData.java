@@ -117,7 +117,7 @@ public class ProfileData {
         LoginSnapshot snapshot = new LoginSnapshot(timestamp, identifier, provider, displayName);
         mLoginSnapshots.add(snapshot);
 
-        mProfiles.put(identifier, auth_info);
+        mProfiles.put(identifier, profile);
     }
 
     public void setCurrentProfileByIdentifier(String identifier) {
@@ -128,8 +128,8 @@ public class ProfileData {
         return mCurrentProfile;
     }
 
-    public JRDictionary getProfileForIdentifier(String identifier) {
-        return mProfiles.get(identifier);
-    }
+//    public JRDictionary getProfileForIdentifier(String identifier) {
+//        return mProfiles.get(identifier);
+//    }
 }
 
