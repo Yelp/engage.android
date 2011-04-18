@@ -67,7 +67,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     /**
      * Array adapter used to render individual providers in list view.
      */
-    private class ProfileAdapter extends ArrayAdapter<LoginSnapshot> {
+    private class ProfileAdapter extends ArrayAdapter<LoginSnapshot> implements View.OnClickListener {
         private int mResourceId;
 
         public ProfileAdapter(Context context, int resId, ArrayList<LoginSnapshot> items) {
@@ -133,12 +133,21 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
             name.setText(snapshot.getDisplayName());
             timestamp.setText(snapshot.getTimeStamp());
 
-//            if (mEditing)
-//                deleteRow.setVisibility(View.VISIBLE);
-//            else
-//                deleteRow.setVisibility(View.GONE);
+            deleteRow.setTag(position);
+            deleteRow.setOnClickListener(this);
+
+            if (mEditing)
+                deleteRow.setVisibility(View.VISIBLE);
+            else
+                deleteRow.setVisibility(View.GONE);
             
             return v;
+        }
+
+        public void onClick(View view) {
+            Integer position = ((Integer)view.getTag());
+            mProfileData.deleteLoginSnapshotAtPosition(position);
+            this.notifyDataSetChanged();
         }
     }
 
@@ -168,6 +177,8 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     private ProfileData mProfileData;
 
     private boolean mEditing;
+    private MenuItem mEditProfilesButton;
+    private MenuItem mClearAllProfilesButton;
 
     private JREngage mEngage;
 
@@ -221,6 +232,11 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
         mEditing = false;
 
+
+
+        mEditProfilesButton = (MenuItem)findViewById(R.id.edit_profiles);
+        mClearAllProfilesButton = (MenuItem)findViewById(R.id.delete_all_profiles);
+
         mAddProfile = (Button)findViewById(R.id.btn_add_profile);
         mAddProfile.setOnClickListener(this);
 
@@ -270,9 +286,19 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-       MenuInflater inflater = getMenuInflater();
-       inflater.inflate(R.menu.profile_managing_menu, menu);
-       return true;
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.profile_managing_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (!mEditing)
+            menu.findItem(R.id.edit_profiles).setTitle("Edit Profiles");
+        else
+            menu.findItem(R.id.edit_profiles).setTitle("Done Editing");
+
+        return true;
     }
 
     /**
@@ -280,19 +306,29 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-       // Handle item selection
-       switch (item.getItemId()) {
-       case R.id.edit_profiles:
-           mEditing = true;
-           mAddProfile.setText("Done Editing");
-           mAdapter.notifyDataSetChanged();
-           return true;
-       case R.id.delete_all_profiles:
-
-           return true;
-       default:
-           return super.onOptionsItemSelected(item);
-       }
+        switch (item.getItemId()) {
+            case R.id.edit_profiles:
+                if (!mEditing) {
+                    mEditing = true;
+                    mAddProfile.setText("Done Editing");
+                    mAdapter.notifyDataSetChanged();
+                    return true;
+                }
+                else {
+                    mEditing = false;
+                    mAddProfile.setText("Add Another Profile");
+                    mAdapter.notifyDataSetChanged();
+                    return true;
+                }
+            case R.id.delete_all_profiles:
+                mEditing = false;
+                mAddProfile.setText("Add Another Profile");
+                mProfileData.deleteAllProfiles();
+                mAdapter.notifyDataSetChanged();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**

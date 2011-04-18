@@ -102,6 +102,20 @@ public class ProfileData {
         Archiver.save(ARCHIVE_LOGIN_SNAPSHOTS, mLoginSnapshots);
     }
 
+    public void deleteLoginSnapshotAtPosition(int position) {
+        mLoginSnapshots.remove(position);
+        Archiver.save(ARCHIVE_ALL_PROFILES, mProfiles);
+        Archiver.save(ARCHIVE_LOGIN_SNAPSHOTS, mLoginSnapshots);
+    }
+
+    public void deleteAllProfiles() {
+        mLoginSnapshots.clear();
+        mProfiles.clear();
+
+        Archiver.save(ARCHIVE_ALL_PROFILES, mProfiles);
+        Archiver.save(ARCHIVE_LOGIN_SNAPSHOTS, mLoginSnapshots);
+    }
+
     public void setCurrentProfileByIdentifier(String identifier) {
         mCurrentProfile = mProfiles.get(identifier);
     }
