@@ -1,6 +1,9 @@
 package com.janrain.android.quicksignin;
 
-public class LoginSnapshot {
+
+import java.io.Serializable;
+
+public class LoginSnapshot implements Serializable {
     private String mTimeStamp;
     private String mIdentifier;
     private String mProvider;

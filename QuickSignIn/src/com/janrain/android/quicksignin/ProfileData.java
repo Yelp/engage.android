@@ -28,6 +28,7 @@ public class ProfileData {
 
 
     private static final String ARCHIVE_ALL_PROFILES = "allProfiles";
+    private static final String ARCHIVE_LOGIN_SNAPSHOTS = "loginSnapshots";
 
     public static ProfileData getInstance() {
 
@@ -90,13 +91,13 @@ public class ProfileData {
 //                mProfiles = new ArrayList<String>();
 //            }
 
-        mLoginSnapshots = new ArrayList<LoginSnapshot>();
-        mProfiles = new HashMap<String, JRDictionary>();
-//        mProfiles.add("Alice");
-//        mProfiles.add("Bob");
-//        mProfiles.add("Carol");
-//        mProfiles.add("Dave");
-//        mProfiles.add("Edith");
+        mLoginSnapshots = (ArrayList<LoginSnapshot>)Archiver.load(ARCHIVE_LOGIN_SNAPSHOTS);
+        if (mLoginSnapshots == null)
+            mLoginSnapshots = new ArrayList<LoginSnapshot>();
+
+        mProfiles = (HashMap<String, JRDictionary>)Archiver.load(ARCHIVE_ALL_PROFILES);
+        if (mProfiles == null)
+            mProfiles = new HashMap<String, JRDictionary>();
     }
 
     // ------------------------------------------------------------------------
@@ -118,6 +119,9 @@ public class ProfileData {
         mLoginSnapshots.add(snapshot);
 
         mProfiles.put(identifier, profile);
+
+        Archiver.save(ARCHIVE_ALL_PROFILES, mProfiles);
+        Archiver.save(ARCHIVE_LOGIN_SNAPSHOTS, mLoginSnapshots);
     }
 
     public void setCurrentProfileByIdentifier(String identifier) {
