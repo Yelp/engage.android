@@ -21,6 +21,8 @@ import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -140,7 +142,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     private static final String TAG = ProfilesActivity.class.getSimpleName();
 
     private static final String ENGAGE_APP_ID = "";
-    private static final String ENGAGE_TOKEN_URL = null;//"http://jrengage-for-android.appspot.com/login";
+    private static final String ENGAGE_TOKEN_URL = "";
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -176,6 +178,18 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     // METHODS
     // ------------------------------------------------------------------------
 
+    private String readAsset(String fileName) {
+        try {
+            InputStream is = getAssets().open(fileName);
+            byte[] buffer = new byte[is.available()];
+            is.read(buffer);
+            return new String(buffer);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+
     /**
      * Called when the activity is first created.
      *
@@ -188,7 +202,13 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profiles_listview);
 
-        mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);        
+
+        // TODO: Fix bug for when this is NULL
+        String engageAppId = readAsset("app_id.txt").trim();
+        String engageTokenUrl = null;//readAsset("token_url.txt").trim();
+
+//        mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
+        mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, this);        
 
         mAddProfile = (Button)findViewById(R.id.btn_add_profile);
         mAddProfile.setOnClickListener(this);

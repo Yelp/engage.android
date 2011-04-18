@@ -13,6 +13,7 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/MainActivity.java" afterPath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/MainActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileData.java" afterPath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileData.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileDetailActivity.java" afterPath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileDetailActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java" afterPath="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java" />
     </list>
     <ignored path="QuickSignIn.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -71,22 +72,22 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="JRProvidersActivity.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../JREngage/src/com/janrain/android/engage/ui/JRProvidersActivity.java">
+      <file leaf-file-name="ProfilesActivity.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="87" column="32" selection-start="4722" selection-end="4730" vertical-scroll-proportion="-29.961538">
-              <folding />
+            <state line="217" column="0" selection-start="9214" selection-end="9214" vertical-scroll-proportion="0.47920433">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ProfilesActivity.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java">
+      <file leaf-file-name="app_id.txt" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/assets/app_id.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="141" column="49" selection-start="6398" selection-end="6398" vertical-scroll-proportion="0.41229656">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -316,6 +317,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="QuickSignIn" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="QuickSignIn" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="assets" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -614,7 +629,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1920" height="1054" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -674,13 +689,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/res/layout/profiles_listview.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="59" selection-start="1214" selection-end="1274" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/res/layout/profile_detail_listview.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="23" column="0" selection-start="767" selection-end="767" vertical-scroll-proportion="0.0">
@@ -781,9 +789,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/assets/app_id.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="141" column="49" selection-start="6398" selection-end="6398" vertical-scroll-proportion="0.41229656">
+        <state line="217" column="0" selection-start="9214" selection-end="9214" vertical-scroll-proportion="0.47920433">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
