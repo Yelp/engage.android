@@ -1,18 +1,13 @@
 package com.janrain.android.quicksignin;
 
-import android.content.pm.ApplicationInfo;
-import android.text.TextUtils;
+import android.content.Context;
+import java.text.DateFormat;
 import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.Archiver;
-import com.janrain.android.engage.utils.ListUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,9 +21,21 @@ public class ProfileData {
 
 	private static ProfileData sInstance;
 
-
     private static final String ARCHIVE_ALL_PROFILES = "allProfiles";
     private static final String ARCHIVE_LOGIN_SNAPSHOTS = "loginSnapshots";
+
+
+    // ------------------------------------------------------------------------
+    // FIELDS
+    // ------------------------------------------------------------------------
+    private Context mContext;
+
+    private ArrayList<LoginSnapshot> mLoginSnapshots;
+    private HashMap<String, JRDictionary> mProfiles;
+    private JRDictionary mCurrentProfile;
+    // ------------------------------------------------------------------------
+    // INITIALIZERS
+    // ------------------------------------------------------------------------
 
     public static ProfileData getInstance() {
 
@@ -49,17 +56,6 @@ public class ProfileData {
     }
 
     // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
-    private ArrayList<LoginSnapshot> mLoginSnapshots;
-    private HashMap<String, JRDictionary> mProfiles;
-    private JRDictionary mCurrentProfile;
-    // ------------------------------------------------------------------------
-    // INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
 
@@ -67,29 +63,6 @@ public class ProfileData {
         if (Config.LOGD) {
             Log.d(TAG, "[ctor] creating instance.");
         }
-
-//            ApplicationInfo ai = JREngage.getContext().getApplicationInfo();
-//            String appName = JREngage.getContext().getPackageManager().getApplicationLabel(ai).toString();
-//            try { mUrlEncodedAppName = URLEncoder.encode(appName, "UTF-8"); }
-//            catch (UnsupportedEncodingException e) { Log.e(TAG, e.toString()); }
-//
-//            String libraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
-//            String diskVersion = Prefs.getAsString("JREngageVersion", "");
-//
-//            if (diskVersion.equals(libraryVersion)) {
-            // Load the list of basic providers
-//            mProfiles = (ArrayList<String>) Archiver.load(ARCHIVE_ALL_PROFILES);
-//            if (Config.LOGD) {
-//                if (ListUtils.isEmpty(mProfiles)) {
-//                    Log.d(TAG, "[ctor] basic providers is empty");
-//                } else {
-//                    Log.d(TAG, "[ctor] basic providers: [" + TextUtils.join(",", mProfiles) + "]");
-//                }
-//            }
-//            }
-//            else {
-//                mProfiles = new ArrayList<String>();
-//            }
 
         mLoginSnapshots = (ArrayList<LoginSnapshot>)Archiver.load(ARCHIVE_LOGIN_SNAPSHOTS);
         if (mLoginSnapshots == null)
@@ -109,7 +82,12 @@ public class ProfileData {
     }
 
     public void addProfile(JRDictionary auth_info, String provider) {
-        String timestamp = "12:00 PM April 14th, 2011";
+//        Calendar rightNow = Calendar.getInstance();
+//        Date date = new Date(location.getTime());
+//        DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(getApplicationContext());
+//        mTimeText.setText("Time: " + dateFormat.format(date));
+
+        String timestamp = DateFormat.getDateTimeInstance().format(new Date());//rightNow.toString();//"12:00 PM April 14th, 2011";
 
         JRDictionary profile = (auth_info == null) ? null : auth_info.getAsDictionary("profile");
         String identifier = (auth_info == null) ? null : auth_info.getAsString("identifier");
