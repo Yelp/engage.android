@@ -24,10 +24,6 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:gravity="center_horizontal|center_vertical"
-        android:paddingTop="0dip"
-        android:paddingRight="10dip"
-        android:paddingBottom="0dip"
-        android:paddingLeft="10dip"
         >
 
         <TextView
@@ -41,8 +37,8 @@
             android:gravity="left|center_vertical"
             android:singleLine="true"
             android:text="@string/provider_unknown"
-            android:textSize="16dip"
-            android:padding="6dip"
+            android:textSize="14dip"
+            android:paddingBottom="4dip"
             />
         <!--android:textColor="#333333"-->
 
@@ -57,8 +53,7 @@
             android:gravity="left|center_vertical"
             android:singleLine="true"
             android:text="@string/provider_unknown"
-            android:textSize="12dip"
-            android:padding="6dip"
+            android:textSize="11dip"
             />
     </LinearLayout>
 </LinearLayout>

@@ -92,10 +92,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="profile_detail_listview_row.xml" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="profile_detail_listview_row.xml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/res/layout/profile_detail_listview_row.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="35" column="28" selection-start="1297" selection-end="1297" vertical-scroll-proportion="0.0">
+            <state line="36" column="0" selection-start="1308" selection-end="1308" vertical-scroll-proportion="1.1813471">
               <folding />
             </state>
           </provider>
@@ -104,7 +104,7 @@
       <file leaf-file-name="profiles_listview_row.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/res/layout/profiles_listview_row.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="62" column="0" selection-start="2407" selection-end="2407" vertical-scroll-proportion="0.0">
+            <state line="42" column="42" selection-start="1640" selection-end="1640" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -128,10 +128,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ProfileData.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="ProfileData.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="80" column="31" selection-start="2769" selection-end="2769" vertical-scroll-proportion="0.11744387">
+            <state line="80" column="31" selection-start="2769" selection-end="2769" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -220,11 +220,11 @@
         <option value="$PROJECT_DIR$/../JREngage/res/layout/provider_listview_row.xml" />
         <option value="$PROJECT_DIR$/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileDetailActivity.java" />
-        <option value="$PROJECT_DIR$/res/layout/profile_detail_listview_row.xml" />
-        <option value="$PROJECT_DIR$/res/layout/profiles_listview_row.xml" />
         <option value="$PROJECT_DIR$/src/com/janrain/android/quicksignin/LoginSnapshot.java" />
         <option value="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfilesActivity.java" />
         <option value="$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileData.java" />
+        <option value="$PROJECT_DIR$/res/layout/profiles_listview_row.xml" />
+        <option value="$PROJECT_DIR$/res/layout/profile_detail_listview_row.xml" />
       </list>
     </option>
   </component>
@@ -748,23 +748,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/profile_detail_listview_row.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="28" selection-start="1297" selection-end="1297" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../JREngage/res/layout/publish_activity.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="260" column="19" selection-start="12104" selection-end="12710" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/profiles_listview_row.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="0" selection-start="2407" selection-end="2407" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -829,10 +815,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/janrain/android/quicksignin/ProfileData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="31" selection-start="2769" selection-end="2769" vertical-scroll-proportion="0.11744387">
+        <state line="80" column="31" selection-start="2769" selection-end="2769" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/layout/profiles_listview_row.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="42" selection-start="1640" selection-end="1640" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/layout/profile_detail_listview_row.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="0" selection-start="1308" selection-end="1308" vertical-scroll-proportion="1.1813471">
+          <folding />
         </state>
       </provider>
     </entry>

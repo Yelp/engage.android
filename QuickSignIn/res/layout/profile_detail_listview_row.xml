@@ -18,8 +18,8 @@
         android:gravity="left|center_vertical"
         android:singleLine="true"
         android:text="unknown"
-        android:textSize="12dip"
-        android:padding="6dip"
+        android:textSize="11dip"
+        android:paddingBottom="4dip"
         />
     <!--android:textColor="#333333"-->
 
@@ -33,8 +33,7 @@
         android:gravity="left|center_vertical"
         android:singleLine="true"
         android:text="unknown"
-        android:textSize="16dip"
-        android:padding="6dip"
+        android:textSize="14dip"
         />
 
 </LinearLayout>
