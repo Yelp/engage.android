@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -122,6 +123,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
             ImageView icon = (ImageView)v.findViewById(R.id.row_profile_provider_icon);
             TextView name = (TextView)v.findViewById(R.id.row_profile_preferred_username_label);
             TextView timestamp = (TextView)v.findViewById(R.id.row_profile_timestamp_label);
+            Button deleteRow = (Button)v.findViewById(R.id.row_delete_button);
 
             LoginSnapshot snapshot = getItem(position);
 
@@ -131,6 +133,11 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
             name.setText(snapshot.getDisplayName());
             timestamp.setText(snapshot.getTimeStamp());
 
+//            if (mEditing)
+//                deleteRow.setVisibility(View.VISIBLE);
+//            else
+//                deleteRow.setVisibility(View.GONE);
+            
             return v;
         }
     }
@@ -159,6 +166,8 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     private ArrayList<LoginSnapshot> mProfilesList;
     private ProfileAdapter mAdapter;
     private ProfileData mProfileData;
+
+    private boolean mEditing;
 
     private JREngage mEngage;
 
@@ -210,6 +219,8 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 //        mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, this);        
 
+        mEditing = false;
+
         mAddProfile = (Button)findViewById(R.id.btn_add_profile);
         mAddProfile.setOnClickListener(this);
 
@@ -259,16 +270,29 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // use the shared menu
-        return true;
+       MenuInflater inflater = getMenuInflater();
+       inflater.inflate(R.menu.profile_managing_menu, menu);
+       return true;
     }
 
     /**
-     * This hook is called whenever an item in your options menu is selected.
-     */
+    * This hook is called whenever an item in your options menu is selected.
+    */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+       // Handle item selection
+       switch (item.getItemId()) {
+       case R.id.edit_profiles:
+           mEditing = true;
+           mAddProfile.setText("Done Editing");
+           mAdapter.notifyDataSetChanged();
+           return true;
+       case R.id.delete_all_profiles:
+
+           return true;
+       default:
+           return super.onOptionsItemSelected(item);
+       }
     }
 
     /**
@@ -337,6 +361,14 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     }
 
     public void onClick(View view) {
-        mEngage.showAuthenticationDialog();
+
+        if (mEditing) {
+            mEditing = false;
+            mAddProfile.setText("Add Another Profile");
+            mAdapter.notifyDataSetChanged();
+        }
+        else {
+            mEngage.showAuthenticationDialog();
+        }
     }
 }

@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal|center_vertical"
         android:layout_gravity="center_horizontal"
-        android:text="Add another Profile"
+        android:text="Add Another Profile"
         android:textSize="18dip"
         android:layout_alignParentTop="true"
         />
@@ -24,10 +24,10 @@
         android:id="@id/android:list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:paddingBottom="30dip"
         android:layout_below="@id/btn_add_profile"
         />
-
+    <!--android:paddingBottom="30dip"-->
+        
     <!-- List view (empty state) -->
     <TextView
         android:id="@id/android:empty"

@@ -7,32 +7,51 @@
     android:padding="6dip"
     >
 
+    <RelativeLayout
+        android:id="@+id/row_content"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        >
+
     <ImageView
         android:id="@+id/row_profile_provider_icon"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="10dip"
         android:src="@drawable/icon_unknown"
         />
+    <!--android:layout_weight="1"-->
+
+    <Button
+        android:id="@+id/row_delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="right"
+        android:layout_marginLeft="10dip"
+        android:text="Delete"
+        />
 
     <LinearLayout
         android:id="@+id/display_name_and_timestamp"
         android:orientation="vertical"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@id/row_profile_provider_icon"
+        android:layout_toLeftOf="@id/row_delete_button"
         android:gravity="center_horizontal|center_vertical"
         >
+        <!--android:layout_weight="1"-->
 
         <TextView
             android:id="@+id/row_profile_preferred_username_label"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_toRightOf="@id/row_profile_provider_icon"
-            android:layout_alignParentRight="true"
-            android:layout_alignWithParentIfMissing="true"
             android:layout_centerVertical="true"
             android:gravity="left|center_vertical"
             android:singleLine="true"
@@ -40,20 +59,32 @@
             android:textSize="14dip"
             android:paddingBottom="4dip"
             />
+        <!--android:visibility="gone"-->
+        <!--android:layout_toRightOf="@id/row_profile_provider_icon"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignWithParentIfMissing="true"-->
         <!--android:textColor="#333333"-->
 
         <TextView
             android:id="@+id/row_profile_timestamp_label"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_toRightOf="@id/row_profile_provider_icon"
-            android:layout_alignParentRight="true"
-            android:layout_alignWithParentIfMissing="true"
             android:layout_centerVertical="true"
+            android:maxWidth="200dip"
             android:gravity="left|center_vertical"
             android:singleLine="true"
             android:text="@string/provider_unknown"
             android:textSize="11dip"
             />
     </LinearLayout>
+
+    <!--android:layout_toRightOf="@id/display_name_and_timestamp"-->
+    <!--android:layout_weight="1"-->
+
+    <!--android:visibility="gone"-->
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_alignParentRight="true"-->
+
+    </RelativeLayout>
 </LinearLayout>
