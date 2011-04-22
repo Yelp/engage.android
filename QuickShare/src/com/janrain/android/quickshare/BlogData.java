@@ -8,6 +8,7 @@ import android.util.Config;
 import android.util.Log;
 
 import android.widget.ArrayAdapter;
+import com.janrain.android.engage.utils.Archiver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -20,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,8 +37,13 @@ public class BlogData {
 
     private final Uri BLOGURL = Uri.parse("http://www.janrain.com/feed/blogs");
 
+    private static final String ARCHIVE_BLOG_LIST_ARRAY = "blogListArray";
+    private static final String ARCHIVE_BLOG_LINKS_HASH = "blogLinksHash";
+
     private static BlogData sInstance;
+    private HashSet<String> mBlogsLinks;
     private ArrayList<BlogArticle> mBlogs;
+    private BlogArticle mCurrentBlog;
 
     public static BlogData getInstance() {
 
@@ -58,7 +67,15 @@ public class BlogData {
             Log.d(TAG, "[ctor] creating instance.");
         }
 
-        mBlogs = new ArrayList<BlogArticle>();
+        //mBlogs = (ArrayList<BlogArticle>)Archiver.load(ARCHIVE_BLOG_LIST_ARRAY);
+        //if (mBlogs == null)
+            mBlogs = new ArrayList<BlogArticle>();
+
+        //mBlogsLinks = (HashSet<String>) Archiver.load(ARCHIVE_BLOG_LINKS_HASH);
+        //if (mBlogsLinks == null)
+            mBlogsLinks = new HashSet<String>();
+
+//        mBlogs = new ArrayList<BlogArticle>();
     }
 
     private void logd(String function, String message) {
@@ -103,15 +120,21 @@ public class BlogData {
                     NodeList items = channel.getElementsByTagName("item");
                     int numItems = items.getLength();
 
+                    logd("asyncLoadBlog", "walking " + ((Integer)numItems).toString() + " stories");
+
                     for (int i = 0; i < numItems; i++) {
-                        Element item = (Element)items.item(0);
+                        Element item = (Element)items.item(i);
 
                         Element title = (Element) item.getElementsByTagName("title").item(0);
                         Element link = (Element) item.getElementsByTagName("link").item(0);
                         Element description = (Element) item.getElementsByTagName("description").item(0);
+                        Element date = (Element) item.getElementsByTagName("pubDate").item(0);
 
                         String titleText = title.getFirstChild().getNodeValue();
                         String linkText = link.getFirstChild().getNodeValue();
+                        String dateText = date.getFirstChild().getNodeValue();
+
+                        logd("asyncLoadBlog", "adding story: " + titleText);
 
                         //need to concatenate all the children of the description element (which has
                         // ~100s of TextElement children) in order to come up with the complete
@@ -131,13 +154,18 @@ public class BlogData {
                             }
                         }, null).toString();
 
-                        BlogArticle article = new BlogArticle(
-                                titleText, descriptionText, plainText, linkText, imageUrl);
+                        BlogArticle article = new BlogArticle(titleText, dateText, descriptionText,
+                                                              plainText, linkText, imageUrl);
 
-                        addBlog(article);
+                        if (!addBlogOnlyIfNew(article))
+                            break;
                     }
                     logd("asyncLoadBlog", "blog feed walked");
 
+                    //Archiver.save(ARCHIVE_BLOG_LIST_ARRAY, mBlogs);
+                    //Archiver.save(ARCHIVE_BLOG_LINKS_HASH, mBlogsLinks);
+
+                    logd("asyncLoadBlog", "blogs saved");
                     //no exceptions -> success
                     return true;
                 }
@@ -152,7 +180,7 @@ public class BlogData {
             }
 
             protected void onPostExecute(Boolean loadSuccess) {
-                Log.d(TAG, "blog loader onPostExecute");
+                Log.d(TAG, "blog loader onPostExecute, result: " + (loadSuccess ? "succeeded" : "failed"));
                 if (loadSuccess)
                     mListener.AsyncBlogLoadSucceeded();
                 else
@@ -161,11 +189,23 @@ public class BlogData {
         }.execute();
     }
 
-    private void addBlog(BlogArticle blogArticle) {
+    private boolean addBlogOnlyIfNew(BlogArticle blogArticle) {
+        if (mBlogsLinks.contains(blogArticle.getLink()))
+            return false;
+
         mBlogs.add(blogArticle);
+        return true;
     }
 
     public ArrayList<BlogArticle> getBlogList() {
-        return mBlogs;
+        return new ArrayList<BlogArticle>(mBlogs);
+    }
+
+    public void setCurrentBlogArticle(BlogArticle article) {
+        mCurrentBlog = article;
+    }
+
+    public BlogArticle getCurrentBlogArticle() {
+        return mCurrentBlog;
     }
 }

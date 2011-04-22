@@ -33,11 +33,13 @@ public class MainActivity extends Activity implements View.OnClickListener, Blog
     }
 
     public void AsyncBlogLoadSucceeded() {
+        mBtnTestAuth.setEnabled(true);
         mBlogLoaded = true;
         mBtnTestAuth.setText("Browse Janrain Blog");
     }
 
     public void AsyncBlogLoadFailed() {
+        mBtnTestAuth.setEnabled(true);
         mBlogLoaded = false;
         mBtnTestAuth.setText("Reload Blog");
     }

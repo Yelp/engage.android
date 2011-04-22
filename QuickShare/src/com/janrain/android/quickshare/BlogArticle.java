@@ -1,5 +1,7 @@
 package com.janrain.android.quickshare;
 
+import java.io.Serializable;
+
 /**
  * Created by IntelliJ IDEA.
  * User: lillialexis
@@ -7,16 +9,18 @@ package com.janrain.android.quickshare;
  * Time: 1:12 PM
  * To change this template use File | Settings | File Templates.
  */
-public class BlogArticle {
+public class BlogArticle implements Serializable {
     private String mTitle;
+    private String mDate;
     private String mDescription;
     private String mPlainText;
     private String mLink;
     private String mImageUrl;
 
-    public BlogArticle(String title, String description,
+    public BlogArticle(String title, String date, String description,
                        String plainText, String link, String imageUrl) {
         this.mTitle = title;
+        this.mDate = date;
         this.mDescription = description;
         this.mPlainText = plainText;
         this.mLink = link;
@@ -25,6 +29,10 @@ public class BlogArticle {
 
     public String getTitle() {
             return mTitle;
+    }
+
+    public String getDate() {
+        return mDate;
     }
 
     public String getDescription() {

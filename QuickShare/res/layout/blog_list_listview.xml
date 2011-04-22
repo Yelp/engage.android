@@ -5,7 +5,7 @@
               android:layout_height="fill_parent">
 
     <Button
-        android:id="@+id/btn_add_profile"
+        android:id="@+id/btn_refresh_blog"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal|center_vertical"
         android:layout_gravity="center_horizontal"
-        android:text="Add Another Profile"
+        android:text="Refresh"
         android:textSize="18dip"
         android:layout_alignParentTop="true"
         />
@@ -24,7 +24,7 @@
         android:id="@id/android:list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/btn_add_profile"
+        android:layout_below="@id/btn_refresh_blog"
         />
     <!--android:paddingBottom="30dip"-->
         

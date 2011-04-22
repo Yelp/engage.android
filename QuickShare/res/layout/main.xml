@@ -58,7 +58,7 @@
                 android:layout_marginLeft="15dp"
                 android:textSize="18dip"
                 android:textColor="#FF074764"
-                android:text="Sign in with an existing account and browse profile data returned by each provider."
+                android:text="TODO."
                 />
             <!--android:text="Sign in with an existing account and browse profile data returned by each provider."-->
 
@@ -88,8 +88,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal|center_vertical"
                 android:layout_gravity="center_horizontal|center_vertical"
-                android:text="auth"
+                android:text="Loading the Janrain Blog..."
                 android:textSize="18dip"
+                android:enabled="false"
                 />
 
         </LinearLayout>
