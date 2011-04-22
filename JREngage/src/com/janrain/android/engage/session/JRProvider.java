@@ -84,6 +84,7 @@ public class JRProvider implements Serializable {
                         put("icon_bw_myspace", R.drawable.icon_bw_myspace);
                         put("icon_bw_twitter", R.drawable.icon_bw_twitter);
                         put("icon_bw_yahoo", R.drawable.icon_bw_yahoo);
+                        
                         put("icon_aol", R.drawable.icon_aol);
                         put("icon_blogger", R.drawable.icon_blogger);
                         put("icon_facebook", R.drawable.icon_facebook);
@@ -293,7 +294,12 @@ public class JRProvider implements Serializable {
 
             Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
             if (icon != null) {
-                icon.setDensity(android.util.DisplayMetrics.DENSITY_MEDIUM);
+                //icon.setDensity(android.util.DisplayMetrics.DENSITY_XHIGH);
+
+                //Our downloaded icons are all at xhdpi, but Android 2.1 doesn't have the
+                //DENSITY_XHIGH constant defined yet.  Fortunately it does the right thing
+                //if you pass in the DPI as an int
+                icon.setDensity(320);
             }
             else {
                 c.deleteFile(iconFileName);
