@@ -10,7 +10,7 @@ import android.os.Bundle;
  * Time: 3:16 PM
  * To change this template use File | Settings | File Templates.
  */
-public class BlogArticleActivity extends Activity {
+public class BlogDetailedViewActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
