@@ -34,6 +34,7 @@ import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Config;
@@ -108,9 +109,8 @@ public class JRProvidersActivity extends ListActivity {
 
             JRProvider provider = getItem(position);
 
-            //ResourceHelper.providerNameToIconResourceId(provider.getName())
-            //icon.setImageResource();
-            icon.setImageDrawable(provider.getProviderListIconDrawable(getContext()));
+            Drawable providerIcon = provider.getProviderListIconDrawable(getContext());
+            icon.setImageDrawable(providerIcon);
             label.setText(provider.getFriendlyName());
 
             return v;

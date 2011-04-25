@@ -20,6 +20,8 @@ import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.utils.IOUtils;
+import com.janrain.android.engage.utils.StringUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -222,17 +224,14 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profiles_listview);
 
-
-        // TODO: Fix bug for when this is NULL
-        String engageAppId = readAsset("app_id.txt").trim();
-        String engageTokenUrl = null;//readAsset("token_url.txt").trim();
+        String engageAppId = TextUtils.isEmpty(readAsset("app_id.txt")) ?
+                null : readAsset("app_id.txt").trim();
+        String engageTokenUrl = null;
 
 //        mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, this);        
 
         mEditing = false;
-
-
 
         mEditProfilesButton = (MenuItem)findViewById(R.id.edit_profiles);
         mClearAllProfilesButton = (MenuItem)findViewById(R.id.delete_all_profiles);

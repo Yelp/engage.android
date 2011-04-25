@@ -114,11 +114,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	public static JRSessionData getInstance(String appId,
                                             String tokenUrl,
                                             JRSessionDelegate delegate) {
-
-		if (TextUtils.isEmpty(appId)) {
-            Log.w(TAG, "[getInstance] null instance w/ null appId specified.");
-			return null;
-		}
+        if (sInstance != null) Log.e(TAG, "reinitializing JRSessionData");
 
 		sInstance = new JRSessionData(appId, tokenUrl, delegate);
         if (Config.LOGD) {
