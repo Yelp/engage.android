@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MainActivity</string>
+    <string name="app_name">Quick Share</string>
+    <string name="janrain_welcome_message">TODO.</string>
+    <string name="janrain_url">www.janrain.com</string>
+    <string name="loading_janrain_blog">Loading the Janrain Blog...</string>
+    <string name="view_janrain_blog">View the Janrain Blog</string>
+    <string name="reload_janrain_blog">Reload the Janrain Blog</string>
 </resources>

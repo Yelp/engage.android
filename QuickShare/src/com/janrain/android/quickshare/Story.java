@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Time: 1:12 PM
  * To change this template use File | Settings | File Templates.
  */
-public class BlogArticle implements Serializable {
+public class Story implements Serializable {
     private String mTitle;
     private String mDate;
     private String mDescription;
@@ -17,8 +17,8 @@ public class BlogArticle implements Serializable {
     private String mLink;
     private String mImageUrl;
 
-    public BlogArticle(String title, String date, String description,
-                       String plainText, String link, String imageUrl) {
+    public Story(String title, String date, String description,
+                 String plainText, String link, String imageUrl) {
         this.mTitle = title;
         this.mDate = date;
         this.mDescription = description;

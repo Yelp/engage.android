@@ -8,14 +8,12 @@ import android.text.Html;
 import android.util.Config;
 import android.util.Log;
 
-import android.widget.ArrayAdapter;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.utils.Archiver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -28,9 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,22 +35,22 @@ import java.util.Set;
  * Time: 12:59 PM
  * To change this template use File | Settings | File Templates.
  */
-public class BlogData implements JREngageDelegate {
-    private static final String TAG = BlogData.class.getSimpleName();
+public class FeedData implements JREngageDelegate {
+    private static final String TAG = FeedData.class.getSimpleName();
 
-    private final Uri BLOGURL = Uri.parse("http://www.janrain.com/feed/blogs");
+    private final Uri FEED_URL = Uri.parse("http://www.janrain.com/feed/blogs");
 
-    private static final String ARCHIVE_BLOG_LIST_ARRAY = "blogListArray";
-    private static final String ARCHIVE_BLOG_LINKS_HASH = "blogLinksHash";
+    private static final String ARCHIVE_STORIES_ARRAY = "storiesArray";
+    private static final String ARCHIVE_STORY_LINKS_HASH = "storyLinksHash";
 
     private static final String ENGAGE_APP_ID = "appcfamhnpkagijaeinl";
     private static final String ENGAGE_TOKEN_URL = "";
 
+    private static FeedData sInstance;
 
-    private static BlogData sInstance;
-    private HashSet<String> mBlogsLinks;
-    private ArrayList<BlogArticle> mBlogs;
-    private BlogArticle mCurrentBlog;
+    private HashSet<String> mStoryLinks;
+    private ArrayList<Story> mStories;
+    private Story mCurrentStory;
 
     private JREngage mEngage;
     private Context mContext;
@@ -62,77 +58,76 @@ public class BlogData implements JREngageDelegate {
     private String mUrlToBeLoaded;
 
 
-    public static BlogData getInstance(Context context) {
-
+    public static FeedData getInstance(Context context) {
         if (sInstance != null) {
-            if (Config.LOGD) {
+            if (Config.LOGD)
                 Log.d(TAG, "[getInstance] returning existing instance.");
-            }
+
             return sInstance;
         }
 
-        sInstance = new BlogData(context);
-        if (Config.LOGD) {
+        sInstance = new FeedData(context);
+
+        if (Config.LOGD)
             Log.d(TAG, "[getInstance] returning new instance.");
-        }
 
         return sInstance;
     }
 
-    private BlogData(Context context) {
-        if (Config.LOGD) {
+    private FeedData(Context context) {
+        if (Config.LOGD)
             Log.d(TAG, "[ctor] creating instance.");
-        }
 
         mContext = context;
         mEngage = JREngage.initInstance(context, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
 
-        //mBlogs = (ArrayList<BlogArticle>)Archiver.load(ARCHIVE_BLOG_LIST_ARRAY);
-        //if (mBlogs == null)
-            mBlogs = new ArrayList<BlogArticle>();
+        //mStories = (ArrayList<Story>)Archiver.load(ARCHIVE_STORIES_ARRAY);
+        //if (mStories == null)
+            mStories = new ArrayList<Story>();
 
-        //mBlogsLinks = (HashSet<String>) Archiver.load(ARCHIVE_BLOG_LINKS_HASH);
-        //if (mBlogsLinks == null)
-            mBlogsLinks = new HashSet<String>();
-
-//        mBlogs = new ArrayList<BlogArticle>();
+        //mStoryLinks = (HashSet<String>) Archiver.load(ARCHIVE_STORY_LINKS_HASH);
+        //if (mStoryLinks == null)
+            mStoryLinks = new HashSet<String>();
     }
 
-    private void logd(String function, String message) {
+    private void LOGD(String function, String message) {
         if (Config.LOGD && function != null && message != null)
             Log.d(TAG, "[" + function + "] " + message);
     }
 
-    BlogLoadListener mListener;
+    FeedReaderListener mListener;
 
-    public void asyncLoadJanrainBlog(BlogLoadListener listener) {
+    public void asyncLoadJanrainBlog(FeedReaderListener listener) {
         mListener = listener;
         
         new AsyncTask<Void, Void, Boolean>() {
             private String imageUrl;
 
             protected Boolean doInBackground(Void... v) {
-                logd("asyncLoadBlog", "loading blog");
+                LOGD("asyncLoadJanrainBlog", "loading blog");
 
                 try {
-                    URL u = (new URL(BLOGURL.toString()));
+                    LOGD("asyncLoadJanrainBlog", "opening blog stream");
+                    URL u = (new URL(FEED_URL.toString()));
                     URLConnection uc = u.openConnection();
                     InputStream is = uc.getInputStream();
-                    logd("asyncLoadBlog", "blog stream open");
+                    LOGD("asyncLoadJanrainBlog", "blog stream open");
 
+                    LOGD("asyncLoadJanrainBlog", "instantiating blog factory");
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     dbf.setCoalescing(true);
                     dbf.setValidating(false);
                     dbf.setNamespaceAware(false);
                     DocumentBuilder db = dbf.newDocumentBuilder();
-                    logd("asyncLoadBlog", "blog factory instantiated");
+                    LOGD("asyncLoadJanrainBlog", "blog factory instantiated");
 
-                    //the following parse call takes ten seconds on a fast phone.
-                    //XMLPullParser is said to be a faster way to go.
-                    //sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
-                    //another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser
+                    /* The following parse call takes ten seconds on a fast phone.
+                        XMLPullParser is said to be a faster way to go.
+                        Sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
+                        Another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser */
+                    LOGD("asyncLoadJanrainBlog", "parsing feed");
                     Document d = db.parse(is);
-                    logd("asyncLoadBlog", "blog feed parsed");
+                    LOGD("asyncLoadJanrainBlog", "feed parsed");
 
                     Element rss = (Element) d.getElementsByTagName("rss").item(0);
                     Element channel = (Element) rss.getElementsByTagName("channel").item(0);
@@ -140,7 +135,7 @@ public class BlogData implements JREngageDelegate {
                     NodeList items = channel.getElementsByTagName("item");
                     int numItems = items.getLength();
 
-                    logd("asyncLoadBlog", "walking " + ((Integer)numItems).toString() + " stories");
+                    LOGD("asyncLoadJanrainBlog", "walking " + ((Integer) numItems).toString() + " stories");
 
                     for (int i = 0; i < numItems; i++) {
                         Element item = (Element)items.item(i);
@@ -154,7 +149,7 @@ public class BlogData implements JREngageDelegate {
                         String linkText = link.getFirstChild().getNodeValue();
                         String dateText = date.getFirstChild().getNodeValue();
 
-                        logd("asyncLoadBlog", "adding story: " + titleText);
+                        LOGD("asyncLoadJanrainBlog", "adding story: " + titleText);
 
                         //need to concatenate all the children of the description element (which has
                         // ~100s of TextElement children) in order to come up with the complete
@@ -169,72 +164,77 @@ public class BlogData implements JREngageDelegate {
                         //and while decoding it we yoink out a link to an image if there is one.
                         String plainText = Html.fromHtml(descriptionText, new Html.ImageGetter() {
                             public Drawable getDrawable(String s) {
-                                imageUrl = BLOGURL.getScheme() + "://" + BLOGURL.getHost() + s;
+                                imageUrl = FEED_URL.getScheme() + "://" + FEED_URL.getHost() + s;
                                 return null;
                             }
                         }, null).toString();
 
-                        BlogArticle article = new BlogArticle(titleText, dateText, descriptionText,
-                                                              plainText, linkText, imageUrl);
+                        Story story = new Story(titleText, dateText, descriptionText,
+                                                plainText, linkText, imageUrl);
 
-                        if (!addBlogOnlyIfNew(article))
+                        if (!addStoryOnlyIfNew(story))
                             break;
                     }
-                    logd("asyncLoadBlog", "blog feed walked");
+                    LOGD("asyncLoadJanrainBlog", "feed walked");
 
-                    //Archiver.save(ARCHIVE_BLOG_LIST_ARRAY, mBlogs);
-                    //Archiver.save(ARCHIVE_BLOG_LINKS_HASH, mBlogsLinks);
+                    //LOGD("asyncLoadJanrainBlog", "saving stories");
+                    //Archiver.save(ARCHIVE_STORIES_ARRAY, mStories);
+                    //Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
+                    //LOGD("asyncLoadJanrainBlog", "stories saved");
 
-                    logd("asyncLoadBlog", "blogs saved");
-                    //no exceptions -> success
+                    /* If there are no exceptions, then it was a success */
                     return true;
                 }
-                catch (MalformedURLException e) { logd("asyncLoadBlog", "MalformedURLException" + e.getLocalizedMessage()); }
-                catch (IOException e) { logd("asyncLoadBlog", "IOException" + e.getLocalizedMessage()); }
-                catch (ParserConfigurationException e) { logd("asyncLoadBlog", "ParserConfigurationException" + e.getLocalizedMessage()); }
-                catch (SAXException e) { logd("asyncLoadBlog", "SAXException" + e.getLocalizedMessage()); }
-//                catch (NullPointerException e) { logd("asyncLoadBlog", "NullPointerException" + e.getLocalizedMessage()); }
+                catch (MalformedURLException e) { LOGD("asyncLoadJanrainBlog", "MalformedURLException" + e.getLocalizedMessage()); }
+                catch (IOException e) { LOGD("asyncLoadJanrainBlog", "IOException" + e.getLocalizedMessage()); }
+                catch (ParserConfigurationException e) { LOGD("asyncLoadJanrainBlog", "ParserConfigurationException" + e.getLocalizedMessage()); }
+                catch (SAXException e) { LOGD("asyncLoadJanrainBlog", "SAXException" + e.getLocalizedMessage()); }
+                catch (NullPointerException e) { LOGD("asyncLoadJanrainBlog", "NullPointerException" + e.getLocalizedMessage()); }
 
-                //exceptions -> failure
+                /* If there were exceptions, then it was a failure. */
                 return false;
             }
 
             protected void onPostExecute(Boolean loadSuccess) {
-                Log.d(TAG, "blog loader onPostExecute, result: " + (loadSuccess ? "succeeded" : "failed"));
+                LOGD("onPostExecute", "blog loader onPostExecute, result: " +
+                        (loadSuccess ? "succeeded" : "failed"));
+
                 if (loadSuccess)
-                    mListener.AsyncBlogLoadSucceeded();
+                    mListener.AsyncFeedReadSucceeded();
                 else
-                    mListener.AsyncBlogLoadFailed();
+                    mListener.AsyncFeedReadFailed();
             }
         }.execute();
     }
 
-    private boolean addBlogOnlyIfNew(BlogArticle blogArticle) {
-        if (mBlogsLinks.contains(blogArticle.getLink()))
+    private boolean addStoryOnlyIfNew(Story story) {
+        if (mStoryLinks.contains(story.getLink()))
             return false;
 
-        mBlogs.add(blogArticle);
+        mStories.add(story);
         return true;
     }
 
-    public ArrayList<BlogArticle> getBlogList() {
-        return new ArrayList<BlogArticle>(mBlogs);
+    public ArrayList<Story> getFeed() {
+        return new ArrayList<Story>(mStories);
     }
 
-    public void setCurrentBlogArticle(BlogArticle article) {
-        mCurrentBlog = article;
+    public void setCurrentStory(Story story) {
+        mCurrentStory = story;
     }
 
-    public BlogArticle getCurrentBlogArticle() {
-        return mCurrentBlog;
+    public Story getCurrentStory() {
+        return mCurrentStory;
     }
 
-    public void shareCurrentBlogArticle() {
+    public void shareCurrentStory() {
+        LOGD("shareCurrentStory", "sharing story");
+
         JRActivityObject activityObject =
-                new JRActivityObject("shared an article from the Janrain Blog", mCurrentBlog.getLink());
+                new JRActivityObject("shared an article from the Janrain Blog", mCurrentStory.getLink());
 
-        activityObject.setTitle(mCurrentBlog.getTitle());
-        activityObject.setDescription(mCurrentBlog.getPlainText());
+        activityObject.setTitle(mCurrentStory.getTitle());
+        activityObject.setDescription(mCurrentStory.getPlainText());
 
         mEngage.showSocialPublishingDialogWithActivity(activityObject);
     }

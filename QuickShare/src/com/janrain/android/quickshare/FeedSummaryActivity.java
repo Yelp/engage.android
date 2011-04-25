@@ -1,0 +1,136 @@
+package com.janrain.android.quickshare;
+
+import android.app.ListActivity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.*;
+import android.widget.*;
+
+import java.util.ArrayList;
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: lillialexis
+ * Date: 4/22/11
+ * Time: 12:55 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class FeedSummaryActivity extends ListActivity implements View.OnClickListener, FeedReaderListener {
+    private static final String TAG = FeedSummaryActivity.class.getSimpleName();
+
+    private ArrayList<Story> mStories;
+    private StoryAdapter mAdapter;
+    private FeedData mFeedData;
+
+    private Button mReloadBlog;
+
+    public FeedSummaryActivity() {
+    }
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.feed_summary_listview);
+
+        mReloadBlog = (Button)findViewById(R.id.btn_refresh_blog);
+        mReloadBlog.setOnClickListener(this);
+
+        mFeedData = FeedData.getInstance(this);
+        mStories = mFeedData.getFeed();
+
+        if (mStories == null) {
+            mStories = new ArrayList<Story>();
+        }
+
+        mAdapter = new StoryAdapter(this, R.layout.feed_summary_listview_row, mStories);
+        setListAdapter(mAdapter);
+    }
+
+    public void onResume () {
+        super.onResume();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int pos, long id) {
+        Story story = mAdapter.getItem(pos);
+        mFeedData.setCurrentStory(story);
+        this.startActivity(new Intent(this, StoryDetailActivity.class));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void onClick(View view) {
+        mReloadBlog.setText("Loading new articles...");
+        mFeedData.asyncLoadJanrainBlog(this);
+    }
+
+    public void AsyncFeedReadSucceeded() {
+        mReloadBlog.setText("Refresh");
+        mAdapter.notifyDataSetChanged();
+    }
+
+    public void AsyncFeedReadFailed() {
+        mReloadBlog.setText("Refresh");
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private class StoryAdapter extends ArrayAdapter<Story> {
+        private int mResourceId;
+
+        public StoryAdapter(Context context, int resId, ArrayList<Story> items) {
+            super(context, -1, items);
+
+            mResourceId = resId;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v = convertView;
+            if (v == null) {
+                LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = li.inflate(mResourceId, null);
+                Log.i(TAG, "[getView] with null converView");
+            } else Log.i(TAG, "[getView] with non null convertView");
+
+            ImageView icon = (ImageView)v.findViewById(R.id.row_profile_provider_icon);
+            TextView title = (TextView)v.findViewById(R.id.row_profile_preferred_username_label);
+            TextView date = (TextView)v.findViewById(R.id.row_profile_timestamp_label);
+
+            Story story = getItem(position);
+
+            Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " + story.getTitle());
+
+            //icon.setImageDrawable(getProviderIconDrawable(getContext(), article.getProvider()));
+            title.setText(story.getTitle());
+            date.setText(story.getDate());
+
+            return v;
+        }
+    }
+}

@@ -7,7 +7,7 @@ package com.janrain.android.quickshare;
  * Time: 1:38 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface BlogLoadListener {
-    void AsyncBlogLoadSucceeded();
-    void AsyncBlogLoadFailed();
+public interface FeedReaderListener {
+    void AsyncFeedReadSucceeded();
+    void AsyncFeedReadFailed();
 }

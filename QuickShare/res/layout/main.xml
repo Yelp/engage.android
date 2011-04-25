@@ -15,7 +15,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/background"
+            android:src="@drawable/bg_janrain_blue_gradient"
             />
 
         <LinearLayout
@@ -47,7 +47,7 @@
                 />
 
             <TextView
-                android:id="@+id/janrain_welcome_label"
+                android:id="@+id/janrain_welcome_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -58,7 +58,7 @@
                 android:layout_marginLeft="15dp"
                 android:textSize="18dip"
                 android:textColor="#FF074764"
-                android:text="TODO."
+                android:text="@string/janrain_welcome_message"
                 />
             <!--android:text="Sign in with an existing account and browse profile data returned by each provider."-->
 
@@ -75,11 +75,11 @@
                 android:textSize="14dip"
                 android:textColor="#FF053044"
                 android:singleLine="true"
-                android:text="www.janrain.com"
+                android:text="@string/janrain_url"
                 />
 
             <Button
-                android:id="@+id/btn_test_auth"
+                android:id="@+id/view_feed_summary"
                 android:layout_marginTop="20dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="0dp"
@@ -88,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal|center_vertical"
                 android:layout_gravity="center_horizontal|center_vertical"
-                android:text="Loading the Janrain Blog..."
+                android:text="@string/loading_janrain_blog"
                 android:textSize="18dip"
                 android:enabled="false"
                 />
