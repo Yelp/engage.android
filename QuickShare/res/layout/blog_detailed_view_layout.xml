@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent">
+
+    <LinearLayout
+        android:id="@+id/blog_detail_view_container"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="top|center_horizontal"
+        android:padding="0dip"
+        android:background="#33074764"
+        >
+
+        <Button
+            android:id="@+id/share_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="Share This Article"
+            android:textSize="20dip"
+            android:textStyle="bold"
+            />
+
+        <WebView
+            android:id="@+id/webview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            />
+
+
+        <!--<TextView-->
+            <!--android:id="@+id/title"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="top|left"-->
+            <!--android:paddingBottom="5dip"-->
+            <!--android:textSize="14dip"-->
+            <!--/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/date"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="right"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:singleLine="true"-->
+            <!--android:textSize="10dip"-->
+            <!--android:textColor="#aa000000"-->
+            <!--/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/text"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="12dip"-->
+            <!--/>-->
+
+    </LinearLayout>
+
+</LinearLayout>
+

@@ -16,7 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BlogListActivity"/>
-        <activity android:name=".BlogArticleActivity"/>
+        <activity android:name=".BlogSummaryListActivity"/>
+        <activity android:name=".BlogDetailedViewActivity"/>
     </application>
 </manifest> 

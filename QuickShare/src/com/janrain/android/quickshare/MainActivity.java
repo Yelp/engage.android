@@ -27,7 +27,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Blog
 
     public void onClick(View view) {
         if (mBlogLoaded)
-            this.startActivity(new Intent(this, BlogListActivity.class));
+            this.startActivity(new Intent(this, BlogSummaryListActivity.class));
         else
             BlogData.getInstance().asyncLoadJanrainBlog(this);
     }

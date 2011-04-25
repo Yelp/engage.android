@@ -26,12 +26,12 @@ import java.util.HashMap;
  * Time: 12:55 PM
  * To change this template use File | Settings | File Templates.
  */
-public class BlogListActivity extends ListActivity implements View.OnClickListener, BlogLoadListener {
+public class BlogSummaryListActivity extends ListActivity implements View.OnClickListener, BlogLoadListener {
     // ------------------------------------------------------------------------
     // STATIC FIELDS
     // ------------------------------------------------------------------------
 
-    private static final String TAG = BlogListActivity.class.getSimpleName();
+    private static final String TAG = BlogSummaryListActivity.class.getSimpleName();
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -58,7 +58,7 @@ public class BlogListActivity extends ListActivity implements View.OnClickListen
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
 
-    public BlogListActivity() {
+    public BlogSummaryListActivity() {
     }
 
     // ------------------------------------------------------------------------
@@ -87,7 +87,7 @@ public class BlogListActivity extends ListActivity implements View.OnClickListen
      */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.blog_list_listview);
+        setContentView(R.layout.blog_summary_listview);
 
         mReloadBlog = (Button)findViewById(R.id.btn_refresh_blog);
         mReloadBlog.setOnClickListener(this);
@@ -99,7 +99,7 @@ public class BlogListActivity extends ListActivity implements View.OnClickListen
             mBlogList = new ArrayList<BlogArticle>();
         }
 
-        mAdapter = new BlogListAdapter(this, R.layout.blog_list_listview_row, mBlogList);
+        mAdapter = new BlogListAdapter(this, R.layout.blog_summary_listview_row, mBlogList);
         setListAdapter(mAdapter);
     }
 
@@ -126,7 +126,7 @@ public class BlogListActivity extends ListActivity implements View.OnClickListen
     protected void onListItemClick(ListView l, View v, int pos, long id) {
         BlogArticle article = mAdapter.getItem(pos);
         mBlogData.setCurrentBlogArticle(article);
-        this.startActivity(new Intent(this, BlogArticleActivity.class));
+        this.startActivity(new Intent(this, BlogDetailedViewActivity.class));
     }
 
     /**
