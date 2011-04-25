@@ -22,14 +22,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Blog
         mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
         mBtnTestAuth.setOnClickListener(this);
 
-        BlogData.getInstance().asyncLoadJanrainBlog(this);
+        BlogData.getInstance(this).asyncLoadJanrainBlog(this);
     }
 
     public void onClick(View view) {
         if (mBlogLoaded)
             this.startActivity(new Intent(this, BlogSummaryListActivity.class));
         else
-            BlogData.getInstance().asyncLoadJanrainBlog(this);
+            BlogData.getInstance(this).asyncLoadJanrainBlog(this);
     }
 
     public void AsyncBlogLoadSucceeded() {
