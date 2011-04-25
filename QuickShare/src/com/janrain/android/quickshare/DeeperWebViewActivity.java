@@ -27,7 +27,7 @@ public class DeeperWebViewActivity extends Activity {
 
         setContentView(R.layout.deeper_webview);
 
-        mWebview = (WebView)findViewById(R.id.webview_2);
+        mWebview = (WebView)findViewById(R.id.deeper_webview);
         mWebview.loadUrl(FeedData.getInstance(this).getUrlToBeLoaded());
 
         if (Config.LOGD)

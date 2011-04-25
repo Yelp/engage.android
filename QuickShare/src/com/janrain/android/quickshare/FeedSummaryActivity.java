@@ -24,7 +24,7 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
     private StoryAdapter mAdapter;
     private FeedData mFeedData;
 
-    private Button mReloadBlog;
+    private Button mRefreshBlog;
 
     public FeedSummaryActivity() {
     }
@@ -33,8 +33,8 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.feed_summary_listview);
 
-        mReloadBlog = (Button)findViewById(R.id.btn_refresh_blog);
-        mReloadBlog.setOnClickListener(this);
+        mRefreshBlog = (Button)findViewById(R.id.refresh_blog);
+        mRefreshBlog.setOnClickListener(this);
 
         mFeedData = FeedData.getInstance(this);
         mStories = mFeedData.getFeed();
@@ -86,17 +86,17 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
     }
 
     public void onClick(View view) {
-        mReloadBlog.setText("Loading new articles...");
+        mRefreshBlog.setText("Loading new articles...");
         mFeedData.asyncLoadJanrainBlog(this);
     }
 
     public void AsyncFeedReadSucceeded() {
-        mReloadBlog.setText("Refresh");
+        mRefreshBlog.setText("Refresh");
         mAdapter.notifyDataSetChanged();
     }
 
     public void AsyncFeedReadFailed() {
-        mReloadBlog.setText("Refresh");
+        mRefreshBlog.setText("Refresh");
         mAdapter.notifyDataSetChanged();
     }
 
@@ -118,9 +118,9 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
                 Log.i(TAG, "[getView] with null converView");
             } else Log.i(TAG, "[getView] with non null convertView");
 
-            ImageView icon = (ImageView)v.findViewById(R.id.row_profile_provider_icon);
-            TextView title = (TextView)v.findViewById(R.id.row_profile_preferred_username_label);
-            TextView date = (TextView)v.findViewById(R.id.row_profile_timestamp_label);
+            ImageView icon = (ImageView)v.findViewById(R.id.row_story_icon);
+            TextView title = (TextView)v.findViewById(R.id.row_story_title);
+            TextView date = (TextView)v.findViewById(R.id.row_story_date);
 
             Story story = getItem(position);
 

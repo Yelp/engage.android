@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Main Activity Strings -->
     <string name="app_name">Quick Share</string>
     <string name="janrain_welcome_message">TODO.</string>
     <string name="janrain_url">www.janrain.com</string>
     <string name="loading_janrain_blog">Loading the Janrain Blog...</string>
     <string name="view_janrain_blog">View the Janrain Blog</string>
     <string name="reload_janrain_blog">Reload the Janrain Blog</string>
+
+    <!-- Feed Summary Activity Strings -->
+    <string name="janrain_blog">Janrain Blog</string>
+    <string name="refresh_janrain_blog">Refresh</string>
+    <string name="empty_feed">There are currently no stories available.  Please refresh.</string>
+    <!-- Story Detail Activity Strings -->
+
+    <!-- Deeper WebView Activity Strings -->
 </resources>

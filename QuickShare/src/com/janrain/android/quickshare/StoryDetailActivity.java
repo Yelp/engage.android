@@ -40,7 +40,7 @@ public class StoryDetailActivity extends Activity implements View.OnClickListene
         mShareStory = (Button)findViewById(R.id.share_button);
         mShareStory.setOnClickListener(this);
 
-        mWebview = (WebView)findViewById(R.id.webview_1);
+        mWebview = (WebView)findViewById(R.id.story_webview);
         mWebview.setWebViewClient(mWebviewClient);
 
 //        mTitle = (TextView)findViewById(R.id.title);
