@@ -10,7 +10,8 @@
 
     <application android:label="QuickShare" android:icon="@drawable/icon">
         <activity android:name="MainActivity"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+                  android:theme="@android:style/Theme.Light" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -18,9 +19,14 @@
         </activity>
 
         <activity android:name=".FeedSummaryActivity"
-                  android:label="@string/app_name"/>
-        <activity android:name=".StoryDetailActivity"/>
-        <activity android:name=".DeeperWebViewActivity"/>
+                  android:label="@string/app_name"
+                  android:theme="@android:style/Theme.Light" />
+
+        <activity android:name=".StoryDetailActivity"
+                  android:theme="@android:style/Theme.Light"/>
+
+        <activity android:name=".DeeperWebViewActivity"
+                  android:theme="@android:style/Theme.Light"/>
 
         <!-- For Janrain Engage library -->
         <activity android:name="com.janrain.android.engage.ui.JRProvidersActivity"
