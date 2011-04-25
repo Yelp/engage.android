@@ -89,7 +89,7 @@ public class BlogDetailedViewActivity extends Activity implements View.OnClickLi
             }
 
             openNewWebViewToUrl(url);
-            return false;
+            return true;
         }
 
         @Override
