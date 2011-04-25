@@ -32,6 +32,7 @@
                   <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRPublishActivity"
                 android:theme="@android:style/Theme.Light.NoTitleBar"/>
+        <activity android:name=".BlogWebViewActivity"/>
         <!--android:configChanges="orientation|keyboardHidden"-->
         
     </application>

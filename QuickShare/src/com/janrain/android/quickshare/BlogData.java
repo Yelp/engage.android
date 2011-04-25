@@ -59,6 +59,8 @@ public class BlogData implements JREngageDelegate {
     private JREngage mEngage;
     private Context mContext;
 
+    private String mUrlToBeLoaded;
+
 
     public static BlogData getInstance(Context context) {
 
@@ -279,5 +281,13 @@ public class BlogData implements JREngageDelegate {
 
     public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public String getUrlToBeLoaded() {
+        return mUrlToBeLoaded;
+    }
+
+    public void setUrlToBeLoaded(String mUrlToBeLoaded) {
+        this.mUrlToBeLoaded = mUrlToBeLoaded;
     }
 }
