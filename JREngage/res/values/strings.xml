@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="jr_engage_version">0.91a</string>
+    <string name="jr_engage_version">0.91b</string>
 
     <!--
        - Server URL strings for each of the three typical environments.

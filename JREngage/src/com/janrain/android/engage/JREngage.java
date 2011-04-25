@@ -102,14 +102,16 @@ public class JREngage {
                                         String appId,
                                         String tokenUrl,
                                         JREngageDelegate delegate) {
+        // todo Throw up a helpful dialog if appId is null? To point devs in the right direction?
+
         if (context == null) {
             Log.e(TAG, "[initialize] context parameter cannot be null.");
-            return null;
+            throw new IllegalArgumentException("context parameter cannot be null.");
         }
 
         if (TextUtils.isEmpty(appId)) {
             Log.e(TAG, "[initialize] appId parameter cannot be null.");
-            return null;
+            throw new IllegalArgumentException("appId parameter cannot be null.");
         }
 
         if (sInstance == null) sInstance = new JREngage();
@@ -202,8 +204,6 @@ public class JREngage {
                             String tokenUrl,
                             JREngageDelegate delegate) {
         mContext = context;
-//        mAppId = appId;
-//        mTokenUrl = tokenUrl;
         mDelegates = new ArrayList<JREngageDelegate>();
         if (delegate != null) {
             mDelegates.add(delegate);
