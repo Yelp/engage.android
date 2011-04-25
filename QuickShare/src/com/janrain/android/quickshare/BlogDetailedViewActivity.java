@@ -41,7 +41,7 @@ public class BlogDetailedViewActivity extends Activity implements View.OnClickLi
 //        mDate = (TextView)findViewById(R.id.date);
 //        mText = (TextView)findViewById(R.id.text);
 
-        mBlogData = BlogData.getInstance();
+        mBlogData = BlogData.getInstance(this);
 
         loadCurrentBlog();
     }
@@ -63,6 +63,6 @@ public class BlogDetailedViewActivity extends Activity implements View.OnClickLi
     }
 
     public void onClick(View view) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        mBlogData.shareCurrentBlogArticle();
     }
 }

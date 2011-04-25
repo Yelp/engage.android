@@ -1,5 +1,6 @@
 package com.janrain.android.quickshare;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -8,6 +9,12 @@ import android.util.Config;
 import android.util.Log;
 
 import android.widget.ArrayAdapter;
+import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.JREngageDelegate;
+import com.janrain.android.engage.JREngageError;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
+import com.janrain.android.engage.types.JRActivityObject;
+import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.Archiver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,7 +39,7 @@ import java.util.Set;
  * Time: 12:59 PM
  * To change this template use File | Settings | File Templates.
  */
-public class BlogData {
+public class BlogData implements JREngageDelegate {
     private static final String TAG = BlogData.class.getSimpleName();
 
     private final Uri BLOGURL = Uri.parse("http://www.janrain.com/feed/blogs");
@@ -40,12 +47,20 @@ public class BlogData {
     private static final String ARCHIVE_BLOG_LIST_ARRAY = "blogListArray";
     private static final String ARCHIVE_BLOG_LINKS_HASH = "blogLinksHash";
 
+    private static final String ENGAGE_APP_ID = "appcfamhnpkagijaeinl";
+    private static final String ENGAGE_TOKEN_URL = "";
+
+
     private static BlogData sInstance;
     private HashSet<String> mBlogsLinks;
     private ArrayList<BlogArticle> mBlogs;
     private BlogArticle mCurrentBlog;
 
-    public static BlogData getInstance() {
+    private JREngage mEngage;
+    private Context mContext;
+
+
+    public static BlogData getInstance(Context context) {
 
         if (sInstance != null) {
             if (Config.LOGD) {
@@ -54,7 +69,7 @@ public class BlogData {
             return sInstance;
         }
 
-        sInstance = new BlogData();
+        sInstance = new BlogData(context);
         if (Config.LOGD) {
             Log.d(TAG, "[getInstance] returning new instance.");
         }
@@ -62,10 +77,13 @@ public class BlogData {
         return sInstance;
     }
 
-    private BlogData() {
+    private BlogData(Context context) {
         if (Config.LOGD) {
             Log.d(TAG, "[ctor] creating instance.");
         }
+
+        mContext = context;
+        mEngage = JREngage.initInstance(context, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
 
         //mBlogs = (ArrayList<BlogArticle>)Archiver.load(ARCHIVE_BLOG_LIST_ARRAY);
         //if (mBlogs == null)
@@ -207,5 +225,59 @@ public class BlogData {
 
     public BlogArticle getCurrentBlogArticle() {
         return mCurrentBlog;
+    }
+
+    public void shareCurrentBlogArticle() {
+        JRActivityObject activityObject =
+                new JRActivityObject("shared an article from the Janrain Blog", mCurrentBlog.getLink());
+
+        activityObject.setTitle(mCurrentBlog.getTitle());
+        activityObject.setDescription(mCurrentBlog.getPlainText());
+
+        mEngage.showSocialPublishingDialogWithActivity(activityObject);
+    }
+
+    public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrAuthenticationDidNotComplete() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, String tokenUrlPayload, String provider) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrSocialDidNotCompletePublishing() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrSocialDidCompletePublishing() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

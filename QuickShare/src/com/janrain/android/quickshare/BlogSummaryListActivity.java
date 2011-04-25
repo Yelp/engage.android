@@ -92,7 +92,7 @@ public class BlogSummaryListActivity extends ListActivity implements View.OnClic
         mReloadBlog = (Button)findViewById(R.id.btn_refresh_blog);
         mReloadBlog.setOnClickListener(this);
 
-        mBlogData = BlogData.getInstance();
+        mBlogData = BlogData.getInstance(this);
         mBlogList = mBlogData.getBlogList();
 
         if (mBlogList == null) {
