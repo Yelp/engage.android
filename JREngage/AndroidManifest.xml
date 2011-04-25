@@ -10,7 +10,6 @@
         which is part of this thread:
         https://groups.google.com/group/android-developers/browse_thread/thread/0b4a5d751346655b/9db36f18521fca7d#9db36f18521fca7d -->
 
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-sdk android:minSdkVersion="7" />
@@ -20,18 +19,14 @@
         <activity android:name="com.janrain.android.engage.ui.JRProvidersActivity"
                   android:theme="@android:style/Theme.Light"
                   android:configChanges="orientation"/>
-                  <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRLandingActivity"
                   android:theme="@android:style/Theme.Light"
                   android:configChanges="orientation"/>
-                  <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRWebViewActivity"
                   android:theme="@android:style/Theme.Light"
                   android:configChanges="orientation"/>
-                  <!--android:configChanges="orientation|keyboardHidden"-->
         <activity android:name="com.janrain.android.engage.ui.JRPublishActivity"
                   android:theme="@android:style/Theme.Light.NoTitleBar"
                   android:configChanges="orientation"/>
-                  <!--android:configChanges="orientation|keyboardHidden"-->
     </application>
 </manifest>
