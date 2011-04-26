@@ -5,8 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.os.AsyncTask;
+import android.util.Config;
 import android.util.Log;
+import android.view.Gravity;
 import com.janrain.android.engage.session.JRSessionData;
 
 import java.io.FileOutputStream;
@@ -34,7 +37,10 @@ public class Story implements Serializable {
     private String mPlainText;
     private String mLink;
     private ArrayList<String> mImageUrls;
-    private transient BitmapDrawable mImage;
+    private transient Bitmap mImage;
+//    private transient BitmapDrawable mImage;
+//    private transient BitmapDrawable mImage;
+//    private transient ScaleDrawable mImage;
 
     private boolean mCurrentlyDownloading;
 
@@ -52,7 +58,15 @@ public class Story implements Serializable {
                 startDownloadImage(mImageUrls.get(0));
     }
 
+    public void downloadImage() {
+        if (mImageUrls != null)
+            if (!mImageUrls.isEmpty())
+                startDownloadImage(mImageUrls.get(0));
+    }
+
     private void startDownloadImage(final String imageUrl) {
+        if (Config.LOGD)
+            Log.d(TAG, "[startDownloadImage] " + imageUrl);
 
         synchronized (this) {
             if (mCurrentlyDownloading) return;
@@ -61,21 +75,63 @@ public class Story implements Serializable {
 
         new AsyncTask<Void, Void, Void>(){
             public Void doInBackground(Void... s) {
-                Log.d(TAG, "[doInBackground] downloading image");
+                if (Config.LOGD)
+                    Log.d(TAG, "[doInBackground] downloading image");
                 
                 try {
                     URL url = new URL(imageUrl);
                     InputStream is = url.openStream();
 
-                    mImage = new BitmapDrawable(BitmapFactory.decodeStream(is));
+//                    BitmapDrawable bd = new BitmapDrawable(BitmapFactory.decodeStream(is));
+                    Bitmap bd = BitmapFactory.decodeStream(is);
+
+                    int width = bd.getWidth();// .getIntrinsicWidth();
+                    int height = bd.getHeight();// .getIntrinsicHeight();
+
+                    if (Config.LOGD)
+                        Log.d(TAG, "[getView] original image size: " +
+                                ((Integer)width).toString() + ", " + ((Integer)height).toString());
+
+                    int x_ratio = width/120, y_ratio = height/90, scale_ratio;
+
+                    if (x_ratio <= 1 || y_ratio <= 1)
+                        scale_ratio = 1;
+                    else if (x_ratio < y_ratio)
+                        scale_ratio = x_ratio;
+                    else
+                        scale_ratio = y_ratio;
+
+                    mImage = Bitmap.createScaledBitmap(bd, width/scale_ratio, height/scale_ratio, true);
+
+                    if (Config.LOGD)
+                        Log.d(TAG, "[getView] scaled image size: " +
+                                ((Integer)mImage.getWidth()).toString() + ", " +
+                                ((Integer)mImage.getHeight()).toString());
+
+                    //ScaleDrawable sd = ScaleDrawable.createFromStream(is, "stream");
+
+//                    int width = bd.getIntrinsicWidth();
+//                    int height = bd.getIntrinsicHeight();
+//
+//                    if (Config.LOGD)
+//                        Log.d(TAG, "[doInBackground] image size: " +
+//                                ((Integer)width).toString() + ", " + ((Integer)height).toString());
+//
+//                    if (width > 120 && height > 90)
+//                        mImage = new ScaleDrawable(bd, Gravity.CLIP_HORIZONTAL | Gravity.CLIP_VERTICAL, width/3, height/3);
+//                    else
+//                        mImage = new ScaleDrawable(bd, Gravity.CLIP_HORIZONTAL | Gravity.CLIP_VERTICAL, width, height);
 
                 } catch (MalformedURLException e) {
-                    Log.d(TAG, e.toString());
+                    if (Config.LOGD) Log.d(TAG, e.toString());
                 } catch (IOException e) {
-                    Log.d(TAG, e.toString());
+                    if (Config.LOGD) Log.d(TAG, e.toString());
                 } catch (RuntimeException e) {
-                    Log.d(TAG, e.toString());
+                    if (Config.LOGD) Log.d(TAG, e.toString());
+                } catch (OutOfMemoryError e) {
+                    if (Config.LOGD) Log.d(TAG, e.toString());
                 }
+
 
                 mCurrentlyDownloading = false;
                 return null;
@@ -117,7 +173,9 @@ public class Story implements Serializable {
         return mImageUrls;
     }
 
-    public BitmapDrawable getImage() {
+//    public ScaleDrawable getImage() {
+//    public BitmapDrawable getImage() {
+    public Bitmap getImage() {
         return mImage;
     }
 

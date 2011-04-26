@@ -62,7 +62,7 @@ public class FeedData implements JREngageDelegate {
     public static FeedData getInstance(Context context) {
         if (sInstance != null) {
             if (Config.LOGD)
-                Log.d(TAG, "[getInstance] returning existing instance.");
+                Log.d(TAG, "[getInstance] returning existing instance");
 
             return sInstance;
         }
@@ -77,7 +77,7 @@ public class FeedData implements JREngageDelegate {
 
     private FeedData(Context context) {
         if (Config.LOGD)
-            Log.d(TAG, "[ctor] creating instance.");
+            Log.d(TAG, "[ctor] creating instance");
 
         mContext = context;
         mEngage = JREngage.initInstance(context, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
@@ -86,8 +86,17 @@ public class FeedData implements JREngageDelegate {
         if (mStories == null)
             mStories = new ArrayList<Story>();
 
+        if (Config.LOGD)
+            Log.d(TAG, "[ctor] loaded " + ((Integer)mStories.size()).toString() + " stories from disk");
+
+        for (Story story : mStories)
+            story.downloadImage();
+
+        /* If the Story class changes, then the Archiver can't load the new stories, which is fine,
+            They'll just get redownloaded/added, but we also have to clear the links hash, so that
+            the new stories get added. */
         mStoryLinks = (HashSet<String>) Archiver.load(ARCHIVE_STORY_LINKS_HASH);
-        if (mStoryLinks == null)
+        if (mStoryLinks == null || mStories.isEmpty())
             mStoryLinks = new HashSet<String>();
     }
 
@@ -177,6 +186,8 @@ public class FeedData implements JREngageDelegate {
 
                         if (!addStoryOnlyIfNew(story))
                             break;
+
+                        mStoryLinks.add(linkText);
                     }
                     LOGD("asyncLoadJanrainBlog", "feed walked");
 
@@ -214,11 +225,16 @@ public class FeedData implements JREngageDelegate {
         if (mStoryLinks.contains(story.getLink()))
             return false;
 
+        if (Config.LOGD)
+            Log.d(TAG, "[addStoryOnlyIfNew] story hasn't been added");
+        
         mStories.add(story);
         return true;
     }
 
     public ArrayList<Story> getFeed() {
+        /* Returning a copy of the mStories array list so that adding stories while the list
+            is being used as the list adapter for the Feed Summary activity doesn't crash the app. */
         return new ArrayList<Story>(mStories);
     }
 

@@ -3,7 +3,11 @@ package com.janrain.android.quickshare;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Config;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -126,8 +130,22 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
 
             Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " + story.getTitle());
 
+//            Bitmap bd = story.getImage();
+//            int width = bd.getWidth();// .getIntrinsicWidth();
+//            int height = bd.getHeight();// .getIntrinsicHeight();
+//
+//            if (Config.LOGD)
+//                Log.d(TAG, "[getView] image size: " +
+//                        ((Integer)width).toString() + ", " + ((Integer)height).toString());
+//
+//            if (width > 120 && height > 90)
+//                bd = Bitmap.createScaledBitmap(bd, width/3, height/3, true);
+//                mImage = new ScaleDrawable(bd, Gravity.CLIP_HORIZONTAL | Gravity.CLIP_VERTICAL, width/3, height/3);
+//            else
+//                mImage = new ScaleDrawable(bd, Gravity.CLIP_HORIZONTAL | Gravity.CLIP_VERTICAL, width, height);
 
-            icon.setImageDrawable(story.getImage());
+//            icon.setImageDrawable(story.getImage());
+            icon.setImageBitmap(story.getImage());
             title.setText(story.getTitle());
             date.setText(story.getDate());
 

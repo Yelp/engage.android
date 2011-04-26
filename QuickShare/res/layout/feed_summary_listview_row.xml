@@ -16,14 +16,26 @@
 
     <ImageView
         android:id="@+id/row_story_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dip"
+        android:layout_height="30dip"
+        android:maxWidth="40dip"
+        android:maxHeight="30dip"
+        android:minWidth="40dip"
+        android:minHeight="30dip"
+        android:adjustViewBounds="true"
+        android:scaleType="center"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="10dip"
         android:src="@drawable/icon"
         />
+        <!--android:layout_width="45dip"-->
+        <!--android:layout_height="45dip"-->
+        <!--android:maxHeight="45dip"-->
+        <!--android:maxWidth="45dip"-->
+        <!--android:minHeight="45dip"-->
+        <!--android:minWidth="45dip"-->
 
         <LinearLayout
             android:id="@+id/title_and_date"
