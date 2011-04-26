@@ -122,8 +122,9 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
                 Log.i(TAG, "[getView] with null converView");
             } else Log.i(TAG, "[getView] with non null convertView");
 
-            ImageView icon = (ImageView)v.findViewById(R.id.row_story_icon);
             TextView title = (TextView)v.findViewById(R.id.row_story_title);
+            ImageView icon = (ImageView)v.findViewById(R.id.row_story_icon);
+            TextView text = (TextView)v.findViewById(R.id.row_story_text);
             TextView date = (TextView)v.findViewById(R.id.row_story_date);
 
             Story story = getItem(position);
@@ -145,8 +146,9 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
 //                mImage = new ScaleDrawable(bd, Gravity.CLIP_HORIZONTAL | Gravity.CLIP_VERTICAL, width, height);
 
 //            icon.setImageDrawable(story.getImage());
-            icon.setImageBitmap(story.getImage());
             title.setText(story.getTitle());
+            icon.setImageBitmap(story.getImage());
+            text.setText(story.getPlainText());
             date.setText(story.getDate());
 
             return v;
