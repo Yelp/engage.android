@@ -854,7 +854,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         //todo check on forcereauth
         if (mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) {
-            //CookieHelper.deleteCookiesByUrl(mCurrentlyAuthenticatingProvider.getCookieDomain());
+            for (String domain : mCurrentlyAuthenticatingProvider.getCookieDomains())
+                deleteWebviewCookiesForDomain(domain);
         }
 
         //str = String.format("%s%s?%s%sversion=android_one&device=android",
@@ -865,7 +866,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 ((mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) ? "force_reauth=true&" : "")
         );
 
-        mCurrentlyAuthenticatingProvider.setForceReauth(false);
 
         if (Config.LOGD) {
             Log.d(TAG, "[startUrlForCurrentlyAuthenticatingProvider] startUrl: " + str);
@@ -1104,6 +1104,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         //todo
         //else saveLastUsedSocialProvider();
 
+
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.authenticationDidComplete(
                     rpx_result.getAsDictionary("auth_info"),
@@ -1115,6 +1116,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             makeCallToTokenUrl(mTokenUrl, auth_info_token_for_token_url, mCurrentlyAuthenticatingProvider.getName());
         }
 
+        mCurrentlyAuthenticatingProvider.setForceReauth(false);
         setCurrentlyAuthenticatingProvider((String) null);
     }
 
