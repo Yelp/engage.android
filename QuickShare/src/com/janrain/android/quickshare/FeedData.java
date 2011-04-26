@@ -14,6 +14,7 @@ import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.utils.Archiver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -81,12 +82,12 @@ public class FeedData implements JREngageDelegate {
         mContext = context;
         mEngage = JREngage.initInstance(context, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
 
-        //mStories = (ArrayList<Story>)Archiver.load(ARCHIVE_STORIES_ARRAY);
-        //if (mStories == null)
+        mStories = (ArrayList<Story>) Archiver.load(ARCHIVE_STORIES_ARRAY);
+        if (mStories == null)
             mStories = new ArrayList<Story>();
 
-        //mStoryLinks = (HashSet<String>) Archiver.load(ARCHIVE_STORY_LINKS_HASH);
-        //if (mStoryLinks == null)
+        mStoryLinks = (HashSet<String>) Archiver.load(ARCHIVE_STORY_LINKS_HASH);
+        if (mStoryLinks == null)
             mStoryLinks = new HashSet<String>();
     }
 
@@ -101,7 +102,7 @@ public class FeedData implements JREngageDelegate {
         mListener = listener;
         
         new AsyncTask<Void, Void, Boolean>() {
-            private String imageUrl;
+            private ArrayList<String> imageUrls;
 
             protected Boolean doInBackground(Void... v) {
                 LOGD("asyncLoadJanrainBlog", "loading blog");
@@ -151,36 +152,38 @@ public class FeedData implements JREngageDelegate {
 
                         LOGD("asyncLoadJanrainBlog", "adding story: " + titleText);
 
-                        //need to concatenate all the children of the description element (which has
-                        // ~100s of TextElement children) in order to come up with the complete
-                        //description text
+                        /* We need to concatenate all the children of the description element (which has
+                            ~100s of TextElement children) in order to come up with the complete
+                            description text */
                         String descriptionText = "";
                         NodeList nl = description.getChildNodes();
                         for (int x=0; x<nl.getLength(); x++) {
                             descriptionText += nl.item(x).getNodeValue();
                         }
 
-                        //the description is in html, so we decode it to display it as plain text
-                        //and while decoding it we yoink out a link to an image if there is one.
+                        imageUrls = new ArrayList<String>();
+
+                        /* The description is in html, so we decode it to display it as plain text,
+                            and while decoding it we yoink out a link to an image if there is one. */
                         String plainText = Html.fromHtml(descriptionText, new Html.ImageGetter() {
                             public Drawable getDrawable(String s) {
-                                imageUrl = FEED_URL.getScheme() + "://" + FEED_URL.getHost() + s;
+                                imageUrls.add(FEED_URL.getScheme() + "://" + FEED_URL.getHost() + s);
                                 return null;
                             }
                         }, null).toString();
 
                         Story story = new Story(titleText, dateText, descriptionText,
-                                                plainText, linkText, imageUrl);
+                                                plainText, linkText, imageUrls);
 
                         if (!addStoryOnlyIfNew(story))
                             break;
                     }
                     LOGD("asyncLoadJanrainBlog", "feed walked");
 
-                    //LOGD("asyncLoadJanrainBlog", "saving stories");
-                    //Archiver.save(ARCHIVE_STORIES_ARRAY, mStories);
-                    //Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
-                    //LOGD("asyncLoadJanrainBlog", "stories saved");
+                    LOGD("asyncLoadJanrainBlog", "saving stories");
+                    Archiver.save(ARCHIVE_STORIES_ARRAY, mStories);
+                    Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
+                    LOGD("asyncLoadJanrainBlog", "stories saved");
 
                     /* If there are no exceptions, then it was a success */
                     return true;

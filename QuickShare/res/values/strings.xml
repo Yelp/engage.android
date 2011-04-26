@@ -12,7 +12,69 @@
     <string name="janrain_blog">Janrain Blog</string>
     <string name="refresh_janrain_blog">Refresh</string>
     <string name="empty_feed">There are currently no stories available.  Please refresh.</string>
+
     <!-- Story Detail Activity Strings -->
+    <string name="html_style_sheet_common">
+        a:link    { color:#009DDC; }
+        a:visited { color:#074764; }
+        a:active  { color:#7AC143; }
+    </string>
+    <string name="html_style_sheet_phone">
+        body
+        {
+            font-family:"Helvetica";
+            color:#333333;
+            font-size:14px;
+            padding:0px;
+            margin:10px;
+        }
+
+        div.title
+        {
+            font-size:16px;
+            color:#074764;
+        }
+
+        div.date
+        {
+            font-size:12px;
+            color:#999999;
+        }
+
+        p
+        {
+            color:#333333;
+            font-size:14px;
+        }
+    </string>
+    <string name="html_style_sheet_tablet">
+        body
+        {
+            font-family:"Helvetica";
+            color:#333333;
+            font-size:20px;
+            padding:0px;
+            margin:44px;
+        }
+
+        div.title
+        {
+            font-size:24px;
+            color:#074764;
+        }
+
+        div.date
+        {
+            font-size:16px;
+            color:#999999;
+        }
+
+        p
+        {
+            color:#333333;
+            font-size:20px;
+        }
+    </string>
 
     <!-- Deeper WebView Activity Strings -->
 </resources>

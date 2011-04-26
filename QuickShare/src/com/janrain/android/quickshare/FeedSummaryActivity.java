@@ -126,7 +126,8 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
 
             Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " + story.getTitle());
 
-            //icon.setImageDrawable(getProviderIconDrawable(getContext(), article.getProvider()));
+
+            icon.setImageDrawable(story.getImage());
             title.setText(story.getTitle());
             date.setText(story.getDate());
 

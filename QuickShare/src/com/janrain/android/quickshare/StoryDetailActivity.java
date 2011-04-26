@@ -25,10 +25,6 @@ public class StoryDetailActivity extends Activity implements View.OnClickListene
     private Story mStory;
 
     private Button mShareStory;
-//    private TextView mTitle;
-//    private TextView mDate;
-//    private TextView mText;
-
     private WebView mWebview;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -43,27 +39,36 @@ public class StoryDetailActivity extends Activity implements View.OnClickListene
         mWebview = (WebView)findViewById(R.id.story_webview);
         mWebview.setWebViewClient(mWebviewClient);
 
-//        mTitle = (TextView)findViewById(R.id.title);
-//        mDate = (TextView)findViewById(R.id.date);
-//        mText = (TextView)findViewById(R.id.text);
-
         loadCurrentStory();
     }
 
     public void loadCurrentStory() {
         mStory = mFeedData.getCurrentStory();
 
-        mWebview.loadDataWithBaseURL("http://www.janrain.com/blogs/",
-                                            "<html><body>" +
-                                            "<h1>" + mStory.getTitle() + "</h1><br />" +
-                                            "<h2>" + mStory.getDate() + "</h2><br />" +
-                                            "<div class='body'>" + mStory.getDescription() + "</div>" +
-                                            "</body></html>",
-                                            "text/html", "UTF-8", "");
+        String styleCommon = getResources().getString(R.string.html_style_sheet_common);
+        String stylePhone = getString(R.string.html_style_sheet_phone);
 
-//        mTitle.setText(mStory.getTitle());
-//        mDate.setText(mStory.getDate());
-//        mText.setText(mStory.getDescription());
+        String htmlString =
+                "<html>" +
+                    "<head>" +
+                        "<style type=\"text/css\">" +
+                        styleCommon + // TODO: When adding support for tablet, change this to be device dependent
+                        stylePhone +
+                        "</style>" +
+                    "</head>" +
+                    "<body>" +
+                        "<div class=\"main\">" +
+                            "<div class=\"title\">" + mStory.getTitle() + "</div>" +
+                            "<div class=\"date\">" + mStory.getDate() + "</div>" +
+                            mStory.getDescription() +
+                        "</div>" +
+                    "</body>" +
+                "</html>";
+
+        if (Config.LOGD)
+            Log.d(TAG, "[loadCurrentStory] html: " + htmlString);
+
+        mWebview.loadDataWithBaseURL("http://www.janrain.com/blogs/", htmlString, "text/html", "UTF-8", "");
     }
 
     public void onClick(View view) {
