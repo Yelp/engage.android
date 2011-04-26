@@ -14,6 +14,7 @@ import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.utils.Archiver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -61,7 +62,7 @@ public class FeedData implements JREngageDelegate {
     public static FeedData getInstance(Context context) {
         if (sInstance != null) {
             if (Config.LOGD)
-                Log.d(TAG, "[getInstance] returning existing instance.");
+                Log.d(TAG, "[getInstance] returning existing instance");
 
             return sInstance;
         }
@@ -76,17 +77,26 @@ public class FeedData implements JREngageDelegate {
 
     private FeedData(Context context) {
         if (Config.LOGD)
-            Log.d(TAG, "[ctor] creating instance.");
+            Log.d(TAG, "[ctor] creating instance");
 
         mContext = context;
         mEngage = JREngage.initInstance(context, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
 
-        //mStories = (ArrayList<Story>)Archiver.load(ARCHIVE_STORIES_ARRAY);
-        //if (mStories == null)
+        mStories = (ArrayList<Story>) Archiver.load(ARCHIVE_STORIES_ARRAY);
+        if (mStories == null)
             mStories = new ArrayList<Story>();
 
-        //mStoryLinks = (HashSet<String>) Archiver.load(ARCHIVE_STORY_LINKS_HASH);
-        //if (mStoryLinks == null)
+        if (Config.LOGD)
+            Log.d(TAG, "[ctor] loaded " + ((Integer)mStories.size()).toString() + " stories from disk");
+
+        for (Story story : mStories)
+            story.downloadImage();
+
+        /* If the Story class changes, then the Archiver can't load the new stories, which is fine,
+            They'll just get redownloaded/added, but we also have to clear the links hash, so that
+            the new stories get added. */
+        mStoryLinks = (HashSet<String>) Archiver.load(ARCHIVE_STORY_LINKS_HASH);
+        if (mStoryLinks == null || mStories.isEmpty())
             mStoryLinks = new HashSet<String>();
     }
 
@@ -101,7 +111,7 @@ public class FeedData implements JREngageDelegate {
         mListener = listener;
         
         new AsyncTask<Void, Void, Boolean>() {
-            private String imageUrl;
+            private ArrayList<String> imageUrls;
 
             protected Boolean doInBackground(Void... v) {
                 LOGD("asyncLoadJanrainBlog", "loading blog");
@@ -151,36 +161,40 @@ public class FeedData implements JREngageDelegate {
 
                         LOGD("asyncLoadJanrainBlog", "adding story: " + titleText);
 
-                        //need to concatenate all the children of the description element (which has
-                        // ~100s of TextElement children) in order to come up with the complete
-                        //description text
+                        /* We need to concatenate all the children of the description element (which has
+                            ~100s of TextElement children) in order to come up with the complete
+                            description text */
                         String descriptionText = "";
                         NodeList nl = description.getChildNodes();
                         for (int x=0; x<nl.getLength(); x++) {
                             descriptionText += nl.item(x).getNodeValue();
                         }
 
-                        //the description is in html, so we decode it to display it as plain text
-                        //and while decoding it we yoink out a link to an image if there is one.
+                        imageUrls = new ArrayList<String>();
+
+                        /* The description is in html, so we decode it to display it as plain text,
+                            and while decoding it we yoink out a link to an image if there is one. */
                         String plainText = Html.fromHtml(descriptionText, new Html.ImageGetter() {
                             public Drawable getDrawable(String s) {
-                                imageUrl = FEED_URL.getScheme() + "://" + FEED_URL.getHost() + s;
+                                imageUrls.add(FEED_URL.getScheme() + "://" + FEED_URL.getHost() + s);
                                 return null;
                             }
                         }, null).toString();
 
                         Story story = new Story(titleText, dateText, descriptionText,
-                                                plainText, linkText, imageUrl);
+                                                plainText, linkText, imageUrls);
 
                         if (!addStoryOnlyIfNew(story))
                             break;
+
+                        mStoryLinks.add(linkText);
                     }
                     LOGD("asyncLoadJanrainBlog", "feed walked");
 
-                    //LOGD("asyncLoadJanrainBlog", "saving stories");
-                    //Archiver.save(ARCHIVE_STORIES_ARRAY, mStories);
-                    //Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
-                    //LOGD("asyncLoadJanrainBlog", "stories saved");
+                    LOGD("asyncLoadJanrainBlog", "saving stories");
+                    Archiver.save(ARCHIVE_STORIES_ARRAY, mStories);
+                    Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
+                    LOGD("asyncLoadJanrainBlog", "stories saved");
 
                     /* If there are no exceptions, then it was a success */
                     return true;
@@ -211,11 +225,16 @@ public class FeedData implements JREngageDelegate {
         if (mStoryLinks.contains(story.getLink()))
             return false;
 
+        if (Config.LOGD)
+            Log.d(TAG, "[addStoryOnlyIfNew] story hasn't been added");
+        
         mStories.add(story);
         return true;
     }
 
     public ArrayList<Story> getFeed() {
+        /* Returning a copy of the mStories array list so that adding stories while the list
+            is being used as the list adapter for the Feed Summary activity doesn't crash the app. */
         return new ArrayList<Story>(mStories);
     }
 

@@ -27,7 +27,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Feed
         mViewFeedSummary = (Button)findViewById(R.id.view_feed_summary);
         mViewFeedSummary.setOnClickListener(this);
 
-        FeedData.getInstance(this).asyncLoadJanrainBlog(this);
+        if (FeedData.getInstance(this).getFeed().isEmpty()) {
+            FeedData.getInstance(this).asyncLoadJanrainBlog(this);
+        }
+        else {
+            mViewFeedSummary.setEnabled(true);
+            mFeedHasLoaded = true;
+            mViewFeedSummary.setText(R.string.view_janrain_blog);
+        }
     }
 
     public void onClick(View view) {
