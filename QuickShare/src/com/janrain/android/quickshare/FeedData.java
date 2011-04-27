@@ -184,7 +184,7 @@ public class FeedData implements JREngageDelegate {
                             }
                         }, null).toString();
 
-                        // Parse the blog dates
+                        // Parse the blog dates, and then reformat them to be more readable.
                         // Example: 2011-04-25PDT04:30:00-:00
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-ddzzzhh:mm:ss'-:00'");
                         SimpleDateFormat moreReadableDate =
