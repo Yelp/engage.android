@@ -44,6 +44,10 @@ public class Story implements Serializable {
 
     private boolean mCurrentlyDownloading;
 
+    public static Story dummyStory() {
+        return new Story();
+    }
+
     public Story(String title, String date, String description,
                  String plainText, String link, ArrayList<String> imageUrls) {
         this.mTitle = title;
@@ -56,6 +60,9 @@ public class Story implements Serializable {
         if (mImageUrls != null)
             if (!mImageUrls.isEmpty())
                 startDownloadImage(mImageUrls.get(0));
+    }
+
+    private Story() {
     }
 
     public void downloadImage() {
@@ -92,7 +99,7 @@ public class Story implements Serializable {
                         Log.d(TAG, "[getView] original image size: " +
                                 ((Integer)width).toString() + ", " + ((Integer)height).toString());
 
-                    int x_ratio = width/120, y_ratio = height/90, scale_ratio;
+                    int x_ratio = width/120, y_ratio = height/120, scale_ratio;
 
                     if (x_ratio <= 1 || y_ratio <= 1)
                         scale_ratio = 1;
