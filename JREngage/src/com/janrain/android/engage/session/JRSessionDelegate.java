@@ -81,7 +81,7 @@ public interface JRSessionDelegate {
      * Triggered when
      */
     //nothing calls this?
-    void publishingDidRestart();
+    //void publishingDidRestart();
     
     /**
      * Triggered when

@@ -301,14 +301,14 @@ public class JREngage {
             }
         }
 
-        public void publishingDidRestart() {
-            if (Config.LOGD) {
-                Log.d(TAG, "[publishingDidRestart]");
-            }
-
-            // TODO:  implement UI stuff
-            // interfaceMaestro.publishingRestarted();
-        }
+//        public void publishingDidRestart() {
+//            if (Config.LOGD) {
+//                Log.d(TAG, "[publishingDidRestart]");
+//            }
+//
+//            // TODO:  implement UI stuff
+//            // interfaceMaestro.publishingRestarted();
+//        }
 
         public void publishingDidCancel() {
             if (Config.LOGD) {
@@ -440,32 +440,44 @@ public class JREngage {
         }
     }
 
-	public void showAuthenticationDialog() {
-		if (Config.LOGD) { 
-			Log.d(TAG, "[showProviderSelectionDialog]");
-		}
-
+    private boolean checkSessionDataError() {
         /* If there was error configuring the library, sessionData.error will not be null. */
         JREngageError error = mSessionData.getError();
-		if (error != null) {
+        if (error != null) {
             /* If there was an error, send a message to the delegates, release the error, then
-            attempt to restart the configuration.  If, for example, the error was temporary
-            (network issues, etc.) reattempting to configure the library could end successfully.
-            Since configuration may happen before the user attempts to use the library, if the
-            user attempts to use the library at all, we only try to reconfigure when the library
-            is needed. */
+          attempt to restart the configuration.  If, for example, the error was temporary
+          (network issues, etc.) reattempting to configure the library could end successfully.
+          Since configuration may happen before the user attempts to use the library, if the
+          user attempts to use the library at all, we only try to reconfigure when the library
+          is needed. */
             if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
                 engageDidFailWithError(error);
                 mSessionData.tryToReconfigureLibrary();
 
-                return;
+                return true;
             }
         }
+        return false;
+    }
+
+    public void showAuthenticationDialog() {
+        if (Config.LOGD) {
+            Log.d(TAG, "[showProviderSelectionDialog]");
+        }
+
+        if (checkSessionDataError()) return;
 
         mInterfaceMaestro.showProviderSelectionDialog();
-	}
+    }
 
 //    public void showAuthenticationDialog(boolean forceReauth) {
+//        if (Config.LOGD) {
+//            Log.d(TAG, "[showAuthenticationDialog(boolean forceReath)]");
+//        }
+//
+//        if (checkSessionDataError()) return;
+//
+//        mInterfaceMaestro.showProviderSelectionDialog(forceReauth);
 //
 //    }
 
@@ -475,21 +487,7 @@ public class JREngage {
         }
 
         /* If there was error configuring the library, sessionData.error will not be null. */
-        JREngageError error = mSessionData.getError();
-		if (error != null) {
-            /* If there was an error, send a message to the delegates, release the error, then
-            attempt to restart the configuration.  If, for example, the error was temporary
-            (network issues, etc.) reattempting to configure the library could end successfully.
-            Since configuration may happen before the user attempts to use the library, if the
-            user attempts to use the library at all, we only try to reconfigure when the library
-            is needed. */
-            if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
-                engageDidFailWithError(error);
-                mSessionData.tryToReconfigureLibrary();
-
-                return;
-            }
-        }
+        if (checkSessionDataError()) return;
 
 
         if (activity == null) {

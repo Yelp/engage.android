@@ -118,7 +118,7 @@ public class JRUserInterfaceMaestro {
         startActivity(JRProvidersActivity.class);
 
         // See JRProvidersActivity.onCreate for an explanation of the flow control when there's a
-        // "returning" provider.
+        // "returning provider."
     }
 
     /**

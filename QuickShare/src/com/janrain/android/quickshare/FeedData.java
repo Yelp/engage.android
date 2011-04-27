@@ -26,7 +26,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 
 /**
@@ -180,6 +183,18 @@ public class FeedData implements JREngageDelegate {
                                 return null;
                             }
                         }, null).toString();
+
+                        // Parse the blog dates
+                        // Example: 2011-04-25PDT04:30:00-:00
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-ddzzzhh:mm:ss'-:00'");
+                        SimpleDateFormat moreReadableDate =
+                                new SimpleDateFormat("EEE MMMM d h:mm aa zzz yyyy");
+                        try {
+                            Date parsedDate = sdf.parse(dateText);
+                            dateText = moreReadableDate.format(parsedDate);
+                        } catch (ParseException e) {
+                            //do nothing, leave the date as it was
+                        }
 
                         Story story = new Story(titleText, dateText, descriptionText,
                                                 plainText, linkText, imageUrls);
