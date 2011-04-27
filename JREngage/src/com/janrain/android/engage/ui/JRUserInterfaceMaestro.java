@@ -114,7 +114,7 @@ public class JRUserInterfaceMaestro {
      */
     public void showProviderSelectionDialog() {
         mSessionData.setDialogIsShowing(true);
-        mSessionData.setSocial(false);
+        mSessionData.setSocialSharingMode(false);
         startActivity(JRProvidersActivity.class);
 
         // See JRProvidersActivity.onCreate for an explanation of the flow control when there's a
@@ -149,7 +149,7 @@ public class JRUserInterfaceMaestro {
     }
 
     public void authenticationCompleted() {
-        if (!mSessionData.getSocial()) {
+        if (!mSessionData.getSocialSharingMode()) {
             popAll();
             mSessionData.setDialogIsShowing(false);
         } else {
@@ -159,7 +159,7 @@ public class JRUserInterfaceMaestro {
 
     public void authenticationFailed() {
         //todo what's this doing, what should it be doing?
-//        if (mSessionData.getSocial()) popToOriginal();
+//        if (mSessionData.getSocialSharingMode()) popToOriginal();
 //        else popAll();
         popToOriginal();
     }
@@ -170,7 +170,7 @@ public class JRUserInterfaceMaestro {
     }
 
     public void setUpSocialPublishing() {
-        mSessionData.setSocial(true);
+        mSessionData.setSocialSharingMode(true);
 
         // TODO:
         // if (myPublishActivityController)
@@ -178,7 +178,7 @@ public class JRUserInterfaceMaestro {
     }
 
     public void tearDownSocialPublishing() {
-        mSessionData.setSocial(false);
+        mSessionData.setSocialSharingMode(false);
         mSessionData.setJRActivity(null);
 
         // TODO:
@@ -249,7 +249,7 @@ public class JRUserInterfaceMaestro {
             Log.d(TAG, "[popToOriginal]");
         }
 
-        Class originalRootActivity = (mSessionData.getSocial())
+        Class originalRootActivity = (mSessionData.getSocialSharingMode())
                 ? JRPublishActivity.class : JRProvidersActivity.class;
 
         popAndFinishActivitiesUntil(originalRootActivity);

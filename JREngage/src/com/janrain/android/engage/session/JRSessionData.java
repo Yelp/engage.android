@@ -56,8 +56,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EncodingUtils;
 
-import java.io.IOException;
-import java.io.InvalidClassException;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.ArrayList;
@@ -157,7 +155,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     //private boolean mForceReauth;
 
-	private boolean mSocialSharing;
+	private boolean mSocialSharingMode;
 
     private boolean mDialogIsShowing = false;
 
@@ -353,12 +351,12 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mBaseUrl;
     }
 
-    public boolean getSocial() {
-        return mSocialSharing;
+    public boolean getSocialSharingMode() {
+        return mSocialSharingMode;
     }
 
-    public void setSocial(boolean value) {
-        mSocialSharing = value;
+    public void setSocialSharingMode(boolean value) {
+        mSocialSharingMode = value;
     }
 
     public boolean getHidePoweredBy() {
@@ -889,7 +887,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         /* If we're authenticating with a provider for social publishing, then don't worry about the return experience
          * for basic authentication. *//*
-        if (mSocialSharing)
+        if (mSocialSharingMode)
             return mCurrentlyAuthenticatingProvider.requiresInput();
 
         /* If we're authenticating with a basic provider, then we don't need to gather infomation if we're displaying
@@ -988,7 +986,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         setCurrentlyPublishingProvider(user.getProviderName());
-        setSocial(true);
+        setSocialSharingMode(true);
 
         StringBuilder body = new StringBuilder();
         String deviceToken = user.getDeviceToken();
@@ -1029,7 +1027,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         setCurrentlyPublishingProvider(user.getProviderName());
-        setSocial(true);
+        setSocialSharingMode(true);
 
         String deviceToken = user.getDeviceToken();
         String status = mActivity.getUserGeneratedContent();
@@ -1100,7 +1098,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mAuthenticatedUsersByProvider.put(mCurrentlyAuthenticatingProvider.getName(), user);
         JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
 
-        if (!mSocialSharing) saveLastUsedBasicProvider();
+        if (!mSocialSharingMode) saveLastUsedBasicProvider();
         //todo
         //else saveLastUsedSocialProvider();
 
@@ -1174,7 +1172,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             delegate.publishingDidComplete();
         }
 
-        mSocialSharing = false;
+        mSocialSharingMode = false;
     }
 
     public void triggerPublishingJRActivityDidFail(JREngageError error) {

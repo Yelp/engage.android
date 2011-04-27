@@ -43,7 +43,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
-import android.net.UrlQuerySanitizer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -372,70 +371,82 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void configureTabs() {
-        TabHost tabHost = getTabHost(); // The activity TabHost
+        TabHost tabHost = getTabHost();
         tabHost.setup();
-        TabHost.TabSpec spec;           // Reused TabSpec for each tab
 
         List<JRProvider> socialProviders = mSessionData.getSocialProviders();
 
-        int currentIndex = 0, indexOfLastUsedProvider = 0;
+        // Make a tab for each social provider
         for (JRProvider provider : socialProviders) {
-            Drawable providerIconSet = provider.getTabSpecIndicatorDrawable(
-                    getApplicationContext());
+            Drawable providerIconSet = provider.getTabSpecIndicatorDrawable(this);
 
-            spec = tabHost.newTabSpec(provider.getName())
-                                .setContent(R.id.tab_view_content);
+            TabHost.TabSpec spec = tabHost.newTabSpec(provider.getName());
+            spec.setContent(R.id.tab_view_content);
 
-            LinearLayout ll = new LinearLayout(this);
-            ll.setOrientation(LinearLayout.VERTICAL);
-
-            ImageView ib = new ImageView(this);
-            ib.setImageDrawable(providerIconSet);
-            ib.setPadding(
-                    scaleDipPixels(10),
-                    scaleDipPixels(10),
-                    scaleDipPixels(10),
-                    scaleDipPixels(3)
-            );
-            ll.addView(ib);
-
-            StateListDrawable tabBackground = new StateListDrawable();
-            tabBackground.addState(new int[]{android.R.attr.state_selected},
-                    getResources().getDrawable(android.R.color.transparent));
-            tabBackground.addState(new int[]{},
-                    getResources().getDrawable(android.R.color.darker_gray));
-            ll.setBackgroundDrawable(tabBackground);
-            
-            TextView tv = new TextView(this);
-            tv.setText(provider.getFriendlyName());
-            tv.setGravity(Gravity.CENTER);
-            tv.setPadding(
-                    scaleDipPixels(0),
-                    scaleDipPixels(0),
-                    scaleDipPixels(0),
-                    scaleDipPixels(4)
-            );
-            ll.addView(tv);
+            LinearLayout ll = createTabSpecIndicator(provider.getFriendlyName(), providerIconSet);
 
             spec.setIndicator(ll);
             tabHost.addTab(spec);
 
             mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
-
-            if (provider.getName().equals(mSessionData.getReturningSocialProvider()))
-                indexOfLastUsedProvider = currentIndex;
-
-            currentIndex++;
         }
-    
-        tabHost.setOnTabChangedListener(this);
-        tabHost.setCurrentTab(indexOfLastUsedProvider);
 
-        //when TabHost is constructed it defaults to tab 0, so if
-        //indexOfLastUsedProvider is 0, the tab change listener won't be
-        //invoked, so we call it manually to ensure it is called.  (it's
-        //idempotent)
+        // Make a tab for email/SMS
+        TabHost.TabSpec emailSmsSpec = tabHost.newTabSpec("emailSms");
+        Drawable d = getResources().getDrawable(R.drawable.email_sms_tab_indicator);
+        emailSmsSpec.setIndicator(createTabSpecIndicator("email", d));
+        emailSmsSpec.setContent(R.id.tab_view_content);
+        tabHost.addTab(emailSmsSpec);
+
+        tabHost.setOnTabChangedListener(this);
+
+        JRProvider rp = mSessionData.getProviderByName(mSessionData.getReturningSocialProvider());
+        tabHost.setCurrentTab(socialProviders.indexOf(rp));
+        
+        // when TabHost is constructed it defaults to tab 0, so if
+        // indexOfLastUsedProvider is 0, the tab change listener won't be
+        // invoked, so we call it manually to ensure it is called.  (it's
+        // idempotent)
         onTabChanged(tabHost.getCurrentTabTag());
+
+        //XXX TabHost is setting our FrameLayout's only child to View.GONE when loading.
+        //XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
+        //XXX This is a workaround:
+        findViewById(R.id.tab_view_content).setVisibility(View.VISIBLE);
+    }
+
+    private LinearLayout createTabSpecIndicator(String labelText, Drawable providerIconSet) {
+        LinearLayout ll = new LinearLayout(this);
+        ll.setOrientation(LinearLayout.VERTICAL);
+
+        ImageView ib = new ImageView(this);
+        ib.setImageDrawable(providerIconSet);
+        ib.setPadding(
+                scaleDipPixels(10),
+                scaleDipPixels(10),
+                scaleDipPixels(10),
+                scaleDipPixels(3)
+        );
+        ll.addView(ib);
+
+        StateListDrawable tabBackground = new StateListDrawable();
+        tabBackground.addState(new int[]{android.R.attr.state_selected},
+                getResources().getDrawable(android.R.color.transparent));
+        tabBackground.addState(new int[]{},
+                getResources().getDrawable(android.R.color.darker_gray));
+        ll.setBackgroundDrawable(tabBackground);
+
+        TextView tv = new TextView(this);
+        tv.setText(labelText);
+        tv.setGravity(Gravity.CENTER);
+        tv.setPadding(
+                scaleDipPixels(0),
+                scaleDipPixels(0),
+                scaleDipPixels(0),
+                scaleDipPixels(4)
+        );
+        ll.addView(tv);
+        return ll;
     }
 
     protected void onRestart() {
@@ -634,12 +645,17 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     public void onTabChanged(String tabId) {
         Log.d(TAG, "[onTabChange]: " + tabId);
 
-        mSelectedProvider = mSessionData.getProviderByName(tabId);
+        if (tabId.equals("emailSms")) {
+            Intent i = new Intent(android.content.Intent.ACTION_SEND);
+            i.setType("plain/text");
+            i.putExtra(android.content.Intent.EXTRA_TEXT, "extra text");
+            i.putExtra(android.content.Intent.EXTRA_SUBJECT, "extra subject");
+            startActivityForResult(Intent.createChooser(i, "title..."), 0);
 
-        //XXX TabHost is setting our FrameLayout's only child to View.GONE when loading.
-        //XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
-        //XXX This is a workaround:
-        findViewById(R.id.tab_view_content).setVisibility(View.VISIBLE);
+            return;
+        }
+
+        mSelectedProvider = mSessionData.getProviderByName(tabId);
 
         configureViewElementsBasedOnProvider();
         configureLoggedInUserBasedOnProvider();
@@ -647,6 +663,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(
                 getApplicationContext()));
+    }
+
+    public void onActivityResult(int a, int b, Intent c) {
+        // this code path hasn't set mSelectedProvider yet, so we use the value previously
+        // set and "unselect" the email SMS tab, making it kind of a button in tab clothing.
+        int lastProviderIndex = mSessionData.getSocialProviders().indexOf(mSelectedProvider);
+        getTabHost().setCurrentTab(lastProviderIndex);
     }
 
     private void configureSharedStatusBasedOnProvider() {
