@@ -4,62 +4,43 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/story_detail_view"
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="top|center_horizontal"
-        android:padding="0dip"
-        android:background="#33074764"
         >
-
-        <Button
-            android:id="@+id/share_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="Share This Article"
-            android:textSize="20dip"
-            android:textStyle="bold"
-            />
 
         <WebView
             android:id="@+id/story_webview"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:layout_above="@+id/button_container"
             />
 
-        <!--<TextView-->
-            <!--android:id="@+id/title"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:gravity="top|left"-->
-            <!--android:paddingBottom="5dip"-->
-            <!--android:textSize="14dip"-->
-            <!--/>-->
+        <LinearLayout
+            android:id="@+id/button_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#33074764"
+            android:padding="10dip"
+            android:layout_alignParentBottom="true"
+            >
 
-        <!--<TextView-->
-            <!--android:id="@+id/date"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:gravity="right"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:singleLine="true"-->
-            <!--android:textSize="10dip"-->
-            <!--android:textColor="#aa000000"-->
-            <!--/>-->
+            <Button
+                android:id="@+id/share_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="Share This Article"
+                android:textSize="20dip"
+                android:textStyle="bold"
+                />
 
-        <!--<TextView-->
-            <!--android:id="@+id/text"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textSize="12dip"-->
-            <!--/>-->
+        </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>
 
