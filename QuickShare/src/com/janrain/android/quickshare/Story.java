@@ -44,6 +44,10 @@ public class Story implements Serializable {
 
     private boolean mCurrentlyDownloading;
 
+    public static Story dummyStory() {
+        return new Story();
+    }
+
     public Story(String title, String date, String description,
                  String plainText, String link, ArrayList<String> imageUrls) {
         this.mTitle = title;
@@ -56,6 +60,9 @@ public class Story implements Serializable {
         if (mImageUrls != null)
             if (!mImageUrls.isEmpty())
                 startDownloadImage(mImageUrls.get(0));
+    }
+
+    private Story() {
     }
 
     public void downloadImage() {

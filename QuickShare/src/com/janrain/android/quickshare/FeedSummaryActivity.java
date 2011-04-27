@@ -29,6 +29,7 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
     private FeedData mFeedData;
 
     private Button mRefreshBlog;
+    private View mHeader;
 
     public FeedSummaryActivity() {
     }
@@ -39,13 +40,23 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
 
         mRefreshBlog = (Button)findViewById(R.id.refresh_blog);
         mRefreshBlog.setOnClickListener(this);
+        mRefreshBlog.setVisibility(View.GONE);
+        
+//        mHeader = findViewById(R.layout.feed_summary_listview_header);
+//
+//        ListView lv = getListView();
+//
+//        if (lv == null)
+//            Log.d(TAG, "LIST VIEW NULL");
+//        else
+//            lv.addHeaderView(mHeader, null, true);
 
         mFeedData = FeedData.getInstance(this);
-        mStories = mFeedData.getFeed();
+        getUpdatedStoriesList();//mFeedData.getFeed();
 
-        if (mStories == null) {
-            mStories = new ArrayList<Story>();
-        }
+//        if (mStories == null) {
+//            mStories = new ArrayList<Story>();
+//        }
 
         mAdapter = new StoryAdapter(this, R.layout.feed_summary_listview_row, mStories);
         setListAdapter(mAdapter);
@@ -69,9 +80,15 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
 
     @Override
     protected void onListItemClick(ListView l, View v, int pos, long id) {
-        Story story = mAdapter.getItem(pos);
-        mFeedData.setCurrentStory(story);
-        this.startActivity(new Intent(this, StoryDetailActivity.class));
+        if (pos == 0) {
+            ((TextView)v.findViewById(R.id.row_story_title)).setText("Loading new articles...");
+            mFeedData.asyncLoadJanrainBlog(this);
+        }
+        else {
+            Story story = mAdapter.getItem(pos);
+            mFeedData.setCurrentStory(story);
+            this.startActivity(new Intent(this, StoryDetailActivity.class));
+        }
     }
 
     @Override
@@ -96,12 +113,25 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
 
     public void AsyncFeedReadSucceeded() {
         mRefreshBlog.setText("Refresh");
+
+        getUpdatedStoriesList();
         mAdapter.notifyDataSetChanged();
     }
 
     public void AsyncFeedReadFailed() {
         mRefreshBlog.setText("Refresh");
+
+        getUpdatedStoriesList();
         mAdapter.notifyDataSetChanged();
+    }
+
+    private void getUpdatedStoriesList() {
+        mStories = mFeedData.getFeed();
+
+        if (mStories == null)
+            mStories = new ArrayList<Story>();
+
+        mStories.add(0, Story.dummyStory());
     }
 
     private class StoryAdapter extends ArrayAdapter<Story> {
@@ -113,13 +143,20 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
             mResourceId = resId;
         }
 
+        private View getInflatedView() {
+            Log.i(TAG, "[getView] with null or dummy convertView");
+            LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            return li.inflate(mResourceId, null);
+
+        }
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = convertView;
             if (v == null) {
-                LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = li.inflate(mResourceId, null);
-                Log.i(TAG, "[getView] with null converView");
+                v = getInflatedView();
+            } else if (v.getTag().equals("DUMMY_ROW")) {
+                v = getInflatedView();
             } else Log.i(TAG, "[getView] with non null convertView");
 
             TextView title = (TextView)v.findViewById(R.id.row_story_title);
@@ -129,27 +166,34 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
 
             Story story = getItem(position);
 
-            Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " + story.getTitle());
+            /* This is the row that contains dummy (empty) story, really to be used as a "Refresh"
+                button that is clickable/focusable like other listview rows, and looks nicer than
+                a real button. */
+            if (position == 0) {
+                v.setTag("DUMMY_ROW");
 
-//            Bitmap bd = story.getImage();
-//            int width = bd.getWidth();// .getIntrinsicWidth();
-//            int height = bd.getHeight();// .getIntrinsicHeight();
-//
-//            if (Config.LOGD)
-//                Log.d(TAG, "[getView] image size: " +
-//                        ((Integer)width).toString() + ", " + ((Integer)height).toString());
-//
-//            if (width > 120 && height > 90)
-//                bd = Bitmap.createScaledBitmap(bd, width/3, height/3, true);
-//                mImage = new ScaleDrawable(bd, Gravity.CLIP_HORIZONTAL | Gravity.CLIP_VERTICAL, width/3, height/3);
-//            else
-//                mImage = new ScaleDrawable(bd, Gravity.CLIP_HORIZONTAL | Gravity.CLIP_VERTICAL, width, height);
+                icon.setVisibility(View.GONE);
+                text.setVisibility(View.GONE);
+                date.setVisibility(View.GONE);
 
-//            icon.setImageDrawable(story.getImage());
-            title.setText(story.getTitle());
-            icon.setImageBitmap(story.getImage());
-            text.setText(story.getPlainText());
-            date.setText(story.getDate());
+                title.setText("Refresh");
+                title.setGravity(Gravity.CENTER_HORIZONTAL);
+            }
+            else {
+                v.setTag("STORY_ROW");
+                Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " + story.getTitle());
+
+                title.setGravity(Gravity.LEFT);
+
+//                icon.setVisibility(View.VISIBLE);
+//                text.setVisibility(View.VISIBLE);
+//                date.setVisibility(View.VISIBLE);
+
+                title.setText(story.getTitle());
+                icon.setImageBitmap(story.getImage());
+                text.setText(story.getPlainText());
+                date.setText(story.getDate());
+            }
 
             return v;
         }

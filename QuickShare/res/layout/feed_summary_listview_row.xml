@@ -12,7 +12,7 @@
         android:id="@+id/row_content"
         android:orientation="vertical"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         >
 
         <TextView
@@ -22,11 +22,9 @@
             android:layout_centerVertical="true"
             android:gravity="left|center_vertical"
             android:singleLine="true"
-            android:text="foo"
             android:textSize="15dip"
             android:textStyle="bold"
             android:textColor="#053044"
-            android:paddingBottom="4dip"
             />
 
 
@@ -46,11 +44,11 @@
                 android:maxHeight="40dip"
                 android:minWidth="40dip"
                 android:minHeight="40dip"
+                android:layout_marginTop="4dip"
                 android:adjustViewBounds="true"
                 android:scaleType="center"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dip"
-                android:src="@drawable/icon"
                 android:layout_alignParentTop="true"
                 />
                 <!--android:layout_alignParentTop="true"-->
@@ -78,9 +76,9 @@
                     android:layout_centerVertical="true"
                     android:gravity="left|center_vertical"
                     android:maxLines="2"
-                    android:text="foo"
                     android:textSize="14dip"
                     android:paddingBottom="2dip"
+                    android:ellipsize="end"
                     />
 
                 <TextView
@@ -91,8 +89,8 @@
                     android:maxWidth="200dip"
                     android:gravity="left|center_vertical"
                     android:singleLine="true"
-                    android:text="foo"
                     android:textSize="11dip"
+                    android:textColor="#333333"
                     />
             </LinearLayout>
 
