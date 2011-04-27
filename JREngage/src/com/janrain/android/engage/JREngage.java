@@ -1,4 +1,4 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  Copyright (c) 2010, Janrain, Inc.
  
  All rights reserved.
@@ -367,10 +367,6 @@ public class JREngage {
         public void mobileConfigDidFinish() {}
     };
 
-    /*
-     * TODO:  See setCustomNavigationController in iPhone code.  Do we need this?
-     */
-
     public JRAuthenticatedUser getUserForProvider(String provider) {
         if (Config.LOGD) {
             Log.d(TAG, "[getUserForProvider]");
@@ -378,8 +374,6 @@ public class JREngage {
         return mSessionData.authenticatedUserForProviderNamed(provider);
     }
 
-    //todo xxx the following four functions all call the same JRSessionData methods but they should
-    //do different things.
     public void signoutUserForProvider(String provider) {
         if (Config.LOGD) {
             Log.d(TAG, "[signoutUserForProvider]");
@@ -394,23 +388,9 @@ public class JREngage {
         mSessionData.forgetAllAuthenticatedUsers();
     }
 
-    public void signoutUserForSocialProvider(String provider) {
+    public void setAlwaysForceReauthentication(boolean force) {
         if (Config.LOGD) {
-            Log.d(TAG, "[signoutUserForSocialProvider]");
-        }
-        mSessionData.forgetAuthenticatedUserForProvider(provider);
-    }
-
-    public void signoutUserForAllSocialProviders() {
-        if (Config.LOGD) {
-            Log.d(TAG, "[signoutUserForAllSocialProviders]");
-        }
-        mSessionData.forgetAllAuthenticatedUsers();
-    }
-
-    public void alwaysForceReauthentication(boolean force) {
-        if (Config.LOGD) {
-            Log.d(TAG, "[alwaysForceReauthentication]");
+            Log.d(TAG, "[setAlwaysForceReauthentication]");
         }
         mSessionData.setAlwaysForceReauth(force);
     }
@@ -429,9 +409,9 @@ public class JREngage {
         mSessionData.triggerPublishingDidCancel();
     }
 
-    public void updateTokenUrl(String newTokenUrl) {
+    public void setTokenUrl(String newTokenUrl) {
         if (Config.LOGD) {
-            Log.d(TAG, "[updateTokenUrl]");
+            Log.d(TAG, "[setTokenUrl]");
         }
         mSessionData.setTokenUrl(newTokenUrl);
     }
@@ -484,6 +464,10 @@ public class JREngage {
 
         mInterfaceMaestro.showProviderSelectionDialog();
 	}
+
+    public void showAuthenticationDialog(boolean forceReauth) {
+        
+    }
 
     public void showSocialPublishingDialogWithActivity(JRActivityObject activity) {
         if (Config.LOGD) {

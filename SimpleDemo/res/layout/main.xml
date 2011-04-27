@@ -32,6 +32,21 @@
         android:textSize="18dip"
         />
 
+    <!-- A testing button for setAlwaysForceReauth -->
+    <!--<ToggleButton-->
+        <!--android:id="@+id/btn_always_force_reauth"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:layout_marginRight="8dp"-->
+        <!--android:layout_marginLeft="8dp"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="90dp"-->
+        <!--android:gravity="center_horizontal|center_vertical"-->
+        <!--android:layout_gravity="center_horizontal|center_vertical"-->
+        <!--android:textOn="alwaysForceReauth"-->
+        <!--android:textOff="alwaysForceReauth"-->
+        <!--android:textSize="18dip"-->
+        <!--/>-->
+
     <Button
         android:id="@+id/btn_test_land"
         android:layout_marginTop="10dp"

@@ -43,6 +43,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 import com.janrain.android.engage.*;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.*;
@@ -106,6 +107,14 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
         mBtnTestLand = (Button)findViewById(R.id.btn_test_land);
         mBtnTestLand.setOnClickListener(this);
+
+        // Test button code to test setAlwaysForceReauth
+//        final ToggleButton tb = ((ToggleButton)findViewById(R.id.btn_always_force_reauth));
+//        tb.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                mEngage.setAlwaysForceReauthentication(tb.isChecked());
+//            }
+//        });
 
         String engageAppId = readAsset("app_id.txt").trim();
         String engageTokenUrl = readAsset("token_url.txt").trim();

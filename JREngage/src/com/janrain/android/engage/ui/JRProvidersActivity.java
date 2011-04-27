@@ -33,6 +33,7 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -104,10 +105,10 @@ public class JRProvidersActivity extends ListActivity {
                 Log.i(TAG, "[getView] with null converView");
             } else Log.i(TAG, "[getView] with non null convertView");
 
-            ImageView icon = (ImageView)v.findViewById(R.id.row_provider_icon);
-            TextView label = (TextView)v.findViewById(R.id.row_provider_label);
+            ImageView icon = (ImageView) v.findViewById(R.id.row_provider_icon);
+            TextView label = (TextView) v.findViewById(R.id.row_provider_label);
 
-            JRProvider provider = getItem(position);
+            final JRProvider provider = getItem(position);
 
             Drawable providerIcon = provider.getProviderListIconDrawable(getContext());
             icon.setImageDrawable(providerIcon);
@@ -219,6 +220,8 @@ public class JRProvidersActivity extends ListActivity {
         mAdapter = new ProviderAdapter(this, R.layout.provider_listview_row, mProviderList);
         setListAdapter(mAdapter);
 
+        //registerForContextMenu(getListView());
+
         if (mProviderList.size() == 0) {
             // show progress and poll for results
             mLayoutHelper.showProgressDialog();
@@ -275,6 +278,26 @@ public class JRProvidersActivity extends ListActivity {
         unregisterReceiver(mFinishReceiver);
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.provider_listview_row_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+      AdapterView.AdapterContextMenuInfo info =
+              (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+      switch (item.getItemId()) {
+      case R.id.force_reauth:
+        mAdapter.getItem((int) info.id).setForceReauth(true);
+        return true;
+      default:
+        return super.onContextItemSelected(item);
+      }
+    }
+
     /**
      * This method will be called when an item in the list is selected.
      */
@@ -313,9 +336,7 @@ public class JRProvidersActivity extends ListActivity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return (mLayoutHelper.handleAboutMenu(item))
-            ? true
-            : super.onOptionsItemSelected(item);
+        return mLayoutHelper.handleAboutMenu(item) || super.onOptionsItemSelected(item);
     }
 
     /**
