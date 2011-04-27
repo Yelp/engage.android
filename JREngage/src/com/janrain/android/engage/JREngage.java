@@ -465,9 +465,9 @@ public class JREngage {
         mInterfaceMaestro.showProviderSelectionDialog();
 	}
 
-    public void showAuthenticationDialog(boolean forceReauth) {
-        
-    }
+//    public void showAuthenticationDialog(boolean forceReauth) {
+//
+//    }
 
     public void showSocialPublishingDialogWithActivity(JRActivityObject activity) {
         if (Config.LOGD) {
