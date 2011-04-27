@@ -117,10 +117,8 @@ public class JRUserInterfaceMaestro {
         mSessionData.setSocial(false);
         startActivity(JRProvidersActivity.class);
 
-//        if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
-//            mSessionData.setCurrentlyAuthenticatingProvider(mSessionData.getReturningBasicProvider());
-//            showUserLanding();
-//        }
+        // See JRProvidersActivity.onCreate for an explanation of the flow control when there's a
+        // "returning" provider.
     }
 
     /**

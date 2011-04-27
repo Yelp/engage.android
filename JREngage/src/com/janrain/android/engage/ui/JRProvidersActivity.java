@@ -46,6 +46,7 @@ import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
+import sun.tools.tree.ThisExpression;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -238,17 +239,17 @@ public class JRProvidersActivity extends ListActivity {
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
 
-        //XXX hack
-        //TODO Fix this to be more consistent with the rest of the library
-        //What's happening is that we need to start the landing activity from this onCreate method
-        //So that this activities FinishHandler is registered (which happens in this onCreate)
-        //otherwise (if the activity is started from the UI maestro) this activity isn't created
-        //until it's popped into view, at which point the FinishHandler is registered, but by
-        //which time this activity has already missed it's finish message.  The getStack call
-        //allows us to add the LandingActivity to the managed activity stack after we start it with
-        //startActivityForResult which has a special case for >= 0 requestCodes that makes this
-        //activities window not draw.  That method can only be called from within an Activity,
-        //however, so the UI maestro would have to jump through some hoops to use it.
+        // XXX
+        // What's happening is that we need to start the landing activity from this onCreate method
+        // So that this activities FinishHandler is registered (which happens in this onCreate)
+        // otherwise (if the activity is started from the UI maestro) this activity isn't created
+        // until it's popped into view, at which point the FinishHandler is registered, but by
+        // which time this activity has already missed it's finish message.  The getStack call
+        // allows us to add the LandingActivity to the managed activity stack after we start it with
+        // startActivityForResult. startActivityForResult has a special case for requestCodes >= 0
+        // that makes this activity's window not draw.  That can only be called from within
+        // an Activity, however, so the UI maestro can't use it (because it uses a generic
+        // application Context.)
         if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
             mSessionData.setCurrentlyAuthenticatingProvider(
                     mSessionData.getReturningBasicProvider());
@@ -278,25 +279,26 @@ public class JRProvidersActivity extends ListActivity {
         unregisterReceiver(mFinishReceiver);
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.provider_listview_row_menu, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-      AdapterView.AdapterContextMenuInfo info =
-              (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-      switch (item.getItemId()) {
-      case R.id.force_reauth:
-        mAdapter.getItem((int) info.id).setForceReauth(true);
-        return true;
-      default:
-        return super.onContextItemSelected(item);
-      }
-    }
+    // This test code adds a context menu to the providers.
+//    @Override
+//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//        super.onCreateContextMenu(menu, v, menuInfo);
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.provider_listview_row_menu, menu);
+//    }
+//
+//    @Override
+//    public boolean onContextItemSelected(MenuItem item) {
+//      AdapterView.AdapterContextMenuInfo info =
+//              (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+//      switch (item.getItemId()) {
+//      case R.id.force_reauth:
+//        mAdapter.getItem((int) info.id).setForceReauth(true);
+//        return true;
+//      default:
+//        return super.onContextItemSelected(item);
+//      }
+//    }
 
     /**
      * This method will be called when an item in the list is selected.
