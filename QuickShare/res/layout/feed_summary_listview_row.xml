@@ -50,6 +50,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dip"
                 android:layout_alignParentTop="true"
+                android:background="#999999"
                 />
                 <!--android:layout_alignParentTop="true"-->
                 <!--android:layout_alignParentBottom="true"-->

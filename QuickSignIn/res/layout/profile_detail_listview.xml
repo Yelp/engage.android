@@ -9,9 +9,9 @@
         android:id="@id/android:list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:paddingBottom="30dip"
         />
-
+    <!--android:paddingBottom="30dip"-->
+        
     <!-- List view (empty state) -->
     <TextView
         android:id="@id/android:empty"

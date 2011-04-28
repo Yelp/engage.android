@@ -15,7 +15,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/background"
+            android:src="@drawable/bg_janrain_blue_gradient"
             />
 
         <LinearLayout
@@ -88,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal|center_vertical"
                 android:layout_gravity="center_horizontal|center_vertical"
-                android:text="auth"
+                android:text="View Your Profiles"
                 android:textSize="18dip"
                 />
 

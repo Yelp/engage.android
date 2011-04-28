@@ -2,7 +2,7 @@
 <resources>
     <!-- Main Activity Strings -->
     <string name="app_name">Quick Share</string>
-    <string name="janrain_welcome_message">TODO.</string>
+    <string name="janrain_welcome_message">Browse the Janrain Blog and publish stories to your social networks.</string>
     <string name="janrain_url">www.janrain.com</string>
     <string name="loading_janrain_blog">Loading the Janrain Blog...</string>
     <string name="view_janrain_blog">View the Janrain Blog</string>
