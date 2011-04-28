@@ -20,10 +20,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -174,8 +171,8 @@ public class Story implements Serializable {
     }
 
     public String getDescription() {
-        if (!mDescriptionImagesAlreadyScaled)
-            scaleDescriptionImages();
+//        if (!mDescriptionImagesAlreadyScaled)
+//            scaleDescriptionImages();
 
             return mDescription;
     }
@@ -196,9 +193,13 @@ public class Story implements Serializable {
                 XMLPullParser is said to be a faster way to go.
                 Sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
                 Another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser */
-            Document d = db.parse(mDescription);
+            mDescription = "<div id=\"root_element_required_for_dom_parser\">" + mDescription + "</div>\0";
+            InputStream stream = new ByteArrayInputStream(mDescription.getBytes("UTF-8"));
+            Document d = db.parse(stream);
 
-            NodeList nl = d.getElementsByTagName("img");
+            Element root = (Element) d.getFirstChild();
+
+            NodeList nl = root.getElementsByTagName("img");
             for (int x=0; x<nl.getLength(); x++) {
                 Element image = (Element) nl.item(x);
                 String style = image.getAttribute("style");
@@ -206,16 +207,33 @@ public class Story implements Serializable {
                 Log.d(TAG, "[scaleDescriptionImages] style attribute: " + style);
             }
 
-            mDescription = d.toString();
-            mDescriptionImagesAlreadyScaled = true;
+//            TransformerFactory tf = TransformerFactory.newInstance();
+//            Transformer t = tf.newTransformer();
+//            t.setOutputProperty(OutputKeys.INDENT, "yes");
+//            StringWriter sw = new StringWriter();
+//            t.transform(new DOMSource(d), new StreamResult(sw));
+//            System.out.println(sw.toString());
+
+//            String descriptionText = "";
+//            NodeList nl2 = root.getChildNodes();
+//            for (int x=0; x<nl2.getLength(); x++) {
+//                String nodeValue = nl2.item(x).getNodeValue();
+//                descriptionText += nodeValue;
+//            }
+
+            mDescription = root.getTextContent();//null;//sw.toString();//descriptionText;
+
+            //mDescription = d.getTextContent();//d.toString();
+            //mDescriptionImagesAlreadyScaled = true;
 
             Log.d(TAG, "[scaleDescriptionImages] description after scale: " + mDescription);
         }
-        catch (MalformedURLException e) { Log.d("asyncLoadJanrainBlog", "MalformedURLException" + e.getLocalizedMessage()); }
-        catch (IOException e) { Log.d("asyncLoadJanrainBlog", "IOException" + e.getLocalizedMessage()); }
-        catch (ParserConfigurationException e) { Log.d("asyncLoadJanrainBlog", "ParserConfigurationException" + e.getLocalizedMessage()); }
-        catch (SAXException e) { Log.d("asyncLoadJanrainBlog", "SAXException" + e.getLocalizedMessage()); }
-        catch (NullPointerException e) { Log.d("asyncLoadJanrainBlog", "NullPointerException" + e.getLocalizedMessage()); }
+        catch (MalformedURLException e) { Log.d("scaleDescriptionImages", "MalformedURLException" + e.getLocalizedMessage()); }
+        catch (IOException e) { Log.d("scaleDescriptionImages", "IOException" + e.getLocalizedMessage()); }
+        catch (ParserConfigurationException e) { Log.d("scaleDescriptionImages", "ParserConfigurationException" + e.getLocalizedMessage()); }
+        catch (SAXException e) { Log.d("scaleDescriptionImages", "SAXException" + e.getLocalizedMessage());  throw new RuntimeException(e);}
+        catch (NullPointerException e) { Log.d("scaleDescriptionImages", "NullPointerException" + e.getLocalizedMessage()); }
+        //catch (TransformerException e) { Log.d("scaleDescriptionImages", "NullPointerException" + e.getLocalizedMessage()); }
     }
 
     public String getPlainText() {

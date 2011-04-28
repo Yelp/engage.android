@@ -18,9 +18,11 @@
         </activity>
 
         <activity android:name=".ProfilesActivity"
-                  android:label="Profiles"/>
+                  android:label="Profiles"
+                  android:theme="@android:style/Theme.Light" />
 
-        <activity android:name=".ProfileDetailActivity"/>
+        <activity android:name=".ProfileDetailActivity"
+                  android:theme="@android:style/Theme.Light" />
 
 
         <!-- For Janrain Engage library -->

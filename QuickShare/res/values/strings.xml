@@ -46,11 +46,6 @@
             color:#333333;
             font-size:14px;
         }
-
-        img
-        {
-            max-width: 280px;
-        }
     </string>
     <string name="html_style_sheet_tablet">
         body
