@@ -29,7 +29,6 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
     private FeedData mFeedData;
 
     private Button mRefreshBlog;
-    private View mHeader;
 
     public FeedSummaryActivity() {
     }
@@ -41,22 +40,12 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
         mRefreshBlog = (Button)findViewById(R.id.refresh_blog);
         mRefreshBlog.setOnClickListener(this);
         mRefreshBlog.setVisibility(View.GONE);
-        
-//        mHeader = findViewById(R.layout.feed_summary_listview_header);
-//
-//        ListView lv = getListView();
-//
-//        if (lv == null)
-//            Log.d(TAG, "LIST VIEW NULL");
-//        else
-//            lv.addHeaderView(mHeader, null, true);
+
 
         mFeedData = FeedData.getInstance(this);
-        getUpdatedStoriesList();//mFeedData.getFeed();
 
-//        if (mStories == null) {
-//            mStories = new ArrayList<Story>();
-//        }
+        mStories = new ArrayList<Story>();
+        getUpdatedStoriesList();
 
         mAdapter = new StoryAdapter(this, R.layout.feed_summary_listview_row, mStories);
         setListAdapter(mAdapter);
@@ -91,21 +80,6 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
     public void onClick(View view) {
         mRefreshBlog.setText("Loading new articles...");
         mFeedData.asyncLoadJanrainBlog(this);
@@ -126,13 +100,43 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
     }
 
     private void getUpdatedStoriesList() {
-        mStories = mFeedData.getFeed();
 
-        if (mStories == null)
-            mStories = new ArrayList<Story>();
+        mStories.clear();
+        mStories.addAll(mFeedData.getFeed());
+
+        if (Config.LOGD)
+            Log.d(TAG, "[getUpdatedStoriesList] " + ((Integer)mStories.size()).toString() + " stories remain");
 
         mStories.add(0, Story.dummyStory());
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.story_managing_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "[onOptionsItemSelected] here");
+        switch (item.getItemId()) {
+            case R.id.delete_all_stories:
+                Log.d(TAG, "[onOptionsItemSelected] delete all stories option selected");
+                mFeedData.deleteAllStories();
+                getUpdatedStoriesList();
+
+//                mAdapter = new StoryAdapter(this, R.layout.feed_summary_listview_row, mStories);
+//                setListAdapter(mAdapter);
+//                mAdapter.notifyDataSetInvalidated();
+
+                mAdapter.notifyDataSetChanged();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     private class StoryAdapter extends ArrayAdapter<Story> {
         private int mResourceId;

@@ -7,11 +7,19 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.os.AsyncTask;
+import android.text.Html;
 import android.util.Config;
 import android.util.Log;
 import android.view.Gravity;
 import com.janrain.android.engage.session.JRSessionData;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,10 +47,8 @@ public class Story implements Serializable {
     private String mLink;
     private ArrayList<String> mImageUrls;
     private transient Bitmap mImage;
-//    private transient BitmapDrawable mImage;
-//    private transient BitmapDrawable mImage;
-//    private transient ScaleDrawable mImage;
 
+    private boolean mDescriptionImagesAlreadyScaled;
     private boolean mCurrentlyDownloading;
 
     public static Story dummyStory() {
@@ -56,6 +63,8 @@ public class Story implements Serializable {
         this.mPlainText = plainText;
         this.mLink = link;
         this.mImageUrls = imageUrls;
+
+        mDescriptionImagesAlreadyScaled = false;
 
         if (mImageUrls != null)
             if (!mImageUrls.isEmpty())
@@ -165,7 +174,48 @@ public class Story implements Serializable {
     }
 
     public String getDescription() {
-        return mDescription;
+        if (!mDescriptionImagesAlreadyScaled)
+            scaleDescriptionImages();
+
+            return mDescription;
+    }
+
+    private void scaleDescriptionImages() {
+        //String unescapedDescription = Html.fromHtml(mDescription);
+        
+        Log.d(TAG, "[scaleDescriptionImages] description before scale: " + mDescription);
+
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setCoalescing(true);
+            dbf.setValidating(false);
+            dbf.setNamespaceAware(false);
+            DocumentBuilder db = dbf.newDocumentBuilder();
+
+            /* The following parse call takes ten seconds on a fast phone.
+                XMLPullParser is said to be a faster way to go.
+                Sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
+                Another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser */
+            Document d = db.parse(mDescription);
+
+            NodeList nl = d.getElementsByTagName("img");
+            for (int x=0; x<nl.getLength(); x++) {
+                Element image = (Element) nl.item(x);
+                String style = image.getAttribute("style");
+
+                Log.d(TAG, "[scaleDescriptionImages] style attribute: " + style);
+            }
+
+            mDescription = d.toString();
+            mDescriptionImagesAlreadyScaled = true;
+
+            Log.d(TAG, "[scaleDescriptionImages] description after scale: " + mDescription);
+        }
+        catch (MalformedURLException e) { Log.d("asyncLoadJanrainBlog", "MalformedURLException" + e.getLocalizedMessage()); }
+        catch (IOException e) { Log.d("asyncLoadJanrainBlog", "IOException" + e.getLocalizedMessage()); }
+        catch (ParserConfigurationException e) { Log.d("asyncLoadJanrainBlog", "ParserConfigurationException" + e.getLocalizedMessage()); }
+        catch (SAXException e) { Log.d("asyncLoadJanrainBlog", "SAXException" + e.getLocalizedMessage()); }
+        catch (NullPointerException e) { Log.d("asyncLoadJanrainBlog", "NullPointerException" + e.getLocalizedMessage()); }
     }
 
     public String getPlainText() {

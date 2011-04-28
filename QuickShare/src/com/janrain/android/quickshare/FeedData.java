@@ -8,6 +8,7 @@ import android.text.Html;
 import android.util.Config;
 import android.util.Log;
 
+import android.widget.ArrayAdapter;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
@@ -49,8 +50,9 @@ public class FeedData implements JREngageDelegate {
 
     private static FeedData sInstance;
 
-    private HashSet<String> mStoryLinks;
-    private ArrayList<Story> mStories;
+    private final HashSet<String> mStoryLinks;
+    private final ArrayList<Story> mStories;
+
     private Story mCurrentStory;
 
     private JREngage mEngage;
@@ -82,9 +84,11 @@ public class FeedData implements JREngageDelegate {
         mContext = context;
         mEngage = JREngage.initInstance(context, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
 
-        mStories = (ArrayList<Story>) Archiver.load(ARCHIVE_STORIES_ARRAY);
-        if (mStories == null)
-            mStories = new ArrayList<Story>();
+        ArrayList<Story> stories = (ArrayList<Story>) Archiver.load(ARCHIVE_STORIES_ARRAY);
+        if (stories == null)
+            stories = new ArrayList<Story>();
+
+        mStories = new ArrayList<Story>(stories);
 
         if (Config.LOGD)
             Log.d(TAG, "[ctor] loaded " + ((Integer)mStories.size()).toString() + " stories from disk");
@@ -95,9 +99,11 @@ public class FeedData implements JREngageDelegate {
         /* If the Story class changes, then the Archiver can't load the new stories, which is fine,
             They'll just get redownloaded/added, but we also have to clear the links hash, so that
             the new stories get added. */
-        mStoryLinks = (HashSet<String>) Archiver.load(ARCHIVE_STORY_LINKS_HASH);
-        if (mStoryLinks == null || mStories.isEmpty())
-            mStoryLinks = new HashSet<String>();
+        HashSet<String> links = (HashSet<String>) Archiver.load(ARCHIVE_STORY_LINKS_HASH);
+        if (links == null || mStories.isEmpty())
+            links = new HashSet<String>();
+
+        mStoryLinks = links;
     }
 
     private void LOGD(String function, String message) {
@@ -167,7 +173,8 @@ public class FeedData implements JREngageDelegate {
                         String descriptionText = "";
                         NodeList nl = description.getChildNodes();
                         for (int x=0; x<nl.getLength(); x++) {
-                            descriptionText += nl.item(x).getNodeValue();
+                            String nodeValue = nl.item(x).getNodeValue();
+                            descriptionText += nodeValue;
                         }
 
                         imageUrls = new ArrayList<String>();
@@ -186,8 +193,6 @@ public class FeedData implements JREngageDelegate {
 
                         if (!addStoryOnlyIfNew(story))
                             break;
-
-                        mStoryLinks.add(linkText);
                     }
                     LOGD("asyncLoadJanrainBlog", "feed walked");
 
@@ -209,6 +214,11 @@ public class FeedData implements JREngageDelegate {
                 return false;
             }
 
+            private String resizeImage(String nodeValue) {
+                Log.d(TAG, "[resizeImage] :" + nodeValue);
+                return nodeValue;
+            }
+
             protected void onPostExecute(Boolean loadSuccess) {
                 LOGD("onPostExecute", "blog loader onPostExecute, result: " +
                         (loadSuccess ? "succeeded" : "failed"));
@@ -227,15 +237,21 @@ public class FeedData implements JREngageDelegate {
 
         if (Config.LOGD)
             Log.d(TAG, "[addStoryOnlyIfNew] story hasn't been added");
-        
-        mStories.add(story);
+
+        synchronized (mStories) {
+            mStories.add(story);
+            mStoryLinks.add(story.getLink());
+        }
+
         return true;
     }
 
     public ArrayList<Story> getFeed() {
         /* Returning a copy of the mStories array list so that adding stories while the list
             is being used as the list adapter for the Feed Summary activity doesn't crash the app. */
-        return new ArrayList<Story>(mStories);
+        synchronized (mStories) {
+            return new ArrayList<Story>(mStories);
+        }
     }
 
     public void setCurrentStory(Story story) {
@@ -256,6 +272,19 @@ public class FeedData implements JREngageDelegate {
         activityObject.setDescription(mCurrentStory.getPlainText());
 
         mEngage.showSocialPublishingDialogWithActivity(activityObject);
+    }
+
+    public void deleteAllStories() {
+        synchronized (mStories) {
+            mStories.clear();
+            mStoryLinks.clear();
+        }
+
+        if (Config.LOGD)
+            Log.d(TAG, "[deleteAllStories] " + ((Integer)mStories.size()).toString() + " stories remain");
+
+        Archiver.save(ARCHIVE_STORIES_ARRAY, mStories);
+        Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
     }
 
     public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
