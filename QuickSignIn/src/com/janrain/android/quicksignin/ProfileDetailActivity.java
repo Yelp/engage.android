@@ -47,11 +47,14 @@ public class ProfileDetailActivity extends ListActivity {
 
             keyLabel.setText(key);
 
-            // TODO: Flatten subdictionaries
-            if (key.equals("name") || key.equals("address"))
-                valueLabel.setText("TODO: FLATTEN SUBDICTIONARIES");
-            else
+//            // TODO: Flatten subdictionaries
+//            if (key.equals("name") || key.equals("address"))
+//                valueLabel.setText("TODO: FLATTEN SUBDICTIONARIES");
+//            else
+            if (mProfile.get(key) instanceof String)
                 valueLabel.setText(mProfile.getAsString(key));
+            else
+                valueLabel.setText("");
 
             return v;
         }

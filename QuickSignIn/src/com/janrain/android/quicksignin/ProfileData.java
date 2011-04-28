@@ -93,6 +93,14 @@ public class ProfileData {
         String identifier = (auth_info == null) ? null : auth_info.getAsString("identifier");
         String displayName = (profile == null) ? null : profile.getAsString("displayName");
 
+        if (profile != null) {
+            if (profile.containsKey("name"))
+                profile.put("name", flattenName(profile));
+
+            if (profile.containsKey("address"))
+                profile.put("address", flattenAddress(profile));
+        }
+        
         LoginSnapshot snapshot = new LoginSnapshot(timestamp, identifier, provider, displayName);
         mLoginSnapshots.add(snapshot);
 
@@ -123,6 +131,44 @@ public class ProfileData {
     public JRDictionary getCurrentProfile() {
         return mCurrentProfile;
     }
+
+    private String flattenName(JRDictionary profile) {
+        JRDictionary name = profile.getAsDictionary("name");
+
+	    if (name.containsKey("formatted"))
+		    return name.getAsString("formatted");
+	    else
+		    return
+                (name.containsKey("honorificPrefix") ?
+                        name.getAsString("honorificPrefix") + " " : "") +
+                (name.containsKey("givenName") ?
+                        name.getAsString("givenName") + " " : "") +
+                (name.containsKey("middleName") ?
+                        name.getAsString("middleName") + " " : "") +
+                (name.containsKey("familyName") ?
+                        name.getAsString("familyName") + " " : "") +
+                (name.containsKey("honorificSuffix") ?
+                        name.getAsString("honorificSuffix") : "");
+}
+
+    private String flattenAddress(JRDictionary profile) {
+        JRDictionary address = profile.getAsDictionary("name");
+
+        if (address.containsKey("formatted"))
+            return address.getAsString("formatted");
+        else
+            return
+                (address.containsKey("streetAddress") ?
+                        address.getAsString("streetAddress") + " " : "") +
+                (address.containsKey("locality") ?
+                        address.getAsString("locality") + " " : "") +
+                (address.containsKey("region") ?
+                        address.getAsString("region") + " " : "") +
+                (address.containsKey("postalCode") ?
+                        address.getAsString("postalCode") + " " : "") +
+                (address.containsKey("country") ?
+                        address.getAsString("country") : "");
+}
 
 //    public JRDictionary getProfileForIdentifier(String identifier) {
 //        return mProfiles.get(identifier);
