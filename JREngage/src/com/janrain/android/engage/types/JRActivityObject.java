@@ -164,6 +164,11 @@ public class JRActivityObject {
      */
     private Map<String, Object> mProperties = new HashMap<String, Object>();
 
+    /**
+     * A JREmailObject to use to prefill a sharing email sent by the user
+     */
+    private JREmailObject mEmail;
+
     // ------------------------------------------------------------------------
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
@@ -187,6 +192,14 @@ public class JRActivityObject {
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
     // ------------------------------------------------------------------------
+
+    public void setEmail(JREmailObject email) {
+        mEmail = email;
+    }
+
+    public JREmailObject getEmail() {
+        return mEmail;
+    }
 
     public String getAction() {  /* (readonly) */
         return mAction;

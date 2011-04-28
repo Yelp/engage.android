@@ -47,6 +47,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Config;
 import android.util.Log;
@@ -66,6 +67,7 @@ import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.types.JREmailObject;
 import com.janrain.android.engage.types.JRMediaObject;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -646,11 +648,25 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         Log.d(TAG, "[onTabChange]: " + tabId);
 
         if (tabId.equals("emailSms")) {
-            Intent i = new Intent(android.content.Intent.ACTION_SEND);
-            i.setType("plain/text");
-            i.putExtra(android.content.Intent.EXTRA_TEXT, "extra text");
-            i.putExtra(android.content.Intent.EXTRA_SUBJECT, "extra subject");
-            startActivityForResult(Intent.createChooser(i, "title..."), 0);
+            Intent email = new Intent(android.content.Intent.ACTION_SEND);
+            email.setType("plain/text");
+            String body, subject;
+
+            JREmailObject jrEmail = mActivityObject.getEmail();
+            if (jrEmail == null) {
+                body = mUserCommentView.getText().toString();
+                subject = getString(R.string.default_email_share_subject);
+            } else {
+                body = mUserCommentView.getText().toString() + "\n------\n" + jrEmail.getBody();
+                subject = TextUtils.isEmpty(jrEmail.getSubject()) ?
+                        getString(R.string.default_email_share_subject)
+                        : jrEmail.getSubject();
+            }
+
+            email.putExtra(android.content.Intent.EXTRA_TEXT, body);
+            email.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+            Intent chooser = Intent.createChooser(email, getString(R.string.choose_email_handler));
+            startActivityForResult(chooser, 0);
 
             return;
         }
@@ -665,7 +681,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 getApplicationContext()));
     }
 
-    public void onActivityResult(int a, int b, Intent c) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // callback from startActivityForResult for email sharing
         // this code path hasn't set mSelectedProvider yet, so we use the value previously
         // set and "unselect" the email SMS tab, making it kind of a button in tab clothing.
         int lastProviderIndex = mSessionData.getSocialProviders().indexOf(mSelectedProvider);
