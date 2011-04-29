@@ -221,7 +221,7 @@ public class Story implements Serializable {
 //                descriptionText += nodeValue;
 //            }
 
-            mDescription = root.getTextContent();//null;//sw.toString();//descriptionText;
+//            mDescription = root.getTextContent();//null;//sw.toString();//descriptionText;
 
             //mDescription = d.getTextContent();//d.toString();
             //mDescriptionImagesAlreadyScaled = true;

@@ -46,7 +46,6 @@ import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
-import sun.tools.tree.ThisExpression;
 
 import java.util.ArrayList;
 import java.util.Timer;
