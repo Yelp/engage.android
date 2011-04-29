@@ -195,7 +195,7 @@ public class FeedData implements JREngageDelegate {
                         // Example: 2011-04-25PDT04:30:00-:00
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-ddzzzhh:mm:ss'-:00'");
                         SimpleDateFormat moreReadableDate =
-                                new SimpleDateFormat("EEE MMMM d h:mm aa zzz yyyy");
+                                new SimpleDateFormat("EEE, MMMM d, yyyy h:mm aa");
                         try {
                             Date parsedDate = sdf.parse(dateText);
                             dateText = moreReadableDate.format(parsedDate);
