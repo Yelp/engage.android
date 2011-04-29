@@ -33,13 +33,16 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
@@ -63,7 +66,9 @@ public class JRProvidersActivity extends ListActivity {
      */
     private class FinishReceiver extends BroadcastReceiver {
 
-        private final String TAG = JRProvidersActivity.TAG + "-" + FinishReceiver.class.getSimpleName();
+        private final String TAG = JRProvidersActivity.TAG
+                + "-"
+                + FinishReceiver.class.getSimpleName();
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -94,19 +99,19 @@ public class JRProvidersActivity extends ListActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = convertView;
             if (v == null) {
-                LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater li = (LayoutInflater) getSystemService(
+                        Context.LAYOUT_INFLATER_SERVICE);
                 v = li.inflate(mResourceId, null);
                 Log.i(TAG, "[getView] with null converView");
             } else Log.i(TAG, "[getView] with non null convertView");
 
-            ImageView icon = (ImageView)v.findViewById(R.id.rowIcon);
-            TextView label = (TextView)v.findViewById(R.id.rowLabel);
+            ImageView icon = (ImageView) v.findViewById(R.id.row_provider_icon);
+            TextView label = (TextView) v.findViewById(R.id.row_provider_label);
 
-            JRProvider provider = getItem(position);
+            final JRProvider provider = getItem(position);
 
-            //ResourceHelper.providerNameToIconResourceId(provider.getName())
-            //icon.setImageResource();
-            icon.setImageDrawable(provider.getProviderListIconDrawable(getContext()));
+            Drawable providerIcon = provider.getProviderListIconDrawable(getContext());
+            icon.setImageDrawable(providerIcon);
             label.setText(provider.getFriendlyName());
 
             return v;
@@ -150,7 +155,9 @@ public class JRProvidersActivity extends ListActivity {
     private Runnable mNoProvidersFoundRunner = new Runnable() {
         public void run() {
             mLayoutHelper.dismissProgressDialog();
-            Toast.makeText(JRProvidersActivity.this, "No providers found.", Toast.LENGTH_LONG).show();
+            Toast.makeText(JRProvidersActivity.this,
+                    "No providers found.",
+                    Toast.LENGTH_LONG).show();
         }
     };
 
@@ -197,6 +204,13 @@ public class JRProvidersActivity extends ListActivity {
         mLayoutHelper = new SharedLayoutHelper(this);
 
         mSessionData = JRSessionData.getInstance();
+
+        //for the case when this activity is relaunched after the process was killed
+        if (mSessionData == null) {
+            finish();
+            return;
+        }
+
         mProviderList = mSessionData.getBasicProviders();
 
         if (mProviderList == null) {
@@ -205,6 +219,8 @@ public class JRProvidersActivity extends ListActivity {
 
         mAdapter = new ProviderAdapter(this, R.layout.provider_listview_row, mProviderList);
         setListAdapter(mAdapter);
+
+        //registerForContextMenu(getListView());
 
         if (mProviderList.size() == 0) {
             // show progress and poll for results
@@ -222,17 +238,17 @@ public class JRProvidersActivity extends ListActivity {
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
 
-        //XXX hack
-        //TODO Fix this to be more consistent with the rest of the library
-        //What's happening is that we need to start the landing activity from this onCreate method
-        //So that this activities FinishHandler is registered (which happens in this onCreate)
-        //otherwise (if the activity is started from the UI maestro) this activity isn't created
-        //until it's popped into view, at which point the FinishHandler is registered, but by
-        //which time this activity has already missed it's finish message.  The getStack call
-        //allows us to add the LandingActivity to the managed activity stack after we start it with
-        //startActivityForResult which has a special case for >= 0 requestCodes that makes this
-        //activities window not draw.  That method can only be called from within an Activity,
-        //however, so the UI maestro would have to jump through some hoops to use it.
+        // XXX
+        // What's happening is that we need to start the landing activity from this onCreate method
+        // So that this activities FinishHandler is registered (which happens in this onCreate)
+        // otherwise (if the activity is started from the UI maestro) this activity isn't created
+        // until it's popped into view, at which point the FinishHandler is registered, but by
+        // which time this activity has already missed it's finish message.  The getStack call
+        // allows us to add the LandingActivity to the managed activity stack after we start it with
+        // startActivityForResult. startActivityForResult has a special case for requestCodes >= 0
+        // that makes this activity's window not draw.  That can only be called from within
+        // an Activity, however, so the UI maestro can't use it (because it uses a generic
+        // application Context.)
         if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
             mSessionData.setCurrentlyAuthenticatingProvider(
                     mSessionData.getReturningBasicProvider());
@@ -244,6 +260,7 @@ public class JRProvidersActivity extends ListActivity {
 
     public void onResume () {
         super.onResume();
+        JREngage.setContext(this);
     }
 
     @Override
@@ -257,8 +274,30 @@ public class JRProvidersActivity extends ListActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        if (mFinishReceiver != null)
         unregisterReceiver(mFinishReceiver);
     }
+
+    // This test code adds a context menu to the providers.
+//    @Override
+//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//        super.onCreateContextMenu(menu, v, menuInfo);
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.provider_listview_row_menu, menu);
+//    }
+//
+//    @Override
+//    public boolean onContextItemSelected(MenuItem item) {
+//      AdapterView.AdapterContextMenuInfo info =
+//              (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+//      switch (item.getItemId()) {
+//      case R.id.force_reauth:
+//        mAdapter.getItem((int) info.id).setForceReauth(true);
+//        return true;
+//      default:
+//        return super.onContextItemSelected(item);
+//      }
+//    }
 
     /**
      * This method will be called when an item in the list is selected.
@@ -267,8 +306,16 @@ public class JRProvidersActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int pos, long id) {
         JRProvider provider = mAdapter.getItem(pos);
         mSessionData.setCurrentlyAuthenticatingProvider(provider);
-        if (provider.requiresInput()
-                || provider.getName().equals(mSessionData.getReturningBasicProvider())) {
+
+        //todo
+        // || provider.getName().equals(mSessionData.getReturningBasicProvider())
+        //used to be part of the if conditional, seems to be related to giving the user an
+        //opportunity to switch accounts if they already have credentials, however if that's the
+        //intention mSessionData.getAuthenticatedUserForProvider() != null or something should be
+        //used so that providers that aren't the returning basic provider are also afforded the same
+        //possibility.
+
+        if (provider.requiresInput()) {
             JRUserInterfaceMaestro.getInstance().showUserLanding();
         } else {
             JRUserInterfaceMaestro.getInstance().showWebView();
@@ -290,9 +337,7 @@ public class JRProvidersActivity extends ListActivity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return (mLayoutHelper.handleAboutMenu(item))
-            ? true
-            : super.onOptionsItemSelected(item);
+        return mLayoutHelper.handleAboutMenu(item) || super.onOptionsItemSelected(item);
     }
 
     /**

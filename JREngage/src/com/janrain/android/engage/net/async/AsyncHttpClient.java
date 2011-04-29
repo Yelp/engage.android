@@ -56,7 +56,7 @@ public final class AsyncHttpClient {
 	 */
 	private static class HttpSender extends Thread {
         static {
-            //HttpURLConnection has a known bug discussed:
+            //HttpURLConnection has a known bug discussed
             //here: http://code.google.com/p/android/issues/detail?id=7786
             //here: http://stackoverflow.com/questions/1440957/httpurlconnection-getresponsecode-returns-1-on-second-invocation/1441491#1441491
             //and here: http://stackoverflow.com/questions/2792843/httpurlconnection-whats-the-deal-with-having-to-read-the-whole-response
@@ -138,11 +138,19 @@ public final class AsyncHttpClient {
 
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
                     mHandler.post(mWrapper);
+                } else if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
+                    Log.d(TAG, "[run] HTTP_NOT_MODIFIED");
+                    HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
+
+                    mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, null));
+                    mHandler.post(mWrapper);
                 } else {
                     //todo maybe this shouldn't be globbed together, but instead be structured
                     //to allow the error response handler to make meaninful use of the web
                     //servers response (here read into String r)
-                    String r = new String(IOUtils.readFromStream(connection.getErrorStream()));
+                    byte[] b = IOUtils.readFromStream(connection.getErrorStream());
+                    String r = null;
+                    if (b != null) r = new String(b);
                     String message = "[run] Unexpected HTTP response:  [code: "
                             + connection.getResponseCode() + " | message: "
                             + connection.getResponseMessage() + " error: "

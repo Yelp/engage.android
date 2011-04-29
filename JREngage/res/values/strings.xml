@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="jr_engage_version">0.9a</string>
+    <string name="jr_engage_version">v1.1.0</string>
 
     <!--
        - Server URL strings for each of the three typical environments.
@@ -20,7 +20,7 @@
       -->
     <string name="about_menu_item">About Janrain Engage</string>
     <string name="about_title">Janrain Engage for Android Library</string>
-    <string name="about_version">Version 1.0.0</string>
+    <string name="about_version">Version 1.1.0</string>
     <string name="about_url">www.janrain.com</string>
     <string name="about_button_ok">OK</string>
 

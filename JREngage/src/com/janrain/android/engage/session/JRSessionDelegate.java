@@ -40,36 +40,35 @@ import com.janrain.android.engage.types.JRDictionary;
 public interface JRSessionDelegate {
 
     /**
-     * triggered when
+     * Triggered when
      */
     void authenticationDidRestart();
 
     /**
-     * triggered when
+     * Triggered when
      */
     //For now this is only triggered by the calling application via JREngage.cancelAuthentication
     void authenticationDidCancel();
 
     // TODO: Wasn't this deprecated!?
     /**
-     * triggered when
+     * Triggered when
      */
     void authenticationDidComplete(String token, String provider);
     
     /**
-     * triggered when
+     * Triggered when JRWebViewActivity receieves a success message from Engage.
      */
     void authenticationDidComplete(JRDictionary profile, String provider);
     
     /**
-     * triggered when
+     * Triggered when the Engage authentication flow completes with an Engage error, or when there
+     * is an error loading a URL during that authentication flow.
      */
-    //For now this is only triggered by a network error loading the mobile endpoint URL from within the JRWebViewActivity
-    //maybe it should also be triggered by http errors from inside the JRWebView
     void authenticationDidFail(JREngageError error, String provider);
     
     /**
-     * triggered when
+     * Triggered when
      */
     void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String payload, String provider);
     
@@ -79,32 +78,31 @@ public interface JRSessionDelegate {
     void authenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider);
     
     /**
-     * triggered when
+     * Triggered when
      */
-    void publishingDidRestart();
+    //nothing calls this?
+    //void publishingDidRestart();
     
     /**
-     * triggered when
+     * Triggered when
      */
     //For now this is only triggered by the calling application via JREngage.cancelPublishing
     void publishingDidCancel();
     
     /**
-     * triggered when
+     * Triggered when
      */
     //what's the different between publishDidComplete and publishingJRActivityDidSucceed?
     //nothing is triggering this
     void publishingDidComplete();
     
     /**
-     * triggered when
+     * Triggered when a success response is received from Engage from the activity api
      */
-    //this is triggered by the connection started by JRSessionData.shareActivity completing
-    //successfully, in the JRSessionData.processShareActivityResponse
     void publishingJRActivityDidSucceed(JRActivityObject activity, String provider);
 
     /**
-     * triggered when
+     * Triggered when
      */
     //this is triggered by the connection response handlers for share activity (either by a network
     //error or by an errorful response from RPX
@@ -116,7 +114,7 @@ public interface JRSessionDelegate {
     void publishingDialogDidFail(JREngageError err);
 
     /**
-     * triggered when JRSessionData has finished loading the mobile configuration
+     * Triggered when JRSessionData has finished loading the mobile configuration
      */
     void mobileConfigDidFinish();
 }

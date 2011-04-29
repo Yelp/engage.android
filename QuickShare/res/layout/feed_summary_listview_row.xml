@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/profiles_row_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="6dip"
+    >
+    <!--android:layout_height="?android:attr/listPreferredItemHeight"-->
+
+    <LinearLayout
+        android:id="@+id/row_content"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        >
+
+        <TextView
+            android:id="@+id/row_story_title"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:gravity="left|center_vertical"
+            android:singleLine="true"
+            android:textSize="15dip"
+            android:textStyle="bold"
+            android:textColor="#053044"
+            />
+
+
+        <RelativeLayout
+            android:id="@+id/icon_text_and_date"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+
+            <ImageView
+                android:id="@+id/row_story_icon"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:maxWidth="40dip"
+                android:maxHeight="40dip"
+                android:minWidth="40dip"
+                android:minHeight="40dip"
+                android:layout_marginTop="4dip"
+                android:adjustViewBounds="true"
+                android:scaleType="center"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dip"
+                android:layout_alignParentTop="true"
+                android:background="#999999"
+                />
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_alignParentBottom="true"-->
+                <!--android:layout_width="45dip"-->
+                <!--android:layout_height="45dip"-->
+                <!--android:maxHeight="45dip"-->
+                <!--android:maxWidth="45dip"-->
+                <!--android:minHeight="45dip"-->
+                <!--android:minWidth="45dip"-->
+
+            <LinearLayout
+                android:id="@+id/text_and_date"
+                android:orientation="vertical"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_toRightOf="@id/row_story_icon"
+                android:gravity="center_horizontal|center_vertical"
+                >
+
+                <TextView
+                    android:id="@+id/row_story_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:gravity="left|center_vertical"
+                    android:maxLines="2"
+                    android:textSize="14dip"
+                    android:paddingBottom="2dip"
+                    android:ellipsize="end"
+                    />
+
+                <TextView
+                    android:id="@+id/row_story_date"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:maxWidth="200dip"
+                    android:gravity="left|center_vertical"
+                    android:singleLine="true"
+                    android:textSize="11dip"
+                    android:textColor="#333333"
+                    />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

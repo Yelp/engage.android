@@ -47,6 +47,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
@@ -67,7 +68,8 @@ public class JRLandingActivity extends Activity {
      */
     private class FinishReceiver extends BroadcastReceiver {
 
-        private final String TAG = JRLandingActivity.TAG + "-" + FinishReceiver.class.getSimpleName();
+        private final String TAG = JRLandingActivity.TAG + "-" +
+                FinishReceiver.class.getSimpleName();
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -85,7 +87,8 @@ public class JRLandingActivity extends Activity {
     private class ButtonEventListener implements
             View.OnClickListener, View.OnFocusChangeListener, View.OnTouchListener {
 
-        private final String TAG = JRLandingActivity.TAG + "-" + ButtonEventListener.class.getSimpleName();
+        private final String TAG = JRLandingActivity.TAG + "-" +
+                ButtonEventListener.class.getSimpleName();
 
         public void onClick(View view) {
             Log.i(TAG, "[onClick] handled");
@@ -133,7 +136,7 @@ public class JRLandingActivity extends Activity {
 
     // I find the auto-show keyboard really annoying, so I am turning
     // it off until someone asks for it...
-    private static final boolean SHOW_KEYBOARD_ON_LAUNCH = false;
+//    private static final boolean SHOW_KEYBOARD_ON_LAUNCH = false;
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -151,8 +154,8 @@ public class JRLandingActivity extends Activity {
     private JRSessionData mSessionData;
     private FinishReceiver mFinishReceiver;
 
-    private boolean mIsAlertShowing;
-    private boolean mIsFinishPending;
+    private boolean mIsAlertShowing = false;
+    private boolean mIsFinishPending = false;
 
     private ImageView mImageView;
     private EditText mEditText;
@@ -169,13 +172,6 @@ public class JRLandingActivity extends Activity {
     // ------------------------------------------------------------------------
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
-
-    public JRLandingActivity() {
-        mLayoutHelper = new SharedLayoutHelper(this);
-        mSessionData = JRSessionData.getInstance();
-        mIsAlertShowing = false;
-        mIsFinishPending = false;
-    }
 
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
@@ -196,6 +192,16 @@ public class JRLandingActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mLayoutHelper = new SharedLayoutHelper(this);
+        mSessionData = JRSessionData.getInstance();
+
+        //for the case when this activity is relaunched after the process was killed
+        if (mSessionData == null) {
+            finish();
+            return;
+        }
+
         setContentView(R.layout.provider_landing);
 
         mImageView = (ImageView)findViewById(R.id.landing_logo);
@@ -227,8 +233,13 @@ public class JRLandingActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-
     }
+
+    protected void onResume() {
+        super.onResume();
+        JREngage.setContext(this);
+    }
+
 
     public void onBackPressed() {
         mSessionData.triggerAuthenticationDidRestart();
@@ -238,25 +249,25 @@ public class JRLandingActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
 
-        unregisterReceiver(mFinishReceiver);
+        if (mFinishReceiver != null) unregisterReceiver(mFinishReceiver);
     }
 
     private void handlePrimaryButtonClick() {
         if (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
         {
             //TODO validate OpenID URLs so they don't hang the WebView
-            String text = mEditText.getText().toString();
+            String text = mEditText.getText().toString().trim();
             if (TextUtils.isEmpty(text)) {
                 //todo turn this string into a resource
                 showAlertDialog("Invalid Input",
                         "The input you have entered is not valid. Please try again.");
             } else {
-                showHideKeyboard(false);
+//                showHideKeyboard(false);
                 mSessionData.getCurrentlyAuthenticatingProvider().setUserInput(text);
                 JRUserInterfaceMaestro.getInstance().showWebView();
             }
         } else {
-            showHideKeyboard(false);
+//            showHideKeyboard(false);
             JRUserInterfaceMaestro.getInstance().showWebView();
         }
     }
@@ -286,7 +297,7 @@ public class JRLandingActivity extends Activity {
             .show();
     }
 
-    public void tryToFinishActivity() {
+    private void tryToFinishActivity() {
         Log.i(TAG, "[tryToFinishActivity]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
@@ -296,27 +307,15 @@ public class JRLandingActivity extends Activity {
     }
 
     private boolean prepareUserInterface() {
-        if (mSessionData.getCurrentlyAuthenticatingProvider() == null) {
-            JREngageError error = new JREngageError(
-                "There was an error authenticating with the selected provider.",
-                JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                JREngageError.ErrorType.AUTHENTICATION_FAILED);
-
-            mSessionData.triggerAuthenticationDidFail(error);
-
-            // TODO:  toast or error dialog???
-            // call finish?
-
-            return false;
-        }
-
-        JRProvider currentlyAuthenticatingProvider = mSessionData.getCurrentlyAuthenticatingProvider();
+        JRProvider currentlyAuthenticatingProvider =
+                mSessionData.getCurrentlyAuthenticatingProvider();
 
         mLayoutHelper.setHeaderText(getCustomTitle());
 
-        mImageView.setImageDrawable(currentlyAuthenticatingProvider.getProviderLogo(getApplicationContext()));
+        mImageView.setImageDrawable(currentlyAuthenticatingProvider.getProviderLogo(this));
 
-        if (currentlyAuthenticatingProvider.getName().equals(mSessionData.getReturningBasicProvider())) {
+        if (currentlyAuthenticatingProvider.getName().equals(
+                mSessionData.getReturningBasicProvider())) {
             configureButtonVisibility(false);
 
             if (currentlyAuthenticatingProvider.requiresInput()) {
@@ -337,8 +336,6 @@ public class JRLandingActivity extends Activity {
                 }
 
                 mEditText.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
-                //mEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
-
             } else {
                 if (Config.LOGD) {
                     Log.d(TAG, "[prepareUserInterface] current provider doesn't require input");
@@ -379,8 +376,8 @@ public class JRLandingActivity extends Activity {
 
     private void configureButtonVisibility(boolean isSingleButtonLayout) {
         if (isSingleButtonLayout) {
-            // TODO: If we go with Gabe/Alexis's suggestions, big button will always be gone and small button
-            // will always be visible... Clean this code up...
+            // TODO: If we go with Gabe/Alexis's suggestions, big button will always be gone and
+            // small button will always be visible... Clean this code up...
             mSwitchAccountButton.setVisibility(View.INVISIBLE);//(View.GONE);
             mSigninButton.setVisibility(View.VISIBLE);//(View.GONE);
 //            mBigSigninButton.setVisibility(View.VISIBLE);
@@ -398,15 +395,15 @@ public class JRLandingActivity extends Activity {
                 : getString(R.string.landing_default_custom_title);
     }
 
-    private void showHideKeyboard(boolean show) {
-        if (show) {
-            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                .showSoftInput(mEditText, 0);
-        } else {
-            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-        }
-    }
+//    private void showHideKeyboard(boolean show) {
+//        if (show) {
+//            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                .showSoftInput(mEditText, 0);
+//        } else {
+//            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                .hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+//        }
+//    }
 
 //    private void focusEditAndPopKeyboard() {
 //        if ((TextUtils.isEmpty(mEditText.getText()) && (mEditText.requestFocus()))) {

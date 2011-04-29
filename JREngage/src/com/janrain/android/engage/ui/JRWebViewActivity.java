@@ -43,8 +43,10 @@ import android.util.Config;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.webkit.*;
 import android.widget.Toast;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -108,10 +110,10 @@ public class JRWebViewActivity extends Activity {
     private SharedLayoutHelper mLayoutHelper;
     private JRSessionData mSessionData;
     private WebView mWebView;
-    private boolean mIsAlertShowing;
-    private boolean mIsFinishPending;
+    private boolean mIsAlertShowing = false;
+    private boolean mIsFinishPending = false;
+    private boolean mIsMobileEndpointUrlLoading = false;
     private FinishReceiver mFinishReceiver;
-    private boolean mIsMobileEndpointUrlLoading;
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -120,12 +122,6 @@ public class JRWebViewActivity extends Activity {
     // ------------------------------------------------------------------------
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
-
-    public JRWebViewActivity() {
-        mIsAlertShowing = false;
-        mIsFinishPending = false;
-        mIsMobileEndpointUrlLoading = false;
-    }
 
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
@@ -145,18 +141,22 @@ public class JRWebViewActivity extends Activity {
      */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
+
+        // Request progress bar
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.provider_webview);
 
         CookieSyncManager.createInstance(this);
-
+        
         mSessionData = JRSessionData.getInstance();
-
-//        if (Config.LOGD) {
-//            Log.d(TAG, "[onCreate] provider: " + provider.getName());
-//        }
-
         mLayoutHelper = new SharedLayoutHelper(this);
-//        mLayoutHelper.showProgressDialog();
+
+//        for the case when this activity is relaunched after the process was killed
+        if (mSessionData == null) {
+            finish();
+            return;
+        }
 
         mWebView = (WebView)findViewById(R.id.webview);
         mWebView.clearView();
@@ -169,9 +169,6 @@ public class JRWebViewActivity extends Activity {
         webSettings.setJavaScriptCanOpenWindowsAutomatically(false);
         webSettings.setSupportZoom(true);
 
-        URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
-        mWebView.loadUrl(startUrl.toString());
-
         JRProvider provider = mSessionData.getCurrentlyAuthenticatingProvider();
         mLayoutHelper.setHeaderText(provider.getFriendlyName());
 
@@ -182,12 +179,19 @@ public class JRWebViewActivity extends Activity {
 
         mWebView.setWebViewClient(mWebviewClient);
         mWebView.setDownloadListener(mWebviewDownloadListener);
+
+        URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
+        mWebView.loadUrl(startUrl.toString());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+    }
 
+    protected void onResume() {
+        super.onResume();
+        JREngage.setContext(this);
     }
 
     protected void onStop() {
@@ -200,19 +204,24 @@ public class JRWebViewActivity extends Activity {
         super.onDestroy();
 
         mLayoutHelper.dismissProgressDialog();
-        unregisterReceiver(mFinishReceiver);
+
+        if (mFinishReceiver != null) unregisterReceiver(mFinishReceiver);
 
 
         //this listener's callback assumes the activity is running, but if the user presses
         //the back button while the webview is transitioning between pages the activity may
         //not be shown when this listener is fired, which would cause a crash, so we unset
         //the listener here.
-        mWebView.setWebViewClient(null);
-        mWebView.setDownloadListener(null);
+        if (mWebView != null) {
+            mWebView.setWebViewClient(null);
+            mWebView.setDownloadListener(null);
+        }
     }
 
     public void onBackPressed() {
+        mWebView.stopLoading();
         mSessionData.triggerAuthenticationDidRestart();
+//        finish();
     }
 
     /**
@@ -222,6 +231,7 @@ public class JRWebViewActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // use the shared menu
         mLayoutHelper.inflateAboutMenu(menu);
+        menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "Refresh");
         return true;
     }
 
@@ -230,6 +240,12 @@ public class JRWebViewActivity extends Activity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getTitle().toString().equals("Refresh")) {
+            Log.d(TAG, "refreshing WebView");
+            mWebView.reload();
+            return true;
+        }
+        
         return mLayoutHelper.handleAboutMenu(item) || super.onOptionsItemSelected(item);
     }
 
@@ -325,6 +341,8 @@ public class JRWebViewActivity extends Activity {
                 Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
             }
 
+            setProgressBarIndeterminateVisibility(true);
+
             super.onPageStarted(view, url, favicon);
         }
 
@@ -339,32 +357,27 @@ public class JRWebViewActivity extends Activity {
 //                mLayoutHelper.dismissProgressDialog();
 //            }
 
+            setProgressBarIndeterminateVisibility(false);
+
             super.onPageFinished(view, url);
         }
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String url) {
+            super.onReceivedError(view, errorCode, description, url);
             Log.e(TAG, "[onReceivedError] code: " + errorCode + " | description: " + description
                 + " | url: " + url);
 
-            super.onReceivedError(view, errorCode, description, url);
+            setProgressBarIndeterminateVisibility(false);
 
-//          mLayoutHelper.dismissProgressDialog();
-//          Toast.makeText(JRWebViewActivity.this, description, Toast.LENGTH_LONG).show();
+//            mIsFinishPending = true;
+            showAlertDialog("Log In Failed", "An error occurred while attempting to sign in.");
 
-            mIsFinishPending = true;
-
-//            JREngageError err = new JREngageError(
-//                    "Authentication failed: " + description,
-//                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-//                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
-
-            showAlertDialog(
-                    "Log In Failed",
-                    "An error occurred while attempting to sign you in.  Please try again."
-                );
-
-            //mSessionData.triggerAuthenticationDidFail(err);
+            JREngageError err = new JREngageError(
+                    "Authentication failed: " + description,
+                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
+            mSessionData.triggerAuthenticationDidFail(err);
         }
     };
 
@@ -374,82 +387,79 @@ public class JRWebViewActivity extends Activity {
 
             mLayoutHelper.dismissProgressDialog();
 
-            if (userdata instanceof String) {
-                final String tag = (String)userdata;
-                if (tag.equals(RPX_RESULT_TAG)) {
-                    JRDictionary payloadDictionary = JRDictionary.fromJSON(payload);
-                    JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
-                    final String result = resultDictionary.getAsString("stat");
-                    if ("ok".equals(result)) {
-                        // back button?
-                        mSessionData.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
+            if (userdata.equals(RPX_RESULT_TAG)) {
+                JRDictionary payloadDictionary = JRDictionary.fromJSON(payload);
+                JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
+                final String result = resultDictionary.getAsString("stat");
+                if ("ok".equals(result)) {
+                    // back button?
+                    mSessionData.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
+                } else {
+                    //todo for OpenID errors we're just firing a dialog and then calling
+                    //finish when it's dismissed in order to get back to the landing page
+                    //instead of calling triggerAuthenticationDidRestart because that would
+                    //return us to the provider selection activity, when the user probably just
+                    //wants to correct a minor OpenID typo.
+                    final String error = resultDictionary.getAsString("error");
+                    String alertTitle, alertMessage, logMessage;
+                    if ("Discovery failed for the OpenID you entered".equals(error) ||
+                            "Your OpenID must be a URL".equals(error)) {
+                        alertTitle = "Invalid Input";
+                        alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
+                                ? String.format("The %s you entered was not valid. Please try again.",
+                                    mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
+                                : "There was a problem authenticating with this provider. Please try again.";
+                        logMessage = "Discovery failed for the OpenID you entered: ";
+
+                        Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
+
+                        mIsFinishPending = true;
+                        showAlertDialog(alertTitle, alertMessage);
+//                            mSessionData.triggerAuthenticationDidRestart();
+                    } else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
+                        alertTitle = "Invalid Input";
+                        alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
+                                ? String.format("The %s you entered was not valid. Please try again.",
+                                mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
+                                : "There was a problem authenticating with this provider. Please try again.";
+                        logMessage = "The URL you entered does not appear to be an OpenID: ";
+
+                        Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
+
+                        mIsFinishPending = true;
+                        showAlertDialog(alertTitle, alertMessage);
+//                            mSessionData.triggerAuthenticationDidRestart();
+                    } else if ("Please enter your OpenID".equals(error)) {
+                        //todo what case is causing this?
+                        //entering a ~blank OpenID URL
+                        //todo verify
+//                            JREngageError err = new JREngageError(
+//                                    "Authentication failed: " + payload,
+//                                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+//                                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
+
+                        mIsFinishPending = true;
+                        showAlertDialog("OpenID Error",
+                                "The URL you entered does not appear to be an OpenID");
+
+//                            mSessionData.triggerAuthenticationDidRestart();
                     } else {
-                        final String error = resultDictionary.getAsString("error");
-                        String alertTitle, alertMessage, logMessage;
-                        if ("Discovery failed for the OpenID you entered".equals(error)) {
-                            alertTitle = "Invalid Input";
-                            alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
-                                    ? String.format("The %s you entered was not valid. Please try again.",
-                                        mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
-                                    : "There was a problem authenticating with this provider. Please try again.";
-                            logMessage = "Discovery failed for the OpenID you entered: ";
+                        Log.e(TAG, "unrecognized error");
+                        JREngageError err = new JREngageError(
+                                "Authentication failed: " + payload,
+                                JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                                JREngageError.ErrorType.AUTHENTICATION_FAILED);
 
-                            Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
+                        showAlertDialog(
+                                "Log In Failed",
+                                "An error occurred while attempting to sign in."
+                            );
 
-                            /*
-                            TODO:  iPhone does this:
-                            [[self navigationController] popViewControllerAnimated:YES];
-                             */
-
-                            //mSessionData.triggerAuthenticationDidFail();
-                            mIsFinishPending = true;
-                            showAlertDialog(alertTitle, alertMessage);
-                        } else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
-                            alertTitle = "Invalid Input";
-                            alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
-                                    ? String.format("The %s you entered was not valid. Please try again.",
-                                        mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
-                                    : "There was a problem authenticating with this provider. Please try again.";
-                            logMessage = "The URL you entered does not appear to be an OpenID: ";
-
-                            Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
-
-                            /*
-                            TODO:  iPhone does this:
-                            [[self navigationController] popViewControllerAnimated:YES];
-
-                             */
-                            mIsFinishPending = true;
-                            showAlertDialog(alertTitle, alertMessage);
-                        } else if ("Please enter your OpenID".equals(error)) {
-                            JREngageError err = new JREngageError(
-                                    "Authentication failed: " + payload,
-                                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
-
-                            //todo verify nearby behavior
-                            // TODO: Is this really what we want to do here?
-                            throw new RuntimeException("unhandled OpenID error");
-                            //mSessionData.triggerAuthenticationDidFail(err);
-                        } else {
-                            JREngageError err = new JREngageError(
-                                    "Authentication failed: " + payload,
-                                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
-
-                            showAlertDialog(
-                                    "Log In Failed",
-                                    "An error occurred while attempting to sign you in.  Please try again."
-                                );
-
-                            mSessionData.triggerAuthenticationDidFail(err);
-                        }
+                        mSessionData.triggerAuthenticationDidFail(err);
                     }
-
-                } else if (tag.equals("request")) {
-                    // connectionDataAlreadyDownloadedThis???
-                    mWebView.loadDataWithBaseURL(requestUrl, payload, null, "utf-8", null);
                 }
+            } else if (userdata.equals("request")) {
+                mWebView.loadDataWithBaseURL(requestUrl, payload, null, "utf-8", null);
             }
         }
 

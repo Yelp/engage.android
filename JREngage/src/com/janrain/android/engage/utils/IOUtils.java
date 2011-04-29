@@ -33,6 +33,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
@@ -170,6 +171,9 @@ public final class IOUtils {
 				ois = new ObjectInputStream(bais);
 				retval = ois.readObject();
 				ois.close();
+			} catch (InvalidClassException e) {
+				Log.e(TAG, "[bytesToObject] InvalidClassException encountered", e);
+				if (shouldThrowOnError) throw e;
 			} catch (StreamCorruptedException e) {
 				Log.e(TAG, "[bytesToObject] StreamCorruptedException encountered", e);
 				if (shouldThrowOnError) throw e;

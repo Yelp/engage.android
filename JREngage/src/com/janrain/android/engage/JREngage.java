@@ -1,4 +1,4 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  Copyright (c) 2010, Janrain, Inc.
  
  All rights reserved.
@@ -98,27 +98,23 @@ public class JREngage {
      *   	<code>appId</code>, <code>tokenUrl</code>, and <code>delegate</code>.  If the given
      *   	<code>appId</code> is <code>null</code>, returns <code>null</code>.
      */
-    public static JREngage initInstance(Context context, String appId, String tokenUrl,
-            JREngageDelegate delegate) {
+    public static JREngage initInstance(Context context,
+                                        String appId,
+                                        String tokenUrl,
+                                        JREngageDelegate delegate) {
+        // todo Throw up a helpful dialog if appId is null? To point devs in the right direction?
 
-        if (sInstance == null) {
+        if (context == null) {
+            Log.e(TAG, "[initialize] context parameter cannot be null.");
+            throw new IllegalArgumentException("context parameter cannot be null.");
+        }
 
-            if (context == null) {
-                Log.e(TAG, "[initialize] context parameter cannot be null.");
-                return null;
-            }
+        if (TextUtils.isEmpty(appId)) {
+            Log.e(TAG, "[initialize] appId parameter cannot be null.");
+            throw new IllegalArgumentException("appId parameter cannot be null.");
+        }
 
-            if (TextUtils.isEmpty(appId)) {
-                Log.e(TAG, "[initialize] appId parameter cannot be null.");
-                return null;
-            }
-
-            sInstance = new JREngage();
-        } //else throw new IllegalArgumentException("illegal reinitialization in JREngage.initInstance");
-
-        //todo this can happen if the user exits the activity via the home button or something and the phone
-        //doesn't kill the app, so it shouldn't be an error, but there's suspect statefulness here regardless
-        //since we're just discarding the parameters
+        if (sInstance == null) sInstance = new JREngage();
         sInstance.initialize(context, appId, tokenUrl, delegate);
 
         return sInstance;
@@ -144,6 +140,10 @@ public class JREngage {
         return (sInstance == null) ? null : sInstance.mContext;
 	}
 
+    public static void setContext(Context c) {
+        sInstance.mContext = c;
+    }
+
     // ------------------------------------------------------------------------
     // FIELDS
     // ------------------------------------------------------------------------
@@ -151,11 +151,11 @@ public class JREngage {
     // Application context
     private Context mContext;
 
-    // Application ID string
-    private String mAppId;
-
-    // Token URL
-    private String mTokenUrl;
+//    // Application ID string
+//    private String mAppId;
+//
+//    // Token URL
+//    private String mTokenUrl;
 
 	// Holds configuration and state for the JREngage library
 	private JRSessionData mSessionData;
@@ -199,19 +199,19 @@ public class JREngage {
 	/*
 	 * Initializer.
 	 */
-	private void initialize(Context context, String appId, String tokenUrl, JREngageDelegate delegate) {
+	private void initialize(Context context,
+                            String appId,
+                            String tokenUrl,
+                            JREngageDelegate delegate) {
         mContext = context;
-        mAppId = appId;
-        mTokenUrl = tokenUrl;
         mDelegates = new ArrayList<JREngageDelegate>();
         if (delegate != null) {
             mDelegates.add(delegate);
         }
-        mSessionData = JRSessionData.getInstance(mAppId, mTokenUrl, mJRSD);
+
+        mSessionData = JRSessionData.getInstance(appId, tokenUrl, mJRSD);
         mInterfaceMaestro = JRUserInterfaceMaestro.getInstance();
 	}
-
-
 
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
@@ -275,7 +275,10 @@ public class JREngage {
             mInterfaceMaestro.authenticationFailed();
         }
 
-        public void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders headers, String payload, String provider) {
+        public void authenticationDidReachTokenUrl(String tokenUrl,
+                                                   HttpResponseHeaders headers,
+                                                   String payload,
+                                                   String provider) {
             if (Config.LOGD) {
                 Log.d(TAG, "[authenticationDidReachTokenUrl]");
             }
@@ -286,7 +289,9 @@ public class JREngage {
             }
         }
 
-        public void authenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
+        public void authenticationCallToTokenUrlDidFail(String tokenUrl,
+                                                        JREngageError error,
+                                                        String provider) {
             if (Config.LOGD) {
                 Log.d(TAG, "[authenticationCallToTokenUrlDidFail]");
             }
@@ -296,14 +301,14 @@ public class JREngage {
             }
         }
 
-        public void publishingDidRestart() {
-            if (Config.LOGD) {
-                Log.d(TAG, "[publishingDidRestart]");
-            }
-
-            // TODO:  implement UI stuff
-            // interfaceMaestro.publishingRestarted();
-        }
+//        public void publishingDidRestart() {
+//            if (Config.LOGD) {
+//                Log.d(TAG, "[publishingDidRestart]");
+//            }
+//
+//            // TODO:  implement UI stuff
+//            // interfaceMaestro.publishingRestarted();
+//        }
 
         public void publishingDidCancel() {
             if (Config.LOGD) {
@@ -345,7 +350,9 @@ public class JREngage {
             }
         }
 
-        public void publishingJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
+        public void publishingJRActivityDidFail(JRActivityObject activity,
+                                                JREngageError error,
+                                                String provider) {
             if (Config.LOGD) {
                 Log.d(TAG, "[publishingJRActivityDidFail]");
             }
@@ -360,11 +367,6 @@ public class JREngage {
         public void mobileConfigDidFinish() {}
     };
 
-    /*
-     * TODO:  See setCustomNavigationController in iPhone code.  Do we need this?
-     */
-
-
     public JRAuthenticatedUser getUserForProvider(String provider) {
         if (Config.LOGD) {
             Log.d(TAG, "[getUserForProvider]");
@@ -372,8 +374,6 @@ public class JREngage {
         return mSessionData.authenticatedUserForProviderNamed(provider);
     }
 
-
-    //todo xxx the following four functions all call the same JRSessionData methods but they should do different things.
     public void signoutUserForProvider(String provider) {
         if (Config.LOGD) {
             Log.d(TAG, "[signoutUserForProvider]");
@@ -388,23 +388,9 @@ public class JREngage {
         mSessionData.forgetAllAuthenticatedUsers();
     }
 
-    public void signoutUserForSocialProvider(String provider) {
+    public void setAlwaysForceReauthentication(boolean force) {
         if (Config.LOGD) {
-            Log.d(TAG, "[signoutUserForSocialProvider]");
-        }
-        mSessionData.forgetAuthenticatedUserForProvider(provider);
-    }
-
-    public void signoutUserForAllSocialProviders() {
-        if (Config.LOGD) {
-            Log.d(TAG, "[signoutUserForAllSocialProviders]");
-        }
-        mSessionData.forgetAllAuthenticatedUsers();
-    }
-
-    public void alwaysForceReauthentication(boolean force) {
-        if (Config.LOGD) {
-            Log.d(TAG, "[alwaysForceReauthentication]");
+            Log.d(TAG, "[setAlwaysForceReauthentication]");
         }
         mSessionData.setAlwaysForceReauth(force);
     }
@@ -423,13 +409,12 @@ public class JREngage {
         mSessionData.triggerPublishingDidCancel();
     }
 
-    public void updateTokenUrl(String newTokenUrl) {
+    public void setTokenUrl(String newTokenUrl) {
         if (Config.LOGD) {
-            Log.d(TAG, "[updateTokenUrl]");
+            Log.d(TAG, "[setTokenUrl]");
         }
         mSessionData.setTokenUrl(newTokenUrl);
     }
-
 
     // ------------------------------------------------------------------------
     // METHODS
@@ -455,30 +440,46 @@ public class JREngage {
         }
     }
 
-	public void showAuthenticationDialog() {
-		if (Config.LOGD) { 
-			Log.d(TAG, "[showProviderSelectionDialog]");
-		}
-
+    private boolean checkSessionDataError() {
         /* If there was error configuring the library, sessionData.error will not be null. */
         JREngageError error = mSessionData.getError();
-		if (error != null) {
+        if (error != null) {
             /* If there was an error, send a message to the delegates, release the error, then
-            attempt to restart the configuration.  If, for example, the error was temporary
-            (network issues, etc.) reattempting to configure the library could end successfully.
-            Since configuration may happen before the user attempts to use the library, if the
-            user attempts to use the library at all, we only try to reconfigure when the library
-            is needed. */
+          attempt to restart the configuration.  If, for example, the error was temporary
+          (network issues, etc.) reattempting to configure the library could end successfully.
+          Since configuration may happen before the user attempts to use the library, if the
+          user attempts to use the library at all, we only try to reconfigure when the library
+          is needed. */
             if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
                 engageDidFailWithError(error);
                 mSessionData.tryToReconfigureLibrary();
 
-                return;
+                return true;
             }
         }
+        return false;
+    }
+
+    public void showAuthenticationDialog() {
+        if (Config.LOGD) {
+            Log.d(TAG, "[showProviderSelectionDialog]");
+        }
+
+        if (checkSessionDataError()) return;
 
         mInterfaceMaestro.showProviderSelectionDialog();
-	}
+    }
+
+//    public void showAuthenticationDialog(boolean forceReauth) {
+//        if (Config.LOGD) {
+//            Log.d(TAG, "[showAuthenticationDialog(boolean forceReath)]");
+//        }
+//
+//        if (checkSessionDataError()) return;
+//
+//        mInterfaceMaestro.showProviderSelectionDialog(forceReauth);
+//
+//    }
 
     public void showSocialPublishingDialogWithActivity(JRActivityObject activity) {
         if (Config.LOGD) {
@@ -486,21 +487,7 @@ public class JREngage {
         }
 
         /* If there was error configuring the library, sessionData.error will not be null. */
-        JREngageError error = mSessionData.getError();
-		if (error != null) {
-            /* If there was an error, send a message to the delegates, release the error, then
-            attempt to restart the configuration.  If, for example, the error was temporary
-            (network issues, etc.) reattempting to configure the library could end successfully.
-            Since configuration may happen before the user attempts to use the library, if the
-            user attempts to use the library at all, we only try to reconfigure when the library
-            is needed. */
-            if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
-                engageDidFailWithError(error);
-                mSessionData.tryToReconfigureLibrary();
-
-                return;
-            }
-        }
+        if (checkSessionDataError()) return;
 
 
         if (activity == null) {
@@ -511,7 +498,7 @@ public class JREngage {
             ));
         }
 
-        mSessionData.setActivity(activity);
+        mSessionData.setJRActivity(activity);
 
         mInterfaceMaestro.showPublishingDialogWithActivity();
 
