@@ -48,8 +48,8 @@ public class FeedData implements JREngageDelegate {
     private static final String ARCHIVE_STORIES_ARRAY = "storiesArray";
     private static final String ARCHIVE_STORY_LINKS_HASH = "storyLinksHash";
 
-//    private static final String ENGAGE_APP_ID = "";
-//    private static final String ENGAGE_TOKEN_URL = "";
+    private static final String ENGAGE_APP_ID = "";
+    private static final String ENGAGE_TOKEN_URL = "";
 
     private static FeedData sInstance;
 

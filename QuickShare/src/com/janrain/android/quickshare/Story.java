@@ -25,6 +25,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -171,13 +173,86 @@ public class Story implements Serializable {
     }
 
     public String getDescription() {
-//        if (!mDescriptionImagesAlreadyScaled)
-//            scaleDescriptionImages();
+        if (!mDescriptionImagesAlreadyScaled)
+            scaleDescriptionImages();
 
             return mDescription;
     }
 
     private void scaleDescriptionImages() {
+        String[] splitDescription = mDescription.split("<img ", -1);
+
+        int length = splitDescription.length;
+
+        String newDescription = splitDescription[0];
+
+        for (int i=1; i<length; i++) {
+            Log.d(TAG, "[scaleDescriptionImages] " + ((Integer)i).toString() + ": " + splitDescription[i]);
+
+            try {
+                Pattern pattern = Pattern.compile("(.+?)style=\"(.+?)\"(.+?)/>(.+)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+                Matcher matcher = pattern.matcher(splitDescription[i]);
+
+                Log.d(TAG, "[scaleDescriptionImages] matcher matches?: " + (matcher.matches() ? "yes" : "no"));
+    //            Log.d(TAG, "[scaleDescriptionImages] matched groups: " + ((Integer)matcher.groupCount()).toString());
+
+                for (int j=1; j<=matcher.groupCount(); j++)
+                    Log.d(TAG, "[scaleDescriptionImages] matched group " + ((Integer)j).toString() + ": " + matcher.group(j));
+
+                newDescription += "<img " + matcher.group(1) +
+                        "style=\"" + newWidthAndHeight(matcher.group(2)) + "\"" +
+                        matcher.group(3) + "/>" + matcher.group(4);
+            } catch (IllegalStateException e) {
+                Log.d(TAG, "[scaleDescriptionImages] exception: " + e.getLocalizedMessage());
+                newDescription += "<img " + splitDescription[i];
+            }
+        }
+
+        Log.d(TAG, "[scaleDescriptionImages] newDescription: " + newDescription);
+
+        mDescription = newDescription;
+    }
+
+    private String newWidthAndHeight(String style) {
+//        if (style != null)
+//            return style;
+
+        Pattern patternWidth = Pattern.compile("(.*?)width:(.+?)px(.*)", Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
+        Pattern patternHeight = Pattern.compile("(.*?)height:(.+?)px(.*)", Pattern.CASE_INSENSITIVE);
+
+        Matcher matcherWidth = patternWidth.matcher(style);
+        Matcher matcherHeight = patternHeight.matcher(style);
+
+        Log.d(TAG, "[newWidthAndHeight] matchers match style (" + style + ")?: " +
+                (matcherWidth.matches() ? "width=yes and " : "width=no and ") +
+                (matcherHeight.matches() ? "height=yes" : "height=no"));
+
+        if (!matcherWidth.matches() || !matcherHeight.matches())
+            return style;
+
+        Integer width;
+        Integer height;
+
+        try {
+            width = new Integer(matcherWidth.group(2).trim());
+            height = new Integer(matcherHeight.group(2).trim());
+        } catch (NumberFormatException e) { return style; }
+
+        if (width <= 280)
+            return style;
+
+        Double ratio = width / 280.0;
+        Integer newHeight = (new Double(height / ratio)).intValue();
+
+        Log.d(TAG, "[newWidthAndHeight] style before: " + style);
+        style = style.replace("width:" + matcherWidth.group(2) + "px", "width: 280px");
+        style = style.replace("height:" + matcherHeight.group(2) + "px", "height: " + newHeight.toString() + "px");
+        Log.d(TAG, "[newWidthAndHeight] style after: " + style);
+
+        return style;
+    }
+
+    private void scaleDescriptionImages_old() {
         //String unescapedDescription = Html.fromHtml(mDescription);
         
         Log.d(TAG, "[scaleDescriptionImages] description before scale: " + mDescription);
@@ -248,8 +323,6 @@ public class Story implements Serializable {
         return mImageUrls;
     }
 
-//    public ScaleDrawable getImage() {
-//    public BitmapDrawable getImage() {
     public Bitmap getImage() {
         return mImage;
     }
