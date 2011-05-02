@@ -15,6 +15,7 @@ import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.types.JRImageMediaObject;
 import com.janrain.android.engage.utils.Archiver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -285,6 +286,8 @@ public class FeedData implements JREngageDelegate {
 
         activityObject.setTitle(mCurrentStory.getTitle());
         activityObject.setDescription(mCurrentStory.getPlainText());
+        activityObject.setMedia(new JRImageMediaObject(
+                mCurrentStory.getImageUrls().get(0), mCurrentStory.getImageUrls().get(0)));
 
         mEngage.showSocialPublishingDialogWithActivity(activityObject);
     }
