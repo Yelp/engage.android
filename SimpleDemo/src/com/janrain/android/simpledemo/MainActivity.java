@@ -66,6 +66,9 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
     private static final int DIALOG_JRENGAGE_ERROR = 1;
 
+//    private static final String ENGAGE_APP_ID = <YOUR_APP_ID>;
+    private static final String ENGAGE_TOKEN_URL = null;
+
     private String readAsset(String fileName) {
         try {
             InputStream is = getAssets().open(fileName);
