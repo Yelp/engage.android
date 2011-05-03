@@ -992,7 +992,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         String deviceToken = user.getDeviceToken();
 
         String activityContent;
-        JRDictionary activityDictionary = mActivity.dictionaryForObject();
+        JRDictionary activityDictionary = mActivity.toJRDictionary();
         try {
             String activityJSON = activityDictionary.toJSON();
             activityContent = URLEncoder.encode(activityJSON, "UTF-8");

@@ -117,5 +117,29 @@ public interface JRSessionDelegate {
      * Triggered when JRSessionData has finished loading the mobile configuration
      */
     void mobileConfigDidFinish();
+
+    public static abstract class SimpleJRSessionDelegate implements JRSessionDelegate {
+        public void authenticationDidRestart() {}
+        public void authenticationDidCancel() {}
+        public void authenticationDidComplete(String token, String provider) {}
+        public void authenticationDidComplete(JRDictionary profile, String provider) {}
+        public void authenticationDidFail(JREngageError error, String provider) {}
+        public void authenticationDidReachTokenUrl(String tokenUrl,
+                                                   HttpResponseHeaders response,
+                                                   String payload,
+                                                   String provider) {}
+        public void authenticationCallToTokenUrlDidFail(String tokenUrl,
+                                                        JREngageError error,
+                                                        String provider) {}
+        public void publishingDidRestart() {}
+        public void publishingDidCancel() {}
+        public void publishingDidComplete() {}
+        public void publishingJRActivityDidSucceed(JRActivityObject activity, String provider) {}
+        public void publishingDialogDidFail(JREngageError error) {}
+        public void publishingJRActivityDidFail(JRActivityObject activity,
+                                                JREngageError error,
+                                                String provider) {}
+        public void mobileConfigDidFinish() {}
+    }
 }
 

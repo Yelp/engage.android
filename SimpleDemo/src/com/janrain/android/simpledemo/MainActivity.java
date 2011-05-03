@@ -174,6 +174,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
                     mTitleText = title.getFirstChild().getNodeValue();
                     mActionLink = link.getFirstChild().getNodeValue();
+                    Log.d(TAG, "Action Link: " + mActionLink);
 
                     //need to concatenate all the children of the description element (which has
                     // ~100s of TextElement children) in order to come up with the complete
@@ -244,10 +245,8 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         if (view == mBtnTestAuth) {
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
-            //JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!",
-            //  mActionLink);
             JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!",
-                    "");
+                mActionLink);
             jra.setTitle(mTitleText);
             jra.setDescription(mDescriptionText);
             jra.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));

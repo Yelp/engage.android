@@ -92,17 +92,17 @@ public final class StringUtils {
      * @return
      *      The JSONified string.
      */
-    public static String toJSON(String str) {
-        String retval = null;
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            retval = mapper.writeValueAsString(str);
-        } catch (IOException e) {
-            Log.w(TAG, "[toJSON] problem serializing JSON string: ", e);
-        }
-
-        return retval;
-    }
+    //public static String toJSON(String str) {
+    //    String retval = null;
+    //    try {
+    //        ObjectMapper mapper = new ObjectMapper();
+    //        retval = mapper.writeValueAsString(str);
+    //    } catch (IOException e) {
+    //        Log.w(TAG, "[toJSON] problem serializing JSON string: ", e);
+    //    }
+    //
+    //    return retval;
+    //}
 
     /**
      * Converts the byte array to String using UTF-8 encoding.
@@ -121,6 +121,10 @@ public final class StringUtils {
         try {
             return new String(bytes, UTF8);
         } catch (UnsupportedEncodingException e) {
+            // todo:
+            // if we get an unsupported encoding exception for utf-8 that's a very very bad thing
+            // so there should not be code to handle that exception short of rethrowing it as a
+            // runtime exception.
             return defaultStr;
         }
     }
@@ -195,11 +199,11 @@ public final class StringUtils {
         return retval;
     }
 
-    public static String generateStackTrace(String msg) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        new Exception(msg).printStackTrace(new PrintStream(baos));
-        return baos.toString();
-    }
+    //public static String generateStackTrace(String msg) {
+    //    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    //    new Exception(msg).printStackTrace(new PrintStream(baos));
+    //    return baos.toString();
+    //}
 
 
     // ------------------------------------------------------------------------

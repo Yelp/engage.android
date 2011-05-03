@@ -33,36 +33,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class JREmailObject {
-    private String mSubject, mBody;
-    //private boolean mHtml;
+public class JRSmsObject {
+    private String mBody;
     private List<String> mUrls;
     private List<String> mShortUrls;
 
-    public JREmailObject() {
-        this("", "");
+    public JRSmsObject() {
+        this("");
     }
 
-    public JREmailObject(String subject, String body) {
-        if (subject == null) subject = "";
+    public JRSmsObject(String body) {
         if (body == null) body = "";
 
-        mSubject = subject;
         mBody = body;
-        //mHtml = false;
         mUrls = new ArrayList<String>();
     }
 
     void setShortUrls(List<String> shortUrls) {
         mShortUrls = shortUrls;
-    }
-
-    public String getSubject() {
-        return mSubject;
-    }
-
-    public void setSubject(String subject) {
-        mSubject = subject;
     }
 
     public String getBody() {
@@ -73,14 +61,6 @@ public class JREmailObject {
         mBody = body;
     }
 
-    //public void setHtml(boolean html) {
-    //    mHtml = html;
-    //}
-    //
-    //public boolean getHtml() {
-    //    return mHtml;
-    //}
-
     public List<String> getUrls() {
         return Collections.unmodifiableList(mUrls);
     }
@@ -88,14 +68,14 @@ public class JREmailObject {
     public void setUrls(List<String> urls) {
         if (urls == null) urls = new ArrayList<String>();
         if (urls.size() >= 5) throw
-                new IllegalArgumentException("JREmailObject supports a max of five URLs");
+                new IllegalArgumentException("JRSmsObject supports a max of five URLs");
 
         mUrls = urls;
     }
 
     public void addUrl(String url) {
         if (mUrls.size() >= 5) throw
-                new IllegalArgumentException("JREmailObject supports a max of five URLs");
+                new IllegalArgumentException("JRSmsObject supports a max of five URLs");
 
         mUrls.add(url);
     }
