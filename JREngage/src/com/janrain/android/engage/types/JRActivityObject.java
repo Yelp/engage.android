@@ -207,7 +207,7 @@ public class JRActivityObject {
         public void setShortenedUrl(String shortenedUrl);
     }
 
-    public void getShortenedUrls(final ShortenedUrlCallback callback) {
+    public void shortenUrls(final ShortenedUrlCallback callback) {
         final JRSessionData sessionData = JRSessionData.getInstance();
         try {
             // todo invoke when the activity object is created (or maybe when publish is called?)

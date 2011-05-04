@@ -60,21 +60,16 @@ import android.widget.*;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
-import com.janrain.android.engage.net.JRConnectionManager;
-import com.janrain.android.engage.net.JRConnectionManagerDelegate;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRAuthenticatedUser;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.*;
-import org.json.*;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +82,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     //private static final int DIALOG_SUCCESS = 2;
     private static final int DIALOG_CONFIRM_SIGNOUT = 3;
     private static final int DIALOG_MOBILE_CONFIG_LOADING = 4;
-    private static final int LIGHT_BLUE_BACKGROUND = 0xFF1A557C;
+    //private static final int LIGHT_BLUE_BACKGROUND = 0xFF1A557C;
     private static final int JANRAIN_BLUE_20PERCENT = 0x33074764;
     private static final int JANRAIN_BLUE_100PERCENT = 0xFF074764;
     private static final String EMAIL_SMS_TAB_TAG = "email_sms";
@@ -138,27 +133,27 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     //private FinishReceiver mFinishReceiver;
 
-    //reference to the library model
+    // Reference to the library model
     private JRSessionData mSessionData;
     private JRSessionDelegate mSessionDelegate; //call backs for JRSessionData
 
-    //JREngage objects we're operating with
+    // JREngage objects we're operating with
     private JRProvider mSelectedProvider; //the provider for the selected tab
     private JRAuthenticatedUser mAuthenticatedUser; //the user (if logged in) for the selected tab
     private JRActivityObject mActivityObject;
 
-    //UI properties
+    // UI properties
     private String mShortenedActivityURL = null; //null if it hasn't been shortened
     private int mMaxCharacters;
     private String mDialogErrorMessage;
 
-    //UI state transitioning variables
+    // UI state transitioning variables
     //private boolean mUserHasEditedText = false;
     private boolean mWeHaveJustAuthenticated = false;
     //private boolean mWeAreCurrentlyPostingSomething = false;
-    private boolean mWeAreWaitingForMobileConfig = false;
+    private boolean mWaitingForMobileConfig = false;
 
-    //UI views
+    // UI views
     private RelativeLayout mPreviewBorder;
     private RelativeLayout mPreviewBox;
     private RelativeLayout mMediaContentView;
@@ -183,10 +178,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
 
-    //a helper class used to control display of a nice loading dialog
+    // Helper class used to control display of a nice loading dialog
     private SharedLayoutHelper mLayoutHelper;
 
-    //a helper class for the JRUserInterfaceMaestro
+    // Helper class for the JRUserInterfaceMaestro
     private FinishReceiver mFinishReceiver;
 
     // Activity life-cycle methods
@@ -212,7 +207,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             poweredBy.setVisibility(View.GONE);
         }
 
-        //View References
+        // View References
         mPreviewBox = (RelativeLayout) findViewById(R.id.preview_box);
         mPreviewBorder = (RelativeLayout) findViewById(R.id.preview_box_border);
         mMediaContentView = (RelativeLayout) findViewById(R.id.media_content_view);
@@ -238,7 +233,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSmsButton = (Button) findViewById(R.id.sms_button);
         mEmailSmsComment = (EditText) findViewById(R.id.email_sms_edit_comment);
 
-        //View listeners
+        // View listeners
         mEmailButton.setOnClickListener(mEmailSmsButtonListener);
         mSmsButton.setOnClickListener(mEmailSmsButtonListener);
         ButtonEventColorChangingListener colorChangingListener =
@@ -259,13 +254,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mJustShareButton.setOnFocusChangeListener(colorChangingListener);
         mJustShareButton.setOnTouchListener(colorChangingListener);
 
-        //initialize the provider shared-ness state map.
+        // initialize the provider shared-ness state map.
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
 
-        //SharedLayoutHelper is a spinner dialog class
+        // SharedLayoutHelper is a spinner dialog class
         mLayoutHelper = new SharedLayoutHelper(this);
 
-        //JRUserInterfaceMaestro's hook into calling this.finish()
+        // JRUserInterfaceMaestro's hook into calling this.finish()
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
@@ -281,7 +276,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if ((socialProviders == null || socialProviders.size() == 0)
                 && !mSessionData.isGetMobileConfigDone()) {
-            mWeAreWaitingForMobileConfig = true;
+            mWaitingForMobileConfig = true;
             showDialog(DIALOG_MOBILE_CONFIG_LOADING);
         } else {
             initializeWithProviderConfiguration();
@@ -294,7 +289,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void loadViewElementPropertiesWithActivityObject() {
-        // this sets up pieces of the UI before the provider configuration information
+        // This sets up pieces of the UI before the provider configuration information
         // has been loaded
 
         JRMediaObject mo = null;
@@ -304,7 +299,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         final TextView  mcd = (TextView)  findViewById(R.id.media_content_description);
         final TextView  mct = (TextView)  findViewById(R.id.media_content_title);
 
-        //set the media_content_view = a thumbnail of the media
+        // Set the media_content_view = a thumbnail of the media
         if (mo != null) if (mo.hasThumbnail()) {
             Log.d(TAG, "media image url: " + mo.getThumbnail());
             //there was a bug here, openstream is IO blocking, so moved that call into an asynctask
@@ -333,10 +328,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             }.execute(mo);
         }
 
-        //set the media content description
+        // Set the media content description
         mcd.setText(mActivityObject.getDescription());
 
-        //set the media content title
+        // Set the media content title
         mct.setText(mActivityObject.getTitle());
     }
 
@@ -352,8 +347,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             return;
         }
 
-        // configure the properties of the UI
-        mActivityObject.getShortenedUrls(new JRActivityObject.ShortenedUrlCallback() {
+        // Configure the properties of the UI
+        mActivityObject.shortenUrls(new JRActivityObject.ShortenedUrlCallback() {
             public void setShortenedUrl(String shortenedUrl) {
                 mShortenedActivityURL = shortenedUrl;
 
@@ -420,16 +415,18 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         LinearLayout ll = new LinearLayout(this);
         ll.setOrientation(LinearLayout.VERTICAL);
 
-        ImageView ib = new ImageView(this);
-        ib.setImageDrawable(providerIconSet);
-        ib.setPadding(
+        // Icon
+        ImageView icon = new ImageView(this);
+        icon.setImageDrawable(providerIconSet);
+        icon.setPadding(
                 scaleDipPixels(10),
                 scaleDipPixels(10),
                 scaleDipPixels(10),
                 scaleDipPixels(3)
         );
-        ll.addView(ib);
+        ll.addView(icon);
 
+        // Background
         StateListDrawable tabBackground = new StateListDrawable();
         tabBackground.addState(new int[]{android.R.attr.state_selected},
                 getResources().getDrawable(android.R.color.transparent));
@@ -437,17 +434,19 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 getResources().getDrawable(android.R.color.darker_gray));
         ll.setBackgroundDrawable(tabBackground);
 
-        TextView tv = new TextView(this);
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
-        tv.setText(labelText);
-        tv.setGravity(Gravity.CENTER);
-        tv.setPadding(
+        // Label
+        TextView label = new TextView(this);
+        label.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+        label.setText(labelText);
+        label.setGravity(Gravity.CENTER);
+        label.setPadding(
                 scaleDipPixels(0),
                 scaleDipPixels(0),
                 scaleDipPixels(0),
                 scaleDipPixels(4)
         );
-        ll.addView(tv);
+        ll.addView(label);
+
         return ll;
     }
 
@@ -482,8 +481,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             mPreviewBox.setVisibility(View.GONE);
+            mEmailSmsComment.setLines(3);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             mPreviewBox.setVisibility(View.VISIBLE);
+            mEmailSmsComment.setLines(4);
         }
     }
 
@@ -619,7 +620,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 mProvidersThatHaveAlreadyShared.put(k, false);
             
             showActivityAsShared(false);
-
         }
     };
 
@@ -628,18 +628,16 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (tabId.equals(EMAIL_SMS_TAB_TAG)) {
             mEmailSmsComment.setText(mUserCommentView.getText());
+        } else { // ... else a "real" provider -- Facebook, Twitter, etc.
+            mSelectedProvider = mSessionData.getProviderByName(tabId);
+    
+            configureViewElementsBasedOnProvider();
+            configureLoggedInUserBasedOnProvider();
+            configureSharedStatusBasedOnProvider();
 
-            return;
+            mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(
+                    getApplicationContext()));
         }
-
-        mSelectedProvider = mSessionData.getProviderByName(tabId);
-
-        configureViewElementsBasedOnProvider();
-        configureLoggedInUserBasedOnProvider();
-        configureSharedStatusBasedOnProvider();
-
-        mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(
-                getApplicationContext()));
     }
 
     private View.OnClickListener mEmailSmsButtonListener = new View.OnClickListener() {
@@ -667,26 +665,32 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 // MIME type is not valid (normally it would be text/plain) but the email apps respond
                 // to ACTION_SEND type */* so it works.
                 // The reason that using ACTION_SENDTO with a URI with scheme mailto: does not work is
-                // that the "Email" platform app fills the To: field with a single comma.
+                // that the "Email" app fills the To: field with a single comma.
                 // (Because it's expecting an actual email address in the URI, but we're not
                 // supplying one, we're supplying only a scheme.)
                 intent.setType("plain/text");
                 //intent.setData(Uri.parse("mailto:"));
                 intent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
                 intent.putExtra(android.content.Intent.EXTRA_TEXT, body);
-            } else {
+            } else { // ... else SMS button
                 JRSmsObject jrSms = mActivityObject.getSms();
                 String body;
 
                 if (jrSms == null) {
                     body = mUserCommentView.getText().toString();
                 } else {
-                    body = mUserCommentView.getText().toString() + "\n------\n" + jrSms.getBody();
+                    body = mUserCommentView.getText().toString() + "\n" + jrSms.getBody();
                 }
 
-                intent = new Intent(android.content.Intent.ACTION_SENDTO);
-                intent.setData(Uri.parse("sms:"));
-                intent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+                // Google Voice does not respect passing the body, so this Intent is constructed
+                // specifically to be responded to only by Mms (the platform messaging app).
+                //intent = new Intent(android.content.Intent.ACTION_SEND);
+                intent = new Intent(android.content.Intent.ACTION_VIEW);
+                intent.setType("vnd.android-dir/mms-sms");
+                //intent.setData(Uri.parse("smsto:"));
+                //intent.setData(Uri.parse("sms:"));
+                //intent.putExtra(android.content.Intent.EXTRA_TEXT, body.substring(0,130));
+                intent.putExtra("sms_body", body.substring(0,139));
             }
 
             //Intent chooser = Intent.createChooser(intent, getString(R.string.choose_email_handler));
@@ -1229,9 +1233,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             }
 
             public void mobileConfigDidFinish() {
-                if (mWeAreWaitingForMobileConfig) {
+                if (mWaitingForMobileConfig) {
                     dismissDialog(DIALOG_MOBILE_CONFIG_LOADING);
-                    mWeAreWaitingForMobileConfig = false;
+                    mWaitingForMobileConfig = false;
                     initializeWithProviderConfiguration();
                 }
             }

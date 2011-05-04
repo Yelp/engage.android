@@ -55,6 +55,11 @@ public class JREmailObject {
 
     void setShortUrls(List<String> shortUrls) {
         mShortUrls = shortUrls;
+
+        for (String longUrl : mUrls) {
+            String shortUrl = mShortUrls.get(mUrls.indexOf(longUrl));
+            mBody = mBody.replace(longUrl, shortUrl);
+        }
     }
 
     public String getSubject() {
