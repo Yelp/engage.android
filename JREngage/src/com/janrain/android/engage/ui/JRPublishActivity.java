@@ -710,6 +710,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             //intent.setData(Uri.parse("sms:"));
             //intent.putExtra(android.content.Intent.EXTRA_TEXT, body.substring(0,130));
             intent.putExtra("sms_body", body.substring(0, Math.min(139, body.length())));
+            intent.putExtra("exit_on_sent", true);
 
             startActivityForResult(intent, 0);
             mSessionData.notifyEmailSmsShare("sms");
@@ -724,6 +725,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //int lastProviderIndex = mSessionData.getSocialProviders().indexOf(mSelectedProvider);
         //getTabHost().setCurrentTab(lastProviderIndex);
         mUserCommentView.setText(mEmailSmsComment.getText());
+
+        // Email and SMS intents are returning 0, 0, null
+        Log.d(TAG, "[onActivityResult]: requestCode=" + requestCode + " resultCode=" + resultCode
+                + " data=" + data);
     }
 
     public Dialog onCreateDialog(int id) {
