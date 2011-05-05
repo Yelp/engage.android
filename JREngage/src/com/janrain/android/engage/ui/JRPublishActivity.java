@@ -175,6 +175,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private Button mEmailButton;
     private Button mSmsButton;
     private EditText mEmailSmsComment;
+    private LinearLayout mEmailSmsButtonContainer;
 
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
 
@@ -232,6 +233,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mEmailButton = (Button) findViewById(R.id.email_button);
         mSmsButton = (Button) findViewById(R.id.sms_button);
         mEmailSmsComment = (EditText) findViewById(R.id.email_sms_edit_comment);
+        mEmailSmsButtonContainer = (LinearLayout) findViewById(R.id.email_sms_button_container);
 
         // View listeners
         mEmailButton.setOnClickListener(mEmailSmsButtonListener);
@@ -485,9 +487,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             mPreviewBox.setVisibility(View.GONE);
             mEmailSmsComment.setLines(3);
+            mEmailSmsButtonContainer.setOrientation(LinearLayout.HORIZONTAL);
+            //mEmailButton.setl
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             mPreviewBox.setVisibility(View.VISIBLE);
             mEmailSmsComment.setLines(4);
+            mEmailSmsButtonContainer.setOrientation(LinearLayout.VERTICAL);
         }
     }
 
@@ -655,7 +660,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                     body = mUserCommentView.getText().toString();
                     subject = getString(R.string.default_email_share_subject);
                 } else {
-                    body = mUserCommentView.getText().toString() + "\n------\n" + jrEmail.getBody();
+                    body = mUserCommentView.getText().toString() + "\n" + jrEmail.getBody();
                     subject = TextUtils.isEmpty(jrEmail.getSubject()) ?
                             getString(R.string.default_email_share_subject)
                             : jrEmail.getSubject();
@@ -693,7 +698,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 //intent.setData(Uri.parse("smsto:"));
                 //intent.setData(Uri.parse("sms:"));
                 //intent.putExtra(android.content.Intent.EXTRA_TEXT, body.substring(0,130));
-                intent.putExtra("sms_body", body.substring(0,139));
+                intent.putExtra("sms_body", body.substring(0,Math.min(139, body.length())));
             }
 
             //Intent chooser = Intent.createChooser(intent, getString(R.string.choose_email_handler));

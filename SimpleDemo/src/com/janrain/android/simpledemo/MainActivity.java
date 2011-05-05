@@ -134,6 +134,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
             mDescriptionText = savedInstanceState.getString("b");
             mImageUrl = savedInstanceState.getString("c");
             mActionLink = savedInstanceState.getString("d");
+            mDescriptionHtml = savedInstanceState.getString("e");
             mBtnTestPub.setText("Test Publishing");
             Log.d(TAG, "restoring savedInstanceState: (" + mTitleText + ", " + mDescriptionText +
                 ", " + mImageUrl + ", " + mActionLink + ")");
@@ -154,16 +155,24 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         mActivity.setDescription(mDescriptionText);
         mActivity.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
 
-        List<String> urls = new ArrayList<String>();
-        Pattern urlPattern = Pattern.compile("(https?://[\\S]{4,})");
-        Matcher urlMatcher = urlPattern.matcher(mDescriptionHtml);
-        while (urls.size() < 5 && urlMatcher.find()) urls.add(urlMatcher.group());
+        //List<String> urls = new ArrayList<String>();
+        //Pattern urlPattern = Pattern.compile("(https?://[\\S&&[^\"']]{4,})");
+        //Matcher urlMatcher = urlPattern.matcher(mDescriptionHtml);
+        //while (urls.size() < 5 && urlMatcher.find()) urls.add(urlMatcher.group());
+        //
+        //String smsBody = mDescriptionText;
+        //if (urls.size() > 0) smsBody = (urls.get(0) + smsBody);
+        //smsBody = smsBody.substring(0, Math.min(139, smsBody.length()));
 
-        String smsBody = mDescriptionText.substring(0, Math.min(139, mDescriptionText.length()));
+        String smsBody = "Check out this article!\n" + mActionLink;
+        String emailBody = mActionLink + "\n" + mDescriptionText;
+
         JRSmsObject sms = new JRSmsObject(smsBody);
-        JREmailObject email = new JREmailObject("Check out this article..", mDescriptionText);
-        sms.setUrls(urls);
-        email.setUrls(urls);
+        JREmailObject email = new JREmailObject("Check out this article!", emailBody);
+        //sms.setUrls(urls);
+        //email.setUrls(urls);
+        sms.addUrl(mActionLink);
+        email.addUrl(mActionLink);
         mActivity.setEmail(email);
         mActivity.setSms(sms);
     }
@@ -229,6 +238,9 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                             return null;
                         }
                     }, null).toString();
+                    // Strip out the Unicode "Object replacement character" that Html.fromHtml
+                    // inserts in place of <img ... > tags.
+                    mDescriptionText = mDescriptionText.replaceAll("\ufffc", "");
 
                     //no exceptions -> success
                     return true;
@@ -277,6 +289,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
             outState.putString("b", mDescriptionText);
             outState.putString("c", mImageUrl);
             outState.putString("d", mActionLink);
+            outState.putString("e", mDescriptionHtml);
         }
     }
 

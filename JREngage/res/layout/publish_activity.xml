@@ -76,34 +76,45 @@
                         android:src="@drawable/triangle_icon"
                         />
 
-                    <Button
-                        android:id="@+id/email_button"
+                    <LinearLayout
+                        android:id="@+id/email_sms_button_container"
                         android:layout_height="wrap_content"
                         android:layout_width="fill_parent"
-                        android:text="Email"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:textSize="20dip"
-                        android:textStyle="bold"
-                        android:textColor="#ffffffff"
-                        android:layout_margin="5dp"
-                        />
-                    <!--android:layout_marginRight="10dp"-->
-                    <!--android:layout_marginLeft="10dp"-->
+                        android:orientation="vertical"
+                        >
 
-                    <Button
-                        android:id="@+id/sms_button"
-                        android:layout_height="wrap_content"
-                        android:layout_width="fill_parent"
-                        android:layout_above="@id/email_button"
-                        android:text="SMS"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:textSize="20dip"
-                        android:textStyle="bold"
-                        android:textColor="#ffffffff"
-                        android:layout_margin="5dp"
-                        />
-                    <!--android:layout_marginRight="10dp"-->
-                    <!--android:layout_marginLeft="10dp"-->
+                        <Button
+                            android:id="@+id/email_button"
+                            android:layout_height="wrap_content"
+                            android:layout_width="fill_parent"
+                            android:text="Email"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:textSize="20dip"
+                            android:textStyle="bold"
+                            android:textColor="#ffffffff"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"
+                            />
+                        <!--android:layout_marginRight="10dp"-->
+                        <!--android:layout_marginLeft="10dp"-->
+
+                        <Button
+                            android:id="@+id/sms_button"
+                            android:layout_height="wrap_content"
+                            android:layout_width="fill_parent"
+                            android:layout_above="@id/email_button"
+                            android:text="SMS"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:textSize="20dip"
+                            android:textStyle="bold"
+                            android:textColor="#ffffffff"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"
+                            />
+                        <!--android:layout_marginRight="10dp"-->
+                        <!--android:layout_marginLeft="10dp"-->
+                        
+                    </LinearLayout>
 
                 </LinearLayout>
 
