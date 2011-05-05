@@ -33,6 +33,7 @@ import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
+import android.util.StringBuilderPrinter;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import com.janrain.android.engage.JREngage;
@@ -980,6 +981,31 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mAllProviders.getAsProvider(name);
     }
 
+    public void notifyEmailSmsShare(String method) {
+        StringBuilder body = new StringBuilder();
+        body.append("method=").append(method);
+        body.append("&device=").append("android");
+        body.append("&appId=").append(mAppId);
+
+        String url = ENVIRONMENT.getServerUrl() + "/social/record_activity";
+
+        Log.d(TAG, "[notifyEmailSmsShare]: " + url + " data: " + body.toString());
+
+        JRConnectionManagerDelegate jrcmd = new SimpleJRConnectionManagerDelegate() {
+            public void connectionDidFinishLoading(String payload,
+                                                   String requestUrl,
+                                                   Object userdata) {
+                Log.d(TAG, "[notifyEmailSmsShare]: success");
+            }
+
+            public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
+                Log.e(TAG, "[notifyEmailSmsShare]: failure", ex);
+            }
+        };
+
+        JRConnectionManager.createConnection(url, body.toString().getBytes(), jrcmd, false, null);
+    }
+
     public void shareActivityForUser(JRAuthenticatedUser user) {
         if (Config.LOGD) {
             Log.d(TAG, "[shareActivityForUser]");
@@ -993,18 +1019,19 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         String activityContent;
         JRDictionary activityDictionary = mActivity.toJRDictionary();
+        String activityJSON = activityDictionary.toJSON();
         try {
-            String activityJSON = activityDictionary.toJSON();
             activityContent = URLEncoder.encode(activityJSON, "UTF-8");
-            body.append("activity=").append(activityContent);
-
-            //these are undocumented parameters available to the mobile library.
-            body.append("&device_token=").append(deviceToken);
-            body.append("&url_shortening=true");
-            body.append("&provider=").append(user.getProviderName());
-            body.append("&device=android");
-            body.append("&app_name=").append(mUrlEncodedAppName);
         } catch (UnsupportedEncodingException e) { throw new RuntimeException(e); }
+
+        body.append("activity=").append(activityContent);
+
+        //these are undocumented parameters available to the mobile library.
+        body.append("&device_token=").append(deviceToken);
+        body.append("&url_shortening=true");
+        body.append("&provider=").append(user.getProviderName());
+        body.append("&device=android");
+        body.append("&app_name=").append(mUrlEncodedAppName);
 
         String url = ENVIRONMENT.getServerUrl() + "/api/v2/activity";
 

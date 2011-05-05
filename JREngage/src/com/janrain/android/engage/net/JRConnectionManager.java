@@ -276,8 +276,10 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
                         connectionData.mTag);
             } else {
                 // non-full response
+                byte[] payload = response.getPayload();
+                if (payload == null) payload = new byte[0];
                 delegate.connectionDidFinishLoading(
-                        new String(response.getPayload()),
+                        new String(payload),
                         requestUrl,
                         connectionData.mTag);
             }

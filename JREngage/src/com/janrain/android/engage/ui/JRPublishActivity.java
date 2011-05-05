@@ -43,7 +43,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -187,7 +186,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     // Activity life-cycle methods
 
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
@@ -236,8 +234,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mEmailSmsButtonContainer = (LinearLayout) findViewById(R.id.email_sms_button_container);
 
         // View listeners
-        mEmailButton.setOnClickListener(mEmailSmsButtonListener);
-        mSmsButton.setOnClickListener(mEmailSmsButtonListener);
+        mEmailButton.setOnClickListener(mEmailButtonListener);
+        mSmsButton.setOnClickListener(mSmsButtonListener);
         ButtonEventColorChangingListener colorChangingListener =
                 new ButtonEventColorChangingListener();
         mEmailButton.setOnFocusChangeListener(colorChangingListener);
@@ -506,7 +504,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         Log.d(TAG, "onStop");
     }
 
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
@@ -566,7 +563,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                         // For some reason both email/SMS buttons' colorfilters are being cleared
                         // this is a hack to make sure they're both applied.
 
-                        mEmailButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+                        mEmailButton.getBackground().setColorFilter(color,
+                                PorterDuff.Mode.MULTIPLY);
                         mSmsButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
                     }
                     break;
@@ -652,61 +650,69 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         }
     }
 
-    private View.OnClickListener mEmailSmsButtonListener = new View.OnClickListener() {
+    private View.OnClickListener mEmailButtonListener = new View.OnClickListener() {
         public void onClick(View v) {
             Intent intent;
 
-            if (v.getId() == R.id.email_button) {
-                JREmailObject jrEmail = mActivityObject.getEmail();
-                String body, subject;
+            JREmailObject jrEmail = mActivityObject.getEmail();
+            String body, subject;
 
-                if (jrEmail == null) {
-                    body = mUserCommentView.getText().toString();
-                    subject = getString(R.string.default_email_share_subject);
-                } else {
-                    body = mUserCommentView.getText().toString() + "\n" + jrEmail.getBody();
-                    subject = TextUtils.isEmpty(jrEmail.getSubject()) ?
-                            getString(R.string.default_email_share_subject)
-                            : jrEmail.getSubject();
-                }
-
-                intent = new Intent(android.content.Intent.ACTION_SEND);
-
-                // XXX hack:
-                // By setting this MIME type we cajole the right behavior out of the platform.  This
-                // MIME type is not valid (normally it would be text/plain) but the email apps respond
-                // to ACTION_SEND type */* so it works.
-                // The reason that using ACTION_SENDTO with a URI with scheme mailto: does not work is
-                // that the "Email" app fills the To: field with a single comma.
-                // (Because it's expecting an actual email address in the URI, but we're not
-                // supplying one, we're supplying only a scheme.)
-                intent.setType("plain/text");
-                //intent.setData(Uri.parse("mailto:"));
-                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
-                intent.putExtra(android.content.Intent.EXTRA_TEXT, body);
-            } else { // ... else SMS button
-                JRSmsObject jrSms = mActivityObject.getSms();
-                String body;
-
-                if (jrSms == null) {
-                    body = mUserCommentView.getText().toString();
-                } else {
-                    body = mUserCommentView.getText().toString() + "\n" + jrSms.getBody();
-                }
-
-                // Google Voice does not respect passing the body, so this Intent is constructed
-                // specifically to be responded to only by Mms (the platform messaging app).
-                //intent = new Intent(android.content.Intent.ACTION_SEND);
-                intent = new Intent(android.content.Intent.ACTION_VIEW);
-                intent.setType("vnd.android-dir/mms-sms");
-                //intent.setData(Uri.parse("smsto:"));
-                //intent.setData(Uri.parse("sms:"));
-                //intent.putExtra(android.content.Intent.EXTRA_TEXT, body.substring(0,130));
-                intent.putExtra("sms_body", body.substring(0,Math.min(139, body.length())));
+            if (jrEmail == null) {
+                body = mUserCommentView.getText().toString();
+                subject = getString(R.string.default_email_share_subject);
+            } else {
+                body = mUserCommentView.getText().toString() + "\n" + jrEmail.getBody();
+                subject = TextUtils.isEmpty(jrEmail.getSubject()) ?
+                        getString(R.string.default_email_share_subject)
+                        : jrEmail.getSubject();
             }
+
+            intent = new Intent(android.content.Intent.ACTION_SEND);
+
+            // XXX hack:
+            // By setting this MIME type we cajole the right behavior out of the platform.  This
+            // MIME type is not valid (normally it would be text/plain) but the email apps respond
+            // to ACTION_SEND type */* so it works.
+            // The reason that using ACTION_SENDTO with a URI with scheme mailto: does not work is
+            // that the "Email" app fills the To: field with a single comma.
+            // (Because it's expecting an actual email address in the URI, but we're not
+            // supplying one, we're supplying only a scheme.)
+            intent.setType("plain/text");
+            //intent.setData(Uri.parse("mailto:"));
+            intent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+            intent.putExtra(android.content.Intent.EXTRA_TEXT, body);
 
             //Intent chooser = Intent.createChooser(intent, getString(R.string.choose_email_handler));
             startActivityForResult(intent, 0);
+            mSessionData.notifyEmailSmsShare("email");
+        }
+    };
+
+    private View.OnClickListener mSmsButtonListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            Intent intent;
+
+            JRSmsObject jrSms = mActivityObject.getSms();
+            String body;
+
+            if (jrSms == null) {
+                body = mUserCommentView.getText().toString();
+            } else {
+                body = mUserCommentView.getText().toString() + "\n" + jrSms.getBody();
+            }
+
+            // Google Voice does not respect passing the body, so this Intent is constructed
+            // specifically to be responded to only by Mms (the platform messaging app).
+            //intent = new Intent(android.content.Intent.ACTION_SEND);
+            intent = new Intent(android.content.Intent.ACTION_VIEW);
+            intent.setType("vnd.android-dir/mms-sms");
+            //intent.setData(Uri.parse("smsto:"));
+            //intent.setData(Uri.parse("sms:"));
+            //intent.putExtra(android.content.Intent.EXTRA_TEXT, body.substring(0,130));
+            intent.putExtra("sms_body", body.substring(0, Math.min(139, body.length())));
+
+            startActivityForResult(intent, 0);
+            mSessionData.notifyEmailSmsShare("sms");
         }
     };
 
@@ -1096,10 +1102,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private void shareActivity() {
         Log.d(TAG, "shareActivity mAuthenticatedUser: " + mAuthenticatedUser.toString());
 
-        if (isPublishThunk())
+        if (isPublishThunk()) {
             mSessionData.setStatusForUser(mAuthenticatedUser);
-        else
+        } else {
             mSessionData.shareActivityForUser(mAuthenticatedUser);
+        }
     }
 
     // Helper functions
