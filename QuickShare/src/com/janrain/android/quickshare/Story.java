@@ -1,39 +1,53 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ Copyright (c) 2011, Janrain, Inc.
+
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation and/or
+   other materials provided with the distribution.
+ * Neither the name of the Janrain, Inc. nor the names of its
+   contributors may be used to endorse or promote products derived from this
+   software without specific prior written permission.
+
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+ File:   Story.java
+ Author: Lilli Szafranski - lilli@janrain.com
+ Date:   April 22, 2011
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.quickshare;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.os.AsyncTask;
-import android.text.Html;
 import android.util.Config;
 import android.util.Log;
-import android.view.Gravity;
-import com.janrain.android.engage.session.JRSessionData;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-
-/**
- * Created by IntelliJ IDEA.
- * User: lillialexis
- * Date: 4/22/11
- * Time: 1:12 PM
- * To change this template use File | Settings | File Templates.
- */
 public class Story implements Serializable {
     private static final String TAG = Story.class.getSimpleName();
 
@@ -180,60 +194,60 @@ public class Story implements Serializable {
     private void scaleDescriptionImages() {
         //String unescapedDescription = Html.fromHtml(mDescription);
         
-        Log.d(TAG, "[scaleDescriptionImages] description before scale: " + mDescription);
-
-        try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            dbf.setCoalescing(true);
-            dbf.setValidating(false);
-            dbf.setNamespaceAware(false);
-            DocumentBuilder db = dbf.newDocumentBuilder();
-
-            /* The following parse call takes ten seconds on a fast phone.
-                XMLPullParser is said to be a faster way to go.
-                Sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
-                Another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser */
-            mDescription = "<div id=\"root_element_required_for_dom_parser\">" + mDescription + "</div>\0";
-            InputStream stream = new ByteArrayInputStream(mDescription.getBytes("UTF-8"));
-            Document d = db.parse(stream);
-
-            Element root = (Element) d.getFirstChild();
-
-            NodeList nl = root.getElementsByTagName("img");
-            for (int x=0; x<nl.getLength(); x++) {
-                Element image = (Element) nl.item(x);
-                String style = image.getAttribute("style");
-
-                Log.d(TAG, "[scaleDescriptionImages] style attribute: " + style);
-            }
-
-//            TransformerFactory tf = TransformerFactory.newInstance();
-//            Transformer t = tf.newTransformer();
-//            t.setOutputProperty(OutputKeys.INDENT, "yes");
-//            StringWriter sw = new StringWriter();
-//            t.transform(new DOMSource(d), new StreamResult(sw));
-//            System.out.println(sw.toString());
-
-//            String descriptionText = "";
-//            NodeList nl2 = root.getChildNodes();
-//            for (int x=0; x<nl2.getLength(); x++) {
-//                String nodeValue = nl2.item(x).getNodeValue();
-//                descriptionText += nodeValue;
+//        Log.d(TAG, "[scaleDescriptionImages] description before scale: " + mDescription);
+//
+//        try {
+//            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+//            dbf.setCoalescing(true);
+//            dbf.setValidating(false);
+//            dbf.setNamespaceAware(false);
+//            DocumentBuilder db = dbf.newDocumentBuilder();
+//
+//            /* The following parse call takes ten seconds on a fast phone.
+//                XMLPullParser is said to be a faster way to go.
+//                Sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
+//                Another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser */
+//            mDescription = "<div id=\"root_element_required_for_dom_parser\">" + mDescription + "</div>\0";
+//            InputStream stream = new ByteArrayInputStream(mDescription.getBytes("UTF-8"));
+//            Document d = db.parse(stream);
+//
+//            Element root = (Element) d.getFirstChild();
+//
+//            NodeList nl = root.getElementsByTagName("img");
+//            for (int x=0; x<nl.getLength(); x++) {
+//                Element image = (Element) nl.item(x);
+//                String style = image.getAttribute("style");
+//
+//                Log.d(TAG, "[scaleDescriptionImages] style attribute: " + style);
 //            }
-
-//            mDescription = root.getTextContent();//null;//sw.toString();//descriptionText;
-
-            //mDescription = d.getTextContent();//d.toString();
-            //mDescriptionImagesAlreadyScaled = true;
-
-            Log.d(TAG, "[scaleDescriptionImages] description after scale: " + mDescription);
-        }
-        catch (MalformedURLException e) { Log.d("scaleDescriptionImages", "MalformedURLException" + e.getLocalizedMessage()); }
-        catch (IOException e) { Log.d("scaleDescriptionImages", "IOException" + e.getLocalizedMessage()); }
-        catch (ParserConfigurationException e) { Log.d("scaleDescriptionImages", "ParserConfigurationException" + e.getLocalizedMessage()); }
-        catch (SAXException e) { Log.d("scaleDescriptionImages", "SAXException" + e.getLocalizedMessage());  throw new RuntimeException(e);}
-        catch (NullPointerException e) { Log.d("scaleDescriptionImages", "NullPointerException" + e.getLocalizedMessage()); }
-        //catch (TransformerException e) { Log.d("scaleDescriptionImages", "NullPointerException" + e.getLocalizedMessage()); }
+//
+////            TransformerFactory tf = TransformerFactory.newInstance();
+////            Transformer t = tf.newTransformer();
+////            t.setOutputProperty(OutputKeys.INDENT, "yes");
+////            StringWriter sw = new StringWriter();
+////            t.transform(new DOMSource(d), new StreamResult(sw));
+////            System.out.println(sw.toString());
+//
+////            String descriptionText = "";
+////            NodeList nl2 = root.getChildNodes();
+////            for (int x=0; x<nl2.getLength(); x++) {
+////                String nodeValue = nl2.item(x).getNodeValue();
+////                descriptionText += nodeValue;
+////            }
+//
+////            mDescription = root.getTextContent();//null;//sw.toString();//descriptionText;
+//
+//            //mDescription = d.getTextContent();//d.toString();
+//            //mDescriptionImagesAlreadyScaled = true;
+//
+//            Log.d(TAG, "[scaleDescriptionImages] description after scale: " + mDescription);
+//        }
+//        catch (MalformedURLException e) { Log.d("scaleDescriptionImages", "MalformedURLException" + e.getLocalizedMessage()); }
+//        catch (IOException e) { Log.d("scaleDescriptionImages", "IOException" + e.getLocalizedMessage()); }
+//        catch (ParserConfigurationException e) { Log.d("scaleDescriptionImages", "ParserConfigurationException" + e.getLocalizedMessage()); }
+//        catch (SAXException e) { Log.d("scaleDescriptionImages", "SAXException" + e.getLocalizedMessage());  throw new RuntimeException(e);}
+//        catch (NullPointerException e) { Log.d("scaleDescriptionImages", "NullPointerException" + e.getLocalizedMessage()); }
+//        //catch (TransformerException e) { Log.d("scaleDescriptionImages", "NullPointerException" + e.getLocalizedMessage()); }
     }
 
     public String getPlainText() {
