@@ -1111,7 +1111,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                     mCurrentlyAuthenticatingProvider.getName());
         }
 
-        String auth_info_token_for_token_url = rpx_result.getAsString("auth_info_token_for_token_url");
+        String auth_info_token_for_token_url = rpx_result.getAsString("token");
         if (!TextUtils.isEmpty(mTokenUrl)) {
             makeCallToTokenUrl(mTokenUrl, auth_info_token_for_token_url, mCurrentlyAuthenticatingProvider.getName());
         }
