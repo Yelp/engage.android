@@ -1162,7 +1162,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
-    //todo nothing is triggering this?
     public void triggerPublishingDidComplete() {
         if (Config.LOGD) {
             Log.d(TAG, "[triggerPublishingDidComplete]");

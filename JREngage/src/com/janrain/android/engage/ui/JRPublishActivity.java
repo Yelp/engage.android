@@ -526,6 +526,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     // UI event listeners
 
+    public void onBackPressed() {
+        mSessionData.triggerPublishingDidComplete();
+    }
+
     private class ButtonEventColorChangingListener implements
             View.OnFocusChangeListener, View.OnTouchListener {
 
@@ -550,11 +554,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             int providerColor = colorForProviderFromArray(
                     mSelectedProvider.getSocialSharingProperties().get("color_values"), false);
-            int color = getTabHost().getCurrentTabTag().equals(EMAIL_SMS_TAB_TAG) ?
-                    JANRAIN_BLUE_100PERCENT
-                    : providerColor;
 
             boolean isEmailSmsTab = getTabHost().getCurrentTabTag().equals(EMAIL_SMS_TAB_TAG);
+            int color = isEmailSmsTab ? JANRAIN_BLUE_100PERCENT : providerColor;
 
             switch (motionEvent.getAction()) {
                 case MotionEvent.ACTION_UP:
@@ -636,6 +638,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (tabId.equals(EMAIL_SMS_TAB_TAG)) {
             mEmailSmsComment.setText(mUserCommentView.getText());
+            mEmailButton.getBackground()
+                    .setColorFilter(JANRAIN_BLUE_100PERCENT, PorterDuff.Mode.MULTIPLY);
         } else { // ... else a "real" provider -- Facebook, Twitter, etc.
             mSelectedProvider = mSessionData.getProviderByName(tabId);
     
@@ -786,10 +790,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (mSelectedProvider.getSocialSharingProperties()
                 .getAsBoolean("content_replaces_action")) {
-            //twitter, myspace, linkedin
+            // twitter, myspace, linkedin
             if (doesActivityUrlAffectCharacterCountForSelectedProvider()
                     && mShortenedActivityURL == null) {
-                //twitter, myspace
+                // twitter, myspace
                 characterCountText = getText(R.string.calculating_remaining_characters);
             } else {
                 int preview_length = mPreviewLabelView.getText().length();
@@ -800,7 +804,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 else
                     characterCountText = Html.fromHtml("Remaining characters: " + chars_remaining);
             }
-        } else { //facebook, yahoo
+        } else { // facebook, yahoo
             int comment_length = mUserCommentView.getText().length();
             int chars_remaining = mMaxCharacters - comment_length;
             if (chars_remaining < 0)
@@ -970,7 +974,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         else
             updatePreviewTextWhenContentDoesNotReplaceAction();
 
-        mMaxCharacters = mSelectedProvider.getSocialSharingProperties().getAsInt("max_characters");
+        if (isPublishThunk()) {
+            mMaxCharacters = mSelectedProvider.getSocialSharingProperties()
+                    .getAsDictionary("set_status_properties").getAsInt("max_characters");
+        } else {
+            mMaxCharacters = mSelectedProvider.getSocialSharingProperties()
+                    .getAsInt("max_characters");
+        }
+        
         if (mMaxCharacters != -1) {
             mCharacterCountView.setVisibility(View.VISIBLE);
         } else
@@ -981,13 +992,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         boolean can_share_media = mSelectedProvider.getSocialSharingProperties()
                 .getAsBoolean("can_share_media");
 
-        //switch on or off the media content view based on the presence of media and ability to display it
+        // Switch on or off the media content view based on the presence of media and ability to
+        // display it
         boolean showMediaContentView = mActivityObject.getMedia().size() > 0 && can_share_media;
         mMediaContentView.setVisibility(showMediaContentView ? View.VISIBLE : View.GONE);
 
-        //switch on or off the action label view based on the provider accepting an action
-//        boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
-//        mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
+        // Switch on or off the action label view based on the provider accepting an action
+        //boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
+        //mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
 
         mUserProfileInformationAndShareButtonContainer.setBackgroundColor(
                 colorForProviderFromArray(socialSharingProperties.get("color_values"), true));
@@ -1011,7 +1023,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (!(arrayOfColorStrings instanceof ArrayList))
             if (withAlpha)
-                return JANRAIN_BLUE_20PERCENT; // If there's ever an error, just return Janrain blue (at 20% opacity)
+                // If there's ever an error, just return Janrain blue (at 20% opacity)
+                return JANRAIN_BLUE_20PERCENT;
             else
                 return JANRAIN_BLUE_100PERCENT;
 
@@ -1083,16 +1096,19 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private void shareActivity() {
         Log.d(TAG, "shareActivity mAuthenticatedUser: " + mAuthenticatedUser.toString());
 
-        boolean thunk = mSelectedProvider.getSocialSharingProperties()
-                .getAsBoolean("uses_set_status_if_no_url");
-
-        if (mActivityObject.getUrl().equals("") & thunk)
+        if (isPublishThunk())
             mSessionData.setStatusForUser(mAuthenticatedUser);
         else
             mSessionData.shareActivityForUser(mAuthenticatedUser);
     }
 
     // Helper functions
+
+    private boolean isPublishThunk() {
+        return mActivityObject.getUrl().equals("") &&
+                mSelectedProvider.getSocialSharingProperties()
+                        .getAsBoolean("uses_set_status_if_no_url");
+    }
 
     public boolean doesActivityUrlAffectCharacterCountForSelectedProvider() {
         boolean url_reduces_max_chars = mSelectedProvider.getSocialSharingProperties()

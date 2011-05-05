@@ -331,8 +331,7 @@ public class JREngage {
                 delegate.jrSocialDidCompletePublishing();
             }
 
-            // TODO:  implement UI stuff
-            // interfaceMaestro.publishingCompleted();
+            JRUserInterfaceMaestro.getInstance().publishingCompleted();
         }
 
         public void publishingDialogDidFail(JREngageError err) {

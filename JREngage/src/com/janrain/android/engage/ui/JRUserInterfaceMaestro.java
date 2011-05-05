@@ -197,7 +197,6 @@ public class JRUserInterfaceMaestro {
 
     public void publishingJRActivityFailed() {
         Log.d(TAG, "publishingJRActivityFailed");
-        //popAll(); //why does this popAll(), isn't that a bug?
         popToOriginal();
     }
 

@@ -154,6 +154,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     void buildActivity() {
         mActivity = new JRActivityObject("shared an article from the Janrain Blog!",
             mActionLink);
+        //mActivity = new JRActivityObject("shared an article from the Janrain Blog!", "");
         mActivity.setTitle(mTitleText);
         mActivity.setDescription(mDescriptionText);
         mActivity.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
@@ -361,7 +362,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     }
 
     public void jrSocialDidCompletePublishing() {
-        Toast.makeText(this, "Sharing did complete", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Sharing dialog did complete", Toast.LENGTH_LONG).show();
     }
 
     public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
