@@ -1,9 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- colors used in JRProviderActivity for share_button_container background color -->
-    <color name="bg_clr_facebook">#333B5999</color>
-    <color name="bg_clr_twitter">#3335CEFF</color>
-    <color name="bg_clr_yahoo">#33650065</color>
-    <color name="bg_clr_linkedin">#33005A88</color>
-    <color name="bg_clr_myspace">#331B3E8F</color>
-    <color name="bg_clr_google">#333F65DB</color>
+    <!--<color name="bg_clr_facebook">#333B5999</color>-->
+    <!--<color name="bg_clr_twitter">#3335CEFF</color>-->
+    <!--<color name="bg_clr_yahoo">#33650065</color>-->
+    <!--<color name="bg_clr_linkedin">#33005A88</color>-->
+    <!--<color name="bg_clr_myspace">#331B3E8F</color>-->
+    <!--<color name="bg_clr_google">#333F65DB</color>-->
+    <color name="JANRAIN_BLUE_20PERCENT">#33074764</color>
+    <color name="TEXT_COLOR_HINT">#ccc</color>
+    <!--<color name="JANRAIN_BLUE_100PERCENT">#FF074764</color>-->
 </resources>

@@ -31,7 +31,16 @@ package com.janrain.android.engage.types;
 
 import android.text.Html;
 import android.util.Log;
+import com.janrain.android.engage.net.JRConnectionManager;
+import com.janrain.android.engage.net.JRConnectionManagerDelegate;
+import com.janrain.android.engage.session.JRSessionData;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+import org.json.JSONTokener;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -164,6 +173,16 @@ public class JRActivityObject {
      */
     private Map<String, Object> mProperties = new HashMap<String, Object>();
 
+    /**
+     * A JREmailObject to use to prefill a sharing email sent by the user
+     */
+    private JREmailObject mEmail;
+
+    /**
+     * A JRSmsObject to use to prefill a sharing SMS sent by the user
+     */
+    private JRSmsObject mSms;
+
     // ------------------------------------------------------------------------
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
@@ -184,9 +203,124 @@ public class JRActivityObject {
         mUrl = url;
     }
 
+    public interface ShortenedUrlCallback {
+        public void setShortenedUrl(String shortenedUrl);
+    }
+
+    public void shortenUrls(final ShortenedUrlCallback callback) {
+        final JRSessionData sessionData = JRSessionData.getInstance();
+        try {
+            // todo invoke when the activity object is created (or maybe when publish is called?)
+            List<String> emptyList = new ArrayList<String>();
+            final List<String> emailUrls = mEmail == null ? emptyList : mEmail.getUrls();
+            final List<String> smsUrls = mSms == null ? emptyList : mSms.getUrls();
+
+            // Make the JSON string
+            JSONStringer jss = (new JSONStringer())
+                    .object()
+                        .key("activity")
+                        .array()
+                            .value(getUrl())
+                        .endArray()
+                        .key("email_urls")
+                        .array();
+                            for (String url : emailUrls) jss.value(url);
+                        jss.endArray()
+                        .key("sms_urls")
+                        .array();
+                            for (String url : smsUrls) jss.value(url);
+                        jss.endArray()
+                    .endObject();
+
+            // Make the URL
+            final String jsonEncodedActivityUrl = jss.toString();
+            String htmlEncodedJson = URLEncoder.encode(jsonEncodedActivityUrl, "UTF8");
+            final String getUrlsUrl =
+                    sessionData.getBaseUrl() + "/openid/get_urls?"
+                    + "urls=" + htmlEncodedJson
+                    + "&app_name=" + sessionData.getUrlEncodedAppName()
+                    + "&device=android";
+
+            // Define the network callback
+            JRConnectionManagerDelegate jrcmd =
+                    new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
+                public void connectionDidFinishLoading(String payload,
+                                                       String requestUrl,
+                                                       Object userdata) {
+                    String shortUrl = getUrl();
+
+                    try {
+                        Log.d(TAG, "fetchShortenedURLs connectionDidFinishLoading: " + payload);
+                        JSONObject jso = (JSONObject) (new JSONTokener(payload)).nextValue();
+                        jso = jso.getJSONObject("urls");
+                        JSONObject jsonActivityUrls = jso.getJSONObject("activity");
+                        JSONObject jsonSmsUrls = jso.getJSONObject("sms_urls");
+                        JSONObject jsonEmailUrls = jso.getJSONObject("email_urls");
+
+                        shortUrl = jsonActivityUrls.getString(getUrl());
+                        if (mEmail != null) {
+                            List<String> shortEmailUrls = new ArrayList<String>();
+                            for (String longUrl : emailUrls)
+                                shortEmailUrls.add(jsonEmailUrls.getString(longUrl));
+                            mEmail.setShortUrls(shortEmailUrls);
+                        }
+                        if (mSms != null) {
+                            List<String> shortSmsUrls = new ArrayList<String>();
+                            for (String longUrl : smsUrls)
+                                shortSmsUrls.add(jsonSmsUrls.getString(longUrl));
+                            mSms.setShortUrls(shortSmsUrls);
+                        }
+                    } catch (JSONException e) {
+                        Log.e(TAG, "URL shortening JSON parse error", e);
+                    } catch (ClassCastException e) {
+                        Log.e(TAG, "URL shortening JSON parse error", e);
+                    }
+
+                    updateUI(shortUrl);
+                }
+
+                void updateUI(String shortenedUrl) {
+                    callback.setShortenedUrl(shortenedUrl);
+                }
+
+                public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
+                    updateUI(getUrl());
+                }
+
+                public void connectionWasStopped(Object userdata) {
+                    updateUI(getUrl());
+                }
+            };
+
+            // Invoke the network call
+            JRConnectionManager.createConnection(getUrlsUrl, jrcmd, false, null);
+        } catch (JSONException e) {
+            Log.e(TAG, "URL shortening JSON error", e);
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "URL shortening error", e);
+        }
+    }
+
+
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
     // ------------------------------------------------------------------------
+
+    public void setEmail(JREmailObject email) {
+        mEmail = email;
+    }
+
+    public JREmailObject getEmail() {
+        return mEmail;
+    }
+
+    public void setSms(JRSmsObject sms) {
+        mSms = sms;
+    }
+
+    public JRSmsObject getSms() {
+        return mSms;
+    }
 
     public String getAction() {  /* (readonly) */
         return mAction;
@@ -267,12 +401,8 @@ public class JRActivityObject {
      * NOTE: This function should not be used directly.  It is intended only for use by the
      * JREngage library.
      *
-     * TODO: revisit visibility/usage
      */
-    public JRDictionary dictionaryForObject() {
-        //todo store media object, action links, user generated content, description, title, text,
-        //-> all of the things that comprise the fundament of an activity
-
+    public JRDictionary toJRDictionary() {
         JRDictionary map = new JRDictionary();
         map.put("url", mUrl);
         map.put("action", mAction);

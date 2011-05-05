@@ -43,6 +43,20 @@ public interface JRConnectionManagerDelegate {
 	void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object userdata);
 	void connectionDidFail(Exception ex, String requestUrl, Object userdata);
 	void connectionWasStopped(Object userdata);
-	
+
+    public abstract class SimpleJRConnectionManagerDelegate
+            implements JRConnectionManagerDelegate {
+
+        public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
+        }
+
+        public void connectionDidFinishLoading(HttpResponseHeaders headers,
+                                               byte[] payload,
+                                               String requestUrl,
+                                               Object userdata) {}
+        public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {}
+        public void connectionWasStopped(Object userdata) {}
+    }
+
 }
 
