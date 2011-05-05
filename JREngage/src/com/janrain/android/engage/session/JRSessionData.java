@@ -1093,10 +1093,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         if (mCurrentlyAuthenticatingProvider == null) {
+            // todo verify this code path
             return;
         }
 
-        JRAuthenticatedUser user = new JRAuthenticatedUser(rpx_result, mCurrentlyAuthenticatingProvider.getName());
+        // Instantiate a user object, keep track of it.
+        JRAuthenticatedUser user =
+                new JRAuthenticatedUser(rpx_result, mCurrentlyAuthenticatingProvider.getName());
         mAuthenticatedUsersByProvider.put(mCurrentlyAuthenticatingProvider.getName(), user);
         JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
 
@@ -1104,16 +1107,17 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         //todo
         //else saveLastUsedSocialProvider();
 
-
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.authenticationDidComplete(
                     rpx_result.getAsDictionary("auth_info"),
                     mCurrentlyAuthenticatingProvider.getName());
         }
 
-        String auth_info_token_for_token_url = rpx_result.getAsString("auth_info_token_for_token_url");
+        String auth_info_token = rpx_result.getAsString("token");
         if (!TextUtils.isEmpty(mTokenUrl)) {
-            makeCallToTokenUrl(mTokenUrl, auth_info_token_for_token_url, mCurrentlyAuthenticatingProvider.getName());
+            makeCallToTokenUrl(mTokenUrl,
+                               auth_info_token,
+                               mCurrentlyAuthenticatingProvider.getName());
         }
 
         mCurrentlyAuthenticatingProvider.setForceReauth(false);
