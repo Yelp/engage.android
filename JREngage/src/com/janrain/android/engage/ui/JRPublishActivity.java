@@ -272,8 +272,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         loadViewElementPropertiesWithActivityObject();
 
-        List<JRProvider>socialProviders = mSessionData.getSocialProviders();
+        // Call by hand the configuration change listener so that it sets up correctly if this
+        // activity started in landscape mode.
+        onConfigurationChanged(getResources().getConfiguration());
 
+        List<JRProvider>socialProviders = mSessionData.getSocialProviders();
         if ((socialProviders == null || socialProviders.size() == 0)
                 && !mSessionData.isGetMobileConfigDone()) {
             mWaitingForMobileConfig = true;
