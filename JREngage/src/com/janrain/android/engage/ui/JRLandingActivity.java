@@ -198,6 +198,7 @@ public class JRLandingActivity extends Activity {
 
         //for the case when this activity is relaunched after the process was killed
         if (mSessionData == null) {
+            Log.e(TAG, "JRLandingActivity bailing out after a process kill/restart");
             finish();
             return;
         }

@@ -257,31 +257,48 @@ public class JRUserInterfaceMaestro {
     private void popAndFinishActivitiesUntil(Class untilManagedActivity) {
         Log.i(TAG, "[popAndFinishActivitiesUntil] until: " + untilManagedActivity);
 
-        Class top;
-        do {
-            if (mActivityStack.size() < 1) {
-                if (Config.LOGD) {
-                    Log.d(TAG, "[popAndFinishActivitiesUntil] stack empty");
-                }
-                break;
-            }
-            top = mActivityStack.peek();
-            if (top.equals(untilManagedActivity)) {
-                if (Config.LOGD) {
-                    Log.d(TAG, "[popAndFinishActivitiesUntil] found until");
-                }
-                break;
-            }
-            top = mActivityStack.pop();
-            doFinishActivity(top);
-            Log.i(TAG, "[popAndFinishActivitiesUntil] popped: " + top);
-        } while (top != null);
+        // This seems way broken. :(
+        // Specifically, there are two loops that are doing the same thing for no fathomable reason.
+        // The second one does basically nothing AFAICS, but crash when the first loop bails out
+        // of an empty stack.  Rewritten below.
 
-        while (mActivityStack.peek() != untilManagedActivity) {
-            Class managedActivity = mActivityStack.pop();
-            doFinishActivity(managedActivity);
-            Log.i(TAG, "[popAndFinishActivitiesUntil] popped and finished: " + managedActivity);
+        //Class top;
+        //do {
+        //    if (mActivityStack.size() < 1) {
+        //        if (Config.LOGD) {
+        //            Log.d(TAG, "[popAndFinishActivitiesUntil] stack empty");
+        //        }
+        //        break;
+        //    }
+        //    top = mActivityStack.peek();
+        //    if (top.equals(untilManagedActivity)) {
+        //        if (Config.LOGD) {
+        //            Log.d(TAG, "[popAndFinishActivitiesUntil] found until");
+        //        }
+        //        break;
+        //    }
+        //    top = mActivityStack.pop();
+        //    doFinishActivity(top);
+        //    Log.i(TAG, "[popAndFinishActivitiesUntil] popped: " + top);
+        //} while (top != null);
+        //
+        //while (mActivityStack.peek() != untilManagedActivity) {
+        //    Class managedActivity = mActivityStack.pop();
+        //    doFinishActivity(managedActivity);
+        //    Log.i(TAG, "[popAndFinishActivitiesUntil] popped and finished: " + managedActivity);
+        //}
+
+        if (mActivityStack.size() == 0) {
+            // Crash horribly
+            throw new IllegalStateException("JRUserInterfaceMaestro activity stack illegal state");
         }
+
+        // If we're done, we're done.
+        if (mActivityStack.peek().equals(untilManagedActivity)) return;
+
+        // Pop and recurse.
+        doFinishActivity(mActivityStack.pop());
+        popAndFinishActivitiesUntil(untilManagedActivity);
     }
 
     private void doFinishActivity(Class managedActivity) {
