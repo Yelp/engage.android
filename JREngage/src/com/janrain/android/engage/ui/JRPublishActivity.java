@@ -279,6 +279,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         List<JRProvider>socialProviders = mSessionData.getSocialProviders();
         if ((socialProviders == null || socialProviders.size() == 0)
                 && !mSessionData.isGetMobileConfigDone()) {
+            // Hide the email/SMS tab so things look nice as we load the providers
+            findViewById(R.id.tab_email_sms_content).setVisibility(View.GONE);
             mWaitingForMobileConfig = true;
             showDialog(DIALOG_MOBILE_CONFIG_LOADING);
         } else {
@@ -467,11 +469,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         Log.d(TAG, "onResume");
 
         JREngage.setContext(this);
-        int color = colorForProviderFromArray(
-                mSelectedProvider.getSocialSharingProperties().get("color_values"), false);
+        if (mSelectedProvider != null) {
+            Object colorArray = mSelectedProvider.getSocialSharingProperties().get("color_values");
+            int color = colorForProviderFromArray(colorArray, false);
 
-        mJustShareButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-        mConnectAndShareButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+            mJustShareButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+            mConnectAndShareButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+        }
+
 
         mEmailButton.getBackground().setColorFilter(JANRAIN_BLUE_100PERCENT,
                 PorterDuff.Mode.MULTIPLY);

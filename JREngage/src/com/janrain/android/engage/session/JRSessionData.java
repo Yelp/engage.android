@@ -435,9 +435,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[connectionDidFinishLoading] payload: " + payload);
         }
 
-        if (userdata == null) {
-            Log.e(TAG, "[connectionDidFinishLoading] unexpected null userdata");
-        } else if (userdata instanceof String) {
+        if (userdata instanceof String) {
+            // todo verify this code path
             String tag = (String) userdata;
 
             if (tag.equals("emailSuccess")) {
@@ -448,11 +447,17 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 //todo
             }
         } else if (userdata instanceof JRDictionary) {
+            // Share activity response
             JRDictionary dictionary = (JRDictionary) userdata;
 
             if (dictionary.getAsString("action").equals("shareActivity"))
                 processShareActivityResponse(payload, dictionary);
-            //else todo
+            else {
+                Log.e(TAG, "[connectionDidFinishLoading] unexpected JRDictionary: " + userdata);
+            }
+        } else if (userdata == null) {
+            // Unrecognized response
+            Log.e(TAG, "[connectionDidFinishLoading] unexpected null userdata");
         }
 	}
 
@@ -581,10 +586,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 if (headers.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
                     Log.d(TAG,
                             "[connectionDidFinishLoading] found HTTP_NOT_MODIFIED -> matched ETag");
+                    mGetConfigDone = true;
                     return;
                 }
 
-                //todo this is probably UTF-8 encoded, not ASCII encoded, review this function
+                //todo this is probably UTF-8 encoded, not ASCII encoded, verify this function
                 String payloadString = EncodingUtils.getAsciiString(payload);
                 Log.d(TAG, "[connectionDidFinishLoading-full] payload string: " + payloadString);
 
