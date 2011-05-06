@@ -271,6 +271,10 @@ public class JRProvidersActivity extends ListActivity {
         Log.d(TAG, "onStart");
     }
 
+    public void onBackPressed() {
+        mSessionData.triggerAuthenticationDidCancel();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

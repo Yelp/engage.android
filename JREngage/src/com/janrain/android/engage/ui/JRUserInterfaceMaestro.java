@@ -165,8 +165,7 @@ public class JRUserInterfaceMaestro {
     }
 
     public void authenticationCanceled() {
-        //todo what's this doing, what should it be doing?
-        //popAll();
+        popAll();
     }
 
     public void setUpSocialPublishing() {
