@@ -86,11 +86,12 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private static final String ARCHIVE_AUTH_USERS_BY_PROVIDER = "jrAuthenticatedUsersByProvider";
 
     private static final String FMT_CONFIG_URL =
-            "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s";
+            "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s&version=%s";
 
     private boolean mGetConfigDone = false;
     private String mOldEtag;
     private String mUrlEncodedAppName;
+    private String mLibraryVersion;
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -187,9 +188,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         try { mUrlEncodedAppName = URLEncoder.encode(appName, "UTF-8"); }
         catch (UnsupportedEncodingException e) { Log.e(TAG, e.toString()); }
 
-        String libraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
+        mLibraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
         String diskVersion = Prefs.getAsString("JREngageVersion", "");
-        if (diskVersion.equals(libraryVersion)) {
+        if (diskVersion.equals(mLibraryVersion)) {
             // Load dictionary of authenticated users.  If the dictionary is not found, the
             // archiver will return a new (empty) list.
             mAuthenticatedUsersByProvider = JRDictionary.unarchive(ARCHIVE_AUTH_USERS_BY_PROVIDER);
@@ -633,7 +634,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     private JREngageError startGetConfiguration() {
-        String urlString = String.format(FMT_CONFIG_URL, ENVIRONMENT.getServerUrl(), mAppId, mUrlEncodedAppName);
+        String urlString = String.format(FMT_CONFIG_URL,
+                ENVIRONMENT.getServerUrl(),
+                mAppId,
+                mUrlEncodedAppName,
+                mLibraryVersion);
         if (Config.LOGD) {
             Log.d(TAG, "[startGetConfiguration] url: " + urlString);
         }
@@ -641,7 +646,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         final String tag = "getConfiguration";
 
         BasicNameValuePair etagHeader = new BasicNameValuePair("If-None-Match", mOldEtag);
-//                "\"" + mOldEtag + "\"");
         List<NameValuePair> headerList = new ArrayList<NameValuePair>();
         headerList.add(etagHeader);
 
@@ -723,8 +727,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         Prefs.putString(Prefs.KEY_JR_CONFIGURATION_ETAG, mNewEtag);
 
         // 'git-tag'-like library version tag to prevent reloading stale data from disk
-        String libraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
-        Prefs.putString("JREngageVersion", libraryVersion);
+        Prefs.putString("JREngageVersion", mLibraryVersion);
 
         mGetConfigDone = true;
         triggerMobileConfigDidFinish();
