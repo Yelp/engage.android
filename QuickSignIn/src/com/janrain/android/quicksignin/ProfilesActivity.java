@@ -59,6 +59,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.janrain.android.quicksignin.QuickSignInEnvironment.*;
+
 public class ProfilesActivity extends ListActivity implements View.OnClickListener, JREngageDelegate {
 
     private static HashMap<String, Drawable> provider_list_icon_drawables =
@@ -182,8 +184,8 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
     private static final String TAG = ProfilesActivity.class.getSimpleName();
 
-    private static final String ENGAGE_APP_ID = "";
-    private static final String ENGAGE_TOKEN_URL = "";
+    private static String ENGAGE_APP_ID = getAppId();
+    private static String ENGAGE_TOKEN_URL = getTokenUrl();
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -247,12 +249,12 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profiles_listview);
 
-        String engageAppId = TextUtils.isEmpty(readAsset("app_id.txt")) ?
-                null : readAsset("app_id.txt").trim();
-        String engageTokenUrl = null;
+//        String engageAppId = TextUtils.isEmpty(readAsset("app_id.txt")) ?
+//                null : readAsset("app_id.txt").trim();
+//        String engageTokenUrl = null;
 
-//        mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
-        mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, this);        
+        mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
+//        mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, this);
 
         mEditing = false;
 
