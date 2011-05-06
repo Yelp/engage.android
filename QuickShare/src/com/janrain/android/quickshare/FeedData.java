@@ -67,6 +67,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 
+import static com.janrain.android.quickshare.QuickShareEnvironment.*;
+
 public class FeedData implements JREngageDelegate {
     private static final String TAG = FeedData.class.getSimpleName();
 
@@ -75,8 +77,8 @@ public class FeedData implements JREngageDelegate {
     private static final String ARCHIVE_STORIES_ARRAY = "storiesArray";
     private static final String ARCHIVE_STORY_LINKS_HASH = "storyLinksHash";
 
-//    private static final String ENGAGE_APP_ID = "";
-//    private static final String ENGAGE_TOKEN_URL = "";
+    private static String ENGAGE_APP_ID = getAppId();
+    private static String ENGAGE_TOKEN_URL = getTokenUrl();
 
     private static FeedData sInstance;
 
