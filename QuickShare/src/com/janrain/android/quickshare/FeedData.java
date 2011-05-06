@@ -101,6 +101,7 @@ public class FeedData implements JREngageDelegate {
             return sInstance;
         }
 
+        /* testing git stuff */
         sInstance = new FeedData(context);
 
         if (Config.LOGD)
