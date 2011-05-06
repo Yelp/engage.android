@@ -249,12 +249,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profiles_listview);
 
-//        String engageAppId = TextUtils.isEmpty(readAsset("app_id.txt")) ?
-//                null : readAsset("app_id.txt").trim();
-//        String engageTokenUrl = null;
-
         mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
-//        mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, this);
 
         mEditing = false;
 
