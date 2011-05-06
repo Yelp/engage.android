@@ -189,9 +189,11 @@
                         android:layout_alignParentLeft="true"
                         android:background="@drawable/bg_publish_preview_border"
                         android:layout_marginTop="8dip"
-                        android:layout_marginRight="4dip"
                         android:layout_marginBottom="4dip"
+                        android:layout_marginRight="4dip"
                         android:layout_marginLeft="4dip"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
                         >
                         <!--android:gravity="top|left"-->
 
@@ -214,10 +216,11 @@
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/preview_text_view"
-                            android:layout_marginTop="4dip"
+                            android:layout_marginTop="3dip"
                             android:layout_marginLeft="4dip"
                             android:layout_marginBottom="4dip"
                             android:layout_marginRight="4dip"
+                            android:paddingTop="4dp"
                             android:background="@drawable/bg_provider_activity_info"
                             >
                             <!--android:layout_height="122dip"-->
