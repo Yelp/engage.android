@@ -133,7 +133,8 @@ public class JRActivityObject {
     /**
      * An array of <code>JRActionLink</code> objects, each having two attributes: text and href.
      * An action link is a link a user can use to take action on an activity update on the provider
-     * Example:
+     *
+     * @par Example:
      * @code
      * action_links:
      * [
@@ -149,7 +150,7 @@ public class JRActivityObject {
      * @endcode
      *
      * @note
-     *      Any objects added to this array that are not of type <code>JRActionLink</code> will
+     *      Any objects added to this array that are not of type JRActionLink will
      *      be ignored.
      *
      * @par Getter/Setter:
@@ -158,11 +159,11 @@ public class JRActivityObject {
     private List<JRActionLink> mActionLinks = new ArrayList<JRActionLink>();
 
     /**
-     * An array of objects with base class <code>JRMediaObject (i.e., JRImageMediaObject,
-     * JRFlashMediaObject, JRMp3MediaObject)</code>.
+     * An array of objects with base class \em JRMediaObject (i.e., JRImageMediaObject,
+     * JRFlashMediaObject, JRMp3MediaObject).
      *
      * To publish attached media objects with your activity, create the preferred
-     * object, populate the object's fields, then add the object to the <code>media</code> array.
+     * object, populate the object's fields, then add the object to the #mMedia array.
      * You can attach pictures, videos, and mp3s to your activity, although how the
      * media objects get presented and whether or not they are used, depend on the provider.
      *
@@ -172,7 +173,7 @@ public class JRActivityObject {
      *   -# flash
      *   -# mp3
      *
-     * Also, any objects added to this array that are not of type <code>JRMediaObject</code>
+     * Also, any objects added to this array that are not of type JRMediaObject
      * will be ignored.
      *
      * @sa Media object format and rules are identical to those described on the <a
@@ -187,7 +188,8 @@ public class JRActivityObject {
     /**
      * An object with attributes describing properties of the update. An attribute value can be
      * a string or an object with two attributes, text and href.
-     * Example:
+     *
+     * @par Example:
      * @code
      *   properties:
      *   {
@@ -211,16 +213,21 @@ public class JRActivityObject {
  **/
 /*@{*/
     /**
-     * Returns a <code>JRActivityObject</code> initialized with the given action and url.
+     * Returns a JRActivityObject initialized with the given action and url.
      *
      * @param action
      *   A string describing what the user did, written in the third person.  This value cannot
-     *   be <code>null</code>.
+     *   be <code>null</code>
      *
      * @param url
-     *   The URL of the resource being mentioned in the activity update.
-     */
+     *   The URL of the resource being mentioned in the activity update
+     *
+     * @throws IllegalArgumentException
+     *   if text or href is null
+     **/
     public JRActivityObject(String action, String url) {
+        if (action == null) throw new IllegalArgumentException("illegal null text or null href");
+
         Log.d(TAG, "created with action: " + action + " url: " + url);
         mAction = action;
         mUrl = url;
@@ -258,7 +265,7 @@ public class JRActivityObject {
      *
      * @return
      *      A string containing user-supplied content, such as a comment or the first paragraph of
-     *       an article that the user wrote
+     *      an article that the user wrote
      **/
     public String getUserGeneratedContent() {
         return mUserGeneratedContent;
@@ -319,7 +326,7 @@ public class JRActivityObject {
      * Getter for the activity object's #mActionLinks property
      *
      * @return
-     *      An array of <code>JRActionLink</code> objects, each having two attributes: text and href.
+     *      An array of JRActionLink objects, each having two attributes: text and href.
      *      An action link is a link a user can use to take action on an activity update on the provider
      **/
     public List<JRActionLink> getActionLinks() {
@@ -330,7 +337,7 @@ public class JRActivityObject {
      * Setter for the activity object's #mActionLinks property
      *
      * @param actionLinks
-     *      An array of <code>JRActionLink</code> objects, each having two attributes: text and href.
+     *      An array of JRActionLink objects, each having two attributes: text and href.
      *      An action link is a link a user can use to take action on an activity update on the provider
      **/
     public void setActionLinks(List<JRActionLink> actionLinks) {
@@ -354,8 +361,8 @@ public class JRActivityObject {
      * Getter for the activity object's #mMedia property
      *
      * @return
-     *      An array of objects with base class <code>JRMediaObject (i.e., JRImageMediaObject,
-     *      JRFlashMediaObject, JRMp3MediaObject)</code>.
+     *      An array of objects with base class \em JRMediaObject (i.e., JRImageMediaObject,
+     *      JRFlashMediaObject, JRMp3MediaObject)
      **/
     public List<JRMediaObject> getMedia() {
         return mMedia;
@@ -365,8 +372,8 @@ public class JRActivityObject {
      * Setter for the activity object's #mMedia property
      *
      * @param media
-     *      An array of objects with base class <code>JRMediaObject (i.e., JRImageMediaObject,
-     *      JRFlashMediaObject, JRMp3MediaObject)</code>.
+     *      An array of objects with base class \em JRMediaObject (i.e., JRImageMediaObject,
+     *      JRFlashMediaObject, JRMp3MediaObject)
      **/
     public void setMedia(List<JRMediaObject> media) {
         mMedia = media;

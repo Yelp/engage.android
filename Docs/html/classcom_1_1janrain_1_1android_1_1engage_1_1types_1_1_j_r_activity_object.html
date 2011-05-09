@@ -121,11 +121,17 @@ Private Attributes</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Returns a <code><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html" title="An activity object you create, populate, and post to the user&#39;s activity stream.">JRActivityObject</a></code> initialized with the given action and url.</p>
+<p>Returns a <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html" title="An activity object you create, populate, and post to the user&#39;s activity stream.">JRActivityObject</a> initialized with the given action and url.</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>action</em>&nbsp;</td><td>A string describing what the user did, written in the third person. This value cannot be <code>null</code>.</td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>url</em>&nbsp;</td><td>The URL of the resource being mentioned in the activity update. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>action</em>&nbsp;</td><td>A string describing what the user did, written in the third person. This value cannot be <code>null</code></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>url</em>&nbsp;</td><td>The URL of the resource being mentioned in the activity update</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>IllegalArgumentException</em>&nbsp;</td><td>if text or href is null </td></tr>
   </table>
   </dd>
 </dl>
@@ -318,7 +324,7 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 <p>Getter for the activity object's <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a9808cd0aa65b882929ba8be9a974b496">mActionLinks</a> property</p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>An array of <code><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link.html" title="A link a user can use to take action on an activity update on the provider.">JRActionLink</a></code> objects, each having two attributes: text and href. An action link is a link a user can use to take action on an activity update on the provider </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>An array of <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link.html" title="A link a user can use to take action on an activity update on the provider.">JRActionLink</a> objects, each having two attributes: text and href. An action link is a link a user can use to take action on an activity update on the provider </dd></dl>
 
 </div>
 </div>
@@ -340,7 +346,7 @@ Private Attributes</h2></td></tr>
 <p>Setter for the activity object's <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a9808cd0aa65b882929ba8be9a974b496">mActionLinks</a> property</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>actionLinks</em>&nbsp;</td><td>An array of <code><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link.html" title="A link a user can use to take action on an activity update on the provider.">JRActionLink</a></code> objects, each having two attributes: text and href. An action link is a link a user can use to take action on an activity update on the provider </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>actionLinks</em>&nbsp;</td><td>An array of <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link.html" title="A link a user can use to take action on an activity update on the provider.">JRActionLink</a> objects, each having two attributes: text and href. An action link is a link a user can use to take action on an activity update on the provider </td></tr>
   </table>
   </dd>
 </dl>
@@ -387,7 +393,7 @@ Private Attributes</h2></td></tr>
 </div>
 <div class="memdoc">
 <p>Getter for the activity object's <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a3d89cbb011a9839da0b559556acad5f3">mMedia</a> property</p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>An array of objects with base class <code>JRMediaObject (i.e., <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object.html" title="Image object to be included in a post to a user&#39;s stream.">JRImageMediaObject</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object.html" title="Flash object to be included in a post to a user&#39;s stream.">JRFlashMediaObject</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object.html" title="Mp3 object to be included in a post to a user&#39;s stream.">JRMp3MediaObject</a>)</code>. </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>An array of objects with base class <em>JRMediaObject</em> (i.e., <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object.html" title="Image object to be included in a post to a user&#39;s stream.">JRImageMediaObject</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object.html" title="Flash object to be included in a post to a user&#39;s stream.">JRFlashMediaObject</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object.html" title="Mp3 object to be included in a post to a user&#39;s stream.">JRMp3MediaObject</a>) </dd></dl>
 
 </div>
 </div>
@@ -409,7 +415,7 @@ Private Attributes</h2></td></tr>
 <p>Setter for the activity object's <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a3d89cbb011a9839da0b559556acad5f3">mMedia</a> property</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>media</em>&nbsp;</td><td>An array of objects with base class <code>JRMediaObject (i.e., <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object.html" title="Image object to be included in a post to a user&#39;s stream.">JRImageMediaObject</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object.html" title="Flash object to be included in a post to a user&#39;s stream.">JRFlashMediaObject</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object.html" title="Mp3 object to be included in a post to a user&#39;s stream.">JRMp3MediaObject</a>)</code>. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>media</em>&nbsp;</td><td>An array of objects with base class <em>JRMediaObject</em> (i.e., <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object.html" title="Image object to be included in a post to a user&#39;s stream.">JRImageMediaObject</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object.html" title="Flash object to be included in a post to a user&#39;s stream.">JRFlashMediaObject</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object.html" title="Mp3 object to be included in a post to a user&#39;s stream.">JRMp3MediaObject</a>) </td></tr>
   </table>
   </dd>
 </dl>
@@ -573,8 +579,8 @@ Private Attributes</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>An array of <code><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link.html" title="A link a user can use to take action on an activity update on the provider.">JRActionLink</a></code> objects, each having two attributes: text and href. An action link is a link a user can use to take action on an activity update on the provider Example: </p>
-<div class="fragment"><pre class="fragment"> action_links:
+<p>An array of <code><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link.html" title="A link a user can use to take action on an activity update on the provider.">JRActionLink</a></code> objects, each having two attributes: text and href. An action link is a link a user can use to take action on an activity update on the provider</p>
+<dl class="user"><dt><b>Example:</b></dt><dd><div class="fragment"><pre class="fragment"> action_links:
  [
    {
      <span class="stringliteral">&quot;text&quot;</span>: <span class="stringliteral">&quot;Rate this quiz result&quot;</span>,
@@ -585,7 +591,8 @@ Private Attributes</h2></td></tr>
      <span class="stringliteral">&quot;href&quot;</span>: <span class="stringliteral">&quot;http://example.com/quiz/12345/take&quot;</span>
    }
  ]
-</pre></div><dl class="note"><dt><b>Note:</b></dt><dd>Any objects added to this array that are not of type <code><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link.html" title="A link a user can use to take action on an activity update on the provider.">JRActionLink</a></code> will be ignored.</dd></dl>
+</pre></div></dd></dl>
+<dl class="note"><dt><b>Note:</b></dt><dd>Any objects added to this array that are not of type <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link.html" title="A link a user can use to take action on an activity update on the provider.">JRActionLink</a> will be ignored.</dd></dl>
 <dl class="user"><dt><b>Getter/Setter:</b></dt><dd><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#aa6c896c3414d99e74895eda895025573">getActionLinks()</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a081d9f6608b311f1d09baccfc22d765d">setActionLinks()</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#aeeaceaacba0d9f5a50626b0ab60ae48d">addActionLink()</a> </dd></dl>
 
 </div>
@@ -600,15 +607,15 @@ Private Attributes</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>An array of objects with base class <code>JRMediaObject (i.e., <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object.html" title="Image object to be included in a post to a user&#39;s stream.">JRImageMediaObject</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object.html" title="Flash object to be included in a post to a user&#39;s stream.">JRFlashMediaObject</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object.html" title="Mp3 object to be included in a post to a user&#39;s stream.">JRMp3MediaObject</a>)</code>.</p>
-<p>To publish attached media objects with your activity, create the preferred object, populate the object's fields, then add the object to the <code>media</code> array. You can attach pictures, videos, and mp3s to your activity, although how the media objects get presented and whether or not they are used, depend on the provider.</p>
+<p>An array of objects with base class <em>JRMediaObject</em> (i.e., <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object.html" title="Image object to be included in a post to a user&#39;s stream.">JRImageMediaObject</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object.html" title="Flash object to be included in a post to a user&#39;s stream.">JRFlashMediaObject</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object.html" title="Mp3 object to be included in a post to a user&#39;s stream.">JRMp3MediaObject</a>).</p>
+<p>To publish attached media objects with your activity, create the preferred object, populate the object's fields, then add the object to the <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a3d89cbb011a9839da0b559556acad5f3">mMedia</a> array. You can attach pictures, videos, and mp3s to your activity, although how the media objects get presented and whether or not they are used, depend on the provider.</p>
 <p>If you include more than one media type in the array, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="Main API for interacting with the Janrain Engage for iPhone library.">JREngage</a> will choose only one of these types, in this order:</p>
 <ol type="1">
 <li>image</li>
 <li>flash</li>
 <li>mp3</li>
 </ol>
-<p>Also, any objects added to this array that are not of type <code>JRMediaObject</code> will be ignored.</p>
+<p>Also, any objects added to this array that are not of type JRMediaObject will be ignored.</p>
 <dl class="see"><dt><b>See also:</b></dt><dd>Media object format and rules are identical to those described on the <a href="http://developers.facebook.com/docs/guides/attachments">Facebook Developer page on Attachments</a>.</dd></dl>
 <dl class="user"><dt><b>Getter/Setter:</b></dt><dd><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a52553e9e6b54169e7479f988c09c4532">getMedia()</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#aa891704e795b404d59b3b59f63103056">setMedia(List&lt;JRMediaObject&gt;)</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a09645c0a971972737f7b0463cd8c5b9b">setMedia(JRMediaObject)</a> </dd></dl>
 
@@ -624,8 +631,8 @@ Private Attributes</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>An object with attributes describing properties of the update. An attribute value can be a string or an object with two attributes, text and href. Example: </p>
-<div class="fragment"><pre class="fragment">   properties:
+<p>An object with attributes describing properties of the update. An attribute value can be a string or an object with two attributes, text and href.</p>
+<dl class="user"><dt><b>Example:</b></dt><dd><div class="fragment"><pre class="fragment">   properties:
    {
        <span class="stringliteral">&quot;Time&quot;</span>: <span class="stringliteral">&quot;05:00&quot;</span>,
        <span class="stringliteral">&quot;Location&quot;</span>:
@@ -634,7 +641,8 @@ Private Attributes</h2></td></tr>
            <span class="stringliteral">&quot;href&quot;</span>: <span class="stringliteral">&quot;http://en.wikipedia.org/wiki/Portland,_Oregon&quot;</span>
        }
    }
-</pre></div><dl class="user"><dt><b>Getter/Setter:</b></dt><dd><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#abbb9f5024dbb91acb1d08f22c11b7661">getProperties()</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a6f8bd80cdc8f93045131b5b413170294">setProperties()</a> </dd></dl>
+</pre></div></dd></dl>
+<dl class="user"><dt><b>Getter/Setter:</b></dt><dd><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#abbb9f5024dbb91acb1d08f22c11b7661">getProperties()</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a6f8bd80cdc8f93045131b5b413170294">setProperties()</a> </dd></dl>
 
 </div>
 </div>
