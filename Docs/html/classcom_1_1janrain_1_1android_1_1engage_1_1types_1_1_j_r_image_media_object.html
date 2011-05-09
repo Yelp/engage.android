@@ -14,7 +14,6 @@
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&nbsp;List</span></a></li>
       <li><a href="classes.html"><span>Class&nbsp;Index</span></a></li>
-      <li><a href="hierarchy.html"><span>Class&nbsp;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
@@ -30,33 +29,30 @@
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <h1>com.janrain.android.engage.types.JRImageMediaObject Class Reference</h1>  </div>
 </div>
 <div class="contents">
-<!-- doxytag: class="com::janrain::android::engage::types::JRImageMediaObject" --><!-- doxytag: inherits="com::janrain::android::engage::types::JRMediaObject" --><div class="dynheader">
-Inheritance diagram for com.janrain.android.engage.types.JRImageMediaObject:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object.png" usemap="#com.janrain.android.engage.types.JRImageMediaObject_map" alt=""/>
-  <map id="com.janrain.android.engage.types.JRImageMediaObject_map" name="com.janrain.android.engage.types.JRImageMediaObject_map">
-<area href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_media_object.html" alt="com.janrain.android.engage.types.JRMediaObject" shape="rect" coords="0,0,329,24"/>
-</map>
-</div>
+<!-- doxytag: class="com::janrain::android::engage::types::JRImageMediaObject" --><!-- doxytag: inherits="com::janrain::android::engage::types::JRMediaObject" -->
+<p>Image object to be included in a post to a user's stream.  
+<a href="#_details">More...</a></p>
+
+<p>Inherits com::janrain::android::engage::types::JRMediaObject.</p>
 
 <p><a href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object-members.html">List of all members.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Constructors</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p><a class="anchor" id="amgrp559a25fdb98a7d1fd1c3771ac568d5e9"></a> </p>
+</div></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object.html#a14ad49a8b8a77ef12ed459b685cbac07">JRImageMediaObject</a> (String src, String href)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
-<p>Image object to be included in a post to a user's stream.</p>
-<p>Create an image media object, fill in the object's fields, and add the object to the JRActivityObject.media array in your <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html">JRActivityObject</a>. How the images get presented and whether or not they are used, depend on the provider.</p>
-<p>Each image must contain a src URL, which maps to the photo's URL, and an href URL, which maps to the URL where a user should be taken if he or she clicks the photo.</p>
-<p>Format and rules are identical to those described on the <a href="http://developers.facebook.com/docs/guides/attachments">Facebook Developer page on Attachments</a>. </p>
+<p>Image object to be included in a post to a user's stream. </p>
+<p>Create an image media object, fill in the object's fields, and add the object to the JRActivityObject.media array in your <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html" title="An activity object you create, populate, and post to the user&#39;s activity stream.">JRActivityObject</a>. How the images get presented and whether or not they are used, depend on the provider.</p>
+<p>Each image must contain a <em>src</em> URL, which maps to the photo's URL, and an <em>href</em> URL, which maps to the URL where a user should be taken if he or she clicks the photo.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd>Format and rules are identical to those described on the <a href="http://developers.facebook.com/docs/guides/attachments">Facebook Developer page on Attachments</a>. </dd></dl>
 <hr/><h2>Constructor</h2>
 <a class="anchor" id="a14ad49a8b8a77ef12ed459b685cbac07"></a><!-- doxytag: member="com::janrain::android::engage::types::JRImageMediaObject::JRImageMediaObject" ref="a14ad49a8b8a77ef12ed459b685cbac07" args="(String src, String href)" -->
 <div class="memitem">
@@ -82,14 +78,15 @@ Public Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Creates a <code><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object.html">JRImageMediaObject</a></code> initialized with the given src and href.</p>
+<p>Returns a <code><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object.html" title="Image object to be included in a post to a user&#39;s stream.">JRImageMediaObject</a></code> initialized with the given src and href.</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>src</em>&nbsp;</td><td>The photo's URL. This value cannot be <code>null</code>.</td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>href</em>&nbsp;</td><td>The URL where a user should be taken if he or she clicks the photo. This value cannot be <code>null</code>.</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>src</em>&nbsp;</td><td>The photo's URL. This value cannot be <code>nil</code>.</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>href</em>&nbsp;</td><td>The URL where a user should be taken if he or she clicks the photo. This value cannot be <code>nil</code>.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>A <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object.html" title="Image object to be included in a post to a user&#39;s stream.">JRImageMediaObject</a> initialized with the given src and href. If either <code>src</code> or <code>href</code> are <em>nil</em>, returns <code>nil</code>.</dd></dl>
 <dl><dt><b>Exceptions:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>IllegalArgumentException</em>&nbsp;</td><td>if src or href is null </td></tr>

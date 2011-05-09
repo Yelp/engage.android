@@ -32,8 +32,11 @@ package com.janrain.android.engage.types;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
+ * @internal
+ *
+ * @class JRMediaObject
  * Base class for JRImageMediaObject, JRFlashMediaObject, and JRMp3MediaObject.
- */
+ **/
 public abstract class JRMediaObject {
     public boolean hasThumbnail() { return false; }
 

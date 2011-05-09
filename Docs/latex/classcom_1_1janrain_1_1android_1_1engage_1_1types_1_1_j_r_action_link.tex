@@ -2,21 +2,39 @@
 \section{com.janrain.android.engage.types.JRActionLink Class Reference}
 \label{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link}\index{com::janrain::android::engage::types::JRActionLink@{com::janrain::android::engage::types::JRActionLink}}
 }
+
+
+A link a user can use to take action on an activity update on the provider.  
+
+
 \subsection*{Public Member Functions}
-\begin{DoxyCompactItemize}
+\begin{Indent}{\bf Constructors}\par
+{\em \label{_amgrp559a25fdb98a7d1fd1c3771ac568d5e9}
+ }\begin{DoxyCompactItemize}
 \item 
 \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_a4a5c9c01ed02d9234ccae5ad402cd10e}{JRActionLink} (String text, String href)
-\item 
-Map$<$ String, String $>$ \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_aeebae3cd3eb70a0e86015a30cfa4cfe1}{dictionaryForObject} ()
 \end{DoxyCompactItemize}
+\end{Indent}
 
 
 \subsection{Detailed Description}
-A link a user can use to take action on an activity update on the provider.
+A link a user can use to take action on an activity update on the provider. Create an action link object, fill in the object's fields, and add the object the JRActivityObject.action\_\-links array of your \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}{JRActivityObject}.
 
-Create an action link object, fill in the object's fields, and add the object the JRActivityObject.action\_\-links array of your \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}{JRActivityObject}.
-
-Each action link must contain a link, {\itshape href\/}, and some {\itshape text\/}, describing what action will happen if someone clicks the link. Example: {\ttfamily  action\_\-links: \mbox{[} \{ \char`\"{}text\char`\"{}: \char`\"{}Rate this quiz result\char`\"{}, \char`\"{}href\char`\"{}: \char`\"{}http://example.com/quiz/12345/result/6789/rate\char`\"{} \}, \{ \char`\"{}text\char`\"{}: \char`\"{}Take this quiz\char`\"{}, \char`\"{}href\char`\"{}: \char`\"{}http://example.com/quiz/12345/take\char`\"{} \} \mbox{]} } 
+Each action link must contain a link, {\itshape href\/}, and some {\itshape text\/}, describing what action will happen if someone clicks the link. Example: 
+\begin{DoxyCode}
+ action_links:
+ [
+   {
+     "text": "Rate this quiz result",
+     "href": "http://example.com/quiz/12345/result/6789/rate"
+   },
+   {
+     "text": "Take this quiz",
+     "href": "http://example.com/quiz/12345/take"
+   }
+ ]
+\end{DoxyCode}
+ 
 
 \subsection{Constructor}
 \hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_a4a5c9c01ed02d9234ccae5ad402cd10e}{
@@ -38,25 +56,6 @@ Creates a {\ttfamily \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1type
 \begin{DoxyExceptions}{Exceptions}
 \item[{\em IllegalArgumentException}]if text or href is null \end{DoxyExceptions}
 
-
-\subsection{Member Function Documentation}
-\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_aeebae3cd3eb70a0e86015a30cfa4cfe1}{
-\index{com::janrain::android::engage::types::JRActionLink@{com::janrain::android::engage::types::JRActionLink}!dictionaryForObject@{dictionaryForObject}}
-\index{dictionaryForObject@{dictionaryForObject}!com::janrain::android::engage::types::JRActionLink@{com::janrain::android::engage::types::JRActionLink}}
-\subsubsection[{dictionaryForObject}]{\setlength{\rightskip}{0pt plus 5cm}Map$<$String, String$>$ com.janrain.android.engage.types.JRActionLink.dictionaryForObject (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
-\label{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_aeebae3cd3eb70a0e86015a30cfa4cfe1}
-Returns a HashMap (Dictionary) representing the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link}{JRActionLink}.
-
-\begin{DoxyReturn}{Returns}
-An HashMap (Dictionary) of String objects representing the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link}{JRActionLink}.
-\end{DoxyReturn}
-NOTE: This function should not be used directly. It is intended only for use by the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} library.
-
-TODO: revisit visibility/usage specifically, is this the right jsonification 
 
 The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
 \item 

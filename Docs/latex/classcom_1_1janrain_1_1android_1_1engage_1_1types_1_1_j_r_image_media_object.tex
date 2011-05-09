@@ -2,27 +2,34 @@
 \section{com.janrain.android.engage.types.JRImageMediaObject Class Reference}
 \label{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object}\index{com::janrain::android::engage::types::JRImageMediaObject@{com::janrain::android::engage::types::JRImageMediaObject}}
 }
-Inheritance diagram for com.janrain.android.engage.types.JRImageMediaObject:\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[height=2.000000cm]{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object}
-\end{center}
-\end{figure}
+
+
+Image object to be included in a post to a user's stream.  
+
+
+
+
+Inherits com::janrain::android::engage::types::JRMediaObject.
+
 \subsection*{Public Member Functions}
-\begin{DoxyCompactItemize}
+\begin{Indent}{\bf Constructors}\par
+{\em \label{_amgrp559a25fdb98a7d1fd1c3771ac568d5e9}
+ }\begin{DoxyCompactItemize}
 \item 
 \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_a14ad49a8b8a77ef12ed459b685cbac07}{JRImageMediaObject} (String src, String href)
 \end{DoxyCompactItemize}
+\end{Indent}
 
 
 \subsection{Detailed Description}
-Image object to be included in a post to a user's stream.
+Image object to be included in a post to a user's stream. Create an image media object, fill in the object's fields, and add the object to the JRActivityObject.media array in your \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}{JRActivityObject}. How the images get presented and whether or not they are used, depend on the provider.
 
-Create an image media object, fill in the object's fields, and add the object to the JRActivityObject.media array in your \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}{JRActivityObject}. How the images get presented and whether or not they are used, depend on the provider.
+Each image must contain a {\itshape src\/} URL, which maps to the photo's URL, and an {\itshape href\/} URL, which maps to the URL where a user should be taken if he or she clicks the photo.
 
-Each image must contain a src URL, which maps to the photo's URL, and an href URL, which maps to the URL where a user should be taken if he or she clicks the photo.
-
+\begin{DoxySeeAlso}{See also}
 Format and rules are identical to those described on the \href{http://developers.facebook.com/docs/guides/attachments}{\tt Facebook Developer page on Attachments}. 
+\end{DoxySeeAlso}
+
 
 \subsection{Constructor}
 \hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_a14ad49a8b8a77ef12ed459b685cbac07}{
@@ -35,11 +42,14 @@ Format and rules are identical to those described on the \href{http://developers
 \end{DoxyParamCaption}
 )}}
 \label{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_a14ad49a8b8a77ef12ed459b685cbac07}
-Creates a {\ttfamily \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object}{JRImageMediaObject}} initialized with the given src and href.
+Returns a {\ttfamily \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object}{JRImageMediaObject}} initialized with the given src and href.
 
 
 \begin{DoxyParams}{Parameters}
-\item[{\em src}]The photo's URL. This value cannot be {\ttfamily null}.\item[{\em href}]The URL where a user should be taken if he or she clicks the photo. This value cannot be {\ttfamily null}.\end{DoxyParams}
+\item[{\em src}]The photo's URL. This value cannot be {\ttfamily nil}.\item[{\em href}]The URL where a user should be taken if he or she clicks the photo. This value cannot be {\ttfamily nil}.\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object}{JRImageMediaObject} initialized with the given src and href. If either {\ttfamily src} or {\ttfamily href} are {\itshape nil\/}, returns {\ttfamily nil}.
+\end{DoxyReturn}
 
 \begin{DoxyExceptions}{Exceptions}
 \item[{\em IllegalArgumentException}]if src or href is null \end{DoxyExceptions}

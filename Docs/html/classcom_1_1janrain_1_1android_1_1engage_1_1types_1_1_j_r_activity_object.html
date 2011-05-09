@@ -14,7 +14,6 @@
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&nbsp;List</span></a></li>
       <li><a href="classes.html"><span>Class&nbsp;Index</span></a></li>
-      <li><a href="hierarchy.html"><span>Class&nbsp;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
     </ul>
   </div>
@@ -30,22 +29,25 @@
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <h1>com.janrain.android.engage.types.JRActivityObject Class Reference</h1>  </div>
 </div>
 <div class="contents">
 <!-- doxytag: class="com::janrain::android::engage::types::JRActivityObject" -->
+<p>An activity object you create, populate, and post to the user's activity stream.  
+<a href="#_details">More...</a></p>
+
 <p><a href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object-members.html">List of all members.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Constructors</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p><a class="anchor" id="amgrp559a25fdb98a7d1fd1c3771ac568d5e9"></a> </p>
+</div></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a625c1c83258dc53f0f5c5531c79db3b9">JRActivityObject</a> (String action, String url)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary.html">JRDictionary</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a9cfd26c57e878a8e12736c39103741a0">dictionaryForObject</a> ()</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
-<p>An activity object you create, populate, and post to the user's activity stream.</p>
+<p>An activity object you create, populate, and post to the user's activity stream. </p>
 <p>Create an activity object, fill in the object's fields, and pass the object to the <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="Main API for interacting with the Janrain Engage for iPhone library.">JREngage</a> library when you are ready to publish. Currently supported providers are:</p>
 <ul>
 <li>Facebook</li>
@@ -61,7 +63,7 @@ Public Member Functions</h2></td></tr>
 <li>The user has already authenticated and has given consent to publish activity</li>
 </ul>
 <p>Otherwise, you will be given an error response indicating what was wrong. Detailed error responses will also be given if the activity parameter does not meet the formatting requirements described below.</p>
-<p>For more information of Janrain Engage's activity api, see <a href="https://rpxnow.com/docs#api_activity">the activity section</a> of our API Documentation. </p>
+<dl class="see"><dt><b>See also:</b></dt><dd>For more information of Janrain Engage's activity api, see <a href="https://rpxnow.com/docs#api_activity">the activity section</a> of our API Documentation. </dd></dl>
 <hr/><h2>Constructor</h2>
 <a class="anchor" id="a625c1c83258dc53f0f5c5531c79db3b9"></a><!-- doxytag: member="com::janrain::android::engage::types::JRActivityObject::JRActivityObject" ref="a625c1c83258dc53f0f5c5531c79db3b9" args="(String action, String url)" -->
 <div class="memitem">
@@ -87,7 +89,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Returns a <code><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html">JRActivityObject</a></code> initialized with the given action and url.</p>
+<p>Returns a <code><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html" title="An activity object you create, populate, and post to the user&#39;s activity stream.">JRActivityObject</a></code> initialized with the given action and url.</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>action</em>&nbsp;</td><td>A string describing what the user did, written in the third person. This value cannot be <code>null</code>.</td></tr>
@@ -98,30 +100,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a9cfd26c57e878a8e12736c39103741a0"></a><!-- doxytag: member="com::janrain::android::engage::types::JRActivityObject::dictionaryForObject" ref="a9cfd26c57e878a8e12736c39103741a0" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary.html">JRDictionary</a> com.janrain.android.engage.types.JRActivityObject.dictionaryForObject </td>
-          <td>(</td>
-          <td class="paramname"></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Returns a HashMap (Dictionary) representing the <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html">JRActivityObject</a>.</p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>An HashMap (Dictionary) of String objects representing the <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html">JRActivityObject</a>.</dd></dl>
-<p>NOTE: This function should not be used directly. It is intended only for use by the <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="Main API for interacting with the Janrain Engage for iPhone library.">JREngage</a> library.</p>
-<p>TODO: revisit visibility/usage </p>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>/Users/lillialexis/Android/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java</li>
+<li>/Users/lillialexis/Android/engage.android/JREngage/src/com/janrain/android/engage/types/<a class="el" href="_j_r_activity_object_8java.html">JRActivityObject.java</a></li>
 </ul>
 </div>
 <!-- doxygen footer -->

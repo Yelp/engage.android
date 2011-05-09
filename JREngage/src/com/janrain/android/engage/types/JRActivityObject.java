@@ -39,7 +39,17 @@ import java.util.Map;
 
 
 /**
- * An activity object you create, populate, and post to the user's activity stream.
+ * @file
+ * @brief Interface for creating and populating activities that you wish to publish.
+ *
+ * Interface for creating and populating activities that you wish to publish
+ * to your user's social networks.  Create an activity object, fill in the
+ * object's fields, and pass the object to the JREngage library when you
+ * are ready to share.
+ **/
+
+/**
+ * @brief An activity object you create, populate, and post to the user's activity stream.
  *
  * Create an activity object, fill in the object's fields, and pass the object to
  * the JREngage library when you are ready to publish. Currently supported providers are:
@@ -61,7 +71,7 @@ import java.util.Map;
  * responses will also be given if the activity parameter does not meet the formatting requirements
  * described below.
  *
- * For more information of Janrain Engage's activity api, see <a
+ * @sa For more information of Janrain Engage's activity api, see <a
  * href="https://rpxnow.com/docs#api_activity">the activity section</a> of our API Documentation.
  */
 public class JRActivityObject {
@@ -70,6 +80,11 @@ public class JRActivityObject {
     // ------------------------------------------------------------------------
     // FIELDS
     // ------------------------------------------------------------------------
+/**
+ * @name
+ * The various properties of the JRActivityObject that you can configure
+ **/
+/*@{*/
 
     /**
      * A string describing what the user did, written in the third person (e.g.,
@@ -91,7 +106,7 @@ public class JRActivityObject {
     /**
      * The title of the resource being mentioned in the activity update.
      *
-     * NOTE: No length restriction on the status is imposed by Janrain Engage, however Yahoo
+     * @note No length restriction on the status is imposed by Janrain Engage, however Yahoo
      * truncates this value to 256 characters.
      */
     private String mTitle = "";
@@ -117,7 +132,7 @@ public class JRActivityObject {
      * ]
      * </code>
      *
-     * NOTE: Any objects added to this array that are not of type <code>JRActionLink</code> will
+     * @note Any objects added to this array that are not of type <code>JRActionLink</code> will
      * be ignored.
      */
     private List<JRActionLink> mActionLinks = new ArrayList<JRActionLink>();
@@ -140,7 +155,7 @@ public class JRActivityObject {
      * Also, any objects added to this array that are not of type <code>JRMediaObject</code>
      * will be ignored.
      *
-     * Media object format and rules are identical to those described on the <a
+     * @sa Media object format and rules are identical to those described on the <a
      * href="http://developers.facebook.com/docs/guides/attachments">Facebook Developer page
      * on Attachments</a>.
      */
@@ -163,11 +178,15 @@ public class JRActivityObject {
      * </code>
      */
     private Map<String, Object> mProperties = new HashMap<String, Object>();
+/*@}*/
 
     // ------------------------------------------------------------------------
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
-
+/**
+ * @name Constructors
+ **/
+/*@{*/
     /**
      * Returns a <code>JRActivityObject</code> initialized with the given action and url.
      *
@@ -183,6 +202,7 @@ public class JRActivityObject {
         mAction = action;
         mUrl = url;
     }
+/*@}*/
 
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
@@ -259,6 +279,7 @@ public class JRActivityObject {
     // ------------------------------------------------------------------------
 
     /**
+     * @internal
      * Returns a HashMap (Dictionary) representing the JRActivityObject.
      *
      * @return

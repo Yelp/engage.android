@@ -2,29 +2,37 @@
 \section{com.janrain.android.engage.types.JRFlashMediaObject Class Reference}
 \label{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object}\index{com::janrain::android::engage::types::JRFlashMediaObject@{com::janrain::android::engage::types::JRFlashMediaObject}}
 }
-Inheritance diagram for com.janrain.android.engage.types.JRFlashMediaObject:\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[height=2.000000cm]{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object}
-\end{center}
-\end{figure}
+
+
+Flash object to be included in a post to a user's stream.  
+
+
+
+
+Inherits com::janrain::android::engage::types::JRMediaObject.
+
 \subsection*{Public Member Functions}
-\begin{DoxyCompactItemize}
+\begin{Indent}{\bf Constructors}\par
+{\em \label{_amgrp559a25fdb98a7d1fd1c3771ac568d5e9}
+ }\begin{DoxyCompactItemize}
 \item 
 \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_a43ce407e77102f8745dd9aab7ddf2216}{JRFlashMediaObject} (String swfSrc, String imgSrc)
 \end{DoxyCompactItemize}
+\end{Indent}
 
 
 \subsection{Detailed Description}
-Flash object to be included in a post to a user's stream.
+Flash object to be included in a post to a user's stream. Create an flash media object, fill in the object's fields, and add the object to the JRActivityObject.media array in your \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}{JRActivityObject}. How the flash videos get presented and whether or not they are used, depend on the provider.
 
-Create an flash media object, fill in the object's fields, and add the object to the JRActivityObject.media array in your \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}{JRActivityObject}. How the flash videos get presented and whether or not they are used, depend on the provider.
+Each video must contain a {\itshape swfSrc\/} url, which is the URL of the Flash object to be rendered, and an {\itshape imgSrc\/}, which is the URL of an photo that should be displayed in place of the flash object until the user clicks to prompt the flash object to play. Flash object has two optional fields, {\itshape width\/} and {\itshape height\/}, which can be used to override the default choices when displaying the video in the provider's stream (e.g., Facebook's stream). It also has two optional fields, {\itshape expanded\_\-width\/} and {\itshape expanded\_\-height\/}, to specify the width and height of flash object will resize to, on the provider's stream, once the user clicks on it.
 
-Each video must contain a swfsrc url, which is the URL of the Flash object to be rendered, and an imgsrc, which is the URL of an photo that should be displayed in place of the flash object until the user clicks to prompt the flash object to play. Flash object has two optional fields, width and height, which can be used to override the default choices when displaying the video in the provider's stream (e.g., Facebook's stream). It also has two optional fields, expanded\_\-width and expanded\_\-height, to specify the width and height of flash object will resize to, on the provider's stream, once the user clicks on it.
-
-NOTE: You can only include one \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object}{JRFlashMediaObject} in the media array. Any others will be ignored.
-
+\begin{DoxyNote}{Note}
+You can only include one \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object}{JRFlashMediaObject} in the media array. Any others will be ignored.
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
 Format and rules are identical to those described on the \href{http://developers.facebook.com/docs/guides/attachments}{\tt Facebook Developer page on Attachments}. 
+\end{DoxySeeAlso}
+
 
 \subsection{Constructor}
 \hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_a43ce407e77102f8745dd9aab7ddf2216}{
@@ -37,11 +45,14 @@ Format and rules are identical to those described on the \href{http://developers
 \end{DoxyParamCaption}
 )}}
 \label{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_a43ce407e77102f8745dd9aab7ddf2216}
-Creates a {\ttfamily \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object}{JRFlashMediaObject}} initialized with the given swfSrc and imgSrc.
+Returns a \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object}{JRFlashMediaObject} initialized with the given swfsrc and imgsrc.
 
 
 \begin{DoxyParams}{Parameters}
-\item[{\em swfSrc}]The URL of the Flash object to be rendered. This value cannot be {\ttfamily null}.\item[{\em imgSrc}]The URL of an photo that should be displayed in place of the flash object. This value cannot be {\ttfamily null}.\end{DoxyParams}
+\item[{\em swfSrc}]The URL of the Flash object to be rendered. This value cannot be {\ttfamily nil}.\item[{\em imgSrc}]The URL of an photo that should be displayed in place of the flash object. This value cannot be {\ttfamily nil}.\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object}{JRFlashMediaObject} initialized with the given swfsrc and imgsrc. If either {\ttfamily swfSrc} or {\ttfamily imgSrc} are {\itshape nil\/}, returns {\ttfamily nil}.
+\end{DoxyReturn}
 
 \begin{DoxyExceptions}{Exceptions}
 \item[{\em IllegalArgumentException}]if swfSrc or imgSrc is null \end{DoxyExceptions}

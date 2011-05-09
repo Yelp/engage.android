@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A link a user can use to take action on an activity update on the provider.
+ * @brief A link a user can use to take action on an activity update on the provider.
  *
  * Create an action link object, fill in the object's fields, and add the object
  * the JRActivityObject#action_links array of your JRActivityObject.
@@ -41,7 +41,7 @@ import java.util.Map;
  * Each action link must contain a link, \e href, and some \e text, describing what action
  * will happen if someone clicks the link.
  * Example:
- * <code>
+ * @code
  * action_links:
  * [
  *   {
@@ -53,9 +53,9 @@ import java.util.Map;
  *     "href": "http://example.com/quiz/12345/take"
  *   }
  * ]
- * </code>
+ * @endcode
  *
- */
+ **/
 public class JRActionLink {
 
     // ------------------------------------------------------------------------
@@ -70,7 +70,10 @@ public class JRActionLink {
     // ------------------------------------------------------------------------
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
-
+/**
+ * @name Constructors
+ **/
+/*@{*/
     /**
      * Creates a <code>JRActionLink</code> initialized with the given text and href.
      *
@@ -88,6 +91,7 @@ public class JRActionLink {
         mText = text;
         mHref = href;
     }
+/*@}*/
 
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
@@ -114,6 +118,7 @@ public class JRActionLink {
     // ------------------------------------------------------------------------
 
     /**
+     * @internal
      * Returns a HashMap (Dictionary) representing the JRActionLink.
      *
      * @return
