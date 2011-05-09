@@ -50,8 +50,10 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * TODO:DOC
- */
+ * @internal
+ *
+ * @class JRProvider
+ **/
 public class JRProvider implements Serializable {
 	
     // ------------------------------------------------------------------------
@@ -405,4 +407,7 @@ public class JRProvider implements Serializable {
         return mName;
     }
 }
+/**
+ * @endinternal
+ **/
 

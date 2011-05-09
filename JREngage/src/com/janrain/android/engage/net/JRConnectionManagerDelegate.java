@@ -35,14 +35,18 @@ import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 
 /**
- * TODO:DOC
- */
+ * @internal
+ *
+ * @interface JRConnectionManagerDelegate
+ **/
 public interface JRConnectionManagerDelegate {
 	
 	void connectionDidFinishLoading(String payload, String requestUrl, Object userdata);
 	void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object userdata);
 	void connectionDidFail(Exception ex, String requestUrl, Object userdata);
 	void connectionWasStopped(Object userdata);
-	
 }
+/**
+ * @endinternal
+ **/
 

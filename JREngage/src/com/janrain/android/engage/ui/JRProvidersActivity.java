@@ -52,6 +52,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
+ * @internal
+ *
+ * @class JRProvidersActivity
  * Displays list of [basic] providers.
  */
 public class JRProvidersActivity extends ListActivity {
@@ -377,6 +380,8 @@ public class JRProvidersActivity extends ListActivity {
                 Log.i(TAG, "[doSessionPoll] no providers yet, will retry soon...");
             }
         }
-
     }
 }
+/**
+ * @endinternal
+ **/

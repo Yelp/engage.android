@@ -1,0 +1,77 @@
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}{
+\section{com.janrain.android.engage.types.JRActivityObject Class Reference}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}\index{com::janrain::android::engage::types::JRActivityObject@{com::janrain::android::engage::types::JRActivityObject}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_a625c1c83258dc53f0f5c5531c79db3b9}{JRActivityObject} (String action, String url)
+\item 
+\hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary}{JRDictionary} \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_a9cfd26c57e878a8e12736c39103741a0}{dictionaryForObject} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+An activity object you create, populate, and post to the user's activity stream.
+
+Create an activity object, fill in the object's fields, and pass the object to the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} library when you are ready to publish. Currently supported providers are:
+\begin{DoxyItemize}
+\item Facebook
+\item LinkedIn
+\item Twitter
+\item MySpace
+\item Yahoo!
+\end{DoxyItemize}
+
+Janrain Engage will make a best effort to use all of the fields submitted in the activity request, but note that how they get presented (and which ones are used) ultimately depends on the provider.
+
+This API will work if and only if:
+\begin{DoxyItemize}
+\item Your Janrain Engage application has been configured with the given provider
+\item The user has already authenticated and has given consent to publish activity
+\end{DoxyItemize}
+
+Otherwise, you will be given an error response indicating what was wrong. Detailed error responses will also be given if the activity parameter does not meet the formatting requirements described below.
+
+For more information of Janrain Engage's activity api, see \href{https://rpxnow.com/docs#api_activity}{\tt the activity section} of our API Documentation. 
+
+\subsection{Constructor}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_a625c1c83258dc53f0f5c5531c79db3b9}{
+\index{com::janrain::android::engage::types::JRActivityObject@{com::janrain::android::engage::types::JRActivityObject}!JRActivityObject@{JRActivityObject}}
+\index{JRActivityObject@{JRActivityObject}!com::janrain::android::engage::types::JRActivityObject@{com::janrain::android::engage::types::JRActivityObject}}
+\subsubsection[{JRActivityObject}]{\setlength{\rightskip}{0pt plus 5cm}com.janrain.android.engage.types.JRActivityObject.JRActivityObject (
+\begin{DoxyParamCaption}
+\item[{String}]{ action, }
+\item[{String}]{ url}
+\end{DoxyParamCaption}
+)}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_a625c1c83258dc53f0f5c5531c79db3b9}
+Returns a {\ttfamily \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}{JRActivityObject}} initialized with the given action and url.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em action}]A string describing what the user did, written in the third person. This value cannot be {\ttfamily null}.\item[{\em url}]The URL of the resource being mentioned in the activity update. \end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_a9cfd26c57e878a8e12736c39103741a0}{
+\index{com::janrain::android::engage::types::JRActivityObject@{com::janrain::android::engage::types::JRActivityObject}!dictionaryForObject@{dictionaryForObject}}
+\index{dictionaryForObject@{dictionaryForObject}!com::janrain::android::engage::types::JRActivityObject@{com::janrain::android::engage::types::JRActivityObject}}
+\subsubsection[{dictionaryForObject}]{\setlength{\rightskip}{0pt plus 5cm}{\bf JRDictionary} com.janrain.android.engage.types.JRActivityObject.dictionaryForObject (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_a9cfd26c57e878a8e12736c39103741a0}
+Returns a HashMap (Dictionary) representing the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}{JRActivityObject}.
+
+\begin{DoxyReturn}{Returns}
+An HashMap (Dictionary) of String objects representing the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}{JRActivityObject}.
+\end{DoxyReturn}
+NOTE: This function should not be used directly. It is intended only for use by the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} library.
+
+TODO: revisit visibility/usage 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/Users/lillialexis/Android/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java\end{DoxyCompactItemize}

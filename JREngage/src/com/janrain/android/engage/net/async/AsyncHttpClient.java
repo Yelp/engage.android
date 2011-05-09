@@ -44,8 +44,11 @@ import java.util.List;
 import java.util.Random;
 
 /**
+ * @internal
+ *
+ * @class AsyncHttpClient
  * Utility class which performs HTTP operations asynchronously.
- */
+ **/
 public final class AsyncHttpClient {
     // ------------------------------------------------------------------------
     // TYPES
@@ -264,7 +267,7 @@ public final class AsyncHttpClient {
      *      Any additional headers to be sent with the get.
 	 * @param listener
 	 * 		The AsyncHttpResponseListener to return the results to.
-	 */
+	 **/
     public static void executeHttpGet(final String url,
                                       List<NameValuePair> requestHeaders,
                                       AsyncHttpResponseListener listener) {
@@ -286,7 +289,7 @@ public final class AsyncHttpClient {
      *      The data to be posted (written) to the server.
      * @param listener
      * 		The AsyncHttpResponseListener to return the results to.
-     */
+     **/
     public static void executeHttpPost(final String url,
                                        byte[] data,
                                        AsyncHttpResponseListener listener) {
@@ -306,5 +309,7 @@ public final class AsyncHttpClient {
 	private AsyncHttpClient() {
 		/* no instance */
 	}
-	
 }
+/**
+ * @endinternal
+ **/

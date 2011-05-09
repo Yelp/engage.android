@@ -1,0 +1,179 @@
+\hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate}{
+\section{com.janrain.android.engage.session.JRSessionDelegate Interface Reference}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate}\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+}
+
+
+Inherited by com.janrain.android.engage.ui.JRPublishActivity.JRSD.
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_aa06c291fb87c3b103854bc39c9b55399}{authenticationDidCancel} ()
+\item 
+void \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a71084326de845a98c8facb5a03eeb314}{authenticationDidComplete} (String token, String provider)
+\item 
+void \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a1e4d214144e986b86a24a16289c58234}{authenticationDidComplete} (\hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary}{JRDictionary} profile, String provider)
+\item 
+void \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a5f04eee2bc9d726b268513f87ee199d1}{authenticationDidFail} (\hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error}{JREngageError} error, String provider)
+\item 
+void \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a5eb20b3f3aa6ed9fa2a27c126d1f2116}{authenticationDidReachTokenUrl} (String tokenUrl, HttpResponseHeaders response, String payload, String provider)
+\item 
+void \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_ae9caea9cf8e4f56a178fa934e42462bb}{authenticationCallToTokenUrlDidFail} (String tokenUrl, \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error}{JREngageError} error, String provider)
+\item 
+void \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_aaadcbca515d8041904341a81a9c33a8e}{publishingDidCancel} ()
+\item 
+void \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_afd57dbe6522f5546b246a2bcc1f6ed2b}{publishingDidComplete} ()
+\item 
+void \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a2d2f156ec8f5e0ff5e34fcdd3d28867d}{publishingJRActivityDidSucceed} (\hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}{JRActivityObject} activity, String provider)
+\item 
+void \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a31e641b132e1aec41de32ff9e8394c13}{publishingJRActivityDidFail} (\hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}{JRActivityObject} activity, \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error}{JREngageError} error, String provider)
+\item 
+void \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a5c44554bcf526069501cab3b68d292a4}{publishingDialogDidFail} (\hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error}{JREngageError} err)
+\item 
+void \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_af524fe71d1429f96db43a033a56b2d7a}{mobileConfigDidFinish} ()
+\end{DoxyCompactItemize}
+\subsection*{Package Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a37be024d8fe6d9ee564a52a1c5c0db1a}{authenticationDidRestart} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+TODO:DOC 
+
+\subsection{Member Function Documentation}
+\hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a37be024d8fe6d9ee564a52a1c5c0db1a}{
+\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}!authenticationDidRestart@{authenticationDidRestart}}
+\index{authenticationDidRestart@{authenticationDidRestart}!com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+\subsubsection[{authenticationDidRestart}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.session.JRSessionDelegate.authenticationDidRestart (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}package\mbox{]}}}}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a37be024d8fe6d9ee564a52a1c5c0db1a}
+Triggered when \hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_aa06c291fb87c3b103854bc39c9b55399}{
+\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}!authenticationDidCancel@{authenticationDidCancel}}
+\index{authenticationDidCancel@{authenticationDidCancel}!com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+\subsubsection[{authenticationDidCancel}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.session.JRSessionDelegate.authenticationDidCancel (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_aa06c291fb87c3b103854bc39c9b55399}
+Triggered when \hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a71084326de845a98c8facb5a03eeb314}{
+\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}!authenticationDidComplete@{authenticationDidComplete}}
+\index{authenticationDidComplete@{authenticationDidComplete}!com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+\subsubsection[{authenticationDidComplete}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.session.JRSessionDelegate.authenticationDidComplete (
+\begin{DoxyParamCaption}
+\item[{String}]{ token, }
+\item[{String}]{ provider}
+\end{DoxyParamCaption}
+)}}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a71084326de845a98c8facb5a03eeb314}
+Triggered when \hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a1e4d214144e986b86a24a16289c58234}{
+\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}!authenticationDidComplete@{authenticationDidComplete}}
+\index{authenticationDidComplete@{authenticationDidComplete}!com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+\subsubsection[{authenticationDidComplete}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.session.JRSessionDelegate.authenticationDidComplete (
+\begin{DoxyParamCaption}
+\item[{{\bf JRDictionary}}]{ profile, }
+\item[{String}]{ provider}
+\end{DoxyParamCaption}
+)}}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a1e4d214144e986b86a24a16289c58234}
+Triggered when JRWebViewActivity receieves a success message from Engage. \hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a5f04eee2bc9d726b268513f87ee199d1}{
+\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}!authenticationDidFail@{authenticationDidFail}}
+\index{authenticationDidFail@{authenticationDidFail}!com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+\subsubsection[{authenticationDidFail}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.session.JRSessionDelegate.authenticationDidFail (
+\begin{DoxyParamCaption}
+\item[{{\bf JREngageError}}]{ error, }
+\item[{String}]{ provider}
+\end{DoxyParamCaption}
+)}}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a5f04eee2bc9d726b268513f87ee199d1}
+Triggered when the Engage authentication flow completes with an Engage error, or when there is an error loading a URL during that authentication flow. \hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a5eb20b3f3aa6ed9fa2a27c126d1f2116}{
+\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}!authenticationDidReachTokenUrl@{authenticationDidReachTokenUrl}}
+\index{authenticationDidReachTokenUrl@{authenticationDidReachTokenUrl}!com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+\subsubsection[{authenticationDidReachTokenUrl}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.session.JRSessionDelegate.authenticationDidReachTokenUrl (
+\begin{DoxyParamCaption}
+\item[{String}]{ tokenUrl, }
+\item[{HttpResponseHeaders}]{ response, }
+\item[{String}]{ payload, }
+\item[{String}]{ provider}
+\end{DoxyParamCaption}
+)}}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a5eb20b3f3aa6ed9fa2a27c126d1f2116}
+Triggered when \hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_ae9caea9cf8e4f56a178fa934e42462bb}{
+\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}!authenticationCallToTokenUrlDidFail@{authenticationCallToTokenUrlDidFail}}
+\index{authenticationCallToTokenUrlDidFail@{authenticationCallToTokenUrlDidFail}!com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+\subsubsection[{authenticationCallToTokenUrlDidFail}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.session.JRSessionDelegate.authenticationCallToTokenUrlDidFail (
+\begin{DoxyParamCaption}
+\item[{String}]{ tokenUrl, }
+\item[{{\bf JREngageError}}]{ error, }
+\item[{String}]{ provider}
+\end{DoxyParamCaption}
+)}}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_ae9caea9cf8e4f56a178fa934e42462bb}
+triggered when \hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_aaadcbca515d8041904341a81a9c33a8e}{
+\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}!publishingDidCancel@{publishingDidCancel}}
+\index{publishingDidCancel@{publishingDidCancel}!com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+\subsubsection[{publishingDidCancel}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.session.JRSessionDelegate.publishingDidCancel (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_aaadcbca515d8041904341a81a9c33a8e}
+Triggered when Triggered when \hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_afd57dbe6522f5546b246a2bcc1f6ed2b}{
+\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}!publishingDidComplete@{publishingDidComplete}}
+\index{publishingDidComplete@{publishingDidComplete}!com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+\subsubsection[{publishingDidComplete}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.session.JRSessionDelegate.publishingDidComplete (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_afd57dbe6522f5546b246a2bcc1f6ed2b}
+Triggered when \hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a2d2f156ec8f5e0ff5e34fcdd3d28867d}{
+\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}!publishingJRActivityDidSucceed@{publishingJRActivityDidSucceed}}
+\index{publishingJRActivityDidSucceed@{publishingJRActivityDidSucceed}!com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+\subsubsection[{publishingJRActivityDidSucceed}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.session.JRSessionDelegate.publishingJRActivityDidSucceed (
+\begin{DoxyParamCaption}
+\item[{{\bf JRActivityObject}}]{ activity, }
+\item[{String}]{ provider}
+\end{DoxyParamCaption}
+)}}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a2d2f156ec8f5e0ff5e34fcdd3d28867d}
+Triggered when a success response is received from Engage from the activity api \hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a31e641b132e1aec41de32ff9e8394c13}{
+\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}!publishingJRActivityDidFail@{publishingJRActivityDidFail}}
+\index{publishingJRActivityDidFail@{publishingJRActivityDidFail}!com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+\subsubsection[{publishingJRActivityDidFail}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.session.JRSessionDelegate.publishingJRActivityDidFail (
+\begin{DoxyParamCaption}
+\item[{{\bf JRActivityObject}}]{ activity, }
+\item[{{\bf JREngageError}}]{ error, }
+\item[{String}]{ provider}
+\end{DoxyParamCaption}
+)}}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a31e641b132e1aec41de32ff9e8394c13}
+Triggered when \hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a5c44554bcf526069501cab3b68d292a4}{
+\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}!publishingDialogDidFail@{publishingDialogDidFail}}
+\index{publishingDialogDidFail@{publishingDialogDidFail}!com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+\subsubsection[{publishingDialogDidFail}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.session.JRSessionDelegate.publishingDialogDidFail (
+\begin{DoxyParamCaption}
+\item[{{\bf JREngageError}}]{ err}
+\end{DoxyParamCaption}
+)}}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_a5c44554bcf526069501cab3b68d292a4}
+triggered when the JRPublishActivity fails to load \hypertarget{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_af524fe71d1429f96db43a033a56b2d7a}{
+\index{com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}!mobileConfigDidFinish@{mobileConfigDidFinish}}
+\index{mobileConfigDidFinish@{mobileConfigDidFinish}!com::janrain::android::engage::session::JRSessionDelegate@{com::janrain::android::engage::session::JRSessionDelegate}}
+\subsubsection[{mobileConfigDidFinish}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.session.JRSessionDelegate.mobileConfigDidFinish (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_af524fe71d1429f96db43a033a56b2d7a}
+Triggered when JRSessionData has finished loading the mobile configuration 
+
+The documentation for this interface was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/Users/lillialexis/Android/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java\end{DoxyCompactItemize}

@@ -1,0 +1,269 @@
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{
+\section{com.janrain.android.engage.JREngage Class Reference}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+}
+
+
+Main API for interacting with the Janrain Engage for iPhone library.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_ac4b60b45b0613f3ffc2854da85fa9537}{initInstance} (Context context, String appId, String tokenUrl, \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate}{JREngageDelegate} delegate)
+\item 
+static \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_aa1cad88974f2885a61a83811ca8d9cfb}{getInstance} ()
+\item 
+static Context \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a93c7b388832339f12549b996953d91fb}{getContext} ()
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{Indent}{\bf Management Authenticated Users}\par
+{\em \label{_amgrp4247d2361fbfb57c620ed69782a50c95}
+ Methods that manage authenticated users remembered by the library }\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a8347fa6572b022b8730a5c2808c31b0e}{signoutUserForProvider} (String provider)
+\item 
+void \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a2040cb9371fd98882671dac6907ea548}{signoutUserForAllProviders} ()
+\item 
+void \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a3e93234a3a57a72318b41a101395abde}{setAlwaysForceReauthentication} (boolean force)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf Cancel the JREngage Dialogs}\par
+{\em \label{_amgrpd07ee85d05cc5dd13dd0e31682479a39}
+ Methods to cancel authentication and social publishing }\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a06b51503fb14cb55d99a138a2778fd42}{cancelAuthentication} ()
+\item 
+void \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a88a1a97162c4a01a57b2adccafc82be7}{cancelPublishing} ()
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf Server-\/side Authentication}\par
+{\em \label{_amgrp1fc6cae7bdf84f91a0bad45f5891f15e}
+ Methods to reconfigure server-\/side authentication }\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_ac9b1ed5b6fc916ea7f7cb33177122d05}{setTokenUrl} (String newTokenUrl)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf Manage the Delegates}\par
+{\em \label{_amgrpf6bb425cb9b7388d33e37d551db6b02e}
+ Add/remove delegates that implement the \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate}{JREngageDelegate} protocol }\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a706aaa4feb9a3b89ac99d41b2bde4d09}{addDelegate} (\hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate}{JREngageDelegate} delegate)
+\item 
+void \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a94ccdcd629bd8b1324178c513e45a879}{removeDelegate} (\hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate}{JREngageDelegate} delegate)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf Show the JREngage Dialogs}\par
+{\em \label{_amgrp345603279e1df04f4a3678e78089b7be}
+ \label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_showMethods}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_showMethods}{}
+
+
+Methods that display JREngage's dialogs to initiate authentication and social publishing }\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a76041b85557ce2c3dcde6bf1bf355e91}{showAuthenticationDialog} ()
+\item 
+void \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a9959b7cde73f28daa0dfd875c549d20d}{showSocialPublishingDialogWithActivity} (\hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object}{JRActivityObject} activity)
+\end{DoxyCompactItemize}
+\end{Indent}
+
+
+\subsection{Detailed Description}
+Main API for interacting with the Janrain Engage for iPhone library. \begin{DoxySeeAlso}{See also}
+Use the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} object to authenticate a user with your application and allow them to publish activities to their social networks.
+\end{DoxySeeAlso}
+If you wish to include 3rd-\/Party Authentication and Social Publishing in your iPhone application, you can use the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} class to achieve this. Prior to using the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} library, you must already have an application on \href{http://rpxnow.com}{\tt http://rpxnow.com}. This is all that is required for basic authentication, although some providers may require extra configuration (which can be done through your application's \href{http://rpxnow.com/relying_parties}{\tt Dashboard} For social publishing, you will need to configure your rpxnow application with the desired providers.
+
+If desired, you can optionally implement server-\/side authentication$\ast$. When provided, the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} library can post the user's authentication token to a url on your server: the token url. Your server can complete authentication, access more of JREngage's API, log the authentication, etc. and the server's response will be passed back through to your iPhone application.
+
+$\ast$In the previous version of the Engage for iPhone library, implementing token url that completed server-\/side authentication was required. This is no longer the case, although you can optionally implement the token url if you wish to continue authentication on your server. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_ac4b60b45b0613f3ffc2854da85fa9537}{
+\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}!initInstance@{initInstance}}
+\index{initInstance@{initInstance}!com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+\subsubsection[{initInstance}]{\setlength{\rightskip}{0pt plus 5cm}static {\bf JREngage} com.janrain.android.engage.JREngage.initInstance (
+\begin{DoxyParamCaption}
+\item[{Context}]{ context, }
+\item[{String}]{ appId, }
+\item[{String}]{ tokenUrl, }
+\item[{{\bf JREngageDelegate}}]{ delegate}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_ac4b60b45b0613f3ffc2854da85fa9537}
+Initializes and returns instance of \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage}.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em context}]Application context used for access to application and information (e.g. global preferences). This value cannot be null.\item[{\em appId}]This is your 20-\/character application ID. You can find this on your application's Dashboard on \href{http://rpxnow.com}{\tt http://rpxnow.com}. This value cannot be null.\item[{\em tokenUrl}]The url on your server where you wish to complete authentication. If provided, the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} library will post the user's authentication token to this url where it can used for further authentication and processing. When complete, the library will pass the server's response back to the your application.\item[{\em delegate}]The delegate object that implements the \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate}{JREngageDelegate} protocol.\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The shared instance of the {\ttfamily \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage}} object initialized with the given {\ttfamily appId}, {\ttfamily tokenUrl}, and {\ttfamily delegate}. If the given {\ttfamily appId} is {\ttfamily null}, returns {\ttfamily null}. 
+\end{DoxyReturn}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_aa1cad88974f2885a61a83811ca8d9cfb}{
+\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}!getInstance@{getInstance}}
+\index{getInstance@{getInstance}!com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+\subsubsection[{getInstance}]{\setlength{\rightskip}{0pt plus 5cm}static {\bf JREngage} com.janrain.android.engage.JREngage.getInstance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_aa1cad88974f2885a61a83811ca8d9cfb}
+Returns singleton instance, provided it has been initialized.
+
+\begin{DoxyReturn}{Returns}
+\hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} instance if properly initialized, null otherwise. 
+\end{DoxyReturn}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a93c7b388832339f12549b996953d91fb}{
+\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}!getContext@{getContext}}
+\index{getContext@{getContext}!com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+\subsubsection[{getContext}]{\setlength{\rightskip}{0pt plus 5cm}static Context com.janrain.android.engage.JREngage.getContext (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a93c7b388832339f12549b996953d91fb}
+Returns the application context used to initialize the library.
+
+\begin{DoxyReturn}{Returns}
+Context object used to initialize this library. 
+\end{DoxyReturn}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a8347fa6572b022b8730a5c2808c31b0e}{
+\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}!signoutUserForProvider@{signoutUserForProvider}}
+\index{signoutUserForProvider@{signoutUserForProvider}!com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+\subsubsection[{signoutUserForProvider}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.JREngage.signoutUserForProvider (
+\begin{DoxyParamCaption}
+\item[{String}]{ provider}
+\end{DoxyParamCaption}
+)}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a8347fa6572b022b8730a5c2808c31b0e}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_signoutProvider}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_signoutProvider}{}
+
+
+Tell \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} to forget that a user is already signed in with the given provider
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em provider}]The name of the provider on which the user authenticated. For a list of possible strings, please see the \hyperlink{_providers_basicProviders}{List of Providers} \end{DoxyParams}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a2040cb9371fd98882671dac6907ea548}{
+\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}!signoutUserForAllProviders@{signoutUserForAllProviders}}
+\index{signoutUserForAllProviders@{signoutUserForAllProviders}!com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+\subsubsection[{signoutUserForAllProviders}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.JREngage.signoutUserForAllProviders (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a2040cb9371fd98882671dac6907ea548}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_signoutAll}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_signoutAll}{}
+
+
+Tell \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} to forget that a user is signed in with all \hyperlink{_providers_basicProviders}{Providers} \hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a3e93234a3a57a72318b41a101395abde}{
+\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}!setAlwaysForceReauthentication@{setAlwaysForceReauthentication}}
+\index{setAlwaysForceReauthentication@{setAlwaysForceReauthentication}!com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+\subsubsection[{setAlwaysForceReauthentication}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.JREngage.setAlwaysForceReauthentication (
+\begin{DoxyParamCaption}
+\item[{boolean}]{ force}
+\end{DoxyParamCaption}
+)}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a3e93234a3a57a72318b41a101395abde}
+Use this function to toggle whether or not the library should force the user to reauthenticate for all providers
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em force}]YES if the library should force reauthentication for all providers or NO if the library should perform the default behavior \end{DoxyParams}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a06b51503fb14cb55d99a138a2778fd42}{
+\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}!cancelAuthentication@{cancelAuthentication}}
+\index{cancelAuthentication@{cancelAuthentication}!com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+\subsubsection[{cancelAuthentication}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.JREngage.cancelAuthentication (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a06b51503fb14cb55d99a138a2778fd42}
+Use this functions if you need to cancel authentication for any reason. \hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a88a1a97162c4a01a57b2adccafc82be7}{
+\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}!cancelPublishing@{cancelPublishing}}
+\index{cancelPublishing@{cancelPublishing}!com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+\subsubsection[{cancelPublishing}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.JREngage.cancelPublishing (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a88a1a97162c4a01a57b2adccafc82be7}
+Use this functions if you need to cancel publishing for any reason. \hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_ac9b1ed5b6fc916ea7f7cb33177122d05}{
+\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}!setTokenUrl@{setTokenUrl}}
+\index{setTokenUrl@{setTokenUrl}!com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+\subsubsection[{setTokenUrl}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.JREngage.setTokenUrl (
+\begin{DoxyParamCaption}
+\item[{String}]{ newTokenUrl}
+\end{DoxyParamCaption}
+)}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_ac9b1ed5b6fc916ea7f7cb33177122d05}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_updateTokenUrl}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_updateTokenUrl}{}
+
+
+Use this function to specify a different tokenUrl than the one you initiated the library with \hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a706aaa4feb9a3b89ac99d41b2bde4d09}{
+\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}!addDelegate@{addDelegate}}
+\index{addDelegate@{addDelegate}!com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+\subsubsection[{addDelegate}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.JREngage.addDelegate (
+\begin{DoxyParamCaption}
+\item[{{\bf JREngageDelegate}}]{ delegate}
+\end{DoxyParamCaption}
+)}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a706aaa4feb9a3b89ac99d41b2bde4d09}
+Add a \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate}{JREngageDelegate} to the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} library
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em delegate}]The object that implements the \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate}{JREngageDelegate} protocol \end{DoxyParams}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a94ccdcd629bd8b1324178c513e45a879}{
+\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}!removeDelegate@{removeDelegate}}
+\index{removeDelegate@{removeDelegate}!com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+\subsubsection[{removeDelegate}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.JREngage.removeDelegate (
+\begin{DoxyParamCaption}
+\item[{{\bf JREngageDelegate}}]{ delegate}
+\end{DoxyParamCaption}
+)}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a94ccdcd629bd8b1324178c513e45a879}
+Remove a \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate}{JREngageDelegate} from the \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} library
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em delegate}]The object that implements the \hyperlink{interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate}{JREngageDelegate} protocol \end{DoxyParams}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a76041b85557ce2c3dcde6bf1bf355e91}{
+\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}!showAuthenticationDialog@{showAuthenticationDialog}}
+\index{showAuthenticationDialog@{showAuthenticationDialog}!com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+\subsubsection[{showAuthenticationDialog}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.JREngage.showAuthenticationDialog (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a76041b85557ce2c3dcde6bf1bf355e91}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_showAuthDialog}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_showAuthDialog}{}
+
+
+Use this function to begin authentication. The \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} library will pop up a modal dialog and take the user through the sign-\/in process. \hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a9959b7cde73f28daa0dfd875c549d20d}{
+\index{com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}!showSocialPublishingDialogWithActivity@{showSocialPublishingDialogWithActivity}}
+\index{showSocialPublishingDialogWithActivity@{showSocialPublishingDialogWithActivity}!com::janrain::android::engage::JREngage@{com::janrain::android::engage::JREngage}}
+\subsubsection[{showSocialPublishingDialogWithActivity}]{\setlength{\rightskip}{0pt plus 5cm}void com.janrain.android.engage.JREngage.showSocialPublishingDialogWithActivity (
+\begin{DoxyParamCaption}
+\item[{{\bf JRActivityObject}}]{ activity}
+\end{DoxyParamCaption}
+)}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_a9959b7cde73f28daa0dfd875c549d20d}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_showPubDialog}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_showPubDialog}{}
+
+
+Use this function to begin social publishing. The \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage}{JREngage} library will pop up a modal dialog and take the user through the sign-\/in process, if necessary, and share the given {\ttfamily JRActivityObject}.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em activity}]The activity you wish to share \end{DoxyParams}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/Users/lillialexis/Android/engage.android/JREngage/src/com/janrain/android/engage/JREngage.java\end{DoxyCompactItemize}

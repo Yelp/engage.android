@@ -29,6 +29,86 @@
 */
 package com.janrain.android.engage;
 
+
+/**
+ * @mainpage Janrain Engage for the iPhone, version 2
+ *
+ * <a href="http://rpxnow.com/docs/iphone">
+ * Janrain Engage for iPhone SDK</a> makes it easy to include third party authentication and
+ * social publishing in your iPhone app.  This Objective-C library includes the same key
+ * features as our web version, as well as additional features created specifically for the mobile
+ * platform. With as few as three lines of code, you can authenticate your users with their
+ * accounts on Google, Yahoo!, Facebook, etc., and they can immediately publish their
+ * activities to multiple social networks, including Facebook, Twitter, LinkedIn, MySpace,
+ * and Yahoo, through one simple interface.
+ *
+ * Beyond authentication and social sharing, the latest release of the Engage for iPhone SDK
+ * now allows mobile apps to:
+ *   - Share content, activities, game scores or invitations via Email or SMS
+ *   - Customize the login experience by displaying native and social login options on the same screen
+ *   - Track popularity and click through rates on various links included in the
+ *     shared email message with automatic URL shortening for up to 5 URLs
+ *   - Provide an additional level of security with forced re-authentication when
+ *     users are about to make a purchase or conduct a sensitive transaction
+ *   - Configure and maintain separate lists of providers for mobile and web apps
+ *   - Match the look and feel of the iPhone app with customizable background colors, images, and navigation bar tints
+ *
+ * Before you begin, you need to have created a <a href="https://rpxnow.com/signup_createapp_plus">Janrain Engage application</a>,
+ * which you can do on <a href="http://rpxnow.com">http://rpxnow.com</a>
+ *
+ * For an overview of how the library works and how you can take advantage of the library's features,
+ * please see the <a href="http://rpxnow.com/docs/iphone#user_experience">"Overview"</a> section of our documentation.
+ *
+ * To begin using the SDK, please see the <a href="http://rpxnow.com/docs/iphone#quick">"Quick Start Guide"</a>.
+ *
+ * For more detailed documentation of the library's API, you can use
+ * the <a href="http://rpxnow.com/docs/iphone_api/annotated.html">"JREngage API"</a> documentation.
+ **/
+
+/**
+ * @page Providers
+ * @section basicProviders List of Providers
+ *
+ * Here is a list of possible strings that the argument (NSString*)provider can be
+ * when used in the authentication methods:
+ *   - "aol"
+ *   - "blogger"
+ *   - "facebook"
+ *   - "flickr"
+ *   - "google"
+ *   - "hyves"
+ *   - "linkedin"
+ *   - "live_id"
+ *   - "livejournal"
+ *   - "myopenid"
+ *   - "myspace"
+ *   - "netlog"
+ *   - "openid"
+ *   - "paypal"
+ *   - "twitter"
+ *   - "verisign"
+ *   \if wordpress_is_working
+ *   - "wordpress"
+ *   \endif
+ *   - "yahoo"
+ *
+ * @note As your Engage application is limited by the number of providers it may use,
+ * you may only see a subset of this list.
+ *
+ * @section socialProviders List of Social Providers
+ *
+ * Here is a list of possible strings that the argument (NSString*)provider can be
+ * when used in the social publishing methods:
+ *   - "facebook"
+ *   - "linkedin"
+ *   - "myspace"
+ *   - "twitter"
+ *   - "yahoo"
+ *
+ * @note As your Engage application is limited by the number of providers it may use,
+ * you may only see a subset of this list.
+ **/
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,10 +125,31 @@ import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.ui.JRUserInterfaceMaestro;
 
+
 /**
- * TODO:DOC
+ * @brief
+ * Main API for interacting with the Janrain Engage for iPhone library
  *
- */
+ * @sa
+ * Use the JREngage object to authenticate a user with your application and
+ * allow them to publish activities to their social networks.
+ *
+ * If you wish to include 3rd-Party Authentication and Social Publishing in your iPhone
+ * application, you can use the JREngage class to achieve this.  Prior to using the JREngage
+ * library, you must already have an application on <a href="http://rpxnow.com">http://rpxnow.com</a>.
+ * This is all that is required for basic authentication, although some providers may require extra
+ * configuration (which can be done through your application's <a href="http://rpxnow.com/relying_parties">Dashboard</a>
+ * For social publishing, you will need to configure your rpxnow application with the desired providers.
+ *
+ * If desired, you can optionally implement server-side authentication<span class="footnote">*</span>.
+ * When provided, the JREngage library can post the user's authentication token to a url on your server:
+ * the token url.  Your server can complete authentication, access more of JREngage's API, log the authentication, etc.
+ * and the server's response will be passed back through to your iPhone application.
+ *
+ * <span class="footnote">*</span>In the previous version of the Engage for iPhone library, implementing token url that
+ * completed server-side authentication was required. This is no longer the case, although you can optionally implement
+ * the token url if you wish to continue authentication on your server.
+ **/
 public class JREngage {
     // ------------------------------------------------------------------------
     // TYPES
@@ -367,13 +468,21 @@ public class JREngage {
         public void mobileConfigDidFinish() {}
     };
 
-    public JRAuthenticatedUser getUserForProvider(String provider) {
-        if (Config.LOGD) {
-            Log.d(TAG, "[getUserForProvider]");
-        }
-        return mSessionData.authenticatedUserForProviderNamed(provider);
-    }
+/**
+ * @name Management Authenticated Users
+ * Methods that manage authenticated users remembered by the library
+ **/
+/*@{*/
 
+    /**
+     * @anchor signoutProvider
+     *
+     * Tell JREngage to forget that a user is already signed in with the given provider
+     *
+     * @param provider
+     *   The name of the provider on which the user authenticated.  For a list of possible strings,
+     *   please see the \ref basicProviders "List of Providers"
+     **/    
     public void signoutUserForProvider(String provider) {
         if (Config.LOGD) {
             Log.d(TAG, "[signoutUserForProvider]");
@@ -381,6 +490,11 @@ public class JREngage {
         mSessionData.forgetAuthenticatedUserForProvider(provider);
     }
 
+    /**
+     * @anchor signoutAll
+     *
+     * Tell JREngage to forget that a user is signed in with all \ref basicProviders "Providers"
+     **/
     public void signoutUserForAllProviders() {
         if (Config.LOGD) {
             Log.d(TAG, "[signoutUserForAllProviders]");
@@ -388,13 +502,29 @@ public class JREngage {
         mSessionData.forgetAllAuthenticatedUsers();
     }
 
+    /**
+     * Use this function to toggle whether or not the library should force the user to reauthenticate for all providers
+     *
+     * @param force
+     *   YES if the library should force reauthentication for all providers or NO if the library should
+     *   perform the default behavior
+     **/
     public void setAlwaysForceReauthentication(boolean force) {
         if (Config.LOGD) {
             Log.d(TAG, "[setAlwaysForceReauthentication]");
         }
         mSessionData.setAlwaysForceReauth(force);
     }
+/*@}*/
 
+/**
+ * @name Cancel the JREngage Dialogs
+ * Methods to cancel authentication and social publishing
+ **/
+/*@{*/
+    /**
+     * Use this functions if you need to cancel authentication for any reason.
+     **/
     public void cancelAuthentication() {
         if (Config.LOGD) {
             Log.d(TAG, "[cancelAuthentication]");
@@ -402,38 +532,75 @@ public class JREngage {
         mSessionData.triggerAuthenticationDidCancel();
     }
 
+    /**
+     * Use this functions if you need to cancel publishing for any reason.
+     **/
     public void cancelPublishing() {
         if (Config.LOGD) {
             Log.d(TAG, "[cancelPublishing]");
         }
         mSessionData.triggerPublishingDidCancel();
     }
+/*@}*/
 
+/**
+ * @name Server-side Authentication
+ * Methods to reconfigure server-side authentication
+ **/
+/*@{*/
+
+    /**
+     * @anchor updateTokenUrl
+     *
+     * Use this function to specify a different tokenUrl than the one you
+     * initiated the library with
+     **/
     public void setTokenUrl(String newTokenUrl) {
         if (Config.LOGD) {
             Log.d(TAG, "[setTokenUrl]");
         }
         mSessionData.setTokenUrl(newTokenUrl);
     }
+/*@}*/
 
     // ------------------------------------------------------------------------
     // METHODS
     // ------------------------------------------------------------------------
 	
-	public void addDelegate(JREngageDelegate delegate) {
+
+/**
+ * @name Manage the Delegates
+ * Add/remove delegates that implement the JREngageDelegate protocol
+ **/
+/*@{*/
+
+    /**
+     * Add a JREngageDelegate to the JREngage library
+     *
+     * @param delegate
+     *   The object that implements the JREngageDelegate protocol
+     **/
+    public void addDelegate(JREngageDelegate delegate) {
 		if (Config.LOGD) { 
 			Log.d(TAG, "[addDelegate]"); 
 		}
 		mDelegates.add(delegate);
 	}
-	
+
+    /**
+     * Remove a JREngageDelegate from the JREngage library
+     *
+     * @param delegate
+     *   The object that implements the JREngageDelegate protocol
+     **/	
 	public void removeDelegate(JREngageDelegate delegate) {
 		if (Config.LOGD) { 
 			Log.d(TAG, "[removeDelegate]"); 
 		}
 		mDelegates.remove(delegate);
 	}
-
+/*@}*/
+    
     private void engageDidFailWithError(JREngageError error) {
         for (JREngageDelegate delegate : getDelegatesCopy()) {
             delegate.jrEngageDialogDidFailToShowWithError(error);
@@ -460,6 +627,20 @@ public class JREngage {
         return false;
     }
 
+
+/** @anchor showMethods **/
+/**
+ * @name Show the JREngage Dialogs
+ * Methods that display JREngage's dialogs to initiate authentication and social publishing
+ **/
+/*@{*/
+
+/**
+ * @anchor showAuthDialog
+ *
+ * Use this function to begin authentication.  The JREngage library will
+ * pop up a modal dialog and take the user through the sign-in process.
+ **/
     public void showAuthenticationDialog() {
         if (Config.LOGD) {
             Log.d(TAG, "[showProviderSelectionDialog]");
@@ -481,6 +662,17 @@ public class JREngage {
 //
 //    }
 
+
+    /**
+     * @anchor showPubDialog
+     *
+     * Use this function to begin social publishing.  The JREngage library will
+     * pop up a modal dialog and take the user through the sign-in process, if necessary,
+     * and share the given \c JRActivityObject.
+     *
+     * @param activity
+     *   The activity you wish to share
+     **/
     public void showSocialPublishingDialogWithActivity(JRActivityObject activity) {
         if (Config.LOGD) {
             Log.d(TAG, "[showSocialPublishingDialogWithActivity]");
@@ -503,7 +695,8 @@ public class JREngage {
         mInterfaceMaestro.showPublishingDialogWithActivity();
 
     }
-	
+/*@}*/
+
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		throw new CloneNotSupportedException();

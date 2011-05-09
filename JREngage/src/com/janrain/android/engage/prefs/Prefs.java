@@ -34,8 +34,11 @@ import android.preference.PreferenceManager;
 import com.janrain.android.engage.JREngage;
 
 /**
+ * @internal
+ *
+ * @class Prefs
  * Utility class used for managing preferences in the Android global shared preferences.
- */
+ **/
 public final class Prefs {
 
     // ------------------------------------------------------------------------
@@ -145,5 +148,7 @@ public final class Prefs {
 	private Prefs() {
 		/* private constructor - utility class | no instance */
 	}
-	
 }
+/**
+ * @endinternal
+ **/

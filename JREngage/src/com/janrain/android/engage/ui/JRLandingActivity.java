@@ -54,6 +54,9 @@ import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 
 /**
+ * @internal
+ *
+ * @class JRLandingActivity
  * Landing Page Activity
  */
 public class JRLandingActivity extends Activity {
@@ -420,3 +423,6 @@ public class JRLandingActivity extends Activity {
 //        }
 //    }
 }
+/**
+ * @endinternal
+ **/

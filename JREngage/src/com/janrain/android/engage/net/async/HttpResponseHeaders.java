@@ -39,10 +39,11 @@ import com.janrain.android.engage.types.JRDictionary;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-
 /**
- * TODO: javadoc
- */
+ * @internal
+ *
+ * @class HttpResponseHeaders
+ **/
 public class HttpResponseHeaders {
 
     // ------------------------------------------------------------------------
@@ -194,3 +195,6 @@ public class HttpResponseHeaders {
         return sb.toString();
     }
 }
+/**
+ * @endinternal
+ **/

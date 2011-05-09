@@ -35,9 +35,12 @@ import com.janrain.android.engage.utils.Archiver;
 import java.util.ArrayList;
 
 /**
+ * @internal
+ *
+ * @class JRProviderList
  * List of JRProvider objects.  This class is provided for simplicity and readability, especially
  * in the case of storing lists of providers within a JRDictionary.
- */
+ **/
 public class JRProviderList extends ArrayList<JRProvider> {
 
     // ------------------------------------------------------------------------
@@ -129,3 +132,6 @@ public class JRProviderList extends ArrayList<JRProvider> {
         }
     }
 }
+/**
+ * @endinternal
+ **/

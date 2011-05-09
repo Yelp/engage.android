@@ -35,8 +35,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 /**
- * TODO:DOC
- */
+ * @internal
+ *
+ * @class JRAuthenticatedUser
+ **/
 public class JRAuthenticatedUser implements Serializable {
 
     // ------------------------------------------------------------------------
@@ -128,3 +130,6 @@ public class JRAuthenticatedUser implements Serializable {
         }
     }
 }
+/**
+ * @endinternal
+ **/

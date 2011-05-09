@@ -1,0 +1,152 @@
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver}{
+\section{com.janrain.android.engage.utils.Archiver Class Reference}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver}\index{com::janrain::android::engage::utils::Archiver@{com::janrain::android::engage::utils::Archiver}}
+}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static boolean \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_af076b6e5a9be6b616fa7b80903a2536a}{save} (String name, Object object)
+\item 
+static Object \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_a51b9d13ed8a6cb8bbf75961ca454e429}{load} (String name)
+\item 
+static String \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_a169544853f8d3386f06a46ead2b8faf6}{loadString} (String name)
+\item 
+static Integer \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_aa7d09e66d7c86ed2faceb00ffce7edb2}{loadInteger} (String name)
+\item 
+static Boolean \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_a9fefb3466223a7df6370ed5faa76422a}{loadBoolean} (String name)
+\item 
+static boolean \hyperlink{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_a4b60e73436728316e49df08422392e66}{loadBooleanWithDefault} (String name, boolean defaultValue)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Utility class used to archiveDictionary/unarchive objects. This implementation serializes the object to a binary format and saves to the protected storage area (disk). 
+
+\subsection{Member Function Documentation}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_af076b6e5a9be6b616fa7b80903a2536a}{
+\index{com::janrain::android::engage::utils::Archiver@{com::janrain::android::engage::utils::Archiver}!save@{save}}
+\index{save@{save}!com::janrain::android::engage::utils::Archiver@{com::janrain::android::engage::utils::Archiver}}
+\subsubsection[{save}]{\setlength{\rightskip}{0pt plus 5cm}static boolean com.janrain.android.engage.utils.Archiver.save (
+\begin{DoxyParamCaption}
+\item[{String}]{ name, }
+\item[{Object}]{ object}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_af076b6e5a9be6b616fa7b80903a2536a}
+Saves (archives) the specified object to the local (protected) file system.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em name}]The name the object will be saved as on disk. This parameter cannot be null.\item[{\em object}]The object to be saved.\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns {\ttfamily true} if the save operation is successful, {\ttfamily false} otherwise.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em IllegalArgumentException}]if the context or name parameters are null. \end{DoxyExceptions}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_a51b9d13ed8a6cb8bbf75961ca454e429}{
+\index{com::janrain::android::engage::utils::Archiver@{com::janrain::android::engage::utils::Archiver}!load@{load}}
+\index{load@{load}!com::janrain::android::engage::utils::Archiver@{com::janrain::android::engage::utils::Archiver}}
+\subsubsection[{load}]{\setlength{\rightskip}{0pt plus 5cm}static Object com.janrain.android.engage.utils.Archiver.load (
+\begin{DoxyParamCaption}
+\item[{String}]{ name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_a51b9d13ed8a6cb8bbf75961ca454e429}
+Loads (unarchives) the specified object from the local (protected) file system.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em name}]The name of the object to be loaded from disk. This parameter cannot be null.\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The object if found and loaded, null otherwise.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em IllegalArgumentException}]if the context or name parameters are null. \end{DoxyExceptions}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_a169544853f8d3386f06a46ead2b8faf6}{
+\index{com::janrain::android::engage::utils::Archiver@{com::janrain::android::engage::utils::Archiver}!loadString@{loadString}}
+\index{loadString@{loadString}!com::janrain::android::engage::utils::Archiver@{com::janrain::android::engage::utils::Archiver}}
+\subsubsection[{loadString}]{\setlength{\rightskip}{0pt plus 5cm}static String com.janrain.android.engage.utils.Archiver.loadString (
+\begin{DoxyParamCaption}
+\item[{String}]{ name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_a169544853f8d3386f06a46ead2b8faf6}
+Loads (unarchives) the specified string object from the local (protected) file system.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em name}]The name of the string to be loaded from disk. This parameter cannot be null.\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The string if found and loaded, null otherwise.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em IllegalArgumentException}]if the context or name parameters are null. \end{DoxyExceptions}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_aa7d09e66d7c86ed2faceb00ffce7edb2}{
+\index{com::janrain::android::engage::utils::Archiver@{com::janrain::android::engage::utils::Archiver}!loadInteger@{loadInteger}}
+\index{loadInteger@{loadInteger}!com::janrain::android::engage::utils::Archiver@{com::janrain::android::engage::utils::Archiver}}
+\subsubsection[{loadInteger}]{\setlength{\rightskip}{0pt plus 5cm}static Integer com.janrain.android.engage.utils.Archiver.loadInteger (
+\begin{DoxyParamCaption}
+\item[{String}]{ name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_aa7d09e66d7c86ed2faceb00ffce7edb2}
+Loads (unarchives) the specified integer object from the local (protected) file system.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em name}]The name of the integer to be loaded from disk. This parameter cannot be null.\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The integer if found and loaded, null otherwise.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em IllegalArgumentException}]if the context or name parameters are null. \end{DoxyExceptions}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_a9fefb3466223a7df6370ed5faa76422a}{
+\index{com::janrain::android::engage::utils::Archiver@{com::janrain::android::engage::utils::Archiver}!loadBoolean@{loadBoolean}}
+\index{loadBoolean@{loadBoolean}!com::janrain::android::engage::utils::Archiver@{com::janrain::android::engage::utils::Archiver}}
+\subsubsection[{loadBoolean}]{\setlength{\rightskip}{0pt plus 5cm}static Boolean com.janrain.android.engage.utils.Archiver.loadBoolean (
+\begin{DoxyParamCaption}
+\item[{String}]{ name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_a9fefb3466223a7df6370ed5faa76422a}
+Loads (unarchives) the specified boolean object from the local (protected) file system.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em name}]The name of the boolean to be loaded from disk. This parameter cannot be null.\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The boolean if found and loaded, null otherwise.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em IllegalArgumentException}]if the context or name parameters are null. \end{DoxyExceptions}
+\hypertarget{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_a4b60e73436728316e49df08422392e66}{
+\index{com::janrain::android::engage::utils::Archiver@{com::janrain::android::engage::utils::Archiver}!loadBooleanWithDefault@{loadBooleanWithDefault}}
+\index{loadBooleanWithDefault@{loadBooleanWithDefault}!com::janrain::android::engage::utils::Archiver@{com::janrain::android::engage::utils::Archiver}}
+\subsubsection[{loadBooleanWithDefault}]{\setlength{\rightskip}{0pt plus 5cm}static boolean com.janrain.android.engage.utils.Archiver.loadBooleanWithDefault (
+\begin{DoxyParamCaption}
+\item[{String}]{ name, }
+\item[{boolean}]{ defaultValue}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_a4b60e73436728316e49df08422392e66}
+Loads (unarchives) the specified boolean value from the local (protected) file system. If the value cannot be found (null), the default value will be returned.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em name}]The name of the boolean to be loaded from disk. This parameter cannot be null.\item[{\em defaultValue}]The default boolean value to be returned if the lookup fails.\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The boolean if found and loaded, null otherwise.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em IllegalArgumentException}]if the context or name parameters are null. \end{DoxyExceptions}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+/Users/lillialexis/Android/engage.android/JREngage/src/com/janrain/android/engage/utils/Archiver.java\end{DoxyCompactItemize}
