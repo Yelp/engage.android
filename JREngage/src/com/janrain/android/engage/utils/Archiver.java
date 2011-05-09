@@ -40,6 +40,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
+ * @internal
+ *
+ * @class Archiver
  * Utility class used to archiveDictionary/unarchive objects.  This implementation serializes
  * the object to a binary format and saves to the protected storage area (disk).
  */
@@ -267,3 +270,7 @@ public final class Archiver {
     private Archiver() {
     }
 }
+/**
+ * @endinternal
+ **/
+

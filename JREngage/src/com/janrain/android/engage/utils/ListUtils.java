@@ -32,8 +32,10 @@ package com.janrain.android.engage.utils;
 import java.util.List;
 
 /**
- * TODO: javadoc
- */
+ * @internal
+ *
+ * @class ListUtils
+ **/
 public final class ListUtils {
 
     // ------------------------------------------------------------------------
@@ -75,5 +77,8 @@ public final class ListUtils {
     // ------------------------------------------------------------------------
     // METHODS
     // ------------------------------------------------------------------------
-
 }
+/**
+ * @endinternal
+ **/
+

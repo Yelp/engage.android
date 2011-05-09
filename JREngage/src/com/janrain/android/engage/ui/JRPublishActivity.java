@@ -83,6 +83,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
+ * @internal
+ *
+ * @class JRPublishActivity
  * Publishing UI
  */
 public class JRPublishActivity extends TabActivity implements TabHost.OnTabChangeListener {
@@ -1256,3 +1259,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         public void mobileConfigDidFinish() {}
     }
 }
+/**
+ * @endinternal
+ **/
+

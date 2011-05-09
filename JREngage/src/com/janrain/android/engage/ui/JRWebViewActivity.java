@@ -60,6 +60,9 @@ import com.janrain.android.engage.utils.StringUtils;
 import java.net.URL;
 
 /**
+ * @internal
+ *
+ * @class JRWebViewActivity
  * Container for authentication web view.  Mimics JRWebViewController iPhone interface.
  */
 public class JRWebViewActivity extends Activity {
@@ -496,3 +499,6 @@ public class JRWebViewActivity extends Activity {
         }
     };
 }
+/**
+ * @endinternal
+ **/

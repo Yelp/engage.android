@@ -41,6 +41,11 @@ import java.io.StreamCorruptedException;
 
 import android.util.Log;
 
+/**
+ * @internal
+ *
+ * @class IOUtils
+ **/
 public final class IOUtils {
 
     // ------------------------------------------------------------------------
@@ -267,3 +272,7 @@ public final class IOUtils {
 		// no instance
 	}
 }
+/**
+ * @endinternal
+ **/
+

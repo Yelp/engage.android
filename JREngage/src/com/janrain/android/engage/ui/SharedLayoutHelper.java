@@ -41,6 +41,9 @@ import com.janrain.android.engage.R;
 
 
 /**
+ * @internal
+ *
+ * @class SharedLayoutHelper
  * Encapsulated common functionality for UI Activities that use the shared header/footer
  * XML layout.
  */
@@ -189,3 +192,7 @@ public class SharedLayoutHelper {
         return (mProgressDialog != null) && mProgressDialog.isShowing();
     }
 }
+/**
+ * @endinternal
+ **/
+
