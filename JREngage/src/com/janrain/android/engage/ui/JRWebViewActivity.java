@@ -159,10 +159,14 @@ public class JRWebViewActivity extends Activity {
         }
 
         mWebView = (WebView)findViewById(R.id.webview);
-        mWebView.clearView();
+        WebSettings webSettings = mWebView.getSettings();
+
+        //mWebView.clearView();
+        //mWebView.setInitialScale(100);
+        //webSettings.setUseWideViewPort(true);
+        //webSettings.setUseWideViewPort(false);
         mWebView.setInitialScale(100);
 
-        WebSettings webSettings = mWebView.getSettings();
         webSettings.setBuiltInZoomControls(true);
         webSettings.setLoadsImagesAutomatically(true);
         webSettings.setJavaScriptEnabled(true);
@@ -208,10 +212,10 @@ public class JRWebViewActivity extends Activity {
         if (mFinishReceiver != null) unregisterReceiver(mFinishReceiver);
 
 
-        //this listener's callback assumes the activity is running, but if the user presses
-        //the back button while the webview is transitioning between pages the activity may
-        //not be shown when this listener is fired, which would cause a crash, so we unset
-        //the listener here.
+        // This listener's callback assumes the activity is running, but if the user presses
+        // the back button while the WebView is transitioning between pages the activity may
+        // not be shown when this listener is fired, which would cause a crash, so we unset
+        // the listener here.
         if (mWebView != null) {
             mWebView.setWebViewClient(null);
             mWebView.setDownloadListener(null);
@@ -221,7 +225,6 @@ public class JRWebViewActivity extends Activity {
     public void onBackPressed() {
         mWebView.stopLoading();
         mSessionData.triggerAuthenticationDidRestart();
-//        finish();
     }
 
     /**

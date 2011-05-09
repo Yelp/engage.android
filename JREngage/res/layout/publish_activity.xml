@@ -192,8 +192,8 @@
                         android:layout_marginBottom="4dip"
                         android:layout_marginRight="4dip"
                         android:layout_marginLeft="4dip"
-                        android:paddingLeft="4dp"
-                        android:paddingRight="4dp"
+                        android:paddingLeft="3dp"
+                        android:paddingRight="3dp"
                         >
                         <!--android:gravity="top|left"-->
 
@@ -220,7 +220,10 @@
                             android:layout_marginLeft="4dip"
                             android:layout_marginBottom="4dip"
                             android:layout_marginRight="4dip"
-                            android:paddingTop="4dp"
+                            android:paddingTop="3dp"
+                            android:paddingLeft="3dp"
+                            android:paddingRight="3dp"
+                            android:paddingBottom="7dp"
                             android:background="@drawable/bg_provider_activity_info"
                             >
                             <!--android:layout_height="122dip"-->
