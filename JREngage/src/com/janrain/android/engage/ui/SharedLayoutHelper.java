@@ -192,7 +192,3 @@ public class SharedLayoutHelper {
         return (mProgressDialog != null) && mProgressDialog.isShowing();
     }
 }
-/**
- * @endinternal
- **/
-

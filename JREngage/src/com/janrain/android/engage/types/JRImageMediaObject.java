@@ -33,20 +33,21 @@ package com.janrain.android.engage.types;
 import android.graphics.Bitmap;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+
 /**
- * Image object to be included in a post to a user's stream.
+ * @brief Image object to be included in a post to a user's stream.
  *
  * Create an image media object, fill in the object's fields, and add the object to the
  * JRActivityObject#media array in your JRActivityObject.  How the images get presented
  * and whether or not they are used, depend on the provider.
  *
- * Each image must contain a src URL, which maps to the photo's URL, and an href URL, which maps
- * to the URL where a user should be taken if he or she clicks the photo.
+ * Each image must contain a \e src URL, which maps to the photo's URL, and an
+ * \e href URL, which maps to the URL where a user should be taken if he or she clicks the photo.
  *
- * Format and rules are identical to those described on the <a
- * href="http://developers.facebook.com/docs/guides/attachments">Facebook Developer page on
- * Attachments</a>.
- */
+ * @sa Format and rules are identical to those described on the
+ * <a href="http://developers.facebook.com/docs/guides/attachments">
+ * Facebook Developer page on Attachments</a>.
+ **/
 public class
         JRImageMediaObject extends JRMediaObject {
 
@@ -62,25 +63,33 @@ public class
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
 
+/**
+ * @name Constructors
+ **/
+/*@{*/
     /**
-     * Creates a <code>JRImageMediaObject</code> initialized with the given src and href.
+     * Returns a \c JRImageMediaObject initialized with the given src and href.
      *
      * @param src
-     *   The photo's URL.  This value cannot be <code>null</code>.
+     *   The photo's URL.  This value cannot be \c nil.
      *
      * @param href
-     *   The URL where a user should be taken if he or she clicks the photo.  This value cannot
-     *   be <code>null</code>.
+     *   The URL where a user should be taken if he or she clicks the photo.  This value cannot be \c nil.
+     *
+     * @return
+     *   A JRImageMediaObject initialized with the given src and href.  If either
+     *   \c src or \c href are \e nil, returns \c nil.
      *
      * @throws IllegalArgumentException
      *   if src or href is null
-     */
+     **/
     public JRImageMediaObject(String src, String href) {
         // TODO: if null/empty should we throw?
         if (src == null || href == null) throw new IllegalArgumentException("illegal null src or href");
         mSrc = src;
         mHref = href;
     }
+/*@}*/
 
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS

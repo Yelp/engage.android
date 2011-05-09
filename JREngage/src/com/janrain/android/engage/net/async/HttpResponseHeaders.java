@@ -195,6 +195,3 @@ public class HttpResponseHeaders {
         return sb.toString();
     }
 }
-/**
- * @endinternal
- **/

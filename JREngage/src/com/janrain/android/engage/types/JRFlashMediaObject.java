@@ -33,28 +33,28 @@ package com.janrain.android.engage.types;
 import android.graphics.Bitmap;
 
 /**
- * Flash object to be included in a post to a user's stream.
+ * @brief Flash object to be included in a post to a user's stream.
  *
  * Create an flash media object, fill in the object's fields, and add the object to the
  * JRActivityObject#media array in your JRActivityObject.  How the flash videos get presented
  * and whether or not they are used, depend on the provider.
  *
- * Each video must contain a swfsrc url, which is the URL of the Flash object to be rendered,
- * and an imgsrc, which is the URL of an photo that should be displayed in place of the
+ * Each video must contain a \e swfSrc url, which is the URL of the Flash object to be rendered,
+ * and an \e imgSrc, which is the URL of an photo that should be displayed in place of the
  * flash object until the user clicks to prompt the flash object to play.  Flash object
- * has two optional fields, width and height, which can be used to override the
+ * has two optional fields, \e width and \e height, which can be used to override the
  * default choices when displaying the video in the provider's stream (e.g., Facebook's stream).
- * It also has two optional fields, expanded_width and expanded_height, to specify
+ * It also has two optional fields, \e expanded_width and \e expanded_height, to specify
  * the width and height of flash object will resize to, on the provider's stream,
  * once the user clicks on it.
  *
- * NOTE: You can only include one JRFlashMediaObject in the media array.  Any others
+ * @note You can only include one JRFlashMediaObject in the media array.  Any others
  * will be ignored.
  *
- * Format and rules are identical to those described on the <a
- * href="http://developers.facebook.com/docs/guides/attachments">Facebook Developer page on
- * Attachments</a>.
- */
+ * @sa Format and rules are identical to those described on the
+ * <a href="http://developers.facebook.com/docs/guides/attachments">
+ * Facebook Developer page on Attachments</a>.
+ **/
 public class JRFlashMediaObject extends JRMediaObject {
 
     // ------------------------------------------------------------------------
@@ -80,7 +80,8 @@ public class JRFlashMediaObject extends JRMediaObject {
     private int mExpandedHeight;
 
     /**
-     * [internal] Contains the downloaded preview of the image for display in the publish
+     * @internal
+     * Contains the downloaded preview of the image for display in the publish
      * activity dialog
      */
     private Bitmap mPreview;
@@ -89,25 +90,33 @@ public class JRFlashMediaObject extends JRMediaObject {
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
 
+/**
+ * @name Constructors
+ **/
+/*@{*/
     /**
-     * Creates a <code>JRFlashMediaObject</code> initialized with the given swfSrc and imgSrc.
+     * Returns a JRFlashMediaObject initialized with the given swfsrc and imgsrc.
      *
      * @param swfSrc
-     *   The URL of the Flash object to be rendered.  This value cannot be <code>null</code>.
+     *   The URL of the Flash object to be rendered.  This value cannot be \c nil.
      *
      * @param imgSrc
-     *   The URL of an photo that should be displayed in place of the flash object.  This value
-     *   cannot be <code>null</code>.
+     *   The URL of an photo that should be displayed in place of the flash object.  This value cannot be \c nil.
+     *
+     * @return
+     *   A JRFlashMediaObject initialized with the given swfsrc and imgsrc.  If either
+     *   \c swfSrc or \c imgSrc are \e nil, returns \c nil.
      *
      * @throws IllegalArgumentException
      *   if swfSrc or imgSrc is null
-     */
+     **/
     public JRFlashMediaObject(String swfSrc, String imgSrc) {
         // TODO: if null/empty should we throw?
         if (swfSrc == null || imgSrc == null) throw new IllegalArgumentException("illegal null parameter");
         mSwfSrc = swfSrc;
         mImgSrc = imgSrc;
     }
+/*@}*/
 
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS

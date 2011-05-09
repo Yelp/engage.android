@@ -130,6 +130,3 @@ public class JRAuthenticatedUser implements Serializable {
         }
     }
 }
-/**
- * @endinternal
- **/

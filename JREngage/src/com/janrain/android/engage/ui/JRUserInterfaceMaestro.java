@@ -296,7 +296,3 @@ public class JRUserInterfaceMaestro {
         context.sendBroadcast(intent);
     }
 }
-/**
- * @endinternal
- **/
-

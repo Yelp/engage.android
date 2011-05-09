@@ -34,22 +34,23 @@ import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 
 /**
- * The JREngageDelegate protocol is adopted by an object that wishes to receive notifications when 
- * and information about a user that authenticates with your application and publishes activities to 
- * their social networks.
+ * @brief
+ * The JREngageDelegate protocol is adopted by an object that wishes to receive notifications when and
+ * information about a user that authenticates with your application and publishes activities to their
+ * social networks.
  *
- * This protocol will notify the delegate(s) when authentication and social publishing succeed or 
- * fail, it will provider the delegate(s) with the authenticated user's profile data, and, if 
- * server-side authentication is desired, it can provide the delegate(s) with the data payload 
- * returned by your server's token URL.
+ * This protocol will notify the delegate(s) when authentication and social publishing succeed or fail,
+ * it will provider the delegate(s) with the authenticated user's profile data, and, if server-side
+ * authentication is desired, it can provide the delegate(s) with the data payload returned by your
+ * server's token URL.
  **/
 public interface JREngageDelegate {
 	
-	/** 
-	 * \name Configuration 
-	 * Messages sent by JREngage during dialog launch/configuration
-	 **/
-	/*@{*/
+/**
+ * \name Configuration
+ * Messages sent by JREngage during dialog launch/configuration
+ **/
+/*@{*/
 
 	/**
 	 * Sent if the application tries to show a JREngage dialog, and JREngage failed to show.  May
@@ -58,7 +59,7 @@ public interface JREngageDelegate {
 	 * @param error
 	 *   The error that occurred during configuration
 	 *
-	 * \note
+	 * @note
 	 * This message is only sent if your application tries to show a JREngage dialog, and not 
 	 * necessarily when an error occurs, if, say, the error occurred during the library's 
 	 * configuration.  The raison d'etre is based on the possibility that your application may 
@@ -66,14 +67,14 @@ public interface JREngageDelegate {
 	 * won't get any error.
 	 **/
     void jrEngageDialogDidFailToShowWithError(JREngageError error);
-    /*@}*/
+/*@}*/
     
 
-    /** 
-     * \name Authentication
-     * Messages sent  by JREngage during authentication
-     **/
-    /*@{*/
+/**
+ * \name Authentication
+ * Messages sent  by JREngage during authentication
+ **/
+/*@{*/
 
     /**
      * Sent if the authorization was canceled for any reason other than an error.  For example, 
@@ -194,14 +195,13 @@ public interface JREngageDelegate {
      *   please see the \ref basicProviders "List of Providers"
      **/
     void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider);
+/*@}*/
 
-    /*@}*/
-
-    /** 
-     * \name SocialPublishing
-     * Messages sent by JREngage during social publishing
-     **/
-    /*@{*/
+/**
+ * \name SocialPublishing
+ * Messages sent by JREngage during social publishing
+ **/
+/*@{*/
 
     /**
      * Sent if social publishing was canceled for any reason other than an error.  For example, 
@@ -246,5 +246,5 @@ public interface JREngageDelegate {
      *   of possible strings, please see the \ref socialProviders "List of Social Providers"
      **/
     void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
-    /*@}*/
+/*@}*/
 }

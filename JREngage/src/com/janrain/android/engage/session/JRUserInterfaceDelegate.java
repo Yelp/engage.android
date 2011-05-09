@@ -40,7 +40,3 @@ public interface JRUserInterfaceDelegate {
     void userInterfaceDidClose();
 
 }
-/**
- * @endinternal
- **/
-

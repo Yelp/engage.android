@@ -46,7 +46,3 @@ public interface JRConnectionManagerDelegate {
 	void connectionDidFail(Exception ex, String requestUrl, Object userdata);
 	void connectionWasStopped(Object userdata);
 }
-/**
- * @endinternal
- **/
-

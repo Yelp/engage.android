@@ -45,6 +45,3 @@ public interface AsyncHttpResponseListener {
      */
     void onResponseReceived(AsyncHttpResponseHolder response);
 }
-/**
- * @endinternal
- **/

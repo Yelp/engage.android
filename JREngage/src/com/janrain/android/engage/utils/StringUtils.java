@@ -213,7 +213,3 @@ public final class StringUtils {
         // no instance allowed, static utility class
     }
 }
-/**
- * @endinternal
- **/
-

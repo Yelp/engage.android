@@ -33,15 +33,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A link a user can use to take action on an activity update on the provider.
+ * @brief A link a user can use to take action on an activity update on the provider.
  *
  * Create an action link object, fill in the object's fields, and add the object
  * the JRActivityObject#action_links array of your JRActivityObject.
  *
  * Each action link must contain a link, \e href, and some \e text, describing what action
  * will happen if someone clicks the link.
- * Example:
- * <code>
+ *
+ * @par Example:
+ * @code
  * action_links:
  * [
  *   {
@@ -53,33 +54,39 @@ import java.util.Map;
  *     "href": "http://example.com/quiz/12345/take"
  *   }
  * ]
- * </code>
+ * @endcode
  *
- */
+ **/
 public class JRActionLink {
 
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
-    /** The text describing the link */
+    /** The text describing the link
+     *
+     * @par Getter/Setter:
+     *      #getText(), #setText()
+     **/
     private String mText;
-    /** A link a user can use to take action on an activity update on the provider */
+
+    /** A link a user can use to take action on an activity update on the provider
+     *
+     * @par Getter/Setter:
+     *      #getHref(), #setHref()
+     **/
     private String mHref;
 
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
-
+/**
+ * @name Constructors
+ **/
+/*@{*/
     /**
-     * Creates a <code>JRActionLink</code> initialized with the given text and href.
+     * Creates a JRActionLink initialized with the given text and href
      *
      * @param text
-     *   The text describing the link.  This value cannot be <code>null</code>.
+     *   The text describing the link.  This value cannot be <code>null</code>
      *
      * @param href
      *   A link a user can use to take action on an activity update on the provider.  This value
-     *   cannot be <code>null</code>.
+     *   cannot be <code>null</code>
+     *
      * @throws IllegalArgumentException
      *   if text or href is null
      */
@@ -88,32 +95,55 @@ public class JRActionLink {
         mText = text;
         mHref = href;
     }
+/*@}*/
 
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
-
+/**
+ * @name Getters/Setters
+ **/
+/*@{*/
+    /**
+     * Getter for the action link's #mText property
+     *
+     * @return
+     *      The text describing the link
+     **/
     public String getText() {
         return mText;
     }
 
+    /**
+     * Setter for the action link's #mText property
+     *
+     * @param text
+     *      The text describing the link
+     **/
     public void setText(String text) {
         mText = text;
     }
 
+    /**
+     * Getter for the action link's #mHref property
+     *
+     * @return
+     *      A link a user can use to take action on an activity update on the provider
+     **/
     public String getHref() {
         return mHref;
     }
 
+    /**
+     * Setter for the action link's #mHref property
+     *
+     * @param href
+     *      A link a user can use to take action on an activity update on the provider
+     **/
     public void setHref(String href) {
         mHref = href;
     }
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
+/*@}*/
 
     /**
+     * @internal
      * Returns a HashMap (Dictionary) representing the JRActionLink.
      *
      * @return
@@ -124,7 +154,7 @@ public class JRActionLink {
      * 
      * TODO: revisit visibility/usage
      * specifically, is this the right jsonification
-     */
+     **/
     public Map<String, String> dictionaryForObject() {
         Map<String, String> map = new HashMap<String, String>(1);
         map.put(mText, mHref);

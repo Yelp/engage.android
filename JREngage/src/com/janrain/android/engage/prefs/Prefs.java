@@ -149,6 +149,3 @@ public final class Prefs {
 		/* private constructor - utility class | no instance */
 	}
 }
-/**
- * @endinternal
- **/

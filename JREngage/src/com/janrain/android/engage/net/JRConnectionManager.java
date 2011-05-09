@@ -297,6 +297,3 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 	}
 	*/
 }
-/**
- * @endinternal
- **/

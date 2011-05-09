@@ -310,6 +310,3 @@ public final class AsyncHttpClient {
 		/* no instance */
 	}
 }
-/**
- * @endinternal
- **/

@@ -132,6 +132,3 @@ public class JRProviderList extends ArrayList<JRProvider> {
         }
     }
 }
-/**
- * @endinternal
- **/

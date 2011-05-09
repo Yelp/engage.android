@@ -1259,7 +1259,3 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         public void mobileConfigDidFinish() {}
     }
 }
-/**
- * @endinternal
- **/
-

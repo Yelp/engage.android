@@ -31,23 +31,23 @@ package com.janrain.android.engage.types;
 
 
 /**
- * Mp3 object to be included in a post to a user's stream.
+ * @brief Mp3 object to be included in a post to a user's stream.
  *
  * Create an mp3 media object, fill in the object's fields, and add the object to the
  * JRActivityObject#media array in your JRActivityObject.  How the mp3s get presented
  * and whether or not they are used, depend on the provider.
  *
- * Each mp3 must contain a src url, which is the URL of the MP3 file to be rendered.
- * The mp3 can also include a title, artist, and album.
+ * Each mp3 must contain a \e src url, which is the URL of the MP3 file to be rendered.
+ * The mp3 can also include a \e title, \e artist, and \e album.
  *
- * NOTE: You can only include one JRMp3MediaObject in the media array.  Any others
+ * @note You can only include one JRMp3MediaObject in the media array.  Any others
  * will be ignored.
  *
- * Format and rules are identical to those described on the <a
- * href="http://developers.facebook.com/docs/guides/attachments">Facebook Developer page on
- * Attachments</a>.
- */
-public class JRMp3MediaObject extends JRMediaObject {
+ * * @ Format and rules are identical to those described on the
+ * <a href="http://developers.facebook.com/docs/guides/attachments">
+ * Facebook Developer page on Attachments</a>.
+ **/
+ public class JRMp3MediaObject extends JRMediaObject {
 
     // ------------------------------------------------------------------------
     // FIELDS
@@ -66,15 +66,23 @@ public class JRMp3MediaObject extends JRMediaObject {
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
 
+/**
+ * @name Constructors
+ **/
+/*@{*/
     /**
-     * Creates a <code>JRMp3MediaObject</code> initialized with the given src.
+     * Returns a \c JRMp3MediaObject initialized with the given src.
      *
      * @param src
-     *   The URL of the MP3 file to be rendered.  This value cannot be <code>null</code>.
+     *   The URL of the MP3 file to be rendered.  This value cannot be \c nil.
+     *
+     * @return
+     *   A JRMp3MediaObject initialized with the given src.  If
+     *   \c src is \e nil, returns \c nil.
      *
      * @throws IllegalArgumentException
      *   if src is null
-     */
+     **/
     public JRMp3MediaObject(String src) {
         // TODO: if null/empty should we throw?
         if (src == null) throw new IllegalArgumentException("illegal src for JRMp3MediaObject constructor");
