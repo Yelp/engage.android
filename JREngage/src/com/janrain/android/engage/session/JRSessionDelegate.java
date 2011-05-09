@@ -120,7 +120,3 @@ public interface JRSessionDelegate {
      */
     void mobileConfigDidFinish();
 }
-/**
- * @endinternal
- **/
-

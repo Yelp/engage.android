@@ -499,6 +499,3 @@ public class JRWebViewActivity extends Activity {
         }
     };
 }
-/**
- * @endinternal
- **/

@@ -382,6 +382,3 @@ public class JRProvidersActivity extends ListActivity {
         }
     }
 }
-/**
- * @endinternal
- **/

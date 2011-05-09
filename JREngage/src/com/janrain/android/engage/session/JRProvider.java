@@ -407,7 +407,3 @@ public class JRProvider implements Serializable {
         return mName;
     }
 }
-/**
- * @endinternal
- **/
-

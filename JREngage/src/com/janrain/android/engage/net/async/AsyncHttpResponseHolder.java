@@ -168,6 +168,3 @@ public class AsyncHttpResponseHolder {
         return (mException != null);
     }
 }
-/**
- * @endinternal
- **/

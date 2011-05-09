@@ -423,6 +423,3 @@ public class JRLandingActivity extends Activity {
 //        }
 //    }
 }
-/**
- * @endinternal
- **/
