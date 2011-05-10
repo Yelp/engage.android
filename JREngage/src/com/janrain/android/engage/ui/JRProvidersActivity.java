@@ -64,9 +64,12 @@ public class JRProvidersActivity extends ListActivity {
     // ------------------------------------------------------------------------
 
     /**
+     * @internal
+     *
+     * @class FinishReceiver
      * Used to listen to "Finish" broadcast messages sent by JRUserInterfaceMaestro.  A facility
      * for iPhone-like ability to close this activity from the maestro class.
-     */
+     **/
     private class FinishReceiver extends BroadcastReceiver {
 
         private final String TAG = JRProvidersActivity.TAG
@@ -87,8 +90,11 @@ public class JRProvidersActivity extends ListActivity {
     }
 
     /**
+     * @internal
+     *
+     * @class ProviderAdapter
      * Array adapter used to render individual providers in list view.
-     */
+     **/
     private class ProviderAdapter extends ArrayAdapter<JRProvider> {
         private int mResourceId;
 
