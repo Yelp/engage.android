@@ -59,11 +59,11 @@ public final class AsyncHttpClient {
 	 */
 	private static class HttpSender extends Thread {
         static {
-            //HttpURLConnection has a known bug discussed
-            //here: http://code.google.com/p/android/issues/detail?id=7786
-            //here: http://stackoverflow.com/questions/1440957/httpurlconnection-getresponsecode-returns-1-on-second-invocation/1441491#1441491
-            //and here: http://stackoverflow.com/questions/2792843/httpurlconnection-whats-the-deal-with-having-to-read-the-whole-response
-            //the following is a workaround:
+            // HttpURLConnection has a known bug discussed
+            // here: http://code.google.com/p/android/issues/detail?id=7786
+            // here: http://stackoverflow.com/questions/1440957/httpurlconnection-getresponsecode-returns-1-on-second-invocation/1441491#1441491
+            // and here: http://stackoverflow.com/questions/2792843/httpurlconnection-whats-the-deal-with-having-to-read-the-whole-response
+            // the following is a workaround:
             System.setProperty("http.keepAlive", "false");
         }
 

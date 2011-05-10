@@ -32,7 +32,6 @@ package com.janrain.android.simpledemo;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -43,11 +42,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 import com.janrain.android.engage.*;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.*;
-import com.janrain.android.engage.ui.JRLandingActivity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -112,12 +109,12 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         mBtnTestLand.setOnClickListener(this);
 
         // Test button code to test setAlwaysForceReauth
-//        final ToggleButton tb = ((ToggleButton)findViewById(R.id.btn_always_force_reauth));
-//        tb.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                mEngage.setAlwaysForceReauthentication(tb.isChecked());
-//            }
-//        });
+        //final ToggleButton tb = ((ToggleButton)findViewById(R.id.btn_always_force_reauth));
+        //tb.setOnClickListener(new View.OnClickListener() {
+        //    public void onClick(View v) {
+        //        mEngage.setAlwaysForceReauthentication(tb.isChecked());
+        //    }
+        //});
 
         String engageAppId = readAsset("app_id.txt").trim();
         String engageTokenUrl = readAsset("token_url.txt").trim();
@@ -254,11 +251,8 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
             jra.setTitle(mTitleText);
             jra.setDescription(mDescriptionText);
             jra.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
-            mEngage.showSocialPublishingDialogWithActivity(jra);
-        } else if (view == mBtnTestLand) {
-            Intent intent = new Intent(this, JRLandingActivity.class);
-            startActivity(intent);
-        }
+            mEngage.showSocialPublishingDialog(jra);
+        } 
     }
 
     // ------------------------------------------------------------------------
