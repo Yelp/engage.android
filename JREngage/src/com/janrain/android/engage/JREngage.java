@@ -680,7 +680,7 @@ public class JREngage {
      * start a new Android Activity enabling the user to publish a social share.  The user will also
      * be taken through the sign-in process, if necessary.
      *
-     * @sa JRActivityObject
+     * @sa \c JRActivityObject
      *
      * @param activity
      *   the activity you wish to share
