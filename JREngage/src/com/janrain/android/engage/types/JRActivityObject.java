@@ -93,7 +93,8 @@ public class JRActivityObject {
      **/
     private String mAction;
 
-    /** The URL of the resource being mentioned in the activity update
+    /**
+     * The URL of the resource being mentioned in the activity update
      *
      * @par Getter:
      *      #getUrl()
@@ -123,7 +124,8 @@ public class JRActivityObject {
      **/
     private String mTitle = "";
 
-    /** A description of the resource mentioned in the activity update
+    /**
+     * A description of the resource mentioned in the activity update
      *
      * @par Getter/Setter:
      *      #getDescription(), #setDescription()

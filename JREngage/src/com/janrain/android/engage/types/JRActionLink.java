@@ -59,14 +59,16 @@ import java.util.Map;
  **/
 public class JRActionLink {
 
-    /** The text describing the link
+    /**
+     * The text describing the link
      *
      * @par Getter/Setter:
      *      #getText(), #setText()
      **/
     private String mText;
 
-    /** A link a user can use to take action on an activity update on the provider
+    /**
+     * A link a user can use to take action on an activity update on the provider
      *
      * @par Getter/Setter:
      *      #getHref(), #setHref()
