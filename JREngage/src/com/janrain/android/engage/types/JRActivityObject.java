@@ -73,20 +73,21 @@ import java.util.Map;
  *
  * @sa For more information of Janrain Engage's activity api, see <a
  * href="https://rpxnow.com/docs#api_activity">the activity section</a> of our API Documentation.
+ *
+ * @nosubgrouping
  **/
 public class JRActivityObject {
     private static final String TAG = JRActivityObject.class.getSimpleName();
 
 /**
- * @name
- * The various properties of the JRActivityObject that you can configure through the object's
- * constructures, getters, and setters
+ * @name Private Attributes
+ * The various properties of the JRActivityObject that you can access and configure through the
+ * object's constructor, getters, and setters
  **/
 /*@{*/
-
     /**
      * A string describing what the user did, written in the third person (e.g.,
-     * "wrote a restaurant review", "posted a comment", "took a quiz")
+     * "wrote a restaurant review", "posted a comment", "took a quiz").
      *
      * @par Getter:
      *      #getAction()
@@ -94,7 +95,7 @@ public class JRActivityObject {
     private String mAction;
 
     /**
-     * The URL of the resource being mentioned in the activity update
+     * The URL of the resource being mentioned in the activity update.
      *
      * @par Getter:
      *      #getUrl()
@@ -125,7 +126,7 @@ public class JRActivityObject {
     private String mTitle = "";
 
     /**
-     * A description of the resource mentioned in the activity update
+     * A description of the resource mentioned in the activity update.
      *
      * @par Getter/Setter:
      *      #getDescription(), #setDescription()
@@ -133,8 +134,8 @@ public class JRActivityObject {
     private String mDescription = "";
 
     /**
-     * An array of <code>JRActionLink</code> objects, each having two attributes: text and href.
-     * An action link is a link a user can use to take action on an activity update on the provider
+     * An array of JRActionLink objects, each having two attributes: \e text and \e href.
+     * An action link is a link a user can use to take action on an activity update on the provider.
      *
      * @par Example:
      * @code
@@ -161,7 +162,7 @@ public class JRActivityObject {
     private List<JRActionLink> mActionLinks = new ArrayList<JRActionLink>();
 
     /**
-     * An array of objects with base class \em JRMediaObject (i.e., JRImageMediaObject,
+     * An array of objects with base class \e JRMediaObject (i.e. JRImageMediaObject,
      * JRFlashMediaObject, JRMp3MediaObject).
      *
      * To publish attached media objects with your activity, create the preferred
@@ -175,7 +176,7 @@ public class JRActivityObject {
      *   -# flash
      *   -# mp3
      *
-     * Also, any objects added to this array that are not of type JRMediaObject
+     * Also, any objects added to this array that do not inherit from \e JRMediaObject
      * will be ignored.
      *
      * @sa Media object format and rules are identical to those described on the <a
@@ -188,8 +189,8 @@ public class JRActivityObject {
     private List<JRMediaObject> mMedia = new ArrayList<JRMediaObject>();
 
     /**
-     * An object with attributes describing properties of the update. An attribute value can be
-     * a string or an object with two attributes, text and href.
+     * An object with attributes describing properties of the update. An attribute \e value can be
+     * a string or an object with two attributes, \e text and \e href.
      *
      * @par Example:
      * @code
@@ -212,14 +213,15 @@ public class JRActivityObject {
 
 /**
  * @name Constructors
+ * Constructor for JRActivityObject
  **/
 /*@{*/
     /**
-     * Returns a JRActivityObject initialized with the given action and url
+     * Returns a JRActivityObject initialized with the given action and url.
      *
      * @param action
      *   A string describing what the user did, written in the third person.  This value cannot
-     *   be \c null
+     *   be null
      *
      * @param url
      *   The URL of the resource being mentioned in the activity update
@@ -238,11 +240,12 @@ public class JRActivityObject {
 
 /**
  * @name Getters/Setters
+ * Getters and setters for the JRActivityObject's private properties
  **/
 /*@{*/
 
     /**
-     * Getter for the activity object's #mAction property
+     * Getter for the activity object's #mAction property.
      *
      * @return
      *      A string describing what the user did, written in the third person (e.g.,
@@ -253,7 +256,7 @@ public class JRActivityObject {
     }
 
     /**
-     * Getter for the activity object's #mUrl property
+     * Getter for the activity object's #mUrl property.
      *
      * @return
      *       The URL of the resource being mentioned in the activity update
@@ -263,7 +266,7 @@ public class JRActivityObject {
     }
 
     /**
-     * Getter for the activity object's #mUserGeneratedContent property
+     * Getter for the activity object's #mUserGeneratedContent property.
      *
      * @return
      *      A string containing user-supplied content, such as a comment or the first paragraph of
@@ -274,7 +277,7 @@ public class JRActivityObject {
     }
 
     /**
-     * Setter for the activity object's #mUserGeneratedContent property
+     * Setter for the activity object's #mUserGeneratedContent property.
      *
      * @param userGeneratedContent
      *      A string containing user-supplied content, such as a comment or the first paragraph of
@@ -285,7 +288,7 @@ public class JRActivityObject {
     }
 
     /**
-     * Getter for the activity object's #mTitle property
+     * Getter for the activity object's #mTitle property.
      *
      * @return
      *      The title of the resource being mentioned in the activity update
@@ -295,7 +298,7 @@ public class JRActivityObject {
     }
 
     /**
-     * Setter for the activity object's #mTitle property
+     * Setter for the activity object's #mTitle property.
      *
      * @param title
      *      The title of the resource being mentioned in the activity update
@@ -305,7 +308,7 @@ public class JRActivityObject {
     }
 
     /**
-     * Getter for the activity object's #mDescription property
+     * Getter for the activity object's #mDescription property.
      *
      * @return
      *      A description of the resource mentioned in the activity update
@@ -315,7 +318,7 @@ public class JRActivityObject {
     }
 
     /**
-     * Setter for the activity object's #mDescription property
+     * Setter for the activity object's #mDescription property.
      *
      * @param description
      *      A description of the resource mentioned in the activity update
@@ -325,10 +328,10 @@ public class JRActivityObject {
     }
 
     /**
-     * Getter for the activity object's #mActionLinks property
+     * Getter for the activity object's #mActionLinks property.
      *
      * @return
-     *      An array of JRActionLink objects, each having two attributes: text and href.
+     *      An array of JRActionLink objects, each having two attributes: \e text and \e href.
      *      An action link is a link a user can use to take action on an activity update on the provider
      **/
     public List<JRActionLink> getActionLinks() {
@@ -336,10 +339,10 @@ public class JRActivityObject {
     }
 
     /**
-     * Setter for the activity object's #mActionLinks property
+     * Setter for the activity object's #mActionLinks property.
      *
      * @param actionLinks
-     *      An array of JRActionLink objects, each having two attributes: text and href.
+     *      An array of JRActionLink objects, each having two attributes: \e text and \e href.
      *      An action link is a link a user can use to take action on an activity update on the provider
      **/
     public void setActionLinks(List<JRActionLink> actionLinks) {
@@ -347,11 +350,11 @@ public class JRActivityObject {
     }
 
     /**
-     * Setter for the activity object's #mActionLinks property
+     * Setter for the activity object's #mActionLinks property.
      *
      * @param actionLink
-     *      A single JRActionLink to be added to the array of action links, creating the array if it
-     *      hasn't already been created
+     *      A single JRActionLink to be added to the array of action links, creating the array if
+     *      it hasn't already been created
      **/
     public void addActionLink(JRActionLink actionLink) {
         if (mActionLinks == null)
@@ -360,10 +363,10 @@ public class JRActivityObject {
     }
 
     /**
-     * Getter for the activity object's #mMedia property
+     * Getter for the activity object's #mMedia property.
      *
      * @return
-     *      An array of objects with base class \em JRMediaObject (i.e., JRImageMediaObject,
+     *      An array of objects with base class \e JRMediaObject (i.e. JRImageMediaObject,
      *      JRFlashMediaObject, JRMp3MediaObject)
      **/
     public List<JRMediaObject> getMedia() {
@@ -371,10 +374,10 @@ public class JRActivityObject {
     }
 
     /**
-     * Setter for the activity object's #mMedia property
+     * Setter for the activity object's #mMedia property.
      *
      * @param media
-     *      An array of objects with base class \em JRMediaObject (i.e., JRImageMediaObject,
+     *      An array of objects with base class \e JRMediaObject (i.e. JRImageMediaObject,
      *      JRFlashMediaObject, JRMp3MediaObject)
      **/
     public void setMedia(List<JRMediaObject> media) {
@@ -382,7 +385,7 @@ public class JRActivityObject {
     }
 
     /**
-     * Setter for the activity object's #mMedia property
+     * Setter for the activity object's #mMedia property.
      *
      * @param mediaObject
      *        An single JRImageMediaObject, JRFlashMediaObject, or JRMp3MediaObject to be added to
@@ -395,22 +398,22 @@ public class JRActivityObject {
     }
 
     /**
-     * Getter for the activity object's #mProperties property
+     * Getter for the activity object's #mProperties property.
      *
      * @return
      *      An object with attributes describing properties of the update. An attribute value can be
-     *      a string or an object with two attributes, text and href.
+     *      a string or an object with two attributes, \e text and \e href.
      **/
     public Map<String, Object> getProperties() {
         return mProperties;
     }
 
     /**
-     * Setter for the activity object's #mProperties property
+     * Setter for the activity object's #mProperties property.
      *
      * @param properties
      *      An object with attributes describing properties of the update. An attribute value can be
-     *      a string or an object with two attributes, text and href.
+     *      a string or an object with two attributes, \e text and \e href.
      **/    
     public void setProperties(Map<String, Object> properties) {
         mProperties = properties;

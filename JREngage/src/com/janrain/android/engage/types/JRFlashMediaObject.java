@@ -36,7 +36,7 @@ import android.graphics.Bitmap;
  * @brief Flash object to be included in a post to a user's stream.
  *
  * Create an flash media object, fill in the object's fields, and add the object to the
- * JRActivityObject#media array in your JRActivityObject.  How the flash videos get presented
+ * JRActivityObject#mMedia array in your JRActivityObject.  How the flash videos get presented
  * and whether or not they are used, depend on the provider.
  *
  * Each video must contain a \e swfSrc url, which is the URL of the Flash object to be rendered,
@@ -55,11 +55,19 @@ import android.graphics.Bitmap;
  * @sa Format and rules are identical to those described on the
  * <a href="http://developers.facebook.com/docs/guides/attachments">
  * Facebook Developer page on Attachments</a>.
+ *
+ *
+ * @nosubgrouping
  **/
 public class JRFlashMediaObject extends JRMediaObject {
-
+/**
+ * @name Private Attributes
+ * The various properties of the flash media object that you can access and configure through the
+ * object's constructor, getters, and setters
+ **/
+/*@{*/
     /**
-     * The URL of the Flash object to be rendered
+     * The URL of the Flash object to be rendered.
      *
      * @par Getter:
      *      #getSwfSrc()
@@ -67,7 +75,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     private String mSwfSrc;
 
     /**
-     * The URL of an photo that should be displayed in place of the flash object
+     * The URL of an photo that should be displayed in place of the flash object.
      *
      * @par Getter:
      *      #getImgSrc()
@@ -75,7 +83,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     private String mImgSrc;
 
     /**
-     * Used to override the default width
+     * Used to override the default width.
      *
      * @par Getter/Setter:
      *      #getWidth(), #setWidth()
@@ -83,7 +91,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     private int mWidth;
 
     /**
-     * Used to override the default height
+     * Used to override the default height.
      *
      * @par Getter/Setter:
      *      #getHeight(), #setHeight()
@@ -91,7 +99,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     private int mHeight;
 
     /**
-     * Width the video will resize to once the user clicks it
+     * Width the video will resize to once the user clicks it.
      *
      * @par Getter/Setter:
      *      #getExpandedWidth(), #setExpandedWidth()
@@ -99,7 +107,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     private int mExpandedWidth;
 
     /**
-     * Height the video will resize to once the user clicks it
+     * Height the video will resize to once the user clicks it.
      *
      * @par Getter/Setter:
      *      #getExpandedHeight(), #setExpandedHeight()
@@ -109,22 +117,24 @@ public class JRFlashMediaObject extends JRMediaObject {
     /**
      * @internal
      * Contains the downloaded preview of the image for display in the publish
-     * activity dialog
+     * activity dialog.
      **/
     private Bitmap mPreview;
-
+/*@}*/
+    
 /**
  * @name Constructors
+ * Constructor for flash media object
  **/
 /*@{*/
     /**
-     * Returns a JRFlashMediaObject initialized with the given swfSrc and imgSrc
+     * Returns a JRFlashMediaObject initialized with the given swfSrc and imgSrc.
      *
      * @param swfSrc
-     *   The URL of the Flash object to be rendered.  This value cannot be \c null
+     *   The URL of the Flash object to be rendered.  This value cannot be null
      *
      * @param imgSrc
-     *   The URL of an photo that should be displayed in place of the flash object.  This value cannot be \c null
+     *   The URL of an photo that should be displayed in place of the flash object.  This value cannot be null
      *
      * @throws IllegalArgumentException
      *   if swfSrc or imgSrc is null
@@ -139,10 +149,11 @@ public class JRFlashMediaObject extends JRMediaObject {
 
 /**
  * @name Getters/Setters
+ * Getters and setters for the flash media object's private properties
  **/
 /*@{*/
     /**
-     * Getter for the flash object's #mSwfSrc property
+     * Getter for the flash object's #mSwfSrc property.
      *
      * @return
      *      The URL of the Flash object to be rendered
@@ -152,7 +163,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     }
 
     /**
-     * Getter for the flash object's #mImgSrc property
+     * Getter for the flash object's #mImgSrc property.
      *
      * @return
      *      The URL of an photo that should be displayed in place of the flash object
@@ -162,7 +173,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     }
 
     /**
-     * Getter for the flash object's #mWidth property
+     * Getter for the flash object's #mWidth property.
      *
      * @return
      *      Used to override the default width
@@ -172,7 +183,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     }
 
     /**
-     * Setter for the flash object's #mWidth property
+     * Setter for the flash object's #mWidth property.
      *
      * @param width
      *      Used to override the default width
@@ -182,7 +193,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     }
 
     /**
-     * Getter for the flash object's #mHeight property
+     * Getter for the flash object's #mHeight property.
      *
      * @return
      *      Used to override the default height
@@ -192,7 +203,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     }
 
     /**
-     * Setter for the flash object's #mHeight property
+     * Setter for the flash object's #mHeight property.
      *
      * @param height
      *      Used to override the default height
@@ -202,7 +213,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     }
 
     /**
-     * Getter for the flash object's #mExpandedWidth property
+     * Getter for the flash object's #mExpandedWidth property.
      *
      * @return
      *      Width the video will resize to once the user clicks it
@@ -212,7 +223,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     }
 
     /**
-     * Setter for the flash object's #mExpandedWidth property
+     * Setter for the flash object's #mExpandedWidth property.
      *
      * @param expandedWidth
      *      Width the video will resize to once the user clicks it
@@ -222,7 +233,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     }
 
     /**
-     * Getter for the flash object's #mExpandedHeight property
+     * Getter for the flash object's #mExpandedHeight property.
      *
      * @return
      *      Height the video will resize to once the user clicks it
@@ -232,7 +243,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     }
 
     /**
-     * Setter for the flash object's #mExpandedHeight property
+     * Setter for the flash object's #mExpandedHeight property.
      *
      * @param expandedHeight
      *      Height the video will resize to once the user clicks it

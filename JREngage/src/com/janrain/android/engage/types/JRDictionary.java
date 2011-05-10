@@ -44,13 +44,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * iPhone dictionary work-alike class.  Maps string keys to object values.
- */
+ * @class JRDictionary
+ * @brief aps string keys to object values
+ *
+ * @nosubgrouping
+ * 
+ * @internal
+ * iPhone dictionary work-alike class
+ * @endinternal
+ **/
 public final class JRDictionary extends HashMap<String,Object> {
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
 
 	public static final String DEFAULT_VALUE_STRING = "";
 	public static final int DEFAULT_VALUE_INT = -1;
@@ -65,41 +68,74 @@ public final class JRDictionary extends HashMap<String,Object> {
     /* Tag used for logging. */
     private static final String TAG = JRDictionary.class.getSimpleName();
 
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
-
+/**
+ * @name Contructors
+ * Methods that manage authenticated users remembered by the library
+ **/
+/*@{*/
     /**
-     * Utility method used to check if a dictionary object is "empty", that is, it is null or
-     * contains zero items.
-     *
-     * @param dictionary
-     *      The dictionary object to be tested.
-     *
-     * @return
-     *      <code>true</code> if the dictionary is null or contains zero items, <code>false</code>
-     *      otherwise.
-     */
-    public static boolean isEmpty(JRDictionary dictionary) {
-        return ((dictionary == null) || (dictionary.size() == 0));
+     * Default constructor.
+     **/
+    public JRDictionary() {
+        super();
     }
 
+    /**
+     * Initializing constructor.  Creates instance of JRDictionary with the specified
+     * initial size/capacity.
+     *
+     * @param capacity
+     *      Initial size/capacity of JRDictionary instance
+     **/
+    public JRDictionary(int capacity) {
+        super(capacity);
+    }
+
+    /**
+     * Copy constructor (for base type).
+     *
+     * @param map
+     *      The HashMap instance to clone
+     **/
+    public JRDictionary(Map<String,Object> map) {
+        if (map != null) {
+            putAll(map);
+        }
+    }
+
+    /**
+     * Copy constructor.
+     *
+     * @param dictionary
+     *      Dictionary instance to clone
+     **/
+    public JRDictionary(JRDictionary dictionary) {
+        if (!JRDictionary.isEmpty(dictionary)) {
+            putAll(dictionary);
+        }
+    }
+/*@}*/
+
+/**
+ * @name Archving
+ * Methods that manage archiving/unarchiving of JRDictionaary
+ **/
+/*@{*/
     /**
      * Archives the specified JRDictionary object to disk.
      *
      * @param name
-     *      The name the JRDictionary will be saved as on disk.  This parameter cannot be null.
+     *      The name the JRDictionary will be saved as on disk.  This parameter cannot be null
      *
      * @param dictionary
-     *      The dictionary object to be saved.
+     *      The dictionary object to be saved
      *
-     * 		Returns <code>true</code> if the save operation is successful, <code>false</code>
-     * 		otherwise.
+     * @return
+     *      \c true if the save operation is successful, \c false otherwise
      *
      * @throws
-     * 		IllegalArgumentException if the context or name parameters are null.
-     */
+     * 		IllegalArgumentException if the context or name parameters are null
+     **/
     public static boolean archive(String name, JRDictionary dictionary) {
         return Archiver.save(name, dictionary);
     }
@@ -108,14 +144,14 @@ public final class JRDictionary extends HashMap<String,Object> {
      * Loads (unarchives) the specified JRDictionary object from the local (protected) file system.
      *
      * @param name
-     * 		The name of the JRDictionary to be loaded from disk.  This parameter cannot be null.
+     * 		The name of the JRDictionary to be loaded from disk.  This parameter cannot be null
      *
      * @return
-     * 		The JRDictionary if found and loaded, new (empty) JRDictionary otherwise.
+     * 		The JRDictionary if found and loaded, new (empty) JRDictionary otherwise
      *
      * @throws
-     * 		IllegalArgumentException if the context or name parameters are null.
-     */
+     * 		IllegalArgumentException if the context or name parameters are null
+     **/
     public static JRDictionary unarchive(String name) {
         Object obj = Archiver.load(name);
         if ((obj != null) && (obj instanceof JRDictionary)) {
@@ -123,13 +159,19 @@ public final class JRDictionary extends HashMap<String,Object> {
         }
         return new JRDictionary();
     }
+/*@}*/
 
+/**
+ * @name JSON Seririalization
+ * Methods that serialize/deserialize the JRDictionary to/from JSON
+ **/
+/*@{*/
     /**
      * Serializes the specified dictionary object to a JSON string.
      *
      * @return
-     *      JSON representation of the specified JRDictionary object.
-     */
+     *      JSON representation of the specified JRDictionary object
+     **/
     public String toJSON() {
         String retval = "";
 
@@ -150,8 +192,8 @@ public final class JRDictionary extends HashMap<String,Object> {
      *      The JSON string to be deserialized.
      *
      * @return
-     *      A JRDictionary object representation of the JSON string.
-     */
+     *      A JRDictionary object representation of the JSON string
+     **/
     public static JRDictionary fromJSON(String json) {
         if (Config.LOGD) {
             Log.d(TAG, "[fromJSON] json: " + json);
@@ -168,111 +210,67 @@ public final class JRDictionary extends HashMap<String,Object> {
 
         return retval;
     }
+/*@}*/
 
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
-
-    /**
-     * Default constructor.
-     */
-    public JRDictionary() {
-        super();
-    }
-
-    /**
-     * Initializing constructor.  Creates instance of JRDictionary with the specified
-     * initial size/capacity.
-     *
-     * @param capacity
-     *      Initial size/capacity of JRDictionary instance.
-     */
-    public JRDictionary(int capacity) {
-        super(capacity);
-    }
-
-    /**
-     * Copy constructor (for base type).
-     *
-     * @param map
-     *      The HashMap instance to clone.
-     */
-    public JRDictionary(Map<String,Object> map) {
-        if (map != null) {
-            putAll(map);
-        }
-    }
-
-    /**
-     * Copy constructor.
-     *
-     * @param dictionary
-     *      Dictionary instance to clone.
-     */
-    public JRDictionary(JRDictionary dictionary) {
-        if (!JRDictionary.isEmpty(dictionary)) {
-            putAll(dictionary);
-        }
-    }
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
-	
+/**
+ * @name Getting Dictionary Content
+ * Methods that return typed values given a String key
+ **/
+/*@{*/
 	/**
-	 * Convenience method used to retrieve a named value as a String object.
+	 * Convenience method used to retrieve a named value as a \e String object.
 	 *  
 	 * @param key
-	 * 		The key of the value to be retrieved.
+	 * 		The key of the value to be retrieved
 	 * 
 	 * @return
-	 * 		String object if found, empty string otherwise.
-	 */
+	 * 		\e String object if found, empty string otherwise
+	 **/
 	public String getAsString(String key) {
 		return getAsString(key, DEFAULT_VALUE_STRING);
 	}
 	
 	/**
-	 * Convenience method used to retrieve a named value as a String object.
+	 * Convenience method used to retrieve a named value as a \e String object.
 	 *  
 	 * @param key
-	 * 		The key of the value to be retrieved.
+	 * 		The key of the value to be retrieved
 	 * 
 	 * @param defaultValue
-	 * 		The value to be returned if the key is not found.
+	 * 		The value to be returned if the key is not found
 	 * 
 	 * @return
-	 * 		String value if found, value of 'defaultValue' otherwise.
-	 */
+	 * 		\e String value if found, value of 'defaultValue' otherwise
+	 **/
 	public String getAsString(String key, String defaultValue) {
 		return (containsKey(key)) ? (String)get(key) : defaultValue;
 	}
 	
 	/**
-	 * Convenience method used to retrieve a named value as an int.
+	 * Convenience method used to retrieve a named value as an \e int.
 	 *  
 	 * @param key
-	 * 		The key of the value to be retrieved.
+	 * 		The key of the value to be retrieved
 	 * 
 	 * @return
-	 * 		integer value if found, -1 otherwise.
-	 */
+	 * 		\e integer value if found, \c -1 otherwise
+	 **/
 	public int getAsInt(String key) {
 		return getAsInt(key, DEFAULT_VALUE_INT);
 	}
 	
 	/**
-	 * Convenience method used to retrieve a named value as an int.
+	 * Convenience method used to retrieve a named value as an \e int.
 	 *  
 	 * @param key
-	 * 		The key of the value to be retrieved.
+	 * 		The key of the value to be retrieved
 	 * 
 	 * @param defaultValue
-	 * 		The value to be returned if the key is not found.
+	 * 		The value to be returned if the key is not found
 	 *
 	 * @return
-	 * 		integer value if found, value of 'defaultValue' otherwise.
-	 */
+	 * 		\e integer value if found, value of 'defaultValue' otherwise
+	 **/
 	public int getAsInt(String key, int defaultValue) {
 		int retval = defaultValue;
 		if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
@@ -294,30 +292,30 @@ public final class JRDictionary extends HashMap<String,Object> {
 	}
 	
 	/**
-	 * Convenience method used to retrieve a named value as a boolean.
+	 * Convenience method used to retrieve a named value as a \e boolean.
 	 *  
 	 * @param key
-	 * 		The key of the value to be retrieved.
+	 * 		The key of the value to be retrieved
 	 * 
 	 * @return
-	 * 		boolean value if found, false otherwise.
-	 */
+	 * 		\e boolean value if found, \c false otherwise
+	 **/
 	public boolean getAsBoolean(String key) {
 		return getAsBoolean(key, DEFAULT_VALUE_BOOLEAN);
 	}
 	
 	/**
-	 * Convenience method used to retrieve a named value as a boolean.
+	 * Convenience method used to retrieve a named value as a \e boolean.
 	 *  
 	 * @param key
-	 * 		The key of the value to be retrieved.
+	 * 		The key of the value to be retrieved
 	 * 
 	 * @param defaultValue
-	 * 		The value to be returned if the key is not found.
+	 * 		The value to be returned if the key is not found
 	 *
 	 * @return
-	 * 		boolean value if found, value of 'defaultValue' otherwise.
-	 */
+	 * 		\e boolean value if found, value of 'defaultValue' otherwise
+	 **/
 	public boolean getAsBoolean(String key, boolean defaultValue) {
 		boolean retval = defaultValue;
 		if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
@@ -336,11 +334,11 @@ public final class JRDictionary extends HashMap<String,Object> {
 	 * Convenience method used to retrieve a named value as a JRDictionary.
 	 * 
 	 * @param key
-	 * 		The key of the value to be retrieved.
+	 * 		The key of the value to be retrieved
 	 *
 	 * @return
-	 * 		The JRDictionary value if key is found, null otherwise.
-	 */
+	 * 		The JRDictionary value if key is found, null otherwise
+	 **/
 	public JRDictionary getAsDictionary(String key) {
 		return getAsDictionary(key, false);
 	}
@@ -349,16 +347,16 @@ public final class JRDictionary extends HashMap<String,Object> {
 	 * Convenience method used to retrieve a named value as a JRDictionary.
 	 * 
 	 * @param key
-	 * 		The key of the value to be retrieved.
+	 * 		The key of the value to be retrieved
 	 * 
 	 * @param shouldCreateIfNotFound
 	 * 		Flag indicating whether or not a new JRDictionary object should be created if the 
-	 * 		specified key does not exist.
+	 * 		specified key does not exist
 	 * 
 	 * @return
 	 * 		The JRDictionary value if key is found, empty object or null otherwise (based on value
-	 *      of the 'shouldCreateIfNotFound' flag).
-	 */
+	 *      of the 'shouldCreateIfNotFound' flag)
+	 **/
 	public JRDictionary getAsDictionary(String key, boolean shouldCreateIfNotFound) {
 		JRDictionary retval = null;
 		if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
@@ -376,14 +374,56 @@ public final class JRDictionary extends HashMap<String,Object> {
 	}
 
     /**
+     * Convenience method used to retrieve a named value as an array of strings.
+     *
+     * @param key
+     * 		The key of the value to be retrieved
+     *
+     * @return
+     * 		The \e ArrayList<String> value if key is found, null otherwise
+     **/
+    public ArrayList<String> getAsListOfStrings(String key) {
+        return getAsListOfStrings(key, false);
+    }
+
+    /**
+     * Convenience method used to retrieve a named value as an array of strings.
+     *
+     * @param key
+     * 		The key of the value to be retrieved
+     *
+     * @param shouldCreateIfNotFound
+     * 		Flag indicating whether or not a new \e ArrayList<String> object should be created
+     * 		if the specified key does not exist
+     *
+     * @return
+     * 		The \e ArrayList<String> value if key is found, null otherwise
+     **/
+    public ArrayList<String> getAsListOfStrings(String key, boolean shouldCreateIfNotFound) {
+        ArrayList<String> retval = null;
+        if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
+            Object value = get(key);
+            if (value instanceof ArrayList) {
+                retval = (ArrayList<String>)value;
+            }
+        }
+
+        return ((retval == null) && shouldCreateIfNotFound)
+            ? new ArrayList<String>()
+            : retval;
+    }
+/*@}*/
+
+    /**
+     * @internal
      * Convenience method used to retrieve a named value as a JRProvider
      *
      * @param key
-     *      The key of the value to be retrieved.
+     *      The key of the value to be retrieved
      *
      * @return
-     *      The JRProvider object if found, null otherwise.
-     */
+     *      The JRProvider object if found, null otherwise
+     **/
     public JRProvider getAsProvider(String key) {
         JRProvider retval = null;
         if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
@@ -397,31 +437,33 @@ public final class JRDictionary extends HashMap<String,Object> {
     }
 
     /**
-     * Convenience method used to retrieve a named value as a JRProviderList.
+     * @internal
+     * Convenience method used to retrieve a named value as a JRProviderList
      *
      * @param key
-     * 		The key of the value to be retrieved.
+     * 		The key of the value to be retrieved
      *
      * @return
-     * 		The JRProviderList value if key is found, null otherwise.
-     */
+     * 		The JRProviderList value if key is found, null otherwise
+     **/
     public JRProviderList getAsProviderList(String key) {
         return getAsProviderList(key, false);
     }
 
     /**
-     * Convenience method used to retrieve a named value as a JRProviderList.
+     * @internal
+     * Convenience method used to retrieve a named value as a JRProviderList
      *
      * @param key
-     * 		The key of the value to be retrieved.
+     * 		The key of the value to be retrieved
      *
      * @param shouldCreateIfNotFound
      * 		Flag indicating whether or not a new JRProviderList object should be created if the
-     * 		specified key does not exist.
+     * 		specified key does not exist
      *
      * @return
-     * 		The JRProviderList value if key is found, null otherwise.
-     */
+     * 		The JRProviderList value if key is found, null otherwise
+     **/
     public JRProviderList getAsProviderList(String key, boolean shouldCreateIfNotFound) {
         JRProviderList retval = null;
         if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
@@ -438,21 +480,24 @@ public final class JRDictionary extends HashMap<String,Object> {
             : retval;
     }
 
-    public ArrayList<String> getAsListOfStrings(String key) {
-        return getAsListOfStrings(key, false);
+/**
+ * @name Miscellaneous
+ * Miscellanous methods
+ **/
+/*@{*/
+    /**
+     * Utility method used to check if a dictionary object is "empty", that is, it is null or
+     * contains zero items
+     *
+     * @param dictionary
+     *      The dictionary object to be tested
+     *
+     * @return
+     *      <code>true</code> if the dictionary is null or contains zero items, <code>false</code>
+     *      otherwise
+     **/
+    public static boolean isEmpty(JRDictionary dictionary) {
+        return ((dictionary == null) || (dictionary.size() == 0));
     }
-
-    public ArrayList<String> getAsListOfStrings(String key, boolean shouldCreateIfNotFound) {
-        ArrayList<String> retval = null;
-        if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
-            Object value = get(key);
-            if (value instanceof ArrayList) {
-                retval = (ArrayList<String>)value;
-            }
-        }
-
-        return ((retval == null) && shouldCreateIfNotFound)
-            ? new ArrayList<String>()
-            : retval;
-    }
+/*@}*/
 }

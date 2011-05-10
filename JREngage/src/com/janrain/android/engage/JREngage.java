@@ -66,7 +66,7 @@ package com.janrain.android.engage;
  * For an overview of how the library works and how you can take advantage of the library's features,
  * please see the <a href="http://rpxnow.com/docs/android#user_experience">"Overview"</a> section of our documentation.
  *
- * To begin using the SDK, please see the <a href="http://rpxnow.com/docs/iphone#quick">"Quick Start Guide"</a>.
+ * To begin using the SDK, please see the <a href="http://rpxnow.com/docs/android#quick">"Quick Start Guide"</a>.
  *
  * For more detailed documentation of the library's API, you can use
  * the <a href="http://rpxnow.com/docs/android_api/annotated.html">"JREngage API"</a> documentation.
@@ -83,17 +83,24 @@ package com.janrain.android.engage;
  *   - "facebook"
  *   - "flickr"
  *   - "google"
+ *   \if hyves_is_working
  *   - "hyves"
+ *   \endif
  *   - "linkedin"
+ *   \if live_id_is_working
  *   - "live_id"
+ *   \endif
  *   - "livejournal"
  *   - "myopenid"
  *   - "myspace"
  *   - "netlog"
  *   - "openid"
+ *   - "orkut"
  *   - "paypal"
+ *   - "salesforce"
  *   - "twitter"
  *   - "verisign"
+ *   - "vzn"
  *   \if wordpress_is_working
  *   - "wordpress"
  *   \endif
@@ -155,56 +162,45 @@ import com.janrain.android.engage.ui.JRUserInterfaceMaestro;
  *  - Invoke showAuthenticationDialog() or showSocialPublishingDialog(JRActivityObject activity)
  *  - You may implement JREngageDelegate to receive responses
  *
+ * @nosubgrouping
  **/
 public class JREngage {
-    // ------------------------------------------------------------------------
-    // TYPES
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-	
-	// Tag used for logging
 	private static final String TAG = JREngage.class.getSimpleName();
 
-    // Singleton instance of this class
+    /* Singleton instance of this class */
 	private static JREngage sInstance;
 
-    // ------------------------------------------------------------------------
-    // STATIC INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
-
+/**
+ * @name Get the JREngage Instance
+ * Methods that initialize and return the shared JREngage instance
+ **/
+/*@{*/
     /**
      * Initializes and returns the singleton instance of JREngage.
      *
      * @param context
-     * 		the Android application Context, used for access to system resources (e.g. global
-     * 		preferences).  This value cannot be null.
+     * 		The Android application Context, used for access to system resources (e.g. global
+     * 		preferences).  This value cannot be null
      *
      * @param appId
-     * 		your 20-character application ID.  You can find this on your application's
+     * 		Your 20-character application ID.  You can find this on your application's
      * 		Engage Dashboard at <a href="http://rpxnow.com">http://rpxnow.com</a>.  This value
-     * 		cannot be null.
+     * 		cannot be null
      *
      * @param tokenUrl
-     * 		the url on your server where you wish to complete authentication, or null.  If provided,
+     * 		The url on your server where you wish to complete authentication, or null.  If provided,
      *   	the JREngage library will post the user's authentication token to this url where it can
      *   	used for further authentication and processing.  When complete, the library will pass
-     *   	the server's response back to the your application.
+     *   	the server's response back to the your application
 
      * @param delegate
-     * 		the delegate object that implements the JREngageDelegate protocol.
+     * 		The delegate object that implements the JREngageDelegate protocol
      *
      * @return
-     * 		the shared instance of the \c JREngage object initialized with the given
-     *   	<code>appId</code>, <code>tokenUrl</code>, and <code>delegate</code>.  If the given
-     *   	<code>appId</code> is <code>null</code>, returns <code>null</code>.
-     */
+     * 		The shared instance of the JREngage object initialized with the given
+     *   	appId, tokenUrl, and delegate.  If the given
+     *   	appId is null, returns null
+     **/
     public static JREngage initInstance(Context context,
                                         String appId,
                                         String tokenUrl,
@@ -231,21 +227,20 @@ public class JREngage {
 	 * Returns the singleton instance, provided it has been initialized.
 	 * 
 	 * @return
-	 * 		the JREngage instance if properly initialized, null otherwise.
-	 */
+	 * 		The JREngage instance if properly initialized, null otherwise
+	 **/
 	public static JREngage getInstance() {
 		return sInstance;
 	}
+/*@}*/
 	
 	/**
-     * \internal
-     * @hide
-     * @exclude
-	 * Returns the application context used to initialize the library.
+     * @internal
+     * Returns the application context used to initialize the library.
 	 * 
 	 * @return
-	 * 		the Context object used to initialize this library.
-	 */
+	 * 		The Context object used to initialize this library
+	 **/
 	public static Context getContext() {
         return (sInstance == null) ? null : sInstance.mContext;
 	}
@@ -254,28 +249,16 @@ public class JREngage {
         sInstance.mContext = c;
     }
 
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
-    // Application context
+    /* Application context */
     private Context mContext;
 
-	// Holds configuration and state for the JREngage library
+	/* Holds configuration and state for the JREngage library */
 	private JRSessionData mSessionData;
 	
-	// Delegates (listeners) array
+	/* Delegates (listeners) array */
 	private ArrayList<JREngageDelegate> mDelegates;
 	
 	private JRUserInterfaceMaestro mInterfaceMaestro;
-	
-    // ------------------------------------------------------------------------
-    // INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
 
 	/*
 	 * Initializing constructor.
@@ -316,9 +299,6 @@ public class JREngage {
         mInterfaceMaestro = JRUserInterfaceMaestro.getInstance();
 	}
 
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
 
     private JRSessionDelegate mJRSD = new JRSessionDelegate() {
         // ------------------------------------------------------------------------
@@ -387,7 +367,7 @@ public class JREngage {
             }
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, payload, provider);
+                //delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, payload, provider);
                 delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, headers, payload, provider);
             }
         }
@@ -474,16 +454,12 @@ public class JREngage {
  * @name Manage Authenticated Users
  * Methods that manage authenticated users remembered by the library
  **/
-    
 /*@{*/
-
     /**
-     * @anchor signoutUserForProvider
-     *
      * Remove the user's credentials for the given provider from the library.
      *
      * @param provider
-     *   the name of the provider on which the user authenticated.  For a list of possible strings,
+     *   The name of the provider on which the user authenticated.  For a list of possible strings,
      *   please see the \ref basicProviders "List of Providers"
      **/    
     public void signoutUserForProvider(String provider) {
@@ -494,8 +470,6 @@ public class JREngage {
     }
 
     /**
-     * @anchor signoutUserForAllProviders
-     *
      * Remove the user's credentials for all providers from the library.
      **/
     public void signoutUserForAllProviders() {
@@ -510,7 +484,7 @@ public class JREngage {
      * Reauthentication will require the user to re-enter their password.
      *
      * @param force
-     *   true if the library should force reauthentication for all providers or false if the
+     *   \c true if the library should force reauthentication for all providers or \c false if the
      *   library should allow cached credentials to authenticate the user
      **/
     public void setAlwaysForceReauthentication(boolean force) {
@@ -556,13 +530,11 @@ public class JREngage {
 /*@{*/
 
     /**
-     * @anchor setTokenUrl
-     *
      * Specify a token URL (potentially a different token URL than the one the library was
      * initialized with).
      * 
      * @param newTokenUrl
-     *   the new token URL you wish authentications to post the Engage auth_info token to
+     *   The new token URL you wish authentications to post the Engage \e auth_info \e token to
      **/
     public void setTokenUrl(String newTokenUrl) {
         if (Config.LOGD) {
@@ -584,10 +556,10 @@ public class JREngage {
 /*@{*/
 
     /**
-     * Add a JREngageDelegate to the library
+     * Add a JREngageDelegate to the library.
      *
      * @param delegate
-     *   the object that implements the JREngageDelegate protocol
+     *   The object that implements the JREngageDelegate protocol
      **/
     public void addDelegate(JREngageDelegate delegate) {
 		if (Config.LOGD) { 
@@ -597,10 +569,10 @@ public class JREngage {
 	}
 
     /**
-     * Remove a JREngageDelegate from the library
+     * Remove a JREngageDelegate from the library.
      *
      * @param delegate
-     *   the object that implements the JREngageDelegate protocol
+     *   The object that implements the JREngageDelegate protocol
      **/	
 	public void removeDelegate(JREngageDelegate delegate) {
 		if (Config.LOGD) { 
@@ -646,8 +618,6 @@ public class JREngage {
 /*@{*/
 
 /**
- * @anchor showAuthDialog
- *
  * Begins authentication.  The library will
  * start a new Android Activity and take the user through the sign-in process.
  **/
@@ -674,16 +644,13 @@ public class JREngage {
 
 
     /**
-     * @anchor showPubDialog
-     *
-     * Begin social publishing.  The library will
-     * start a new Android Activity enabling the user to publish a social share.  The user will also
-     * be taken through the sign-in process, if necessary.
-     *
-     * @sa \c JRActivityObject
+     * Begin social publishing.  The library will start a new Android \e Activity enabling the user to
+     * publish a social share.  The user will also be taken through the sign-in process, if necessary.
      *
      * @param activity
-     *   the activity you wish to share
+     *   The activity you wish to share
+     *
+     * @sa JRActivityObject
      **/
     public void showSocialPublishingDialog(JRActivityObject activity) {
         if (Config.LOGD) {

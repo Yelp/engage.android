@@ -38,7 +38,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * @brief Image object to be included in a post to a user's stream.
  *
  * Create an image media object, fill in the object's fields, and add the object to the
- * JRActivityObject#media array in your JRActivityObject.  How the images get presented
+ * JRActivityObject#mMedia array in your JRActivityObject.  How the images get presented
  * and whether or not they are used, depend on the provider.
  *
  * Each image must contain a \e src URL, which maps to the photo's URL, and an
@@ -47,11 +47,18 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * @sa Format and rules are identical to those described on the
  * <a href="http://developers.facebook.com/docs/guides/attachments">
  * Facebook Developer page on Attachments</a>.
+ *
+ * @nosubgrouping
  **/
 public class JRImageMediaObject extends JRMediaObject {
-
+/**
+ * @name Private Attributes
+ * The various properties of the image media object that you can access and configure through the
+ * object's constructor, getters, and setters
+ **/
+/*@{*/
     /**
-     * The photo's URL
+     * The photo's URL.
      *
      * @par Getter:
      *      #getSrc()
@@ -59,7 +66,7 @@ public class JRImageMediaObject extends JRMediaObject {
     private String mSrc;
 
     /**
-     * The URL where a user should be taken if he or she clicks the photo
+     * The URL where a user should be taken if he or she clicks the photo.
      *
      * @par Getter:
      *      #getHref()
@@ -68,22 +75,24 @@ public class JRImageMediaObject extends JRMediaObject {
 
     /**
      * @internal
-     * Contains the downloaded preview of the image for display in the publish activity dialog
+     * Contains the downloaded preview of the image for display in the publish activity dialog.
      **/
     private Bitmap mPreview;
-
+/*@}*/
+    
 /**
  * @name Constructors
+ * Constructor for JRImageMediaObject
  **/
 /*@{*/
     /**
-     * Returns a JRImageMediaObject initialized with the given src and href
+     * Returns an image media object initialized with the given src and href.
      *
      * @param src
-     *   The photo's URL.  This value cannot be \c null
+     *   The photo's URL. This value cannot be null
      *
      * @param href
-     *   The URL where a user should be taken if he or she clicks the photo.  This value cannot be \c null
+     *   The URL where a user should be taken if he or she clicks the photo. This value cannot be null
      *
      * @throws IllegalArgumentException
      *   if src or href is null
@@ -98,10 +107,11 @@ public class JRImageMediaObject extends JRMediaObject {
 
 /**
  * @name Getters/Setters
+ * Getters and setters for the image media object's private properties
  **/
 /*@{*/
     /**
-     * Getter for the image object's #mSrc property
+     * Getter for the image object's #mSrc property.
      *
      * @return
      *      The photo's URL
@@ -111,7 +121,7 @@ public class JRImageMediaObject extends JRMediaObject {
     }
 
     /**
-     * Getter for the image object's #mHref property
+     * Getter for the image object's #mHref property.
      *
      * @return
      *      The URL where a user should be taken if he or she clicks the photo

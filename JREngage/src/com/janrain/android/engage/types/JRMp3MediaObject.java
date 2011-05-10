@@ -34,7 +34,7 @@ package com.janrain.android.engage.types;
  * @brief Mp3 object to be included in a post to a user's stream.
  *
  * Create an mp3 media object, fill in the object's fields, and add the object to the
- * JRActivityObject#media array in your JRActivityObject.  How the mp3s get presented
+ * JRActivityObject#mMedia array in your JRActivityObject.  How the mp3s get presented
  * and whether or not they are used, depend on the provider.
  *
  * Each mp3 must contain a \e src url, which is the URL of the MP3 file to be rendered.
@@ -46,11 +46,18 @@ package com.janrain.android.engage.types;
  * * @ Format and rules are identical to those described on the
  * <a href="http://developers.facebook.com/docs/guides/attachments">
  * Facebook Developer page on Attachments</a>.
+ *
+ * @nosubgrouping
  **/
  public class JRMp3MediaObject extends JRMediaObject {
-
+/**
+ * @name Private Attributes
+ * The various properties of the mp3 media object that you can access and configure through the
+ * object's constructor, getters, and setters
+ **/
+/*@{*/
     /**
-     * The URL of the MP3 file to be rendered
+     * The URL of the mp3 file to be rendered.
      *
      * @par Getter:
      *      #getSrc()
@@ -58,7 +65,7 @@ package com.janrain.android.engage.types;
     private String mSrc;
 
     /**
-     * The title of the song
+     * The title of the song.
      *
      * @par Getter/Setter:
      *      #getTitle(), #setTitle()
@@ -66,7 +73,7 @@ package com.janrain.android.engage.types;
     private String mTitle;
 
     /**
-     * The artist
+     * The artist.
      *
      * @par Getter/Setter:
      *      #getArtist(), #setArtist()
@@ -74,22 +81,24 @@ package com.janrain.android.engage.types;
     private String mArtist;
 
     /**
-     * The album
+     * The album.
      *
      * @par Getter/Setter:
      *      #getAlbum(), #setAlbum()
      **/
     private String mAlbum;
+/*@}*/
 
 /**
  * @name Constructors
+ * Constructor for an mp3 media object
  **/
 /*@{*/
     /**
-     * Returns a JRMp3MediaObject initialized with the given src
+     * Returns a JRMp3MediaObject initialized with the given src.
      *
      * @param src
-     *   The URL of the MP3 file to be rendered.  This value cannot be \c null
+     *   The URL of the mp3 file to be rendered.  This value cannot be null
      *
      * @throws IllegalArgumentException
      *   if src is null
@@ -103,10 +112,11 @@ package com.janrain.android.engage.types;
 
 /**
  * @name Getters/Setters
+ * Getters and setters for the mp3 media object's private properties
  **/
 /*@{*/
     /**
-     * Getter for the mp3 object's #mSrc property
+     * Getter for the mp3 object's #mSrc property.
      *
      * @return
      *      The URL of the MP3 file to be rendered
@@ -116,7 +126,7 @@ package com.janrain.android.engage.types;
     }
 
     /**
-     * Getter for the mp3 object's #mTitle property
+     * Getter for the mp3 object's #mTitle property.
      *
      * @return
      *      The title of the song
@@ -126,7 +136,7 @@ package com.janrain.android.engage.types;
     }
 
     /**
-     * Setter for the mp3 object's #mTitle property
+     * Setter for the mp3 object's #mTitle property.
      *
      * @param title
      *      The title of the song
@@ -136,7 +146,7 @@ package com.janrain.android.engage.types;
     }
 
     /**
-     * Getter for the mp3 object's #mArtist property
+     * Getter for the mp3 object's #mArtist property.
      *
      * @return
      *      The artist
@@ -146,7 +156,7 @@ package com.janrain.android.engage.types;
     }
 
     /**
-     * Setter for the mp3 object's #mArtist property
+     * Setter for the mp3 object's #mArtist property.
      *
      * @param artist
      *      The artist
@@ -156,7 +166,7 @@ package com.janrain.android.engage.types;
     }
 
     /**
-     * Getter for the mp3 object's #mAlbum property
+     * Getter for the mp3 object's #mAlbum property.
      *
      * @return
      *      The album
@@ -166,7 +176,7 @@ package com.janrain.android.engage.types;
     }
 
     /**
-     * Setter for the mp3 object's #mAlbum property
+     * Setter for the mp3 object's #mAlbum property.
      *
      * @param album
      *      The album
