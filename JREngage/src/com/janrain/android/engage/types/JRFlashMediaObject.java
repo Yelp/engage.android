@@ -61,16 +61,16 @@ public class JRFlashMediaObject extends JRMediaObject {
     /**
      * The URL of the Flash object to be rendered
      *
-     * @par Getter/Setter:
-     *      #getSwfSrc(), #setSwfSrc()
+     * @par Getter:
+     *      #getSwfSrc()
      **/
     private String mSwfSrc;
 
     /**
      * The URL of an photo that should be displayed in place of the flash object
      *
-     * @par Getter/Setter:
-     *      #getImgSrc(), #setImgSrc()
+     * @par Getter:
+     *      #getImgSrc()
      **/
     private String mImgSrc;
 
@@ -118,17 +118,13 @@ public class JRFlashMediaObject extends JRMediaObject {
  **/
 /*@{*/
     /**
-     * Returns a JRFlashMediaObject initialized with the given swfSrc and imgSrc.
+     * Returns a JRFlashMediaObject initialized with the given swfSrc and imgSrc
      *
      * @param swfSrc
-     *   The URL of the Flash object to be rendered.  This value cannot be \c nil.
+     *   The URL of the Flash object to be rendered.  This value cannot be \c null
      *
      * @param imgSrc
-     *   The URL of an photo that should be displayed in place of the flash object.  This value cannot be \c nil.
-     *
-     * @return
-     *   A JRFlashMediaObject initialized with the given swfSrc and imgSrc.  If either
-     *   \c swfSrc or \c imgSrc are \e nil, returns \c nil.
+     *   The URL of an photo that should be displayed in place of the flash object.  This value cannot be \c null
      *
      * @throws IllegalArgumentException
      *   if swfSrc or imgSrc is null

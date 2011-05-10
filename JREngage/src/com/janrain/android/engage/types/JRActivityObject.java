@@ -215,11 +215,11 @@ public class JRActivityObject {
  **/
 /*@{*/
     /**
-     * Returns a JRActivityObject initialized with the given action and url.
+     * Returns a JRActivityObject initialized with the given action and url
      *
      * @param action
      *   A string describing what the user did, written in the third person.  This value cannot
-     *   be <code>null</code>
+     *   be \c null
      *
      * @param url
      *   The URL of the resource being mentioned in the activity update
