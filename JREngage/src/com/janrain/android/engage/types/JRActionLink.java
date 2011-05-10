@@ -59,14 +59,16 @@ import java.util.Map;
  **/
 public class JRActionLink {
 
-    /** The text describing the link
+    /**
+     * The text describing the link
      *
      * @par Getter/Setter:
      *      #getText(), #setText()
      **/
     private String mText;
 
-    /** A link a user can use to take action on an activity update on the provider
+    /**
+     * A link a user can use to take action on an activity update on the provider
      *
      * @par Getter/Setter:
      *      #getHref(), #setHref()
@@ -81,11 +83,11 @@ public class JRActionLink {
      * Creates a JRActionLink initialized with the given text and href
      *
      * @param text
-     *   The text describing the link.  This value cannot be <code>null</code>
+     *   The text describing the link.  This value cannot be \c null
      *
      * @param href
      *   A link a user can use to take action on an activity update on the provider.  This value
-     *   cannot be <code>null</code>
+     *   cannot be \c null
      *
      * @throws IllegalArgumentException
      *   if text or href is null

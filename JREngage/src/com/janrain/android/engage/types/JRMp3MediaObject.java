@@ -49,36 +49,47 @@ package com.janrain.android.engage.types;
  **/
  public class JRMp3MediaObject extends JRMediaObject {
 
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
-    /** The URL of the MP3 file to be rendered */
+    /**
+     * The URL of the MP3 file to be rendered
+     *
+     * @par Getter:
+     *      #getSrc()
+     **/
     private String mSrc;
-    /** The title of the song */
-    private String mTitle;
-    /** The artist */
-    private String mArtist;
-    /** The album */
-    private String mAlbum;
 
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
+    /**
+     * The title of the song
+     *
+     * @par Getter/Setter:
+     *      #getTitle(), #setTitle()
+     **/
+    private String mTitle;
+
+    /**
+     * The artist
+     *
+     * @par Getter/Setter:
+     *      #getArtist(), #setArtist()
+     **/
+    private String mArtist;
+
+    /**
+     * The album
+     *
+     * @par Getter/Setter:
+     *      #getAlbum(), #setAlbum()
+     **/
+    private String mAlbum;
 
 /**
  * @name Constructors
  **/
 /*@{*/
     /**
-     * Returns a \c JRMp3MediaObject initialized with the given src.
+     * Returns a JRMp3MediaObject initialized with the given src
      *
      * @param src
-     *   The URL of the MP3 file to be rendered.  This value cannot be \c nil.
-     *
-     * @return
-     *   A JRMp3MediaObject initialized with the given src.  If
-     *   \c src is \e nil, returns \c nil.
+     *   The URL of the MP3 file to be rendered.  This value cannot be \c null
      *
      * @throws IllegalArgumentException
      *   if src is null
@@ -88,44 +99,84 @@ package com.janrain.android.engage.types;
         if (src == null) throw new IllegalArgumentException("illegal src for JRMp3MediaObject constructor");
         mSrc = src;
     }
+/*@}*/
 
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
-
+/**
+ * @name Getters/Setters
+ **/
+/*@{*/
+    /**
+     * Getter for the mp3 object's #mSrc property
+     *
+     * @return
+     *      The URL of the MP3 file to be rendered
+     **/
     public String getSrc() {  /* (readonly) */
         return mSrc;
     }
 
+    /**
+     * Getter for the mp3 object's #mTitle property
+     *
+     * @return
+     *      The title of the song
+     **/
     public String getTitle() {
         return mTitle;
     }
 
+    /**
+     * Setter for the mp3 object's #mTitle property
+     *
+     * @param title
+     *      The title of the song
+     **/
     public void setTitle(String title) {
         mTitle = title;
     }
 
+    /**
+     * Getter for the mp3 object's #mArtist property
+     *
+     * @return
+     *      The artist
+     **/
     public String getArtist() {
         return mArtist;
     }
 
+    /**
+     * Setter for the mp3 object's #mArtist property
+     *
+     * @param artist
+     *      The artist
+     **/
     public void setArtist(String artist) {
         mArtist = artist;
     }
 
+    /**
+     * Getter for the mp3 object's #mAlbum property
+     *
+     * @return
+     *      The album
+     **/
     public String getAlbum() {
         return mAlbum;
     }
 
+    /**
+     * Setter for the mp3 object's #mAlbum property
+     *
+     * @param album
+     *      The album
+     **/
     public void setAlbum(String album) {
         mAlbum = album;
     }
+/*@}*/
 
     public String getType() {
         return "music";
     }
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
 }

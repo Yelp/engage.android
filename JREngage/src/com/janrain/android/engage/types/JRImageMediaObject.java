@@ -48,37 +48,42 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * <a href="http://developers.facebook.com/docs/guides/attachments">
  * Facebook Developer page on Attachments</a>.
  **/
-public class
-        JRImageMediaObject extends JRMediaObject {
+public class JRImageMediaObject extends JRMediaObject {
 
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
+    /**
+     * The photo's URL
+     *
+     * @par Getter:
+     *      #getSrc()
+     **/
     private String mSrc;
-    private String mHref;
-    private Bitmap mPreview;
 
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
+    /**
+     * The URL where a user should be taken if he or she clicks the photo
+     *
+     * @par Getter:
+     *      #getHref()
+     **/
+    private String mHref;
+
+    /**
+     * @internal
+     * Contains the downloaded preview of the image for display in the publish activity dialog
+     **/
+    private Bitmap mPreview;
 
 /**
  * @name Constructors
  **/
 /*@{*/
     /**
-     * Returns a \c JRImageMediaObject initialized with the given src and href.
+     * Returns a JRImageMediaObject initialized with the given src and href
      *
      * @param src
-     *   The photo's URL.  This value cannot be \c nil.
+     *   The photo's URL.  This value cannot be \c null
      *
      * @param href
-     *   The URL where a user should be taken if he or she clicks the photo.  This value cannot be \c nil.
-     *
-     * @return
-     *   A JRImageMediaObject initialized with the given src and href.  If either
-     *   \c src or \c href are \e nil, returns \c nil.
+     *   The URL where a user should be taken if he or she clicks the photo.  This value cannot be \c null
      *
      * @throws IllegalArgumentException
      *   if src or href is null
@@ -91,18 +96,31 @@ public class
     }
 /*@}*/
 
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
-
+/**
+ * @name Getters/Setters
+ **/
+/*@{*/
+    /**
+     * Getter for the image object's #mSrc property
+     *
+     * @return
+     *      The photo's URL
+     **/
     public String getSrc() {  /* (readonly) */
         return mSrc;
     }
 
+    /**
+     * Getter for the image object's #mHref property
+     *
+     * @return
+     *      The URL where a user should be taken if he or she clicks the photo
+     **/
     public String getHref() {  /* (readonly) */
         return mHref;
     }
-
+/*@}*/
+    
     @JsonIgnore
     public Bitmap getPreview() {
         return mPreview;
@@ -112,9 +130,6 @@ public class
         mPreview = preview;
     }
 
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
     public boolean hasThumbnail() {
         return true;
     }

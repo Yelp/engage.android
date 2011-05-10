@@ -93,7 +93,8 @@ public class JRActivityObject {
      **/
     private String mAction;
 
-    /** The URL of the resource being mentioned in the activity update
+    /**
+     * The URL of the resource being mentioned in the activity update
      *
      * @par Getter:
      *      #getUrl()
@@ -123,7 +124,8 @@ public class JRActivityObject {
      **/
     private String mTitle = "";
 
-    /** A description of the resource mentioned in the activity update
+    /**
+     * A description of the resource mentioned in the activity update
      *
      * @par Getter/Setter:
      *      #getDescription(), #setDescription()
@@ -213,11 +215,11 @@ public class JRActivityObject {
  **/
 /*@{*/
     /**
-     * Returns a JRActivityObject initialized with the given action and url.
+     * Returns a JRActivityObject initialized with the given action and url
      *
      * @param action
      *   A string describing what the user did, written in the third person.  This value cannot
-     *   be <code>null</code>
+     *   be \c null
      *
      * @param url
      *   The URL of the resource being mentioned in the activity update
