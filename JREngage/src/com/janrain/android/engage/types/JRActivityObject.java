@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 
-/**
+/*
  * @file
  * @brief Interface for creating and populating activities that you wish to publish.
  *
@@ -46,7 +46,7 @@ import java.util.Map;
  * to your user's social networks.  Create an activity object, fill in the
  * object's fields, and pass the object to the JREngage library when you
  * are ready to share.
- **/
+ */
 
 /**
  * @brief An activity object you create, populate, and post to the user's activity stream.
