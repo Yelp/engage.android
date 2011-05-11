@@ -30,6 +30,9 @@
 package com.janrain.android.engage;
 
 /**
+ * @internal
+ *
+ * @enum JREnvironment
  * Enumeration used to encapsulate environment-specific data.
  */
 public enum JREnvironment {
@@ -47,3 +50,6 @@ public enum JREnvironment {
         return JREngage.getContext().getString(mServerUrlResourceId);
     }
 }
+/**
+ * @endinternal
+ **/

@@ -40,6 +40,9 @@ import com.janrain.android.engage.session.JRSessionData;
 import java.util.Stack;
 
 /**
+ * @internal
+ *
+ * @class JRUserInterfaceMaestro
  * Helper class for UI display/state.
  */
 public class JRUserInterfaceMaestro {

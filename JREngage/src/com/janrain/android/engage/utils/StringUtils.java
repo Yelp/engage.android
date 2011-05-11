@@ -39,6 +39,9 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
 /**
+ * @internal
+ *
+ * @class StringUtils
  * String utility methods.
  */
 public final class StringUtils {
@@ -213,5 +216,4 @@ public final class StringUtils {
     private StringUtils() {
         // no instance allowed, static utility class
     }
-
 }

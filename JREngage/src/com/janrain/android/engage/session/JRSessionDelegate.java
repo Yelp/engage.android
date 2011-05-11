@@ -35,8 +35,10 @@ import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 
 /**
- * TODO:DOC
- */
+ * @internal
+ *
+ * @interface JRSessionDelegate
+ **/
 public interface JRSessionDelegate {
 
     /**
@@ -142,4 +144,3 @@ public interface JRSessionDelegate {
         public void mobileConfigDidFinish() {}
     }
 }
-

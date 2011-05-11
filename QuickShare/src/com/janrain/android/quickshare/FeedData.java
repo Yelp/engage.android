@@ -318,7 +318,7 @@ public class FeedData implements JREngageDelegate {
         activityObject.setMedia(new JRImageMediaObject(
                 mCurrentStory.getImageUrls().get(0), mCurrentStory.getImageUrls().get(0)));
 
-        mEngage.showSocialPublishingDialogWithActivity(activityObject);
+        mEngage.showSocialPublishingDialog(activityObject);
     }
 
     public void deleteAllStories() {

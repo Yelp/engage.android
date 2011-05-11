@@ -28,8 +28,10 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package com.janrain.android.engage.net.async;
-
 /**
+ * @internal
+ *
+ * @interface AsyncHttpResponseListener
  * Interface used to define behavior for listening to asynchronous HTTP responses.
  */
 public interface AsyncHttpResponseListener {
@@ -42,5 +44,4 @@ public interface AsyncHttpResponseListener {
      *      the response headers and data or if an issue occurs, an exception detailing the issue encountered.
      */
     void onResponseReceived(AsyncHttpResponseHolder response);
-
 }

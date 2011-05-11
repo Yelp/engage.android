@@ -54,8 +54,11 @@ import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 
 /**
+ * @internal
+ *
+ * @class JRLandingActivity
  * Landing Page Activity
- */
+ **/
 public class JRLandingActivity extends Activity {
 
     // ------------------------------------------------------------------------
@@ -63,9 +66,12 @@ public class JRLandingActivity extends Activity {
     // ------------------------------------------------------------------------
 
     /**
+     * @internal
+     *
+     * @class FinishReceiver
      * Used to listen to "Finish" broadcast messages sent by JRUserInterfaceMaestro.  A facility
      * for iPhone-like ability to close this activity from the maestro class.
-     */
+     **/
     private class FinishReceiver extends BroadcastReceiver {
 
         private final String TAG = JRLandingActivity.TAG + "-" +

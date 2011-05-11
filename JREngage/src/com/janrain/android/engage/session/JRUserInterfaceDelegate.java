@@ -30,8 +30,10 @@
 package com.janrain.android.engage.session;
 
 /**
- * TODO:DOC
- */
+ * @internal
+ *
+ * @interface JRUserInterfaceDelegate
+ **/
 public interface JRUserInterfaceDelegate {
 
     void userInterfaceWillClose();

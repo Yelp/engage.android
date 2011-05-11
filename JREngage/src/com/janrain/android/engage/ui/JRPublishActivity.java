@@ -74,6 +74,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
+ * @internal
+ *
+ * @class JRPublishActivity
  * Publishing UI
  */
 public class JRPublishActivity extends TabActivity implements TabHost.OnTabChangeListener {
@@ -91,10 +94,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     // ------------------------------------------------------------------------
 
     /**
+     * @internal
+     *
+     * @class FinishReceiver
      * Used to listen to "Finish" broadcast messages sent by JRUserInterfaceMaestro.  A facility
      * for iPhone-like ability to close this activity from the maestro class.
-     */
-
+     **/
     private class FinishReceiver extends BroadcastReceiver {
 
         private final String TAG = JRPublishActivity.TAG + "-" + FinishReceiver.class.getSimpleName();

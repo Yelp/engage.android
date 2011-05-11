@@ -44,8 +44,11 @@ import java.util.List;
 import java.util.Random;
 
 /**
+ * @internal
+ *
+ * @class AsyncHttpClient
  * Utility class which performs HTTP operations asynchronously.
- */
+ **/
 public final class AsyncHttpClient {
     // ------------------------------------------------------------------------
     // TYPES
@@ -56,11 +59,11 @@ public final class AsyncHttpClient {
 	 */
 	private static class HttpSender extends Thread {
         static {
-            //HttpURLConnection has a known bug discussed
-            //here: http://code.google.com/p/android/issues/detail?id=7786
-            //here: http://stackoverflow.com/questions/1440957/httpurlconnection-getresponsecode-returns-1-on-second-invocation/1441491#1441491
-            //and here: http://stackoverflow.com/questions/2792843/httpurlconnection-whats-the-deal-with-having-to-read-the-whole-response
-            //the following is a workaround:
+            // HttpURLConnection has a known bug discussed
+            // here: http://code.google.com/p/android/issues/detail?id=7786
+            // here: http://stackoverflow.com/questions/1440957/httpurlconnection-getresponsecode-returns-1-on-second-invocation/1441491#1441491
+            // and here: http://stackoverflow.com/questions/2792843/httpurlconnection-whats-the-deal-with-having-to-read-the-whole-response
+            // the following is a workaround:
             System.setProperty("http.keepAlive", "false");
         }
 
@@ -272,7 +275,7 @@ public final class AsyncHttpClient {
      *      Any additional headers to be sent with the get.
 	 * @param listener
 	 * 		The AsyncHttpResponseListener to return the results to.
-	 */
+	 **/
     public static void executeHttpGet(final String url,
                                       List<NameValuePair> requestHeaders,
                                       AsyncHttpResponseListener listener) {
@@ -294,7 +297,7 @@ public final class AsyncHttpClient {
      *      The data to be posted (written) to the server.
      * @param listener
      * 		The AsyncHttpResponseListener to return the results to.
-     */
+     **/
     public static void executeHttpPost(final String url,
                                        byte[] data,
                                        AsyncHttpResponseListener listener) {
@@ -314,5 +317,4 @@ public final class AsyncHttpClient {
 	private AsyncHttpClient() {
 		/* no instance */
 	}
-	
 }

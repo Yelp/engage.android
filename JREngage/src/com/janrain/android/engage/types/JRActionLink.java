@@ -33,15 +33,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * @brief
  * A link a user can use to take action on an activity update on the provider.
  *
  * Create an action link object, fill in the object's fields, and add the object
- * the JRActivityObject#action_links array of your JRActivityObject.
+ * the JRActivityObject#mActionLinks array of your JRActivityObject.
  *
- * Each action link must contain a link, \e href, and some \e text, describing what action
- * will happen if someone clicks the link.
- * Example:
- * <code>
+ * Each action link must contain a link: \e href, and some text describing what action
+ * will happen if someone clicks the link: \e text.
+ *
+ * @par Example:
+ * @code
  * action_links:
  * [
  *   {
@@ -53,78 +55,99 @@ import java.util.Map;
  *     "href": "http://example.com/quiz/12345/take"
  *   }
  * ]
- * </code>
+ * @endcode
  *
- */
+ * @nosubgrouping
+ **/
 public class JRActionLink {
-
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
-    /** The text describing the link */
+/**
+ * @name Private Attributes
+ * The various properties of the JRActionLink that you can access and configure through the object's
+ * constructor and getters
+ **/
+/*@{*/
+    /**
+     * The text describing the link.
+     *
+     * @par Getter/Setter:
+     *      #getText()
+     **/
     private String mText;
-    /** A link a user can use to take action on an activity update on the provider */
-    private String mHref;
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
 
     /**
-     * Creates a <code>JRActionLink</code> initialized with the given text and href.
+     * A link a user can use to take action on an activity update on the provider.
+     *
+     * @par Getter/Setter:
+     *      #getHref()
+     **/
+    private String mHref;
+/*@}*/
+
+/**
+ * @name Constructors
+ * Constructor for JRActionLink
+ **/
+/*@{*/
+    /**
+     * Creates a JRActionLink initialized with the given text and href.
      *
      * @param text
-     *   The text describing the link.  This value cannot be <code>null</code>.
+     *      The text describing the link.  This value cannot be null
      *
      * @param href
-     *   A link a user can use to take action on an activity update on the provider.  This value
-     *   cannot be <code>null</code>.
+     *      A link a user can use to take action on an activity update on the provider.  This value
+     *      cannot be null
+     *
      * @throws IllegalArgumentException
-     *   if text or href is null
+     *      if text or href is null
      */
     public JRActionLink(String text, String href) {
         if (text == null || href == null) throw new IllegalArgumentException("illegal null text or null href");
         mText = text;
         mHref = href;
     }
+/*@}*/
 
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
-
+/**
+ * @name Getters
+ * Getters for the JRActiionLinks's private properties
+ **/
+/*@{*/
+    /**
+     * Getter for the action link's #mText property.
+     *
+     * @return
+     *      The text describing the link
+     **/
     public String getText() {
         return mText;
     }
 
-    public void setText(String text) {
-        mText = text;
-    }
-
+    /**
+     * Getter for the action link's #mHref property.
+     *
+     * @return
+     *      A link a user can use to take action on an activity update on the provider
+     **/
     public String getHref() {
         return mHref;
     }
-
-    public void setHref(String href) {
-        mHref = href;
-    }
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
+/*@}*/
 
     /**
+     * @internal
      * Returns a HashMap (Dictionary) representing the JRActionLink.
      *
      * @return
-     *   An HashMap (Dictionary) of String objects representing the JRActionLink.
+     *      An HashMap (Dictionary) of String objects representing the JRActionLink
      *
-     * NOTE: This function should not be used directly.  It is intended only for use by the
-     * JREngage library.
+     * @note
+     *      This function should not be used directly.  It is intended only for use by the
+     *      JREngage library.
      * 
      * TODO: revisit visibility/usage
      * specifically, is this the right jsonification
-     */
+     **/
     public Map<String, String> dictionaryForObject() {
         Map<String, String> map = new HashMap<String, String>(1);
         map.put(mText, mHref);

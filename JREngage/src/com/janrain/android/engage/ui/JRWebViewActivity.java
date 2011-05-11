@@ -60,6 +60,9 @@ import com.janrain.android.engage.utils.StringUtils;
 import java.net.URL;
 
 /**
+ * @internal
+ *
+ * @class JRWebViewActivity
  * Container for authentication web view.  Mimics JRWebViewController iPhone interface.
  */
 public class JRWebViewActivity extends Activity {
@@ -75,9 +78,12 @@ public class JRWebViewActivity extends Activity {
     // ------------------------------------------------------------------------
 
     /**
+     * @internal
+     *
+     * @class FinishReceiver
      * Used to listen to "Finish" broadcast messages sent by JRUserInterfaceMaestro.  A facility
      * for iPhone-like ability to close this activity from the maestro class.
-     */
+     **/
     private class FinishReceiver extends BroadcastReceiver {
 
         private final String TAG = JRWebViewActivity.TAG + "-" + FinishReceiver.class.getSimpleName();

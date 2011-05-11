@@ -38,6 +38,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * @internal
+ *
+ * @class JRConnectionManager
+ **/
 public class JRConnectionManager implements AsyncHttpResponseListener {
 
     // ------------------------------------------------------------------------
@@ -293,5 +298,4 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 		return false;
 	}
 	*/
-
 }

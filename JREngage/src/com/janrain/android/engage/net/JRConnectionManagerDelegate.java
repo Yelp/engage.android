@@ -35,8 +35,10 @@ import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 
 /**
- * TODO:DOC
- */
+ * @internal
+ *
+ * @interface JRConnectionManagerDelegate
+ **/
 public interface JRConnectionManagerDelegate {
 	
 	void connectionDidFinishLoading(String payload, String requestUrl, Object userdata);
@@ -59,4 +61,3 @@ public interface JRConnectionManagerDelegate {
     }
 
 }
-

@@ -32,7 +32,6 @@ package com.janrain.android.simpledemo;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -43,11 +42,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 import com.janrain.android.engage.*;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.*;
-import com.janrain.android.engage.ui.JRLandingActivity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -301,11 +298,15 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         if (view == mBtnTestAuth) {
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
-            mEngage.showSocialPublishingDialogWithActivity(mActivity);
-        } else if (view == mBtnTestLand) {
-            Intent intent = new Intent(this, JRLandingActivity.class);
-            startActivity(intent);
-        }
+            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!",
+              mActionLink);
+//            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!",
+//                    "");
+            jra.setTitle(mTitleText);
+            jra.setDescription(mDescriptionText);
+            jra.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
+            mEngage.showSocialPublishingDialog(jra);
+        } 
     }
 
     // ------------------------------------------------------------------------

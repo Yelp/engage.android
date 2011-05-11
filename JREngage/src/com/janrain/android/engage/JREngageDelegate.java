@@ -34,72 +34,79 @@ import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 
 /**
- * The JREngageDelegate protocol is adopted by an object that wishes to receive notifications when 
- * and information about a user that authenticates with your application and publishes activities to 
- * their social networks.
+ * @brief
+ * The interface implemented by an object in order to receive notifications when a user
+ * authenticates, or publishes an activity to their social networks.
  *
- * This protocol will notify the delegate(s) when authentication and social publishing succeed or 
- * fail, it will provider the delegate(s) with the authenticated user's profile data, and, if 
- * server-side authentication is desired, it can provide the delegate(s) with the data payload 
- * returned by your server's token URL.
+ * The methods of this interface are invoked upon the success or failure of the Janrain Engage for
+ * Android Activities. They provide a conduit for the authenticated user's profile data, and if
+ * server-side authentication is configured, the data payload returned by your server's token URL.
+ *
+ * @nosubgrouping
  **/
 public interface JREngageDelegate {
 	
-	/** 
-	 * \name Configuration 
-	 * Messages sent by JREngage during dialog launch/configuration
-	 **/
-	/*@{*/
+/**
+ * \name Configuration
+ * Messages sent by JREngage during dialog launch/configuration
+ **/
+/*@{*/
 
 	/**
-	 * Sent if the application tries to show a JREngage dialog, and JREngage failed to show.  May
-	 * occur if the JREngage library failed to configure, or if the activity object was nil, etc.
-	 *
+	 * Notifies the delegate when the application invokes the display of a library Activity, but the
+     * Activity fails to start. May occur if the library failed to connect to the Engage server, or
+     * if the JRActivityObject was null, etc.
+	 *  
 	 * @param error
 	 *   The error that occurred during configuration
 	 *
-	 * \note
-	 * This message is only sent if your application tries to show a JREngage dialog, and not 
-	 * necessarily when an error occurs, if, say, the error occurred during the library's 
-	 * configuration.  The raison d'etre is based on the possibility that your application may 
-	 * preemptively configure JREngage, but never actually use it.  If that is the case, then you 
-	 * won't get any error.
+	 * @note
+	 * This message is only sent if your application tries to show a JREngage dialog, and not
+	 * necessarily when the error occurred. For example, if the error occurred during the library's
+	 * configuration with the Engage server, it will not be sent through this interface until the
+     * application attempts to display a library Activity.
+     *
+     * The raison d'etre for this delayed delegate delivery is to allow for the possibility that an
+     * application may speculatively configure the library, but never actually invoke any library
+     * Activies.  In that case, no error is delivered to the application.
 	 **/
     void jrEngageDialogDidFailToShowWithError(JREngageError error);
-    /*@}*/
+/*@}*/
     
 
-    /** 
-     * \name Authentication
-     * Messages sent  by JREngage during authentication
-     **/
-    /*@{*/
+/**
+ * \name Authentication
+ * Messages sent  by JREngage during authentication
+ **/
+/*@{*/
 
     /**
-     * Sent if the authorization was canceled for any reason other than an error.  For example, 
-     * the user hits the "Cancel" button, any class (e.g., the JREngage delegate) calls the 
-     * cancelAuthentication message, or if configuration of the library is taking more than about 
-     * 16 seconds (rare) to download.
+     * Notifies the delegate that authorization was canceled for any reason other than an error.
+     * For example: The user pressed the back button, the cancelAuthentication method was called,
+     * or configuration of the library timed out.
      **/
     void jrAuthenticationDidNotComplete();
     
     /**
-     * \anchor authDidSucceed
-     *
-     * Tells the delegate that the user has successfully authenticated with the given provider, 
-     * passing to the delegate an \c NSDictionary object with the user's profile data
+     * Notifies the delegate that the user has successfully authenticated with the given provider,
+     * passing to the delegate a JRDictionary object with the user's profile data.
      *
      * @param auth_info
-     *   An \c NSDictionary of fields containing all the information Janrain Engage knows about the 
-     *   user logging into your application.  Includes the field "profile" which contains the user's 
-     *   profile information
+     *   A JRDictionary of fields containing all the information that Janrain Engage knows about
+     *   the user logging into your application.  Includes the field \e "profile" which contains the
+     *   user's profile information.
      *
-     *   The structure of the dictionary (represented here in json) should look something like the 
+     * @param provider
+     *   The name of the provider on which the user authenticated.  For a list of possible strings,
+     *   please see the \ref basicProviders "List of Providers"
+     *
+     * @note:
+     *   The structure of the \e auth_info JRDictionary (represented here in JSON) will be like the
      *   following:
-     * \code
+     * @code
      "auth_info":
      {
-       "profile": 
+       "profile":
        {
          "displayName": "brian",
          "preferredUsername": "brian",
@@ -108,60 +115,58 @@ public interface JREngageDelegate {
          "identifier": "http:\/\/brian.myopenid.com\/"
        }
      }
-     * \endcode
+     * @endcode
      *
-     * @param provider
-     *   The name of the provider on which the user authenticated.  For a list of possible strings, 
-     *   please see the \ref basicProviders "List of Providers"
-     *
-     * \sa For a full description of the dictionary and its fields, 
+     * \sa For a full description of the dictionary and its fields,
      * please see the <a href="https://rpxnow.com/docs#api_auth_info_response">auth_info 
      * response</a> section of the Janrain Engage API documentation.
      **/
     void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider);
 
     /**
-     * Sent when authentication failed and could not be recovered by the library
+     * Notifies the delegate when authentication has failed and could not be recovered by the
+     * library.
      *
      * @param error
      *   The error that occurred during authentication
      *
      * @param provider
-     *   The name of the provider on which the user tried to authenticate.  For a list of possible 
+     *   The name of the provider on which the user tried to authenticate.  For a list of possible
      *   strings, please see the \ref basicProviders "List of Providers"
      *
-     * \note
+     * @note
      * This message is not sent if authentication was canceled.  To be notified of a canceled 
-     * authentication, see jrAuthenticationDidNotComplete.
+     * authentication, see jrAuthenticationDidNotComplete().
      **/
     void jrAuthenticationDidFailWithError(JREngageError error, String provider);
 
-    /**
-     * Sent after JREngage has successfully posted the token to your application's token_url, 
-     * containing the body of the response from the server
-     *
-     * @param tokenUrl
-     *   The URL on the server where the token was posted and server-side authentication was 
-     *   completed
-     *
-     * @param tokenUrlPayload
-     *   The response from the server
-     *
-     * @param provider
-     *   The name of the provider on which the user authenticated.  For a list of possible strings, 
-     *   please see the \ref basicProviders "List of Providers"
-     * 
-     * \warning This function may become deprecated in the future.
-     *
-     * \sa \ref tokenUrlReached "- (void)jrAuthenticationDidReachTokenUrl:withResponse:andPayload:forProvider:"
-     **/
-    void jrAuthenticationDidReachTokenUrl(String tokenUrl, String tokenUrlPayload, String provider);
+//    /*
+//     * Notifies the delegate after the library has successfully posted the Engage auth_info token to
+//     * your server application's token URL, passing to the delegate the body of the HTTP response
+//     * from the token URL.
+//     *
+//     * @param tokenUrl
+//     *   The URL on the server where the token was posted and server-side authentication was
+//     *   completed
+//     *
+//     * @param tokenUrlPayload
+//     *   The response from the server
+//     *
+//     * @param provider
+//     *   The name of the provider on which the user authenticated.  For a list of possible strings,
+//     *   please see the \ref basicProviders "List of Providers"
+//     *
+//     * @deprecated
+//     * This function has been deprecated
+//     *
+//     * @sa \ref tokenUrlReached "void jrAuthenticationDidReachTokenUrl(String tokenUrl, String tokenUrlPayload, String provider)"
+//     */
+//    void jrAuthenticationDidReachTokenUrl(String tokenUrl, String tokenUrlPayload, String provider);
 
     /**
-     * \anchor tokenUrlReached
-     *
-     * Sent after JREngage has successfully posted the token to your application's token_url, containing 
-     * the headers and body of the response from the server
+     * Notifies the delegate after the library has successfully posted the Engage auth_info token to
+     * your server application's token URL, passing to the delegate the body and headers of the HTTP
+     * response from the token URL.
      *
      * @param tokenUrl
      *   The URL on the server where the token was posted and server-side authentication was completed
@@ -173,55 +178,53 @@ public interface JREngageDelegate {
      *   The response from the server
      *
      * @param provider
-     *   The name of the provider on which the user authenticated.  For a list of possible strings, 
+     *   The name of the provider on which the user authenticated.  For a list of possible strings,
      *   please see the \ref basicProviders "List of Providers"
      **/
     void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response,
                                           String tokenUrlPayload, String provider);
 
     /**
-     * Sent when the call to the token URL has failed
+     * Notifies the delegate when the call to the token URL has failed.
      *
      * @param tokenUrl
-     *   The URL on the server where the token was posted and server-side authentication was 
+     *   The URL on the server where the token was posted and server-side authentication was
      *   completed
      *
      * @param error
      *   The error that occurred during server-side authentication
      *
      * @param provider
-     *   The name of the provider on which the user authenticated.  For a list of possible strings, 
+     *   The name of the provider on which the user authenticated.  For a list of possible strings,
      *   please see the \ref basicProviders "List of Providers"
      **/
     void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider);
+/*@}*/
 
-    /*@}*/
-
-    /** 
-     * \name SocialPublishing
-     * Messages sent by JREngage during social publishing
-     **/
-    /*@{*/
+/**
+ * \name SocialPublishing
+ * Messages sent by JREngage during social publishing
+ **/
+/*@{*/
 
     /**
-     * Sent if social publishing was canceled for any reason other than an error.  For example, 
-     * the user hits the "Cancel" button, any class (e.g., the JREngage delegate) calls the 
-     * cancelPublishing message, or if configuration of the library is taking more than about 16 
-     * seconds (rare) to download.
+     * Notifies the delegate if social publishing was canceled for any reason other than an error.
+     * For example, the user presses the back button, any class (e.g., the JREngage delegate) calls
+     * the cancelPublishing method, or if configuration of the library times out.
      **/
     void jrSocialDidNotCompletePublishing();
     
     /**
-     * Sent after the social publishing dialog is closed (e.g., the user hits the "Close" button) 
-     * and publishing is complete. You can receive multiple 
-     * \ref didPublish "- (void)jrSocialDidPublishJRActivity:forProvider:"
+     * Notifies the delegate after the social publishing dialog is closed (e.g., the user presses
+     * the back button) and publishing is complete. You may receive multiple \ref didPublish
+     * "void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider)"
      * messages before the dialog is closed and publishing is complete.
      **/
     void jrSocialDidCompletePublishing();
 
     /**
      * \anchor didPublish
-     * Sent after the user successfully shares an activity on the given provider
+     * Notifies the delegate after the user successfully shares an activity on the given provider.
      *
      * @param activity
      *   The shared activity
@@ -233,7 +236,8 @@ public interface JREngageDelegate {
     void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider);
     
     /**
-     * Sent when publishing an activity failed and could not be recovered by the library
+     * Notifies the delegate when publishing an activity failed and could not be recovered by the
+     * library.
      *
      * @param activity
      *   The activity the user was trying to share
@@ -242,9 +246,9 @@ public interface JREngageDelegate {
      *   The error that occurred during publishing
      *
      * @param provider
-     *   The name of the provider on which the user attempted to publish the activity.  For a list 
+     *   The name of the provider on which the user attempted to publish the activity.  For a list
      *   of possible strings, please see the \ref socialProviders "List of Social Providers"
      **/
     void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
-    /*@}*/
+/*@}*/
 }

@@ -30,6 +30,9 @@
 package com.janrain.android.engage.net.async;
 
 /**
+ * @internal
+ *
+ * @class AsyncHttpResponseHolder
  * Wraps the possible data returned from a full asynchronous HTTP request.  This object will
  * contain either headers and data (if successful) or an Exception object (if failed).
  */
@@ -164,5 +167,4 @@ public class AsyncHttpResponseHolder {
     public boolean hasException() {
         return (mException != null);
     }
-
 }
