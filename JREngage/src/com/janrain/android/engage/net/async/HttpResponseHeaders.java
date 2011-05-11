@@ -61,6 +61,7 @@ public class HttpResponseHeaders {
     // Invalid response code (initial state of object)
     public static final int RESPONSE_CODE_INVALID = -1;
 
+
     // ------------------------------------------------------------------------
     // STATIC METHODS
     // ------------------------------------------------------------------------
@@ -82,6 +83,7 @@ public class HttpResponseHeaders {
         headers.setLastModified(connection.getLastModified());
         headers.setLastModifiedUtc(connection.getHeaderField(HEADER_LAST_MODIFIED));
         headers.setETag(connection.getHeaderField(HEADER_ETAG));
+        headers.setConnection(connection);
         
         return headers;
     }
@@ -98,6 +100,16 @@ public class HttpResponseHeaders {
     private long mLastModified;
     private String mLastModifiedUtc;
     private String mETag;
+
+    public void setConnection(HttpURLConnection connection) {
+        this.mConnection = connection;
+    }
+
+    public String getHeaderField(String headerFieldName) {
+        return mConnection.getHeaderField(headerFieldName);
+    }
+
+    private HttpURLConnection mConnection;
 
     // ------------------------------------------------------------------------
     // CONSTRUCTORS
