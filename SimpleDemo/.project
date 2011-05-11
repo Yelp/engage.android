@@ -31,11 +31,4 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>JREngage_src</name>
-			<type>2</type>
-			<locationURI>_android_JREngage_74d2bac9/src</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>
