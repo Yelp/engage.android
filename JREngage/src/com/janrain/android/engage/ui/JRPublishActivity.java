@@ -491,7 +491,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             mPreviewBox.setVisibility(View.GONE);
             mEmailSmsComment.setLines(3);
             mEmailSmsButtonContainer.setOrientation(LinearLayout.HORIZONTAL);
-            //mEmailButton.setl
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             mPreviewBox.setVisibility(View.VISIBLE);
             mEmailSmsComment.setLines(4);
@@ -642,6 +641,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         if (tabId.equals(EMAIL_SMS_TAB_TAG)) {
             mEmailSmsComment.setText(mUserCommentView.getText());
             mEmailButton.getBackground()
+                    .setColorFilter(JANRAIN_BLUE_100PERCENT, PorterDuff.Mode.MULTIPLY);
+            mSmsButton.getBackground()
                     .setColorFilter(JANRAIN_BLUE_100PERCENT, PorterDuff.Mode.MULTIPLY);
         } else { // ... else a "real" provider -- Facebook, Twitter, etc.
             mSelectedProvider = mSessionData.getProviderByName(tabId);

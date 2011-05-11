@@ -274,8 +274,8 @@ public class JRLandingActivity extends Activity {
     }
 
     private void handleSecondaryButtonClick() {
-        //todo this should also call the forget function or no ... ?
         Log.i(TAG, "[handleSecondaryButtonClick]");
+        //todo this should also call the forget function or no ... ?
         mSessionData.getCurrentlyAuthenticatingProvider().setForceReauth(true);
         mSessionData.setReturningBasicProvider("");
         finish();
