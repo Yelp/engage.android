@@ -358,8 +358,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     public boolean getHidePoweredBy() {
-        return false;
-        //return mHidePoweredBy;
+        return mHidePoweredBy;
     }
 
     public void setDialogIsShowing(boolean mDialogIsShowing) {
