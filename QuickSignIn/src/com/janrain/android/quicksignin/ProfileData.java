@@ -130,7 +130,7 @@ public class ProfileData {
         }
         
         LoginSnapshot snapshot = new LoginSnapshot(timestamp, identifier, provider, displayName);
-        mLoginSnapshots.add(snapshot);
+        mLoginSnapshots.add(0, snapshot);
 
         mProfiles.put(identifier, profile);
 
@@ -180,7 +180,7 @@ public class ProfileData {
 }
 
     private String flattenAddress(JRDictionary profile) {
-        JRDictionary address = profile.getAsDictionary("name");
+        JRDictionary address = profile.getAsDictionary("address");
 
         if (address.containsKey("formatted"))
             return address.getAsString("formatted");
