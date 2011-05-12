@@ -38,6 +38,7 @@ import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
 import com.janrain.android.engage.R;
+import com.janrain.android.engage.session.JRSessionData;
 
 
 /**
@@ -80,6 +81,20 @@ public class SharedLayoutHelper {
     public SharedLayoutHelper(Activity owner) {
         mOwner = owner;
         mProgressDialog = null;
+        
+        boolean hideTagline = JRSessionData.getInstance().getHidePoweredBy();
+        int visibility = hideTagline ? View.GONE : View.VISIBLE;
+        owner.findViewById(R.id.jr_tagline).setVisibility(visibility);
+        try {
+            owner.findViewById(R.id.email_sms_powered_by_text).setVisibility(visibility);
+        } catch (NullPointerException e) {
+            // Do nothing, we're just not displaying JRPublishActivity
+        }
+    }
+
+    // Declare the default constructor private so this class is only instantiated with an owner
+    // Activity
+    private SharedLayoutHelper() {
     }
 
     // ------------------------------------------------------------------------

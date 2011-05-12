@@ -77,8 +77,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	private static JRSessionData sInstance;
 
     private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
-//    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
-//    private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
+    //private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
+    //private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
 
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
     private static final String ARCHIVE_BASIC_PROVIDERS = "basicProviders";
@@ -152,13 +152,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private String mDevice;
 
     private boolean mHidePoweredBy;
-
 	private boolean mAlwaysForceReauth;
-
     //private boolean mForceReauth;
-
 	private boolean mSocialSharingMode;
-
     private boolean mDialogIsShowing = false;
 
     private JREngageError mError;
@@ -362,7 +358,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     public boolean getHidePoweredBy() {
-        return mHidePoweredBy;
+        return false;
+        //return mHidePoweredBy;
     }
 
     public void setDialogIsShowing(boolean mDialogIsShowing) {

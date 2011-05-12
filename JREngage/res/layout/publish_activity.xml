@@ -311,7 +311,7 @@
                 </RelativeLayout>
 
                 <TextView
-                    android:id="@+id/powered_by_text"
+                    android:id="@+id/jr_tagline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
