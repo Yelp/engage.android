@@ -154,7 +154,7 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 <p>Return the SMS's list of URLs to be shortened.</p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>The SMS's list of URLs to be shortened. </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>An immutable list of URLs to be shortened. </dd></dl>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object.html#a744f055478816813bc41d7db2979430f">JRSmsObject.setUrls</a>(java.util.List) </dd></dl>
 
 </div>
@@ -176,10 +176,11 @@ Public Member Functions</h2></td></tr>
 <p>Set the SMS's list of URLs to be shortened. Each of these URLs will be shortened to an rpx.me URL which tracks click-throughs and provides analytics. Once shortened, the Engage for Android library will substitute the shortened version for the original long version for each URL found in the body of the SMS.</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">urls</td><td>The SMS's list of URLs to be shortened, not more than five URLs. </td></tr>
+    <tr><td class="paramname">urls</td><td>The SMS's list of URLs to be shortened, not more than five URLs.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object.html#ab482a851576f3766af32a2988ca25f59">JRSmsObject.addUrl(String)</a> </dd></dl>
 
 </div>
 </div>

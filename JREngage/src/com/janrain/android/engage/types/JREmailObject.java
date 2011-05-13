@@ -138,7 +138,7 @@ public class JREmailObject {
     /**
      * Return the email's list of URLs to be shortened.
      *
-     * @return The email's list of URLs to be shortened.
+     * @return An immutable list of URLs to be shortened.
      * @see JREmailObject#setUrls(java.util.List)
      */
     public List<String> getUrls() {

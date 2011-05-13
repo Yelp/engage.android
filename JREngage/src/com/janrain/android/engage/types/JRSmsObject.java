@@ -107,7 +107,7 @@ public class JRSmsObject {
     /**
      * Return the SMS's list of URLs to be shortened.
      *
-     * @return The SMS's list of URLs to be shortened.
+     * @return An immutable list of URLs to be shortened.
      * @see JRSmsObject#setUrls(java.util.List)
      */
     public List<String> getUrls() {
@@ -121,6 +121,8 @@ public class JRSmsObject {
      * each URL found in the body of the SMS.
      *
      * @param urls The SMS's list of URLs to be shortened, not more than five URLs.
+     *
+     * @see JRSmsObject#addUrl(String) 
      */
     public void setUrls(List<String> urls) {
         if (urls == null) urls = new ArrayList<String>();
