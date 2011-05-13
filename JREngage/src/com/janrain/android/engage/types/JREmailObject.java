@@ -33,16 +33,40 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @brief An email a user can send to share an activity.
+ *
+ * JREmailObject is a simple container object for a pre-composed email to be attached to a
+ * {@link com.janrain.android.engage.types.JRActivityObject JRActivityObject}.
+ *
+ * Instantiate a new JREmailObject with a subject and a body.  Optionally, add a list of URLs
+ * from the body and Engage will automatically shorten them, track click-throughs and provide
+ * analytics on your dashboard.
+ *
+ * See {@link com.janrain.android.engage.types.JRActivityObject JRActivityObject},
+ * {@link com.janrain.android.engage.types.JRSmsObject JRSmsObject}
+ */
+
 public class JREmailObject {
     private String mSubject, mBody;
     //private boolean mHtml;
     private List<String> mUrls;
     private List<String> mShortUrls;
 
+    /**
+     * Create an empty email object.
+     */
     public JREmailObject() {
         this("", "");
     }
 
+    /**
+     * Create an email object with a given subject and body.
+     *
+     * @param subject The email's subject line, passed to the device's email application
+     * @param body The email's body, which will be appended to the user's comment and passed to the
+     *  devices email application.
+     */
     public JREmailObject(String subject, String body) {
         if (subject == null) subject = "";
         if (body == null) body = "";
@@ -53,6 +77,11 @@ public class JREmailObject {
         mUrls = new ArrayList<String>();
     }
 
+    /**
+     * @internal
+     *
+     * @param shortUrls
+     */
     void setShortUrls(List<String> shortUrls) {
         mShortUrls = shortUrls;
 
@@ -62,18 +91,38 @@ public class JREmailObject {
         }
     }
 
+    /**
+     * Return the email's subject.
+     * 
+     * @return The email's subject.
+     */
     public String getSubject() {
         return mSubject;
     }
 
+    /**
+     * Set the email's subject.
+     * 
+     * @param subject The email's subject.
+     */
     public void setSubject(String subject) {
         mSubject = subject;
     }
 
+    /**
+     * Return the email's body.
+     *
+     * @return The email's body.
+     */
     public String getBody() {
         return mBody;
     }
 
+    /**
+     * Set the email's body.
+     *
+     * @param body The email's body.
+     */
     public void setBody(String body) {
         mBody = body;
     }
@@ -86,21 +135,42 @@ public class JREmailObject {
     //    return mHtml;
     //}
 
+    /**
+     * Return the email's list of URLs to be shortened.
+     *
+     * @return The email's list of URLs to be shortened.
+     * @see JREmailObject#setUrls(java.util.List)
+     */
     public List<String> getUrls() {
         return Collections.unmodifiableList(mUrls);
     }
 
+    /**
+     * Set the email's list of URLs to be shortened.  Each of these URLs will be shortened to an
+     * rpx.me URL which tracks click-throughs and provides analytics.  Once shortened, the Engage
+     * for Android library will substitute the shortened version for the original long version for
+     * each URL found in the body of the email.
+     *
+     * @param urls The email's list of URLs to be shortened, not more than five URLs.
+     */
     public void setUrls(List<String> urls) {
         if (urls == null) urls = new ArrayList<String>();
         if (urls.size() >= 5) throw
-                new IllegalArgumentException("JREmailObject supports a max of five URLs");
+                new IllegalArgumentException("JREmailObject supports a maximum of five URLs");
 
         mUrls = urls;
     }
 
+    /**
+     * Add a single URL to the list of URLs to shorten.
+     *
+     * @param url The URL to add to the list of URLs to shorten.
+     *
+     * @see JREmailObject#setUrls(java.util.List)
+     */
     public void addUrl(String url) {
         if (mUrls.size() >= 5) throw
-                new IllegalArgumentException("JREmailObject supports a max of five URLs");
+                new IllegalArgumentException("JREmailObject supports a maximum of five URLs");
 
         mUrls.add(url);
     }

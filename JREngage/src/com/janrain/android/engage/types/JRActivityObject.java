@@ -249,7 +249,7 @@ public class JRActivityObject {
      *   if text or href is null
      **/
     public JRActivityObject(String action, String url) {
-        if (action == null) throw new IllegalArgumentException("illegal null text or null href");
+        if (action == null) throw new IllegalArgumentException("illegal null action or null href");
 
         Log.d(TAG, "created with action: " + action + " url: " + url);
         mAction = action;

@@ -33,15 +33,38 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @brief An SMS a user can send to share an activity.
+ *
+ * JREmailObject is a simple container object for a pre-composed SMS to be attached to a
+ * {@link com.janrain.android.engage.types.JRActivityObject JRActivityObject}.
+ *
+ * Instantiate a new JRSmsObject with a body.  Optionally, add a list of URLs
+ * from the body and Engage will automatically shorten them, track click-throughs and provide
+ * analytics on your dashboard.
+ *
+ * See {@link com.janrain.android.engage.types.JRActivityObject JRActivityObject},
+ * {@link com.janrain.android.engage.types.JREmailObject JREmailObject}
+ */
+
 public class JRSmsObject {
     private String mBody;
     private List<String> mUrls;
     private List<String> mShortUrls;
 
+    /**
+     * Create an empty SMS object.
+     */
     public JRSmsObject() {
         this("");
     }
 
+    /**
+     * Create an SMS object with a given body.
+     *
+     * @param body The SMS's body, which will be appended to the user's comment and passed to the
+     *  devices SMS application.
+     */
     public JRSmsObject(String body) {
         if (body == null) body = "";
 
@@ -49,6 +72,11 @@ public class JRSmsObject {
         mUrls = new ArrayList<String>();
     }
 
+    /**
+     * @internal
+     *
+     * @param shortUrls
+     */
     void setShortUrls(List<String> shortUrls) {
         mShortUrls = shortUrls;
 
@@ -58,29 +86,60 @@ public class JRSmsObject {
         }
     }
 
+    /**
+     * Return the SMS's body.
+     *
+     * @return The SMS's body.
+     */
     public String getBody() {
         return mBody;
     }
 
+    /**
+     * Set the SMS's body.
+     *
+     * @param body The SMS's body.
+     */
     public void setBody(String body) {
         mBody = body;
     }
 
+    /**
+     * Return the SMS's list of URLs to be shortened.
+     *
+     * @return The SMS's list of URLs to be shortened.
+     * @see JRSmsObject#setUrls(java.util.List)
+     */
     public List<String> getUrls() {
         return Collections.unmodifiableList(mUrls);
     }
 
+    /**
+     * Set the SMS's list of URLs to be shortened.  Each of these URLs will be shortened to an
+     * rpx.me URL which tracks click-throughs and provides analytics.  Once shortened, the Engage
+     * for Android library will substitute the shortened version for the original long version for
+     * each URL found in the body of the SMS.
+     *
+     * @param urls The SMS's list of URLs to be shortened, not more than five URLs.
+     */
     public void setUrls(List<String> urls) {
         if (urls == null) urls = new ArrayList<String>();
         if (urls.size() >= 5) throw
-                new IllegalArgumentException("JRSmsObject supports a max of five URLs");
+                new IllegalArgumentException("JRSmsObject supports a maximum of five URLs");
 
         mUrls = urls;
     }
 
+    /**
+     * Add a single URL to the list of URLs to shorten.
+     *
+     * @param url The URL to add to the list of URLs to shorten.
+     *
+     * @see JRSmsObject#setUrls(java.util.List)
+     */
     public void addUrl(String url) {
         if (mUrls.size() >= 5) throw
-                new IllegalArgumentException("JRSmsObject supports a max of five URLs");
+                new IllegalArgumentException("JRSmsObject supports a maximum of five URLs");
 
         mUrls.add(url);
     }
