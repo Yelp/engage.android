@@ -152,10 +152,10 @@ public class Story implements Serializable {
                 Log.d(TAG, "[onPostExecute] image download onPostExecute, result: " +
                         (loadSuccess ? "succeeded" : "failed"));
 
-//                if (loadSuccess)
-//                    mListener.AsyncFeedReadSucceeded();
-//                else
-//                    mListener.AsyncFeedReadFailed();
+////                if (loadSuccess)
+////                    mListener.AsyncFeedReadSucceeded();
+////                else
+////                    mListener.AsyncFeedReadFailed();
             }
         }.execute();
     }
