@@ -298,14 +298,14 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         if (view == mBtnTestAuth) {
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
-            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!",
-              mActionLink);
-//            JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!",
-//                    "");
-            jra.setTitle(mTitleText);
-            jra.setDescription(mDescriptionText);
-            jra.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
-            mEngage.showSocialPublishingDialog(jra);
+            //JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!",
+            //  mActionLink);
+            //JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!",
+            //        "");
+            //jra.setTitle(mTitleText);
+            //jra.setDescription(mDescriptionText);
+            //jra.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
+            mEngage.showSocialPublishingDialog(mActivity);
         } 
     }
 

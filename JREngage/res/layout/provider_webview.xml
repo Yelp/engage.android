@@ -16,7 +16,7 @@
         android:id="@+id/webview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/footer"
+        android:layout_above="@+id/jr_tagline"
         />
     <!--android:paddingBottom="30dip"-->
     <!--android:layout_below="@+id/header"-->

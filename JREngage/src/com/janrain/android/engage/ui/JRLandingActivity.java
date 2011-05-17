@@ -199,7 +199,6 @@ public class JRLandingActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mLayoutHelper = new SharedLayoutHelper(this);
         mSessionData = JRSessionData.getInstance();
 
         //for the case when this activity is relaunched after the process was killed
@@ -210,6 +209,7 @@ public class JRLandingActivity extends Activity {
         }
 
         setContentView(R.layout.provider_landing);
+        mLayoutHelper = new SharedLayoutHelper(this);
 
         mImageView = (ImageView)findViewById(R.id.landing_logo);
         mEditText = (EditText)findViewById(R.id.landing_edit);

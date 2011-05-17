@@ -206,11 +206,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         mSessionDelegate = createSessionDelegate();
 
-        if (mSessionData.getHidePoweredBy()) {
-            TextView poweredBy = (TextView)findViewById(R.id.powered_by_text);
-            poweredBy.setVisibility(View.GONE);
-        }
-
         // View References
         mPreviewBox = (RelativeLayout) findViewById(R.id.preview_box);
         mPreviewBorder = (RelativeLayout) findViewById(R.id.preview_box_border);

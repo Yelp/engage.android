@@ -249,7 +249,7 @@ public class JRActivityObject {
      *   if text or href is null
      **/
     public JRActivityObject(String action, String url) {
-        if (action == null) throw new IllegalArgumentException("illegal null text or null href");
+        if (action == null) throw new IllegalArgumentException("illegal null action or null href");
 
         Log.d(TAG, "created with action: " + action + " url: " + url);
         mAction = action;
@@ -498,11 +498,11 @@ public class JRActivityObject {
                         .array()
                             .value(getUrl())
                         .endArray()
-                        .key("email_urls")
+                        .key("email")
                         .array();
                             for (String url : emailUrls) jss.value(url);
                         jss.endArray()
-                        .key("sms_urls")
+                        .key("sms")
                         .array();
                             for (String url : smsUrls) jss.value(url);
                         jss.endArray()
@@ -510,10 +510,10 @@ public class JRActivityObject {
 
             // Make the URL
             final String jsonEncodedActivityUrl = jss.toString();
-            String htmlEncodedJson = URLEncoder.encode(jsonEncodedActivityUrl, "UTF8");
+            String urlEncodedJson = URLEncoder.encode(jsonEncodedActivityUrl, "UTF8");
             final String getUrlsUrl =
                     sessionData.getBaseUrl() + "/openid/get_urls?"
-                    + "urls=" + htmlEncodedJson
+                    + "urls=" + urlEncodedJson
                     + "&app_name=" + sessionData.getUrlEncodedAppName()
                     + "&device=android";
 
@@ -530,8 +530,8 @@ public class JRActivityObject {
                         JSONObject jso = (JSONObject) (new JSONTokener(payload)).nextValue();
                         jso = jso.getJSONObject("urls");
                         JSONObject jsonActivityUrls = jso.getJSONObject("activity");
-                        JSONObject jsonSmsUrls = jso.getJSONObject("sms_urls");
-                        JSONObject jsonEmailUrls = jso.getJSONObject("email_urls");
+                        JSONObject jsonSmsUrls = jso.getJSONObject("sms");
+                        JSONObject jsonEmailUrls = jso.getJSONObject("email");
 
                         shortUrl = jsonActivityUrls.getString(getUrl());
                         if (mEmail != null) {

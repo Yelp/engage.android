@@ -77,8 +77,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	private static JRSessionData sInstance;
 
     private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
-//    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
-//    private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
+    //private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
+    //private static final JREnvironment ENVIRONMENT = JREnvironment.LOCAL;
 
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
     private static final String ARCHIVE_BASIC_PROVIDERS = "basicProviders";
@@ -142,23 +142,19 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	
 	private String mSavedConfigurationBlock = "";
 	private String mNewEtag;
-    private String mGitCommit;
+    //private String mGitCommit;
 
 	private JRActivityObject mActivity;
 	
 	private String mTokenUrl;
 	private String mBaseUrl;
 	private String mAppId;
-    private String mDevice;
+    //private String mDevice;
 
     private boolean mHidePoweredBy;
-
 	private boolean mAlwaysForceReauth;
-
     //private boolean mForceReauth;
-
 	private boolean mSocialSharingMode;
-
     private boolean mDialogIsShowing = false;
 
     private JREngageError mError;
@@ -336,16 +332,26 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mReturningBasicProvider;
     }
 
-    public void setReturningBasicProvider(String mReturningBasicProvider) {
-        this.mReturningBasicProvider = mReturningBasicProvider;
+    public void setReturningBasicProvider(String returningBasicProvider) {
+        if (!TextUtils.isEmpty(returningBasicProvider) &&
+                !mBasicProviders.contains(returningBasicProvider)) {
+            returningBasicProvider = "";
+        }
+        this.mReturningBasicProvider = returningBasicProvider;
+        Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, returningBasicProvider);
     }
 
     public String getReturningSocialProvider() {
         return mReturningSocialProvider;
     }
 
-    public void setReturningSocialProvider(String mReturningSocialProvider) {
-        this.mReturningSocialProvider = mReturningSocialProvider;
+    public void setReturningSocialProvider(String returningSocialProvider) {
+        if (!TextUtils.isEmpty(returningSocialProvider) &&
+                !mSocialProviders.contains(returningSocialProvider)) {
+            returningSocialProvider = "";
+        }
+        this.mReturningSocialProvider = returningSocialProvider;
+        Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, returningSocialProvider);
     }
 
 
@@ -691,7 +697,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                     jsonEx);
         }
 
-        // Check to see if the base url has changed
+        // Check to see if the base URL has changed
         String baseUrl = jsonDict.getAsString("baseurl", "");
         if (!baseUrl.equals(mBaseUrl)) {
             // Save the new base url
@@ -718,6 +724,19 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         // Get the ordered list of social providers
         mSocialProviders = jsonDict.getAsListOfStrings("social_providers");
 
+        // Ensure that the returning basic and social providers, if set, are members of the
+        // configured set of providers.
+        if (!TextUtils.isEmpty(mReturningBasicProvider) &&
+                !mBasicProviders.contains(mReturningBasicProvider)) {
+            mReturningBasicProvider = "";
+            Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, mReturningBasicProvider);
+        }
+        if (!TextUtils.isEmpty(mReturningSocialProvider) &&
+                !mSocialProviders.contains(mReturningSocialProvider)) {
+            mReturningSocialProvider = "";
+            Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, mReturningSocialProvider);
+        }
+        
         // Done!
 
         // Save data to local store
@@ -725,7 +744,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         Archiver.save(ARCHIVE_BASIC_PROVIDERS, mBasicProviders);
         Archiver.save(ARCHIVE_SOCIAL_PROVIDERS, mSocialProviders);
 
-        // Figure out of we're suppose to hide the powered by line
+        // Figure out of whether to hide the "powered by" line
         mHidePoweredBy = jsonDict.getAsBoolean("hide_tagline", false);
         Prefs.putBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, mHidePoweredBy);
 
@@ -832,8 +851,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mCurrentlyAuthenticatingProvider.setWelcomeString(
                 getWelcomeMessageFromCookieString(welcome_info));
 
-        mReturningBasicProvider = mCurrentlyAuthenticatingProvider.getName();
-        Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, mReturningBasicProvider);
+        setReturningBasicProvider(mCurrentlyAuthenticatingProvider.getName());
     }
 
     public URL startUrlForCurrentlyAuthenticatingProvider() {
