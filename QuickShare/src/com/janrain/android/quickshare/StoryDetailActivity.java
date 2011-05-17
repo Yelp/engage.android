@@ -54,16 +54,31 @@ public class StoryDetailActivity extends Activity implements View.OnClickListene
     private WebView mWebview;
 
     public void onCreate(Bundle savedInstanceState) {
+        if (Config.LOGD)
+            Log.d(TAG, "[onCreate] creating instance of StoryDetailActivity");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.story_detail_webview);
 
+        if (Config.LOGD)
+            Log.d(TAG, "[onCreate] getting the FeedData instance");
+
         mFeedData = FeedData.getInstance(this);
+
+        if (Config.LOGD)
+            Log.d(TAG, "[onCreate] getting the share button resource");
 
         mShareStory = (Button)findViewById(R.id.share_button);
         mShareStory.setOnClickListener(this);
 
+        if (Config.LOGD)
+            Log.d(TAG, "[onCreate] getting the webview resource");
+
         mWebview = (WebView)findViewById(R.id.story_webview);
         mWebview.setWebViewClient(mWebviewClient);
+
+        if (Config.LOGD)
+            Log.d(TAG, "[onCreate] url: loading the current story");
 
         loadCurrentStory();
     }
