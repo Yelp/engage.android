@@ -229,6 +229,7 @@ public class JRWebViewActivity extends Activity {
     }
 
     public void onBackPressed() {
+        Log.d(TAG, "onBackPressed");
         mWebView.stopLoading();
         mSessionData.triggerAuthenticationDidRestart();
     }

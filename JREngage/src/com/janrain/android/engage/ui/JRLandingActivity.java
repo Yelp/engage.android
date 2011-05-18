@@ -249,6 +249,7 @@ public class JRLandingActivity extends Activity {
 
 
     public void onBackPressed() {
+        Log.d(TAG, "onBackPressed");
         mSessionData.triggerAuthenticationDidRestart();
     }
 

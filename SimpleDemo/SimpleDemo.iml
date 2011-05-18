@@ -32,8 +32,8 @@
       <excludeFolder url="file://$MODULE_DIR$/libs" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="JREngage" />
     <orderEntry type="inheritedJdk" />
+    <orderEntry type="module" module-name="JREngage" />
   </component>
 </module>
 
