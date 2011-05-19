@@ -31,10 +31,7 @@ package com.janrain.android.engage.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -42,6 +39,7 @@ import android.util.Config;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -314,9 +312,12 @@ public class JRLandingActivity extends Activity {
         }
     }
 
-    private boolean prepareUserInterface() {
+    private void prepareUserInterface() {
         JRProvider currentlyAuthenticatingProvider =
                 mSessionData.getCurrentlyAuthenticatingProvider();
+        if (currentlyAuthenticatingProvider.getName().equals("openid")) {
+            mEditText.setInputType(EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_URI);
+        }
 
         mLayoutHelper.setHeaderText(getCustomTitle());
 
@@ -378,8 +379,6 @@ public class JRLandingActivity extends Activity {
 
             }
         }
-
-        return true;
     }
 
     private void configureButtonVisibility(boolean isSingleButtonLayout) {
@@ -388,9 +387,9 @@ public class JRLandingActivity extends Activity {
             // small button will always be visible... Clean this code up...
             mSwitchAccountButton.setVisibility(View.INVISIBLE);//(View.GONE);
             mSigninButton.setVisibility(View.VISIBLE);//(View.GONE);
-//            mBigSigninButton.setVisibility(View.VISIBLE);
+            //mBigSigninButton.setVisibility(View.VISIBLE);
         } else {
-//            mBigSigninButton.setVisibility(View.GONE);
+            //mBigSigninButton.setVisibility(View.GONE);
             mSwitchAccountButton.setVisibility(View.VISIBLE);
             mSigninButton.setVisibility(View.VISIBLE);
         }
