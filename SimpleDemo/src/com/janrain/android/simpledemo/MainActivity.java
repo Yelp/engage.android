@@ -189,6 +189,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
         new AsyncTask<Void, Void, Boolean>() {
             protected Boolean doInBackground(Void... v) {
+                Exception error;
                 try {
                     Log.d(TAG, "blogload");
                     URL u = (new URL(BLOGURL.toString()));
@@ -202,10 +203,10 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                     DocumentBuilder db = dbf.newDocumentBuilder();
                     Log.d(TAG, "blogload factory instantiated");
 
-                    //the following parse call takes ten seconds on a fast phone.
-                    //XMLPullParser is said to be a faster way to go.
-                    //sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
-                    //another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser
+                    // The following parse call takes ten seconds on a fast phone.
+                    // XMLPullParser is said to be a faster way to go.
+                    // sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
+                    // another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser
                     Document d = db.parse(is);
                     Log.d(TAG, "blogload parsed");
 
@@ -243,16 +244,17 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                     // inserts in place of <img ... > tags.
                     mDescriptionText = mDescriptionText.replaceAll("\ufffc", "");
 
-                    //no exceptions -> success
+                    // No exceptions -> success
                     return true;
                 }
-                catch (MalformedURLException e) { }
-                catch (IOException e) { }
-                catch (ParserConfigurationException e) { }
-                catch (SAXException e) { }
-                catch (NullPointerException e) { }
+                catch (MalformedURLException e) { error = e; }
+                catch (IOException e) { error = e; }
+                catch (ParserConfigurationException e) { error = e; }
+                catch (SAXException e) { error = e; }
+                catch (NullPointerException e) { error = e; }
 
-                //exceptions -> failure
+                // Exceptions -> failure
+                Log.e(TAG, "Error loading Janrain blog", error);
                 return false;
             }
 

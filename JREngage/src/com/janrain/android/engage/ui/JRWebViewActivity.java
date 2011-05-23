@@ -37,6 +37,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Config;
@@ -45,7 +46,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.webkit.*;
-import android.widget.Toast;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
@@ -72,6 +72,8 @@ public class JRWebViewActivity extends Activity {
 
     private static final String TAG = JRWebViewActivity.class.getSimpleName();
     private static final String RPX_RESULT_TAG = "rpx_result";
+    private JRProvider mProvider;
+    private WebSettings mWebViewSettings;
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -149,8 +151,9 @@ public class JRWebViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
 
-        // Request progress bar
+        // Request progress indicator
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        //requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.provider_webview);
 
         CookieSyncManager.createInstance(this);
@@ -158,29 +161,47 @@ public class JRWebViewActivity extends Activity {
         mSessionData = JRSessionData.getInstance();
         mLayoutHelper = new SharedLayoutHelper(this);
 
-//        for the case when this activity is relaunched after the process was killed
+        // For the case when this activity is relaunched after the process was killed
         if (mSessionData == null) {
             finish();
             return;
         }
 
         mWebView = (WebView)findViewById(R.id.webview);
-        WebSettings webSettings = mWebView.getSettings();
+        mWebViewSettings = mWebView.getSettings();
+        // Shim some information about the OS version into the WebView for use by hax ala Yahoo!
+        mWebView.addJavascriptInterface(new Object() {
+                    String androidIncremental() {
+                        return Build.VERSION.INCREMENTAL;
+                    }
 
-        //mWebView.clearView();
-        //mWebView.setInitialScale(100);
-        //webSettings.setUseWideViewPort(true);
-        //webSettings.setUseWideViewPort(false);
-        mWebView.setInitialScale(100);
+                    String androidRelease() {
+                        return Build.VERSION.RELEASE;
+                    }
 
-        webSettings.setBuiltInZoomControls(true);
-        webSettings.setLoadsImagesAutomatically(true);
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(false);
-        webSettings.setSupportZoom(true);
+                    int androidSdkInt() {
+                        return Build.VERSION.SDK_INT;
+                    }
+                }, "jrengage_mobile");
 
-        JRProvider provider = mSessionData.getCurrentlyAuthenticatingProvider();
-        mLayoutHelper.setHeaderText(provider.getFriendlyName());
+        // Dormant progress bar code.
+        //final Activity activity = this;
+        //mWebView.setWebChromeClient(new WebChromeClient() {
+        //   public void onProgressChanged(WebView view, int progress) {
+        //     // Activities and WebViews measure progress with different scales.
+        //     // The progress meter will automatically disappear when we reach 100%
+        //     activity.setProgress(progress * 100);
+        //   }
+        //});
+
+        mWebViewSettings.setBuiltInZoomControls(true);
+        mWebViewSettings.setLoadsImagesAutomatically(true);
+        mWebViewSettings.setJavaScriptEnabled(true);
+        mWebViewSettings.setJavaScriptCanOpenWindowsAutomatically(false);
+        mWebViewSettings.setSupportZoom(true);
+
+        mProvider = mSessionData.getCurrentlyAuthenticatingProvider();
+        mLayoutHelper.setHeaderText(mProvider.getFriendlyName());
 
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
@@ -188,7 +209,12 @@ public class JRWebViewActivity extends Activity {
         }
 
         mWebView.setWebViewClient(mWebviewClient);
-        mWebView.setDownloadListener(mWebviewDownloadListener);
+        mWebView.setDownloadListener(mWebViewDownloadListener);
+
+        if (mProvider.getName().equals("live_id")) {
+            // Windows Live hax
+            mWebViewSettings.setUserAgentString("Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; en-US; rv:1.9.2.4) Gecko/20100527 Firefox/3.6.4 GTB7.1");
+        }
 
         URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
         mWebView.loadUrl(startUrl.toString());
@@ -312,7 +338,7 @@ public class JRWebViewActivity extends Activity {
         // TODO:  is windows live hack necessary here, as it is on iPhone?
     }
 
-    DownloadListener mWebviewDownloadListener = new DownloadListener() {
+    DownloadListener mWebViewDownloadListener = new DownloadListener() {
         /**
          * Invoked by WebKit when there is something to be downloaded that it does not
          * typically handle (e.g. result of post, mobile endpoint url results, etc).
@@ -341,8 +367,6 @@ public class JRWebViewActivity extends Activity {
                 Log.d(TAG, "[onPageStarted] url: " + url);
             }
 
-//            mLayoutHelper.showProgressDialog();
-
             /*
              * Check for mobile endpoint URL.
              */
@@ -362,14 +386,21 @@ public class JRWebViewActivity extends Activity {
                 Log.d(TAG, "[onPageFinished] url: " + url);
             }
 
-//
-//            if (!mIsMobileEndpointUrlLoading) {
-//                mLayoutHelper.dismissProgressDialog();
-//            }
-
             setProgressBarIndeterminateVisibility(false);
 
+            if (mProvider.getName().equals("yahoo")) {
+                // Yahoo hax
+                Log.w(TAG, "alert?");
+                //mWebView.loadUrl("javascript:document.getElementById('username').value='bolgona';");
+                mWebView.loadUrl("javascript:document.getElementById('yregtgen').setAttribute('style', 'overflow-x:visible;overflow-y:visible;');");
+                mWebView.invokeZoomPicker();
+            } else if (mProvider.getName().equals("live_id")) {
+                // Windows hax
+                mWebView.invokeZoomPicker();
+            }
+
             super.onPageFinished(view, url);
+            //Log.w(TAG, "Scale: " + mWebView.getScale());
         }
 
         @Override
@@ -402,30 +433,38 @@ public class JRWebViewActivity extends Activity {
                 JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
                 final String result = resultDictionary.getAsString("stat");
                 if ("ok".equals(result)) {
-                    // back button?
+                    // Back should be disabled at this point because the progress modal dialog is
+                    // being displayed.
                     mSessionData.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
                 } else {
-                    //todo for OpenID errors we're just firing a dialog and then calling
-                    //finish when it's dismissed in order to get back to the landing page
-                    //instead of calling triggerAuthenticationDidRestart because that would
-                    //return us to the provider selection activity, when the user probably just
-                    //wants to correct a minor OpenID typo.
                     final String error = resultDictionary.getAsString("error");
                     String alertTitle, alertMessage, logMessage;
+
+                    // for OpenID errors we're just firing a dialog and then calling
+                    // finish when it's dismissed in order to get back to the landing page
+                    // instead of calling triggerAuthenticationDidRestart because that would
+                    // return us to the provider selection activity, when the user probably just
+                    // wants to correct a minor OpenID typo.
+                    // TODO there are inconsistencies in the managed activity stack in the UI
+                    // maestro caused by this, but they're benign.  Verify this harmlessness.
                     if ("Discovery failed for the OpenID you entered".equals(error) ||
                             "Your OpenID must be a URL".equals(error)) {
                         alertTitle = "Invalid Input";
-                        alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
-                                ? String.format("The %s you entered was not valid. Please try again.",
-                                    mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
-                                : "There was a problem authenticating with this provider. Please try again.";
+                        if (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput()) {
+                            String shortText = mSessionData.getCurrentlyAuthenticatingProvider()
+                                    .getShortText();
+                            alertMessage = "The " + shortText +
+                                    " you entered was not valid. Please try again.";
+                        } else {
+                            alertMessage = "There was a problem authenticating with this provider. Please try again.";
+                        }
+
                         logMessage = "Discovery failed for the OpenID you entered: ";
 
                         Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
 
                         mIsFinishPending = true;
                         showAlertDialog(alertTitle, alertMessage);
-//                            mSessionData.triggerAuthenticationDidRestart();
                     } else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
                         alertTitle = "Invalid Input";
                         alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
@@ -438,21 +477,12 @@ public class JRWebViewActivity extends Activity {
 
                         mIsFinishPending = true;
                         showAlertDialog(alertTitle, alertMessage);
-//                            mSessionData.triggerAuthenticationDidRestart();
                     } else if ("Please enter your OpenID".equals(error)) {
-                        //todo what case is causing this?
-                        //entering a ~blank OpenID URL
-                        //todo verify
-//                            JREngageError err = new JREngageError(
-//                                    "Authentication failed: " + payload,
-//                                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-//                                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
+                        // Caused by entering a ~blank OpenID URL
 
                         mIsFinishPending = true;
                         showAlertDialog("OpenID Error",
                                 "The URL you entered does not appear to be an OpenID");
-
-//                            mSessionData.triggerAuthenticationDidRestart();
                     } else {
                         Log.e(TAG, "unrecognized error");
                         JREngageError err = new JREngageError(
@@ -473,7 +503,10 @@ public class JRWebViewActivity extends Activity {
             }
         }
 
-        public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object userdata) {
+        public void connectionDidFinishLoading(HttpResponseHeaders headers,
+                                               byte[] payload,
+                                               String requestUrl,
+                                               Object userdata) {
             Log.d(TAG, "[connectionDidFinishLoading-2] userdata: " + userdata + " | payload: "
                     + StringUtils.decodeUtf8(payload, null));
             // Not used
