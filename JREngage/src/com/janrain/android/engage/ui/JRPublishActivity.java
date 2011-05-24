@@ -528,6 +528,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     // UI event listeners
 
     public void onBackPressed() {
+        Log.d(TAG, "onBackPressed");
         mSessionData.triggerPublishingDidComplete();
     }
 

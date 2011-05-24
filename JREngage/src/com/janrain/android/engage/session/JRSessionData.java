@@ -141,6 +141,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	private JRDictionary mAuthenticatedUsersByProvider;
 	
 	private String mSavedConfigurationBlock = "";
+    private String mSavedEtag; // for the saved configuration block
 	private String mNewEtag;
     //private String mGitCommit;
 
@@ -376,6 +377,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         if (!mDialogIsShowing & !mSavedConfigurationBlock.equals("")) {
             String s = mSavedConfigurationBlock;
             mSavedConfigurationBlock = "";
+            mNewEtag = mSavedEtag;
             mError = finishGetConfiguration(s);
         }
     }
@@ -766,7 +768,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         if (!mOldEtag.equals(etag)) {
-            mNewEtag = etag;  //todo verify that this is written out
 
             /* We can only update all of our data if the UI isn't currently using that
              * information.  Otherwise, the library may crash/behave inconsistently.  If a
@@ -776,15 +777,17 @@ public class JRSessionData implements JRConnectionManagerDelegate {
              * The dialogs won't try and do anything until we're done updating the lists. */
             if (!mDialogIsShowing ||
                     (ListUtils.isEmpty(mBasicProviders) && ListUtils.isEmpty(mSocialProviders))) {
+                mNewEtag = etag;
                 return finishGetConfiguration(dataStr);
             }
 
             /* Otherwise, we have to save all this information for later.  The
              * UserInterfaceMaestro sends a signal to sessionData when the dialog closes (by
-             * setting the boolean dialogIsShowing to "NO". In the setter function, sessionData
+             * setting the boolean dialogIsShowing to false. In the setter function, sessionData
              * checks to see if there's anything stored in the savedConfigurationBlock, and
              * updates it then. */
             mSavedConfigurationBlock = dataStr;
+            mSavedEtag = etag;
         }
 
         mGetConfigDone = true;

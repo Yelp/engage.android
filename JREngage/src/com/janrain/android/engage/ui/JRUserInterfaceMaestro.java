@@ -169,6 +169,7 @@ public class JRUserInterfaceMaestro {
 
     public void authenticationCanceled() {
         popAll();
+        mSessionData.setDialogIsShowing(false);
     }
 
     public void setUpSocialPublishing() {

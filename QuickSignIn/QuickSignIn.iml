@@ -28,10 +28,9 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" />
     </content>
-    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Android 2.1 Platform" level="application" />
     <orderEntry type="module" module-name="JREngage" />
+    <orderEntry type="inheritedJdk" />
   </component>
 </module>
 

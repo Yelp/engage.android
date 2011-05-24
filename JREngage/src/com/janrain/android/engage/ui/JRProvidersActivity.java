@@ -281,6 +281,7 @@ public class JRProvidersActivity extends ListActivity {
     }
 
     public void onBackPressed() {
+        Log.d(TAG, "onBackPressed");
         mSessionData.triggerAuthenticationDidCancel();
     }
 

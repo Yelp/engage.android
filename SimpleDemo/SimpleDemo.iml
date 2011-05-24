@@ -31,10 +31,9 @@
       <excludeFolder url="file://$MODULE_DIR$/bin" />
       <excludeFolder url="file://$MODULE_DIR$/libs" />
     </content>
-    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="module" module-name="JREngage" />
-    <orderEntry type="library" scope="PROVIDED" name="Android 2.1 Platform" level="application" />
   </component>
 </module>
 
