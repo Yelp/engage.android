@@ -38,7 +38,9 @@ package com.janrain.android.engage;
 public enum JREnvironment {
     PRODUCTION(R.string.server_url_production),
     STAGING(R.string.server_url_staging),
-    LOCAL(R.string.server_url_local);
+    LILLI(R.string.server_url_lilli),
+    NATHAN(R.string.server_url_nathan);
+
 
     private int mServerUrlResourceId;
 

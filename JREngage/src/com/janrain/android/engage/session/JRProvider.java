@@ -54,6 +54,7 @@ import java.util.*;
  *
  * @class JRProvider
  **/
+@SuppressWarnings({"unchecked"})
 public class JRProvider implements Serializable {
 	
     // ------------------------------------------------------------------------
@@ -72,6 +73,9 @@ public class JRProvider implements Serializable {
 	public static final String KEY_OPENID_IDENTIFIER = "openid_identifier";
 	public static final String KEY_URL = "url";
 	public static final String KEY_REQUIRES_INPUT = "requires_input";
+    public static final String KEY_SOCIAL_SHARING_PROPERTIES = "social_sharing_properties";
+    public static final String KEY_COOKIE_DOMAINS = "cookie_domains";
+    public static final String KEY_ANDROID_WEBVIEW_OPTIONS = "android_webview_options";
 
     private static final String TAG = JRProvider.class.getSimpleName();
     
@@ -163,6 +167,7 @@ public class JRProvider implements Serializable {
     private String mStartAuthenticationUrl;
     private List<String> mCookieDomains;
     private JRDictionary mSocialSharingProperties;
+    private JRDictionary mWebViewOptions;
 
     private transient boolean mForceReauth;   // <- these three user parameters get preserved
     private transient String mUserInput;      // <- across cached provider reloads
@@ -185,8 +190,9 @@ public class JRProvider implements Serializable {
         mOpenIdentifier = dictionary.getAsString(KEY_OPENID_IDENTIFIER);
         mStartAuthenticationUrl = dictionary.getAsString(KEY_URL);
         mRequiresInput = dictionary.getAsBoolean(KEY_REQUIRES_INPUT);
-        mCookieDomains = dictionary.getAsListOfStrings("cookie_domains", true);
-        mSocialSharingProperties = dictionary.getAsDictionary("social_sharing_properties");
+        mCookieDomains = dictionary.getAsListOfStrings(KEY_COOKIE_DOMAINS, true);
+        mSocialSharingProperties = dictionary.getAsDictionary(KEY_SOCIAL_SHARING_PROPERTIES);
+        mWebViewOptions = dictionary.getAsDictionary(KEY_ANDROID_WEBVIEW_OPTIONS, true);
 
 //        if (mCookieDomains.size() == 0) {
 //            mCookieDomains.add(mName + ".com");
@@ -249,6 +255,10 @@ public class JRProvider implements Serializable {
 
     public JRDictionary getSocialSharingProperties() { /* (readonly) */
         return mSocialSharingProperties;
+    }
+
+    public JRDictionary getWebViewOptions() {
+        return mWebViewOptions;
     }
 
     public boolean getForceReauth() {
@@ -365,7 +375,6 @@ public class JRProvider implements Serializable {
             else mCurrentlyDownloading = true;
         }
 
-        //todo verify the naming of these downloaded icons
         final String[] iconFileNames = {
             "icon_" + mName + ".png",
             "icon_bw_" + mName + ".png",

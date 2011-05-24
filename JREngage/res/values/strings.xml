@@ -2,10 +2,11 @@
 <resources>
     <!-- This version number is used to "validate" serialized objects before loading them from
          disk. -->
-    <string name="jr_engage_version">v1.1.5</string>
+    <string name="jr_engage_version">v1.1.7</string>
 
     <!-- - Server URL strings for each of the three typical environments. -->
-    <string name="server_url_local">http://lilli.janrain.com:8080</string>
+    <string name="server_url_lilli">http://lilli.janrain.com:8080</string>
+    <string name="server_url_nathan">http://nathan-dev.janrain.com:8080</string>
     <string name="server_url_staging">https://rpxstaging.com</string>
     <string name="server_url_production">https://rpxnow.com</string>
 

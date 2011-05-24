@@ -345,7 +345,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         List<JRProvider> socialProviders = mSessionData.getSocialProviders();
         if (socialProviders == null || socialProviders.size() == 0) {
             JREngageError err = new JREngageError(
-                    "Cannot load the Publish Activity, no social providers are configured.",
+                    "Cannot load the Publish Activity, no social sharing providers are configured.",
                     JREngageError.ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
                     JREngageError.ErrorType.CONFIGURATION_INFORMATION_MISSING);
             mSessionData.triggerPublishingDialogDidFail(err);
