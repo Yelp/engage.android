@@ -36,7 +36,7 @@ import com.janrain.android.engage.types.JRDictionary;
 /**
  * @brief
  * The interface implemented by an object in order to receive notifications when a user
- * authenticates, or publishes an activity to their social networks.
+ * authenticates or publishes an activity to their social networks.
  *
  * The methods of this interface are invoked upon the success or failure of the Janrain Engage for
  * Android Activities. They provide a conduit for the authenticated user's profile data, and if
@@ -47,7 +47,7 @@ import com.janrain.android.engage.types.JRDictionary;
 public interface JREngageDelegate {
 	
 /**
- * \name Configuration
+ * @name Configuration
  * Messages sent by JREngage during dialog launch/configuration
  **/
 /*@{*/
@@ -75,7 +75,7 @@ public interface JREngageDelegate {
     
 
 /**
- * \name Authentication
+ * @name Authentication
  * Messages sent  by JREngage during authentication
  **/
 /*@{*/
@@ -202,7 +202,7 @@ public interface JREngageDelegate {
 /*@}*/
 
 /**
- * \name SocialPublishing
+ * @name SocialPublishing
  * Messages sent by JREngage during social publishing
  **/
 /*@{*/

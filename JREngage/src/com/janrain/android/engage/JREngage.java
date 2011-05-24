@@ -44,13 +44,12 @@ package com.janrain.android.engage;
  * Janrain Engage for Android SDK</a> makes it easy to include third party authentication and
  * social publishing in your Android app.  This library includes the same key
  * features as Janrain Engage for the web, as well as additional features created specifically for
- * the mobile
- * platform. With as few as three lines of code, you can authenticate your users with their
- * accounts on Google, Yahoo!, Facebook, etc., and they can immediately publish their
+ * the mobile platform. With as few as three lines of code, you can authenticate your users with 
+ * their accounts on Google, Yahoo!, Facebook, etc., and they can immediately publish their
  * activities to multiple social networks, including Facebook, Twitter, LinkedIn, MySpace,
  * and Yahoo, through one simple interface.
  *
- * Beyond authentication and social sharing, the latest release of the Engage for iPhone SDK
+ * Beyond authentication and social sharing, the latest release of the Engage for Android SDK
  * now allows mobile apps to:
  *   - Share content, activities, game scores or invitations via Email or SMS
  *   - Track popularity and click through rates on various links included in the
@@ -63,10 +62,12 @@ package com.janrain.android.engage;
  * Janrain Engage application</a>,
  * which you can do on <a href="http://rpxnow.com">http://rpxnow.com</a>
  *
- * For an overview of how the library works and how you can take advantage of the library's features,
- * please see the <a href="http://rpxnow.com/docs/android#user_experience">"Overview"</a> section of our documentation.
+ * For an overview of how the library works and how you can take advantage of the library's 
+ * features, please see the <a href="http://rpxnow.com/docs/android#user_experience">"Overview"</a> 
+ * section of our documentation.
  *
- * To begin using the SDK, please see the <a href="http://rpxnow.com/docs/android#quick">"Quick Start Guide"</a>.
+ * To begin using the SDK, please see the 
+ * <a href="http://rpxnow.com/docs/android#quick">"Quick Start Guide"</a>.
  *
  * For more detailed documentation of the library's API, you can use
  * the <a href="http://rpxnow.com/docs/android_api/annotated.html">"JREngage API"</a> documentation.
@@ -109,7 +110,7 @@ package com.janrain.android.engage;
  * @note As your Engage application is limited by the number of providers it may use,
  * you may only see a subset of this list.
  *
- * @section socialProviders List of Social Providers
+ * @section  socialProviders List of Social Providers
  *
  * Here is a list of possible strings that the argument provider can be
  * when used in the social publishing methods:
@@ -198,8 +199,7 @@ public class JREngage {
      *
      * @return
      * 		The shared instance of the JREngage object initialized with the given
-     *   	appId, tokenUrl, and delegate.  If the given
-     *   	appId is null, returns null
+     *   	appId, tokenUrl, and delegate.  If the given appId is null, returns null
      **/
     public static JREngage initInstance(Context context,
                                         String appId,
@@ -648,8 +648,6 @@ public class JREngage {
      *
      * @param activity
      *   The activity you wish to share
-     *
-     * @sa JRActivityObject
      **/
     public void showSocialPublishingDialog(JRActivityObject activity) {
         if (Config.LOGD) {
