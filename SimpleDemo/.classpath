@@ -3,8 +3,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/JREngage"/>
 	<classpathentry kind="lib" path="/JREngage/libs/jackson-core-lgpl-1.6.4.jar"/>
 	<classpathentry kind="lib" path="/JREngage/libs/jackson-mapper-lgpl-1.6.4.jar"/>
+	<classpathentry kind="src" path="JREngage_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
