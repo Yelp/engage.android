@@ -58,6 +58,7 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.StringUtils;
 
 import java.net.URL;
+import java.util.List;
 
 /**
  * @internal
@@ -211,10 +212,8 @@ public class JRWebViewActivity extends Activity {
         mWebView.setWebViewClient(mWebviewClient);
         mWebView.setDownloadListener(mWebViewDownloadListener);
 
-        if (mProvider.getName().equals("live_id")) {
-            // Windows Live hax
-            mWebViewSettings.setUserAgentString("Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; en-US; rv:1.9.2.4) Gecko/20100527 Firefox/3.6.4 GTB7.1");
-        }
+        String customUa = mProvider.getWebViewOptions().getAsString("user_agent");
+        if (customUa != null) mWebViewSettings.setUserAgentString(customUa);
 
         URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
         mWebView.loadUrl(startUrl.toString());
@@ -388,19 +387,15 @@ public class JRWebViewActivity extends Activity {
 
             setProgressBarIndeterminateVisibility(false);
 
-            if (mProvider.getName().equals("yahoo")) {
-                // Yahoo hax
-                Log.w(TAG, "alert?");
-                //mWebView.loadUrl("javascript:document.getElementById('username').value='bolgona';");
-                mWebView.loadUrl("javascript:document.getElementById('yregtgen').setAttribute('style', 'overflow-x:visible;overflow-y:visible;');");
-                mWebView.invokeZoomPicker();
-            } else if (mProvider.getName().equals("live_id")) {
-                // Windows hax
-                mWebView.invokeZoomPicker();
-            }
+            List<String> jsInjects =
+                    mProvider.getWebViewOptions().getAsListOfStrings("js_injections", true);
+            for (String i : jsInjects) mWebView.loadUrl("javascript:" + i);
+
+            boolean showZoomControl =
+                    mProvider.getWebViewOptions().getAsBoolean("show_zoom_control");
+            if (showZoomControl) mWebView.invokeZoomPicker();
 
             super.onPageFinished(view, url);
-            //Log.w(TAG, "Scale: " + mWebView.getScale());
         }
 
         @Override
@@ -411,7 +406,7 @@ public class JRWebViewActivity extends Activity {
 
             setProgressBarIndeterminateVisibility(false);
 
-//            mIsFinishPending = true;
+            //mIsFinishPending = true;
             showAlertDialog("Log In Failed", "An error occurred while attempting to sign in.");
 
             JREngageError err = new JREngageError(

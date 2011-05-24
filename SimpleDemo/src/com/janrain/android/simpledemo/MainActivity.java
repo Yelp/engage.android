@@ -126,6 +126,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
         String engageAppId = readAsset("app_id.txt").trim();
         String engageTokenUrl = readAsset("token_url.txt").trim();
+        engageTokenUrl = "http://nathan-mac.janrain.com:8080/login";
 
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, this);
 
@@ -331,16 +332,11 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     }
 
     public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
-                                                 String tokenUrlPayload,
-                                                 String provider) {
-        Toast.makeText(this, "Authentication did reach token URL", Toast.LENGTH_LONG).show();
-    }
-
-    public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
                                                  HttpResponseHeaders response,
                                                  String tokenUrlPayload,
                                                  String provider) {
-        Toast.makeText(this, "Authentication did reach token URL", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Authentication did reach token URL: " + tokenUrlPayload,
+                Toast.LENGTH_LONG).show();
     }
 
     public void jrAuthenticationDidNotComplete() {
