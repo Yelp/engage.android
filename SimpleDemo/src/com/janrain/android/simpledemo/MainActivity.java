@@ -57,10 +57,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MainActivity extends Activity implements View.OnClickListener, JREngageDelegate {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -145,7 +141,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
             // Build an ~empty Activity
             buildActivity();
 
-            asyncLoadJanrainBlog();
+            //asyncLoadJanrainBlog();
         }
     }
 

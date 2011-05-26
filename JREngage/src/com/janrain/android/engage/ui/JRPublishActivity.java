@@ -983,8 +983,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void configureViewElementsBasedOnProvider() {
-        // TODO: make this match the docs for the iphone activity object:
-        // https://rpxnow.com/docs/iphone_api/interface_j_r_activity_object.html#a2e4ff78f83d0f353f8e0c17ed48ce0ab
         JRDictionary socialSharingProperties = mSelectedProvider.getSocialSharingProperties();
 
         if (socialSharingProperties.getAsBoolean("content_replaces_action"))
@@ -1284,5 +1282,4 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             }
         };
     }
-
 }

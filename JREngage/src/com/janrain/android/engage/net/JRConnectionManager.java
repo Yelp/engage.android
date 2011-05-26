@@ -266,7 +266,9 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 
 	public void onResponseReceived(AsyncHttpResponseHolder response) {
         String requestUrl = response.getUrl();
-        ConnectionData connectionData = mConnectionBuffers.get(requestUrl);
+
+        // map.remove instead of map.get so that we don't leak memory.
+        ConnectionData connectionData = mConnectionBuffers.remove(requestUrl);
         JRConnectionManagerDelegate delegate = connectionData.mDelegate;
 
         if (response.hasException()) {
@@ -291,11 +293,4 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 
         }
 	}
-
-	/*
-	private boolean thisIsThatStupidWindowsLiveResponse(HttpResponseHeaders headers) {
-		// TODO:  need to see how to get the redirect URL (if possible) into the headers.
-		return false;
-	}
-	*/
 }

@@ -190,8 +190,6 @@ public class JRProvidersActivity extends ListActivity {
     // ------------------------------------------------------------------------
 
     public JRProvidersActivity() {
-        mTimerCount = 0;
-        mTimer = new Timer();
     }
 
     // ------------------------------------------------------------------------
@@ -210,6 +208,8 @@ public class JRProvidersActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.provider_listview);
 
+        mTimerCount = 0;
+        mTimer = new Timer();
         mLayoutHelper = new SharedLayoutHelper(this);
 
         mSessionData = JRSessionData.getInstance();
@@ -291,6 +291,8 @@ public class JRProvidersActivity extends ListActivity {
 
         if (mFinishReceiver != null)
         unregisterReceiver(mFinishReceiver);
+        
+        mTimer.cancel();
     }
 
     // This test code adds a context menu to the providers.
