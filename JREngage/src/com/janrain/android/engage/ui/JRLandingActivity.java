@@ -206,22 +206,22 @@ public class JRLandingActivity extends Activity {
             return;
         }
 
-        setContentView(R.layout.provider_landing);
+        setContentView(R.layout.jr_provider_landing);
         mLayoutHelper = new SharedLayoutHelper(this);
 
-        mImageView = (ImageView)findViewById(R.id.landing_logo);
-        mEditText = (EditText)findViewById(R.id.landing_edit);
+        mImageView = (ImageView)findViewById(R.id.jr_landing_logo);
+        mEditText = (EditText)findViewById(R.id.jr_landing_edit);
 
-        mWelcomeLabel = (TextView)findViewById(R.id.landing_welcome_label);
+        mWelcomeLabel = (TextView)findViewById(R.id.jr_landing_welcome_label);
 
         ButtonEventListener bel = new ButtonEventListener();
 
-        mSwitchAccountButton = (Button)findViewById(R.id.landing_switch_account_button);
+        mSwitchAccountButton = (Button)findViewById(R.id.jr_landing_switch_account_button);
         mSwitchAccountButton.getBackground().setColorFilter(0xFFAAAAAA, PorterDuff.Mode.MULTIPLY);
         mSwitchAccountButton.setOnClickListener(bel);
         mSwitchAccountButton.setOnFocusChangeListener(bel);
         mSwitchAccountButton.setOnTouchListener(bel);
-        mSigninButton = (Button)findViewById(R.id.landing_small_signin_button);
+        mSigninButton = (Button)findViewById(R.id.jr_landing_small_signin_button);
         mSigninButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
         mSigninButton.setOnClickListener(bel);
         mSigninButton.setOnFocusChangeListener(bel);
@@ -399,7 +399,7 @@ public class JRLandingActivity extends Activity {
         JRProvider provider = mSessionData.getCurrentlyAuthenticatingProvider();
         return provider.requiresInput()
                 ? provider.getShortText()
-                : getString(R.string.landing_default_custom_title);
+                : getString(R.string.jr_landing_default_custom_title);
     }
 
 //    private void showHideKeyboard(boolean show) {

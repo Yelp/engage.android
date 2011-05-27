@@ -49,7 +49,7 @@ public class JRAuthenticatedUser implements Serializable {
     // STATIC FIELDS
     // ------------------------------------------------------------------------
 
-    public static final String KEY_AUTH_INFO = "auth_info";
+    //public static final String KEY_AUTH_INFO = "auth_info";
 	public static final String KEY_DEVICE_TOKEN = "device_token";
     public static final String KEY_PHOTO = "photo";
     public static final String KEY_PREFERRED_USERNAME = "preferred_username";

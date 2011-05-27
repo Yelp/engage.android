@@ -7,7 +7,7 @@
     <!--<color name="bg_clr_linkedin">#33005A88</color>-->
     <!--<color name="bg_clr_myspace">#331B3E8F</color>-->
     <!--<color name="bg_clr_google">#333F65DB</color>-->
-    <color name="JANRAIN_BLUE_20PERCENT">#33074764</color>
-    <color name="TEXT_COLOR_HINT">#ccc</color>
+    <color name="jr_JANRAIN_BLUE_20PERCENT">#33074764</color>
+    <color name="jr_TEXT_COLOR_HINT">#ccc</color>
     <!--<color name="JANRAIN_BLUE_100PERCENT">#FF074764</color>-->
 </resources>

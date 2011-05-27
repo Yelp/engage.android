@@ -13,7 +13,7 @@
 
     <!-- Web view -->
     <WebView
-        android:id="@+id/webview"
+        android:id="@+id/jr_webview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/jr_tagline"
@@ -23,6 +23,6 @@
 
 
     <!-- Footer (powered by) area -->
-    <include layout="@layout/shared_footer" />
+    <include layout="@layout/jr_shared_footer" />
 
 </RelativeLayout>

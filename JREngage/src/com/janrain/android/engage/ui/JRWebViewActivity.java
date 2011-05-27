@@ -155,7 +155,7 @@ public class JRWebViewActivity extends Activity {
         // Request progress indicator
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         //requestWindowFeature(Window.FEATURE_PROGRESS);
-        setContentView(R.layout.provider_webview);
+        setContentView(R.layout.jr_provider_webview);
 
         CookieSyncManager.createInstance(this);
         
@@ -168,7 +168,7 @@ public class JRWebViewActivity extends Activity {
             return;
         }
 
-        mWebView = (WebView)findViewById(R.id.webview);
+        mWebView = (WebView)findViewById(R.id.jr_webview);
         mWebViewSettings = mWebView.getSettings();
         // Shim some information about the OS version into the WebView for use by hax ala Yahoo!
         mWebView.addJavascriptInterface(new Object() {

@@ -9,15 +9,15 @@
     android:layout_width="fill_parent"
     android:layout_height="30dip"
     android:layout_alignParentBottom="true"
-    android:background="@drawable/bg_provider_footer"
+    android:background="@drawable/jr_bg_provider_footer"
     >
 
     <TextView
-        android:id="@+id/footer_text"
+        android:id="@+id/jr_footer_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        android:text="@string/powered_by"
+        android:text="@string/jr_powered_by"
         android:textColor="#ffffff"
         android:textStyle="normal"
         android:gravity="right|center_vertical"

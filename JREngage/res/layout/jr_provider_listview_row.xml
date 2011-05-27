@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/provider_row_layout"
+        android:id="@+id/jr_provider_row_layout"
         android:layout_width="fill_parent"
         android:layout_height="?android:attr/listPreferredItemHeight"
         android:padding="6dip"
         >
 
     <ImageView
-        android:id="@+id/row_provider_icon"
+        android:id="@+id/jr_row_provider_icon"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="10dip"
-        android:src="@drawable/icon_unknown"
+        android:src="@drawable/jr_icon_unknown"
         />
 
     <TextView
-        android:id="@+id/row_provider_label"
+        android:id="@+id/jr_row_provider_label"
         android:layout_height="fill_parent"
         android:layout_width="wrap_content"
-        android:layout_toRightOf="@id/row_provider_icon"
+        android:layout_toRightOf="@id/jr_row_provider_icon"
         android:layout_alignWithParentIfMissing="true"
         android:layout_centerVertical="true"
         android:gravity="left|center_vertical"
         android:singleLine="true"
-        android:text="@string/provider_unknown"
+        android:text="@string/jr_provider_unknown"
         android:textColor="#333333"
         android:textSize="20dip"
         android:padding="6dip"

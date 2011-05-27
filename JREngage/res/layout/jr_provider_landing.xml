@@ -18,7 +18,7 @@
        - TODO:  Layout is filling vertically and not centered in landscape mode.
       -->
     <LinearLayout
-        android:id="@+id/landing_dialog"
+        android:id="@+id/jr_landing_dialog"
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         <!--android:background="@drawable/shape_landing_box"-->
         
         <ImageView
-            android:id="@+id/landing_logo"
+            android:id="@+id/jr_landing_logo"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -46,7 +46,7 @@
             <!--android:src="@drawable/logo_aol_280x65"-->
 
         <EditText
-            android:id="@+id/landing_edit"
+            android:id="@+id/jr_landing_edit"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -55,11 +55,11 @@
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="4dp"
             android:singleLine="true"
-            android:textColorHint="@color/TEXT_COLOR_HINT"
+            android:textColorHint="@color/jr_TEXT_COLOR_HINT"
             />
 
         <TextView
-            android:id="@+id/landing_welcome_label"
+            android:id="@+id/jr_landing_welcome_label"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -72,7 +72,7 @@
             />
 
         <LinearLayout
-            android:id="@+id/landing_buttons"
+            android:id="@+id/jr_landing_buttons"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -81,7 +81,7 @@
             <!--android:layout_gravity="center_horizontal"-->
 
             <Button
-                android:id="@+id/landing_switch_account_button"
+                android:id="@+id/jr_landing_switch_account_button"
                 android:visibility="invisible"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
                 android:layout_marginRight="2dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="4dp"
-                android:text="@string/landing_switch_account_button_text"
+                android:text="@string/jr_landing_switch_account_button_text"
                 android:textColor="#ffffffff"
                 android:textStyle="bold"
                 android:layout_weight="1"
@@ -99,7 +99,7 @@
                 <!--android:background="@drawable/sel_black_135x40"-->
 
             <Button
-                android:id="@+id/landing_big_signin_button"
+                android:id="@+id/jr_landing_big_signin_button"
                 android:visibility="gone"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
                 android:layout_marginRight="4dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="4dp"
-                android:text="@string/landing_signin_button_text"
+                android:text="@string/jr_landing_signin_button_text"
                 android:textColor="#ffffffff"
                 android:textStyle="bold"
                 android:layout_weight="0"
@@ -116,7 +116,7 @@
                 <!--android:background="@drawable/sel_iosblue_280x40"-->
 
             <Button
-                android:id="@+id/landing_small_signin_button"
+                android:id="@+id/jr_landing_small_signin_button"
                 android:visibility="visible"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -125,7 +125,7 @@
                 android:layout_marginRight="4dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="2dp"
-                android:text="@string/landing_signin_button_text"
+                android:text="@string/jr_landing_signin_button_text"
                 android:textColor="#ffffffff"
                 android:textStyle="bold"
                 android:layout_weight="1"
@@ -137,6 +137,6 @@
     </LinearLayout>
 
     <!-- Footer (powered by) area -->
-    <include layout="@layout/shared_footer" />
+    <include layout="@layout/jr_shared_footer" />
 
 </RelativeLayout>
