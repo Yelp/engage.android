@@ -35,7 +35,7 @@
                 reason-->
 
             <RelativeLayout
-                android:id="@+id/tab_email_sms_content"
+                android:id="@+id/jr_tab_email_sms_content"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:padding="5dp"
@@ -43,7 +43,7 @@
                 >
 
                 <EditText
-                    android:id="@+id/email_sms_edit_comment"
+                    android:id="@+id/jr_email_sms_edit_comment"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dip"
@@ -51,17 +51,17 @@
                     android:layout_marginLeft="4dip"
                     android:layout_alignParentTop="true"
                     android:gravity="top|left"
-                    android:hint="@string/please_enter_text"
-                    android:textColorHint="@color/TEXT_COLOR_HINT"
+                    android:hint="@string/jr_please_enter_text"
+                    android:textColorHint="@color/jr_TEXT_COLOR_HINT"
                     android:lines="4"
                     android:inputType="textMultiLine|textAutoComplete"
                     />
 
                 <LinearLayout
-                    android:id="@+id/email_sms_button_layout"
+                    android:id="@+id/jr_email_sms_button_layout"
                     android:layout_height="wrap_content"
                     android:layout_width="fill_parent"
-                    android:background="@color/JANRAIN_BLUE_20PERCENT"
+                    android:background="@color/jr_JANRAIN_BLUE_20PERCENT"
                     android:layout_alignParentBottom="true"
                     android:orientation="vertical"
                     android:gravity="top|center_horizontal"
@@ -73,18 +73,18 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/triangle_icon"
+                        android:src="@drawable/jr_triangle_icon"
                         />
 
                     <LinearLayout
-                        android:id="@+id/email_sms_button_container"
+                        android:id="@+id/jr_email_sms_button_container"
                         android:layout_height="wrap_content"
                         android:layout_width="fill_parent"
                         android:orientation="vertical"
                         >
 
                         <Button
-                            android:id="@+id/email_button"
+                            android:id="@+id/jr_email_button"
                             android:layout_height="wrap_content"
                             android:layout_width="fill_parent"
                             android:text="Email"
@@ -99,10 +99,10 @@
                         <!--android:layout_marginLeft="10dp"-->
 
                         <Button
-                            android:id="@+id/sms_button"
+                            android:id="@+id/jr_sms_button"
                             android:layout_height="wrap_content"
                             android:layout_width="fill_parent"
-                            android:layout_above="@id/email_button"
+                            android:layout_above="@id/jr_email_button"
                             android:text="SMS"
                             android:gravity="center_horizontal|center_vertical"
                             android:textSize="20dip"
@@ -119,14 +119,14 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/email_sms_powered_by_text"
+                    android:id="@+id/jr_email_sms_powered_by_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_above="@id/email_sms_button_layout"
+                    android:layout_above="@id/jr_email_sms_button_layout"
                     android:layout_marginBottom="4dip"
                     android:singleLine="true"
-                    android:text="@string/powered_by"
+                    android:text="@string/jr_powered_by"
                     android:textColor="#ff666666"
                     android:textStyle="normal"
                     android:paddingRight="6dip"
@@ -136,7 +136,7 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/tab_view_content"
+                android:id="@+id/jr_tab_view_content"
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -144,28 +144,28 @@
                 >
 
                 <EditText
-                    android:id="@+id/edit_comment"
+                    android:id="@+id/jr_edit_comment"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dip"
                     android:layout_marginRight="4dip"
                     android:layout_marginLeft="4dip"
                     android:gravity="top|left"
-                    android:hint="@string/please_enter_text"
-                    android:textColorHint="@color/TEXT_COLOR_HINT"
+                    android:hint="@string/jr_please_enter_text"
+                    android:textColorHint="@color/jr_TEXT_COLOR_HINT"
                     android:lines="3"
                     android:inputType="textMultiLine|textAutoComplete"
                     />
 
                 <TextView
-                    android:id="@+id/character_count_view"
+                    android:id="@+id/jr_character_count_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/edit_comment"
+                    android:layout_below="@id/jr_edit_comment"
                     android:layout_alignParentRight="true"
                     android:singleLine="true"
                     android:textColor="#ff333333"
-                    android:text="@string/calculating_remaining_characters"
+                    android:text="@string/jr_calculating_remaining_characters"
                     android:layout_marginRight="4dip"
                     android:layout_marginLeft="4dip"
                     android:layout_marginBottom="5dip"
@@ -173,21 +173,21 @@
                     />
 
                 <RelativeLayout
-                    android:id="@+id/preview_box"
+                    android:id="@+id/jr_preview_box"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/character_count_view"
-                    android:background="@drawable/bg_publish_preview"
+                    android:layout_below="@id/jr_character_count_view"
+                    android:background="@drawable/jr_bg_publish_preview"
                     android:paddingBottom="4dip"
                     >
                     <!--android:gravity="top|left"-->
 
                     <RelativeLayout
-                        android:id="@+id/preview_box_border"
+                        android:id="@+id/jr_preview_box_border"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
-                        android:background="@drawable/bg_publish_preview_border"
+                        android:background="@drawable/jr_bg_publish_preview_border"
                         android:layout_marginTop="8dip"
                         android:layout_marginBottom="4dip"
                         android:layout_marginRight="4dip"
@@ -198,7 +198,7 @@
                         <!--android:gravity="top|left"-->
 
                         <TextView
-                            android:id="@+id/preview_text_view"
+                            android:id="@+id/jr_preview_text_view"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:bufferType="spannable"
@@ -212,10 +212,10 @@
                             <!--android:singleLine="true"-->
 
                         <RelativeLayout
-                            android:id="@+id/media_content_view"
+                            android:id="@+id/jr_media_content_view"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@id/preview_text_view"
+                            android:layout_below="@id/jr_preview_text_view"
                             android:layout_marginTop="3dip"
                             android:layout_marginLeft="4dip"
                             android:layout_marginBottom="4dip"
@@ -224,7 +224,7 @@
                             android:paddingLeft="3dp"
                             android:paddingRight="3dp"
                             android:paddingBottom="7dp"
-                            android:background="@drawable/bg_provider_activity_info"
+                            android:background="@drawable/jr_bg_provider_activity_info"
                             >
                             <!--android:layout_height="122dip"-->
                             <!--android:layout_marginTop="10dip"-->
@@ -234,7 +234,7 @@
                             <!--android:gravity="top|left|bottom|right"-->
                             
                             <ImageView
-                                android:id="@+id/media_content_image"
+                                android:id="@+id/jr_media_content_image"
                                 android:layout_width="45dip"
                                 android:layout_height="45dip"
                                 android:adjustViewBounds="true"
@@ -246,11 +246,11 @@
                                 android:layout_alignParentLeft="true"
                                 android:layout_alignParentTop="true"
                                 android:layout_margin="5dip"
-                                android:src="@drawable/media60x60"
+                                android:src="@drawable/jr_media60x60"
                                 />
 
                             <TextView
-                                android:id="@+id/media_content_title"
+                                android:id="@+id/jr_media_content_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="0dip"
@@ -258,7 +258,7 @@
                                 android:layout_marginBottom="5dip"
                                 android:layout_marginLeft="5dip"
                                 android:layout_alignParentTop="true"
-                                android:layout_toRightOf="@id/media_content_image"
+                                android:layout_toRightOf="@id/jr_media_content_image"
                                 android:singleLine="true"
                                 android:ellipsize="end"
                                 android:textStyle="bold"
@@ -270,15 +270,15 @@
                                -        property.  Unfortunately, doing so breaks the ellipsize function.  Android BUG.
                               -->
                             <TextView
-                                android:id="@+id/media_content_description"
+                                android:id="@+id/jr_media_content_description"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="0dip"
                                 android:layout_marginRight="5dip"
                                 android:layout_marginBottom="0dip"
                                 android:layout_marginLeft="5dip"
-                                android:layout_below="@id/media_content_title"
-                                android:layout_toRightOf="@id/media_content_image"
+                                android:layout_below="@id/jr_media_content_title"
+                                android:layout_toRightOf="@id/jr_media_content_image"
                                 android:ellipsize="end"
                                 android:textStyle="normal"
                                 android:maxLines="4"
@@ -292,13 +292,13 @@
                     </RelativeLayout>
 
                     <TextView
-                        android:id="@+id/preview_label"
+                        android:id="@+id/jr_preview_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_marginLeft="8dip"
                         android:singleLine="true"
-                        android:text="@string/preview"
+                        android:text="@string/jr_preview"
                         android:textColor="#ff666666"
                         android:background="#ffeeeeee"
                         android:textStyle="normal"
@@ -315,10 +315,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_above="@+id/user_profile_information_and_share_button_container"
+                    android:layout_above="@+id/jr_user_profile_information_and_share_button_container"
                     android:layout_marginBottom="4dip"
                     android:singleLine="true"
-                    android:text="@string/powered_by"
+                    android:text="@string/jr_powered_by"
                     android:textColor="#ff666666"
                     android:textStyle="normal"
                     android:paddingRight="6dip"
@@ -327,18 +327,18 @@
                     <!--android:layout_marginLeft="12dip"-->
 
                 <ImageView
-                    android:id="@+id/provider_icon"
+                    android:id="@+id/jr_provider_icon"
                     android:layout_width="20dip"
                     android:layout_height="20dip"
                     android:layout_alignParentRight="true"
-                    android:layout_above="@+id/user_profile_information_and_share_button_container"
+                    android:layout_above="@+id/jr_user_profile_information_and_share_button_container"
                     android:layout_marginBottom="4dip"
-                    android:src="@drawable/icon_facebook"
+                    android:src="@drawable/jr_icon_facebook"
                     />
                     <!--android:layout_marginRight="4dip"-->
 
                 <LinearLayout
-                    android:id="@+id/user_profile_information_and_share_button_container"
+                    android:id="@+id/jr_user_profile_information_and_share_button_container"
                     android:orientation="vertical"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -350,14 +350,14 @@
                     <!-- android:paddingBottom="22dip" -->
 
                     <ImageView
-                        android:id="@+id/triangle_icon_view"
+                        android:id="@+id/jr_triangle_icon_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/triangle_icon"
+                        android:src="@drawable/jr_triangle_icon"
                         />
 
                     <LinearLayout
-                        android:id="@+id/profile_pic_and_buttons_horizontal_layout"
+                        android:id="@+id/jr_profile_pic_and_buttons_horizontal_layout"
                         android:orientation="horizontal"
                         android:layout_height="wrap_content"
                         android:layout_width="fill_parent"
@@ -372,7 +372,7 @@
                         <!--android:gravity="top|center_horizontal"-->
 
                         <LinearLayout
-                            android:id="@+id/user_profile_container"
+                            android:id="@+id/jr_user_profile_container"
                             android:orientation="horizontal"
                             android:layout_height="wrap_content"
                             android:layout_width="fill_parent"
@@ -382,8 +382,8 @@
                             >
 
                             <ImageView
-                                android:id="@+id/profile_pic"
-                                android:src="@drawable/profilepic_placeholder"
+                                android:id="@+id/jr_profile_pic"
+                                android:src="@drawable/jr_profilepic_placeholder"
                                 android:layout_width="45dip"
                                 android:layout_height="45dip"
                                 android:adjustViewBounds="true"
@@ -397,7 +397,7 @@
                                 <!--android:visibility="gone"-->
 
                             <LinearLayout
-                                android:id="@+id/name_and_sign_out_container"
+                                android:id="@+id/jr_name_and_sign_out_container"
                                 android:orientation="vertical"
                                 android:layout_height="wrap_content"
                                 android:layout_width="fill_parent"
@@ -416,7 +416,7 @@
                                 <!--android:gravity="top|center_horizontal"-->
 
                                 <TextView
-                                    android:id="@+id/user_name"
+                                    android:id="@+id/jr_user_name"
                                     android:layout_width="fill_parent"
                                     android:layout_height="fill_parent"
                                     android:gravity="top|left"
@@ -433,7 +433,7 @@
                                 <!--android:paddingRight="6dip"-->
 
                                 <Button
-                                    android:id="@+id/sign_out_button"
+                                    android:id="@+id/jr_sign_out_button"
                                     android:layout_width="fill_parent"
                                     android:layout_height="fill_parent"
                                     android:text="Sign Out"
@@ -456,7 +456,7 @@
                         </LinearLayout>
 
                         <Button
-                            android:id="@+id/just_share_button"
+                            android:id="@+id/jr_just_share_button"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
@@ -477,7 +477,7 @@
                         <!--android:textColor="#ffffffff"-->
 
                         <LinearLayout
-                            android:id="@+id/shared_text_and_check_mark_horizontal_layout"
+                            android:id="@+id/jr_shared_text_and_check_mark_horizontal_layout"
                             android:orientation="horizontal"
                             android:layout_height="wrap_content"
                             android:layout_width="fill_parent"
@@ -487,13 +487,13 @@
                             >
 
                             <TextView
-                                android:id="@+id/shared"
+                                android:id="@+id/jr_shared"
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="right"
                                 android:layout_centerVertical="true"
                                 android:singleLine="true"
-                                android:text="@string/shared"
+                                android:text="@string/jr_shared"
                                 android:textSize="20dip"
                                 android:textStyle="bold"
                                 android:textColor="#aa000000"
@@ -501,10 +501,10 @@
                                 />
 
                             <ImageView
-                                android:id="@+id/check_mark"
+                                android:id="@+id/jr_check_mark"
                                 android:layout_width="20dip"
                                 android:layout_height="20dip"
-                                android:src="@drawable/check_mark"
+                                android:src="@drawable/jr_check_mark"
                                 android:gravity="right"
                                 android:layout_centerVertical="true"
                                 />
@@ -512,7 +512,7 @@
                         </LinearLayout>
 
                         <Button
-                            android:id="@+id/connect_and_share_button"
+                            android:id="@+id/jr_connect_and_share_button"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"

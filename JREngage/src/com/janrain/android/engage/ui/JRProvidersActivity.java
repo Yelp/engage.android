@@ -114,8 +114,8 @@ public class JRProvidersActivity extends ListActivity {
                 Log.i(TAG, "[getView] with null converView");
             } else Log.i(TAG, "[getView] with non null convertView");
 
-            ImageView icon = (ImageView) v.findViewById(R.id.row_provider_icon);
-            TextView label = (TextView) v.findViewById(R.id.row_provider_label);
+            ImageView icon = (ImageView) v.findViewById(R.id.jr_row_provider_icon);
+            TextView label = (TextView) v.findViewById(R.id.jr_row_provider_label);
 
             final JRProvider provider = getItem(position);
 
@@ -190,8 +190,6 @@ public class JRProvidersActivity extends ListActivity {
     // ------------------------------------------------------------------------
 
     public JRProvidersActivity() {
-        mTimerCount = 0;
-        mTimer = new Timer();
     }
 
     // ------------------------------------------------------------------------
@@ -208,8 +206,10 @@ public class JRProvidersActivity extends ListActivity {
      */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.provider_listview);
+        setContentView(R.layout.jr_provider_listview);
 
+        mTimerCount = 0;
+        mTimer = new Timer();
         mLayoutHelper = new SharedLayoutHelper(this);
 
         mSessionData = JRSessionData.getInstance();
@@ -227,7 +227,7 @@ public class JRProvidersActivity extends ListActivity {
             mProviderList = new ArrayList<JRProvider>();
         }
 
-        mAdapter = new ProviderAdapter(this, R.layout.provider_listview_row, mProviderList);
+        mAdapter = new ProviderAdapter(this, R.layout.jr_provider_listview_row, mProviderList);
         setListAdapter(mAdapter);
 
         //registerForContextMenu(getListView());
@@ -291,6 +291,8 @@ public class JRProvidersActivity extends ListActivity {
 
         if (mFinishReceiver != null)
         unregisterReceiver(mFinishReceiver);
+        
+        mTimer.cancel();
     }
 
     // This test code adds a context menu to the providers.

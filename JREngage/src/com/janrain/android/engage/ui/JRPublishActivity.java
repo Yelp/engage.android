@@ -194,7 +194,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-        setContentView(R.layout.publish_activity);
+        setContentView(R.layout.jr_publish_activity);
 
         mSessionData = JRSessionData.getInstance();
 
@@ -207,31 +207,31 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSessionDelegate = createSessionDelegate();
 
         // View References
-        mPreviewBox = (RelativeLayout) findViewById(R.id.preview_box);
-        mPreviewBorder = (RelativeLayout) findViewById(R.id.preview_box_border);
-        mMediaContentView = (RelativeLayout) findViewById(R.id.media_content_view);
-        mCharacterCountView = (TextView) findViewById(R.id.character_count_view);
-        mProviderIcon = (ImageView) findViewById(R.id.provider_icon);
-        mUserCommentView = (EditText) findViewById(R.id.edit_comment);
-        mPreviewLabelView = (TextView) findViewById(R.id.preview_text_view);
-        mTriangleIconView = (ImageView) findViewById(R.id.triangle_icon_view);
+        mPreviewBox = (RelativeLayout) findViewById(R.id.jr_preview_box);
+        mPreviewBorder = (RelativeLayout) findViewById(R.id.jr_preview_box_border);
+        mMediaContentView = (RelativeLayout) findViewById(R.id.jr_media_content_view);
+        mCharacterCountView = (TextView) findViewById(R.id.jr_character_count_view);
+        mProviderIcon = (ImageView) findViewById(R.id.jr_provider_icon);
+        mUserCommentView = (EditText) findViewById(R.id.jr_edit_comment);
+        mPreviewLabelView = (TextView) findViewById(R.id.jr_preview_text_view);
+        mTriangleIconView = (ImageView) findViewById(R.id.jr_triangle_icon_view);
         mUserProfileInformationAndShareButtonContainer = (LinearLayout) findViewById(
-                R.id.user_profile_information_and_share_button_container);
+                R.id.jr_user_profile_information_and_share_button_container);
         //mProfilePicAndButtonsHorizontalLayout = (LinearLayout) findViewById(
-        //        R.id.profile_pic_and_buttons_horizontal_layout);
-        mUserProfileContainer = (LinearLayout) findViewById(R.id.user_profile_container);
-        mUserProfilePic = (ImageView) findViewById(R.id.profile_pic);
-        //mNameAndSignOutContainer = (LinearLayout) findViewById(R.id.name_and_sign_out_container);
-        mUserNameView = (TextView) findViewById(R.id.user_name);
-        mSignOutButton = (Button) findViewById(R.id.sign_out_button);
-        mJustShareButton = (Button) findViewById(R.id.just_share_button);
-        mConnectAndShareButton = (Button) findViewById(R.id.connect_and_share_button);
+        //        R.id.jr_profile_pic_and_buttons_horizontal_layout);
+        mUserProfileContainer = (LinearLayout) findViewById(R.id.jr_user_profile_container);
+        mUserProfilePic = (ImageView) findViewById(R.id.jr_profile_pic);
+        //mNameAndSignOutContainer = (LinearLayout) findViewById(R.id.jr_name_and_sign_out_container);
+        mUserNameView = (TextView) findViewById(R.id.jr_user_name);
+        mSignOutButton = (Button) findViewById(R.id.jr_sign_out_button);
+        mJustShareButton = (Button) findViewById(R.id.jr_just_share_button);
+        mConnectAndShareButton = (Button) findViewById(R.id.jr_connect_and_share_button);
         mSharedTextAndCheckMarkContainer = (LinearLayout) findViewById(
-                R.id.shared_text_and_check_mark_horizontal_layout);
-        mEmailButton = (Button) findViewById(R.id.email_button);
-        mSmsButton = (Button) findViewById(R.id.sms_button);
-        mEmailSmsComment = (EditText) findViewById(R.id.email_sms_edit_comment);
-        mEmailSmsButtonContainer = (LinearLayout) findViewById(R.id.email_sms_button_container);
+                R.id.jr_shared_text_and_check_mark_horizontal_layout);
+        mEmailButton = (Button) findViewById(R.id.jr_email_button);
+        mSmsButton = (Button) findViewById(R.id.jr_sms_button);
+        mEmailSmsComment = (EditText) findViewById(R.id.jr_email_sms_edit_comment);
+        mEmailSmsButtonContainer = (LinearLayout) findViewById(R.id.jr_email_sms_button_container);
 
         // View listeners
         mEmailButton.setOnClickListener(mEmailButtonListener);
@@ -280,7 +280,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         if ((socialProviders == null || socialProviders.size() == 0)
                 && !mSessionData.isGetMobileConfigDone()) {
             // Hide the email/SMS tab so things look nice as we load the providers
-            findViewById(R.id.tab_email_sms_content).setVisibility(View.GONE);
+            findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
             mWaitingForMobileConfig = true;
             showDialog(DIALOG_MOBILE_CONFIG_LOADING);
         } else {
@@ -300,9 +300,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         JRMediaObject mo = null;
         if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
 
-        final ImageView mci = (ImageView) findViewById(R.id.media_content_image);
-        final TextView  mcd = (TextView)  findViewById(R.id.media_content_description);
-        final TextView  mct = (TextView)  findViewById(R.id.media_content_title);
+        final ImageView mci = (ImageView) findViewById(R.id.jr_media_content_image);
+        final TextView  mcd = (TextView)  findViewById(R.id.jr_media_content_description);
+        final TextView  mct = (TextView)  findViewById(R.id.jr_media_content_title);
 
         // Set the media_content_view = a thumbnail of the media
         if (mo != null) if (mo.hasThumbnail()) {
@@ -382,7 +382,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             Drawable providerIconSet = provider.getTabSpecIndicatorDrawable(this);
 
             TabHost.TabSpec spec = tabHost.newTabSpec(provider.getName());
-            spec.setContent(R.id.tab_view_content);
+            spec.setContent(R.id.jr_tab_view_content);
 
             LinearLayout ll = createTabSpecIndicator(provider.getFriendlyName(), providerIconSet);
 
@@ -394,9 +394,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         // Make a tab for email/SMS
         TabHost.TabSpec emailSmsSpec = tabHost.newTabSpec(EMAIL_SMS_TAB_TAG);
-        Drawable d = getResources().getDrawable(R.drawable.email_sms_tab_indicator);
+        Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
         emailSmsSpec.setIndicator(createTabSpecIndicator("Email/SMS", d));
-        emailSmsSpec.setContent(R.id.tab_email_sms_content);
+        emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
         tabHost.addTab(emailSmsSpec);
 
         tabHost.setOnTabChangedListener(this);
@@ -413,7 +413,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //XXX TabHost is setting our FrameLayout's only child to View.GONE when loading.
         //XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
         //XXX This is a workaround:
-        findViewById(R.id.tab_view_content).setVisibility(View.VISIBLE);
+        findViewById(R.id.jr_tab_view_content).setVisibility(View.VISIBLE);
     }
 
     private LinearLayout createTabSpecIndicator(String labelText, Drawable providerIconSet) {
@@ -666,11 +666,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             if (jrEmail == null) {
                 body = mUserCommentView.getText().toString();
-                subject = getString(R.string.default_email_share_subject);
+                subject = getString(R.string.jr_default_email_share_subject);
             } else {
                 body = mUserCommentView.getText().toString() + "\n" + jrEmail.getBody();
                 subject = TextUtils.isEmpty(jrEmail.getSubject()) ?
-                        getString(R.string.default_email_share_subject)
+                        getString(R.string.jr_default_email_share_subject)
                         : jrEmail.getSubject();
             }
 
@@ -689,7 +689,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             intent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
             intent.putExtra(android.content.Intent.EXTRA_TEXT, body);
 
-            //Intent chooser = Intent.createChooser(intent, getString(R.string.choose_email_handler));
+            //Intent chooser = Intent.createChooser(intent, getString(R.string.jr_choose_email_handler));
             startActivityForResult(intent, 0);
             mSessionData.notifyEmailSmsShare("email");
         }
@@ -812,7 +812,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             if (doesActivityUrlAffectCharacterCountForSelectedProvider()
                     && mShortenedActivityURL == null) {
                 // twitter, myspace
-                characterCountText = getText(R.string.calculating_remaining_characters);
+                characterCountText = getText(R.string.jr_calculating_remaining_characters);
             } else {
                 int preview_length = mPreviewLabelView.getText().length();
                 int chars_remaining = mMaxCharacters - preview_length;
@@ -853,7 +853,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         String userNameForPreview = getUserDisplayName();
 
-        String shorteningText = getString(R.string.shortening_url);
+        String shorteningText = getString(R.string.jr_shortening_url);
 
         if (doesActivityUrlAffectCharacterCountForSelectedProvider()) { //twitter/myspace -> true
             mPreviewLabelView.setText(Html.fromHtml(
@@ -862,7 +862,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                     "</font>"));
 
 //            SpannableStringBuilder str = new SpannableStringBuilder(userNameForPreview + " " + newText + " " +
-//                                            ((mShortenedActivityURL != null) ? mShortenedActivityURL : R.string.shortening_url));//mPreviewLabelView.getText();//.getText();
+//                                            ((mShortenedActivityURL != null) ? mShortenedActivityURL : R.string.jr_shortening_url));//mPreviewLabelView.getText();//.getText();
 //
 //            // Create our span sections, and assign a format to each.
 //            str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, userNameForPreview.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -894,7 +894,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (user == null || providerName == null) {
             mUserNameView.setText("");
-            mUserProfilePic.setImageResource(R.drawable.profilepic_placeholder);
+            mUserProfilePic.setImageResource(R.drawable.jr_profilepic_placeholder);
             return;
         }
 
@@ -914,7 +914,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         if (cachedProfilePic != null) {
             mUserProfilePic.setImageBitmap(cachedProfilePic);
         } else if (user.getPhoto() != null) {
-            mUserProfilePic.setImageResource(R.drawable.profilepic_placeholder);
+            mUserProfilePic.setImageResource(R.drawable.jr_profilepic_placeholder);
             new AsyncTask<Void, Void, Bitmap>() {
                 protected Bitmap doInBackground(Void... voids) {
                     try {
@@ -943,7 +943,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 }
             }.execute();
         } else {
-            mUserProfilePic.setImageResource(R.drawable.profilepic_placeholder);
+            mUserProfilePic.setImageResource(R.drawable.jr_profilepic_placeholder);
         }
     }
 
@@ -983,8 +983,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void configureViewElementsBasedOnProvider() {
-        // TODO: make this match the docs for the iphone activity object:
-        // https://rpxnow.com/docs/iphone_api/interface_j_r_activity_object.html#a2e4ff78f83d0f353f8e0c17ed48ce0ab
         JRDictionary socialSharingProperties = mSelectedProvider.getSocialSharingProperties();
 
         if (socialSharingProperties.getAsBoolean("content_replaces_action"))
@@ -1284,5 +1282,4 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             }
         };
     }
-
 }

@@ -130,7 +130,7 @@ public final class AsyncHttpClient {
                 //debugging to test connection failures.
                 //boolean random = (new Random()).nextBoolean();
 
-                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {//  && random) {
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {// && random) {
                     HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
                     byte[] data = IOUtils.readFromStream(connection.getInputStream(), true);
 
@@ -150,15 +150,16 @@ public final class AsyncHttpClient {
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, null));
                     mHandler.post(mWrapper);
                 } else if (connection.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+                    // Response from the Engage trail creation and maybe URL shortening calls
                     Log.d(TAG, "[run] HTTP_CREATED");
                     HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
 
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, null));
                     mHandler.post(mWrapper);
                 } else {
-                    //todo maybe this shouldn't be globbed together, but instead be structured
-                    //to allow the error response handler to make meaninful use of the web
-                    //servers response (here read into String r)
+                    // todo maybe this shouldn't be globbed together, but instead be structured
+                    // to allow the error response handler to make meaningful use of the web
+                    // servers response (here read into String r)
                     byte[] b = IOUtils.readFromStream(connection.getErrorStream());
                     String r = null;
                     if (b != null) r = new String(b);

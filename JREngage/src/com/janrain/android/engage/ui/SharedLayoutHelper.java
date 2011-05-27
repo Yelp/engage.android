@@ -40,6 +40,8 @@ import android.widget.TextView;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSessionData;
 
+import java.lang.ref.WeakReference;
+
 
 /**
  * @internal
@@ -68,7 +70,8 @@ public class SharedLayoutHelper {
     // FIELDS
     // ------------------------------------------------------------------------
 
-    private Activity mOwner;
+    private WeakReference<Activity> mOwner;
+    //private Activity mOwner;
     private ProgressDialog mProgressDialog;
 
     // ------------------------------------------------------------------------
@@ -79,16 +82,17 @@ public class SharedLayoutHelper {
      * Creates instance of this class, binding it to the owner.
      */
     public SharedLayoutHelper(Activity owner) {
-        mOwner = owner;
+        mOwner = new WeakReference<Activity>(owner);
         mProgressDialog = null;
         
         boolean hideTagline = JRSessionData.getInstance().getHidePoweredBy();
         int visibility = hideTagline ? View.GONE : View.VISIBLE;
         owner.findViewById(R.id.jr_tagline).setVisibility(visibility);
         try {
-            owner.findViewById(R.id.email_sms_powered_by_text).setVisibility(visibility);
+            // This View is only found in JRPublishActivity
+            owner.findViewById(R.id.jr_email_sms_powered_by_text).setVisibility(visibility);
         } catch (NullPointerException e) {
-            // Do nothing, we're just not displaying JRPublishActivity
+            // Do nothing, we're not displaying JRPublishActivity
         }
     }
 
@@ -105,7 +109,7 @@ public class SharedLayoutHelper {
      * Changes the header text.
      */
     public void setHeaderText(String text) {
-        TextView textView = (TextView) mOwner.findViewById(R.id.header_text);
+        TextView textView = (TextView) mOwner.get().findViewById(R.id.jr_header_text);
         if (textView != null) {
             textView.setText(text);
         }
@@ -115,7 +119,7 @@ public class SharedLayoutHelper {
      * Inflates the common/shared menu.
      */
     public void inflateAboutMenu(Menu menu) {
-        mOwner.getMenuInflater().inflate(R.menu.about_menu, menu);
+        mOwner.get().getMenuInflater().inflate(R.menu.jr_about_menu, menu);
     }
 
     /**
@@ -125,8 +129,8 @@ public class SharedLayoutHelper {
      */
     public boolean handleAboutMenu(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.about_janrain:
-                mOwner.showDialog(DIALOG_ABOUT_ID);
+            case R.id.jr_about_janrain:
+                mOwner.get().showDialog(DIALOG_ABOUT_ID);
                 return true;
             default:
                 return false;
@@ -140,9 +144,9 @@ public class SharedLayoutHelper {
         if (mProgressDialog == null) {
             // Progress dialog has not been displayed yet, need to create & show.
             mProgressDialog = ProgressDialog.show(
-                    mOwner,
+                    mOwner.get(),
                     "",
-                    mOwner.getString(R.string.progress_loading),
+                    mOwner.get().getString(R.string.jr_progress_loading),
                     true);
             Log.d(TAG, "[showProgressDialog] create/show");
         } else if (!mProgressDialog.isShowing()) {
@@ -162,6 +166,7 @@ public class SharedLayoutHelper {
         if ((mProgressDialog != null) && (mProgressDialog.isShowing())) {
             mProgressDialog.dismiss();
             Log.d(TAG, "[dismissProgressDialog] dismissed");
+            //mProgressDialog = null;
         }
     }
 
@@ -187,12 +192,14 @@ public class SharedLayoutHelper {
         AlertDialog.Builder builder;
         AlertDialog dialog;
 
-        LayoutInflater inflater = (LayoutInflater)mOwner.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.about_dialog, (ViewGroup)mOwner.findViewById(R.id.about_dialog_root));
+        LayoutInflater inflater =
+                (LayoutInflater)mOwner.get().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.jr_about_dialog,
+                (ViewGroup)mOwner.get().findViewById(R.id.jr_about_dialog_root));
 
-        builder = new AlertDialog.Builder(mOwner);
+        builder = new AlertDialog.Builder(mOwner.get());
         builder.setView(layout);
-        builder.setPositiveButton(R.string.about_button_ok, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.jr_about_button_ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
             }

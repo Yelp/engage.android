@@ -33,7 +33,6 @@ import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
-import android.util.StringBuilderPrinter;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import com.janrain.android.engage.JREngage;
@@ -89,11 +88,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private static final String FMT_CONFIG_URL =
             "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s&version=%s";
 
-    private boolean mGetConfigDone = false;
-    private String mOldEtag;
-    private String mUrlEncodedAppName;
-    private String mLibraryVersion;
-
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
     // ------------------------------------------------------------------------
@@ -123,7 +117,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 		return sInstance;
 	}
-	
+
     // ------------------------------------------------------------------------
     // FIELDS
     // ------------------------------------------------------------------------
@@ -152,6 +146,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	private String mBaseUrl;
 	private String mAppId;
     //private String mDevice;
+
+    private boolean mGetConfigDone = false;
+    private String mOldEtag;
+    private String mUrlEncodedAppName;
+    private String mLibraryVersion;
 
     private boolean mHidePoweredBy;
 	private boolean mAlwaysForceReauth;
@@ -880,55 +879,34 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             oid = "";
         }
 
-        String str;
+        String fullStartUrl;
 
-        //todo check on forcereauth
         if (mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) {
             for (String domain : mCurrentlyAuthenticatingProvider.getCookieDomains())
                 deleteWebviewCookiesForDomain(domain);
         }
 
-        //str = String.format("%s%s?%s%sversion=android_one&device=android",
-        str = String.format("%s%s?%s%sdevice=android&extended=true",
+        fullStartUrl = String.format("%s%s?%s%sdevice=android&extended=true",
                 mBaseUrl,
                 mCurrentlyAuthenticatingProvider.getStartAuthenticationUrl(),
                 oid,
-                ((mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) ? "force_reauth=true&" : "")
+                ((mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) ?
+                        "force_reauth=true&" : "")
         );
 
-
         if (Config.LOGD) {
-            Log.d(TAG, "[startUrlForCurrentlyAuthenticatingProvider] startUrl: " + str);
+            Log.d(TAG, "[startUrlForCurrentlyAuthenticatingProvider] startUrl: " + fullStartUrl);
         }
 
         URL url = null;
         try {
-            url = new URL(str);
+            url = new URL(fullStartUrl);
         } catch (MalformedURLException e) {
-            Log.e(TAG, "[startUrlForCurrentlyAuthenticatingProvider] URL create failed for string: " + str);
+            Log.e(TAG, "[startUrlForCurrentlyAuthenticatingProvider] URL create failed for string: "
+                    + fullStartUrl);
         }
         return url;
     }
-
-    /* This function is used to determine whether the library should retain first responderness for the
-     * UI purposes of making sure that the on screen keyboard stays on screen
-    private boolean weShouldBeFirstResponder() {
-        if (Config.LOGD) {
-            Log.d(TAG, "[weShouldBeFirstResponder]");
-        }
-
-        /* If we're authenticating with a provider for social publishing, then don't worry about the return experience
-         * for basic authentication. *//*
-        if (mSocialSharingMode)
-            return mCurrentlyAuthenticatingProvider.requiresInput();
-
-        /* If we're authenticating with a basic provider, then we don't need to gather infomation if we're displaying
-         * return screen. *//*
-        if (mCurrentlyAuthenticatingProvider.isEqualToReturningProvider(mReturningBasicProvider))
-            return false;
-
-        return mCurrentlyAuthenticatingProvider.requiresInput();
-    }*/
 
     public JRAuthenticatedUser getAuthenticatedUserForProvider(JRProvider provider) {
         if (Config.LOGD) {
@@ -954,7 +932,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         JRProvider provider = mAllProviders.getAsProvider(providerName);
         if (provider == null) {
             Log.e(TAG, "[forgetAuthenticatedUserForProvider] provider not found: " + providerName);
-            //throw new RuntimeException(); /? if they hit the signout button twice, this could happen I guess
         } else {
             provider.setForceReauth(true);
             mAuthenticatedUsersByProvider.remove(provider.getName());
@@ -970,22 +947,26 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         CookieSyncManager csm = CookieSyncManager.createInstance(JREngage.getContext());
         CookieManager cm = CookieManager.getInstance();
 
-        //cookies are stored by domain, and are not different for different schemes (i.e. http vs
-        //https) (although they do have an optional 'secure' flag.)
+        // Trim any leading .s
         if (domain.startsWith(".")) domain = domain.substring(1);
 
+        // Cookies are stored by domain, and are not different for different schemes (i.e. http vs
+        // https) (although they do have an optional 'secure' flag.)
         String cookieGlob = cm.getCookie("http://" + domain);
         if (cookieGlob != null) {
             String[] cookies = cookieGlob.split(";");
             for (String cookieTuple : cookies) {
                 String[] cookieParts = cookieTuple.split("=");
 
-                // setCookie changed a lot in the context of how it handles cookies like we're
-                //setting in order to clear a specific cookie, so spam all reasonable similar
-                //request in an effort to be compatible with different versions of setCookie
+                // setCookie has changed a lot between different versions of Android with respect to
+                // how it handles cookies like these, which are set in order to clear an existing
+                // cookie.  This way of invoking it seems to work on all versions.
                 cm.setCookie(domain, cookieParts[0] + "=;");
-//                cm.setCookie(domain, cookieParts[0] + "=");
-//                cm.setCookie(domain, cookieParts[0]);
+
+                // These calls have worked for some subset of the the set of all versions of
+                // Android:
+                //cm.setCookie(domain, cookieParts[0] + "=");
+                //cm.setCookie(domain, cookieParts[0]);
             }
             csm.sync();
         }
@@ -999,14 +980,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         for (String providerName : mAllProviders.keySet())
             forgetAuthenticatedUserForProvider(providerName);
     }
-
-//    public JRProvider getBasicProviderAtIndex(int index) {
-//        return getProviderAtIndex(index, mBasicProviders);
-//    }
-//
-//    public JRProvider getSocialProviderAtIndex(int index) {
-//        return getProviderAtIndex(index, mSocialProviders);
-//    }
 
     public JRProvider getProviderByName(String name) {
         return mAllProviders.getAsProvider(name);
@@ -1271,32 +1244,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         for (JRSessionDelegate d : getDelegatesCopy()) d.mobileConfigDidFinish();
     }
 
-    /*
-    TODO:  This method appears to have gone away.
-    TODO RESPONSE: Um... pretty sure it just moved to a spot higher in the iPhone version of the file?
-
-    private String appNameAndVersion() {
-        final String FMT = "mUrlEncodedAppName=%s.%s&version=%d_%s";
-
-        Context ctx = JREngage.getContext();
-        PackageManager pkgMgr = ctx.getPackageManager();
-        PackageInfo pkgInfo = null;
-        try {
-            pkgInfo = pkgMgr.getPackageInfo(ctx.getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.w(TAG, "[appNameAndVersion] package manager issue -> ", e);
-        }
-
-        return (pkgInfo != null)
-                ? String.format(FMT,
-                    pkgInfo.packageName,
-                    pkgInfo.applicationInfo.nonLocalizedLabel,
-                    pkgInfo.versionCode,
-                    pkgInfo.versionName)
-                : "";
-    }
-     */
-
     private synchronized List<JRSessionDelegate> getDelegatesCopy() {
         return (mDelegates == null)
                 ? new ArrayList<JRSessionDelegate>()
@@ -1323,4 +1270,26 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     public String getUrlEncodedAppName() {
         return mUrlEncodedAppName;
     }
+
+    // Unused application name collection code.
+    //private String appNameAndVersion() {
+    //    final String FMT = "mUrlEncodedAppName=%s.%s&version=%d_%s";
+    //
+    //    Context ctx = JREngage.getContext();
+    //    PackageManager pkgMgr = ctx.getPackageManager();
+    //    PackageInfo pkgInfo = null;
+    //    try {
+    //        pkgInfo = pkgMgr.getPackageInfo(ctx.getPackageName(), 0);
+    //    } catch (PackageManager.NameNotFoundException e) {
+    //        Log.w(TAG, "[appNameAndVersion] package manager issue -> ", e);
+    //    }
+    //
+    //    return (pkgInfo != null)
+    //            ? String.format(FMT,
+    //                pkgInfo.packageName,
+    //                pkgInfo.applicationInfo.nonLocalizedLabel,
+    //                pkgInfo.versionCode,
+    //                pkgInfo.versionName)
+    //            : "";
+    //}
 }
