@@ -6,7 +6,6 @@
   <div class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     </ul>
   </div>
@@ -64,7 +63,7 @@ Server-side Authentication</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a9cae37926c51b92a0d934b65cd14829c">setTokenUrl</a> (String newTokenUrl)</td></tr>
 <tr><td colspan="2"><h2><a name="member-group"></a>
 Manage the JREngage Delegates</h2></td></tr>
-<tr><td colspan="2"><p><a class="anchor" id="amgrp6972234e5fe0e6f4eb1916e12bc18297"></a> Add/remove delegates that implement the <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates...">JREngageDelegate</a> protocol </p>
+<tr><td colspan="2"><p><a class="anchor" id="amgrp6972234e5fe0e6f4eb1916e12bc18297"></a> Add/remove delegates that implement the <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates or...">JREngageDelegate</a> protocol </p>
 <br/><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a7bbc6073780da1e97b3809d15a9394e1">addDelegate</a> (<a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html">JREngageDelegate</a> delegate)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#adf46ec2da28c76195c2aa4eb8339d519">removeDelegate</a> (<a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html">JREngageDelegate</a> delegate)</td></tr>
@@ -85,7 +84,7 @@ Show the JREngage Dialogs</h2></td></tr>
 <li>Call <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a7c79a12fbe98d3dc3567f481b164e4f4">JREngage.initInstance</a></li>
 <li>Save the returned <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="The JREngage class provides methods for configuring the Engage for Android library and initiating aut...">JREngage</a> object</li>
 <li>Invoke <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a0de1aa16e951a1b62e2ef459b1596e83">showAuthenticationDialog()</a> or <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a4b029811d11b8a46483a22ecb5b87a53">showSocialPublishingDialog(JRActivityObject activity)</a></li>
-<li>You may implement <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates...">JREngageDelegate</a> to receive responses </li>
+<li>You may implement <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates or...">JREngageDelegate</a> to receive responses </li>
 </ul>
 <hr/><h2>Member Function Documentation</h2>
 <a class="anchor" id="a7c79a12fbe98d3dc3567f481b164e4f4"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::initInstance" ref="a7c79a12fbe98d3dc3567f481b164e4f4" args="(Context context, String appId, String tokenUrl, JREngageDelegate delegate)" -->
@@ -130,7 +129,7 @@ Show the JREngage Dialogs</h2></td></tr>
     <tr><td valign="top"></td><td valign="top"><em>context</em>&nbsp;</td><td>The Android application Context, used for access to system resources (e.g. global preferences). This value cannot be null</td></tr>
     <tr><td valign="top"></td><td valign="top"><em>appId</em>&nbsp;</td><td>Your 20-character application ID. You can find this on your application's Engage Dashboard at <a href="http://rpxnow.com">http://rpxnow.com</a>. This value cannot be null</td></tr>
     <tr><td valign="top"></td><td valign="top"><em>tokenUrl</em>&nbsp;</td><td>The url on your server where you wish to complete authentication, or null. If provided, the <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="The JREngage class provides methods for configuring the Engage for Android library and initiating aut...">JREngage</a> library will post the user's authentication token to this url where it can used for further authentication and processing. When complete, the library will pass the server's response back to the your application</td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>delegate</em>&nbsp;</td><td>The delegate object that implements the <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates...">JREngageDelegate</a> protocol</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>delegate</em>&nbsp;</td><td>The delegate object that implements the <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates or...">JREngageDelegate</a> protocol</td></tr>
   </table>
   </dd>
 </dl>
@@ -175,7 +174,7 @@ Show the JREngage Dialogs</h2></td></tr>
 <p>Remove the user's credentials for the given provider from the library.</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>provider</em>&nbsp;</td><td>The name of the provider on which the user authenticated. For a list of possible strings, please see the <a class="el" href="_providers.html#basicProviders">List of Providers</a> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>provider</em>&nbsp;</td><td>The name of the provider on which the user authenticated. For a list of possible strings, please see the <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">List of Providers</a> </td></tr>
   </table>
   </dd>
 </dl>
@@ -301,10 +300,10 @@ Show the JREngage Dialogs</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Add a <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates...">JREngageDelegate</a> to the library.</p>
+<p>Add a <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates or...">JREngageDelegate</a> to the library.</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>delegate</em>&nbsp;</td><td>The object that implements the <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates...">JREngageDelegate</a> protocol </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>delegate</em>&nbsp;</td><td>The object that implements the <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates or...">JREngageDelegate</a> protocol </td></tr>
   </table>
   </dd>
 </dl>
@@ -326,10 +325,10 @@ Show the JREngage Dialogs</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Remove a <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates...">JREngageDelegate</a> from the library.</p>
+<p>Remove a <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates or...">JREngageDelegate</a> from the library.</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>delegate</em>&nbsp;</td><td>The object that implements the <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates...">JREngageDelegate</a> protocol </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>delegate</em>&nbsp;</td><td>The object that implements the <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates or...">JREngageDelegate</a> protocol </td></tr>
   </table>
   </dd>
 </dl>
@@ -372,11 +371,10 @@ Show the JREngage Dialogs</h2></td></tr>
 <p>Begin social publishing. The library will start a new Android <em>Activity</em> enabling the user to publish a social share. The user will also be taken through the sign-in process, if necessary.</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>activity</em>&nbsp;</td><td>The activity you wish to share</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>activity</em>&nbsp;</td><td>The activity you wish to share </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="see"><dt><b>See also:</b></dt><dd>JRActivityObject </dd></dl>
 
 </div>
 </div>
