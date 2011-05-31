@@ -69,24 +69,24 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     private final static HashMap<String, Integer> provider_list_icon_resources =
             new HashMap<String, Integer>(){
             {
-                    put("icon_aol", com.janrain.android.engage.R.drawable.icon_aol);
-                    put("icon_blogger", com.janrain.android.engage.R.drawable.icon_blogger);
-                    put("icon_facebook", com.janrain.android.engage.R.drawable.icon_facebook);
-                    put("icon_flickr", com.janrain.android.engage.R.drawable.icon_flickr);
-                    put("icon_google", com.janrain.android.engage.R.drawable.icon_google);
-                    put("icon_hyves", com.janrain.android.engage.R.drawable.icon_hyves);
-                    put("icon_linkedin", com.janrain.android.engage.R.drawable.icon_linkedin);
-                    put("icon_live_id", com.janrain.android.engage.R.drawable.icon_live_id);
-                    put("icon_livejournal", com.janrain.android.engage.R.drawable.icon_livejournal);
-                    put("icon_myopenid", com.janrain.android.engage.R.drawable.icon_myopenid);
-                    put("icon_myspace", com.janrain.android.engage.R.drawable.icon_myspace);
-                    put("icon_netlog", com.janrain.android.engage.R.drawable.icon_netlog);
-                    put("icon_openid", com.janrain.android.engage.R.drawable.icon_openid);
-                    put("icon_paypal", com.janrain.android.engage.R.drawable.icon_paypal);
-                    put("icon_twitter", com.janrain.android.engage.R.drawable.icon_twitter);
-                    put("icon_verisign", com.janrain.android.engage.R.drawable.icon_verisign);
-                    put("icon_wordpress", com.janrain.android.engage.R.drawable.icon_wordpress);
-                    put("icon_yahoo", com.janrain.android.engage.R.drawable.icon_yahoo);
+                    put("icon_aol", com.janrain.android.engage.R.drawable.jr_icon_aol);
+                    put("icon_blogger", com.janrain.android.engage.R.drawable.jr_icon_blogger);
+                    put("icon_facebook", com.janrain.android.engage.R.drawable.jr_icon_facebook);
+                    put("icon_flickr", com.janrain.android.engage.R.drawable.jr_icon_flickr);
+                    put("icon_google", com.janrain.android.engage.R.drawable.jr_icon_google);
+                    put("icon_hyves", com.janrain.android.engage.R.drawable.jr_icon_hyves);
+                    put("icon_linkedin", com.janrain.android.engage.R.drawable.jr_icon_linkedin);
+                    put("icon_live_id", com.janrain.android.engage.R.drawable.jr_icon_live_id);
+                    put("icon_livejournal", com.janrain.android.engage.R.drawable.jr_icon_livejournal);
+                    put("icon_myopenid", com.janrain.android.engage.R.drawable.jr_icon_myopenid);
+                    put("icon_myspace", com.janrain.android.engage.R.drawable.jr_icon_myspace);
+                    put("icon_netlog", com.janrain.android.engage.R.drawable.jr_icon_netlog);
+                    put("icon_openid", com.janrain.android.engage.R.drawable.jr_icon_openid);
+                    put("icon_paypal", com.janrain.android.engage.R.drawable.jr_icon_paypal);
+                    put("icon_twitter", com.janrain.android.engage.R.drawable.jr_icon_twitter);
+                    put("icon_verisign", com.janrain.android.engage.R.drawable.jr_icon_verisign);
+                    put("icon_wordpress", com.janrain.android.engage.R.drawable.jr_icon_wordpress);
+                    put("icon_yahoo", com.janrain.android.engage.R.drawable.jr_icon_yahoo);
            }
     };
 
@@ -313,9 +313,9 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (!mEditing)
-            menu.findItem(R.id.edit_profiles).setTitle("Edit Profiles");
+            menu.findItem(R.id.edit_profiles).setTitle(R.string.edit_profiles);
         else
-            menu.findItem(R.id.edit_profiles).setTitle("Done Editing");
+            menu.findItem(R.id.edit_profiles).setTitle(R.string.done_editing);
 
         return true;
     }
@@ -329,19 +329,19 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
             case R.id.edit_profiles:
                 if (!mEditing) {
                     mEditing = true;
-                    mAddProfile.setText("Done Editing");
+                    mAddProfile.setText(R.string.done_editing);
                     mAdapter.notifyDataSetChanged();
                     return true;
                 }
                 else {
                     mEditing = false;
-                    mAddProfile.setText("Add Another Profile");
+                    mAddProfile.setText(R.string.add_another_profile);
                     mAdapter.notifyDataSetChanged();
                     return true;
                 }
             case R.id.delete_all_profiles:
                 mEditing = false;
-                mAddProfile.setText("Add Another Profile");
+                mAddProfile.setText(R.string.add_another_profile);
                 mProfileData.deleteAllProfiles();
                 mAdapter.notifyDataSetChanged();
                 return true;
@@ -361,7 +361,6 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         Log.i(TAG, "[tryToFinishActivity]");
         finish();
     }
-
 
     public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
         //To change body of implemented methods use File | Settings | File Templates.
@@ -384,10 +383,6 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     }
 
     public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, String tokenUrlPayload, String provider) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -419,7 +414,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
         if (mEditing) {
             mEditing = false;
-            mAddProfile.setText("Add Another Profile");
+            mAddProfile.setText(R.string.add_another_profile);
             mAdapter.notifyDataSetChanged();
         }
         else {

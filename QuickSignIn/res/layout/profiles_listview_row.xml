@@ -33,7 +33,7 @@
         android:layout_alignParentRight="true"
         android:layout_gravity="right|center_vertical"
         android:layout_marginLeft="10dip"
-        android:text="Delete"
+        android:text="@string/delete_row"
         android:visibility="gone"
         />
         <!--android:layout_centerVertical="true"-->
