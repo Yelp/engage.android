@@ -63,9 +63,6 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
     private static final int DIALOG_JRENGAGE_ERROR = 1;
 
-//    private static final String ENGAGE_APP_ID = <YOUR_APP_ID>;
-    private static final String ENGAGE_TOKEN_URL = null;
-
     private String readAsset(String fileName) {
         try {
             InputStream is = getAssets().open(fileName);
@@ -85,7 +82,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     private Button mBtnTestLand;
     private String mDialogErrorMessage;
 
-    //blog fetching variables
+    // Blog fetching variables
     private String mTitleText = "title text";
     private String mActionLink = "http://www.janrain.com/feed/blogs";
     private String mDescriptionText = "description text";
@@ -94,8 +91,6 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
     private final Uri BLOGURL = Uri.parse("http://www.janrain.com/feed/blogs");
 
-
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,7 +117,6 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
         String engageAppId = readAsset("app_id.txt").trim();
         String engageTokenUrl = readAsset("token_url.txt").trim();
-        engageTokenUrl = "http://nathan-mac.janrain.com:8080/login";
 
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, this);
 
@@ -141,7 +135,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
             // Build an ~empty Activity
             buildActivity();
 
-            //asyncLoadJanrainBlog();
+            asyncLoadJanrainBlog();
         }
     }
 
@@ -305,7 +299,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
             //jra.setDescription(mDescriptionText);
             //jra.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
             mEngage.showSocialPublishingDialog(mActivity);
-        } 
+        }
     }
 
     // ------------------------------------------------------------------------

@@ -40,6 +40,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
@@ -173,11 +174,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     //private LinearLayout mNameAndSignOutContainer;
     private TextView mUserNameView;
     private Button mSignOutButton;
-    private Button mJustShareButton;
-    private Button mConnectAndShareButton;
+    private ColorButton mJustShareButton;
+    private ColorButton mConnectAndShareButton;
     private LinearLayout mSharedTextAndCheckMarkContainer;
-    private Button mEmailButton;
-    private Button mSmsButton;
+    private ColorButton mEmailButton;
+    private ColorButton mSmsButton;
     private EditText mEmailSmsComment;
     private LinearLayout mEmailSmsButtonContainer;
 
@@ -217,47 +218,47 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mTriangleIconView = (ImageView) findViewById(R.id.jr_triangle_icon_view);
         mUserProfileInformationAndShareButtonContainer = (LinearLayout) findViewById(
                 R.id.jr_user_profile_information_and_share_button_container);
-        //mProfilePicAndButtonsHorizontalLayout = (LinearLayout) findViewById(
-        //        R.id.jr_profile_pic_and_buttons_horizontal_layout);
         mUserProfileContainer = (LinearLayout) findViewById(R.id.jr_user_profile_container);
         mUserProfilePic = (ImageView) findViewById(R.id.jr_profile_pic);
-        //mNameAndSignOutContainer = (LinearLayout) findViewById(R.id.jr_name_and_sign_out_container);
         mUserNameView = (TextView) findViewById(R.id.jr_user_name);
         mSignOutButton = (Button) findViewById(R.id.jr_sign_out_button);
-        mJustShareButton = (Button) findViewById(R.id.jr_just_share_button);
-        mConnectAndShareButton = (Button) findViewById(R.id.jr_connect_and_share_button);
+        mJustShareButton = (ColorButton) findViewById(R.id.jr_just_share_button);
+        mConnectAndShareButton = (ColorButton) findViewById(R.id.jr_connect_and_share_button);
         mSharedTextAndCheckMarkContainer = (LinearLayout) findViewById(
                 R.id.jr_shared_text_and_check_mark_horizontal_layout);
-        mEmailButton = (Button) findViewById(R.id.jr_email_button);
-        mSmsButton = (Button) findViewById(R.id.jr_sms_button);
+        mEmailButton = (ColorButton) findViewById(R.id.jr_email_button);
+        mSmsButton = (ColorButton) findViewById(R.id.jr_sms_button);
         mEmailSmsComment = (EditText) findViewById(R.id.jr_email_sms_edit_comment);
         mEmailSmsButtonContainer = (LinearLayout) findViewById(R.id.jr_email_sms_button_container);
 
         // View listeners
         mEmailButton.setOnClickListener(mEmailButtonListener);
         mSmsButton.setOnClickListener(mSmsButtonListener);
-        ButtonEventColorChangingListener colorChangingListener =
-                new ButtonEventColorChangingListener();
-        mEmailButton.setOnFocusChangeListener(colorChangingListener);
-        mEmailButton.setOnTouchListener(colorChangingListener);
-        mSmsButton.setOnFocusChangeListener(colorChangingListener);
-        mSmsButton.setOnTouchListener(colorChangingListener);
+        //ButtonEventColorChangingListener colorChangingListener =
+        //        new ButtonEventColorChangingListener();
+        //mEmailButton.setOnFocusChangeListener(colorChangingListener);
+        //mEmailButton.setOnTouchListener(colorChangingListener);
+        //mSmsButton.setOnFocusChangeListener(colorChangingListener);
+        //mSmsButton.setOnTouchListener(colorChangingListener);
 
         mUserCommentView.addTextChangedListener(mUserCommentTextWatcher);
         mSignOutButton.setOnClickListener(mSignoutButtonListener);
 
         mConnectAndShareButton.setOnClickListener(mShareButtonListener);
-        mConnectAndShareButton.setOnFocusChangeListener(colorChangingListener);
-        mConnectAndShareButton.setOnTouchListener(colorChangingListener);
+        //mConnectAndShareButton.setOnFocusChangeListener(colorChangingListener);
+        //mConnectAndShareButton.setOnTouchListener(colorChangingListener);
 
         mJustShareButton.setOnClickListener(mShareButtonListener);
-        mJustShareButton.setOnFocusChangeListener(colorChangingListener);
-        mJustShareButton.setOnTouchListener(colorChangingListener);
+        //mJustShareButton.setOnFocusChangeListener(colorChangingListener);
+        //mJustShareButton.setOnTouchListener(colorChangingListener);
+
+        mSmsButton.setColor(JANRAIN_BLUE_100PERCENT);
+        mEmailButton.setColor(JANRAIN_BLUE_100PERCENT);
 
         // initialize the provider shared-ness state map.
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
 
-        // SharedLayoutHelper is a spinner dialog class
+        // SharedLayoutHelper provides a spinner dialog
         mLayoutHelper = new SharedLayoutHelper(this);
 
         // JRUserInterfaceMaestro's hook into calling this.finish()
@@ -307,11 +308,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         // Set the media_content_view = a thumbnail of the media
         if (mo != null) if (mo.hasThumbnail()) {
             Log.d(TAG, "media image url: " + mo.getThumbnail());
-            //there was a bug here, openstream is IO blocking, so moved that call into an asynctask
             new AsyncTask<JRMediaObject, Void, Bitmap>(){
                 protected Bitmap doInBackground(JRMediaObject... mo_) {
                     try {
-                        //todo experiment with this code, see if we can get it to cache the image
+                        //todo get this cached
                         URL url = new URL(mo_[0].getThumbnail());
                         URLConnection urlc = url.openConnection();
                         urlc.setUseCaches(true);
@@ -468,20 +468,24 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         super.onResume();
         Log.d(TAG, "onResume");
 
+        // Why set the context here?
+        // IIRC this was added in an earlier attempt to support resumption of JREngage dialogs
+        // after a process death and restart.
         JREngage.setContext(this);
-        if (mSelectedProvider != null) {
-            Object colorArray = mSelectedProvider.getSocialSharingProperties().get("color_values");
-            int color = colorForProviderFromArray(colorArray, false);
 
-            mJustShareButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-            mConnectAndShareButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-        }
+        //if (mSelectedProvider != null) {
+        //    Object colorArray = mSelectedProvider.getSocialSharingProperties().get("color_values");
+        //    int color = colorForProviderFromArray(colorArray, false);
+        //
+        //    //mJustShareButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+        //    //mConnectAndShareButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+        //}
 
 
-        mEmailButton.getBackground().setColorFilter(JANRAIN_BLUE_100PERCENT,
-                PorterDuff.Mode.MULTIPLY);
-        mSmsButton.getBackground().setColorFilter(JANRAIN_BLUE_100PERCENT,
-                PorterDuff.Mode.MULTIPLY);
+        //mEmailButton.getBackground().setColorFilter(JANRAIN_BLUE_100PERCENT,
+        //        PorterDuff.Mode.MULTIPLY);
+        //mSmsButton.getBackground().setColorFilter(JANRAIN_BLUE_100PERCENT,
+        //        PorterDuff.Mode.MULTIPLY);
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
@@ -532,69 +536,69 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSessionData.triggerPublishingDidComplete();
     }
 
-    private class ButtonEventColorChangingListener implements
-            View.OnFocusChangeListener, View.OnTouchListener {
-
-        public void onFocusChange(View view, boolean hasFocus) {
-            if (hasFocus)
-                view.getBackground().clearColorFilter();
-            else {
-                int providerColor = colorForProviderFromArray(
-                        mSelectedProvider.getSocialSharingProperties().get("color_values"), false);
-                int color = getTabHost().getCurrentTabTag().equals(EMAIL_SMS_TAB_TAG) ?
-                        JANRAIN_BLUE_100PERCENT
-                        : providerColor;
-                view.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-            }
-        }
-
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            boolean onButton = (motionEvent.getX() >= view.getLeft()) &&
-                    (motionEvent.getX() <= view.getLeft() + view.getWidth()) &&
-                    (motionEvent.getY() >= view.getTop()) &&
-                    (motionEvent.getY() <= view.getTop() + view.getHeight());
-
-            int providerColor = colorForProviderFromArray(
-                    mSelectedProvider.getSocialSharingProperties().get("color_values"), false);
-
-            boolean isEmailSmsTab = getTabHost().getCurrentTabTag().equals(EMAIL_SMS_TAB_TAG);
-            int color = isEmailSmsTab ? JANRAIN_BLUE_100PERCENT : providerColor;
-
-            switch (motionEvent.getAction()) {
-                case MotionEvent.ACTION_UP:
-                    if (!view.isPressed() || isEmailSmsTab) {
-                        view.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-
-                        // For some reason both email/SMS buttons' colorfilters are being cleared
-                        // this is a hack to make sure they're both applied.
-
-                        mEmailButton.getBackground().setColorFilter(color,
-                                PorterDuff.Mode.MULTIPLY);
-                        mSmsButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-                    }
-                    break;
-                case MotionEvent.ACTION_CANCEL:
-                    view.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-                    break;
-                case MotionEvent.ACTION_DOWN:
-                    view.getBackground().clearColorFilter();
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    if (!onButton & !view.isPressed()) {
-                        view.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-                        view.invalidate();
-                    } else if (view.isPressed()) view.getBackground().clearColorFilter();
-                    break;
-                case MotionEvent.ACTION_OUTSIDE:
-                    break;
-            }
-
-            Log.d(TAG, "ColorFilter " + motionEvent.getAction() + " " + view.toString()
-                    + " " + onButton + " " + view.isPressed());
-
-            return false;
-        }
-    }
+    //private class ButtonEventColorChangingListener implements
+    //        View.OnFocusChangeListener, View.OnTouchListener {
+    //
+    //    public void onFocusChange(View view, boolean hasFocus) {
+    //        if (hasFocus)
+    //            view.getBackground().clearColorFilter();
+    //        else {
+    //            int providerColor = colorForProviderFromArray(
+    //                    mSelectedProvider.getSocialSharingProperties().get("color_values"), false);
+    //            int color = getTabHost().getCurrentTabTag().equals(EMAIL_SMS_TAB_TAG) ?
+    //                    JANRAIN_BLUE_100PERCENT
+    //                    : providerColor;
+    //            view.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+    //        }
+    //    }
+    //
+    //    public boolean onTouch(View view, MotionEvent motionEvent) {
+    //        boolean onButton = (motionEvent.getX() >= view.getLeft()) &&
+    //                (motionEvent.getX() <= view.getLeft() + view.getWidth()) &&
+    //                (motionEvent.getY() >= view.getTop()) &&
+    //                (motionEvent.getY() <= view.getTop() + view.getHeight());
+    //
+    //        int providerColor = colorForProviderFromArray(
+    //                mSelectedProvider.getSocialSharingProperties().get("color_values"), false);
+    //
+    //        boolean isEmailSmsTab = getTabHost().getCurrentTabTag().equals(EMAIL_SMS_TAB_TAG);
+    //        int color = isEmailSmsTab ? JANRAIN_BLUE_100PERCENT : providerColor;
+    //
+    //        switch (motionEvent.getAction()) {
+    //            case MotionEvent.ACTION_UP:
+    //                if (!view.isPressed() || isEmailSmsTab) {
+    //                    view.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+    //
+    //                    // For some reason both email/SMS buttons' colorfilters are being cleared
+    //                    // this is a hack to make sure they're both applied.
+    //
+    //                    mEmailButton.getBackground().setColorFilter(color,
+    //                            PorterDuff.Mode.MULTIPLY);
+    //                    mSmsButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+    //                }
+    //                break;
+    //            case MotionEvent.ACTION_CANCEL:
+    //                view.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+    //                break;
+    //            case MotionEvent.ACTION_DOWN:
+    //                view.getBackground().clearColorFilter();
+    //                break;
+    //            case MotionEvent.ACTION_MOVE:
+    //                if (!onButton & !view.isPressed()) {
+    //                    view.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+    //                    view.invalidate();
+    //                } else if (view.isPressed()) view.getBackground().clearColorFilter();
+    //                break;
+    //            case MotionEvent.ACTION_OUTSIDE:
+    //                break;
+    //        }
+    //
+    //        Log.d(TAG, "ColorFilter " + motionEvent.getAction() + " " + view.toString()
+    //                + " " + onButton + " " + view.isPressed());
+    //
+    //        return false;
+    //    }
+    //}
 
     private View.OnClickListener mShareButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
@@ -641,10 +645,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (tabId.equals(EMAIL_SMS_TAB_TAG)) {
             mEmailSmsComment.setText(mUserCommentView.getText());
-            mEmailButton.getBackground()
-                    .setColorFilter(JANRAIN_BLUE_100PERCENT, PorterDuff.Mode.MULTIPLY);
-            mSmsButton.getBackground()
-                    .setColorFilter(JANRAIN_BLUE_100PERCENT, PorterDuff.Mode.MULTIPLY);
         } else { // ... else a "real" provider -- Facebook, Twitter, etc.
             mSelectedProvider = mSessionData.getProviderByName(tabId);
     
@@ -710,6 +710,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             // Google Voice does not respect passing the body, so this Intent is constructed
             // specifically to be responded to only by Mms (the platform messaging app).
+            //http://stackoverflow.com/questions/4646508/how-to-pass-text-to-google-voice-sms-programmatically
+
             //intent = new Intent(android.content.Intent.ACTION_SEND);
             intent = new Intent(android.content.Intent.ACTION_VIEW);
             intent.setType("vnd.android-dir/mms-sms");
@@ -729,13 +731,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         // this code path hasn't set mSelectedProvider yet, so we use the value previously
         // set and "unselect" the email SMS tab, making it kind of a button in tab clothing.
         
-        //int lastProviderIndex = mSessionData.getSocialProviders().indexOf(mSelectedProvider);
-        //getTabHost().setCurrentTab(lastProviderIndex);
         mUserCommentView.setText(mEmailSmsComment.getText());
 
         // Email and SMS intents are returning 0, 0, null
-        Log.d(TAG, "[onActivityResult]: requestCode=" + requestCode + " resultCode=" + resultCode
-                + " data=" + data);
+        //Log.d(TAG, "[onActivityResult]: requestCode=" + requestCode + " resultCode=" + resultCode
+        //        + " data=" + data);
     }
 
     public Dialog onCreateDialog(int id) {
@@ -837,7 +837,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void updateUserCommentView() {
-//        mUserHasEditedText = true;
+        //mUserHasEditedText = true;
 
         if (mSelectedProvider.getSocialSharingProperties()
                 .getAsBoolean("content_replaces_action")) {
@@ -991,22 +991,18 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             updatePreviewTextWhenContentDoesNotReplaceAction();
 
         if (isPublishThunk()) {
-            mMaxCharacters = mSelectedProvider.getSocialSharingProperties()
+            mMaxCharacters = socialSharingProperties
                     .getAsDictionary("set_status_properties").getAsInt("max_characters");
         } else {
-            mMaxCharacters = mSelectedProvider.getSocialSharingProperties()
-                    .getAsInt("max_characters");
+            mMaxCharacters = socialSharingProperties.getAsInt("max_characters");
         }
         
-        if (mMaxCharacters != -1) {
-            mCharacterCountView.setVisibility(View.VISIBLE);
-        } else
-            mCharacterCountView.setVisibility(View.GONE);
+        if (mMaxCharacters != -1) mCharacterCountView.setVisibility(View.VISIBLE);
+        else mCharacterCountView.setVisibility(View.GONE);
 
         updateCharacterCount();
 
-        boolean can_share_media = mSelectedProvider.getSocialSharingProperties()
-                .getAsBoolean("can_share_media");
+        boolean can_share_media = socialSharingProperties.getAsBoolean("can_share_media");
 
         // Switch on or off the media content view based on the presence of media and ability to
         // display it
@@ -1017,21 +1013,16 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
         //mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
 
-        mUserProfileInformationAndShareButtonContainer.setBackgroundColor(
-                colorForProviderFromArray(socialSharingProperties.get("color_values"), true));
+        Object colorValues = socialSharingProperties.get("color_values");
+        int colorWithAlpha = colorForProviderFromArray(colorValues, true);
+        int colorNoAlpha = colorForProviderFromArray(colorValues, false);
 
-        int colorWithNoAlpha = colorForProviderFromArray(
-                mSelectedProvider.getSocialSharingProperties().get("color_values"), false);
+        mUserProfileInformationAndShareButtonContainer.setBackgroundColor(colorWithAlpha);
 
-        mJustShareButton.getBackground().setColorFilter(colorWithNoAlpha, PorterDuff.Mode.MULTIPLY);
-        mConnectAndShareButton.getBackground().setColorFilter(colorWithNoAlpha,
-                PorterDuff.Mode.MULTIPLY);
-        mPreviewBorder.getBackground().setColorFilter(colorWithNoAlpha, PorterDuff.Mode.SRC_ATOP);
+        mJustShareButton.setColor(colorNoAlpha);
+        mConnectAndShareButton.setColor(colorNoAlpha);
+        mPreviewBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
 
-//        Drawable providerIcon = mSelectedProvider.getProviderListIconDrawable(this);
-//
-//        mConnectAndShareButton.setCompoundDrawables(null, null, providerIcon, null);
-//        mJustShareButton.setCompoundDrawables(null, null, providerIcon, null);
         mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(this));
     }
 

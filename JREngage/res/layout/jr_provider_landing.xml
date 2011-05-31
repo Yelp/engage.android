@@ -80,7 +80,7 @@
             >
             <!--android:layout_gravity="center_horizontal"-->
 
-            <Button
+            <com.janrain.android.engage.ui.ColorButton
                 android:id="@+id/jr_landing_switch_account_button"
                 android:visibility="invisible"
                 android:layout_width="fill_parent"
@@ -98,24 +98,24 @@
                 <!--android:layout_gravity="center_horizontal"-->
                 <!--android:background="@drawable/sel_black_135x40"-->
 
-            <Button
-                android:id="@+id/jr_landing_big_signin_button"
-                android:visibility="gone"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="4dp"
-                android:text="@string/jr_landing_signin_button_text"
-                android:textColor="#ffffffff"
-                android:textStyle="bold"
-                android:layout_weight="0"
-                />
+            <!--<com.janrain.android.engage.ui.ColorButton-->
+                <!--android:id="@+id/jr_landing_big_signin_button"-->
+                <!--android:visibility="gone"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_horizontal"-->
+                <!--android:layout_marginTop="4dp"-->
+                <!--android:layout_marginRight="4dp"-->
+                <!--android:layout_marginBottom="8dp"-->
+                <!--android:layout_marginLeft="4dp"-->
+                <!--android:text="@string/jr_landing_signin_button_text"-->
+                <!--android:textColor="#ffffffff"-->
+                <!--android:textStyle="bold"-->
+                <!--android:layout_weight="0"-->
+                <!--/>-->
                 <!--android:background="@drawable/sel_iosblue_280x40"-->
 
-            <Button
+            <com.janrain.android.engage.ui.ColorButton
                 android:id="@+id/jr_landing_small_signin_button"
                 android:visibility="visible"
                 android:layout_width="fill_parent"
