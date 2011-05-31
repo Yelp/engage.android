@@ -47,80 +47,12 @@ import com.janrain.android.engage.types.JRDictionary;
 import java.util.ArrayList;
 
 public class ProfileDetailActivity extends ListActivity {
-    /**
-     * Array adapter used to render individual providers in list view.
-     */
-    private class ProfileAdapter extends ArrayAdapter<String> {
-        private int mResourceId;
-
-        public ProfileAdapter(Context context, int resId, ArrayList<String> items) {
-            super(context, -1, items);
-
-            mResourceId = resId;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View v = convertView;
-            if (v == null) {
-                LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = li.inflate(mResourceId, null);
-                Log.i(TAG, "[getView] with null converView");
-            } else Log.i(TAG, "[getView] with non null convertView");
-
-            TextView keyLabel = (TextView)v.findViewById(R.id.row_profile_detail_key);
-            TextView valueLabel = (TextView)v.findViewById(R.id.row_profile_detail_value);
-
-            String key = getItem(position);
-
-            keyLabel.setText(key);
-
-            if (mProfile.get(key) instanceof String)
-                valueLabel.setText(mProfile.getAsString(key));
-            else
-                valueLabel.setText("");
-
-            return v;
-        }
-    }
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
     private static final String TAG = ProfileDetailActivity.class.getSimpleName();
 
-    // ------------------------------------------------------------------------
-    // STATIC INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
-    private ProfileAdapter mAdapter;
-    private ProfileData mProfileData;
-    private ArrayList<String> mProfileKeys;
     private JRDictionary mProfile;
-
-    // ------------------------------------------------------------------------
-    // INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
 
     public ProfileDetailActivity() {
     }
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
 
     /**
      * Called when the activity is first created.
@@ -134,15 +66,18 @@ public class ProfileDetailActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_detail_listview);
 
+        ProfileAdapter mAdapter;
+        ProfileData mProfileData;
+        ArrayList<String> mProfileKeys;
 
         mProfileData = ProfileData.getInstance();
         mProfile = mProfileData.getCurrentProfile();
 
         mProfileKeys = new ArrayList<String>(mProfile.keySet());
 
-        if (mProfileKeys == null) {
-            mProfileKeys = new ArrayList<String>();
-        }
+//        if (mProfileKeys == null) {
+//            mProfileKeys = new ArrayList<String>();
+//        }
 
         mAdapter = new ProfileAdapter(this, R.layout.profile_detail_listview_row, mProfileKeys);
         setListAdapter(mAdapter);
@@ -195,8 +130,40 @@ public class ProfileDetailActivity extends ListActivity {
         return null;
     }
 
-    public void tryToFinishActivity() {
-        Log.i(TAG, "[tryToFinishActivity]");
-        finish();
+    /**
+     * Array adapter used to render individual providers in list view.
+     */
+    private class ProfileAdapter extends ArrayAdapter<String> {
+        private int mResourceId;
+
+        public ProfileAdapter(Context context, int resId, ArrayList<String> items) {
+            super(context, -1, items);
+
+            mResourceId = resId;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v = convertView;
+            if (v == null) {
+                LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = li.inflate(mResourceId, null);
+                Log.i(TAG, "[getView] with null converView");
+            } else Log.i(TAG, "[getView] with non null convertView");
+
+            TextView keyLabel = (TextView)v.findViewById(R.id.row_profile_detail_key);
+            TextView valueLabel = (TextView)v.findViewById(R.id.row_profile_detail_value);
+
+            String key = getItem(position);
+
+            keyLabel.setText(key);
+
+            if (mProfile.get(key) instanceof String)
+                valueLabel.setText(mProfile.getAsString(key));
+            else
+                valueLabel.setText("");
+
+            return v;
+        }
     }
 }

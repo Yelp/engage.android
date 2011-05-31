@@ -55,12 +55,11 @@ import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static com.janrain.android.quicksignin.QuickSignInEnvironment.*;
+import static com.janrain.android.quicksignin.QuickSignInEnvironment.getAppId;
+import static com.janrain.android.quicksignin.QuickSignInEnvironment.getTokenUrl;
 
 public class ProfilesActivity extends ListActivity implements View.OnClickListener, JREngageDelegate {
 
@@ -105,22 +104,8 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     private JREngage mEngage;
 
     private Button mAddProfile;
-    private MenuItem mEditProfilesButton;
-    private MenuItem mClearAllProfilesButton;
-
     private boolean mEditing;
     private String mDialogErrorMessage;
-
-//    private String readAsset(String fileName) {
-//        try {
-//            InputStream is = getAssets().open(fileName);
-//            byte[] buffer = new byte[is.available()];
-//            is.read(buffer);
-//            return new String(buffer);
-//        } catch (IOException e) {
-//            return null;
-//        }
-//    }
 
     public ProfilesActivity() {
     }
@@ -140,9 +125,6 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
 
         mEditing = false;
-
-        mEditProfilesButton = (MenuItem)findViewById(R.id.edit_profiles);
-        mClearAllProfilesButton = (MenuItem)findViewById(R.id.delete_all_profiles);
 
         mAddProfile = (Button)findViewById(R.id.btn_add_profile);
         mAddProfile.setOnClickListener(this);
@@ -240,7 +222,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
             if (v == null) {
                 LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = li.inflate(mResourceId, null);
-                Log.i(TAG, "[getView] with null converView");
+                Log.i(TAG, "[getView] with null convertView");
             } else Log.i(TAG, "[getView] with non null convertView");
 
             ImageView icon = (ImageView)v.findViewById(R.id.row_profile_provider_icon);
@@ -273,7 +255,6 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
             this.notifyDataSetChanged();
         }
     }
-
 
     /**
      * Initialize the contents of the Activity's standard options menu.
@@ -328,10 +309,6 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     /**
      * Callback for creating dialogs that are managed.
      */
-//    protected Dialog onCreateDialog(int id) {
-//        return null;
-//    }
-
     public Dialog onCreateDialog(int dialogId) {
         switch (dialogId) {
             case DIALOG_JRENGAGE_ERROR:
@@ -343,12 +320,6 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         }
 
         throw new RuntimeException("unknown dialogId");
-    }
-
-
-    public void tryToFinishActivity() {
-        Log.i(TAG, "[tryToFinishActivity]");
-        finish();
     }
 
     public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
