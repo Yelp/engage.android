@@ -33,6 +33,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.quicksignin;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
@@ -63,6 +64,11 @@ import static com.janrain.android.quicksignin.QuickSignInEnvironment.*;
 
 public class ProfilesActivity extends ListActivity implements View.OnClickListener, JREngageDelegate {
 
+    private static final String TAG = ProfilesActivity.class.getSimpleName();
+
+    private static String ENGAGE_APP_ID = getAppId();
+    private static String ENGAGE_TOKEN_URL = getTokenUrl();
+
     private static HashMap<String, Drawable> provider_list_icon_drawables =
             new HashMap<String, Drawable>();
 
@@ -90,152 +96,34 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
            }
     };
 
-
-    /**
-     * Array adapter used to render individual providers in list view.
-     */
-    private class ProfileAdapter extends ArrayAdapter<LoginSnapshot> implements View.OnClickListener {
-        private int mResourceId;
-
-        public ProfileAdapter(Context context, int resId, ArrayList<LoginSnapshot> items) {
-            super(context, -1, items);
-
-            mResourceId = resId;
-        }
-
-        private Drawable getProviderIconDrawable(Context c, String providerName) {
-            String drawableName = "icon_" + providerName;
-            HashMap<String, Drawable> drawableMap = provider_list_icon_drawables;
-            HashMap<String, Integer> resourceMap = provider_list_icon_resources;
-
-            if (drawableMap.containsKey(drawableName)) return drawableMap.get(drawableName);
-
-            if (resourceMap.containsKey(drawableName)) {
-                Drawable r = c.getResources().getDrawable(resourceMap.get(drawableName));
-                drawableMap.put(drawableName, r);
-                return r;
-            }
-
-            try {
-                String iconFileName = "providericon~" + drawableName + ".png";
-
-                Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
-                if (icon != null) {
-                    icon.setDensity(android.util.DisplayMetrics.DENSITY_MEDIUM);
-                }
-                else {
-                    c.deleteFile(iconFileName);
-                    //downloadIcons(c);
-                    return c.getResources().getDrawable(com.janrain.android.engage.R.drawable.icon_unknown);
-                }
-
-                return new BitmapDrawable(c.getResources(), icon);
-            }
-            catch (FileNotFoundException e) {
-                //downloadIcons(c);
-
-                return c.getResources().getDrawable(com.janrain.android.engage.R.drawable.icon_unknown);
-            }
-    }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View v = convertView;
-            if (v == null) {
-                LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = li.inflate(mResourceId, null);
-                Log.i(TAG, "[getView] with null converView");
-            } else Log.i(TAG, "[getView] with non null convertView");
-
-            ImageView icon = (ImageView)v.findViewById(R.id.row_profile_provider_icon);
-            TextView name = (TextView)v.findViewById(R.id.row_profile_preferred_username_label);
-            TextView timestamp = (TextView)v.findViewById(R.id.row_profile_timestamp_label);
-            Button deleteRow = (Button)v.findViewById(R.id.row_delete_button);
-
-            LoginSnapshot snapshot = getItem(position);
-
-            Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " + snapshot.getDisplayName());
-
-            icon.setImageDrawable(getProviderIconDrawable(getContext(), snapshot.getProvider()));
-            name.setText(snapshot.getDisplayName());
-            timestamp.setText(snapshot.getTimeStamp());
-
-            deleteRow.setTag(position);
-            deleteRow.setOnClickListener(this);
-
-            if (mEditing)
-                deleteRow.setVisibility(View.VISIBLE);
-            else
-                deleteRow.setVisibility(View.GONE);
-            
-            return v;
-        }
-
-        public void onClick(View view) {
-            Integer position = ((Integer)view.getTag());
-            mProfileData.deleteLoginSnapshotAtPosition(position);
-            this.notifyDataSetChanged();
-        }
-    }
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
-    private static final String TAG = ProfilesActivity.class.getSimpleName();
-
-    private static String ENGAGE_APP_ID = getAppId();
-    private static String ENGAGE_TOKEN_URL = getTokenUrl();
-
-    // ------------------------------------------------------------------------
-    // STATIC INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
+    private static final int DIALOG_JRENGAGE_ERROR = 1;
 
     private ArrayList<LoginSnapshot> mProfilesList;
     private ProfileAdapter mAdapter;
     private ProfileData mProfileData;
 
-    private boolean mEditing;
-    private MenuItem mEditProfilesButton;
-    private MenuItem mClearAllProfilesButton;
-
     private JREngage mEngage;
 
     private Button mAddProfile;
-    // ------------------------------------------------------------------------
-    // INITIALIZERS
-    // ------------------------------------------------------------------------
+    private MenuItem mEditProfilesButton;
+    private MenuItem mClearAllProfilesButton;
 
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
+    private boolean mEditing;
+    private String mDialogErrorMessage;
+
+//    private String readAsset(String fileName) {
+//        try {
+//            InputStream is = getAssets().open(fileName);
+//            byte[] buffer = new byte[is.available()];
+//            is.read(buffer);
+//            return new String(buffer);
+//        } catch (IOException e) {
+//            return null;
+//        }
+//    }
 
     public ProfilesActivity() {
     }
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
-
-    private String readAsset(String fileName) {
-        try {
-            InputStream is = getAssets().open(fileName);
-            byte[] buffer = new byte[is.available()];
-            is.read(buffer);
-            return new String(buffer);
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
 
     /**
      * Called when the activity is first created.
@@ -300,6 +188,93 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         this.startActivity(new Intent(this, ProfileDetailActivity.class));
     }
 
+    /*
+     * Array adapter used to render individual providers in list view.
+     */
+    private class ProfileAdapter extends ArrayAdapter<LoginSnapshot> implements View.OnClickListener {
+        private int mResourceId;
+
+        public ProfileAdapter(Context context, int resId, ArrayList<LoginSnapshot> items) {
+            super(context, -1, items);
+
+            mResourceId = resId;
+        }
+
+        private Drawable getProviderIconDrawable(Context c, String providerName) {
+            String drawableName = "icon_" + providerName;
+            HashMap<String, Drawable> drawableMap = provider_list_icon_drawables;
+            HashMap<String, Integer> resourceMap = provider_list_icon_resources;
+
+            if (drawableMap.containsKey(drawableName)) return drawableMap.get(drawableName);
+
+            if (resourceMap.containsKey(drawableName)) {
+                Drawable r = c.getResources().getDrawable(resourceMap.get(drawableName));
+                drawableMap.put(drawableName, r);
+                return r;
+            }
+
+            try {
+                String iconFileName = "providericon~" + drawableName + ".png";
+
+                Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
+                if (icon != null) {
+                    icon.setDensity(android.util.DisplayMetrics.DENSITY_MEDIUM);
+                }
+                else {
+                    c.deleteFile(iconFileName);
+                    //downloadIcons(c);
+                    return c.getResources().getDrawable(com.janrain.android.engage.R.drawable.icon_unknown);
+                }
+
+                return new BitmapDrawable(c.getResources(), icon);
+            }
+            catch (FileNotFoundException e) {
+                //downloadIcons(c);
+                return c.getResources().getDrawable(com.janrain.android.engage.R.drawable.icon_unknown);
+            }
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v = convertView;
+            if (v == null) {
+                LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = li.inflate(mResourceId, null);
+                Log.i(TAG, "[getView] with null converView");
+            } else Log.i(TAG, "[getView] with non null convertView");
+
+            ImageView icon = (ImageView)v.findViewById(R.id.row_profile_provider_icon);
+            TextView name = (TextView)v.findViewById(R.id.row_profile_preferred_username_label);
+            TextView timestamp = (TextView)v.findViewById(R.id.row_profile_timestamp_label);
+            Button deleteRow = (Button)v.findViewById(R.id.row_delete_button);
+
+            LoginSnapshot snapshot = getItem(position);
+
+            Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " + snapshot.getDisplayName());
+
+            icon.setImageDrawable(getProviderIconDrawable(getContext(), snapshot.getProvider()));
+            name.setText(snapshot.getDisplayName());
+            timestamp.setText(snapshot.getTimeStamp());
+
+            deleteRow.setTag(position);
+            deleteRow.setOnClickListener(this);
+
+            if (mEditing)
+                deleteRow.setVisibility(View.VISIBLE);
+            else
+                deleteRow.setVisibility(View.GONE);
+
+            return v;
+        }
+
+        public void onClick(View view) {
+            Integer position = ((Integer)view.getTag());
+            mProfileData.deleteLoginSnapshotAtPosition(position);
+            this.notifyDataSetChanged();
+        }
+    }
+
+
     /**
      * Initialize the contents of the Activity's standard options menu.
      */
@@ -353,9 +328,23 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     /**
      * Callback for creating dialogs that are managed.
      */
-    protected Dialog onCreateDialog(int id) {
-        return null;
+//    protected Dialog onCreateDialog(int id) {
+//        return null;
+//    }
+
+    public Dialog onCreateDialog(int dialogId) {
+        switch (dialogId) {
+            case DIALOG_JRENGAGE_ERROR:
+                return new AlertDialog.Builder(this)
+                    .setPositiveButton("Dismiss", null)
+                    .setCancelable(false)
+                    .setMessage(mDialogErrorMessage)
+                    .create();
+        }
+
+        throw new RuntimeException("unknown dialogId");
     }
+
 
     public void tryToFinishActivity() {
         Log.i(TAG, "[tryToFinishActivity]");
@@ -363,11 +352,12 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     }
 
     public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
+        Log.d(TAG, "[jrEngageDialogDidFailToShowWithError]");
 
-    public void jrAuthenticationDidNotComplete() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        mDialogErrorMessage = "Authentication Error: " +
+                ((error == null) ? "unknown" : error.getMessage());
+
+        showDialog(DIALOG_JRENGAGE_ERROR);
     }
 
     public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
@@ -382,32 +372,35 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
+        Toast.makeText(this, "Authentication did reach token url", Toast.LENGTH_SHORT).show();
     }
 
-    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void jrAuthenticationDidNotComplete() {
+        Toast.makeText(this, "Authentication did not complete", Toast.LENGTH_SHORT).show();
+    }
+
+    public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
+        String message = "Authentication failed, error: " +
+                ((error == null) ? "unknown" : error.getMessage());
+
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        Toast.makeText(this, "Authentication failed to reach token url", Toast.LENGTH_SHORT).show();
     }
 
     public void jrSocialDidNotCompletePublishing() {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void jrSocialDidCompletePublishing() {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void onClick(View view) {
