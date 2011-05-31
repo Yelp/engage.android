@@ -83,7 +83,12 @@
                         android:orientation="vertical"
                         >
 
-                        <Button
+                        <!-- It would be nice to use xmlns:jr="http://schemas.android.com/apk/res/com.janrain.android.engage"
+                             here, but there's an open bug preventing aapt from being able to
+                             compile the subsequent usage of the jr:jr_color attribute.
+                             http://code.google.com/p/android/issues/detail?id=9656
+                             -->
+                        <com.janrain.android.engage.ui.ColorButton
                             android:id="@+id/jr_email_button"
                             android:layout_height="wrap_content"
                             android:layout_width="fill_parent"
@@ -98,7 +103,7 @@
                         <!--android:layout_marginRight="10dp"-->
                         <!--android:layout_marginLeft="10dp"-->
 
-                        <Button
+                        <com.janrain.android.engage.ui.ColorButton
                             android:id="@+id/jr_sms_button"
                             android:layout_height="wrap_content"
                             android:layout_width="fill_parent"
@@ -267,7 +272,7 @@
 
                             <!--
                                - NOTE:  In order to get the text to extend more than two lines, had to use the 'inputType=...'
-                               -        property.  Unfortunately, doing so breaks the ellipsize function.  Android BUG.
+                               -        property.  Unfortunately, doing so breaks the ellipsize function.
                               -->
                             <TextView
                                 android:id="@+id/jr_media_content_description"
@@ -455,7 +460,7 @@
 
                         </LinearLayout>
 
-                        <Button
+                        <com.janrain.android.engage.ui.ColorButton
                             android:id="@+id/jr_just_share_button"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -511,7 +516,7 @@
 
                         </LinearLayout>
 
-                        <Button
+                        <com.janrain.android.engage.ui.ColorButton
                             android:id="@+id/jr_connect_and_share_button"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"

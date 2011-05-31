@@ -89,7 +89,7 @@ public class JRLandingActivity extends Activity {
     }
 
     private class ButtonEventListener implements
-            View.OnClickListener, View.OnFocusChangeListener, View.OnTouchListener {
+            View.OnClickListener {//}, View.OnFocusChangeListener, View.OnTouchListener {
 
         private final String TAG = JRLandingActivity.TAG + "-" +
                 ButtonEventListener.class.getSimpleName();
@@ -104,31 +104,31 @@ public class JRLandingActivity extends Activity {
             }
         }
 
-        public void onFocusChange(View view, boolean hasFocus) {
-            Log.i(TAG, "[onFocusChange] hasFocus = " + (hasFocus ? "true" : "false"));
+        //public void onFocusChange(View view, boolean hasFocus) {
+        //    Log.i(TAG, "[onFocusChange] hasFocus = " + (hasFocus ? "true" : "false"));
+        //
+        //    if (hasFocus)
+        //        view.getBackground().clearColorFilter();
+        //    else
+        //        if (view == mSwitchAccountButton)
+        //            view.getBackground().setColorFilter(0xFFAAAAAA, PorterDuff.Mode.MULTIPLY);
+        //        else if (view == mSigninButton)
+        //            view.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
+        //}
 
-            if (hasFocus)
-                view.getBackground().clearColorFilter();
-            else
-                if (view == mSwitchAccountButton)
-                    view.getBackground().setColorFilter(0xFFAAAAAA, PorterDuff.Mode.MULTIPLY);
-                else if (view == mSigninButton)
-                    view.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
-        }
-
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            Log.i(TAG, "[onTouch] motionEvent = " + motionEvent.toString());
-
-            if (view == mSwitchAccountButton)
-                mSwitchAccountButton.getBackground().setColorFilter(0xFFAAAAAA, PorterDuff.Mode.MULTIPLY);
-            else if (view == mSigninButton)
-                mSigninButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
-
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN)
-                view.getBackground().clearColorFilter();
-            
-            return false;
-        }
+        //public boolean onTouch(View view, MotionEvent motionEvent) {
+        //    Log.i(TAG, "[onTouch] motionEvent = " + motionEvent.toString());
+        //
+        //    if (view == mSwitchAccountButton)
+        //        mSwitchAccountButton.getBackground().setColorFilter(0xFFAAAAAA, PorterDuff.Mode.MULTIPLY);
+        //    else if (view == mSigninButton)
+        //        mSigninButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
+        //
+        //    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN)
+        //        view.getBackground().clearColorFilter();
+        //
+        //    return false;
+        //}
     }
 
 
@@ -137,10 +137,6 @@ public class JRLandingActivity extends Activity {
     // ------------------------------------------------------------------------
 
     private static final String TAG = JRLandingActivity.class.getSimpleName();
-
-    // I find the auto-show keyboard really annoying, so I am turning
-    // it off until someone asks for it...
-//    private static final boolean SHOW_KEYBOARD_ON_LAUNCH = false;
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -166,8 +162,8 @@ public class JRLandingActivity extends Activity {
 
     private TextView mWelcomeLabel;
 
-    private Button mSwitchAccountButton;
-    private Button mSigninButton;
+    private ColorButton mSwitchAccountButton;
+    private ColorButton mSigninButton;
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -199,7 +195,7 @@ public class JRLandingActivity extends Activity {
 
         mSessionData = JRSessionData.getInstance();
 
-        //for the case when this activity is relaunched after the process was killed
+        // For the case when this activity is relaunched after the process was killed
         if (mSessionData == null) {
             Log.e(TAG, "JRLandingActivity bailing out after a process kill/restart");
             finish();
@@ -216,17 +212,13 @@ public class JRLandingActivity extends Activity {
 
         ButtonEventListener bel = new ButtonEventListener();
 
-        mSwitchAccountButton = (Button)findViewById(R.id.jr_landing_switch_account_button);
-        mSwitchAccountButton.getBackground().setColorFilter(0xFFAAAAAA, PorterDuff.Mode.MULTIPLY);
+        mSwitchAccountButton = (ColorButton)findViewById(R.id.jr_landing_switch_account_button);
         mSwitchAccountButton.setOnClickListener(bel);
-        mSwitchAccountButton.setOnFocusChangeListener(bel);
-        mSwitchAccountButton.setOnTouchListener(bel);
-        mSigninButton = (Button)findViewById(R.id.jr_landing_small_signin_button);
-        mSigninButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
+        mSigninButton = (ColorButton)findViewById(R.id.jr_landing_small_signin_button);
         mSigninButton.setOnClickListener(bel);
-        mSigninButton.setOnFocusChangeListener(bel);
-        mSigninButton.setOnTouchListener(bel);
 
+        mSwitchAccountButton.setColor(0xffaaaaaa);
+        mSigninButton.setColor(0xff1a557c);
         prepareUserInterface();
 
         if (mFinishReceiver == null) {
