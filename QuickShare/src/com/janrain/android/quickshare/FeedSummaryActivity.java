@@ -64,7 +64,6 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
         mRefreshBlog.setOnClickListener(this);
         mRefreshBlog.setVisibility(View.GONE);
 
-
         mFeedData = FeedData.getInstance(this);
 
         mStories = new ArrayList<Story>();
@@ -148,11 +147,6 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
                 Log.d(TAG, "[onOptionsItemSelected] delete all stories option selected");
                 mFeedData.deleteAllStories();
                 getUpdatedStoriesList();
-
-//                mAdapter = new StoryAdapter(this, R.layout.feed_summary_listview_row, mStories);
-//                setListAdapter(mAdapter);
-//                mAdapter.notifyDataSetInvalidated();
-
                 mAdapter.notifyDataSetChanged();
                 return true;
             default:

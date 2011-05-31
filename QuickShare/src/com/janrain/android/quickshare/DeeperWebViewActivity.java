@@ -42,9 +42,6 @@ import android.webkit.WebView;
 public class DeeperWebViewActivity extends Activity {
     private static final String TAG = DeeperWebViewActivity.class.getSimpleName();
 
-    private WebView mWebview;
-    //private String mUrl;
-
     public void onCreate(Bundle savedInstanceState) {
         if (Config.LOGD)
             Log.d(TAG, "[onCreate]");
@@ -53,16 +50,10 @@ public class DeeperWebViewActivity extends Activity {
 
         setContentView(R.layout.deeper_webview);
 
-        mWebview = (WebView)findViewById(R.id.deeper_webview);
+        WebView mWebview = (WebView)findViewById(R.id.deeper_webview);
         mWebview.loadUrl(FeedData.getInstance(this).getUrlToBeLoaded());
 
         if (Config.LOGD)
             Log.d(TAG, "[onCreate] loading url: " + FeedData.getInstance(this).getUrlToBeLoaded());
     }
-
-//    public void loadUrl(String url) {
-//        //mUrl = url;
-//
-//        mWebview.loadUrl(url);
-//    }
 }

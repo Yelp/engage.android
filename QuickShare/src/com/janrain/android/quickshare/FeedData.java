@@ -68,7 +68,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 
-import static com.janrain.android.quickshare.QuickShareEnvironment.*;
+import static com.janrain.android.quickshare.QuickShareEnvironment.getAppId;
+import static com.janrain.android.quickshare.QuickShareEnvironment.getTokenUrl;
 
 public class FeedData implements JREngageDelegate {
     private static final String TAG = FeedData.class.getSimpleName();
@@ -89,7 +90,6 @@ public class FeedData implements JREngageDelegate {
     private Story mCurrentStory;
 
     private JREngage mEngage;
-    private Context mContext;
 
     private String mUrlToBeLoaded;
 
@@ -114,7 +114,6 @@ public class FeedData implements JREngageDelegate {
         if (Config.LOGD)
             Log.d(TAG, "[ctor] creating instance");
 
-        mContext = context;
         mEngage = JREngage.initInstance(context, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
 
         ArrayList<Story> stories = (ArrayList<Story>) Archiver.load(ARCHIVE_STORIES_ARRAY);
@@ -259,10 +258,10 @@ public class FeedData implements JREngageDelegate {
                 return false;
             }
 
-            private String resizeImage(String nodeValue) {
-                Log.d(TAG, "[resizeImage] :" + nodeValue);
-                return nodeValue;
-            }
+//            private String resizeImage(String nodeValue) {
+//                Log.d(TAG, "[resizeImage] :" + nodeValue);
+//                return nodeValue;
+//            }
 
             protected void onPostExecute(Boolean loadSuccess) {
                 LOGD("onPostExecute", "blog loader onPostExecute, result: " +
@@ -334,55 +333,41 @@ public class FeedData implements JREngageDelegate {
         Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
     }
 
-    public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrAuthenticationDidNotComplete() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, String tokenUrlPayload, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrSocialDidNotCompletePublishing() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrSocialDidCompletePublishing() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     public String getUrlToBeLoaded() {
         return mUrlToBeLoaded;
     }
 
     public void setUrlToBeLoaded(String mUrlToBeLoaded) {
         this.mUrlToBeLoaded = mUrlToBeLoaded;
+    }
+
+    public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
+    }
+
+    public void jrAuthenticationDidNotComplete() {
+    }
+
+    public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
+    }
+
+    public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
+    }
+
+    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
+    }
+
+    public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
+    }
+
+    public void jrSocialDidNotCompletePublishing() {
+    }
+
+    public void jrSocialDidCompletePublishing() {
+    }
+
+    public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
+    }
+
+    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
     }
 }

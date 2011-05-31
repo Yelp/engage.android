@@ -48,9 +48,7 @@ public class StoryDetailActivity extends Activity implements View.OnClickListene
     private static final String TAG = StoryDetailActivity.class.getSimpleName();
 
     private FeedData mFeedData;
-    private Story mStory;
 
-    private Button mShareStory;
     private WebView mWebview;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -60,19 +58,8 @@ public class StoryDetailActivity extends Activity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.story_detail_webview);
 
-        if (Config.LOGD)
-            Log.d(TAG, "[onCreate] getting the FeedData instance");
-
-        mFeedData = FeedData.getInstance(this);
-
-        if (Config.LOGD)
-            Log.d(TAG, "[onCreate] getting the share button resource");
-
-        mShareStory = (Button)findViewById(R.id.share_button);
+        Button mShareStory = (Button) findViewById(R.id.share_button);
         mShareStory.setOnClickListener(this);
-
-        if (Config.LOGD)
-            Log.d(TAG, "[onCreate] getting the webview resource");
 
         mWebview = (WebView)findViewById(R.id.story_webview);
         mWebview.setWebViewClient(mWebviewClient);
@@ -84,8 +71,13 @@ public class StoryDetailActivity extends Activity implements View.OnClickListene
     }
 
     public void loadCurrentStory() {
-        mStory = mFeedData.getCurrentStory();
+        mFeedData = FeedData.getInstance(this);
+        Story mStory = mFeedData.getCurrentStory();
 
+        // TODO: Handle this unlikely error with better grace?
+        if (mStory == null)
+            return;
+        
         String styleCommon = getResources().getString(R.string.html_style_sheet_common);
         String stylePhone = getString(R.string.html_style_sheet_phone);
 
@@ -124,6 +116,7 @@ public class StoryDetailActivity extends Activity implements View.OnClickListene
     private WebViewClient mWebviewClient = new WebViewClient(){
         private final String TAG = this.getClass().getSimpleName();
 
+        /* Clicked URLs should open the new activity and load there */
         @Override
         public boolean shouldOverrideUrlLoading(WebView webView, String url) {
             if (Config.LOGD)
