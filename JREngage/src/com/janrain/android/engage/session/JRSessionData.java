@@ -188,7 +188,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         catch (UnsupportedEncodingException e) { Log.e(TAG, e.toString()); }
 
         mLibraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
-        String diskVersion = Prefs.getAsString("JREngageVersion", "");
+        String diskVersion = Prefs.getAsString(Prefs.KEY_JR_ENGAGE_VERSION, "");
         if (diskVersion.equals(mLibraryVersion)) {
             // Load dictionary of authenticated users.  If the dictionary is not found, the
             // archiver will return a new (empty) list.
@@ -755,7 +755,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         Prefs.putString(Prefs.KEY_JR_CONFIGURATION_ETAG, mNewEtag);
 
         // 'git-tag'-like library version tag to prevent reloading stale data from disk
-        Prefs.putString("JREngageVersion", mLibraryVersion);
+        Prefs.putString(Prefs.KEY_JR_ENGAGE_VERSION, mLibraryVersion);
 
         mGetConfigDone = true;
         triggerMobileConfigDidFinish();

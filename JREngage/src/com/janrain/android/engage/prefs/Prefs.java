@@ -53,6 +53,8 @@ public final class Prefs {
     public static final String KEY_JR_LAST_USED_BASIC_PROVIDER = "jrLastUsedBasicProvider";
     public static final String KEY_JR_LAST_USED_SOCIAL_PROVIDER = "jrLastUsedSocialProvider";
     public static final String KEY_JR_BASE_URL = "jrBaseUrl";
+    public static final String KEY_JR_ENGAGE_VERSION = "JREngageVersion";
+
 
     // ------------------------------------------------------------------------
     // STATIC METHODS
