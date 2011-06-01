@@ -87,6 +87,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     private static final String FMT_CONFIG_URL =
             "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s&version=%s";
+    private static final String TAG_GET_CONFIGURATION = "getConfiguration";
+    private static final String TAG_NOTIFY_EMAIL_SMS = "notifyEmailSms";
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -401,23 +403,21 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                         JREngageError.ErrorType.CONFIGURATION_FAILED);
                 mGetConfigDone = true;
                 triggerMobileConfigDidFinish();
-            } else if (s.equals("emailSuccess")) {
-                // TODO: Implement notifications for email/sms sharing
-            } else if (s.equals("smsSuccess")) {
-                // TODO: Implement notifications for email/sms sharing
+            } else if (s.equals(TAG_NOTIFY_EMAIL_SMS)) {
+                // The notification to Engage of an email/SMS share failed
+                Log.e(TAG, "Engage email/SMS notification failed: " + ex);
             } else {
-
+                Log.e(TAG, "Unrecognized ConnectionManager tag: " + s + " with Exception: " + ex);
             }
         } else if (userdata instanceof JRDictionary) {
             JRDictionary dictionary = (JRDictionary) userdata;
-            // TODO: Should "tokenUrl" be a key, and if so, to what?  In iPhone lib, it's a value to key "action"
-            //todo
-            if (dictionary.containsKey("tokenUrl")) {
-                List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-                for (JRSessionDelegate delegate : delegatesCopy) {
-                    JREngageError error = new JREngageError(
-                        "Session error", JREngageError.CODE_UNKNOWN, "", ex
-                    );
+            if (dictionary.getAsString("action").equals("callTokenUrl")) {
+                JREngageError error = new JREngageError(
+                        "Session error",
+                        JREngageError.CODE_UNKNOWN,
+                        "",
+                        ex);
+                for (JRSessionDelegate delegate : getDelegatesCopy()) {
                     delegate.authenticationCallToTokenUrlDidFail(
                             dictionary.getAsString("tokenUrl"),
                             error,
@@ -425,7 +425,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 }
             } else if (dictionary.getAsString("action").equals("shareActivity")) {
                 List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-                JREngageError error = new JREngageError("Session error", JREngageError.CODE_UNKNOWN, "", ex);
+                JREngageError error = new JREngageError(
+                        "Session error",
+                        JREngageError.CODE_UNKNOWN,
+                        "",
+                        ex);
                 for (JRSessionDelegate delegate : delegatesCopy) {
                     delegate.publishingJRActivityDidFail(
                             (JRActivityObject) dictionary.get("activity"),
@@ -437,25 +441,17 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	}
 
     public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
-        Log.i(TAG, "[connectionDidFinishLoading]");
-
-        if (Config.LOGD) {
-            Log.d(TAG, "[connectionDidFinishLoading] payload: " + payload);
-        }
+        if (Config.LOGD) Log.d(TAG, "[connectionDidFinishLoading] payload: " + payload);
 
         if (userdata instanceof String) {
-            // todo verify this code path
             String tag = (String) userdata;
 
-            if (tag.equals("emailSuccess")) {
-                //todo
-            } else if (tag.equals("smsSuccess")) {
-                //todo
+            if (tag.equals(TAG_NOTIFY_EMAIL_SMS)) {
+                // Nothing to do here, our notification to Engage succeeded
             } else {
-                //todo
+                Log.e(TAG, "Unrecognized ConnectionManager tag: " + tag);
             }
         } else if (userdata instanceof JRDictionary) {
-            // Share activity response
             JRDictionary dictionary = (JRDictionary) userdata;
 
             if (dictionary.getAsString("action").equals("shareActivity"))
@@ -544,8 +540,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                         if (msg.matches(".*witter.*")) publishError = new JREngageError(
                                 msg,
                                 SocialPublishingError.DUPLICATE_TWITTER,
-                                ErrorType.PUBLISH_INVALID_ACTIVITY
-                        ); else publishError = new JREngageError(
+                                ErrorType.PUBLISH_INVALID_ACTIVITY);
+                        else publishError = new JREngageError(
                                 msg,
                                 JREngageError.SocialPublishingError.FAILED,
                                 ErrorType.PUBLISH_INVALID_ACTIVITY
@@ -567,18 +563,14 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
-    //todo unify http connection callbacks?
     public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload,
                                            String requestUrl, Object userdata) {
         Log.i(TAG, "[connectionDidFinishLoading-full]");
 
-        if (userdata == null) {
-            // TODO:  this case is not handled on iPhone, is it possible?
-        } else if (userdata instanceof JRDictionary) {
+        if (userdata instanceof JRDictionary) {
             JRDictionary dictionary = (JRDictionary) userdata;
             if (dictionary.containsKey("tokenUrl")) {
-                List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
-                for (JRSessionDelegate delegate : delegatesCopy) {
+                for (JRSessionDelegate delegate : getDelegatesCopy()) {
                     delegate.authenticationDidReachTokenUrl(
                             dictionary.getAsString("tokenUrl"),
                             headers,
@@ -598,8 +590,18 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                     return;
                 }
 
-                //todo this is probably UTF-8 encoded, not ASCII encoded, verify this function
-                String payloadString = EncodingUtils.getAsciiString(payload);
+                // I switched this from assuming an ASCII encoding to assuming a UTF-8 encoding
+                // because: assuming the payload is always ASCII, decoding it as UTF-8 is OK since
+                // UTF-8 is a superset of ASCII, however I am not convinced that Engage doesn't
+                // return some UTF-8 strings, or might not in the future if IDN support is
+                // implemented.
+                //String payloadString = EncodingUtils.getAsciiString(payload);
+                String payloadString = "";
+                try {
+                    payloadString = new String(payload, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    Log.e(TAG, "getConfiguration decoding exception: " + e);
+                }
                 Log.d(TAG, "[connectionDidFinishLoading-full] payload string: " + payloadString);
 
                 if (payloadString.contains("\"provider_info\":{")) {
@@ -657,12 +659,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[startGetConfiguration] url: " + urlString);
         }
 
-        final String tag = "getConfiguration";
-
         BasicNameValuePair etagHeader = new BasicNameValuePair("If-None-Match", mOldEtag);
         List<NameValuePair> headerList = new ArrayList<NameValuePair>();
         headerList.add(etagHeader);
 
+        String tag = TAG_GET_CONFIGURATION;
         if (!JRConnectionManager.createConnection(urlString, this, true, headerList, tag)) {
             Log.w(TAG, "[startGetConfiguration] createConnection failed.");
             return new JREngageError(
@@ -1007,7 +1008,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             }
         };
 
-        JRConnectionManager.createConnection(url, body.toString().getBytes(), jrcmd, false, null);
+        String tag = TAG_NOTIFY_EMAIL_SMS;
+        JRConnectionManager.createConnection(url, body.toString().getBytes(), jrcmd, false, tag);
     }
 
     public void shareActivityForUser(JRAuthenticatedUser user) {
@@ -1096,8 +1098,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         String body = "token=" + token;
-        byte[] postData = body.getBytes();  //todo URL encode necessary?
-        //it probably isn't required, the token is all alphanumerics or something.
+        byte[] postData = body.getBytes();
 
         JRDictionary tag = new JRDictionary();
         tag.put("action", "callTokenUrl");
@@ -1133,8 +1134,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
 
         if (!mSocialSharingMode) saveLastUsedBasicProvider();
-        //todo
-        //else saveLastUsedSocialProvider();
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.authenticationDidComplete(

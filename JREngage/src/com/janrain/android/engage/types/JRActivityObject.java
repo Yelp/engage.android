@@ -121,7 +121,7 @@ public class JRActivityObject {
      * @par Getter/Setter:
      *      #getUserGeneratedContent(), #setUserGeneratedContent()
      **/
-    private String mUserGeneratedContent;
+    private String mUserGeneratedContent = "";
 
     /**
      * The title of the resource being mentioned in the activity update.

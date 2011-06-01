@@ -167,6 +167,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         email.addUrl(mActionLink);
         mActivity.setEmail(email);
         mActivity.setSms(sms);
+        //mActivity.setUserGeneratedContent("Now is the time for all great men to come to the aid of their country.");
     }
 
     @Override

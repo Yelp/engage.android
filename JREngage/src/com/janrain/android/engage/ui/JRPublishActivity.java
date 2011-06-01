@@ -159,7 +159,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private boolean mWaitingForMobileConfig = false;
 
     // UI views
-    private RelativeLayout mPreviewBorder;
+    private LinearLayout mPreviewBorder;
     private RelativeLayout mPreviewBox;
     private RelativeLayout mMediaContentView;
     private TextView mCharacterCountView;
@@ -205,11 +205,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             return;
         }
 
+        mActivityObject = mSessionData.getJRActivity();
         mSessionDelegate = createSessionDelegate();
 
         // View References
         mPreviewBox = (RelativeLayout) findViewById(R.id.jr_preview_box);
-        mPreviewBorder = (RelativeLayout) findViewById(R.id.jr_preview_box_border);
+        mPreviewBorder = (LinearLayout) findViewById(R.id.jr_preview_box_border);
         mMediaContentView = (RelativeLayout) findViewById(R.id.jr_media_content_view);
         mCharacterCountView = (TextView) findViewById(R.id.jr_character_count_view);
         mProviderIcon = (ImageView) findViewById(R.id.jr_provider_icon);
@@ -230,6 +231,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSmsButton = (ColorButton) findViewById(R.id.jr_sms_button);
         mEmailSmsComment = (EditText) findViewById(R.id.jr_email_sms_edit_comment);
         mEmailSmsButtonContainer = (LinearLayout) findViewById(R.id.jr_email_sms_button_container);
+
+        // Set the user comment field here before the text change listener is registered so that
+        // it can be displayed while the providers are being loaded if this is a first run.
+        // The text change listener will be fired when the first tab is initially selected.
+        mUserCommentView.setText(mActivityObject.getUserGeneratedContent());
 
         // View listeners
         mEmailButton.setOnClickListener(mEmailButtonListener);
@@ -255,7 +261,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSmsButton.setColor(JANRAIN_BLUE_100PERCENT);
         mEmailButton.setColor(JANRAIN_BLUE_100PERCENT);
 
-        // initialize the provider shared-ness state map.
+        // Initialize the provider shared-ness state map.
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
 
         // SharedLayoutHelper provides a spinner dialog
@@ -266,8 +272,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
-
-        mActivityObject = mSessionData.getJRActivity();
 
         mSessionData.addDelegate(mSessionDelegate);
 
@@ -369,6 +373,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             }
         });
         createTabs();
+
+        // Re-set the user comment with it's existing so the text change listener is fired
+        // and the character count is updated.
+        // See also onCreate
+        mUserCommentView.setText(mUserCommentView.getText());
     }
 
     private void createTabs() {

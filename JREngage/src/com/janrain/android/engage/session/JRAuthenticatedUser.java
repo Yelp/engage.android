@@ -49,12 +49,9 @@ public class JRAuthenticatedUser implements Serializable {
     // STATIC FIELDS
     // ------------------------------------------------------------------------
 
-    //public static final String KEY_AUTH_INFO = "auth_info";
 	public static final String KEY_DEVICE_TOKEN = "device_token";
     public static final String KEY_PHOTO = "photo";
     public static final String KEY_PREFERRED_USERNAME = "preferred_username";
-    //TODO remove authinfo field
-    //TODO use keychain or something to store device token
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -71,7 +68,6 @@ public class JRAuthenticatedUser implements Serializable {
     private String mPhoto;
     private String mPreferredUsername;
     private String mDeviceToken;
-    //private JRDictionary mAuthInfo;
     private String mProviderName;
 
     // ------------------------------------------------------------------------
@@ -90,7 +86,6 @@ public class JRAuthenticatedUser implements Serializable {
         mDeviceToken = mobileEndPointResponse.getAsString(KEY_DEVICE_TOKEN);
         mPhoto = mobileEndPointResponse.getAsString(KEY_PHOTO);
         mPreferredUsername = mobileEndPointResponse.getAsString(KEY_PREFERRED_USERNAME);
-        //mAuthInfo = mobileEndPointResponse.getAsDictionary(KEY_AUTH_INFO);
     }
 
     // ------------------------------------------------------------------------
@@ -108,10 +103,6 @@ public class JRAuthenticatedUser implements Serializable {
     public String getDeviceToken() {        /* (readonly) */
         return mDeviceToken;
     }
-
-//    public JRDictionary getAuthInfo() {     /* (readonly) */
-//        return mAuthInfo;
-//    }
 
     public String getProviderName() {       /* (readonly) */
         return mProviderName;

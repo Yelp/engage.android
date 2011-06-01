@@ -112,8 +112,6 @@ public final class AsyncHttpClient {
 
                 addRequestHeaders(connection);
 
-                //todo fail gracefully when there's no net connection
-
                 if (mPostData == null) {
                     // HTTP GET OPERATION
                     if (Config.LOGD) { Log.d(TAG, "[run] HTTP GET"); }
@@ -157,12 +155,13 @@ public final class AsyncHttpClient {
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, null));
                     mHandler.post(mWrapper);
                 } else {
-                    // todo maybe this shouldn't be globbed together, but instead be structured
-                    // to allow the error response handler to make meaningful use of the web
-                    // servers response (here read into String r)
                     byte[] b = IOUtils.readFromStream(connection.getErrorStream());
                     String r = null;
                     if (b != null) r = new String(b);
+
+                    // Maybe this shouldn't be globbed together, but instead be structured
+                    // to allow the error response handler to make meaningful use of the web
+                    // servers response (here contained in String r)
                     String message = "[run] Unexpected HTTP response:  [code: "
                             + connection.getResponseCode() + " | message: "
                             + connection.getResponseMessage() + " error: "

@@ -195,9 +195,9 @@ public final class JRDictionary extends HashMap<String,Object> {
      *      A JRDictionary object representation of the JSON string
      **/
     public static JRDictionary fromJSON(String json) {
-        if (Config.LOGD) {
-            Log.d(TAG, "[fromJSON] json: " + json);
-        }
+        //if (Config.LOGD) {
+        //    Log.d(TAG, "[fromJSON] json: " + json);
+        //}
 
         JRDictionary retval = null;
 
