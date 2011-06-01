@@ -90,10 +90,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private static final int JANRAIN_BLUE_100PERCENT = 0xFF074764;
     private static final String EMAIL_SMS_TAB_TAG = "email_sms";
 
-    // ------------------------------------------------------------------------
-    // TYPES
-    // ------------------------------------------------------------------------
-
     /**
      * @internal
      *
@@ -118,47 +114,31 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         }
     }
 
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
     private static final String TAG = JRPublishActivity.class.getSimpleName();
-
-    // ------------------------------------------------------------------------
-    // STATIC INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
 
     //private FinishReceiver mFinishReceiver;
 
-    // Reference to the library model
+    /* Reference to the library model */
     private JRSessionData mSessionData;
     private JRSessionDelegate mSessionDelegate; //call backs for JRSessionData
 
-    // JREngage objects we're operating with
+    /* JREngage objects we're operating with */
     private JRProvider mSelectedProvider; //the provider for the selected tab
     private JRAuthenticatedUser mAuthenticatedUser; //the user (if logged in) for the selected tab
     private JRActivityObject mActivityObject;
 
-    // UI properties
+    /* UI properties */
     private String mShortenedActivityURL = null; //null if it hasn't been shortened
     private int mMaxCharacters;
     private String mDialogErrorMessage;
 
-    // UI state transitioning variables
+    /* UI state transitioning variables */
     //private boolean mUserHasEditedText = false;
     private boolean mWeHaveJustAuthenticated = false;
     //private boolean mWeAreCurrentlyPostingSomething = false;
     private boolean mWaitingForMobileConfig = false;
 
-    // UI views
+    /* UI views */
     private LinearLayout mPreviewBorder;
     private RelativeLayout mPreviewBox;
     private RelativeLayout mMediaContentView;
@@ -184,14 +164,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
 
-    // Helper class used to control display of a nice loading dialog
+    /* Helper class used to control display of a nice loading dialog */
     private SharedLayoutHelper mLayoutHelper;
 
-    // Helper class for the JRUserInterfaceMaestro
+    /* Helper class for the JRUserInterfaceMaestro */
     private FinishReceiver mFinishReceiver;
 
-    // Activity life-cycle methods
-
+    /* Activity life-cycle methods */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
@@ -199,7 +178,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         mSessionData = JRSessionData.getInstance();
 
-        //for the case when this activity is relaunched after the process was killed
+        /* For the case when this activity is relaunched after the process was killed */
         if (mSessionData == null) {
             finish();
             return;
@@ -208,7 +187,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mActivityObject = mSessionData.getJRActivity();
         mSessionDelegate = createSessionDelegate();
 
-        // View References
+        /* View References */
         mPreviewBox = (RelativeLayout) findViewById(R.id.jr_preview_box);
         mPreviewBorder = (LinearLayout) findViewById(R.id.jr_preview_box_border);
         mMediaContentView = (RelativeLayout) findViewById(R.id.jr_media_content_view);
@@ -232,12 +211,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mEmailSmsComment = (EditText) findViewById(R.id.jr_email_sms_edit_comment);
         mEmailSmsButtonContainer = (LinearLayout) findViewById(R.id.jr_email_sms_button_container);
 
-        // Set the user comment field here before the text change listener is registered so that
-        // it can be displayed while the providers are being loaded if this is a first run.
-        // The text change listener will be fired when the first tab is initially selected.
+        /* Set the user comment field here before the text change listener is registered so that
+         * it can be displayed while the providers are being loaded if this is a first run.
+         * The text change listener will be fired when the first tab is initially selected. */
         mUserCommentView.setText(mActivityObject.getUserGeneratedContent());
 
-        // View listeners
+        /* View listeners */
         mEmailButton.setOnClickListener(mEmailButtonListener);
         mSmsButton.setOnClickListener(mSmsButtonListener);
         //ButtonEventColorChangingListener colorChangingListener =
@@ -261,13 +240,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSmsButton.setColor(JANRAIN_BLUE_100PERCENT);
         mEmailButton.setColor(JANRAIN_BLUE_100PERCENT);
 
-        // Initialize the provider shared-ness state map.
+        /* Initialize the provider shared-ness state map */
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
 
-        // SharedLayoutHelper provides a spinner dialog
+        /* SharedLayoutHelper provides a spinner dialog */
         mLayoutHelper = new SharedLayoutHelper(this);
 
-        // JRUserInterfaceMaestro's hook into calling this.finish()
+        /* JRUserInterfaceMaestro's hook into calling this.finish() */
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
@@ -277,14 +256,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         loadViewElementPropertiesWithActivityObject();
 
-        // Call by hand the configuration change listener so that it sets up correctly if this
-        // activity started in landscape mode.
+        /* Call by hand the configuration change listener so that it sets up correctly if this
+         * activity started in landscape mode. */
         onConfigurationChanged(getResources().getConfiguration());
 
         List<JRProvider>socialProviders = mSessionData.getSocialProviders();
         if ((socialProviders == null || socialProviders.size() == 0)
                 && !mSessionData.isGetMobileConfigDone()) {
-            // Hide the email/SMS tab so things look nice as we load the providers
+            /* Hide the email/SMS tab so things look nice as we load the providers */
             findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
             mWaitingForMobileConfig = true;
             showDialog(DIALOG_MOBILE_CONFIG_LOADING);
@@ -299,8 +278,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void loadViewElementPropertiesWithActivityObject() {
-        // This sets up pieces of the UI before the provider configuration information
-        // has been loaded
+        /* This sets up pieces of the UI before the provider configuration information
+         * has been loaded */
 
         JRMediaObject mo = null;
         if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
@@ -309,13 +288,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         final TextView  mcd = (TextView)  findViewById(R.id.jr_media_content_description);
         final TextView  mct = (TextView)  findViewById(R.id.jr_media_content_title);
 
-        // Set the media_content_view = a thumbnail of the media
+        /* Set the media_content_view = a thumbnail of the media */
         if (mo != null) if (mo.hasThumbnail()) {
             Log.d(TAG, "media image url: " + mo.getThumbnail());
             new AsyncTask<JRMediaObject, Void, Bitmap>(){
                 protected Bitmap doInBackground(JRMediaObject... mo_) {
                     try {
-                        //todo get this cached
+                        // TODO: get this cached
                         URL url = new URL(mo_[0].getThumbnail());
                         URLConnection urlc = url.openConnection();
                         urlc.setUseCaches(true);
@@ -337,15 +316,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             }.execute(mo);
         }
 
-        // Set the media content description
+        /* Set the media content description */
         mcd.setText(mActivityObject.getDescription());
 
-        // Set the media content title
+        /* Set the media content title */
         mct.setText(mActivityObject.getTitle());
     }
 
     private void initializeWithProviderConfiguration() {
-        // Check for no suitable providers
+        /* Check for no suitable providers */
         List<JRProvider> socialProviders = mSessionData.getSocialProviders();
         if (socialProviders == null || socialProviders.size() == 0) {
             JREngageError err = new JREngageError(
@@ -356,7 +335,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             return;
         }
 
-        // Configure the properties of the UI
+        /* Configure the properties of the UI */
         mActivityObject.shortenUrls(new JRActivityObject.ShortenedUrlCallback() {
             public void setShortenedUrl(String shortenedUrl) {
                 mShortenedActivityURL = shortenedUrl;
@@ -374,9 +353,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         });
         createTabs();
 
-        // Re-set the user comment with it's existing so the text change listener is fired
-        // and the character count is updated.
-        // See also onCreate
+        /* Re-set the user comment with it's existing so the text change listener is fired
+         * and the character count is updated.
+         * See also onCreate */
         mUserCommentView.setText(mUserCommentView.getText());
     }
 
@@ -386,7 +365,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         List<JRProvider> socialProviders = mSessionData.getSocialProviders();
 
-        // Make a tab for each social provider
+        /* Make a tab for each social provider */
         for (JRProvider provider : socialProviders) {
             Drawable providerIconSet = provider.getTabSpecIndicatorDrawable(this);
 
@@ -401,7 +380,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
         }
 
-        // Make a tab for email/SMS
+        /* Make a tab for email/SMS */
         TabHost.TabSpec emailSmsSpec = tabHost.newTabSpec(EMAIL_SMS_TAB_TAG);
         Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
         emailSmsSpec.setIndicator(createTabSpecIndicator("Email/SMS", d));
@@ -413,15 +392,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         JRProvider rp = mSessionData.getProviderByName(mSessionData.getReturningSocialProvider());
         tabHost.setCurrentTab(socialProviders.indexOf(rp));
         
-        // when TabHost is constructed it defaults to tab 0, so if
-        // indexOfLastUsedProvider is 0, the tab change listener won't be
-        // invoked, so we call it manually to ensure it is called.  (it's
-        // idempotent)
+        /* When TabHost is constructed it defaults to tab 0, so if indexOfLastUsedProvider is 0,
+         * the tab change listener won't be invoked, so we call it manually to ensure
+         * it is called.  (it's idempotent) */
         onTabChanged(tabHost.getCurrentTabTag());
 
-        //XXX TabHost is setting our FrameLayout's only child to View.GONE when loading.
-        //XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
-        //XXX This is a workaround:
+        /* XXX TabHost is setting our FrameLayout's only child to View.GONE when loading.
+         * XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
+         * XXX This is a workaround: */
         findViewById(R.id.jr_tab_view_content).setVisibility(View.VISIBLE);
     }
 
@@ -429,7 +407,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         LinearLayout ll = new LinearLayout(this);
         ll.setOrientation(LinearLayout.VERTICAL);
 
-        // Icon
+        /* Icon */
         ImageView icon = new ImageView(this);
         icon.setImageDrawable(providerIconSet);
         icon.setPadding(
@@ -440,7 +418,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         );
         ll.addView(icon);
 
-        // Background
+        /* Background */
         StateListDrawable tabBackground = new StateListDrawable();
         tabBackground.addState(new int[]{android.R.attr.state_selected},
                 getResources().getDrawable(android.R.color.transparent));
@@ -448,7 +426,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 getResources().getDrawable(android.R.color.darker_gray));
         ll.setBackgroundDrawable(tabBackground);
 
-        // Label
+        /* Label */
         TextView label = new TextView(this);
         label.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
         label.setText(labelText);
@@ -533,13 +511,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void tryToFinishActivity() {
-        // Invoked by JRUserInterfaceMaestro via FinishReceiver to close this activity.
+        /* Invoked by JRUserInterfaceMaestro via FinishReceiver to close this activity. */
         Log.i(TAG, "[tryToFinishActivity]");
         finish();
     }
 
-    // UI event listeners
-
+    /* UI event listeners */
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed");
         mSessionData.triggerPublishingDidComplete();
@@ -654,7 +631,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (tabId.equals(EMAIL_SMS_TAB_TAG)) {
             mEmailSmsComment.setText(mUserCommentView.getText());
-        } else { // ... else a "real" provider -- Facebook, Twitter, etc.
+        } else { /* ... else a "real" provider -- Facebook, Twitter, etc. */
             mSelectedProvider = mSessionData.getProviderByName(tabId);
     
             configureViewElementsBasedOnProvider();
@@ -685,14 +662,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             intent = new Intent(android.content.Intent.ACTION_SEND);
 
-            // XXX hack:
-            // By setting this MIME type we cajole the right behavior out of the platform.  This
-            // MIME type is not valid (normally it would be text/plain) but the email apps respond
-            // to ACTION_SEND type */* so it works.
-            // The reason that using ACTION_SENDTO with a URI with scheme mailto: does not work is
-            // that the "Email" app fills the To: field with a single comma.
-            // (Because it's expecting an actual email address in the URI, but we're not
-            // supplying one, we're supplying only a scheme.)
+            /* XXX HACK XXX:
+             * By setting this MIME type we cajole the right behavior out of the platform.  This
+             * MIME type is not valid (normally it would be text/plain) but the email apps respond
+             * to ACTION_SEND type so it works.
+             * The reason that using ACTION_SENDTO with a URI with scheme mailto: does not work is
+             * that the "Email" app fills the To: field with a single comma.
+             * (Because it's expecting an actual email address in the URI, but we're not
+             * supplying one, we're supplying only a scheme.) */
             intent.setType("plain/text");
             //intent.setData(Uri.parse("mailto:"));
             intent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
@@ -717,9 +694,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 body = mUserCommentView.getText().toString() + "\n" + jrSms.getBody();
             }
 
-            // Google Voice does not respect passing the body, so this Intent is constructed
-            // specifically to be responded to only by Mms (the platform messaging app).
-            //http://stackoverflow.com/questions/4646508/how-to-pass-text-to-google-voice-sms-programmatically
+            /* Google Voice does not respect passing the body, so this Intent is constructed
+             * specifically to be responded to only by Mms (the platform messaging app).
+             * http://stackoverflow.com/questions/4646508/how-to-pass-text-to-google-voice-sms-programmatically */
 
             //intent = new Intent(android.content.Intent.ACTION_SEND);
             intent = new Intent(android.content.Intent.ACTION_VIEW);
@@ -736,13 +713,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     };
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // callback from startActivityForResult for email sharing
-        // this code path hasn't set mSelectedProvider yet, so we use the value previously
-        // set and "unselect" the email SMS tab, making it kind of a button in tab clothing.
+        /* Callback from startActivityForResult for email sharing.
+         * This code path hasn't set mSelectedProvider yet, so we use the value previously
+         * set and "unselect" the email SMS tab, making it kind of a button in tab clothing. */
         
         mUserCommentView.setText(mEmailSmsComment.getText());
 
-        // Email and SMS intents are returning 0, 0, null
+        /* Email and SMS intents are returning 0, 0, null */
         //Log.d(TAG, "[onActivityResult]: requestCode=" + requestCode + " resultCode=" + resultCode
         //        + " data=" + data);
     }
@@ -753,7 +730,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 finish();
             }
         };
-        //todo make resources out of these strings
+        // TODO: make resources out of these strings
 
         switch (id) {
 //            case DIALOG_SUCCESS:
@@ -805,22 +782,22 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         }
     }
 
-    // UI property updaters
+    /* UI property updaters */
 
     private void configureSharedStatusBasedOnProvider() {
         showActivityAsShared(mProvidersThatHaveAlreadyShared.get(mSelectedProvider.getName()));
     }
 
     public void updateCharacterCount() {
-        //todo verify correctness of the 0 remaining characters edge case
+        // TODO: verify correctness of the 0 remaining characters edge case
         CharSequence characterCountText;
 
         if (mSelectedProvider.getSocialSharingProperties()
                 .getAsBoolean("content_replaces_action")) {
-            // twitter, myspace, linkedin
+            /* Twitter, MySpace, LinkedIn */
             if (doesActivityUrlAffectCharacterCountForSelectedProvider()
                     && mShortenedActivityURL == null) {
-                // twitter, myspace
+                /* Twitter, MySpace */
                 characterCountText = getText(R.string.jr_calculating_remaining_characters);
             } else {
                 int preview_length = mPreviewLabelView.getText().length();
@@ -831,7 +808,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 else
                     characterCountText = Html.fromHtml("Remaining characters: " + chars_remaining);
             }
-        } else { // facebook, yahoo
+        } else { /* Facebook, Yahoo */
             int comment_length = mUserCommentView.getText().length();
             int chars_remaining = mMaxCharacters - comment_length;
             if (chars_remaining < 0)
@@ -850,9 +827,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (mSelectedProvider.getSocialSharingProperties()
                 .getAsBoolean("content_replaces_action")) {
-            //twitter, myspace, linkedin
+            /* Twitter, MySpace, LinkedIn */
             updatePreviewTextWhenContentReplacesAction();
-        } //else yahoo, facebook
+        } /* ... else Yahoo or Facebook */
     }
 
     private void updatePreviewTextWhenContentReplacesAction() {
@@ -864,7 +841,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         String shorteningText = getString(R.string.jr_shortening_url);
 
-        if (doesActivityUrlAffectCharacterCountForSelectedProvider()) { //twitter/myspace -> true
+        if (doesActivityUrlAffectCharacterCountForSelectedProvider()) { /* Twitter/MySpace -> true */
             mPreviewLabelView.setText(Html.fromHtml(
                     "<b>" + userNameForPreview + "</b> " + newText + " <font color=\"#808080\">" +
                     ((mShortenedActivityURL != null) ? mShortenedActivityURL : shorteningText) +
@@ -941,7 +918,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                         return BitmapFactory.decodeStream(bis);
                     } catch (IOException e) {
                         Log.d(TAG, "profile pic image loader exception: " + e.toString());
-                        //todo set default profile pic?
+                        // TODO: set default profile pic?
                         return null;
                     }
                 }
@@ -1013,12 +990,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         boolean can_share_media = socialSharingProperties.getAsBoolean("can_share_media");
 
-        // Switch on or off the media content view based on the presence of media and ability to
-        // display it
+        /* Switch on or off the media content view based on the presence of media and ability to
+         * display it */
         boolean showMediaContentView = mActivityObject.getMedia().size() > 0 && can_share_media;
         mMediaContentView.setVisibility(showMediaContentView ? View.VISIBLE : View.GONE);
 
-        // Switch on or off the action label view based on the provider accepting an action
+        /* Switch on or off the action label view based on the provider accepting an action */
         //boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
         //mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
 
@@ -1039,7 +1016,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (!(arrayOfColorStrings instanceof ArrayList))
             if (withAlpha)
-                // If there's ever an error, just return Janrain blue (at 20% opacity)
+                /* If there's ever an error, just return Janrain blue (at 20% opacity) */
                 return JANRAIN_BLUE_20PERCENT;
             else
                 return JANRAIN_BLUE_100PERCENT;
@@ -1049,7 +1026,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 (ArrayList<Double>) arrayOfColorStrings);
 
         /* We need to reorder the array (which is RGBA, the color format returned by Engage) to the color format
-           used by Android (which is ARGB), by moving the last element (alpha) to the front */
+         * used by Android (which is ARGB), by moving the last element (alpha) to the front */
         Double alphaValue = colorArray.remove(3);
         if (withAlpha)
             colorArray.add(0, alphaValue);
@@ -1058,7 +1035,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         
         int finalColor = 0;
         for (Object colorValue : colorArray) {
-            // If there's ever an error, just return Janrain blue (at 20% opacity)
+            /* If there's ever an error, just return Janrain blue (at 20% opacity) */
             if(!(colorValue instanceof Double))
                 return JANRAIN_BLUE_20PERCENT;
 
@@ -1084,7 +1061,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         showUserAsLoggedIn(mAuthenticatedUser != null);
     }
 
-    // UI state updaters
+    /* UI state updaters */
 
     private void logUserOutForProvider(String provider) {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
@@ -1094,14 +1071,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private void authenticateUserForSharing() {
      /* Set weHaveJustAuthenticated to true, so that when this view returns (for whatever reason...
-        successful auth user canceled, etc), the view will know that we just went through the
-        authentication process. */
+      * successful auth user canceled, etc), the view will know that we just went through the
+      * authentication process. */
         mWeHaveJustAuthenticated = true;
         mSessionData.setCurrentlyAuthenticatingProvider(mSelectedProvider);
 
      /* If the selected provider requires input from the user, go to the user landing view. Or if
-        the user started on the user landing page, went back to the list of providers, then selected
-        the same provider as their last-used provider, go back to the user landing view. */
+      * the user started on the user landing page, went back to the list of providers, then selected
+      * the same provider as their last-used provider, go back to the user landing view. */
         if (mSelectedProvider.requiresInput()) {
             JRUserInterfaceMaestro.getInstance().showUserLanding();
         } else { /* Otherwise, go straight to the web view. */
@@ -1119,7 +1096,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         }
     }
 
-    // Helper functions
+    /* Helper functions */
 
     private boolean isPublishThunk() {
         return mActivityObject.getUrl().equals("") &&
@@ -1133,7 +1110,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         boolean shows_url_as_url = mSelectedProvider.getSocialSharingProperties()
                 .getAsString("shows_url_as").equals("url");
 
-        //twitter + myspace -> true
+        /* Twitter/MySpace -> true */
         return (url_reduces_max_chars && shows_url_as_url);
     }
 
@@ -1142,7 +1119,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         return (int) (((float) dip) * scale);
     }
 
-    // JRSessionDelegate definition
+    /* JRSessionDelegate definition */
 
     private JRSessionDelegate createSessionDelegate() {
         return new JRSessionDelegate.SimpleJRSessionDelegate() {
@@ -1154,7 +1131,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 mLayoutHelper.dismissProgressDialog();
             }
 
-            // should never have to worry about
+            /* Should never have to worry about */
 //            public void authenticationDidCancel() {
 //                Log.d(TAG, "[authenticationDidCancel]");
 //                mWeAreCurrentlyPostingSomething = false;
@@ -1163,15 +1140,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             public void authenticationDidFail(JREngageError error, String provider) {
                 Log.d(TAG, "[authenticationDidFail]");
-                //this happens if the mobile endpoint URL fails to be read correctly
-                //or if Engage completes with an error (like rpxstaging via facebook) or maybe if
-                //a provider is down.
+                /* This happens if the mobile endpoint URL fails to be read correctly
+                 * or if Engage completes with an error (like rpxstaging via facebook) or maybe if
+                 * a provider is down. */
 
                 mWeHaveJustAuthenticated = false;
                 //mWeAreCurrentlyPostingSomething = false;
                 mLayoutHelper.dismissProgressDialog();
 
-                //we don't need to show a dialog because the WebView has already shown one.
+                /* We don't need to show a dialog because the WebView has already shown one. */
                 //mDialogErrorMessage = error.getMessage();
                 //showDialog(DIALOG_FAILURE);
             }
@@ -1250,15 +1227,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 }
 
              /* OK, if this gets called right after authentication succeeds, then the navigation
-                controller won't be done animating back to this view.  If this view isn't loaded
-                yet, and we call shareButtonPressed, then the library will end up trying to push the
-                webview controller onto the navigation controller while the navigation controller
-                is still trying to pop the webview.  This creates craziness, hence we check for
-                [self isViewLoaded]. Also, this prevents an infinite loop of reauthing-failed
-                publishing-reauthing-failed publishing. So, only try and reauthenticate is the
-                publishing activity view is already loaded, which will only happen if we didn't
-                JUST try and authorize, or if sharing took longer than the time it takes to pop the
-                view controller. */
+              * controller won't be done animating back to this view.  If this view isn't loaded
+              * yet, and we call shareButtonPressed, then the library will end up trying to push the
+              * webview controller onto the navigation controller while the navigation controller
+              * is still trying to pop the webview.  This creates craziness, hence we check for
+              * [self isViewLoaded]. Also, this prevents an infinite loop of reauthing-failed
+              * publishing-reauthing-failed publishing. So, only try and reauthenticate is the
+              * publishing activity view is already loaded, which will only happen if we didn't
+              * JUST try and authorize, or if sharing took longer than the time it takes to pop the
+              * view controller. */
                 if (reauthenticate && !mWeHaveJustAuthenticated) {
                     Log.d(TAG, "reauthenticating user for sharing");
                     logUserOutForProvider(provider);
