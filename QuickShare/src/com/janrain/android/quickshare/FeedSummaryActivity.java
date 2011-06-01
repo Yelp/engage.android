@@ -206,10 +206,6 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
 
                 title.setGravity(Gravity.LEFT);
 
-//                icon.setVisibility(View.VISIBLE);
-//                text.setVisibility(View.VISIBLE);
-//                date.setVisibility(View.VISIBLE);
-
                 title.setText(story.getTitle());
                 icon.setImageBitmap(story.getImage());
                 text.setText(story.getPlainText());
