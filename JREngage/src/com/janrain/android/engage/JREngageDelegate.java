@@ -97,8 +97,10 @@ public interface JREngageDelegate {
      *   user's profile information.
      *
      * @param provider
-     *   The name of the provider on which the user authenticated.  For a list of possible strings,
-     *   please see the \ref basicProviders "List of Providers"
+     *   The name of the provider on which the user authenticated.
+     *   For a list of possible strings, please see the
+     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">
+     *   List of Providers</a>
      *
      * @note:
      *   The structure of the \e auth_info JRDictionary (represented here in JSON) will be like the
@@ -131,8 +133,10 @@ public interface JREngageDelegate {
      *   The error that occurred during authentication
      *
      * @param provider
-     *   The name of the provider on which the user tried to authenticate.  For a list of possible
-     *   strings, please see the \ref basicProviders "List of Providers"
+     *   The name of the provider on which the user tried to authenticate.
+     *   For a list of possible strings, please see the
+     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">
+     *   List of Providers</a>
      *
      * @note
      * This message is not sent if authentication was canceled.  To be notified of a canceled 
@@ -153,8 +157,10 @@ public interface JREngageDelegate {
 //     *   The response from the server
 //     *
 //     * @param provider
-//     *   The name of the provider on which the user authenticated.  For a list of possible strings,
-//     *   please see the \ref basicProviders "List of Providers"
+//     *   The name of the provider on which the user authenticated.
+//     *   For a list of possible strings, please see the
+//     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">
+//     *   List of Providers</a>
 //     *
 //     * @deprecated
 //     * This function has been deprecated
@@ -178,8 +184,10 @@ public interface JREngageDelegate {
      *   The response from the server
      *
      * @param provider
-     *   The name of the provider on which the user authenticated.  For a list of possible strings,
-     *   please see the \ref basicProviders "List of Providers"
+     *   The name of the provider on which the user authenticated.
+     *   For a list of possible strings, please see the
+     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">
+     *   List of Providers</a>
      **/
     void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response,
                                           String tokenUrlPayload, String provider);
@@ -195,8 +203,10 @@ public interface JREngageDelegate {
      *   The error that occurred during server-side authentication
      *
      * @param provider
-     *   The name of the provider on which the user authenticated.  For a list of possible strings,
-     *   please see the \ref basicProviders "List of Providers"
+     *   The name of the provider on which the user authenticated.
+     *   For a list of possible strings, please see the
+     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">
+     *   List of Providers</a>
      **/
     void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider);
 /*@}*/
@@ -230,8 +240,11 @@ public interface JREngageDelegate {
      *   The shared activity
      *
      * @param provider
-     *   The name of the provider on which the user published the activity.  For a list of possible
-     *   strings, please see the \ref socialProviders "List of Social Providers"
+     *   The name of the provider on which the user published the activity.
+     *   For a list of possible strings, please see the
+     *   For a list of possible strings, please see the
+     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#socialProviders">
+     *   List of Social Providers</a>
      **/
     void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider);
     
@@ -246,8 +259,10 @@ public interface JREngageDelegate {
      *   The error that occurred during publishing
      *
      * @param provider
-     *   The name of the provider on which the user attempted to publish the activity.  For a list
-     *   of possible strings, please see the \ref socialProviders "List of Social Providers"
+     *   The name of the provider on which the user attempted to publish the activity.
+     *   For a list of possible strings, please see the
+     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#socialProviders">
+     *   List of Social Providers</a>
      **/
     void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
 /*@}*/

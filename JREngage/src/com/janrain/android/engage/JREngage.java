@@ -73,57 +73,6 @@ package com.janrain.android.engage;
  * the <a href="http://rpxnow.com/docs/android_api/annotated.html">"JREngage API"</a> documentation.
  **/
 
-/**
- * @page Providers
- * @section basicProviders List of Providers
- *
- * Here is a list of possible strings that the argument provider can be
- * when used in the authentication methods:
- *   - "aol"
- *   - "blogger"
- *   - "facebook"
- *   - "flickr"
- *   - "google"
- *   \if hyves_is_working
- *   - "hyves"
- *   \endif
- *   - "linkedin"
- *   \if live_id_is_working
- *   - "live_id"
- *   \endif
- *   - "livejournal"
- *   - "myopenid"
- *   - "myspace"
- *   - "netlog"
- *   - "openid"
- *   - "orkut"
- *   - "paypal"
- *   - "salesforce"
- *   - "twitter"
- *   - "verisign"
- *   - "vzn"
- *   \if wordpress_is_working
- *   - "wordpress"
- *   \endif
- *   - "yahoo"
- *
- * @note As your Engage application is limited by the number of providers it may use,
- * you may only see a subset of this list.
- *
- * @section  socialProviders List of Social Providers
- *
- * Here is a list of possible strings that the argument provider can be
- * when used in the social publishing methods:
- *   - "facebook"
- *   - "linkedin"
- *   - "myspace"
- *   - "twitter"
- *   - "yahoo"
- *
- * @note As your Engage application is limited by the number of providers it may use,
- * you may only see a subset of this list.
- **/
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -458,9 +407,11 @@ public class JREngage {
      * Remove the user's credentials for the given provider from the library.
      *
      * @param provider
-     *   The name of the provider on which the user authenticated.  For a list of possible strings,
-     *   please see the \ref basicProviders "List of Providers"
-     **/    
+     *   The name of the provider on which the user authenticated.
+     *   For a list of possible strings, please see the
+     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">
+     *   List of Providers</a>
+     **/
     public void signoutUserForProvider(String provider) {
         if (Config.LOGD) {
             Log.d(TAG, "[signoutUserForProvider]");
