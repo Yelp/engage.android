@@ -205,6 +205,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             return;
         }
 
+        mActivityObject = mSessionData.getJRActivity();
         mSessionDelegate = createSessionDelegate();
 
         // View References
@@ -231,6 +232,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mEmailSmsComment = (EditText) findViewById(R.id.jr_email_sms_edit_comment);
         mEmailSmsButtonContainer = (LinearLayout) findViewById(R.id.jr_email_sms_button_container);
 
+        // Set the user comment field here before the text change listener is registered so that
+        // it can be displayed while the providers are being loaded if this is a first run.
+        // The text change listener will be fired when the first tab is initially selected.
+        mUserCommentView.setText(mActivityObject.getUserGeneratedContent());
+
         // View listeners
         mEmailButton.setOnClickListener(mEmailButtonListener);
         mSmsButton.setOnClickListener(mSmsButtonListener);
@@ -255,7 +261,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSmsButton.setColor(JANRAIN_BLUE_100PERCENT);
         mEmailButton.setColor(JANRAIN_BLUE_100PERCENT);
 
-        // initialize the provider shared-ness state map.
+        // Initialize the provider shared-ness state map.
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
 
         // SharedLayoutHelper provides a spinner dialog
@@ -266,8 +272,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             mFinishReceiver = new FinishReceiver();
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
-
-        mActivityObject = mSessionData.getJRActivity();
 
         mSessionData.addDelegate(mSessionDelegate);
 
@@ -369,6 +373,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             }
         });
         createTabs();
+
+        // Re-set the user comment with it's existing so the text change listener is fired
+        // and the character count is updated.
+        // See also onCreate
+        mUserCommentView.setText(mUserCommentView.getText());
     }
 
     private void createTabs() {
