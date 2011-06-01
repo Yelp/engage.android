@@ -159,7 +159,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private boolean mWaitingForMobileConfig = false;
 
     // UI views
-    private RelativeLayout mPreviewBorder;
+    private LinearLayout mPreviewBorder;
     private RelativeLayout mPreviewBox;
     private RelativeLayout mMediaContentView;
     private TextView mCharacterCountView;
@@ -209,7 +209,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         // View References
         mPreviewBox = (RelativeLayout) findViewById(R.id.jr_preview_box);
-        mPreviewBorder = (RelativeLayout) findViewById(R.id.jr_preview_box_border);
+        mPreviewBorder = (LinearLayout) findViewById(R.id.jr_preview_box_border);
         mMediaContentView = (RelativeLayout) findViewById(R.id.jr_media_content_view);
         mCharacterCountView = (TextView) findViewById(R.id.jr_character_count_view);
         mProviderIcon = (ImageView) findViewById(R.id.jr_provider_icon);

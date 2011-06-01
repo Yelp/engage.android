@@ -201,33 +201,6 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
     }
 
     /**
-     * Stop all connections for the specified delegate.
-     *
-     * TODO: see below
-     *
-     * @param delegate
-     *      The delegate to stop all connections for.
-     *
-     * @return
-     *      Currently always returns true...
-     */
-	public static boolean stopConnectionsForDelegate(JRConnectionManagerDelegate delegate) {
-		// get singleton instance (lazy init)
-		JRConnectionManager instance = getInstance();
-
-		for (String requestUrl : instance.mConnectionBuffers.keySet()) {
-			if (instance.mConnectionBuffers.get(requestUrl).mDelegate == delegate) {
-				/* TODO:  
-				 * need to figure out how to stop connection - not as straightforward w/
-				 * the Android/Apache HTTP classes.  For now, just remove from the hash map.
-				 */
-				instance.mConnectionBuffers.remove(requestUrl);
-			}
-		}
-		return true;
-	}
-
-    /**
      * Returns the number of current (actively managed) connections.
      *
      * @return
