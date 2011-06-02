@@ -233,7 +233,7 @@
                         />
 
                     <!-- This RelativeLayout expands to the size between the character count view and
-                         the provider icon.  It renders nothing, but only server as a bounding
+                         the provider icon.  It renders nothing, but only serves as a bounding
                          container for the jr_preview_box.  (We can't allow the preview box to grow
                          to this size though, because then it's background does too, and that looks
                          weird. -->
