@@ -394,7 +394,7 @@
                     android:id="@+id/jr_tagline_and_provider_icon_container"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_above="@+id/jr_user_profile_information_and_share_button_container"
+                    android:layout_above="@+id/jr_user_profile_info_and_share_button_container"
                     android:paddingBottom="4dip"
                     android:paddingTop="4dip"
                     >
@@ -433,7 +433,7 @@
                 </RelativeLayout>
 
                 <LinearLayout
-                    android:id="@+id/jr_user_profile_information_and_share_button_container"
+                    android:id="@+id/jr_user_profile_info_and_share_button_container"
                     android:orientation="vertical"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
