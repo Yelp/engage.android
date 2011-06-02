@@ -90,7 +90,8 @@ public class SharedLayoutHelper {
         owner.findViewById(R.id.jr_tagline).setVisibility(visibility);
         try {
             // This View is only found in JRPublishActivity
-            owner.findViewById(R.id.jr_email_sms_powered_by_text).setVisibility(visibility);
+            // XXX: LILLI MAKING SMS CHANGES
+            //owner.findViewById(R.id.jr_email_sms_powered_by_text).setVisibility(visibility);
         } catch (NullPointerException e) {
             // Do nothing, we're not displaying JRPublishActivity
         }
