@@ -84,7 +84,7 @@ public class SharedLayoutHelper {
     public SharedLayoutHelper(Activity owner) {
         mOwner = new WeakReference<Activity>(owner);
         mProgressDialog = null;
-        
+
         boolean hideTagline = JRSessionData.getInstance().getHidePoweredBy();
         int visibility = hideTagline ? View.GONE : View.VISIBLE;
         owner.findViewById(R.id.jr_tagline).setVisibility(visibility);
@@ -98,8 +98,12 @@ public class SharedLayoutHelper {
 
     // Declare the default constructor private so this class is only instantiated with an owner
     // Activity
-    private SharedLayoutHelper() {
-    }
+    // We don't need a private default constructor so long as we have another constructor as we 
+    // do, found immediately above.
+    // Declaring this raises an irresolvable compiler warning that requires a suppression
+    // annotation.
+    //private SharedLayoutHelper() {
+    //}
 
     // ------------------------------------------------------------------------
     // METHODS

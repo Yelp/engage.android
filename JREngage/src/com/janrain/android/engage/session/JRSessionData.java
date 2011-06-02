@@ -54,7 +54,6 @@ import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EncodingUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.*;
@@ -72,7 +71,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     // ------------------------------------------------------------------------
 
     private static final String TAG = JRSessionData.class.getSimpleName();
-    
+
 	private static JRSessionData sInstance;
 
     private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
@@ -107,7 +106,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         return sInstance;
 	}
-	
+
 	public static JRSessionData getInstance(String appId,
                                             String tokenUrl,
                                             JRSessionDelegate delegate) {
@@ -125,25 +124,25 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     // ------------------------------------------------------------------------
 
 	private ArrayList<JRSessionDelegate> mDelegates;
-	
+
 	private JRProvider mCurrentlyAuthenticatingProvider;
     private JRProvider mCurrentlyPublishingProvider;
 
     private String mReturningBasicProvider;
 	private String mReturningSocialProvider;
-	
+
 	private JRDictionary mAllProviders;
 	private ArrayList<String> mBasicProviders;
 	private ArrayList<String> mSocialProviders;
 	private JRDictionary mAuthenticatedUsersByProvider;
-	
+
 	private String mSavedConfigurationBlock = "";
     private String mSavedEtag; // for the saved configuration block
 	private String mNewEtag;
     //private String mGitCommit;
 
 	private JRActivityObject mActivity;
-	
+
 	private String mTokenUrl;
 	private String mBaseUrl;
 	private String mAppId;
@@ -161,7 +160,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private boolean mDialogIsShowing = false;
 
     private JREngageError mError;
-	
+
     // ------------------------------------------------------------------------
     // INITIALIZERS
     // ------------------------------------------------------------------------
@@ -170,6 +169,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
 
+    // We runtime type check the deserialized generics so we can safely ignore these unchecked
+    // assignment errors.
+    @SuppressWarnings("unchecked")
 	private JRSessionData(String appId, String tokenUrl, JRSessionDelegate delegate) {
         if (Config.LOGD) {
             Log.d(TAG, "[ctor] creating instance.");
@@ -177,7 +179,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
 		mDelegates = new ArrayList<JRSessionDelegate>();
 		mDelegates.add(delegate);
-		
+
 		mAppId = appId;
 		mTokenUrl = tokenUrl;
 
@@ -188,7 +190,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         catch (UnsupportedEncodingException e) { Log.e(TAG, e.toString()); }
 
         mLibraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
-        String diskVersion = Prefs.getAsString(Prefs.KEY_JR_ENGAGE_VERSION, "");
+        String diskVersion = Prefs.getAsString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, "");
         if (diskVersion.equals(mLibraryVersion)) {
             // Load dictionary of authenticated users.  If the dictionary is not found, the
             // archiver will return a new (empty) list.
@@ -203,6 +205,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
             // Load the list of basic providers
             mBasicProviders = (ArrayList<String>)Archiver.load(ARCHIVE_BASIC_PROVIDERS);
+            for (Object v : mBasicProviders) assert v instanceof String;
             if (Config.LOGD) {
                 if (ListUtils.isEmpty(mBasicProviders)) {
                     Log.d(TAG, "[ctor] basic providers is empty");
@@ -214,6 +217,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
             // Load the list of social providers
             mSocialProviders = (ArrayList<String>)Archiver.load(ARCHIVE_SOCIAL_PROVIDERS);
+            for (Object v : mSocialProviders) assert v instanceof String;
             if (Config.LOGD) {
                 if (ListUtils.isEmpty(mSocialProviders)) {
                     Log.d(TAG, "[ctor] social providers is empty");
@@ -252,7 +256,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         mError = startGetConfiguration();
 	}
-	
+
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
     // ------------------------------------------------------------------------
@@ -296,7 +300,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     public void setCurrentlyAuthenticatingProvider(JRProvider provider) {
         Log.d(TAG, "setCurrentlyAuthenticatingProvider: " +
                 (provider != null ? provider.getName() : null));
-        
+
         mCurrentlyAuthenticatingProvider = provider;
     }
 
@@ -739,7 +743,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             mReturningSocialProvider = "";
             Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, mReturningSocialProvider);
         }
-        
+
         // Done!
 
         // Save data to local store
@@ -755,7 +759,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         Prefs.putString(Prefs.KEY_JR_CONFIGURATION_ETAG, mNewEtag);
 
         // 'git-tag'-like library version tag to prevent reloading stale data from disk
-        Prefs.putString(Prefs.KEY_JR_ENGAGE_VERSION, mLibraryVersion);
+        Prefs.putString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, mLibraryVersion);
 
         mGetConfigDone = true;
         triggerMobileConfigDidFinish();

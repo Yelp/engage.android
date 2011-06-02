@@ -45,7 +45,7 @@ import com.janrain.android.engage.types.JRDictionary;
  * @nosubgrouping
  **/
 public interface JREngageDelegate {
-	
+
 /**
  * @name Configuration
  * Messages sent by JREngage during dialog launch/configuration
@@ -56,7 +56,7 @@ public interface JREngageDelegate {
 	 * Notifies the delegate when the application invokes the display of a library Activity, but the
      * Activity fails to start. May occur if the library failed to connect to the Engage server, or
      * if the JRActivityObject was null, etc.
-	 *  
+	 *
 	 * @param error
 	 *   The error that occurred during configuration
 	 *
@@ -72,7 +72,7 @@ public interface JREngageDelegate {
 	 **/
     void jrEngageDialogDidFailToShowWithError(JREngageError error);
 /*@}*/
-    
+
 
 /**
  * @name Authentication
@@ -86,7 +86,7 @@ public interface JREngageDelegate {
      * or configuration of the library timed out.
      **/
     void jrAuthenticationDidNotComplete();
-    
+
     /**
      * Notifies the delegate that the user has successfully authenticated with the given provider,
      * passing to the delegate a JRDictionary object with the user's profile data.
@@ -120,7 +120,7 @@ public interface JREngageDelegate {
      * @endcode
      *
      * \sa For a full description of the dictionary and its fields,
-     * please see the <a href="https://rpxnow.com/docs#api_auth_info_response">auth_info 
+     * please see the <a href="https://rpxnow.com/docs#api_auth_info_response">auth_info
      * response</a> section of the Janrain Engage API documentation.
      **/
     void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider);
@@ -139,7 +139,7 @@ public interface JREngageDelegate {
      *   List of Providers</a>
      *
      * @note
-     * This message is not sent if authentication was canceled.  To be notified of a canceled 
+     * This message is not sent if authentication was canceled.  To be notified of a canceled
      * authentication, see jrAuthenticationDidNotComplete().
      **/
     void jrAuthenticationDidFailWithError(JREngageError error, String provider);
@@ -223,7 +223,7 @@ public interface JREngageDelegate {
      * the cancelPublishing method, or if configuration of the library times out.
      **/
     void jrSocialDidNotCompletePublishing();
-    
+
     /**
      * Notifies the delegate after the social publishing dialog is closed (e.g., the user presses
      * the back button) and publishing is complete. You may receive multiple \ref didPublish
@@ -247,7 +247,7 @@ public interface JREngageDelegate {
      *   List of Social Providers</a>
      **/
     void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider);
-    
+
     /**
      * Notifies the delegate when publishing an activity failed and could not be recovered by the
      * library.

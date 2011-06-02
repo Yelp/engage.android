@@ -40,7 +40,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
@@ -54,7 +53,6 @@ import android.util.Config;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
 import com.janrain.android.engage.JREngage;
@@ -391,7 +389,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         JRProvider rp = mSessionData.getProviderByName(mSessionData.getReturningSocialProvider());
         tabHost.setCurrentTab(socialProviders.indexOf(rp));
-        
+
         /* When TabHost is constructed it defaults to tab 0, so if indexOfLastUsedProvider is 0,
          * the tab change listener won't be invoked, so we call it manually to ensure
          * it is called.  (it's idempotent) */
@@ -621,7 +619,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             for (String k : mProvidersThatHaveAlreadyShared.keySet())
                 mProvidersThatHaveAlreadyShared.put(k, false);
-            
+
             showActivityAsShared(false);
         }
     };
@@ -633,7 +631,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             mEmailSmsComment.setText(mUserCommentView.getText());
         } else { /* ... else a "real" provider -- Facebook, Twitter, etc. */
             mSelectedProvider = mSessionData.getProviderByName(tabId);
-    
+
             configureViewElementsBasedOnProvider();
             configureLoggedInUserBasedOnProvider();
             configureSharedStatusBasedOnProvider();
@@ -716,7 +714,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         /* Callback from startActivityForResult for email sharing.
          * This code path hasn't set mSelectedProvider yet, so we use the value previously
          * set and "unselect" the email SMS tab, making it kind of a button in tab clothing. */
-        
+
         mUserCommentView.setText(mEmailSmsComment.getText());
 
         /* Email and SMS intents are returning 0, 0, null */
@@ -725,11 +723,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     public Dialog onCreateDialog(int id) {
-        DialogInterface.OnClickListener successDismiss = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialogInterface, int i) {
-                finish();
-            }
-        };
+//        DialogInterface.OnClickListener successDismiss = new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                finish();
+//            }
+//        };
         // TODO: make resources out of these strings
 
         switch (id) {
@@ -982,7 +980,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         } else {
             mMaxCharacters = socialSharingProperties.getAsInt("max_characters");
         }
-        
+
         if (mMaxCharacters != -1) mCharacterCountView.setVisibility(View.VISIBLE);
         else mCharacterCountView.setVisibility(View.GONE);
 
@@ -1021,6 +1019,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             else
                 return JANRAIN_BLUE_100PERCENT;
 
+        // todo see if we can write this in a more compile-time type-safe way
         @SuppressWarnings("unchecked")
         ArrayList<Double> colorArray = new ArrayList<Double>(
                 (ArrayList<Double>) arrayOfColorStrings);
@@ -1032,7 +1031,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             colorArray.add(0, alphaValue);
         else
             colorArray.add(0, 1.0);
-        
+
         int finalColor = 0;
         for (Object colorValue : colorArray) {
             /* If there's ever an error, just return Janrain blue (at 20% opacity) */

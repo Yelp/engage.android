@@ -56,21 +56,21 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 		private boolean mShouldReturnFullResponse;
 		private Object mTag;
 		private JRConnectionManagerDelegate mDelegate;
-		
-		public ConnectionData(JRConnectionManagerDelegate delegate, 
+
+		public ConnectionData(JRConnectionManagerDelegate delegate,
 				boolean shouldReturnFullResponse, Object userdata) {
 			mShouldReturnFullResponse = shouldReturnFullResponse;
 			mDelegate = delegate;
 			mTag = userdata;
 		}
 	}
-	
+
     // ------------------------------------------------------------------------
     // STATIC FIELDS
     // ------------------------------------------------------------------------
 
 	private static JRConnectionManager sInstance;
-	
+
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
     // ------------------------------------------------------------------------
@@ -216,7 +216,7 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 
     /* Map of managed connections, where connection data is mapped to URL. */
 	private HashMap<String, ConnectionData> mConnectionBuffers;
-	
+
     // ------------------------------------------------------------------------
     // INITIALIZERS
     // ------------------------------------------------------------------------
@@ -228,7 +228,7 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 	private JRConnectionManager() {
 		mConnectionBuffers = new HashMap<String, ConnectionData>();
 	}
-	
+
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
     // ------------------------------------------------------------------------
