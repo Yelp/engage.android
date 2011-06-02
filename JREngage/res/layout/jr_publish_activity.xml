@@ -222,6 +222,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/jr_edit_comment"
                         android:layout_alignParentRight="true"
+                        android:layout_gravity="right"
                         android:singleLine="true"
                         android:textColor="#ff333333"
                         android:text="@string/jr_calculating_remaining_characters"
@@ -389,11 +390,13 @@
 
                 </LinearLayout>
 
-                <LinearLayout
+                <RelativeLayout
                     android:id="@+id/jr_tagline_and_provider_icon_container"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_above="@+id/jr_user_profile_information_and_share_button_container"
+                    android:paddingBottom="4dip"
+                    android:paddingTop="4dip"
                     >
                     <!--android:layout_alignParentLeft="true"-->
                     
@@ -402,7 +405,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
-                        android:layout_marginBottom="4dip"
+                        android:layout_alignParentBottom="true"
                         android:singleLine="true"
                         android:text="@string/jr_powered_by"
                         android:textColor="#ff666666"
@@ -410,6 +413,7 @@
                         android:paddingRight="6dip"
                         android:textSize="12dip"
                         />
+                        <!--android:layout_marginBottom="4dip"-->
                         <!--android:layout_marginLeft="12dip"-->
                         <!--android:layout_above="@+id/jr_user_profile_information_and_share_button_container"-->
 
@@ -418,13 +422,15 @@
                         android:layout_width="20dip"
                         android:layout_height="20dip"
                         android:layout_alignParentRight="true"
-                        android:layout_marginBottom="4dip"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="right"
                         android:src="@drawable/jr_icon_facebook"
                         />
+                        <!--android:layout_marginBottom="4dip"-->
                         <!--android:layout_above="@+id/jr_user_profile_information_and_share_button_container"-->
                         <!--android:layout_marginRight="4dip"-->
 
-                </LinearLayout>                    
+                </RelativeLayout>
 
                 <LinearLayout
                     android:id="@+id/jr_user_profile_information_and_share_button_container"

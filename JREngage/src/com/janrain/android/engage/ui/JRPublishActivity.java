@@ -167,7 +167,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private ColorButton mSmsButton;
     private EditText mEmailSmsComment;
     private LinearLayout mEmailSmsButtonContainer;
-    private LinearLayout mTaglineAndProviderIconContainer;
+    private RelativeLayout mTaglineAndProviderIconContainer;
 
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
 
@@ -220,7 +220,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //mEmailSmsComment = (EditText) findViewById(R.id.jr_email_sms_edit_comment);
         mEmailSmsButtonContainer = (LinearLayout) findViewById(R.id.jr_email_sms_button_container);
         mTaglineAndProviderIconContainer =
-                (LinearLayout) findViewById(R.id.jr_tagline_and_provider_icon_container);
+                (RelativeLayout) findViewById(R.id.jr_tagline_and_provider_icon_container);
 
         /* Set the user comment field here before the text change listener is registered so that
          * it can be displayed while the providers are being loaded if this is a first run.
