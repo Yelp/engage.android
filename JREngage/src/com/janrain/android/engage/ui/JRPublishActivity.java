@@ -44,6 +44,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
@@ -53,6 +54,7 @@ import android.util.Config;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -384,7 +386,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             LinearLayout ll = createTabSpecIndicator(provider.getFriendlyName(), providerIconSet);
 
-            spec.setIndicator(ll);
+            // XXX 1.5
+            //spec.setIndicator(ll);
             tabHost.addTab(spec);
 
             mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
@@ -393,8 +396,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         /* Make a tab for email/SMS */
         TabHost.TabSpec emailSmsSpec = tabHost.newTabSpec(EMAIL_SMS_TAB_TAG);
         Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
-        emailSmsSpec.setIndicator(createTabSpecIndicator("Email/SMS", d));
-//        emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
+        // XXX 1.5
+        //emailSmsSpec.setIndicator(createTabSpecIndicator("Email/SMS", d));
+        //emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
         emailSmsSpec.setContent(R.id.jr_tab_view_content);
         tabHost.addTab(emailSmsSpec);
 
@@ -530,6 +534,19 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     /* UI event listeners */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (com.janrain.android.engage.utils.Android.asdf()
+                && keyCode == KeyEvent.KEYCODE_BACK
+                && event.getRepeatCount() == 0) {
+            // Take care of calling this method on earlier versions of
+            // the platform where it doesn't exist.
+            onBackPressed();
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed");
         mSessionData.triggerPublishingDidComplete();
@@ -667,7 +684,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             configureLoggedInUserBasedOnProvider();
             configureSharedStatusBasedOnProvider();
 
-            mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(
+            mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(
                     getApplicationContext()));
 
             mCurrentlyOnEmailSmsTab = false;
@@ -1093,7 +1110,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mConnectAndShareButton.setColor(colorNoAlpha);
         mPreviewBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
 
-        mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(this));
+        mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(this));
     }
 
     private int colorForProviderFromArray(Object arrayOfColorStrings, boolean withAlpha) {

@@ -35,6 +35,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Config;
@@ -118,7 +119,7 @@ public class JRProvidersActivity extends ListActivity {
 
             final JRProvider provider = getItem(position);
 
-            Drawable providerIcon = provider.getProviderListIconDrawable(getContext());
+            Drawable providerIcon = provider.getProviderIcon(getContext());
             icon.setImageDrawable(providerIcon);
             label.setText(provider.getFriendlyName());
 
@@ -277,6 +278,19 @@ public class JRProvidersActivity extends ListActivity {
         super.onStart();
 
         Log.d(TAG, "onStart");
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (com.janrain.android.engage.utils.Android.asdf()
+                && keyCode == KeyEvent.KEYCODE_BACK
+                && event.getRepeatCount() == 0) {
+            // Take care of calling this method on earlier versions of
+            // the platform where it doesn't exist.
+            onBackPressed();
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
     public void onBackPressed() {

@@ -183,7 +183,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 		mAppId = appId;
 		mTokenUrl = tokenUrl;
 
-        ApplicationInfo ai = JREngage.getContext().getApplicationInfo();
+        ApplicationInfo ai = com.janrain.android.engage.utils.Android.getApplicationInfo();
         String appName = JREngage.getContext().getPackageManager().getApplicationLabel(ai)
                 .toString();
         try { mUrlEncodedAppName = URLEncoder.encode(appName, "UTF-8"); }
