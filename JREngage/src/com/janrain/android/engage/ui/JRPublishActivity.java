@@ -54,6 +54,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.*;
 import android.widget.*;
 import com.janrain.android.engage.JREngage;
@@ -140,6 +141,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private boolean mWaitingForMobileConfig = false;
     private boolean mCurrentlyOnEmailSmsTab = false;
     private boolean mMaxCharacterCountViewIsDisplayed = true;
+    private int mInitialNetworkConnectionsAreDone = 0;
+    private static final int NUMBER_OF_INITIAL_NETWORK_CONNECTIONS = 2;
+
 
     /* UI views */
     private LinearLayout mProviderStuffContainer;
@@ -294,15 +298,27 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         /* This sets up pieces of the UI before the provider configuration information
          * has been loaded */
 
-        JRMediaObject mo = null;
-        if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
+        updatePreviewTextWhenContentDoesNotReplaceAction();
 
         final ImageView mci = (ImageView) findViewById(R.id.jr_media_content_image);
         final TextView  mcd = (TextView)  findViewById(R.id.jr_media_content_description);
         final TextView  mct = (TextView)  findViewById(R.id.jr_media_content_title);
 
+        /* Set the media content description */
+        mcd.setText(mActivityObject.getDescription());
+
+        /* Set the media content title */
+        mct.setText(mActivityObject.getTitle());
+
+        JRMediaObject mo = null;
+        if (mActivityObject.getMedia().size() > 0)
+            mo = mActivityObject.getMedia().get(0);
+
         /* Set the media_content_view = a thumbnail of the media */
         if (mo != null) if (mo.hasThumbnail()) {
+            /* Set the default image so that the view animates correctly */
+            mci.setImageResource(R.drawable.jr_media60x60);
+
             Log.d(TAG, "media image url: " + mo.getThumbnail());
             new AsyncTask<JRMediaObject, Void, Bitmap>(){
                 protected Bitmap doInBackground(JRMediaObject... mo_) {
@@ -315,8 +331,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                         InputStream is = urlc.getInputStream();
                         return BitmapFactory.decodeStream(is);
                     } catch (MalformedURLException e) {
+                        mInitialNetworkConnectionsAreDone++;
                         return null;
                     } catch (IOException e) {
+                        mInitialNetworkConnectionsAreDone++;
                         return null;
                     }
                 }
@@ -324,16 +342,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 protected void onPostExecute(Bitmap bitmap) {
                     if (bitmap == null) mci.setVisibility(View.INVISIBLE);
                     else mci.setVisibility(View.VISIBLE);
+
+//                    mci.invalidate();
                     mci.setImageBitmap(bitmap);
+                    Log.d(TAG, "HERE");
+                    //mci.getParent().requestLayout();
+                    mInitialNetworkConnectionsAreDone++;
                 }
             }.execute(mo);
         }
-
-        /* Set the media content description */
-        mcd.setText(mActivityObject.getDescription());
-
-        /* Set the media content title */
-        mct.setText(mActivityObject.getTitle());
     }
 
     private void initializeWithProviderConfiguration() {
@@ -362,6 +379,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                     updatePreviewTextWhenContentDoesNotReplaceAction();
                 }
                 updateCharacterCount();
+
+                mInitialNetworkConnectionsAreDone++;
+                //mPreviewLabelView.requestLayout();
             }
         });
         createTabs();
@@ -644,15 +664,16 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     public void onTabChanged(String tabId) {
         Log.d(TAG, "[onTabChange]: " + tabId);
+        boolean animate = (mInitialNetworkConnectionsAreDone == NUMBER_OF_INITIAL_NETWORK_CONNECTIONS);
 
         if (tabId.equals(EMAIL_SMS_TAB_TAG)) {
 //            mEmailSmsComment.setText(mUserCommentView.getText());
 
             if (!mCurrentlyOnEmailSmsTab) {
-                animateViewDisappearing(mEmailSmsButtonContainer, false);
-                animateViewDisappearing(mProviderStuffContainer, true);
-                animateSinkingUserProfileInformationAndShareButtonContainer(true);
-                animateSinkingTaglineAndIcon(true);
+                animateViewDisappearing(mEmailSmsButtonContainer, false, animate);
+                animateViewDisappearing(mProviderStuffContainer, true, animate);
+                animateSinkingUserProfileInformationAndShareButtonContainer(true, animate);
+                animateSinkingTaglineAndIcon(true, animate);
                 mProviderIcon.setImageResource(R.drawable.jr_quick_share_icon);
             }
 
@@ -661,10 +682,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             mSelectedProvider = mSessionData.getProviderByName(tabId);
 
             if (mCurrentlyOnEmailSmsTab) {
-                animateViewDisappearing(mEmailSmsButtonContainer, true);
-                animateViewDisappearing(mProviderStuffContainer, false);
-                animateSinkingUserProfileInformationAndShareButtonContainer(false);
-                animateSinkingTaglineAndIcon(false);
+                animateViewDisappearing(mEmailSmsButtonContainer, true, animate);
+                animateViewDisappearing(mProviderStuffContainer, false, animate);
+                animateSinkingUserProfileInformationAndShareButtonContainer(false, animate);
+                animateSinkingTaglineAndIcon(false, animate);
             }
 
             configureViewElementsBasedOnProvider();
@@ -678,7 +699,16 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         }
     }
 
-    private void animateViewDisappearing(View view, boolean disappearing) {
+    private void animateViewDisappearing(View view, boolean disappearing, boolean animate) {
+        if (!animate) {
+            if (disappearing)
+                view.setVisibility(View.GONE);
+            else
+                view.setVisibility(View.VISIBLE);
+
+            return;
+        }
+
         Animation animation = new AlphaAnimation(
                 disappearing ? 1.0f : 0.0f,
                 disappearing ? 0.0f : 1.0f);
@@ -689,8 +719,16 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         view.startAnimation(animation);
     }
 
-    private void animateSinkingUserProfileInformationAndShareButtonContainer(boolean sinking) {
-        Animation animation = new TranslateAnimation(
+    private void animateSinkingUserProfileInformationAndShareButtonContainer(boolean sinking, boolean animate) {
+        if (!animate) {
+            if (sinking)
+                mUserProfileInformationAndShareButtonContainer.setVisibility(View.GONE);
+            else
+                mUserProfileInformationAndShareButtonContainer.setVisibility(View.VISIBLE);
+
+            return;
+        }
+                Animation animation = new TranslateAnimation(
                 Animation.RELATIVE_TO_SELF, 0.0f,
                 Animation.RELATIVE_TO_SELF, 0.0f,
                 Animation.RELATIVE_TO_SELF, (sinking ? 0.0f : 1.0f),
@@ -702,7 +740,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mUserProfileInformationAndShareButtonContainer.startAnimation(animation);
     }
 
-    private void animateSinkingTaglineAndIcon(boolean sinking) {
+    private void animateSinkingTaglineAndIcon(boolean sinking, boolean animate) {
+        if (!animate)
+            return;
+
         float yOrigin = sinking ?
                 0.0f : (1.0f * mUserProfileInformationAndShareButtonContainer.getHeight());
         float yOffset = sinking ?
@@ -1048,6 +1089,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private void configureViewElementsBasedOnProvider() {
         JRDictionary socialSharingProperties = mSelectedProvider.getSocialSharingProperties();
 
+        mNestedLayoutManiaSundaySundaySunday.invalidate();
+        mNestedLayoutManiaSundaySundaySunday.requestLayout();
+        
         if (socialSharingProperties.getAsBoolean("content_replaces_action"))
             updatePreviewTextWhenContentReplacesAction();
         else
@@ -1065,19 +1109,22 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         /* Switch on or off the media content view based on the presence of media and ability to
          * display it */
         boolean showMediaContentView = mActivityObject.getMedia().size() > 0 && can_share_media;
-        mMediaContentView.setVisibility(showMediaContentView ? View.VISIBLE : View.GONE);
+        animateDisplayingMediaContentView(showMediaContentView);
+        //mMediaContentView.setVisibility(showMediaContentView ? View.VISIBLE : View.GONE);
 
         /* Switch on or off the action label view based on the provider accepting an action */
         //boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
         //mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
 
         if (mMaxCharacters != -1)
-            animateDisplayingMaxCharacterCountView(true);//mCharacterCountView.setVisibility(View.VISIBLE);
+            animateDisplayingMaxCharacterCountView(true,
+                    (mInitialNetworkConnectionsAreDone == NUMBER_OF_INITIAL_NETWORK_CONNECTIONS));//mCharacterCountView.setVisibility(View.VISIBLE);
         else
-            animateDisplayingMaxCharacterCountView(false);//mCharacterCountView.setVisibility(View.GONE);
+            animateDisplayingMaxCharacterCountView(false,
+                    (mInitialNetworkConnectionsAreDone == NUMBER_OF_INITIAL_NETWORK_CONNECTIONS));//mCharacterCountView.setVisibility(View.GONE);
 
         updateCharacterCount();
-        updateProviderColors(socialSharingProperties);
+        updateProviderColors(socialSharingProperties, (mCurrentlyOnEmailSmsTab ? false : true));
         
         mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(this));
     }
@@ -1085,52 +1132,80 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private int lastProviderColorWithAlpha = JANRAIN_BLUE_20PERCENT;
     private int lastProviderColorNoAlpha = JANRAIN_BLUE_100PERCENT;
 
-    private void updateProviderColors(JRDictionary socialSharingProperties) {
+    private void updateProviderColors(JRDictionary socialSharingProperties, boolean animate) {
         Object colorValues = socialSharingProperties.get("color_values");
         int colorWithAlpha = colorForProviderFromArray(colorValues, true);
         int colorNoAlpha = colorForProviderFromArray(colorValues, false);
 
-        //mUserProfileInformationAndShareButtonContainer.setBackgroundColor(colorWithAlpha);
-        mUserProfileInformationAndShareButtonContainer.startAnimation(
-                new MyColorChanger(lastProviderColorWithAlpha, colorWithAlpha, ANIMATION_DURATION,
-                        new ColorChangerInterface() {
-                            public void doColorStuff(int color) {
-                                mUserProfileInformationAndShareButtonContainer.setBackgroundColor(color);
-                            }
-                        }));
+        if (animate) {
+            mUserProfileInformationAndShareButtonContainer.startAnimation(
+                    new MyColorChanger(lastProviderColorWithAlpha, colorWithAlpha, ANIMATION_DURATION,
+                            new ColorChangerInterface() {
+                                public void doColorStuff(int color) {
+                                    mUserProfileInformationAndShareButtonContainer.setBackgroundColor(color);
+                                }
+                            }));
 
-        //mJustShareButton.setColor(colorNoAlpha);
-        mJustShareButton.startAnimation(
-                new MyColorChanger(lastProviderColorNoAlpha, colorNoAlpha, ANIMATION_DURATION,
-                        new ColorChangerInterface() {
-                            public void doColorStuff(int color) {
-                                mJustShareButton.setColor(color);
-                            }
-                        }));
+            mJustShareButton.startAnimation(
+                    new MyColorChanger(lastProviderColorNoAlpha, colorNoAlpha, ANIMATION_DURATION,
+                            new ColorChangerInterface() {
+                                public void doColorStuff(int color) {
+                                    mJustShareButton.setColor(color);
+                                }
+                            }));
 
-        //mConnectAndShareButton.setColor(colorNoAlpha);
-        mConnectAndShareButton.startAnimation(
-                new MyColorChanger(lastProviderColorNoAlpha, colorNoAlpha, ANIMATION_DURATION,
-                        new ColorChangerInterface() {
-                            public void doColorStuff(int color) {
-                                mConnectAndShareButton.setColor(color);
-                            }
-                        }));
+            mConnectAndShareButton.startAnimation(
+                    new MyColorChanger(lastProviderColorNoAlpha, colorNoAlpha, ANIMATION_DURATION,
+                            new ColorChangerInterface() {
+                                public void doColorStuff(int color) {
+                                    mConnectAndShareButton.setColor(color);
+                                }
+                            }));
 
-        //mPreviewBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
-        mPreviewBorder.startAnimation(
-                new MyColorChanger(lastProviderColorNoAlpha, colorNoAlpha, ANIMATION_DURATION,
-                        new ColorChangerInterface() {
-                            public void doColorStuff(int color) {
-                                mPreviewBorder.getBackground().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-                            }
-                        }));
+            mPreviewBorder.startAnimation(
+                    new MyColorChanger(lastProviderColorNoAlpha, colorNoAlpha, ANIMATION_DURATION,
+                            new ColorChangerInterface() {
+                                public void doColorStuff(int color) {
+                                    mPreviewBorder.getBackground().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+                                }
+                            }));
+        } else {
+            mUserProfileInformationAndShareButtonContainer.setBackgroundColor(colorWithAlpha);
+            mJustShareButton.setColor(colorNoAlpha);
+            mConnectAndShareButton.setColor(colorNoAlpha);
+            mPreviewBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
+        }
 
         lastProviderColorNoAlpha = colorNoAlpha;
         lastProviderColorWithAlpha = colorWithAlpha;
     }
 
-    private void animateDisplayingMaxCharacterCountView(boolean displayMaxCharacterCountView) {
+    private boolean mMediaContentIsDisplayed = true;
+    private void animateDisplayingMediaContentView(boolean displayMediaContentView) {
+        if (true) return;
+
+        if (displayMediaContentView && !mMediaContentIsDisplayed)
+            mMediaContentView.startAnimation(new MyScaler(0.5f, 1.0f, 0.5f, 1.0f,
+                    ANIMATION_DURATION, true, mMediaContentView, false));
+        else if (!displayMediaContentView && mMediaContentIsDisplayed)
+            mMediaContentView.startAnimation(new MyScaler(1.0f, 0.5f, 1.0f, 0.5f,
+                    ANIMATION_DURATION, true, mMediaContentView, true));
+        
+        mMediaContentIsDisplayed = displayMediaContentView;
+    }
+
+    private void animateDisplayingMaxCharacterCountView(boolean displayMaxCharacterCountView, boolean animate) {
+        if (!animate) {
+            if (displayMaxCharacterCountView)
+                mCharacterCountView.setVisibility(View.VISIBLE);
+            else
+                mCharacterCountView.setVisibility(View.GONE);
+
+            return;
+        }
+
+        mCharacterCountView.setVisibility(View.VISIBLE);
+
         /* If we want to display it and it's already displayed, or if we want to hide
          * it and it's already hidden, do nothing. */
         if ((displayMaxCharacterCountView && mMaxCharacterCountViewIsDisplayed) ||
@@ -1279,8 +1354,47 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     }
 
+    public class MyScaler extends ScaleAnimation {
+        private View mView;
+        private LinearLayout.LayoutParams mLayoutParams;
 
+        private int mMarginBottomFromY, mMarginBottomToY;
+        private boolean mVanishAfter = false;
 
+        public MyScaler(float fromX, float toX, float fromY, float toY, int duration, boolean setFillAfter,
+                        View view, boolean vanishAfter) {
+            super(fromX, toX, fromY, toY);
+            setDuration(duration);
+            setFillAfter(setFillAfter);
+            mView = view;
+            mVanishAfter = vanishAfter;
+            mLayoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+            int height = mView.getHeight();
+            mMarginBottomFromY = (int) (0- ((height * (1.0f - fromY)) + mLayoutParams.bottomMargin));
+            mMarginBottomToY = (int) (0 - ((height * (1.0f - toY)) + mLayoutParams.bottomMargin));
+//            mMarginBottomFromY = (int) (height * fromY) + mLayoutParams.bottomMargin - height;
+//            mMarginBottomToY = (int) (0 - ((height * toY) + mLayoutParams.bottomMargin)) - height;
+
+            if (!vanishAfter)
+                mView.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            super.applyTransformation(interpolatedTime, t);
+            if (interpolatedTime < 1.0f) {
+                int newMarginBottom = mMarginBottomFromY
+                        + (int) ((mMarginBottomToY - mMarginBottomFromY) * interpolatedTime);
+                mLayoutParams.setMargins(mLayoutParams.leftMargin, mLayoutParams.topMargin,
+                    mLayoutParams.rightMargin, newMarginBottom);
+                mView.getParent().requestLayout();
+            } else if (mVanishAfter) {
+                Log.d(TAG, "[applyTransformation] final margin: " + mLayoutParams.bottomMargin);
+                //mView.setVisibility(View.GONE);
+            }
+        }
+
+    }
 
     private void configureLoggedInUserBasedOnProvider() {
         mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
