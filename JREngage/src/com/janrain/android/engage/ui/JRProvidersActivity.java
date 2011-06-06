@@ -29,6 +29,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
@@ -47,6 +48,7 @@ import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -57,11 +59,9 @@ import java.util.TimerTask;
  * @class JRProvidersActivity
  * Displays list of [basic] providers.
  */
-public class JRProvidersActivity extends ListActivity {
-
-    // ------------------------------------------------------------------------
-    // TYPES
-    // ------------------------------------------------------------------------
+public class JRProvidersActivity extends Activity {
+    private ListView mListView;
+    private TextView mEmptyTextView;
 
     /**
      * @internal
@@ -96,73 +96,53 @@ public class JRProvidersActivity extends ListActivity {
      * Array adapter used to render individual providers in list view.
      **/
     private class ProviderAdapter extends ArrayAdapter<JRProvider> {
-        private int mResourceId;
+        LayoutInflater li = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        public ProviderAdapter(Context context, int resId, ArrayList<JRProvider> items) {
-            super(context, -1, items);
-
-            mResourceId = resId;
+        public ProviderAdapter() {
+            // The super class only ends up using the last parameter passed into this super constructor,
+            // the List.  The first two parameters are never used.
+            super(JRProvidersActivity.this, 0, mProviderList);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View v = convertView;
-            if (v == null) {
-                LayoutInflater li = (LayoutInflater) getSystemService(
-                        Context.LAYOUT_INFLATER_SERVICE);
-                v = li.inflate(mResourceId, null);
-                Log.i(TAG, "[getView] with null converView");
-            } else Log.i(TAG, "[getView] with non null convertView");
+            if (convertView == null) {
+                // This line is pretty much copied from the super implementation, which doesn't attach
+                // the newly inflated View to it's parent.
+                convertView = li.inflate(R.layout.jr_provider_listview_row, parent, false);
+            }
 
-            ImageView icon = (ImageView) v.findViewById(R.id.jr_row_provider_icon);
-            TextView label = (TextView) v.findViewById(R.id.jr_row_provider_label);
+            ImageView icon = (ImageView) convertView.findViewById(R.id.jr_row_provider_icon);
+            TextView label = (TextView) convertView.findViewById(R.id.jr_row_provider_label);
 
-            final JRProvider provider = getItem(position);
+            JRProvider provider = getItem(position);
 
             Drawable providerIcon = provider.getProviderIcon(getContext());
             icon.setImageDrawable(providerIcon);
             label.setText(provider.getFriendlyName());
 
-            return v;
+            return convertView;
         }
     }
 
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
     private static final String TAG = JRProvidersActivity.class.getSimpleName();
     private static final int TIMER_MAX_ITERATIONS = 30;
-
-    // ------------------------------------------------------------------------
-    // STATIC INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
 
     private SharedLayoutHelper mLayoutHelper;
     private JRSessionData mSessionData;
     private ArrayList<JRProvider> mProviderList;
     private ProviderAdapter mAdapter;
     private Timer mTimer;
-    private int mTimerCount;
+    private int mTimerCount = 0;
     private FinishReceiver mFinishReceiver;
-
-    // ------------------------------------------------------------------------
-    // INITIALIZERS
-    // ------------------------------------------------------------------------
 
     /**
      * Used to alert user that no providers can be found on the UI thread.
      */
     private Runnable mNoProvidersFoundRunner = new Runnable() {
         public void run() {
+            mEmptyTextView.setVisibility(View.VISIBLE);
+
             mLayoutHelper.dismissProgressDialog();
             Toast.makeText(JRProvidersActivity.this,
                     "No providers found.",
@@ -175,26 +155,12 @@ public class JRProvidersActivity extends ListActivity {
      */
     private Runnable mProvidersLoadedRunner = new Runnable() {
         public void run() {
-            mAdapter.notifyDataSetChanged();
-            for (JRProvider provider : mProviderList) {
-                mAdapter.add(provider);
-            }
+            mListView.setVisibility(View.VISIBLE);
+            for (JRProvider p : mProviderList) mAdapter.add(p);
             mAdapter.notifyDataSetChanged();
             mLayoutHelper.dismissProgressDialog();
         }
     };
-
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
-
-    public JRProvidersActivity() {
-    }
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
 
     /**
      * Called when the activity is first created.
@@ -208,13 +174,14 @@ public class JRProvidersActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.jr_provider_listview);
 
-        mTimerCount = 0;
-        mTimer = new Timer();
+        mListView = (ListView) findViewById(android.R.id.list);
+        mEmptyTextView = (TextView) findViewById(android.R.id.empty);
+
         mLayoutHelper = new SharedLayoutHelper(this);
 
         mSessionData = JRSessionData.getInstance();
 
-        //for the case when this activity is relaunched after the process was killed
+        // For the case when this activity is relaunched after the process was killed
         if (mSessionData == null) {
             Log.e(TAG, "JRProvidersActivity bailing out after a process kill/restart");
             finish();
@@ -227,20 +194,22 @@ public class JRProvidersActivity extends ListActivity {
             mProviderList = new ArrayList<JRProvider>();
         }
 
-        mAdapter = new ProviderAdapter(this, R.layout.jr_provider_listview_row, mProviderList);
-        setListAdapter(mAdapter);
-
-        //registerForContextMenu(getListView());
+        mAdapter = new ProviderAdapter();
+        mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener(itemClickListener);
 
         if (mProviderList.size() == 0) {
-            // show progress and poll for results
+            mListView.setVisibility(View.GONE);
+
+            // Show progress and poll for results
             mLayoutHelper.showProgressDialog();
+            mTimer = new Timer();
             mTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     doSessionPoll();
                 }
-            }, 0, 1000);
+            }, 0, 500);
         }
 
         if (mFinishReceiver == null) {
@@ -305,7 +274,7 @@ public class JRProvidersActivity extends ListActivity {
         if (mFinishReceiver != null)
         unregisterReceiver(mFinishReceiver);
 
-        mTimer.cancel();
+        if (mTimer != null) mTimer.cancel();
     }
 
     // This test code adds a context menu to the providers.
@@ -332,25 +301,27 @@ public class JRProvidersActivity extends ListActivity {
     /**
      * This method will be called when an item in the list is selected.
      */
-    @Override
-    protected void onListItemClick(ListView l, View v, int pos, long id) {
-        JRProvider provider = mAdapter.getItem(pos);
-        mSessionData.setCurrentlyAuthenticatingProvider(provider);
+    //@Override
+    private ListView.OnItemClickListener itemClickListener = new ListView.OnItemClickListener() {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            JRProvider provider = mAdapter.getItem(position);
+            mSessionData.setCurrentlyAuthenticatingProvider(provider);
 
-        //todo
-        // || provider.getName().equals(mSessionData.getReturningBasicProvider())
-        //used to be part of the if conditional, seems to be related to giving the user an
-        //opportunity to switch accounts if they already have credentials, however if that's the
-        //intention mSessionData.getAuthenticatedUserForProvider() != null or something should be
-        //used so that providers that aren't the returning basic provider are also afforded the same
-        //possibility.
+            // todo
+            // || provider.getName().equals(mSessionData.getReturningBasicProvider())
+            // used to be part of the if conditional, it seems to be related to giving the user an
+            // opportunity to switch accounts if they already have credentials, however if that's the
+            // intention mSessionData.getAuthenticatedUserForProvider() != null or something should be
+            // used so that providers that aren't the returning basic provider are also afforded the same
+            // possibility.
 
-        if (provider.requiresInput()) {
-            JRUserInterfaceMaestro.getInstance().showUserLanding();
-        } else {
-            JRUserInterfaceMaestro.getInstance().showWebView();
+            if (provider.requiresInput()) {
+                JRUserInterfaceMaestro.getInstance().showUserLanding();
+            } else {
+                JRUserInterfaceMaestro.getInstance().showWebView();
+            }
         }
-    }
+    };
 
     /**
      * Initialize the contents of the Activity's standard options menu.

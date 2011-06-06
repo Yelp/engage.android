@@ -388,6 +388,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             // XXX 1.5
             //spec.setIndicator(ll);
+            spec.setIndicator("spam");
             tabHost.addTab(spec);
 
             mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
@@ -398,6 +399,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
         // XXX 1.5
         //emailSmsSpec.setIndicator(createTabSpecIndicator("Email/SMS", d));
+        emailSmsSpec.setIndicator("spam");
+
         //emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
         emailSmsSpec.setContent(R.id.jr_tab_view_content);
         tabHost.addTab(emailSmsSpec);

@@ -223,6 +223,7 @@ public class JRWebViewActivity extends Activity {
 
         URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
         mWebView.loadUrl(startUrl.toString());
+        //mWebView.loadUrl("http://google.com");
     }
 
     @Override
@@ -358,8 +359,11 @@ public class JRWebViewActivity extends Activity {
          * Invoked by WebKit when there is something to be downloaded that it does not
          * typically handle (e.g. result of post, mobile endpoint url results, etc).
          */
-        public void onDownloadStart(String url, String userAgent,
-                String contentDisposition, String mimetype, long contentLength) {
+        public void onDownloadStart(String url,
+                                    String userAgent,
+                                    String contentDisposition,
+                                    String mimetype,
+                                    long contentLength) {
 
             if (Config.LOGD) {
                 Log.d(TAG, "[onDownloadStart] url: " + url + " | mimetype: " + mimetype
@@ -376,19 +380,19 @@ public class JRWebViewActivity extends Activity {
     private WebViewClient mWebviewClient = new WebViewClient(){
         private final String TAG = this.getClass().getSimpleName();
 
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            //Log.d(TAG, "[shouldOverrideUrlLoading]: " + view + ", " + url);
+            view.loadUrl(url);
+            return true;
+        }
+
+
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[onPageStarted] url: " + url);
-            }
+            if (Config.LOGD) Log.d(TAG, "[onPageStarted] url: " + url);
 
-            /*
-             * Check for mobile endpoint URL.
-             */
-            final String mobileEndpointUrl = mSessionData.getBaseUrl() + "/signin/device";
-            if ((!TextUtils.isEmpty(url)) && (url.startsWith(mobileEndpointUrl))) {
-                Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
-            }
+            /* Check for mobile endpoint URL. */
+            if (isMobileEndpointUrl(url)) Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
 
             setProgressBarIndeterminateVisibility(true);
 

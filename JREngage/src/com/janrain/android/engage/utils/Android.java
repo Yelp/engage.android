@@ -23,8 +23,6 @@ public class Android {
     }
 
     public static ApplicationInfo getApplicationInfo() {
-        // XXX 1.5
-        //return JREngage.getContext().getApplicationInfo();
         String packageName = JREngage.getContext().getPackageName();
         try {
             return JREngage.getContext().getPackageManager().getApplicationInfo(packageName, 0);
