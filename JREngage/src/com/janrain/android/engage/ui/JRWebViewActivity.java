@@ -55,6 +55,7 @@ import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.utils.Android;
 
 import java.net.URL;
 import java.util.List;
@@ -174,20 +175,18 @@ public class JRWebViewActivity extends Activity {
         			// never invoked from this Java code, so they will always generate compiler
         			// warnings, so we suppress those warnings safely.
                     @SuppressWarnings("unused")
-					String androidIncremental() {
+					String getAndroidIncremental() {
                         return Build.VERSION.INCREMENTAL;
                     }
 
                     @SuppressWarnings("unused")
-					String androidRelease() {
+					String getAndroidRelease() {
                         return Build.VERSION.RELEASE;
                     }
 
                     @SuppressWarnings("unused")
-					int androidSdkInt() {
-                        // XXX 1.5
-                        //return Build.VERSION.SDK_INT;
-                        return 0;
+					int getAndroidSdkInt() {
+                        return Android.getAndroidSdkInt();
                     }
                 }, "jrengage_mobile");
 
@@ -262,7 +261,7 @@ public class JRWebViewActivity extends Activity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (com.janrain.android.engage.utils.Android.asdf()
+        if (com.janrain.android.engage.utils.Android.isCupcake()
                 && keyCode == KeyEvent.KEYCODE_BACK
                 && event.getRepeatCount() == 0) {
             // Take care of calling this method on earlier versions of

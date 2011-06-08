@@ -30,6 +30,7 @@
 package com.janrain.android.engage.session;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -48,8 +49,12 @@ import com.janrain.android.engage.R;
 import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.ui.ColorButton;
+import com.janrain.android.engage.utils.Android;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -102,7 +107,7 @@ public class JRProvider implements Serializable {
                         put("icon_blogger", R.drawable.jr_icon_blogger);
                         put("icon_facebook", R.drawable.jr_icon_facebook);
                         put("icon_flickr", R.drawable.jr_icon_flickr);
-                        put("icon_foursquare", R.drawable.jr_icon_foursquare);
+                        //put("icon_foursquare", R.drawable.jr_icon_foursquare);
                         put("icon_google", R.drawable.jr_icon_google);
                         put("icon_hyves", R.drawable.jr_icon_hyves);
                         put("icon_linkedin", R.drawable.jr_icon_linkedin);
@@ -322,7 +327,7 @@ public class JRProvider implements Serializable {
             return r;
         }
 
-        if (Build.VERSION.RELEASE.startsWith("1.5")) {
+        if (Android.isCupcake()) {
             // 1.5 can't handle our programmatic XHDPI resource instantiation
             return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
         }
@@ -336,8 +341,18 @@ public class JRProvider implements Serializable {
                 //Our downloaded icons are all at xhdpi, but Android 2.1 doesn't have the
                 //DENSITY_XHIGH constant defined yet.  Fortunately it does the right thing
                 //if you pass in the DPI as an int
-                // XXX 1.5
+
                 //icon.setDensity(320);
+                try {
+                    Method setDensity = icon.getClass().getDeclaredMethod("setDensity", int.class);
+                    setDensity.invoke(icon, 320);
+                } catch (NoSuchMethodException e) {
+                    Log.e(TAG, "Unexpected: " + e);
+                } catch (IllegalAccessException e) {
+                    Log.e(TAG, "Unexpected: " + e);
+                } catch (InvocationTargetException e) {
+                    Log.e(TAG, "Unexpected: " + e);
+                }
             }
             else {
                 c.deleteFile(iconFileName);
@@ -345,17 +360,29 @@ public class JRProvider implements Serializable {
                 return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
             }
 
-            /// XXX 1.5
             //return new BitmapDrawable(c.getResources(), icon);
+            try {
+                Class bitmapDrawableClass = Class.forName("android.graphics.drawable.BitmapDrawable");
+                Constructor newBitmapDrawable =
+                        bitmapDrawableClass.getDeclaredConstructor(Resources.class, Bitmap.class);
+                return (BitmapDrawable) newBitmapDrawable.newInstance(c.getResources(), icon);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
         }
         catch (FileNotFoundException e) {
             downloadIcons(c);
 
             return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
         }
-
-        // XXX 1.5
-        return null;
     }
 
 

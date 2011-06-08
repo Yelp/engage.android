@@ -2,8 +2,11 @@ package com.janrain.android.engage.utils;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
+
+import java.lang.reflect.Field;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,10 +19,24 @@ public class Android {
     public static final String TAG = Android.class.getSimpleName();
     private Android() {}
 
-    public static boolean asdf() {
-        // XXX 1.5
-        //return android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.DONUT;
-        return true;
+    public static boolean isCupcake() {
+        return Build.VERSION.RELEASE.startsWith("1.5");
+    }
+
+
+    public static int getAndroidSdkInt() {
+        Field SDK_INT = null;
+        try {
+            SDK_INT = Build.VERSION.class.getField("SDK_INT");
+
+            return (Integer) SDK_INT.getInt(null);
+        } catch (NoSuchFieldException e) {
+            // Must be Cupcake
+            return 3;
+        } catch (IllegalAccessException e) {
+            // Not expected
+            throw new RuntimeException(e);
+        }
     }
 
     public static ApplicationInfo getApplicationInfo() {

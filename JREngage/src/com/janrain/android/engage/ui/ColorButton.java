@@ -83,7 +83,7 @@ public class ColorButton extends Button {
 
         //int[] oldStateSet = sld.getState();
         //sld.setState(stateSet);
-        ((ColorFilterRejectingDrawableWrapper) sld.getCurrent()).mutate()
+        ((ColorFilterRejectingDrawableWrapper) sld.getCurrent())
                 ._setColorFilter(color, PorterDuff.Mode.MULTIPLY);
         //sld.getCurrent().invalidateSelf();
         //sld.setState(oldStateSet);

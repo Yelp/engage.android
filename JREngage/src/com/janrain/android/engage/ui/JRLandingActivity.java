@@ -32,7 +32,6 @@ package com.janrain.android.engage.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Config;
@@ -42,7 +41,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 
 import com.janrain.android.engage.JREngage;
@@ -238,7 +236,7 @@ public class JRLandingActivity extends Activity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (com.janrain.android.engage.utils.Android.asdf()
+        if (com.janrain.android.engage.utils.Android.isCupcake()
                 && keyCode == KeyEvent.KEYCODE_BACK
                 && event.getRepeatCount() == 0) {
             // Take care of calling this method on earlier versions of

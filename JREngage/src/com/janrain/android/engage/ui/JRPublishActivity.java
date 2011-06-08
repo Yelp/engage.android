@@ -44,7 +44,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
@@ -71,6 +70,8 @@ import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.*;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -383,12 +384,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             TabHost.TabSpec spec = tabHost.newTabSpec(provider.getName());
             spec.setContent(R.id.jr_tab_view_content);
+            String s = provider.getFriendlyName();
 
-            LinearLayout ll = createTabSpecIndicator(provider.getFriendlyName(), providerIconSet);
+            setTabSpecIndicator(spec, providerIconSet, s);
 
-            // XXX 1.5
-            //spec.setIndicator(ll);
-            spec.setIndicator("spam");
             tabHost.addTab(spec);
 
             mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
@@ -397,9 +396,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         /* Make a tab for email/SMS */
         TabHost.TabSpec emailSmsSpec = tabHost.newTabSpec(EMAIL_SMS_TAB_TAG);
         Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
-        // XXX 1.5
-        //emailSmsSpec.setIndicator(createTabSpecIndicator("Email/SMS", d));
-        emailSmsSpec.setIndicator("spam");
+        setTabSpecIndicator(emailSmsSpec, d, "Email/SMS");
 
         //emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
         emailSmsSpec.setContent(R.id.jr_tab_view_content);
@@ -419,6 +416,29 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
          * XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
          * XXX This is a workaround: */
         findViewById(R.id.jr_tab_view_content).setVisibility(View.VISIBLE);
+    }
+
+    private void setTabSpecIndicator(TabHost.TabSpec spec, Drawable iconSet, String label) {
+        boolean doBasicTabs = false;
+        try {
+            LinearLayout ll = createTabSpecIndicator(label, iconSet);
+            Method setIndicator = spec.getClass().getDeclaredMethod("setIndicator", View.class);
+            setIndicator.invoke(spec, ll);
+        } catch (NoSuchMethodException e) {
+            doBasicTabs = true;
+        } catch (IllegalAccessException e) {
+            // Not expected
+            Log.e(TAG, "Unexpected: " + e);
+            doBasicTabs = true;
+        } catch (InvocationTargetException e) {
+            // Not expected
+            Log.e(TAG, "Unexpected: " + e);
+            doBasicTabs = true;
+        }
+
+        if (doBasicTabs) {
+            spec.setIndicator(label, iconSet);
+        }
     }
 
     private LinearLayout createTabSpecIndicator(String labelText, Drawable providerIconSet) {
@@ -539,7 +559,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     /* UI event listeners */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (com.janrain.android.engage.utils.Android.asdf()
+        if (com.janrain.android.engage.utils.Android.isCupcake()
                 && keyCode == KeyEvent.KEYCODE_BACK
                 && event.getRepeatCount() == 0) {
             // Take care of calling this method on earlier versions of
