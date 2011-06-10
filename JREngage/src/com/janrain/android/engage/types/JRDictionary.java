@@ -45,7 +45,7 @@ import java.util.Map;
 
 /**
  * @class JRDictionary
- * @brief aps string keys to object values
+ * @brief A dictionary that maps \e String keys to values of different types
  *
  * @nosubgrouping
  * 
@@ -70,7 +70,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 
 /**
  * @name Contructors
- * Methods that manage authenticated users remembered by the library
+ * Contructors for JRDictionary
  **/
 /*@{*/
     /**
@@ -95,7 +95,7 @@ public final class JRDictionary extends HashMap<String,Object> {
      * Copy constructor (for base type).
      *
      * @param map
-     *      The HashMap instance to clone
+     *      The \e HashMap instance to clone
      **/
     public JRDictionary(Map<String,Object> map) {
         if (map != null) {
@@ -117,7 +117,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 /*@}*/
 
 /**
- * @name Archving
+ * @name Archiving
  * Methods that manage archiving/unarchiving of JRDictionaary
  **/
 /*@{*/
@@ -125,7 +125,7 @@ public final class JRDictionary extends HashMap<String,Object> {
      * Archives the specified JRDictionary object to disk.
      *
      * @param name
-     *      The name the JRDictionary will be saved as on disk.  This parameter cannot be null
+     *      The name the JRDictionary will be saved as on disk.  This parameter cannot be \e null
      *
      * @param dictionary
      *      The dictionary object to be saved
@@ -134,7 +134,7 @@ public final class JRDictionary extends HashMap<String,Object> {
      *      \c true if the save operation is successful, \c false otherwise
      *
      * @throws
-     * 		IllegalArgumentException if the context or name parameters are null
+     * 		IllegalArgumentException if the context or name parameters are \e null
      **/
     public static boolean archive(String name, JRDictionary dictionary) {
         return Archiver.save(name, dictionary);
@@ -144,13 +144,13 @@ public final class JRDictionary extends HashMap<String,Object> {
      * Loads (unarchives) the specified JRDictionary object from the local (protected) file system.
      *
      * @param name
-     * 		The name of the JRDictionary to be loaded from disk.  This parameter cannot be null
+     * 		The name of the JRDictionary to be loaded from disk.  This parameter cannot be \e null
      *
      * @return
      * 		The JRDictionary if found and loaded, new (empty) JRDictionary otherwise
      *
      * @throws
-     * 		IllegalArgumentException if the context or name parameters are null
+     * 		IllegalArgumentException if the context or name parameters are \e null
      **/
     public static JRDictionary unarchive(String name) {
         Object obj = Archiver.load(name);
@@ -162,7 +162,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 /*@}*/
 
 /**
- * @name JSON Seririalization
+ * @name JSON Serialization
  * Methods that serialize/deserialize the JRDictionary to/from JSON
  **/
 /*@{*/
@@ -214,7 +214,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 
 /**
  * @name Getting Dictionary Content
- * Methods that return typed values given a String key
+ * Methods that return typed values given a \e String key
  **/
 /*@{*/
 	/**
@@ -224,7 +224,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 	 * 		The key of the value to be retrieved
 	 * 
 	 * @return
-	 * 		\e String object if found, empty string otherwise
+	 * 		The \e String object if found, empty string otherwise
 	 **/
 	public String getAsString(String key) {
 		return getAsString(key, DEFAULT_VALUE_STRING);
@@ -240,7 +240,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 	 * 		The value to be returned if the key is not found
 	 * 
 	 * @return
-	 * 		\e String value if found, value of 'defaultValue' otherwise
+	 * 		The \e String value if found, value of \e defaultValue otherwise
 	 **/
 	public String getAsString(String key, String defaultValue) {
 		return (containsKey(key)) ? (String)get(key) : defaultValue;
@@ -253,7 +253,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 	 * 		The key of the value to be retrieved
 	 * 
 	 * @return
-	 * 		\e integer value if found, \c -1 otherwise
+	 * 		The \e int value if found, \c -1 otherwise
 	 **/
 	public int getAsInt(String key) {
 		return getAsInt(key, DEFAULT_VALUE_INT);
@@ -269,7 +269,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 	 * 		The value to be returned if the key is not found
 	 *
 	 * @return
-	 * 		\e integer value if found, value of 'defaultValue' otherwise
+	 * 		The \e int value if found, value of \e defaultValue otherwise
 	 **/
 	public int getAsInt(String key, int defaultValue) {
 		int retval = defaultValue;
@@ -298,7 +298,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 	 * 		The key of the value to be retrieved
 	 * 
 	 * @return
-	 * 		\e boolean value if found, \c false otherwise
+	 * 		The \e boolean value if found, \c false otherwise
 	 **/
 	public boolean getAsBoolean(String key) {
 		return getAsBoolean(key, DEFAULT_VALUE_BOOLEAN);
@@ -314,7 +314,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 	 * 		The value to be returned if the key is not found
 	 *
 	 * @return
-	 * 		\e boolean value if found, value of 'defaultValue' otherwise
+	 * 		The \e boolean value if found, value of \e defaultValue otherwise
 	 **/
 	public boolean getAsBoolean(String key, boolean defaultValue) {
 		boolean retval = defaultValue;
@@ -337,7 +337,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 	 * 		The key of the value to be retrieved
 	 *
 	 * @return
-	 * 		The JRDictionary value if key is found, null otherwise
+	 * 		The JRDictionary value if key is found, \e null otherwise
 	 **/
 	public JRDictionary getAsDictionary(String key) {
 		return getAsDictionary(key, false);
@@ -354,8 +354,8 @@ public final class JRDictionary extends HashMap<String,Object> {
 	 * 		specified key does not exist
 	 * 
 	 * @return
-	 * 		The JRDictionary value if key is found, empty object or null otherwise (based on value
-	 *      of the 'shouldCreateIfNotFound' flag)
+	 * 		The JRDictionary value if key is found, empty object or \e null otherwise (based on value
+	 *      of the \e shouldCreateIfNotFound flag)
 	 **/
 	public JRDictionary getAsDictionary(String key, boolean shouldCreateIfNotFound) {
 		JRDictionary retval = null;
@@ -380,7 +380,7 @@ public final class JRDictionary extends HashMap<String,Object> {
      * 		The key of the value to be retrieved
      *
      * @return
-     * 		The \e ArrayList<String> value if key is found, null otherwise
+     * 		The \e ArrayList<String> value if key is found, \e null otherwise
      **/
     public ArrayList<String> getAsListOfStrings(String key) {
         return getAsListOfStrings(key, false);
@@ -397,7 +397,8 @@ public final class JRDictionary extends HashMap<String,Object> {
      * 		if the specified key does not exist
      *
      * @return
-     * 		The \e ArrayList<String> value if key is found, null otherwise
+     * 		The \e ArrayList<String> value if key is found, empty array or \e null otherwise (based on value
+	 *      of the \e shouldCreateIfNotFound flag)
      **/
     public ArrayList<String> getAsListOfStrings(String key, boolean shouldCreateIfNotFound) {
         ArrayList<String> retval = null;
@@ -422,7 +423,7 @@ public final class JRDictionary extends HashMap<String,Object> {
      *      The key of the value to be retrieved
      *
      * @return
-     *      The JRProvider object if found, null otherwise
+     *      The JRProvider object if found, \e null otherwise
      **/
     public JRProvider getAsProvider(String key) {
         JRProvider retval = null;
@@ -444,7 +445,7 @@ public final class JRDictionary extends HashMap<String,Object> {
      * 		The key of the value to be retrieved
      *
      * @return
-     * 		The JRProviderList value if key is found, null otherwise
+     * 		The JRProviderList value if key is found, \e null otherwise
      **/
     public JRProviderList getAsProviderList(String key) {
         return getAsProviderList(key, false);
@@ -462,7 +463,8 @@ public final class JRDictionary extends HashMap<String,Object> {
      * 		specified key does not exist
      *
      * @return
-     * 		The JRProviderList value if key is found, null otherwise
+     * 		The JRProviderList value if key is found, empty JRProviderList or \e null otherwise (based on value
+	 *      of the \e shouldCreateIfNotFound flag)
      **/
     public JRProviderList getAsProviderList(String key, boolean shouldCreateIfNotFound) {
         JRProviderList retval = null;
@@ -486,14 +488,14 @@ public final class JRDictionary extends HashMap<String,Object> {
  **/
 /*@{*/
     /**
-     * Utility method used to check if a dictionary object is "empty", that is, it is null or
+     * Utility method used to check if a dictionary object is "empty", that is, it is \e null or
      * contains zero items
      *
      * @param dictionary
      *      The dictionary object to be tested
      *
      * @return
-     *      <code>true</code> if the dictionary is null or contains zero items, <code>false</code>
+     *      \c true if the dictionary is null or contains zero items, \c false
      *      otherwise
      **/
     public static boolean isEmpty(JRDictionary dictionary) {

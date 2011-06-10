@@ -34,27 +34,56 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @brief An SMS a user can send to share an activity.
+ * @brief Object containing content to be shared in an sms.
  *
- * JREmailObject is a simple container object for a pre-composed SMS to be attached to a
- * {@link com.janrain.android.engage.types.JRActivityObject JRActivityObject}.
+ * JRSmsObject is a simple container object for a pre-composed SMS to be attached to a JRActivityObject
  *
  * Instantiate a new JRSmsObject with a body.  Optionally, add a list of URLs
- * from the body and Engage will automatically shorten them, track click-throughs and provide
+ * from the body and Engage will automatically shorten them, track click-throughs, and provide
  * analytics on your dashboard.
  *
- * See {@link com.janrain.android.engage.types.JRActivityObject JRActivityObject},
- * {@link com.janrain.android.engage.types.JREmailObject JREmailObject}
- */
-
+ * @nosubgrouping
+ **/
 public class JRSmsObject {
+/**
+ * @name Private Attributes
+ * The various properties of the JRSmsObject that you can access and configure through the object's
+ * constructor and getters
+ **/
+/*@{*/
+    /**
+     * The pre-composed body of the sms.
+     *
+     * @par Getter/Setter:
+     *      #getBody(), #setBody()
+     **/
     private String mBody;
-    private List<String> mUrls;
-    private List<String> mShortUrls;
 
     /**
+     * The list of URLs to be shortened.  Each of these URLs will be shortened to an rpx.me URL, which tracks
+     * click-throughs and provides analytics.  Once shortened, the Engage for Android library will substitute
+     * the shortened version for the original long version for each URL found in the body of the sms.
+     *
+     * @par Getter/Setter:
+     *      #getUrls(), #setUrls()
+     **/
+    private List<String> mUrls;
+/*@}*/
+
+    /**
+     * @internal
+     * The list of shortened URLs.
+     **/
+    private List<String> mShortUrls;
+
+/**
+ * @name Constructors
+ * Constructors for the JRSmsObject
+ **/
+/*@{*/
+    /**
      * Create an empty SMS object.
-     */
+     **/
     public JRSmsObject() {
         this("");
     }
@@ -62,8 +91,9 @@ public class JRSmsObject {
     /**
      * Create an SMS object with a given body.
      *
-     * @param body The SMS's body, which will be appended to the user's comment and passed to the
-     *  devices SMS application.
+     * @param body
+     *      The SMS's body, which will be appended to the user's comment and passed to the
+     *      device's SMS application
      */
     public JRSmsObject(String body) {
         if (body == null) body = "";
@@ -71,7 +101,8 @@ public class JRSmsObject {
         mBody = body;
         mUrls = new ArrayList<String>();
     }
-
+/*@}*/
+    
     /**
      * @internal
      *
@@ -86,44 +117,49 @@ public class JRSmsObject {
         }
     }
 
+/**
+ * @name Getters/Setters
+ * Getters for the JRSmsObject's private properties
+ **/
     /**
-     * Return the SMS's body.
+     * Getter for the sms object's #mBody property.
      *
-     * @return The SMS's body.
-     */
+     * @return
+     *      The body of the sms
+     **/
     public String getBody() {
         return mBody;
     }
 
     /**
-     * Set the SMS's body.
+     * Setter for the sms object's #mBody property.
      *
-     * @param body The SMS's body.
-     */
+     * @param body
+     *      The body of the sms
+     **/
     public void setBody(String body) {
         mBody = body;
     }
 
     /**
-     * Return the SMS's list of URLs to be shortened.
+     * Getter for the sms object's #mUrls property, a list of URLs to be shortened.
      *
-     * @return An immutable list of URLs to be shortened.
-     * @see JRSmsObject#setUrls(java.util.List)
-     */
+     * @return
+     *      An immutable list of URLs to be shortened
+     **/
     public List<String> getUrls() {
         return Collections.unmodifiableList(mUrls);
     }
 
     /**
-     * Set the SMS's list of URLs to be shortened.  Each of these URLs will be shortened to an
-     * rpx.me URL which tracks click-throughs and provides analytics.  Once shortened, the Engage
-     * for Android library will substitute the shortened version for the original long version for
-     * each URL found in the body of the SMS.
+     * Setter for the sms object's #mUrls property, a list of URLs to be shortened.  Each of these URLs will
+     * be shortened to an rpx.me URL, which tracks click-throughs, and provides analytics.  Once shortened,
+     * the Engage for Android library will substitute the shortened version for the original long version for
+     * each URL found in the body of the sms.
      *
-     * @param urls The SMS's list of URLs to be shortened, not more than five URLs.
-     *
-     * @see JRSmsObject#addUrl(String) 
-     */
+     * @param urls
+     *      The sms object's list of URLs to be shortened, not more than five URLs
+     **/
     public void setUrls(List<String> urls) {
         if (urls == null) urls = new ArrayList<String>();
         if (urls.size() >= 5) throw
@@ -135,14 +171,14 @@ public class JRSmsObject {
     /**
      * Add a single URL to the list of URLs to shorten.
      *
-     * @param url The URL to add to the list of URLs to shorten.
-     *
-     * @see JRSmsObject#setUrls(java.util.List)
-     */
+     * @param url
+     *      The URL to add to the list of URLs to shorten
+     **/
     public void addUrl(String url) {
         if (mUrls.size() >= 5) throw
                 new IllegalArgumentException("JRSmsObject supports a maximum of five URLs");
 
         mUrls.add(url);
     }
+/*@}*/
 }

@@ -69,7 +69,7 @@ public class JRActionLink {
     /**
      * The text describing the link.
      *
-     * @par Getter/Setter:
+     * @par Getter:
      *      #getText()
      **/
     private String mText;
@@ -77,7 +77,7 @@ public class JRActionLink {
     /**
      * A link a user can use to take action on an activity update on the provider.
      *
-     * @par Getter/Setter:
+     * @par Getter:
      *      #getHref()
      **/
     private String mHref;
@@ -92,14 +92,14 @@ public class JRActionLink {
      * Creates a JRActionLink initialized with the given text and href.
      *
      * @param text
-     *      The text describing the link.  This value cannot be null
+     *      The text describing the link.  This value cannot be \e null
      *
      * @param href
      *      A link a user can use to take action on an activity update on the provider.  This value
-     *      cannot be null
+     *      cannot be \e null
      *
      * @throws IllegalArgumentException
-     *      if text or href is null
+     *      if text or href is \e null
      */
     public JRActionLink(String text, String href) {
         if (text == null || href == null) throw new IllegalArgumentException("illegal null text or null href");

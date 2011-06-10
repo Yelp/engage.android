@@ -72,57 +72,6 @@ package com.janrain.android.engage;
  * the <a href="http://rpxnow.com/docs/android_api/annotated.html">"JREngage API"</a> documentation.
  **/
 
-/**
- * @page Providers
- * @section basicProviders List of Providers
- *
- * Here is a list of possible strings that the argument provider can be
- * when used in the authentication methods:
- *   - "aol"
- *   - "blogger"
- *   - "facebook"
- *   - "flickr"
- *   - "google"
- *   \if hyves_is_working
- *   - "hyves"
- *   \endif
- *   - "linkedin"
- *   \if live_id_is_working
- *   - "live_id"
- *   \endif
- *   - "livejournal"
- *   - "myopenid"
- *   - "myspace"
- *   - "netlog"
- *   - "openid"
- *   - "orkut"
- *   - "paypal"
- *   - "salesforce"
- *   - "twitter"
- *   - "verisign"
- *   - "vzn"
- *   \if wordpress_is_working
- *   - "wordpress"
- *   \endif
- *   - "yahoo"
- *
- * @note As your Engage application is limited by the number of providers it may use,
- * you may only see a subset of this list.
- *
- * @section socialProviders List of Social Providers
- *
- * Here is a list of possible strings that the argument provider can be
- * when used in the social publishing methods:
- *   - "facebook"
- *   - "linkedin"
- *   - "myspace"
- *   - "twitter"
- *   - "yahoo"
- *
- * @note As your Engage application is limited by the number of providers it may use,
- * you may only see a subset of this list.
- **/
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -686,3 +635,47 @@ public class JREngage {
                 : new ArrayList<JREngageDelegate>(mDelegates);
     }
 }
+
+/**
+ * @page Providers
+ *
+@htmlonly
+<!-- Script to resize the iFrames; Only works because iFrames origin is on same domain and iFrame
+      code contains script that calls this script -->
+<script type="text/javascript">
+    function resize(width, height, id) {
+        var iframe = document.getElementById(id);
+        iframe.width = width;
+        iframe.height = height + 50;
+        iframe.scrolling = false;
+        console.log(width);
+        console.log(height);
+    }
+</script>
+
+<!-- Redundant attributes to force scrolling to work across multiple browsers -->
+<iframe id="intro" src="../mobile_providers?list=intro&device=android" width="100%" height="100%"
+    style="border:none; overflow:hidden;" frameborder="0" scrolling="no">
+  Your browser does not support iFrames.
+</iframe>
+@endhtmlonly
+
+@anchor basicProviders
+@htmlonly
+<iframe id="basic" src="../mobile_providers?list=basic&device=android" width="100%" height="100%"
+    style="border:none; overflow:hidden;" frameborder="0" scrolling="no">
+  Your browser does not support iFrames.
+  <a href="../mobile_providers?list=basic&device=android">List of Providers</a>
+</iframe></p>
+@endhtmlonly
+
+@anchor socialProviders
+@htmlonly
+<iframe id="social" src="../mobile_providers?list=social&device=android" width="100%" height="100%"
+    style="border:none; overflow:hidden;" frameborder="0" scrolling="no">
+  Your browser does not support iFrames.
+  <a href="../mobile_providers?list=social&device=android">List of Social Providers</a>
+</iframe></p>
+@endhtmlonly
+ *
+ **/

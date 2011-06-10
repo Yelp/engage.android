@@ -72,13 +72,13 @@ public class JRImageMediaObject extends JRMediaObject {
      *      #getHref()
      **/
     private String mHref;
+/*@}*/
 
     /**
      * @internal
      * Contains the downloaded preview of the image for display in the publish activity dialog.
      **/
     private Bitmap mPreview;
-/*@}*/
     
 /**
  * @name Constructors

@@ -34,28 +34,65 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @brief An email a user can send to share an activity.
+ * @brief Object containing content to be shared by email.
  *
  * JREmailObject is a simple container object for a pre-composed email to be attached to a
- * {@link com.janrain.android.engage.types.JRActivityObject JRActivityObject}.
+ * JRActivityObject.
  *
  * Instantiate a new JREmailObject with a subject and a body.  Optionally, add a list of URLs
- * from the body and Engage will automatically shorten them, track click-throughs and provide
+ * from the body and Engage will automatically shorten them, track click-throughs, and provide
  * analytics on your dashboard.
  *
- * See {@link com.janrain.android.engage.types.JRActivityObject JRActivityObject},
- * {@link com.janrain.android.engage.types.JRSmsObject JRSmsObject}
- */
-
+ * @nosubgrouping
+ **/
 public class JREmailObject {
-    private String mSubject, mBody;
-    //private boolean mHtml;
-    private List<String> mUrls;
-    private List<String> mShortUrls;
+/**
+ * @name Private Attributes
+ * The various properties of the JREmailObject that you can access and configure through the object's
+ * constructor and getters
+ **/
+/*@{*/
+    /**
+     * The pre-composed subject of the email.
+     *
+     * @par Getter/Setter:
+     *      #getSubject(), #setSubject()
+     **/
+    private String mSubject;
 
     /**
+     * The pre-composed body of the email.
+     *
+     * @par Getter/Setter:
+     *      #getBody(), #setBody()
+     **/
+    private String mBody;
+
+    /**
+     * The list of URLs to be shortened.  Each of these URLs will be shortened to an rpx.me URL, which tracks
+     * click-throughs and provides analytics.  Once shortened, the Engage for Android library will substitute
+     * the shortened version for the original long version for each URL found in the body of the email.
+     *
+     * @par Getter/Setter:
+     *      #getUrls(), #setUrls()
+     **/
+    private List<String> mUrls;
+/*@}*/
+
+    /**
+     * @internal
+     * The list of shortened URLs.
+     **/
+    private List<String> mShortUrls;
+
+/**
+ * @name Constructors
+ * Constructors for the JREmailObject
+ **/
+/*@{*/
+    /**
      * Create an empty email object.
-     */
+     **/
     public JREmailObject() {
         this("", "");
     }
@@ -63,10 +100,13 @@ public class JREmailObject {
     /**
      * Create an email object with a given subject and body.
      *
-     * @param subject The email's subject line, passed to the device's email application
-     * @param body The email's body, which will be appended to the user's comment and passed to the
-     *  devices email application.
-     */
+     * @param subject
+     *      The email's subject line, passed to the device's email application
+     *
+     * @param body
+     *      The email's body, which will be appended to the user's comment and passed to the
+     *      device's email application.
+     **/
     public JREmailObject(String subject, String body) {
         if (subject == null) subject = "";
         if (body == null) body = "";
@@ -76,6 +116,7 @@ public class JREmailObject {
         //mHtml = false;
         mUrls = new ArrayList<String>();
     }
+/*@}*/
 
     /**
      * @internal
@@ -91,68 +132,70 @@ public class JREmailObject {
         }
     }
 
+/**
+ * @name Getters/Setters
+ * Getters for the JREmailObject's private properties
+ **/
+/*@{*/
     /**
-     * Return the email's subject.
+     * Getter for the email object's #mSubject property.
      * 
-     * @return The email's subject.
-     */
+     * @return
+     *      The subject of the email
+     **/
     public String getSubject() {
         return mSubject;
     }
 
     /**
-     * Set the email's subject.
-     * 
-     * @param subject The email's subject.
-     */
+     * Setter for the email object's #mSubject property.
+     *
+     * @param subject
+     *      The subject of the email
+     **/
     public void setSubject(String subject) {
         mSubject = subject;
     }
 
     /**
-     * Return the email's body.
+     * Getter for the email object's #mBody property.
      *
-     * @return The email's body.
-     */
+     * @return
+     *      The body of the email
+     **/
     public String getBody() {
         return mBody;
     }
 
     /**
-     * Set the email's body.
+     * Setter for the email object's #mBody property.
      *
-     * @param body The email's body.
-     */
+     * @param body
+     *      The body of the email
+     **/
     public void setBody(String body) {
         mBody = body;
     }
 
-    //public void setHtml(boolean html) {
-    //    mHtml = html;
-    //}
-    //
-    //public boolean getHtml() {
-    //    return mHtml;
-    //}
-
     /**
-     * Return the email's list of URLs to be shortened.
+     * Getter for the email object's #mUrls property, a list of URLs to be shortened.
      *
-     * @return An immutable list of URLs to be shortened.
-     * @see JREmailObject#setUrls(java.util.List)
-     */
+     * @return
+     *      An immutable list of URLs to be shortened
+     **/
     public List<String> getUrls() {
         return Collections.unmodifiableList(mUrls);
     }
 
     /**
-     * Set the email's list of URLs to be shortened.  Each of these URLs will be shortened to an
-     * rpx.me URL which tracks click-throughs and provides analytics.  Once shortened, the Engage
-     * for Android library will substitute the shortened version for the original long version for
+     * Setter for the email object's #mUrls property, a list of URLs to be shortened.  Each of these URLs will
+     * be shortened to an rpx.me URL, which tracks click-throughs, and provides analytics.  Once shortened,
+     * the Engage for Android library will substitute the shortened version for the original long version for
      * each URL found in the body of the email.
      *
-     * @param urls The email's list of URLs to be shortened, not more than five URLs.
-     */
+     * @param urls
+     *      The email object's list of URLs to be shortened, not more than five URLs
+     **/
     public void setUrls(List<String> urls) {
         if (urls == null) urls = new ArrayList<String>();
         if (urls.size() >= 5) throw
@@ -164,14 +207,14 @@ public class JREmailObject {
     /**
      * Add a single URL to the list of URLs to shorten.
      *
-     * @param url The URL to add to the list of URLs to shorten.
-     *
-     * @see JREmailObject#setUrls(java.util.List)
-     */
+     * @param url
+     *      The URL to add to the list of URLs to shorten
+     **/
     public void addUrl(String url) {
         if (mUrls.size() >= 5) throw
                 new IllegalArgumentException("JREmailObject supports a maximum of five URLs");
 
         mUrls.add(url);
     }
+/*@}*/
 }

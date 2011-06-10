@@ -81,7 +81,7 @@ import java.util.Map;
  * described below.
  *
  * @sa For more information of Janrain Engage's activity api, see <a
- * href="https://rpxnow.com/docs#api_activity">the activity section</a> of our API Documentation.
+ * href="http://documentation.janrain.com/activity">the activity section</a> of our API Documentation.
  *
  * @nosubgrouping
  **/
@@ -220,13 +220,21 @@ public class JRActivityObject {
     private Map<String, Object> mProperties = new HashMap<String, Object>();
 
     /**
-     * A JREmailObject to use to prefill a sharing email sent by the user
-     */
+     * An JREmailObject containing the subject and message body of an email, if the user wishes to
+     * share via email.
+     *
+     * @par Getter/Setter:
+     *      #getEmail(), #setEmail()
+     **/
     private JREmailObject mEmail;
 
     /**
-     * A JRSmsObject to use to prefill a sharing SMS sent by the user
-     */
+     * A JRSmsObject containing the message body of an sms, if the user wishes to
+     * share via sms.
+     *
+     * @par Getter/Setter:
+     *      #getSms(), #setSms()
+     **/
     private JRSmsObject mSms;
 /*@}*/
 
@@ -240,13 +248,13 @@ public class JRActivityObject {
      *
      * @param action
      *   A string describing what the user did, written in the third person.  This value cannot
-     *   be null
+     *   be \e null
      *
      * @param url
      *   The URL of the resource being mentioned in the activity update
      *
      * @throws IllegalArgumentException
-     *   if text or href is null
+     *   if action is \e null
      **/
     public JRActivityObject(String action, String url) {
         if (action == null) throw new IllegalArgumentException("illegal null action or null href");
@@ -438,21 +446,45 @@ public class JRActivityObject {
         mProperties = properties;
     }
 
-    public void setEmail(JREmailObject email) {
-        mEmail = email;
-    }
-
+    /**
+     * Getter for the activity object's #mEmail property.
+     *
+     * @return
+     *      An JREmailObject containing the content that a user can send via sms to share an activity
+     **/
     public JREmailObject getEmail() {
         return mEmail;
     }
 
+    /**
+     * Setter for the activity object's #mEmail property.
+     *
+     * @param email
+     *      An JREmailObject containing the content that a user can send via email to share an activity
+     **/
+    public void setEmail(JREmailObject email) {
+        mEmail = email;
+    }
+
+    /**
+     * Getter for the activity object's #mSms property.
+     *
+     * @return
+     *      An JRSmsObject containing the content that a user can send via sms to share an activity
+     **/
+    public JRSmsObject getSms() {
+        return mSms;
+    }
+
+    /**
+     * Setter for the activity object's #mSms property.
+     *
+     * @param sms
+     *      An JRSmsObject containing the content that a user can send via sms to share an activity
+     **/
     public void setSms(JRSmsObject sms) {
         mSms = sms;
     }
-
-    public JRSmsObject getSms() {
-        return mSms;
-    }    
 /*@}*/
 
     /**

@@ -113,6 +113,7 @@ public class JRFlashMediaObject extends JRMediaObject {
      *      #getExpandedHeight(), #setExpandedHeight()
      **/
     private int mExpandedHeight;
+/*@}*/
 
     /**
      * @internal
@@ -120,8 +121,7 @@ public class JRFlashMediaObject extends JRMediaObject {
      * activity dialog.
      **/
     private Bitmap mPreview;
-/*@}*/
-    
+
 /**
  * @name Constructors
  * Constructor for flash media object

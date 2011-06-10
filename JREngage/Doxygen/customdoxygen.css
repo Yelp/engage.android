@@ -764,7 +764,7 @@ table.memberdecls h2
 
 table.memberdecls p
 {
-	height: 0px;
+	/*height: 0px;*/
 	margin: 0px;
 	padding: 0px;
 }

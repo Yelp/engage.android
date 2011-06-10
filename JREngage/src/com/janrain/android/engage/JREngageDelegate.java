@@ -64,8 +64,7 @@ public interface JREngageDelegate {
 	 * This message is only sent if your application tries to show a JREngage dialog, and not
 	 * necessarily when the error occurred. For example, if the error occurred during the library's
 	 * configuration with the Engage server, it will not be sent through this interface until the
-     * application attempts to display a library Activity.
-     *
+     * application attempts to display a library Activity. <br /><br />
      * The raison d'etre for this delayed delegate delivery is to allow for the possibility that an
      * application may speculatively configure the library, but never actually invoke any library
      * Activies.  In that case, no error is delivered to the application.
@@ -118,7 +117,7 @@ public interface JREngageDelegate {
      * @endcode
      *
      * \sa For a full description of the dictionary and its fields,
-     * please see the <a href="https://rpxnow.com/docs#api_auth_info_response">auth_info 
+     * please see the <a href="http://documentation.janrain.com/engage/api/auth_info">auth_info
      * response</a> section of the Janrain Engage API documentation.
      **/
     void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider);
