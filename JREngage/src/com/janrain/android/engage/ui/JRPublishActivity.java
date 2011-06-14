@@ -33,10 +33,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -85,6 +82,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     //private static final int DIALOG_SUCCESS = 2;
     private static final int DIALOG_CONFIRM_SIGNOUT = 3;
     private static final int DIALOG_MOBILE_CONFIG_LOADING = 4;
+    private static final int DIALOG_NO_EMAIL_CLIENT = 5;
+    private static final int DIALOG_NO_SMS_CLIENT = 6;
     //private static final int LIGHT_BLUE_BACKGROUND = 0xFF1A557C;
     private static final int JANRAIN_BLUE_20PERCENT = 0x33074764;
     private static final int JANRAIN_BLUE_100PERCENT = 0xFF074764;
@@ -675,9 +674,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             intent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
             intent.putExtra(android.content.Intent.EXTRA_TEXT, body);
 
-            //Intent chooser = Intent.createChooser(intent, getString(R.string.jr_choose_email_handler));
-            startActivityForResult(intent, 0);
-            mSessionData.notifyEmailSmsShare("email");
+            try {
+                //Intent chooser = Intent.createChooser(intent, getString(R.string.jr_choose_email_handler));
+                startActivityForResult(intent, 0);
+                mSessionData.notifyEmailSmsShare("email");
+            } catch (ActivityNotFoundException exception) {
+                showDialog(DIALOG_NO_EMAIL_CLIENT);
+            }
         }
     };
 
@@ -707,8 +710,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             intent.putExtra("sms_body", body.substring(0, Math.min(139, body.length())));
             intent.putExtra("exit_on_sent", true);
 
-            startActivityForResult(intent, 0);
-            mSessionData.notifyEmailSmsShare("sms");
+            try {
+                startActivityForResult(intent, 0);
+                mSessionData.notifyEmailSmsShare("sms");
+            } catch (ActivityNotFoundException exception) {
+                showDialog(DIALOG_NO_SMS_CLIENT);
+            }
         }
     };
 
@@ -761,6 +768,16 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 pd.setMessage("Loading first run configuration data. Please wait...");
                 pd.setIndeterminate(false);
                 return pd;
+            case DIALOG_NO_EMAIL_CLIENT:
+                return new AlertDialog.Builder(JRPublishActivity.this)
+                        .setMessage("You do not have an email client configured.")
+                        .setPositiveButton("OK", null)
+                        .create();
+            case DIALOG_NO_SMS_CLIENT:
+                return new AlertDialog.Builder(JRPublishActivity.this)
+                        .setMessage("You do not have an sms client configured.")
+                        .setPositiveButton("OK", null)
+                        .create();
         }
         return null;
     }

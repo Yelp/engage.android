@@ -2,7 +2,7 @@
 <resources>
     <!-- This version number is used to "validate" serialized objects before loading them from
          disk. -->
-    <string name="jr_engage_version">v1.1.8</string>
+    <string name="jr_engage_version">0422f7e0901e1d33673a9e1ac5a4df4f755c721e</string>
 
     <!-- - Server URL strings for each of the three typical environments. -->
     <string name="jr_server_url_lilli">http://lilli.janrain.com:8080</string>
