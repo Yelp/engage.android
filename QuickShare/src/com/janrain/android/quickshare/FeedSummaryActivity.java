@@ -212,8 +212,12 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
 
                 title.setGravity(Gravity.LEFT);
 
+                if (story.getImageUrls().isEmpty())
+                    icon.setVisibility(View.GONE);
+                else
+                    icon.setImageBitmap(story.getImage());
+
                 title.setText(story.getTitle());
-                icon.setImageBitmap(story.getImage());
                 text.setText(story.getPlainText());
                 date.setText(story.getDate());
             }
