@@ -54,7 +54,10 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.animation.*;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.TranslateAnimation;
 import android.widget.*;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
@@ -87,9 +90,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     //private static final int LIGHT_BLUE_BACKGROUND = 0xFF1A557C;
     private static final int JANRAIN_BLUE_20PERCENT = 0x33074764;
     private static final int JANRAIN_BLUE_100PERCENT = 0xFF074764;
-    private static final int ANIMATION_DURATION = 500;
     private static final String EMAIL_SMS_TAB_TAG = "email_sms";
-
 
     /**
      * @internal
@@ -653,7 +654,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 animateViewDisappearing(mProviderStuffContainer, true);
                 animateSinkingUserProfileInformationAndShareButtonContainer(true);
                 animateSinkingTaglineAndIcon(true);
-                mProviderIcon.setImageResource(R.drawable.jr_quick_share_icon);
             }
 
             mCurrentlyOnEmailSmsTab = true;
@@ -679,39 +679,53 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void animateViewDisappearing(View view, boolean disappearing) {
+        AnimationSet set = new AnimationSet(true);
+
         Animation animation = new AlphaAnimation(
                 disappearing ? 1.0f : 0.0f,
                 disappearing ? 0.0f : 1.0f);
 
-        animation.setDuration(ANIMATION_DURATION);
+        animation.setDuration(750);
         animation.setFillAfter(true);
+        set.addAnimation(animation);
 
         view.startAnimation(animation);
     }
 
     private void animateSinkingUserProfileInformationAndShareButtonContainer(boolean sinking) {
+        AnimationSet set = new AnimationSet(true);
+
+        float yOffset = sinking ?
+                (-1.0f * 1.0f) ://mUserProfileInformationAndShareButtonContainer.getHeight()) :
+                (1.0f);//(mUserProfileInformationAndShareButtonContainer.getHeight());
+
         Animation animation = new TranslateAnimation(
                 Animation.RELATIVE_TO_SELF, 0.0f,
                 Animation.RELATIVE_TO_SELF, 0.0f,
                 Animation.RELATIVE_TO_SELF, (sinking ? 0.0f : 1.0f),
                 Animation.RELATIVE_TO_SELF, (sinking ? 1.0f : 0.0f));
 
-        animation.setDuration(ANIMATION_DURATION);
+        animation.setDuration(750);
         animation.setFillAfter(true);
+        set.addAnimation(animation);
 
         mUserProfileInformationAndShareButtonContainer.startAnimation(animation);
     }
 
     private void animateSinkingTaglineAndIcon(boolean sinking) {
+        AnimationSet set = new AnimationSet(true);
+
         float yOrigin = sinking ?
                 0.0f : (1.0f * mUserProfileInformationAndShareButtonContainer.getHeight());
         float yOffset = sinking ?
                 (mUserProfileInformationAndShareButtonContainer.getHeight()) : 0.0f;
+                //(-1.0f * mUserProfileInformationAndShareButtonContainer.getHeight());
 
         Animation animation = new TranslateAnimation(0.0f, 0.0f, yOrigin, yOffset);
 
-        animation.setDuration(ANIMATION_DURATION);
+        animation.setDuration(750);
         animation.setFillAfter(true);
+        set.addAnimation(animation);
 
         mTaglineAndProviderIconContainer.startAnimation(animation);
     }
@@ -866,16 +880,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         // TODO: verify correctness of the 0 remaining characters edge case
         CharSequence characterCountText;
 
-        if (mMaxCharacters == -1)
-            return;
-
-        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
-          /* Twitter, MySpace, LinkedIn */
-            if (doesActivityUrlAffectCharacterCountForSelectedProvider() && mShortenedActivityURL == null) {
-              /* Twitter, MySpace */
+        if (mSelectedProvider.getSocialSharingProperties()
+                .getAsBoolean("content_replaces_action")) {
+            /* Twitter, MySpace, LinkedIn */
+            if (doesActivityUrlAffectCharacterCountForSelectedProvider()
+                    && mShortenedActivityURL == null) {
+                /* Twitter, MySpace */
                 characterCountText = getText(R.string.jr_calculating_remaining_characters);
             } else {
-              /* LinkedIn */
                 int preview_length = mPreviewLabelView.getText().length();
                 int chars_remaining = mMaxCharacters - preview_length;
                 if (chars_remaining < 0)
@@ -884,8 +896,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 else
                     characterCountText = Html.fromHtml("Remaining characters: " + chars_remaining);
             }
-        } else {
-          /* Facebook, Yahoo */
+        } else { /* Facebook, Yahoo */
             int comment_length = mUserCommentView.getText().length();
             int chars_remaining = mMaxCharacters - comment_length;
             if (chars_remaining < 0)
@@ -1059,6 +1070,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         } else {
             mMaxCharacters = socialSharingProperties.getAsInt("max_characters");
         }
+        
+        if (mMaxCharacters != -1) animateDisplayingMaxCharacterCountView(true);//mCharacterCountView.setVisibility(View.VISIBLE);
+        else animateDisplayingMaxCharacterCountView(false);//mCharacterCountView.setVisibility(View.GONE);
+
+        updateCharacterCount();
 
         boolean can_share_media = socialSharingProperties.getAsBoolean("can_share_media");
 
@@ -1071,63 +1087,17 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
         //mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
 
-        if (mMaxCharacters != -1)
-            animateDisplayingMaxCharacterCountView(true);//mCharacterCountView.setVisibility(View.VISIBLE);
-        else
-            animateDisplayingMaxCharacterCountView(false);//mCharacterCountView.setVisibility(View.GONE);
-
-        updateCharacterCount();
-        updateProviderColors(socialSharingProperties);
-        
-        mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(this));
-    }
-
-    private int lastProviderColorWithAlpha = JANRAIN_BLUE_20PERCENT;
-    private int lastProviderColorNoAlpha = JANRAIN_BLUE_100PERCENT;
-
-    private void updateProviderColors(JRDictionary socialSharingProperties) {
         Object colorValues = socialSharingProperties.get("color_values");
         int colorWithAlpha = colorForProviderFromArray(colorValues, true);
         int colorNoAlpha = colorForProviderFromArray(colorValues, false);
 
-        //mUserProfileInformationAndShareButtonContainer.setBackgroundColor(colorWithAlpha);
-        mUserProfileInformationAndShareButtonContainer.startAnimation(
-                new MyColorChanger(lastProviderColorWithAlpha, colorWithAlpha, ANIMATION_DURATION,
-                        new ColorChangerInterface() {
-                            public void doColorStuff(int color) {
-                                mUserProfileInformationAndShareButtonContainer.setBackgroundColor(color);
-                            }
-                        }));
+        mUserProfileInformationAndShareButtonContainer.setBackgroundColor(colorWithAlpha);
 
-        //mJustShareButton.setColor(colorNoAlpha);
-        mJustShareButton.startAnimation(
-                new MyColorChanger(lastProviderColorNoAlpha, colorNoAlpha, ANIMATION_DURATION,
-                        new ColorChangerInterface() {
-                            public void doColorStuff(int color) {
-                                mJustShareButton.setColor(color);
-                            }
-                        }));
+        mJustShareButton.setColor(colorNoAlpha);
+        mConnectAndShareButton.setColor(colorNoAlpha);
+        mPreviewBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
 
-        //mConnectAndShareButton.setColor(colorNoAlpha);
-        mConnectAndShareButton.startAnimation(
-                new MyColorChanger(lastProviderColorNoAlpha, colorNoAlpha, ANIMATION_DURATION,
-                        new ColorChangerInterface() {
-                            public void doColorStuff(int color) {
-                                mConnectAndShareButton.setColor(color);
-                            }
-                        }));
-
-        //mPreviewBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
-        mPreviewBorder.startAnimation(
-                new MyColorChanger(lastProviderColorNoAlpha, colorNoAlpha, ANIMATION_DURATION,
-                        new ColorChangerInterface() {
-                            public void doColorStuff(int color) {
-                                mPreviewBorder.getBackground().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-                            }
-                        }));
-
-        lastProviderColorNoAlpha = colorNoAlpha;
-        lastProviderColorWithAlpha = colorWithAlpha;
+        mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(this));
     }
 
     private void animateDisplayingMaxCharacterCountView(boolean displayMaxCharacterCountView) {
@@ -1137,18 +1107,19 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             (!displayMaxCharacterCountView && !mMaxCharacterCountViewIsDisplayed))
                 return;
 
-        //AnimationSet fadeSet = new AnimationSet(true);
+        AnimationSet fadeSet = new AnimationSet(true);
         Animation fadeAnimation = new AlphaAnimation(
                 displayMaxCharacterCountView ? 0.0f : 1.0f,
                 displayMaxCharacterCountView ? 1.0f : 0.0f);
 
-        fadeAnimation.setDuration(ANIMATION_DURATION);
+        fadeAnimation.setDuration(750);
         fadeAnimation.setFillAfter(true);
-        //fadeSet.addAnimation(fadeAnimation);
+        fadeSet.addAnimation(fadeAnimation);
 
         mCharacterCountView.startAnimation(fadeAnimation);
 
-        //AnimationSet slideSet = new AnimationSet(true);
+        AnimationSet slideSet = new AnimationSet(true);
+
         float yOrigin = displayMaxCharacterCountView ?
                 (-1.0f * mCharacterCountView.getHeight()) : 0.0f;
         float yOffset = displayMaxCharacterCountView ?
@@ -1157,9 +1128,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         Animation slideAnimation = new TranslateAnimation(0.0f, 0.0f, yOrigin, yOffset);
 
-        slideAnimation.setDuration(ANIMATION_DURATION);
+        slideAnimation.setDuration(750);
         slideAnimation .setFillAfter(true);
-        //slideSet.addAnimation(slideAnimation);
+        slideSet.addAnimation(slideAnimation );
 
         mNestedLayoutManiaSundaySundaySunday.startAnimation(slideAnimation);
 
@@ -1205,83 +1176,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         return finalColor;
     }
-
-    private static interface ColorChangerInterface {
-           public void doColorStuff(int color);
-    }
-
-    public class MyColorChanger extends AlphaAnimation {
-        private int mNewColor;
-        private int mOriginalColor;
-        private int mColorDifference;
-
-        private int[] mAdditiveColor = new int[]{0, 0, 0, 0};
-        private int[] mSubtractiveColor = new int[]{0, 0, 0, 0};
-
-        private int steps = 0;
-        private ColorChangerInterface mColorChangerInterface;
-
-        public MyColorChanger(int originalColor, int newColor, int duration, ColorChangerInterface colorChangerInterface) {
-            super(1.0f, 1.0f);
-            setDuration(duration);
-            //mView = view;
-            mOriginalColor = originalColor;
-            mNewColor = newColor;
-
-            /* When transitioning between two colors, each 'part' of the color, (i.e., the alpha, red,
-             * green or blue), could increase or decrease as the animation steps along. That is, the original
-             * integer-representation of the color can't just increment itself to the next color; the
-             * transition colors would be all over the place. Instead, each part of the color needs to be
-             * extracted.  If any part of the new color, for example the red value, is bigger than the same
-             * part of the original color, that part should be incremented on each animation step, and if that
-             * part is less, it should be decremented. */
-            for (int i = 3; i >= 0; i--) {
-                /* Shift the colors to extract the alpha, red, green, and blue values, respectively */
-                int oc = (mOriginalColor >> (8 * i)) & 0xff;//mOriginalColor/(256^i);
-                int nc = (mNewColor >> (8 * i)) & 0xff;//mNewColor/(256^i);
-
-//                /* Shift our masks */
-//                mAdditiveColor *= 256;
-//                mSubtractiveColor *= 256;
-
-                if (oc < nc) /* If the original color part is less than the new part, add the difference... */
-                    mAdditiveColor[3-i] = nc-oc;
-                else /* ... else, if the orig. part is greater than the new part, subtract the difference */
-                    mSubtractiveColor[3-i] = oc-nc;
-            }
-
-//            mColorDifference = mNewColor - mOriginalColor;
-            mColorChangerInterface = colorChangerInterface;
-        }
-
-        private int getPercentageOfColor(int[] color, float percentage) {
-            int newColor = 0;
-            for(int i = 0; i < 4; i++) {
-                newColor *= 256;
-                newColor += color[i] * percentage;
-            }
-            return newColor;
-        }
-
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-            super.applyTransformation(interpolatedTime, t);
-            if (interpolatedTime < 1.0f) {
-                mColorChangerInterface.doColorStuff(
-                        mOriginalColor +                                            // Take the original color and
-                        getPercentageOfColor(mAdditiveColor, interpolatedTime) -    // add the aRGB values that should be increasing between the two colors and
-                        getPercentageOfColor(mSubtractiveColor, interpolatedTime)); // subtract the aRGB values that should be decreasing between the two colors
-//                steps++;
-            } else {
-                mColorChangerInterface.doColorStuff(mNewColor);
-                // We're done
-            }
-        }
-
-    }
-
-
-
 
     private void configureLoggedInUserBasedOnProvider() {
         mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
