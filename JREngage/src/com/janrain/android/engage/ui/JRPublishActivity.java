@@ -40,6 +40,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
@@ -53,6 +54,7 @@ import android.util.Config;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -140,7 +142,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     //private boolean mWeAreCurrentlyPostingSomething = false;
     private boolean mWaitingForMobileConfig = false;
     private boolean mCurrentlyOnEmailSmsTab = false;
-    private boolean mMaxCharacterCountViewIsDisplayed = true;
 
     /* UI views */
     private LinearLayout mProviderStuffContainer;
@@ -167,7 +168,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private EditText mEmailSmsComment;
     private LinearLayout mEmailSmsButtonContainer;
     private RelativeLayout mTaglineAndProviderIconContainer;
-    private RelativeLayout mNestedLayoutManiaSundaySundaySunday;
 
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
 
@@ -205,7 +205,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mPreviewLabelView = (TextView) findViewById(R.id.jr_preview_text_view);
         mTriangleIconView = (ImageView) findViewById(R.id.jr_triangle_icon_view);
         mUserProfileInformationAndShareButtonContainer =
-                (LinearLayout) findViewById(R.id.jr_user_profile_info_and_share_button_container);
+                (LinearLayout) findViewById(R.id.jr_user_profile_information_and_share_button_container);
         mUserProfileContainer = (LinearLayout) findViewById(R.id.jr_user_profile_container);
         mUserProfilePic = (ImageView) findViewById(R.id.jr_profile_pic);
         mUserNameView = (TextView) findViewById(R.id.jr_user_name);
@@ -221,9 +221,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mEmailSmsButtonContainer = (LinearLayout) findViewById(R.id.jr_email_sms_button_container);
         mTaglineAndProviderIconContainer =
                 (RelativeLayout) findViewById(R.id.jr_tagline_and_provider_icon_container);
-        mNestedLayoutManiaSundaySundaySunday =
-                (RelativeLayout) findViewById(R.id.jr_nested_layout_mania_sunday_sunday_sunday);
-        
+
         /* Set the user comment field here before the text change listener is registered so that
          * it can be displayed while the providers are being loaded if this is a first run.
          * The text change listener will be fired when the first tab is initially selected. */
@@ -1064,15 +1062,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         else
             updatePreviewTextWhenContentDoesNotReplaceAction();
 
-        if (willPublishThunkToStatus()) {
+        if (isPublishThunk()) {
             mMaxCharacters = socialSharingProperties
                     .getAsDictionary("set_status_properties").getAsInt("max_characters");
         } else {
             mMaxCharacters = socialSharingProperties.getAsInt("max_characters");
         }
         
-        if (mMaxCharacters != -1) animateDisplayingMaxCharacterCountView(true);//mCharacterCountView.setVisibility(View.VISIBLE);
-        else animateDisplayingMaxCharacterCountView(false);//mCharacterCountView.setVisibility(View.GONE);
+        if (mMaxCharacters != -1) mCharacterCountView.setVisibility(View.VISIBLE);
+        else mCharacterCountView.setVisibility(View.GONE);
 
         updateCharacterCount();
 
@@ -1098,43 +1096,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mPreviewBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
 
         mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(this));
-    }
-
-    private void animateDisplayingMaxCharacterCountView(boolean displayMaxCharacterCountView) {
-        /* If we want to display it and it's already displayed, or if we want to hide
-         * it and it's already hidden, do nothing. */
-        if ((displayMaxCharacterCountView && mMaxCharacterCountViewIsDisplayed) ||
-            (!displayMaxCharacterCountView && !mMaxCharacterCountViewIsDisplayed))
-                return;
-
-        AnimationSet fadeSet = new AnimationSet(true);
-        Animation fadeAnimation = new AlphaAnimation(
-                displayMaxCharacterCountView ? 0.0f : 1.0f,
-                displayMaxCharacterCountView ? 1.0f : 0.0f);
-
-        fadeAnimation.setDuration(750);
-        fadeAnimation.setFillAfter(true);
-        fadeSet.addAnimation(fadeAnimation);
-
-        mCharacterCountView.startAnimation(fadeAnimation);
-
-        AnimationSet slideSet = new AnimationSet(true);
-
-        float yOrigin = displayMaxCharacterCountView ?
-                (-1.0f * mCharacterCountView.getHeight()) : 0.0f;
-        float yOffset = displayMaxCharacterCountView ?
-                0.0f : (-1.0f * mCharacterCountView.getHeight());
-                //(-1.0f * mUserProfileInformationAndShareButtonContainer.getHeight());
-
-        Animation slideAnimation = new TranslateAnimation(0.0f, 0.0f, yOrigin, yOffset);
-
-        slideAnimation.setDuration(750);
-        slideAnimation .setFillAfter(true);
-        slideSet.addAnimation(slideAnimation );
-
-        mNestedLayoutManiaSundaySundaySunday.startAnimation(slideAnimation);
-
-        mMaxCharacterCountViewIsDisplayed = !mMaxCharacterCountViewIsDisplayed;
     }
 
     private int colorForProviderFromArray(Object arrayOfColorStrings, boolean withAlpha) {
@@ -1172,6 +1133,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             finalColor *= 256;
             finalColor += colorValue_Int;
+
         }
 
         return finalColor;
@@ -1214,7 +1176,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private void shareActivity() {
         Log.d(TAG, "shareActivity mAuthenticatedUser: " + mAuthenticatedUser.toString());
 
-        if (willPublishThunkToStatus()) {
+        if (isPublishThunk()) {
             mSessionData.setStatusForUser(mAuthenticatedUser);
         } else {
             mSessionData.shareActivityForUser(mAuthenticatedUser);
@@ -1223,7 +1185,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     /* Helper functions */
 
-    private boolean willPublishThunkToStatus() {
+    private boolean isPublishThunk() {
         return mActivityObject.getUrl().equals("") &&
                 mSelectedProvider.getSocialSharingProperties()
                         .getAsBoolean("uses_set_status_if_no_url");
