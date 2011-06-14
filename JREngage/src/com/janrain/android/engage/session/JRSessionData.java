@@ -194,12 +194,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         if (diskVersion.equals(mLibraryVersion)) {
             // Load dictionary of authenticated users.  If the dictionary is not found, the
             // archiver will return a new (empty) list.
-            // TODO: Handle "Incompatible class (SUID)" exceptions:
-            // TODO: com.janrain.android.engage.session.JRAuthenticatedUser: static final long
-            // TODO: serialVersionUID =-5638572962808263137L; but expected
-            // TODO: com.janrain.android.engage.session.JRAuthenticatedUser: static final
-            // TODO: long serialVersionUID =2480964367284369729L;
- 
             mAuthenticatedUsersByProvider = JRDictionary.unarchive(ARCHIVE_AUTH_USERS_BY_PROVIDER);
 
             // Load the list of all providers
