@@ -33,7 +33,6 @@ import android.os.Handler;
 import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.utils.IOUtils;
-import com.janrain.android.engage.utils.StringUtils;
 import org.apache.http.NameValuePair;
 
 import java.io.DataOutputStream;
@@ -41,7 +40,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @internal
@@ -74,7 +72,7 @@ public final class AsyncHttpClient {
         private byte[] mPostData;
 		private Handler mHandler;
 		private HttpCallbackWrapper mWrapper;
-		
+
         public HttpSender(String url, List<NameValuePair> requestHeaders,
                           Handler handler, HttpCallbackWrapper wrapper) {
             mUrl = url;
@@ -136,7 +134,7 @@ public final class AsyncHttpClient {
                     if (data == null) {
                         Log.d(TAG, "[run] data is null");
                     } else {
-                        Log.d(TAG, "[run] data: " + StringUtils.decodeUtf8(data, ""));
+                        Log.d(TAG, "[run] data: " + new String(data));
                     }
 
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
@@ -224,25 +222,25 @@ public final class AsyncHttpClient {
             }
         }
 	}
-	
+
 	/*
 	 * Sends full response (or exception) back to the listener.
 	 */
 	private static class HttpCallbackWrapper implements Runnable {
 
 		private static final String TAG = HttpCallbackWrapper.class.getSimpleName();
-		
+
 		private AsyncHttpResponseListener mListener;
 		private AsyncHttpResponseHolder mResponse;
-		
+
 		public HttpCallbackWrapper(AsyncHttpResponseListener listener) {
 			mListener = listener;
 		}
-		
+
 		public void run() {
 			mListener.onResponseReceived(mResponse);
 		}
-		
+
 		public void setResponse(AsyncHttpResponseHolder holder) {
 			mResponse = holder;
 			Log.d(TAG, "[setResponse] response set.");
@@ -260,7 +258,7 @@ public final class AsyncHttpClient {
     private static final String USER_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
     private static final String ACCEPT_ENCODING = "identity";
 
-	
+
     // ------------------------------------------------------------------------
     // STATIC METHODS
     // ------------------------------------------------------------------------
@@ -268,7 +266,7 @@ public final class AsyncHttpClient {
 	/**
 	 * Executes the specified HTTP GET request asynchronously.  The results will be returned to
 	 * the specified listener.
-	 * 
+	 *
 	 * @param url
 	 * 		The URL to be executed asynchronously.
      * @param requestHeaders

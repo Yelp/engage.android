@@ -51,11 +51,9 @@ import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.utils.StringUtils;
 
 import java.net.URL;
 import java.util.List;
@@ -121,7 +119,6 @@ public class JRWebViewActivity extends Activity {
     private WebView mWebView;
     private boolean mIsAlertShowing = false;
     private boolean mIsFinishPending = false;
-    private boolean mIsMobileEndpointUrlLoading = false;
     private FinishReceiver mFinishReceiver;
 
     // ------------------------------------------------------------------------
@@ -158,7 +155,7 @@ public class JRWebViewActivity extends Activity {
         setContentView(R.layout.jr_provider_webview);
 
         CookieSyncManager.createInstance(this);
-        
+
         mSessionData = JRSessionData.getInstance();
         mLayoutHelper = new SharedLayoutHelper(this);
 
@@ -172,15 +169,21 @@ public class JRWebViewActivity extends Activity {
         mWebViewSettings = mWebView.getSettings();
         // Shim some information about the OS version into the WebView for use by hax ala Yahoo!
         mWebView.addJavascriptInterface(new Object() {
-                    String androidIncremental() {
+        			// These functions may be invoked via the javascript binding, but they are
+        			// never invoked from this Java code, so they will always generate compiler
+        			// warnings, so we suppress those warnings safely.
+                    @SuppressWarnings("unused")
+					String androidIncremental() {
                         return Build.VERSION.INCREMENTAL;
                     }
 
-                    String androidRelease() {
+                    @SuppressWarnings("unused")
+					String androidRelease() {
                         return Build.VERSION.RELEASE;
                     }
 
-                    int androidSdkInt() {
+                    @SuppressWarnings("unused")
+					int androidSdkInt() {
                         return Build.VERSION.SDK_INT;
                     }
                 }, "jrengage_mobile");
@@ -280,7 +283,7 @@ public class JRWebViewActivity extends Activity {
             mWebView.reload();
             return true;
         }
-        
+
         return mLayoutHelper.handleAboutMenu(item) || super.onOptionsItemSelected(item);
     }
 
@@ -323,8 +326,6 @@ public class JRWebViewActivity extends Activity {
     }
 
     private void loadMobileEndpointUrl(String url) {
-        mIsMobileEndpointUrlLoading = true;
-
         mLayoutHelper.showProgressDialog();
 
         String urlToLoad = url + "&auth_info=true";
@@ -334,7 +335,6 @@ public class JRWebViewActivity extends Activity {
 
         JRConnectionManager.createConnection(
                 urlToLoad, mMobileEndPointConnectionDelegate, false, RPX_RESULT_TAG);
-        // TODO:  is windows live hack necessary here, as it is on iPhone?
     }
 
     DownloadListener mWebViewDownloadListener = new DownloadListener() {
@@ -417,9 +417,11 @@ public class JRWebViewActivity extends Activity {
         }
     };
 
-    private JRConnectionManagerDelegate mMobileEndPointConnectionDelegate = new JRConnectionManagerDelegate() {
+    private JRConnectionManagerDelegate mMobileEndPointConnectionDelegate =
+            new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
         public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
-            Log.d(TAG, "[connectionDidFinishLoading] userdata: " + userdata + " | payload: " + payload);
+            Log.d(TAG, "[connectionDidFinishLoading] userdata: "
+                    + userdata + " | payload: " + payload);
 
             mLayoutHelper.dismissProgressDialog();
 
@@ -496,16 +498,6 @@ public class JRWebViewActivity extends Activity {
             } else if (userdata.equals("request")) {
                 mWebView.loadDataWithBaseURL(requestUrl, payload, null, "utf-8", null);
             }
-        }
-
-        public void connectionDidFinishLoading(HttpResponseHeaders headers,
-                                               byte[] payload,
-                                               String requestUrl,
-                                               Object userdata) {
-            Log.d(TAG, "[connectionDidFinishLoading-2] userdata: " + userdata + " | payload: "
-                    + StringUtils.decodeUtf8(payload, null));
-            // Not used
-            throw new RuntimeException("unexpected JRConnectionmanager callback invoked");
         }
 
         public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {

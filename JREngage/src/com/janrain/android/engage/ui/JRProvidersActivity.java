@@ -33,7 +33,6 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -58,7 +57,7 @@ import java.util.TimerTask;
  * Displays list of [basic] providers.
  */
 public class JRProvidersActivity extends ListActivity {
-    
+
     // ------------------------------------------------------------------------
     // TYPES
     // ------------------------------------------------------------------------
@@ -291,7 +290,7 @@ public class JRProvidersActivity extends ListActivity {
 
         if (mFinishReceiver != null)
         unregisterReceiver(mFinishReceiver);
-        
+
         mTimer.cancel();
     }
 

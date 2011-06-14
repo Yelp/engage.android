@@ -405,7 +405,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         JRProvider rp = mSessionData.getProviderByName(mSessionData.getReturningSocialProvider());
         tabHost.setCurrentTab(socialProviders.indexOf(rp));
-        
+
         /* When TabHost is constructed it defaults to tab 0, so if indexOfLastUsedProvider is 0,
          * the tab change listener won't be invoked, so we call it manually to ensure
          * it is called.  (it's idempotent) */
@@ -637,7 +637,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             for (String k : mProvidersThatHaveAlreadyShared.keySet())
                 mProvidersThatHaveAlreadyShared.put(k, false);
-            
+
             showActivityAsShared(false);
         }
     };
@@ -789,7 +789,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         /* Callback from startActivityForResult for email sharing.
          * This code path hasn't set mSelectedProvider yet, so we use the value previously
          * set and "unselect" the email SMS tab, making it kind of a button in tab clothing. */
-        
+
             // XXX: LILLI MAKING SMS CHANGES
 //        mUserCommentView.setText(mEmailSmsComment.getText());
 
@@ -799,11 +799,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     public Dialog onCreateDialog(int id) {
-        DialogInterface.OnClickListener successDismiss = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialogInterface, int i) {
-                finish();
-            }
-        };
+//        DialogInterface.OnClickListener successDismiss = new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                finish();
+//            }
+//        };
         // TODO: make resources out of these strings
 
         switch (id) {
@@ -1175,6 +1175,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             else
                 return JANRAIN_BLUE_100PERCENT;
 
+        // todo see if we can write this in a more compile-time type-safe way
         @SuppressWarnings("unchecked")
         ArrayList<Double> colorArray = new ArrayList<Double>(
                 (ArrayList<Double>) arrayOfColorStrings);
@@ -1186,7 +1187,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             colorArray.add(0, alphaValue);
         else
             colorArray.add(0, 1.0);
-        
+
         int finalColor = 0;
         for (Object colorValue : colorArray) {
             /* If there's ever an error, just return Janrain blue (at 20% opacity) */

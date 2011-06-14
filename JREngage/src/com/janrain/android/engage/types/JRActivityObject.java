@@ -29,7 +29,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.types;
 
-import android.text.Html;
 import android.util.Log;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
@@ -433,7 +432,7 @@ public class JRActivityObject {
      * @param properties
      *      An object with attributes describing properties of the update. An attribute value can be
      *      a string or an object with two attributes, \e text and \e href.
-     **/    
+     **/
     public void setProperties(Map<String, Object> properties) {
         mProperties = properties;
     }
@@ -452,7 +451,7 @@ public class JRActivityObject {
 
     public JRSmsObject getSms() {
         return mSms;
-    }    
+    }
 /*@}*/
 
     /**

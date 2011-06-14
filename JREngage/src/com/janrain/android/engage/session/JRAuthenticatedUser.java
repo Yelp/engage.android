@@ -78,9 +78,13 @@ public class JRAuthenticatedUser implements Serializable {
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
 
-    private JRAuthenticatedUser() {
-    }
-    
+    // We don't need a private default constructor so long as we have another constructor as we 
+    // do, found immediately below.
+    // Declaring this raises an irresolvable compiler warning that requires a suppression
+    // annotation.
+	//private JRAuthenticatedUser() {
+    //}
+
     public JRAuthenticatedUser(JRDictionary mobileEndPointResponse, String providerName) {
         mProviderName = providerName;
         mDeviceToken = mobileEndPointResponse.getAsString(KEY_DEVICE_TOKEN);

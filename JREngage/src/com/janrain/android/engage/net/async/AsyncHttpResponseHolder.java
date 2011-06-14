@@ -86,7 +86,7 @@ public class AsyncHttpResponseHolder {
         mPayload = null;
         mException = exception;
     }
-    
+
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
     // ------------------------------------------------------------------------

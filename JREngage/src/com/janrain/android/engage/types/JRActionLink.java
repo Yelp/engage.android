@@ -144,7 +144,7 @@ public class JRActionLink {
      * @note
      *      This function should not be used directly.  It is intended only for use by the
      *      JREngage library.
-     * 
+     *
      * TODO: revisit visibility/usage
      * specifically, is this the right jsonification
      **/

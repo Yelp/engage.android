@@ -54,9 +54,8 @@ import java.util.*;
  *
  * @class JRProvider
  **/
-@SuppressWarnings({"unchecked"})
 public class JRProvider implements Serializable {
-	
+
     // ------------------------------------------------------------------------
     // TYPES
     // ------------------------------------------------------------------------
@@ -78,11 +77,13 @@ public class JRProvider implements Serializable {
     public static final String KEY_ANDROID_WEBVIEW_OPTIONS = "android_webview_options";
 
     private static final String TAG = JRProvider.class.getSimpleName();
-    
+
     private static HashMap<String, Drawable> provider_list_icon_drawables =
             new HashMap<String, Drawable>();
 
-    private final static HashMap<String, Integer> provider_list_icon_resources =
+    // Suppressed because this class is not expected to be serialized
+    @SuppressWarnings("serial")
+	private final static HashMap<String, Integer> provider_list_icon_resources =
             new HashMap<String, Integer>(){
                     {
                         put("icon_bw_facebook", R.drawable.jr_icon_bw_facebook);
@@ -90,7 +91,7 @@ public class JRProvider implements Serializable {
                         put("icon_bw_myspace", R.drawable.jr_icon_bw_myspace);
                         put("icon_bw_twitter", R.drawable.jr_icon_bw_twitter);
                         put("icon_bw_yahoo", R.drawable.jr_icon_bw_yahoo);
-                        
+
                         put("icon_aol", R.drawable.jr_icon_aol);
                         put("icon_blogger", R.drawable.jr_icon_blogger);
                         put("icon_facebook", R.drawable.jr_icon_facebook);
@@ -119,7 +120,9 @@ public class JRProvider implements Serializable {
     private static HashMap<String, Drawable> provider_logo_drawables =
             new HashMap<String, Drawable>();
 
-    private final static HashMap<String, Integer> provider_logo_resources =
+    // Suppressed because this class is not expected to be serialized
+    @SuppressWarnings("serial")
+	private final static HashMap<String, Integer> provider_logo_resources =
             new HashMap<String, Integer>(){
                     {
                         put("logo_aol", R.drawable.jr_logo_aol);
@@ -181,7 +184,11 @@ public class JRProvider implements Serializable {
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
 
-    private JRProvider() {}
+    // We don't need a private default constructor so long as we have another constructor as we 
+    // do, found immediately below.
+    // Declaring this raises an irresolvable compiler warning that requires a suppression
+    // annotation.
+    //private JRProvider() {}
 
     public JRProvider(String name, JRDictionary dictionary) {
         mName = name;

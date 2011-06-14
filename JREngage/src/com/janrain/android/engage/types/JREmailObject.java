@@ -93,7 +93,7 @@ public class JREmailObject {
 
     /**
      * Return the email's subject.
-     * 
+     *
      * @return The email's subject.
      */
     public String getSubject() {
@@ -102,7 +102,7 @@ public class JREmailObject {
 
     /**
      * Set the email's subject.
-     * 
+     *
      * @param subject The email's subject.
      */
     public void setSubject(String subject) {

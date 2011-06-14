@@ -82,7 +82,6 @@ import android.util.Config;
 import android.util.Log;
 
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.session.JRAuthenticatedUser;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
@@ -174,7 +173,7 @@ public class JREngage {
 
 	/**
 	 * Returns the singleton instance, provided it has been initialized.
-	 * 
+	 *
 	 * @return
 	 * 		The JREngage instance if properly initialized, null otherwise
 	 **/
@@ -182,11 +181,11 @@ public class JREngage {
 		return sInstance;
 	}
 /*@}*/
-	
+
 	/**
      * @internal
      * Returns the application context used to initialize the library.
-	 * 
+	 *
 	 * @return
 	 * 		The Context object used to initialize this library
 	 **/
@@ -203,10 +202,10 @@ public class JREngage {
 
 	/* Holds configuration and state for the JREngage library */
 	private JRSessionData mSessionData;
-	
+
 	/* Delegates (listeners) array */
 	private ArrayList<JREngageDelegate> mDelegates;
-	
+
 	private JRUserInterfaceMaestro mInterfaceMaestro;
 
 	/*
@@ -482,7 +481,7 @@ public class JREngage {
     /**
      * Specify a token URL (potentially a different token URL than the one the library was
      * initialized with).
-     * 
+     *
      * @param newTokenUrl
      *   The new token URL you wish authentications to post the Engage \e auth_info \e token to
      **/
@@ -497,7 +496,7 @@ public class JREngage {
     // ------------------------------------------------------------------------
     // METHODS
     // ------------------------------------------------------------------------
-	
+
 
 /**
  * @name Manage the JREngage Delegates
@@ -512,8 +511,8 @@ public class JREngage {
      *   The object that implements the JREngageDelegate protocol
      **/
     public void addDelegate(JREngageDelegate delegate) {
-		if (Config.LOGD) { 
-			Log.d(TAG, "[addDelegate]"); 
+		if (Config.LOGD) {
+			Log.d(TAG, "[addDelegate]");
 		}
 		mDelegates.add(delegate);
 	}
@@ -523,15 +522,15 @@ public class JREngage {
      *
      * @param delegate
      *   The object that implements the JREngageDelegate protocol
-     **/	
+     **/
 	public void removeDelegate(JREngageDelegate delegate) {
-		if (Config.LOGD) { 
-			Log.d(TAG, "[removeDelegate]"); 
+		if (Config.LOGD) {
+			Log.d(TAG, "[removeDelegate]");
 		}
 		mDelegates.remove(delegate);
 	}
 /*@}*/
-    
+
     private void engageDidFailWithError(JREngageError error) {
         for (JREngageDelegate delegate : getDelegatesCopy()) {
             delegate.jrEngageDialogDidFailToShowWithError(error);
