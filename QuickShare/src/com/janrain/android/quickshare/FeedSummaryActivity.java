@@ -108,6 +108,9 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
     }
 
     public void AsyncFeedReadSucceeded() {
+        if (Config.LOGD)
+            Log.d(TAG, "[AsyncFeedReadSucceeded]");
+
         mRefreshBlog.setText("Refresh");
 
         getUpdatedStoriesList();
@@ -115,6 +118,9 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
     }
 
     public void AsyncFeedReadFailed() {
+        if (Config.LOGD)
+            Log.d(TAG, "[AsyncFeedReadFailed]");
+
         mRefreshBlog.setText("Refresh");
 
         getUpdatedStoriesList();
