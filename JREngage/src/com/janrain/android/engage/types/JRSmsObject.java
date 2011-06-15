@@ -122,7 +122,7 @@ public class JRSmsObject {
      *
      * @param urls The SMS's list of URLs to be shortened, not more than five URLs.
      *
-     * @see JRSmsObject#addUrl(String) 
+     * @see JRSmsObject#addUrl(String)
      */
     public void setUrls(List<String> urls) {
         if (urls == null) urls = new ArrayList<String>();

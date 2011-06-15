@@ -57,47 +57,47 @@ public interface JRSessionDelegate {
      * Triggered when
      */
     void authenticationDidComplete(String token, String provider);
-    
+
     /**
      * Triggered when JRWebViewActivity receieves a success message from Engage.
      */
     void authenticationDidComplete(JRDictionary profile, String provider);
-    
+
     /**
      * Triggered when the Engage authentication flow completes with an Engage error, or when there
      * is an error loading a URL during that authentication flow.
      */
     void authenticationDidFail(JREngageError error, String provider);
-    
+
     /**
      * Triggered when
      */
     void authenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String payload, String provider);
-    
+
     /**
      * triggered when
      */
     void authenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider);
-    
+
     /**
      * Triggered when
      */
     //nothing calls this?
     //void publishingDidRestart();
-    
+
     /**
      * Triggered when
      */
     //For now this is only triggered by the calling application via JREngage.cancelPublishing
     void publishingDidCancel();
-    
+
     /**
      * Triggered when
      */
     //what's the different between publishDidComplete and publishingJRActivityDidSucceed?
     //nothing is triggering this
     void publishingDidComplete();
-    
+
     /**
      * Triggered when a success response is received from Engage from the activity api
      */

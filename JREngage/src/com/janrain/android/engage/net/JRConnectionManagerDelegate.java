@@ -29,9 +29,6 @@
 */
 package com.janrain.android.engage.net;
 
-import org.apache.http.HttpRequest;
-
-import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 
 /**
@@ -40,7 +37,7 @@ import com.janrain.android.engage.net.async.HttpResponseHeaders;
  * @interface JRConnectionManagerDelegate
  **/
 public interface JRConnectionManagerDelegate {
-	
+
 	void connectionDidFinishLoading(String payload, String requestUrl, Object userdata);
 	void connectionDidFinishLoading(HttpResponseHeaders headers,
                                     byte[] payload,

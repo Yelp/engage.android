@@ -30,13 +30,6 @@
 package com.janrain.android.engage.utils;
 
 import android.text.TextUtils;
-import android.util.Log;
-import org.codehaus.jackson.map.ObjectMapper;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * @internal
@@ -50,7 +43,7 @@ public final class StringUtils {
     // STATIC FIELDS
     // ------------------------------------------------------------------------
 
-    private static final String TAG = StringUtils.class.getSimpleName();
+    //private static final String TAG = StringUtils.class.getSimpleName();
 
     // ------------------------------------------------------------------------
     // STATIC METHODS
@@ -106,31 +99,6 @@ public final class StringUtils {
     //
     //    return retval;
     //}
-
-    /**
-     * Converts the byte array to String using UTF-8 encoding.
-     *
-     * @param bytes
-     *      The byte array to be converted.
-     *
-     * @param defaultStr
-     *      The value to return if conversion fails.
-     *
-     * @return
-     *      Decoded byte array if successful, defaultStr otherwise.
-     */
-    public static String decodeUtf8(byte[] bytes, String defaultStr) {
-        final String UTF8 = "UTF-8";
-        try {
-            return new String(bytes, UTF8);
-        } catch (UnsupportedEncodingException e) {
-            // todo:
-            // if we get an unsupported encoding exception for utf-8 that's a very very bad thing
-            // so there should not be code to handle that exception short of rethrowing it as a
-            // runtime exception.
-            return defaultStr;
-        }
-    }
 
     /**
      * Converts string to boolean, checking for all supported meanings of true.

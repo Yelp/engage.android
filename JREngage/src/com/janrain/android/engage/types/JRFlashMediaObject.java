@@ -121,7 +121,7 @@ public class JRFlashMediaObject extends JRMediaObject {
      **/
     private Bitmap mPreview;
 /*@}*/
-    
+
 /**
  * @name Constructors
  * Constructor for flash media object

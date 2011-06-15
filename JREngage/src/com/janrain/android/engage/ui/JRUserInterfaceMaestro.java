@@ -29,6 +29,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -88,7 +89,7 @@ public class JRUserInterfaceMaestro {
     // FIELDS
     // ------------------------------------------------------------------------
 
-    private Stack<Class> mActivityStack;
+    private Stack<Class<? extends Activity>> mActivityStack;
     private JRSessionData mSessionData;
 
     // ------------------------------------------------------------------------
@@ -100,29 +101,34 @@ public class JRUserInterfaceMaestro {
     // ------------------------------------------------------------------------
 
     private JRUserInterfaceMaestro() {
-        mActivityStack = new Stack<Class>();
+        mActivityStack = new Stack<Class<? extends Activity>>();
         mSessionData = JRSessionData.getInstance();
     }
 
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
+    /**
+     * Displays the provider list for authentication.
+     *
+     * @param skipReturningUserLandingPage
+     *      Prevents the dialog from opening to the LandingActivity when \c true, falls back to default
+     *      behavior when false
+     */
+    public void showProviderSelectionDialog(boolean skipReturningUserLandingPage) {
+        mSessionData.setSkipLandingPage(skipReturningUserLandingPage);
+        mSessionData.setDialogIsShowing(true);
+        mSessionData.setSocialSharingMode(false);
+        startActivity(JRProvidersActivity.class);
 
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
+        /* See JRProvidersActivity.onCreate for an explanation of the flow control when there's a
+         * "returning provider." */
+    }
 
     /**
      * Displays the provider list for authentication.
      */
     public void showProviderSelectionDialog() {
-        mSessionData.setDialogIsShowing(true);
-        mSessionData.setSocialSharingMode(false);
-        startActivity(JRProvidersActivity.class);
-
-        // See JRProvidersActivity.onCreate for an explanation of the flow control when there's a
-        // "returning provider."
+        showProviderSelectionDialog(false);
     }
+
 
     /**
      * Shows the user landing page.
@@ -225,14 +231,14 @@ public class JRUserInterfaceMaestro {
     //FLAG_ACTIVITY_BROUGHT_TO_FRONT 0x00400000
     //FLAG_ACTIVITY_NEW_TASK 0x10000000
     //FLAG_ACTIVITY_RESET_TASK_IF_NEEDED 0x00200000
-    private void startActivity(Class managedActivity) {
+    private void startActivity(Class<? extends Activity> managedActivity) {
         Context context = JREngage.getContext();
         context.startActivity(new Intent(context, managedActivity));
         mActivityStack.push(managedActivity);
         Log.i(TAG, "[startActivity] pushed and started: " + managedActivity);
     }
 
-    protected Stack<Class> getManagedActivityStack() {
+    protected Stack<Class<? extends Activity>> getManagedActivityStack() {
         return mActivityStack;
     }
 
@@ -251,13 +257,13 @@ public class JRUserInterfaceMaestro {
             Log.d(TAG, "[popToOriginal]");
         }
 
-        Class originalRootActivity = (mSessionData.getSocialSharingMode())
+        Class<? extends Activity> originalRootActivity = (mSessionData.getSocialSharingMode())
                 ? JRPublishActivity.class : JRProvidersActivity.class;
 
         popAndFinishActivitiesUntil(originalRootActivity);
     }
 
-    private void popAndFinishActivitiesUntil(Class untilManagedActivity) {
+    private void popAndFinishActivitiesUntil(Class<? extends Activity> untilManagedActivity) {
         Log.i(TAG, "[popAndFinishActivitiesUntil] until: " + untilManagedActivity);
 
         // This seems way broken. :(
@@ -304,7 +310,7 @@ public class JRUserInterfaceMaestro {
         popAndFinishActivitiesUntil(untilManagedActivity);
     }
 
-    private void doFinishActivity(Class managedActivity) {
+    private void doFinishActivity(Class<? extends Activity> managedActivity) {
         Log.d(TAG, "[doFinishActivity] sending broadcast to: " + managedActivity);
         Context context = JREngage.getContext();
         Intent intent = new Intent(ACTION_FINISH_ACTIVITY);
