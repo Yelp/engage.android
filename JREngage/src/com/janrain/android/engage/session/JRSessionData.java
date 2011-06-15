@@ -199,8 +199,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             mHidePoweredBy = Prefs.getAsBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, false);
 
             /* And load the last used basic and social providers */
-            mReturningSocialProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER,
-                    "");
+            mReturningSocialProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
             mReturningBasicProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
 
             /* If the configuration for this rp has changed, the etag will have changed, and we need
@@ -352,10 +351,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
-    // ------------------------------------------------------------------------
-    // DELEGATE METHODS
-    // ------------------------------------------------------------------------
-
     public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
         Log.i(TAG, "[connectionDidFail]");
 
@@ -364,7 +359,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         } else if (userdata instanceof String) {
             String s = (String)userdata;
             if (s.equals("getConfiguration")) {
-                Log.e(TAG, "connectionDidFail for getConfiguration");
+                Log.e(TAG, "[connectionDidFail] for getConfiguration");
                 mError = new JREngageError(
                         "There was a problem communicating with the Janrain server while configuring authentication.",
                         ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
@@ -372,14 +367,16 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 mGetConfigDone = true;
                 triggerMobileConfigDidFinish();
             } else if (s.equals(TAG_NOTIFY_EMAIL_SMS)) {
-                // The notification to Engage of an email/SMS share failed
-                Log.e(TAG, "Engage email/SMS notification failed: " + ex);
+                /* The notification to Engage of an email/SMS share failed */
+                Log.e(TAG, "[connectionDidFail] Engage email/SMS notification failed: " + ex);
             } else {
-                Log.e(TAG, "Unrecognized ConnectionManager tag: " + s + " with Exception: " + ex);
+                Log.e(TAG, "[connectionDidFail] unrecognized ConnectionManager tag: "
+                        + s + " with Exception: " + ex);
             }
         } else if (userdata instanceof JRDictionary) {
             JRDictionary dictionary = (JRDictionary) userdata;
             if (dictionary.getAsString("action").equals("callTokenUrl")) {
+                Log.e(TAG, "[connectionDidFail] call to token url failed: " + ex);
                 JREngageError error = new JREngageError(
                         "Session error",
                         JREngageError.CODE_UNKNOWN,
@@ -392,6 +389,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                             dictionary.getAsString("providerName"));
                 }
             } else if (dictionary.getAsString("action").equals("shareActivity")) {
+                Log.e(TAG, "[connectionDidFail] sharing activity failed: " + ex);
                 List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
                 JREngageError error = new JREngageError(
                         "Session error",
@@ -415,9 +413,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             String tag = (String) userdata;
 
             if (tag.equals(TAG_NOTIFY_EMAIL_SMS)) {
-                // Nothing to do here, our notification to Engage succeeded
+                /* Nothing to do here, our notification to Engage succeeded */
             } else {
-                Log.e(TAG, "Unrecognized ConnectionManager tag: " + tag);
+                Log.e(TAG, "[connectionDidFinishLoading] unrecognized ConnectionManager tag: " + tag);
             }
         } else if (userdata instanceof JRDictionary) {
             JRDictionary dictionary = (JRDictionary) userdata;
@@ -428,7 +426,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 Log.e(TAG, "[connectionDidFinishLoading] unexpected JRDictionary: " + userdata);
             }
         } else if (userdata == null) {
-            // Unrecognized response
+            /* Unrecognized response */
             Log.e(TAG, "[connectionDidFinishLoading] unexpected null userdata");
         }
 	}
@@ -550,7 +548,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             String s = (String)userdata;
 
             if (s.equals("getConfiguration")) {
-                //if the ETag matched, we're done.
+                /* If the ETag matched, we're done. */
                 if (headers.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
                     Log.d(TAG,
                             "[connectionDidFinishLoading] found HTTP_NOT_MODIFIED -> matched ETag");
@@ -558,11 +556,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                     return;
                 }
 
-                // I switched this from assuming an ASCII encoding to assuming a UTF-8 encoding
-                // because: assuming the payload is always ASCII, decoding it as UTF-8 is OK since
-                // UTF-8 is a superset of ASCII, however I am not convinced that Engage doesn't
-                // return some UTF-8 strings, or might not in the future if IDN support is
-                // implemented.
+                /* I switched this from assuming an ASCII encoding to assuming a UTF-8 encoding,
+                 * because even though assuming the payload is always ASCII and decoding it as UTF-8 is OK
+                 * (since UTF-8 is a superset of ASCII), I am not convinced, however, that Engage doesn't
+                 * return some UTF-8 strings, or might not in the future if IDN support is implemented. */
                 //String payloadString = EncodingUtils.getAsciiString(payload);
                 String payloadString = "";
                 try {
@@ -589,10 +586,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         Log.i(TAG, "[connectionWasStopped]");
         // nothing to do here...
 	}
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
 
     public void addDelegate(JRSessionDelegate delegate) {
         if (Config.LOGD) {
@@ -648,7 +641,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[finishGetConfiguration]");
         }
 
-        // Attempt to parse the return string as JSON.
+        /* Attempt to parse the return string as JSON.*/
         JRDictionary jsonDict = null;
         Exception jsonEx = null;
         try {
@@ -658,7 +651,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             jsonEx = e;
         }
 
-        // If the parsed dictionary object is null or an exception has occurred, return.
+        /* If the parsed dictionary object is null or an exception has occurred, return */
         if ((jsonDict == null) || (jsonEx != null)) {
             Log.e(TAG, "[finishGetConfiguration] failed.");
             return new JREngageError(
@@ -668,35 +661,35 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                     jsonEx);
         }
 
-        // Check to see if the base URL has changed
+        /* Check to see if the base URL has changed */
         String baseUrl = jsonDict.getAsString("baseurl", "");
         if (!baseUrl.equals(mBaseUrl)) {
-            // Save the new base url
+            /* Save the new base url */
             mBaseUrl = StringUtils.chomp(baseUrl, "/");
             Prefs.putString(Prefs.KEY_JR_BASE_URL, mBaseUrl);
         }
 
-        // Get the providers out of the provider_info section.  These are likely to have changed.
+        /* Get the providers out of the provider_info section.  These are likely to have changed. */
         JRDictionary providerInfo = jsonDict.getAsDictionary("provider_info");
         mAllProviders = new JRDictionary();
 
-        // For each provider
+        /* For each provider */
         for (String name : providerInfo.keySet()) {
-            // Get its dictionary
+            /* Get its dictionary */
             JRDictionary dictionary = providerInfo.getAsDictionary(name);
-            // Use this to create a provider object
+            /* Use this to create a provider object */
             JRProvider provider = new JRProvider(name, dictionary);
-            // and finally add the object to our dictionary of providers
+            /* and finally add the object to our dictionary of providers */
             mAllProviders.put(name, provider);
         }
 
-        // Get the ordered list of basic providers
+        /* Get the ordered list of basic providers */
         mBasicProviders = jsonDict.getAsListOfStrings("enabled_providers");
-        // Get the ordered list of social providers
+        /* Get the ordered list of social providers */
         mSocialProviders = jsonDict.getAsListOfStrings("social_providers");
 
-        // Ensure that the returning basic and social providers, if set, are members of the
-        // configured set of providers.
+        /* Ensure that the returning basic and social providers, if set, are members of the
+         * configured set of providers. */
         if (!TextUtils.isEmpty(mReturningBasicProvider) &&
                 !mBasicProviders.contains(mReturningBasicProvider)) {
             mReturningBasicProvider = "";
@@ -708,21 +701,21 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, mReturningSocialProvider);
         }
 
-        // Done!
+        /* Done! */
 
-        // Save data to local store
+        /* Save data to local store */
         JRDictionary.archive(ARCHIVE_ALL_PROVIDERS, mAllProviders);
         Archiver.save(ARCHIVE_BASIC_PROVIDERS, mBasicProviders);
         Archiver.save(ARCHIVE_SOCIAL_PROVIDERS, mSocialProviders);
 
-        // Figure out of whether to hide the "powered by" line
+        /* Figure out of whether to hide the "powered by" line */
         mHidePoweredBy = jsonDict.getAsBoolean("hide_tagline", false);
         Prefs.putBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, mHidePoweredBy);
 
-        // Once we know everything is parsed and saved, save the new etag
+        /* Once we know everything is parsed and saved, save the new etag */
         Prefs.putString(Prefs.KEY_JR_CONFIGURATION_ETAG, mNewEtag);
 
-        // 'git-tag'-like library version tag to prevent reloading stale data from disk
+        /* 'git-tag'-like library version tag to prevent reloading stale data from disk */
         Prefs.putString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, mLibraryVersion);
 
         mGetConfigDone = true;
@@ -790,20 +783,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return retval;
     }
 
-//    private void loadLastUsedSocialProvider() {
-//        if (Config.LOGD) {
-//            Log.d(TAG, "[loadLastUsedSocialProvider]");
-//        }
-//        mReturningSocialProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
-//    }
-//
-//    private void loadLastUsedBasicProvider() {
-//        if (Config.LOGD) {
-//            Log.d(TAG, "[loadLastUsedBasicProvider]");
-//        }
-//        mReturningBasicProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
-//    }
-
     private void saveLastUsedSocialProvider() {
         if (Config.LOGD) {
             Log.d(TAG, "[saveLastUsedSocialProvider]");
@@ -817,7 +796,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[saveLastUsedBasicProvider]");
         }
 
-        //CookieHelper doesn't interact with our WebView's cookies :(
+        /* CookieHelper doesn't interact with our WebView's cookies :( */
         String cookies = CookieManager.getInstance().getCookie(getBaseUrl());
         String welcome_info = cookies.replaceAll(".*welcome_info=([^;]*).*", "$1");
         mCurrentlyAuthenticatingProvider.setWelcomeString(
@@ -835,7 +814,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             return null;
         }
 
-        String oid;  //open identifier
+        String oid;  /* open identifier */
 
         if (!TextUtils.isEmpty(mCurrentlyAuthenticatingProvider.getOpenIdentifier())) {
             oid = String.format("openid_identifier=%s&", mCurrentlyAuthenticatingProvider.getOpenIdentifier());
@@ -916,26 +895,26 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         CookieSyncManager csm = CookieSyncManager.createInstance(JREngage.getContext());
         CookieManager cm = CookieManager.getInstance();
 
-        // Trim any leading .s
+        /* Trim any leading .s */
         if (domain.startsWith(".")) domain = domain.substring(1);
 
-        // Cookies are stored by domain, and are not different for different schemes (i.e. http vs
-        // https) (although they do have an optional 'secure' flag.)
+        /* Cookies are stored by domain, and are not different for different schemes (i.e. http vs
+         * https) (although they do have an optional 'secure' flag.) */
         String cookieGlob = cm.getCookie("http://" + domain);
         if (cookieGlob != null) {
             String[] cookies = cookieGlob.split(";");
             for (String cookieTuple : cookies) {
                 String[] cookieParts = cookieTuple.split("=");
 
-                // setCookie has changed a lot between different versions of Android with respect to
-                // how it handles cookies like these, which are set in order to clear an existing
-                // cookie.  This way of invoking it seems to work on all versions.
+                /* setCookie has changed a lot between different versions of Android with respect to
+                 * how it handles cookies like these, which are set in order to clear an existing
+                 * cookie.  This way of invoking it seems to work on all versions. */
                 cm.setCookie(domain, cookieParts[0] + "=;");
 
-                // These calls have worked for some subset of the the set of all versions of
-                // Android:
-                //cm.setCookie(domain, cookieParts[0] + "=");
-                //cm.setCookie(domain, cookieParts[0]);
+                /* These calls have worked for some subset of the the set of all versions of
+                 * Android:
+                 * cm.setCookie(domain, cookieParts[0] + "=");
+                 * cm.setCookie(domain, cookieParts[0]); */
             }
             csm.sync();
         }
