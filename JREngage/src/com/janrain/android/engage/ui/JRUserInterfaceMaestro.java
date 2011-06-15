@@ -105,25 +105,30 @@ public class JRUserInterfaceMaestro {
         mSessionData = JRSessionData.getInstance();
     }
 
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
+    /**
+     * Displays the provider list for authentication.
+     *
+     * @param skipReturningUserLandingPage
+     *      Prevents the dialog from opening to the LandingActivity when \c true, falls back to default
+     *      behavior when false
+     */
+    public void showProviderSelectionDialog(boolean skipReturningUserLandingPage) {
+        mSessionData.setSkipLandingPage(skipReturningUserLandingPage);
+        mSessionData.setDialogIsShowing(true);
+        mSessionData.setSocialSharingMode(false);
+        startActivity(JRProvidersActivity.class);
 
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
+        /* See JRProvidersActivity.onCreate for an explanation of the flow control when there's a
+         * "returning provider." */
+    }
 
     /**
      * Displays the provider list for authentication.
      */
     public void showProviderSelectionDialog() {
-        mSessionData.setDialogIsShowing(true);
-        mSessionData.setSocialSharingMode(false);
-        startActivity(JRProvidersActivity.class);
-
-        // See JRProvidersActivity.onCreate for an explanation of the flow control when there's a
-        // "returning provider."
+        showProviderSelectionDialog(false);
     }
+
 
     /**
      * Shows the user landing page.

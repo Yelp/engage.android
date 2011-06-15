@@ -235,7 +235,7 @@ public class FeedData implements JREngageDelegate {
                         Story story = new Story(titleText, dateText, descriptionText,
                                                 plainText, linkText, imageUrls);
 
-                        if (!addStoryOnlyIfNew(story))
+                        if (!addStoryOnlyIfNew(story, i))
                             break;
                     }
                     LOGD("asyncLoadJanrainBlog", "feed walked");
@@ -275,7 +275,7 @@ public class FeedData implements JREngageDelegate {
         }.execute();
     }
 
-    private boolean addStoryOnlyIfNew(Story story) {
+    private boolean addStoryOnlyIfNew(Story story, int index) {
         if (mStoryLinks.contains(story.getLink()))
             return false;
 
@@ -283,7 +283,10 @@ public class FeedData implements JREngageDelegate {
             Log.d(TAG, "[addStoryOnlyIfNew] story hasn't been added");
 
         synchronized (mStories) {
-            mStories.add(story);
+            if (index <= mStories.size())
+                mStories.add(index, story);
+            else
+                mStories.add(story);
             mStoryLinks.add(story.getLink());
         }
 

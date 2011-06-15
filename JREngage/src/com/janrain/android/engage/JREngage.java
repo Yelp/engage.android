@@ -566,10 +566,10 @@ public class JREngage {
  **/
 /*@{*/
 
-/**
- * Begins authentication.  The library will
- * start a new Android Activity and take the user through the sign-in process.
- **/
+    /**
+     * Begins authentication.  The library will
+     * start a new Android Activity and take the user through the sign-in process.
+     **/
     public void showAuthenticationDialog() {
         if (Config.LOGD) {
             Log.d(TAG, "[showProviderSelectionDialog]");
@@ -580,16 +580,28 @@ public class JREngage {
         mInterfaceMaestro.showProviderSelectionDialog();
     }
 
-//    public void showAuthenticationDialog(boolean forceReauth) {
-//        if (Config.LOGD) {
-//            Log.d(TAG, "[showAuthenticationDialog(boolean forceReath)]");
-//        }
-//
-//        if (checkSessionDataError()) return;
-//
-//        mInterfaceMaestro.showProviderSelectionDialog(forceReauth);
-//
-//    }
+    /**
+     * Begins authentication.  The library will
+     * start a new Android Activity and take the user through the sign-in process.
+     *
+     * @param skipReturningUserLandingPage
+     *  Prevents the dialog from opening to the returning-user landing page when \c true.  That is, the
+     *  dialog will always open straight to the list of providers.  The dialog falls back to the default
+     *  behavior when \c false
+     *
+     * @note
+     *  If you always want to force the user to re=enter his/her credentials, pass \c true to the method
+     *  setAlwaysForceReauthentication().
+     **/
+    public void showAuthenticationDialog(boolean skipReturningUserLandingPage) {
+        if (Config.LOGD)
+            Log.d(TAG, "[showAuthenticationDialog(boolean skipReturningUserLandingPage)]");
+
+        if (checkSessionDataError()) return;
+
+        mInterfaceMaestro.showProviderSelectionDialog(skipReturningUserLandingPage);
+
+    }
 
 
     /**

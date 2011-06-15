@@ -33,10 +33,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,10 +52,6 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.TranslateAnimation;
 import android.widget.*;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
@@ -90,6 +83,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     //private static final int DIALOG_SUCCESS = 2;
     private static final int DIALOG_CONFIRM_SIGNOUT = 3;
     private static final int DIALOG_MOBILE_CONFIG_LOADING = 4;
+    private static final int DIALOG_NO_EMAIL_CLIENT = 5;
+    private static final int DIALOG_NO_SMS_CLIENT = 6;
     //private static final int LIGHT_BLUE_BACKGROUND = 0xFF1A557C;
     private static final int JANRAIN_BLUE_20PERCENT = 0x33074764;
     private static final int JANRAIN_BLUE_100PERCENT = 0xFF074764;
@@ -125,15 +120,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     /* Reference to the library model */
     private JRSessionData mSessionData;
-    private JRSessionDelegate mSessionDelegate; /* Call backs for JRSessionData */
+    private JRSessionDelegate mSessionDelegate; //call backs for JRSessionData
 
     /* JREngage objects we're operating with */
-    private JRProvider mSelectedProvider; /* The provider for the selected tab */
-    private JRAuthenticatedUser mAuthenticatedUser; /* The user (if logged in) for the selected tab */
+    private JRProvider mSelectedProvider; //the provider for the selected tab
+    private JRAuthenticatedUser mAuthenticatedUser; //the user (if logged in) for the selected tab
     private JRActivityObject mActivityObject;
 
     /* UI properties */
-    private String mShortenedActivityURL = null; /* null if it hasn't been shortened */
+    private String mShortenedActivityURL = null; //null if it hasn't been shortened
     private int mMaxCharacters;
     private String mDialogErrorMessage;
 
@@ -142,10 +137,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private boolean mWeHaveJustAuthenticated = false;
     //private boolean mWeAreCurrentlyPostingSomething = false;
     private boolean mWaitingForMobileConfig = false;
-    private boolean mCurrentlyOnEmailSmsTab = false;
 
     /* UI views */
-    private LinearLayout mProviderStuffContainer;
     private LinearLayout mPreviewBorder;
     private RelativeLayout mPreviewBox;
     private RelativeLayout mMediaContentView;
@@ -168,7 +161,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private ColorButton mSmsButton;
     private EditText mEmailSmsComment;
     private LinearLayout mEmailSmsButtonContainer;
-    private RelativeLayout mTaglineAndProviderIconContainer;
 
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
 
@@ -196,7 +188,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSessionDelegate = createSessionDelegate();
 
         /* View References */
-        mProviderStuffContainer = (LinearLayout) findViewById(R.id.jr_provider_stuff_container);
         mPreviewBox = (RelativeLayout) findViewById(R.id.jr_preview_box);
         mPreviewBorder = (LinearLayout) findViewById(R.id.jr_preview_box_border);
         mMediaContentView = (RelativeLayout) findViewById(R.id.jr_media_content_view);
@@ -205,8 +196,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mUserCommentView = (EditText) findViewById(R.id.jr_edit_comment);
         mPreviewLabelView = (TextView) findViewById(R.id.jr_preview_text_view);
         mTriangleIconView = (ImageView) findViewById(R.id.jr_triangle_icon_view);
-        mUserProfileInformationAndShareButtonContainer =
-                (LinearLayout) findViewById(R.id.jr_user_profile_information_and_share_button_container);
+        mUserProfileInformationAndShareButtonContainer = (LinearLayout) findViewById(
+                R.id.jr_user_profile_information_and_share_button_container);
         mUserProfileContainer = (LinearLayout) findViewById(R.id.jr_user_profile_container);
         mUserProfilePic = (ImageView) findViewById(R.id.jr_profile_pic);
         mUserNameView = (TextView) findViewById(R.id.jr_user_name);
@@ -217,11 +208,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 R.id.jr_shared_text_and_check_mark_horizontal_layout);
         mEmailButton = (ColorButton) findViewById(R.id.jr_email_button);
         mSmsButton = (ColorButton) findViewById(R.id.jr_sms_button);
-            // XXX: LILLI MAKING SMS CHANGES
-        //mEmailSmsComment = (EditText) findViewById(R.id.jr_email_sms_edit_comment);
+        mEmailSmsComment = (EditText) findViewById(R.id.jr_email_sms_edit_comment);
         mEmailSmsButtonContainer = (LinearLayout) findViewById(R.id.jr_email_sms_button_container);
-        mTaglineAndProviderIconContainer =
-                (RelativeLayout) findViewById(R.id.jr_tagline_and_provider_icon_container);
 
         /* Set the user comment field here before the text change listener is registered so that
          * it can be displayed while the providers are being loaded if this is a first run.
@@ -276,8 +264,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         if ((socialProviders == null || socialProviders.size() == 0)
                 && !mSessionData.isGetMobileConfigDone()) {
             /* Hide the email/SMS tab so things look nice as we load the providers */
-            // XXX: LILLI MAKING SMS CHANGES
-//            findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
+            findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
             mWaitingForMobileConfig = true;
             showDialog(DIALOG_MOBILE_CONFIG_LOADING);
         } else {
@@ -396,10 +383,24 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         /* Make a tab for email/SMS */
         TabHost.TabSpec emailSmsSpec = tabHost.newTabSpec(EMAIL_SMS_TAB_TAG);
         Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
-        setTabSpecIndicator(emailSmsSpec, d, "Email/SMS");
 
-        //emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
-        emailSmsSpec.setContent(R.id.jr_tab_view_content);
+
+        //<<<<<<< HEAD
+                setTabSpecIndicator(emailSmsSpec, d, "Email/SMS");
+
+                //emailSmsSpec.setContent(R.id.jr_tab_view_content);
+        //=======
+                emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
+
+                //<<<<<<< HEAD
+                //        setTabSpecIndicator(emailSmsSpec, d, "Email/SMS");
+                //
+                //        //emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
+                //        emailSmsSpec.setContent(R.id.jr_tab_view_content);
+                //=======
+                //        emailSmsSpec.setIndicator(createTabSpecIndicator("Email/SMS", d));
+                //        emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
+                //>>>>>>> 21b5e5715e2bebe56e561b2ce8a475a80bed9209
         tabHost.addTab(emailSmsSpec);
 
         tabHost.setOnTabChangedListener(this);
@@ -518,13 +519,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             mPreviewBox.setVisibility(View.GONE);
-            // XXX: LILLI MAKING SMS CHANGES
-//            mEmailSmsComment.setLines(3);
+            mEmailSmsComment.setLines(3);
             mEmailSmsButtonContainer.setOrientation(LinearLayout.HORIZONTAL);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             mPreviewBox.setVisibility(View.VISIBLE);
-            // XXX: LILLI MAKING SMS CHANGES
-//            mEmailSmsComment.setLines(4);
+            mEmailSmsComment.setLines(4);
             mEmailSmsButtonContainer.setOrientation(LinearLayout.VERTICAL);
         }
     }
@@ -683,87 +682,17 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         Log.d(TAG, "[onTabChange]: " + tabId);
 
         if (tabId.equals(EMAIL_SMS_TAB_TAG)) {
-//            mEmailSmsComment.setText(mUserCommentView.getText());
-
-            if (!mCurrentlyOnEmailSmsTab) {
-                animateViewDisappearing(mEmailSmsButtonContainer, false);
-                animateViewDisappearing(mProviderStuffContainer, true);
-                animateSinkingUserProfileInformationAndShareButtonContainer(true);
-                animateSinkingTaglineAndIcon(true);
-            }
-
-            mCurrentlyOnEmailSmsTab = true;
+            mEmailSmsComment.setText(mUserCommentView.getText());
         } else { /* ... else a "real" provider -- Facebook, Twitter, etc. */
             mSelectedProvider = mSessionData.getProviderByName(tabId);
-
-            if (mCurrentlyOnEmailSmsTab) {
-                animateViewDisappearing(mEmailSmsButtonContainer, true);
-                animateViewDisappearing(mProviderStuffContainer, false);
-                animateSinkingUserProfileInformationAndShareButtonContainer(false);
-                animateSinkingTaglineAndIcon(false);
-            }
-
+    
             configureViewElementsBasedOnProvider();
             configureLoggedInUserBasedOnProvider();
             configureSharedStatusBasedOnProvider();
 
             mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(
                     getApplicationContext()));
-
-            mCurrentlyOnEmailSmsTab = false;
         }
-    }
-
-    private void animateViewDisappearing(View view, boolean disappearing) {
-        AnimationSet set = new AnimationSet(true);
-
-        Animation animation = new AlphaAnimation(
-                disappearing ? 1.0f : 0.0f,
-                disappearing ? 0.0f : 1.0f);
-
-        animation.setDuration(750);
-        animation.setFillAfter(true);
-        set.addAnimation(animation);
-
-        view.startAnimation(animation);
-    }
-
-    private void animateSinkingUserProfileInformationAndShareButtonContainer(boolean sinking) {
-        AnimationSet set = new AnimationSet(true);
-
-        float yOffset = sinking ?
-                (-1.0f * 1.0f) ://mUserProfileInformationAndShareButtonContainer.getHeight()) :
-                (1.0f);//(mUserProfileInformationAndShareButtonContainer.getHeight());
-
-        Animation animation = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, (sinking ? 0.0f : 1.0f),
-                Animation.RELATIVE_TO_SELF, (sinking ? 1.0f : 0.0f));
-
-        animation.setDuration(750);
-        animation.setFillAfter(true);
-        set.addAnimation(animation);
-
-        mUserProfileInformationAndShareButtonContainer.startAnimation(animation);
-    }
-
-    private void animateSinkingTaglineAndIcon(boolean sinking) {
-        AnimationSet set = new AnimationSet(true);
-
-        float yOrigin = sinking ?
-                0.0f : (1.0f * mUserProfileInformationAndShareButtonContainer.getHeight());
-        float yOffset = sinking ?
-                (mUserProfileInformationAndShareButtonContainer.getHeight()) : 0.0f;
-                //(-1.0f * mUserProfileInformationAndShareButtonContainer.getHeight());
-
-        Animation animation = new TranslateAnimation(0.0f, 0.0f, yOrigin, yOffset);
-
-        animation.setDuration(750);
-        animation.setFillAfter(true);
-        set.addAnimation(animation);
-
-        mTaglineAndProviderIconContainer.startAnimation(animation);
     }
 
     private View.OnClickListener mEmailButtonListener = new View.OnClickListener() {
@@ -798,9 +727,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             intent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
             intent.putExtra(android.content.Intent.EXTRA_TEXT, body);
 
-            //Intent chooser = Intent.createChooser(intent, getString(R.string.jr_choose_email_handler));
-            startActivityForResult(intent, 0);
-            mSessionData.notifyEmailSmsShare("email");
+            try {
+                //Intent chooser = Intent.createChooser(intent, getString(R.string.jr_choose_email_handler));
+                startActivityForResult(intent, 0);
+                mSessionData.notifyEmailSmsShare("email");
+            } catch (ActivityNotFoundException exception) {
+                showDialog(DIALOG_NO_EMAIL_CLIENT);
+            }
         }
     };
 
@@ -830,8 +763,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             intent.putExtra("sms_body", body.substring(0, Math.min(139, body.length())));
             intent.putExtra("exit_on_sent", true);
 
-            startActivityForResult(intent, 0);
-            mSessionData.notifyEmailSmsShare("sms");
+            try {
+                startActivityForResult(intent, 0);
+                mSessionData.notifyEmailSmsShare("sms");
+            } catch (ActivityNotFoundException exception) {
+                showDialog(DIALOG_NO_SMS_CLIENT);
+            }
         }
     };
 
@@ -840,8 +777,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
          * This code path hasn't set mSelectedProvider yet, so we use the value previously
          * set and "unselect" the email SMS tab, making it kind of a button in tab clothing. */
 
-            // XXX: LILLI MAKING SMS CHANGES
-//        mUserCommentView.setText(mEmailSmsComment.getText());
+        mUserCommentView.setText(mEmailSmsComment.getText());
 
         /* Email and SMS intents are returning 0, 0, null */
         //Log.d(TAG, "[onActivityResult]: requestCode=" + requestCode + " resultCode=" + resultCode
@@ -885,6 +821,16 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 pd.setMessage("Loading first run configuration data. Please wait...");
                 pd.setIndeterminate(false);
                 return pd;
+            case DIALOG_NO_EMAIL_CLIENT:
+                return new AlertDialog.Builder(JRPublishActivity.this)
+                        .setMessage("You do not have an email client configured.")
+                        .setPositiveButton("OK", null)
+                        .create();
+            case DIALOG_NO_SMS_CLIENT:
+                return new AlertDialog.Builder(JRPublishActivity.this)
+                        .setMessage("You do not have an sms client configured.")
+                        .setPositiveButton("OK", null)
+                        .create();
         }
         return null;
     }
@@ -1106,7 +1052,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         } else {
             mMaxCharacters = socialSharingProperties.getAsInt("max_characters");
         }
-
+        
         if (mMaxCharacters != -1) mCharacterCountView.setVisibility(View.VISIBLE);
         else mCharacterCountView.setVisibility(View.GONE);
 
