@@ -34,111 +34,111 @@
                 paddingTop of 0 should obscure the tabStrip, but it doesn't work here for some
                 reason-->
 
-            <RelativeLayout
-                android:id="@+id/jr_tab_email_sms_content"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:padding="5dp"
-                android:orientation="vertical"
-                >
+            <!--<RelativeLayout-->
+                <!--android:id="@+id/jr_tab_email_sms_content"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="fill_parent"-->
+                <!--android:padding="5dp"-->
+                <!--android:orientation="vertical"-->
+                <!-->-->
 
-                <EditText
-                    android:id="@+id/jr_email_sms_edit_comment"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dip"
-                    android:layout_marginRight="4dip"
-                    android:layout_marginLeft="4dip"
-                    android:layout_alignParentTop="true"
-                    android:gravity="top|left"
-                    android:hint="@string/jr_please_enter_text"
-                    android:textColorHint="@color/jr_TEXT_COLOR_HINT"
-                    android:lines="4"
-                    android:inputType="textMultiLine|textAutoComplete"
-                    />
+                <!--<EditText-->
+                    <!--android:id="@+id/jr_email_sms_edit_comment"-->
+                    <!--android:layout_width="fill_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginTop="5dip"-->
+                    <!--android:layout_marginRight="4dip"-->
+                    <!--android:layout_marginLeft="4dip"-->
+                    <!--android:layout_alignParentTop="true"-->
+                    <!--android:gravity="top|left"-->
+                    <!--android:hint="@string/jr_please_enter_text"-->
+                    <!--android:textColorHint="@color/jr_TEXT_COLOR_HINT"-->
+                    <!--android:lines="4"-->
+                    <!--android:inputType="textMultiLine|textAutoComplete"-->
+                    <!--/>-->
 
-                <LinearLayout
-                    android:id="@+id/jr_email_sms_button_layout"
-                    android:layout_height="wrap_content"
-                    android:layout_width="fill_parent"
-                    android:background="@color/jr_JANRAIN_BLUE_20PERCENT"
-                    android:layout_alignParentBottom="true"
-                    android:orientation="vertical"
-                    android:gravity="top|center_horizontal"
-                    android:paddingBottom="10dip"
-                    android:paddingLeft="10dip"
-                    android:paddingRight="10dip"
-                    >
+                <!--<LinearLayout-->
+                    <!--android:id="@+id/jr_email_sms_button_layout1"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_width="fill_parent"-->
+                    <!--android:background="@color/jr_JANRAIN_BLUE_20PERCENT"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:orientation="vertical"-->
+                    <!--android:gravity="top|center_horizontal"-->
+                    <!--android:paddingBottom="10dip"-->
+                    <!--android:paddingLeft="10dip"-->
+                    <!--android:paddingRight="10dip"-->
+                    <!-->-->
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/jr_triangle_icon"
-                        />
+                    <!--<ImageView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:src="@drawable/jr_triangle_icon"-->
+                        <!--/>-->
 
-                    <LinearLayout
-                        android:id="@+id/jr_email_sms_button_container"
-                        android:layout_height="wrap_content"
-                        android:layout_width="fill_parent"
-                        android:orientation="vertical"
-                        >
+                    <!--<LinearLayout-->
+                        <!--android:id="@+id/jr_email_sms_button_container1"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_width="fill_parent"-->
+                        <!--android:orientation="vertical"-->
+                        <!-->-->
 
-                        <!-- It would be nice to use xmlns:jr="http://schemas.android.com/apk/res/com.janrain.android.engage"
-                             here, but there's an open bug preventing aapt from being able to
-                             compile the subsequent usage of the jr:jr_color attribute.
-                             http://code.google.com/p/android/issues/detail?id=9656
-                             -->
-                        <com.janrain.android.engage.ui.ColorButton
-                            android:id="@+id/jr_email_button"
-                            android:layout_height="wrap_content"
-                            android:layout_width="fill_parent"
-                            android:text="Email"
-                            android:gravity="center_horizontal|center_vertical"
-                            android:textSize="20dip"
-                            android:textStyle="bold"
-                            android:textColor="#ffffffff"
-                            android:layout_margin="5dp"
-                            android:layout_weight="1"
-                            />
-                        <!--android:layout_marginRight="10dp"-->
-                        <!--android:layout_marginLeft="10dp"-->
+                        <!--&lt;!&ndash; It would be nice to use xmlns:jr="http://schemas.android.com/apk/res/com.janrain.android.engage"-->
+                             <!--here, but there's an open bug preventing aapt from being able to-->
+                             <!--compile the subsequent usage of the jr:jr_color attribute.-->
+                             <!--http://code.google.com/p/android/issues/detail?id=9656-->
+                             <!--&ndash;&gt;-->
+                        <!--<com.janrain.android.engage.ui.ColorButton-->
+                            <!--android:id="@+id/jr_email_button1"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_width="fill_parent"-->
+                            <!--android:text="Email"-->
+                            <!--android:gravity="center_horizontal|center_vertical"-->
+                            <!--android:textSize="20dip"-->
+                            <!--android:textStyle="bold"-->
+                            <!--android:textColor="#ffffffff"-->
+                            <!--android:layout_margin="5dp"-->
+                            <!--android:layout_weight="1"-->
+                            <!--/>-->
+                        <!--&lt;!&ndash;android:layout_marginRight="10dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginLeft="10dp"&ndash;&gt;-->
 
-                        <com.janrain.android.engage.ui.ColorButton
-                            android:id="@+id/jr_sms_button"
-                            android:layout_height="wrap_content"
-                            android:layout_width="fill_parent"
-                            android:layout_above="@id/jr_email_button"
-                            android:text="SMS"
-                            android:gravity="center_horizontal|center_vertical"
-                            android:textSize="20dip"
-                            android:textStyle="bold"
-                            android:textColor="#ffffffff"
-                            android:layout_margin="5dp"
-                            android:layout_weight="1"
-                            />
-                        <!--android:layout_marginRight="10dp"-->
-                        <!--android:layout_marginLeft="10dp"-->
-                        
-                    </LinearLayout>
+                        <!--<com.janrain.android.engage.ui.ColorButton-->
+                            <!--android:id="@+id/jr_sms_button1"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_width="fill_parent"-->
+                            <!--android:layout_above="@id/jr_email_button1"-->
+                            <!--android:text="SMS"-->
+                            <!--android:gravity="center_horizontal|center_vertical"-->
+                            <!--android:textSize="20dip"-->
+                            <!--android:textStyle="bold"-->
+                            <!--android:textColor="#ffffffff"-->
+                            <!--android:layout_margin="5dp"-->
+                            <!--android:layout_weight="1"-->
+                            <!--/>-->
+                        <!--&lt;!&ndash;android:layout_marginRight="10dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginLeft="10dp"&ndash;&gt;-->
+                        <!---->
+                    <!--</LinearLayout>-->
 
-                </LinearLayout>
+                <!--</LinearLayout>-->
 
-                <TextView
-                    android:id="@+id/jr_email_sms_powered_by_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_above="@id/jr_email_sms_button_layout"
-                    android:layout_marginBottom="4dip"
-                    android:singleLine="true"
-                    android:text="@string/jr_powered_by"
-                    android:textColor="#ff666666"
-                    android:textStyle="normal"
-                    android:paddingRight="6dip"
-                    android:textSize="12dip"
-                    />
+                <!--<TextView-->
+                    <!--android:id="@+id/jr_email_sms_powered_by_text"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentLeft="true"-->
+                    <!--android:layout_above="@id/jr_email_sms_button_layout1"-->
+                    <!--android:layout_marginBottom="4dip"-->
+                    <!--android:singleLine="true"-->
+                    <!--android:text="@string/jr_powered_by"-->
+                    <!--android:textColor="#ff666666"-->
+                    <!--android:textStyle="normal"-->
+                    <!--android:paddingRight="6dip"-->
+                    <!--android:textSize="12dip"-->
+                    <!--/>-->
 
-            </RelativeLayout>
+            <!--</RelativeLayout>-->
 
             <RelativeLayout
                 android:id="@+id/jr_tab_view_content"
@@ -148,225 +148,292 @@
                 android:padding="5dp"
                 >
 
-                <EditText
-                    android:id="@+id/jr_edit_comment"
+                <LinearLayout
+                    android:id="@+id/jr_email_sms_button_container"
+                    android:layout_height="wrap_content"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dip"
-                    android:layout_marginRight="4dip"
-                    android:layout_marginLeft="4dip"
-                    android:gravity="top|left"
-                    android:hint="@string/jr_please_enter_text"
-                    android:textColorHint="@color/jr_TEXT_COLOR_HINT"
-                    android:lines="3"
-                    android:inputType="textMultiLine|textAutoComplete"
-                    />
+                    android:orientation="vertical"
+                    android:visibility="invisible"
+                    >
+                    <!--android:visibility="gone"-->
 
-                <TextView
-                    android:id="@+id/jr_character_count_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/jr_edit_comment"
-                    android:layout_alignParentRight="true"
-                    android:singleLine="true"
-                    android:textColor="#ff333333"
-                    android:text="@string/jr_calculating_remaining_characters"
-                    android:layout_marginRight="4dip"
-                    android:layout_marginLeft="4dip"
-                    android:layout_marginBottom="5dip"
-                    android:textSize="10dip"
-                    />
+                    <!-- It would be nice to use xmlns:jr="http://schemas.android.com/apk/res/com.janrain.android.engage"
+                         here, but there's an open bug preventing aapt from being able to
+                         compile the subsequent usage of the jr:jr_color attribute.
+                         http://code.google.com/p/android/issues/detail?id=9656
+                         -->
+                    <com.janrain.android.engage.ui.ColorButton
+                        android:id="@+id/jr_email_button"
+                        android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:text="Email"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:textSize="20dip"
+                        android:textStyle="bold"
+                        android:textColor="#ffffffff"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        />
+                    <!--android:layout_marginRight="10dp"-->
+                    <!--android:layout_marginLeft="10dp"-->
 
-                <!-- This RelativeLayout expands to the size between the character count view and
-                     the provider icon.  It renders nothing, but only server as a bounding
-                     container for the jr_preview_box.  (We can't allow the preview box to grow
-                     to this size though, because then it's background does too, and that looks
-                     weird. -->
-                <RelativeLayout
-                    android:id="@+id/jr_nested_layout_mania_sunday_sunday_sunday"
+                    <com.janrain.android.engage.ui.ColorButton
+                        android:id="@+id/jr_sms_button"
+                        android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:layout_above="@id/jr_email_button"
+                        android:text="SMS"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:textSize="20dip"
+                        android:textStyle="bold"
+                        android:textColor="#ffffffff"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        />
+                    <!--android:layout_marginRight="10dp"-->
+                    <!--android:layout_marginLeft="10dp"-->
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/jr_provider_stuff_container"
+                    android:layout_height="wrap_content"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/jr_character_count_view"
-                    android:layout_above="@+id/jr_provider_icon"
+                    android:orientation="vertical"
                     >
 
+                    <EditText
+                        android:id="@+id/jr_edit_comment"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dip"
+                        android:layout_marginRight="4dip"
+                        android:layout_marginLeft="4dip"
+                        android:gravity="top|left"
+                        android:hint="@string/jr_please_enter_text"
+                        android:textColorHint="@color/jr_TEXT_COLOR_HINT"
+                        android:lines="3"
+                        android:inputType="textMultiLine|textAutoComplete"
+                        />
+
+                    <TextView
+                        android:id="@+id/jr_character_count_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/jr_edit_comment"
+                        android:layout_alignParentRight="true"
+                        android:layout_gravity="right"
+                        android:singleLine="true"
+                        android:textColor="#ff333333"
+                        android:text="@string/jr_calculating_remaining_characters"
+                        android:layout_marginRight="4dip"
+                        android:layout_marginLeft="4dip"
+                        android:layout_marginBottom="5dip"
+                        android:textSize="10dip"
+                        />
+
                     <!-- This RelativeLayout expands to the size between the character count view and
-                         the provider icon.  It renders nothing, but only serves as a bounding
+                         the provider icon.  It renders nothing, but only server as a bounding
                          container for the jr_preview_box.  (We can't allow the preview box to grow
                          to this size though, because then it's background does too, and that looks
                          weird. -->
                     <!--Cute name, btw...-->
                     <RelativeLayout
-                        android:id="@+id/jr_preview_box"
+                        android:id="@+id/jr_nested_layout_mania_sunday_sunday_sunday"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/jr_bg_publish_preview"
-                        android:paddingBottom="4dip"
+                        android:layout_below="@id/jr_character_count_view"
+                        android:layout_above="@+id/jr_provider_icon"
                         >
-                        <!--android:gravity="top|left"-->
 
-                        <LinearLayout
-                            android:id="@+id/jr_preview_box_border"
+                        <RelativeLayout
+                            android:id="@+id/jr_preview_box"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_alignParentLeft="true"
-                            android:background="@drawable/jr_bg_publish_preview_border"
-                            android:layout_marginTop="8dip"
-                            android:layout_marginBottom="4dip"
-                            android:layout_marginRight="4dip"
-                            android:layout_marginLeft="4dip"
-                            android:paddingLeft="3dp"
-                            android:paddingRight="3dp"
+                            android:background="@drawable/jr_bg_publish_preview"
+                            android:paddingBottom="4dip"
                             >
                             <!--android:gravity="top|left"-->
 
-                            <TextView
-                                android:id="@+id/jr_preview_text_view"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:bufferType="spannable"
-                                android:layout_marginTop="2dip"
-                                android:layout_marginLeft="4dip"
-                                android:layout_marginBottom="2dip"
-                                android:layout_marginRight="4dip"
-                                android:textSize="12dip"
-                                android:layout_weight="1"
-                                />
-                            <!--android:maxLines="3"-->
-                                <!--android:layout_below="@id/character_count_view"-->
-                                <!--android:singleLine="true"-->
-
-                            <RelativeLayout
-                                android:id="@+id/jr_media_content_view"
+                            <LinearLayout
+                                android:id="@+id/jr_preview_box_border"
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="3dip"
-                                android:layout_marginLeft="4dip"
+                                android:orientation="vertical"
+                                android:layout_alignParentLeft="true"
+                                android:background="@drawable/jr_bg_publish_preview_border"
+                                android:layout_marginTop="8dip"
                                 android:layout_marginBottom="4dip"
                                 android:layout_marginRight="4dip"
-                                android:paddingTop="3dp"
+                                android:layout_marginLeft="4dip"
                                 android:paddingLeft="3dp"
                                 android:paddingRight="3dp"
-                                android:paddingBottom="7dp"
-                                android:background="@drawable/jr_bg_provider_activity_info"
-                                android:layout_weight="0"
                                 >
-                                <!--android:layout_height="122dip"-->
-                                <!--android:layout_marginTop="10dip"-->
-                                <!--android:layout_marginRight="7dip"-->
-                                <!--android:layout_marginLeft="7dip"-->
-                                <!--android:padding="5dp"-->
-                                <!--android:gravity="top|left|bottom|right"-->
-
-                                <ImageView
-                                    android:id="@+id/jr_media_content_image"
-                                    android:layout_width="45dip"
-                                    android:layout_height="45dip"
-                                    android:adjustViewBounds="true"
-                                    android:maxHeight="45dip"
-                                    android:maxWidth="45dip"
-                                    android:minHeight="45dip"
-                                    android:minWidth="45dip"
-                                    android:scaleType="centerCrop"
-                                    android:layout_alignParentLeft="true"
-                                    android:layout_alignParentTop="true"
-                                    android:layout_margin="5dip"
-                                    android:src="@drawable/jr_media60x60"
-                                    />
+                                <!--android:gravity="top|left"-->
 
                                 <TextView
-                                    android:id="@+id/jr_media_content_title"
+                                    android:id="@+id/jr_preview_text_view"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="0dip"
-                                    android:layout_marginRight="5dip"
-                                    android:layout_marginBottom="5dip"
-                                    android:layout_marginLeft="5dip"
-                                    android:layout_alignParentTop="true"
-                                    android:layout_toRightOf="@id/jr_media_content_image"
-                                    android:singleLine="true"
-                                    android:ellipsize="end"
-                                    android:textStyle="bold"
-                                    android:textColor="#FF074764"
-                                    />
-
-                                <!--
-                                   - NOTE:  In order to get the text to extend more than two lines, had to use the 'inputType=...'
-                                   -        property.  Unfortunately, doing so breaks the ellipsize function.
-                                  -->
-                                <TextView
-                                    android:id="@+id/jr_media_content_description"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="0dip"
-                                    android:layout_marginRight="5dip"
-                                    android:layout_marginBottom="0dip"
-                                    android:layout_marginLeft="5dip"
-                                    android:layout_below="@id/jr_media_content_title"
-                                    android:layout_toRightOf="@id/jr_media_content_image"
-                                    android:ellipsize="end"
-                                    android:textStyle="normal"
-                                    android:maxLines="4"
+                                    android:bufferType="spannable"
+                                    android:layout_marginTop="2dip"
+                                    android:layout_marginLeft="4dip"
+                                    android:layout_marginBottom="2dip"
+                                    android:layout_marginRight="4dip"
                                     android:textSize="12dip"
-                                    android:inputType="textMultiLine"
+                                    android:layout_weight="1"
                                     />
-                                    <!--android:maxHeight="150dip"-->
+                                <!--android:maxLines="3"-->
+                                    <!--android:layout_below="@id/character_count_view"-->
+                                    <!--android:singleLine="true"-->
 
-                            </RelativeLayout>
+                                <RelativeLayout
+                                    android:id="@+id/jr_media_content_view"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="3dip"
+                                    android:layout_marginLeft="4dip"
+                                    android:layout_marginBottom="4dip"
+                                    android:layout_marginRight="4dip"
+                                    android:paddingTop="3dp"
+                                    android:paddingLeft="3dp"
+                                    android:paddingRight="3dp"
+                                    android:paddingBottom="7dp"
+                                    android:background="@drawable/jr_bg_provider_activity_info"
+                                    android:layout_weight="0"
+                                    >
+                                    <!--android:layout_height="122dip"-->
+                                    <!--android:layout_marginTop="10dip"-->
+                                    <!--android:layout_marginRight="7dip"-->
+                                    <!--android:layout_marginLeft="7dip"-->
+                                    <!--android:padding="5dp"-->
+                                    <!--android:gravity="top|left|bottom|right"-->
 
-                        </LinearLayout>
+                                    <ImageView
+                                        android:id="@+id/jr_media_content_image"
+                                        android:layout_width="45dip"
+                                        android:layout_height="45dip"
+                                        android:adjustViewBounds="true"
+                                        android:maxHeight="45dip"
+                                        android:maxWidth="45dip"
+                                        android:minHeight="45dip"
+                                        android:minWidth="45dip"
+                                        android:scaleType="centerCrop"
+                                        android:layout_alignParentLeft="true"
+                                        android:layout_alignParentTop="true"
+                                        android:layout_margin="5dip"
+                                        android:src="@drawable/jr_media60x60"
+                                        />
 
-                        <TextView
-                            android:id="@+id/jr_preview_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_marginLeft="8dip"
-                            android:singleLine="true"
-                            android:text="@string/jr_preview"
-                            android:textColor="#ff666666"
-                            android:background="#ffeeeeee"
-                            android:textStyle="normal"
-                            android:paddingLeft="4dip"
-                            android:paddingRight="6dip"
-                            android:textSize="10dip"
-                            />
-                            <!--android:layout_marginBottom="10dip"-->
+                                    <TextView
+                                        android:id="@+id/jr_media_content_title"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="0dip"
+                                        android:layout_marginRight="5dip"
+                                        android:layout_marginBottom="5dip"
+                                        android:layout_marginLeft="5dip"
+                                        android:layout_alignParentTop="true"
+                                        android:layout_toRightOf="@id/jr_media_content_image"
+                                        android:singleLine="true"
+                                        android:ellipsize="end"
+                                        android:textStyle="bold"
+                                        android:textColor="#FF074764"
+                                        />
+
+                                    <!--
+                                       - NOTE:  In order to get the text to extend more than two lines, had to use the 'inputType=...'
+                                       -        property.  Unfortunately, doing so breaks the ellipsize function.
+                                      -->
+                                    <TextView
+                                        android:id="@+id/jr_media_content_description"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="0dip"
+                                        android:layout_marginRight="5dip"
+                                        android:layout_marginBottom="0dip"
+                                        android:layout_marginLeft="5dip"
+                                        android:layout_below="@id/jr_media_content_title"
+                                        android:layout_toRightOf="@id/jr_media_content_image"
+                                        android:ellipsize="end"
+                                        android:textStyle="normal"
+                                        android:maxLines="4"
+                                        android:textSize="12dip"
+                                        android:inputType="textMultiLine"
+                                        />
+                                        <!--android:maxHeight="150dip"-->
+
+                                </RelativeLayout>
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/jr_preview_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_marginLeft="8dip"
+                                android:singleLine="true"
+                                android:text="@string/jr_preview"
+                                android:textColor="#ff666666"
+                                android:background="#ffeeeeee"
+                                android:textStyle="normal"
+                                android:paddingLeft="4dip"
+                                android:paddingRight="6dip"
+                                android:textSize="10dip"
+                                />
+                                <!--android:layout_marginBottom="10dip"-->
+
+                        </RelativeLayout>
 
                     </RelativeLayout>
 
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/jr_tagline_and_provider_icon_container"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/jr_user_profile_info_and_share_button_container"
+                    android:paddingBottom="4dip"
+                    android:paddingTop="4dip"
+                    >
+                    <!--android:layout_alignParentLeft="true"-->
+                    
+                    <TextView
+                        android:id="@+id/jr_tagline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentBottom="true"
+                        android:singleLine="true"
+                        android:text="@string/jr_powered_by"
+                        android:textColor="#ff666666"
+                        android:textStyle="normal"
+                        android:paddingRight="6dip"
+                        android:textSize="12dip"
+                        />
+                        <!--android:layout_marginBottom="4dip"-->
+                        <!--android:layout_marginLeft="12dip"-->
+                        <!--android:layout_above="@+id/jr_user_profile_information_and_share_button_container"-->
+
+                    <ImageView
+                        android:id="@+id/jr_provider_icon"
+                        android:layout_width="20dip"
+                        android:layout_height="20dip"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="right"
+                        android:src="@drawable/jr_icon_facebook"
+                        />
+                        <!--android:layout_marginBottom="4dip"-->
+                        <!--android:layout_above="@+id/jr_user_profile_information_and_share_button_container"-->
+                        <!--android:layout_marginRight="4dip"-->
+
                 </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/jr_tagline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_above="@+id/jr_user_profile_information_and_share_button_container"
-                    android:layout_marginBottom="4dip"
-                    android:singleLine="true"
-                    android:text="@string/jr_powered_by"
-                    android:textColor="#ff666666"
-                    android:textStyle="normal"
-                    android:paddingRight="6dip"
-                    android:textSize="12dip"
-                    />
-                    <!--android:layout_marginLeft="12dip"-->
-
-                <ImageView
-                    android:id="@+id/jr_provider_icon"
-                    android:layout_width="20dip"
-                    android:layout_height="20dip"
-                    android:layout_alignParentRight="true"
-                    android:layout_above="@+id/jr_user_profile_information_and_share_button_container"
-                    android:layout_marginBottom="4dip"
-                    android:src="@drawable/jr_icon_facebook"
-                    />
-                    <!--android:layout_marginRight="4dip"-->
-
                 <LinearLayout
-                    android:id="@+id/jr_user_profile_information_and_share_button_container"
+                    android:id="@+id/jr_user_profile_info_and_share_button_container"
                     android:orientation="vertical"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"

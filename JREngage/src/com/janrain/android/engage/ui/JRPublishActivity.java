@@ -53,11 +53,8 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-<<<<<<< HEAD
 import android.view.ViewGroup;
 import android.view.animation.*;
-=======
->>>>>>> development
 import android.widget.*;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
@@ -125,15 +122,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     /* Reference to the library model */
     private JRSessionData mSessionData;
-    private JRSessionDelegate mSessionDelegate; //call backs for JRSessionData
+    private JRSessionDelegate mSessionDelegate; /* Call backs for JRSessionData */
 
     /* JREngage objects we're operating with */
-    private JRProvider mSelectedProvider; //the provider for the selected tab
-    private JRAuthenticatedUser mAuthenticatedUser; //the user (if logged in) for the selected tab
+    private JRProvider mSelectedProvider; /* The provider for the selected tab */
+    private JRAuthenticatedUser mAuthenticatedUser; /* The user (if logged in) for the selected tab */
     private JRActivityObject mActivityObject;
 
     /* UI properties */
-    private String mShortenedActivityURL = null; //null if it hasn't been shortened
+    private String mShortenedActivityURL = null; /* null if it hasn't been shortened */
     private int mMaxCharacters;
     private String mDialogErrorMessage;
 
@@ -148,6 +145,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private static final int NUMBER_OF_INITIAL_NETWORK_CONNECTIONS = 2;
 
     /* UI views */
+    private LinearLayout mProviderStuffContainer;
     private LinearLayout mPreviewBorder;
     private RelativeLayout mPreviewBox;
     private RelativeLayout mMediaContentView;
@@ -170,6 +168,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private ColorButton mSmsButton;
     private EditText mEmailSmsComment;
     private LinearLayout mEmailSmsButtonContainer;
+    private RelativeLayout mTaglineAndProviderIconContainer;
+    private RelativeLayout mNestedLayoutManiaSundaySundaySunday;
 
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
 
@@ -197,6 +197,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mSessionDelegate = createSessionDelegate();
 
         /* View References */
+        mProviderStuffContainer = (LinearLayout) findViewById(R.id.jr_provider_stuff_container);
         mPreviewBox = (RelativeLayout) findViewById(R.id.jr_preview_box);
         mPreviewBorder = (LinearLayout) findViewById(R.id.jr_preview_box_border);
         mMediaContentView = (RelativeLayout) findViewById(R.id.jr_media_content_view);
@@ -205,8 +206,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mUserCommentView = (EditText) findViewById(R.id.jr_edit_comment);
         mPreviewLabelView = (TextView) findViewById(R.id.jr_preview_text_view);
         mTriangleIconView = (ImageView) findViewById(R.id.jr_triangle_icon_view);
-        mUserProfileInformationAndShareButtonContainer = (LinearLayout) findViewById(
-                R.id.jr_user_profile_information_and_share_button_container);
+        mUserProfileInformationAndShareButtonContainer =
+                (LinearLayout) findViewById(R.id.jr_user_profile_info_and_share_button_container);
         mUserProfileContainer = (LinearLayout) findViewById(R.id.jr_user_profile_container);
         mUserProfilePic = (ImageView) findViewById(R.id.jr_profile_pic);
         mUserNameView = (TextView) findViewById(R.id.jr_user_name);
@@ -217,8 +218,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 R.id.jr_shared_text_and_check_mark_horizontal_layout);
         mEmailButton = (ColorButton) findViewById(R.id.jr_email_button);
         mSmsButton = (ColorButton) findViewById(R.id.jr_sms_button);
-        mEmailSmsComment = (EditText) findViewById(R.id.jr_email_sms_edit_comment);
+            // XXX: LILLI MAKING SMS CHANGES
+        //mEmailSmsComment = (EditText) findViewById(R.id.jr_email_sms_edit_comment);
         mEmailSmsButtonContainer = (LinearLayout) findViewById(R.id.jr_email_sms_button_container);
+        mTaglineAndProviderIconContainer =
+                (RelativeLayout) findViewById(R.id.jr_tagline_and_provider_icon_container);
+        mNestedLayoutManiaSundaySundaySunday =
+                (RelativeLayout) findViewById(R.id.jr_nested_layout_mania_sunday_sunday_sunday);
 
         /* Set the user comment field here before the text change listener is registered so that
          * it can be displayed while the providers are being loaded if this is a first run.
@@ -273,7 +279,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         if ((socialProviders == null || socialProviders.size() == 0)
                 && !mSessionData.isGetMobileConfigDone()) {
             /* Hide the email/SMS tab so things look nice as we load the providers */
-            findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
+            // XXX: LILLI MAKING SMS CHANGES
+//            findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
             mWaitingForMobileConfig = true;
             showDialog(DIALOG_MOBILE_CONFIG_LOADING);
         } else {
@@ -409,7 +416,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         TabHost.TabSpec emailSmsSpec = tabHost.newTabSpec(EMAIL_SMS_TAB_TAG);
         Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
         emailSmsSpec.setIndicator(createTabSpecIndicator("Email/SMS", d));
-        emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
+//        emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
+        emailSmsSpec.setContent(R.id.jr_tab_view_content);
         tabHost.addTab(emailSmsSpec);
 
         tabHost.setOnTabChangedListener(this);
@@ -505,11 +513,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             mPreviewBox.setVisibility(View.GONE);
-            mEmailSmsComment.setLines(3);
+            // XXX: LILLI MAKING SMS CHANGES
+//            mEmailSmsComment.setLines(3);
             mEmailSmsButtonContainer.setOrientation(LinearLayout.HORIZONTAL);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             mPreviewBox.setVisibility(View.VISIBLE);
-            mEmailSmsComment.setLines(4);
+            // XXX: LILLI MAKING SMS CHANGES
+//            mEmailSmsComment.setLines(4);
             mEmailSmsButtonContainer.setOrientation(LinearLayout.VERTICAL);
         }
     }
@@ -677,16 +687,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 animateSinkingTaglineAndIcon(false, animate);
             }
 
-            mEmailSmsComment.setText(mUserCommentView.getText());
-        } else { /* ... else a "real" provider -- Facebook, Twitter, etc. */
-            mSelectedProvider = mSessionData.getProviderByName(tabId);
-
             configureViewElementsBasedOnProvider();
             configureLoggedInUserBasedOnProvider();
             configureSharedStatusBasedOnProvider();
 
             mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(
                     getApplicationContext()));
+
+            mCurrentlyOnEmailSmsTab = false;
         }
     }
 
@@ -830,7 +838,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
          * This code path hasn't set mSelectedProvider yet, so we use the value previously
          * set and "unselect" the email SMS tab, making it kind of a button in tab clothing. */
 
-        mUserCommentView.setText(mEmailSmsComment.getText());
+            // XXX: LILLI MAKING SMS CHANGES
+//        mUserCommentView.setText(mEmailSmsComment.getText());
 
         /* Email and SMS intents are returning 0, 0, null */
         //Log.d(TAG, "[onActivityResult]: requestCode=" + requestCode + " resultCode=" + resultCode
@@ -915,14 +924,16 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         // TODO: verify correctness of the 0 remaining characters edge case
         CharSequence characterCountText;
 
-        if (mSelectedProvider.getSocialSharingProperties()
-                .getAsBoolean("content_replaces_action")) {
-            /* Twitter, MySpace, LinkedIn */
-            if (doesActivityUrlAffectCharacterCountForSelectedProvider()
-                    && mShortenedActivityURL == null) {
-                /* Twitter, MySpace */
+        if (mMaxCharacters == -1)
+            return;
+
+        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
+          /* Twitter, MySpace, LinkedIn */
+            if (doesActivityUrlAffectCharacterCountForSelectedProvider() && mShortenedActivityURL == null) {
+              /* Twitter, MySpace */
                 characterCountText = getText(R.string.jr_calculating_remaining_characters);
             } else {
+              /* LinkedIn */
                 int preview_length = mPreviewLabelView.getText().length();
                 int chars_remaining = mMaxCharacters - preview_length;
                 if (chars_remaining < 0)
@@ -931,7 +942,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 else
                     characterCountText = Html.fromHtml("Remaining characters: " + chars_remaining);
             }
-        } else { /* Facebook, Yahoo */
+        } else {
+          /* Facebook, Yahoo */
             int comment_length = mUserCommentView.getText().length();
             int chars_remaining = mMaxCharacters - comment_length;
             if (chars_remaining < 0)
@@ -1102,18 +1114,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         else
             updatePreviewTextWhenContentDoesNotReplaceAction();
 
-        if (isPublishThunk()) {
+        if (willPublishThunkToStatus()) {
             mMaxCharacters = socialSharingProperties
                     .getAsDictionary("set_status_properties").getAsInt("max_characters");
         } else {
             mMaxCharacters = socialSharingProperties.getAsInt("max_characters");
         }
         
-        if (mMaxCharacters != -1) mCharacterCountView.setVisibility(View.VISIBLE);
-        else mCharacterCountView.setVisibility(View.GONE);
-
-        updateCharacterCount();
-
         boolean can_share_media = socialSharingProperties.getAsBoolean("can_share_media");
 
         /* Switch on or off the media content view based on the presence of media and ability to
@@ -1143,7 +1150,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private int lastProviderColorNoAlpha = JANRAIN_BLUE_100PERCENT;
 
     private void updateProviderColors(JRDictionary socialSharingProperties, boolean animate) {
-
         Object colorValues = socialSharingProperties.get("color_values");
         int colorWithAlpha = colorForProviderFromArray(colorValues, true);
         int colorNoAlpha = colorForProviderFromArray(colorValues, false);
@@ -1231,6 +1237,25 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         fadeAnimation.setDuration(ANIMATION_DURATION);
         fadeAnimation.setFillAfter(true);
         //fadeSet.addAnimation(fadeAnimation);
+
+        mCharacterCountView.startAnimation(fadeAnimation);
+
+        //AnimationSet slideSet = new AnimationSet(true);
+        float yOrigin = displayMaxCharacterCountView ?
+                (-1.0f * mCharacterCountView.getHeight()) : 0.0f;
+        float yOffset = displayMaxCharacterCountView ?
+                0.0f : (-1.0f * mCharacterCountView.getHeight());
+                //(-1.0f * mUserProfileInformationAndShareButtonContainer.getHeight());
+
+        Animation slideAnimation = new TranslateAnimation(0.0f, 0.0f, yOrigin, yOffset);
+
+        slideAnimation.setDuration(ANIMATION_DURATION);
+        slideAnimation .setFillAfter(true);
+        //slideSet.addAnimation(slideAnimation);
+
+        mNestedLayoutManiaSundaySundaySunday.startAnimation(slideAnimation);
+
+        mMaxCharacterCountViewIsDisplayed = !mMaxCharacterCountViewIsDisplayed;
     }
 
     private int colorForProviderFromArray(Object arrayOfColorStrings, boolean withAlpha) {
@@ -1268,10 +1293,83 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             finalColor *= 256;
             finalColor += colorValue_Int;
-
         }
 
         return finalColor;
+    }
+
+    private static interface ColorChangerInterface {
+           public void doColorStuff(int color);
+    }
+
+    public class MyColorChanger extends AlphaAnimation {
+        private int mNewColor;
+        private int mOriginalColor;
+        private int mColorDifference;
+
+        private int[] mAdditiveColor = new int[]{0, 0, 0, 0};
+        private int[] mSubtractiveColor = new int[]{0, 0, 0, 0};
+
+        private int steps = 0;
+        private ColorChangerInterface mColorChangerInterface;
+
+        public MyColorChanger(int originalColor, int newColor, int duration, ColorChangerInterface colorChangerInterface) {
+            super(1.0f, 1.0f);
+            setDuration(duration);
+            //mView = view;
+            mOriginalColor = originalColor;
+            mNewColor = newColor;
+
+            /* When transitioning between two colors, each 'part' of the color, (i.e., the alpha, red,
+             * green or blue), could increase or decrease as the animation steps along. That is, the original
+             * integer-representation of the color can't just increment itself to the next color; the
+             * transition colors would be all over the place. Instead, each part of the color needs to be
+             * extracted.  If any part of the new color, for example the red value, is bigger than the same
+             * part of the original color, that part should be incremented on each animation step, and if that
+             * part is less, it should be decremented. */
+            for (int i = 3; i >= 0; i--) {
+                /* Shift the colors to extract the alpha, red, green, and blue values, respectively */
+                int oc = (mOriginalColor >> (8 * i)) & 0xff;//mOriginalColor/(256^i);
+                int nc = (mNewColor >> (8 * i)) & 0xff;//mNewColor/(256^i);
+
+//                /* Shift our masks */
+//                mAdditiveColor *= 256;
+//                mSubtractiveColor *= 256;
+
+                if (oc < nc) /* If the original color part is less than the new part, add the difference... */
+                    mAdditiveColor[3-i] = nc-oc;
+                else /* ... else, if the orig. part is greater than the new part, subtract the difference */
+                    mSubtractiveColor[3-i] = oc-nc;
+            }
+
+//            mColorDifference = mNewColor - mOriginalColor;
+            mColorChangerInterface = colorChangerInterface;
+        }
+
+        private int getPercentageOfColor(int[] color, float percentage) {
+            int newColor = 0;
+            for(int i = 0; i < 4; i++) {
+                newColor *= 256;
+                newColor += color[i] * percentage;
+            }
+            return newColor;
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            super.applyTransformation(interpolatedTime, t);
+            if (interpolatedTime < 1.0f) {
+                mColorChangerInterface.doColorStuff(
+                        mOriginalColor +                                            // Take the original color and
+                        getPercentageOfColor(mAdditiveColor, interpolatedTime) -    // add the aRGB values that should be increasing between the two colors and
+                        getPercentageOfColor(mSubtractiveColor, interpolatedTime)); // subtract the aRGB values that should be decreasing between the two colors
+//                steps++;
+            } else {
+                mColorChangerInterface.doColorStuff(mNewColor);
+                // We're done
+            }
+        }
+
     }
 
     public class MyScaler extends ScaleAnimation {
@@ -1353,7 +1451,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private void shareActivity() {
         Log.d(TAG, "shareActivity mAuthenticatedUser: " + mAuthenticatedUser.toString());
 
-        if (isPublishThunk()) {
+        if (willPublishThunkToStatus()) {
             mSessionData.setStatusForUser(mAuthenticatedUser);
         } else {
             mSessionData.shareActivityForUser(mAuthenticatedUser);
@@ -1362,7 +1460,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     /* Helper functions */
 
-    private boolean isPublishThunk() {
+    private boolean willPublishThunkToStatus() {
         return mActivityObject.getUrl().equals("") &&
                 mSelectedProvider.getSocialSharingProperties()
                         .getAsBoolean("uses_set_status_if_no_url");
