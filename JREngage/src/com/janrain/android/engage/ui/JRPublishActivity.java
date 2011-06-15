@@ -383,24 +383,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         /* Make a tab for email/SMS */
         TabHost.TabSpec emailSmsSpec = tabHost.newTabSpec(EMAIL_SMS_TAB_TAG);
         Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
-
-
-        //<<<<<<< HEAD
-                setTabSpecIndicator(emailSmsSpec, d, "Email/SMS");
-
-                //emailSmsSpec.setContent(R.id.jr_tab_view_content);
-        //=======
-                emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
-
-                //<<<<<<< HEAD
-                //        setTabSpecIndicator(emailSmsSpec, d, "Email/SMS");
-                //
-                //        //emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
-                //        emailSmsSpec.setContent(R.id.jr_tab_view_content);
-                //=======
-                //        emailSmsSpec.setIndicator(createTabSpecIndicator("Email/SMS", d));
-                //        emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
-                //>>>>>>> 21b5e5715e2bebe56e561b2ce8a475a80bed9209
+        setTabSpecIndicator(emailSmsSpec, d, "Email/SMS");
+        emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
         tabHost.addTab(emailSmsSpec);
 
         tabHost.setOnTabChangedListener(this);
