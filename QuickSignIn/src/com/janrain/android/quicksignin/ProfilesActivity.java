@@ -44,6 +44,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Config;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -119,6 +120,9 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
      *      Note: Otherwise it is null.
      */
     public void onCreate(Bundle savedInstanceState) {
+        if (Config.LOGD)
+            Log.d(TAG, "[onCreate]");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profiles_listview);
 
@@ -150,9 +154,10 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
     @Override
     protected void onStart() {
-        super.onStart();
+        if (Config.LOGD)
+            Log.d(TAG, "[onStart]");
 
-        Log.d(TAG, "onStart");
+        super.onStart();
     }
 
     @Override
@@ -165,6 +170,9 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
      */
     @Override
     protected void onListItemClick(ListView l, View v, int pos, long id) {
+        if (Config.LOGD)
+            Log.d(TAG, "[onListItemClick] at position: " + ((Integer)pos).toString());
+
         LoginSnapshot snapshot = mAdapter.getItem(pos);
         mProfileData.setCurrentProfileByIdentifier(snapshot.getIdentifier());
         this.startActivity(new Intent(this, ProfileDetailActivity.class));
@@ -306,9 +314,6 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         }
     }
 
-    /**
-     * Callback for creating dialogs that are managed.
-     */
     public Dialog onCreateDialog(int dialogId) {
         switch (dialogId) {
             case DIALOG_JRENGAGE_ERROR:

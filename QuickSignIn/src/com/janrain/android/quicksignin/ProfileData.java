@@ -93,7 +93,7 @@ public class ProfileData {
         String timestamp = DateFormat.getDateTimeInstance().format(new Date());
 
         JRDictionary profile = (auth_info == null) ? null : auth_info.getAsDictionary("profile");
-        String identifier = (auth_info == null) ? null : auth_info.getAsString("identifier");
+        String identifier = (profile == null) ? null : profile.getAsString("identifier");
         String displayName = (profile == null) ? null : profile.getAsString("displayName");
 
         if (profile != null) {
