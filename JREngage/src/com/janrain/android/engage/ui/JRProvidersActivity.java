@@ -213,7 +213,7 @@ public class JRProvidersActivity extends ListActivity {
 
         mSessionData = JRSessionData.getInstance();
 
-        //for the case when this activity is relaunched after the process was killed
+        /* For the case when this activity is relaunched after the process was killed */
         if (mSessionData == null) {
             Log.e(TAG, "JRProvidersActivity bailing out after a process kill/restart");
             finish();
@@ -232,7 +232,7 @@ public class JRProvidersActivity extends ListActivity {
         //registerForContextMenu(getListView());
 
         if (mProviderList.size() == 0) {
-            // show progress and poll for results
+            /* Show progress and poll for results */
             mLayoutHelper.showProgressDialog();
             mTimer.schedule(new TimerTask() {
                 @Override
@@ -247,17 +247,20 @@ public class JRProvidersActivity extends ListActivity {
             registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
 
-        // XXX
-        // What's happening is that we need to start the landing activity from this onCreate method
-        // So that this activities FinishHandler is registered (which happens in this onCreate)
-        // otherwise (if the activity is started from the UI maestro) this activity isn't created
-        // until it's popped into view, at which point the FinishHandler is registered, but by
-        // which time this activity has already missed it's finish message.  The getStack call
-        // allows us to add the LandingActivity to the managed activity stack after we start it with
-        // startActivityForResult. startActivityForResult has a special case for requestCodes >= 0
-        // that makes this activity's window not draw.  That can only be called from within
-        // an Activity, however, so the UI maestro can't use it (because it uses a generic
-        // application Context.)
+        /* What's happening is that we need to start the LandingActivity from this onCreate method
+         * (as opposed to the LandingActivity being created from the UI maestro class) so that this
+         * activity's FinishHandler is registered (which happens in this onCreate).  Otherwise this activity
+         * isn't created until it's popped back into view (from the LandingActivity), at which point the
+         * FinishHandler is registered, but by which time this activity has already missed it's finish
+         * message. The getStack call allows us to add the LandingActivity to the managed activity stack
+         * after we start it with startActivityForResult. startActivityForResult has a special case for
+         * requestCodes >= 0 that makes this activity's window not draw.  That can only be called from within
+         * an Activity, however, so the UI maestro can't use it (because it uses a generic application
+         * Context.)
+         *
+         * If there is a returning basic provider, we open to the LandingActivity, otherwise, we stay here.
+         * If skipReturningUserLandingPage was set to "true" getReturningBasicProvider will return null
+         * (and we'll stay here). */
         if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
             mSessionData.setCurrentlyAuthenticatingProvider(
                     mSessionData.getReturningBasicProvider());

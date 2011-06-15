@@ -127,6 +127,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         setContentView(R.layout.profiles_listview);
 
         mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
+        //mEngage.setAlwaysForceReauthentication(true);
 
         mEditing = false;
 
@@ -387,6 +388,10 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
             mAdapter.notifyDataSetChanged();
         }
         else {
+            /* To see an example of how you can force the user to always reauthenticate and skip the
+             * returning user landing page, uncomment the following two lines, and comment-out the third */
+            /* mEngage.setAlwaysForceReauthentication(true); */
+            /* mEngage.showAuthenticationDialog(true); */
             mEngage.showAuthenticationDialog();
         }
     }
