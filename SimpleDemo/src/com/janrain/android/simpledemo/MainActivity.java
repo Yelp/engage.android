@@ -58,21 +58,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 
+import static com.janrain.android.simpledemo.SimpleDemoEnvironment.getAppId;
+import static com.janrain.android.simpledemo.SimpleDemoEnvironment.getTokenUrl;
+
 public class MainActivity extends Activity implements View.OnClickListener, JREngageDelegate {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int DIALOG_JRENGAGE_ERROR = 1;
 
-    private String readAsset(String fileName) {
-        try {
-            InputStream is = getAssets().open(fileName);
-            byte[] buffer = new byte[is.available()];
-            is.read(buffer);
-            return new String(buffer);
-        } catch (IOException e) {
-            return null;
-        }
-    }
+    private static String ENGAGE_APP_ID = getAppId();
+    private static String ENGAGE_TOKEN_URL = getTokenUrl();
 
     private JREngage mEngage;
     private JRActivityObject mActivity;
@@ -115,10 +110,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         //    }
         //});
 
-        String engageAppId = readAsset("app_id.txt").trim();
-        String engageTokenUrl = readAsset("token_url.txt").trim();
-
-        mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, this);
+        mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
 
         if (savedInstanceState != null && savedInstanceState.containsKey("a")) {
             mTitleText = savedInstanceState.getString("a");
