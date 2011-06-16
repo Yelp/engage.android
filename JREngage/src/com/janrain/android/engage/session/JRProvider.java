@@ -30,21 +30,31 @@
 package com.janrain.android.engage.session;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.media.MediaRecorder;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.text.AndroidCharacter;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
+import android.view.View;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.ui.ColorButton;
+import com.janrain.android.engage.utils.Android;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -81,6 +91,7 @@ public class JRProvider implements Serializable {
     private static HashMap<String, Drawable> provider_list_icon_drawables =
             new HashMap<String, Drawable>();
 
+
     // Suppressed because this class is not expected to be serialized
     @SuppressWarnings("serial")
 	private final static HashMap<String, Integer> provider_list_icon_resources =
@@ -96,7 +107,7 @@ public class JRProvider implements Serializable {
                         put("icon_blogger", R.drawable.jr_icon_blogger);
                         put("icon_facebook", R.drawable.jr_icon_facebook);
                         put("icon_flickr", R.drawable.jr_icon_flickr);
-                        put("icon_foursquare", R.drawable.jr_icon_foursquare);
+                        //put("icon_foursquare", R.drawable.jr_icon_foursquare);
                         put("icon_google", R.drawable.jr_icon_google);
                         put("icon_hyves", R.drawable.jr_icon_hyves);
                         put("icon_linkedin", R.drawable.jr_icon_linkedin);
@@ -316,17 +327,32 @@ public class JRProvider implements Serializable {
             return r;
         }
 
+        if (Android.isCupcake()) {
+            // 1.5 can't handle our programmatic XHDPI resource instantiation
+            return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
+        }
+
+
         try {
             String iconFileName = "providericon~" + drawableName + ".png";
 
             Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
             if (icon != null) {
-                //icon.setDensity(android.util.DisplayMetrics.DENSITY_XHIGH);
-
                 //Our downloaded icons are all at xhdpi, but Android 2.1 doesn't have the
                 //DENSITY_XHIGH constant defined yet.  Fortunately it does the right thing
                 //if you pass in the DPI as an int
-                icon.setDensity(320);
+
+                //icon.setDensity(320);
+                try {
+                    Method setDensity = icon.getClass().getDeclaredMethod("setDensity", int.class);
+                    setDensity.invoke(icon, 320);
+                } catch (NoSuchMethodException e) {
+                    Log.e(TAG, "Unexpected: " + e);
+                } catch (IllegalAccessException e) {
+                    Log.e(TAG, "Unexpected: " + e);
+                } catch (InvocationTargetException e) {
+                    Log.e(TAG, "Unexpected: " + e);
+                }
             }
             else {
                 c.deleteFile(iconFileName);
@@ -334,7 +360,23 @@ public class JRProvider implements Serializable {
                 return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
             }
 
-            return new BitmapDrawable(c.getResources(), icon);
+            //return new BitmapDrawable(c.getResources(), icon);
+            try {
+                Class bitmapDrawableClass = Class.forName("android.graphics.drawable.BitmapDrawable");
+                Constructor newBitmapDrawable =
+                        bitmapDrawableClass.getDeclaredConstructor(Resources.class, Bitmap.class);
+                return (BitmapDrawable) newBitmapDrawable.newInstance(c.getResources(), icon);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
         }
         catch (FileNotFoundException e) {
             downloadIcons(c);
@@ -344,7 +386,7 @@ public class JRProvider implements Serializable {
     }
 
 
-    public Drawable getProviderListIconDrawable(Context c) {
+    public Drawable getProviderIcon(Context c) {
         return getDrawable(c,
                 "icon_" + mName,
                 provider_list_icon_drawables,
@@ -392,7 +434,7 @@ public class JRProvider implements Serializable {
             public Void doInBackground(Void... s) {
                 for (String iconFileName : iconFileNames) {
                     try {
-                        if (Arrays.asList(c.fileList()).contains("providericons~" + iconFileName))
+                        if (Arrays.asList(c.fileList()).contains("providericon~" + iconFileName))
                             continue;
 
                         Log.d(TAG, "Downloading icon: " + iconFileName);
@@ -402,7 +444,10 @@ public class JRProvider implements Serializable {
                         FileOutputStream fos = c.openFileOutput("providericon~" + iconFileName,
                                 Context.MODE_PRIVATE);
 
-                        while (is.available() > 0) fos.write(is.read());
+                        byte buffer[] = new byte[1000];
+                        int code;
+                        while ((code = is.read(buffer, 0, buffer.length)) > 0) fos.write(buffer, 0, code);
+                        //while (is.available() > 0) fos.write(is.read());
 
                         fos.close();
                     } catch (MalformedURLException e) {

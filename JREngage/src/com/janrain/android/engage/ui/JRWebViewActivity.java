@@ -42,6 +42,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -54,6 +55,7 @@ import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.utils.Android;
 
 import java.net.URL;
 import java.util.List;
@@ -173,18 +175,18 @@ public class JRWebViewActivity extends Activity {
         			// never invoked from this Java code, so they will always generate compiler
         			// warnings, so we suppress those warnings safely.
                     @SuppressWarnings("unused")
-					String androidIncremental() {
+					String getAndroidIncremental() {
                         return Build.VERSION.INCREMENTAL;
                     }
 
                     @SuppressWarnings("unused")
-					String androidRelease() {
+					String getAndroidRelease() {
                         return Build.VERSION.RELEASE;
                     }
 
                     @SuppressWarnings("unused")
-					int androidSdkInt() {
-                        return Build.VERSION.SDK_INT;
+					int getAndroidSdkInt() {
+                        return Android.getAndroidSdkInt();
                     }
                 }, "jrengage_mobile");
 
@@ -220,6 +222,7 @@ public class JRWebViewActivity extends Activity {
 
         URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
         mWebView.loadUrl(startUrl.toString());
+        //mWebView.loadUrl("http://google.com");
     }
 
     @Override
@@ -254,6 +257,19 @@ public class JRWebViewActivity extends Activity {
             mWebView.setWebViewClient(null);
             mWebView.setDownloadListener(null);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (com.janrain.android.engage.utils.Android.isCupcake()
+                && keyCode == KeyEvent.KEYCODE_BACK
+                && event.getRepeatCount() == 0) {
+            // Take care of calling this method on earlier versions of
+            // the platform where it doesn't exist.
+            onBackPressed();
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
     public void onBackPressed() {
@@ -342,8 +358,11 @@ public class JRWebViewActivity extends Activity {
          * Invoked by WebKit when there is something to be downloaded that it does not
          * typically handle (e.g. result of post, mobile endpoint url results, etc).
          */
-        public void onDownloadStart(String url, String userAgent,
-                String contentDisposition, String mimetype, long contentLength) {
+        public void onDownloadStart(String url,
+                                    String userAgent,
+                                    String contentDisposition,
+                                    String mimetype,
+                                    long contentLength) {
 
             if (Config.LOGD) {
                 Log.d(TAG, "[onDownloadStart] url: " + url + " | mimetype: " + mimetype
@@ -360,19 +379,19 @@ public class JRWebViewActivity extends Activity {
     private WebViewClient mWebviewClient = new WebViewClient(){
         private final String TAG = this.getClass().getSimpleName();
 
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            //Log.d(TAG, "[shouldOverrideUrlLoading]: " + view + ", " + url);
+            view.loadUrl(url);
+            return true;
+        }
+
+
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[onPageStarted] url: " + url);
-            }
+            if (Config.LOGD) Log.d(TAG, "[onPageStarted] url: " + url);
 
-            /*
-             * Check for mobile endpoint URL.
-             */
-            final String mobileEndpointUrl = mSessionData.getBaseUrl() + "/signin/device";
-            if ((!TextUtils.isEmpty(url)) && (url.startsWith(mobileEndpointUrl))) {
-                Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
-            }
+            /* Check for mobile endpoint URL. */
+            if (isMobileEndpointUrl(url)) Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
 
             setProgressBarIndeterminateVisibility(true);
 

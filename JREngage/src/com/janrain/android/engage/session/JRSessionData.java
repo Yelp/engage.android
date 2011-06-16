@@ -146,7 +146,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 		mAppId = appId;
 		mTokenUrl = tokenUrl;
 
-        ApplicationInfo ai = JREngage.getContext().getApplicationInfo();
+        ApplicationInfo ai = com.janrain.android.engage.utils.Android.getApplicationInfo();
         String appName = JREngage.getContext().getPackageManager().getApplicationLabel(ai)
                 .toString();
         try { mUrlEncodedAppName = URLEncoder.encode(appName, "UTF-8"); }
@@ -283,6 +283,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             }
         }
         return providerList;
+
+        // Empty return for testing:
+        //return new ArrayList<JRProvider>();
     }
 
     public ArrayList<JRProvider> getSocialProviders() {
@@ -327,7 +330,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         this.mReturningSocialProvider = returningSocialProvider;
         Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, returningSocialProvider);
     }
-
 
     public String getBaseUrl() {
         return mBaseUrl;

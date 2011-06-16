@@ -46,6 +46,7 @@ import com.janrain.android.engage.*;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.*;
 
+import com.janrain.android.engage.utils.Android;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -336,7 +337,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl,
                                                       JREngageError error,
                                                       String provider) {
-        Toast.makeText(this, "Authentication failed to reach token URL", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Failed to reach token URL", Toast.LENGTH_LONG).show();
     }
 
     public void jrSocialDidNotCompletePublishing() {

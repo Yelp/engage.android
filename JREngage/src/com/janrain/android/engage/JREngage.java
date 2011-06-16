@@ -641,8 +641,8 @@ public class JREngage {
 	}
 
     private synchronized List<JREngageDelegate> getDelegatesCopy() {
-        return (mDelegates == null)
-                ? new ArrayList<JREngageDelegate>()
+        return (mDelegates == null) ?
+                new ArrayList<JREngageDelegate>()
                 : new ArrayList<JREngageDelegate>(mDelegates);
     }
 }

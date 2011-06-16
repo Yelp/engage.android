@@ -37,7 +37,6 @@ import android.content.*;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
@@ -51,7 +50,7 @@ import android.util.Config;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.MotionEvent;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.*;
@@ -66,6 +65,8 @@ import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.*;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -403,10 +404,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             TabHost.TabSpec spec = tabHost.newTabSpec(provider.getName());
             spec.setContent(R.id.jr_tab_view_content);
+            String s = provider.getFriendlyName();
 
-            LinearLayout ll = createTabSpecIndicator(provider.getFriendlyName(), providerIconSet);
+            setTabSpecIndicator(spec, providerIconSet, s);
 
-            spec.setIndicator(ll);
             tabHost.addTab(spec);
 
             mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
@@ -415,9 +416,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         /* Make a tab for email/SMS */
         TabHost.TabSpec emailSmsSpec = tabHost.newTabSpec(EMAIL_SMS_TAB_TAG);
         Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
+
         emailSmsSpec.setIndicator(createTabSpecIndicator("Email/SMS", d));
 //        emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
         emailSmsSpec.setContent(R.id.jr_tab_view_content);
+
         tabHost.addTab(emailSmsSpec);
 
         tabHost.setOnTabChangedListener(this);
@@ -434,6 +437,29 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
          * XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
          * XXX This is a workaround: */
         findViewById(R.id.jr_tab_view_content).setVisibility(View.VISIBLE);
+    }
+
+    private void setTabSpecIndicator(TabHost.TabSpec spec, Drawable iconSet, String label) {
+        boolean doBasicTabs = false;
+        try {
+            LinearLayout ll = createTabSpecIndicator(label, iconSet);
+            Method setIndicator = spec.getClass().getDeclaredMethod("setIndicator", View.class);
+            setIndicator.invoke(spec, ll);
+        } catch (NoSuchMethodException e) {
+            doBasicTabs = true;
+        } catch (IllegalAccessException e) {
+            // Not expected
+            Log.e(TAG, "Unexpected: " + e);
+            doBasicTabs = true;
+        } catch (InvocationTargetException e) {
+            // Not expected
+            Log.e(TAG, "Unexpected: " + e);
+            doBasicTabs = true;
+        }
+
+        if (doBasicTabs) {
+            spec.setIndicator(label, iconSet);
+        }
     }
 
     private LinearLayout createTabSpecIndicator(String labelText, Drawable providerIconSet) {
@@ -552,6 +578,19 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     /* UI event listeners */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (com.janrain.android.engage.utils.Android.isCupcake()
+                && keyCode == KeyEvent.KEYCODE_BACK
+                && event.getRepeatCount() == 0) {
+            // Take care of calling this method on earlier versions of
+            // the platform where it doesn't exist.
+            onBackPressed();
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed");
         mSessionData.triggerPublishingDidComplete();
@@ -691,7 +730,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             configureLoggedInUserBasedOnProvider();
             configureSharedStatusBasedOnProvider();
 
-            mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(
+            mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(
                     getApplicationContext()));
 
             mCurrentlyOnEmailSmsTab = false;
@@ -1143,7 +1182,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         updateCharacterCount();
         updateProviderColors(socialSharingProperties, (mCurrentlyOnEmailSmsTab ? false : true));
         
-        mProviderIcon.setImageDrawable(mSelectedProvider.getProviderListIconDrawable(this));
+        mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(this));
     }
 
     private int lastProviderColorWithAlpha = JANRAIN_BLUE_20PERCENT;

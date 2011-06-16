@@ -36,6 +36,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -233,7 +234,20 @@ public class JRLandingActivity extends Activity {
         JREngage.setContext(this);
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (com.janrain.android.engage.utils.Android.isCupcake()
+                && keyCode == KeyEvent.KEYCODE_BACK
+                && event.getRepeatCount() == 0) {
+            // Take care of calling this method on earlier versions of
+            // the platform where it doesn't exist.
+            onBackPressed();
+        }
 
+        return super.onKeyDown(keyCode, event);
+    }
+
+    //@Override
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed");
         mSessionData.triggerAuthenticationDidRestart();

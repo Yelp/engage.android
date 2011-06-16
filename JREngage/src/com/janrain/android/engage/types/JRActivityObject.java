@@ -508,8 +508,8 @@ public class JRActivityObject {
                     .endObject();
 
             // Make the URL
-            final String jsonEncodedActivityUrl = jss.toString();
-            String urlEncodedJson = URLEncoder.encode(jsonEncodedActivityUrl, "UTF8");
+            final String jsonEncodedUrlsMap = jss.toString();
+            String urlEncodedJson = URLEncoder.encode(jsonEncodedUrlsMap, "UTF8");
             final String getUrlsUrl =
                     sessionData.getBaseUrl() + "/openid/get_urls?"
                     + "urls=" + urlEncodedJson

@@ -20,12 +20,10 @@
 
     <TextView
         android:id="@+id/jr_row_provider_label"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_toRightOf="@id/jr_row_provider_icon"
-        android:layout_alignWithParentIfMissing="true"
         android:layout_centerVertical="true"
-        android:gravity="left|center_vertical"
         android:singleLine="true"
         android:text="@string/jr_provider_unknown"
         android:textColor="#333333"
