@@ -148,7 +148,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private RelativeLayout mPreviewBox;
     private RelativeLayout mMediaContentView;
     private TextView mCharacterCountView;
-    private TextView mPreviewLabelView;
+//    private TextView mPreviewLabelView;
+    private PreviewTextViewToggle mPreviewLabelView;
     private ImageView mProviderIcon;
     private EditText mUserCommentView;
     private ImageView mTriangleIconView;
@@ -204,7 +205,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mCharacterCountView = (TextView) findViewById(R.id.jr_character_count_view);
         mProviderIcon = (ImageView) findViewById(R.id.jr_provider_icon);
         mUserCommentView = (EditText) findViewById(R.id.jr_edit_comment);
-        mPreviewLabelView = (TextView) findViewById(R.id.jr_preview_text_view);
+        mPreviewLabelView =
+                new PreviewTextViewToggle(
+                        (TextView) findViewById(R.id.jr_preview_text_view_1),
+                        (TextView) findViewById(R.id.jr_preview_text_view_2));//(TextView) findViewById(R.id.jr_preview_text_view);
         mTriangleIconView = (ImageView) findViewById(R.id.jr_triangle_icon_view);
         mUserProfileInformationAndShareButtonContainer =
                 (LinearLayout) findViewById(R.id.jr_user_profile_info_and_share_button_container);
@@ -1582,6 +1586,87 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             }
         }
     }
+
+    public class PreviewTextViewToggle {
+        private TextView mTextView1;
+        private TextView mTextView2;
+
+        private TextView[] mTextViews;
+        int counter;
+
+        public PreviewTextViewToggle(TextView textView1, TextView textView2) {
+            mTextView1 = textView1;
+            mTextView2 = textView2;
+
+            mTextView1.setText("mTextView1");
+            mTextView2.setText("mTextView2");
+
+            //mTextView1.setVisibility(View.GONE);
+            mTextViews = new TextView[]{mTextView1, mTextView2};
+        }
+
+        private void setText(CharSequence text) {
+            boolean animate = (NUMBER_OF_INITIAL_NETWORK_CONNECTIONS == mInitialNetworkConnectionsAreDone) ? true : false;
+
+            Log.d(TAG, "[setText] mTextViews[counter%2].getText().toString(): " + mTextViews[counter%2].getText().toString());
+            Log.d(TAG, "[setText] text.toString(): " + text.toString());
+
+
+            if(mTextViews[counter%2].getText().toString().equals(text.toString()))
+                return;
+
+
+            Log.d(TAG, "[setText] counter (before): " + ((Integer)counter).toString());
+            counter += 1;
+            Log.d(TAG, "[setText] counter (after): " + ((Integer)counter).toString());
+
+            mTextViews[counter%2].setText(text);
+
+            if (!animate)
+            {
+                mTextViews[(counter-1)%2].setVisibility(View.INVISIBLE);
+                mTextViews[counter%2].setVisibility(View.VISIBLE);
+
+                return;
+            }
+
+            AlphaAnimation hide = new AlphaAnimation(1.0f, 0.0f);
+            AlphaAnimation show = new AlphaAnimation(0.0f, 1.0f);
+
+            hide.setDuration(ANIMATION_DURATION);
+            show.setDuration(ANIMATION_DURATION);
+
+            hide.setFillAfter(true);
+            show.setFillAfter(true);
+
+            mTextViews[(counter-1)%2].startAnimation(hide);
+            mTextViews[counter%2].startAnimation(show);
+
+            Log.d(TAG, "[setText] hiding view at index " + ((Integer)((counter-1)%2)).toString());
+            Log.d(TAG, "[setText] showing view at index: " + ((Integer)(counter%2)).toString());
+        }
+
+        public CharSequence getText() {
+            return mTextViews[counter%2].getText();
+        }
+
+        public int getOldHeight() {
+            return mTextViews[(counter-1)%2].getHeight();
+        }
+
+        public int getNewHeight() {
+            return mTextViews[(counter)%2].getHeight();
+        }
+
+        public TextView getHiddenTextView() {
+            return mTextViews[(counter-1)%2];
+        }
+
+        public TextView getVisibleTextView() {
+            return mTextViews[counter%2];
+        }
+    }
+
 
 //    public class MyScaler extends ScaleAnimation {
 //        private View mView;

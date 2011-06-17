@@ -271,21 +271,37 @@
                                 >
                                 <!--android:gravity="top|left"-->
 
-                                <TextView
-                                    android:id="@+id/jr_preview_text_view"
+                                <RelativeLayout
+                                    android:id="@+id/jr_preview_text_toggle_container"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:bufferType="spannable"
                                     android:layout_marginTop="2dip"
                                     android:layout_marginLeft="4dip"
                                     android:layout_marginBottom="2dip"
                                     android:layout_marginRight="4dip"
-                                    android:textSize="12dip"
                                     android:layout_weight="1"
-                                    />
-                                <!--android:maxLines="3"-->
-                                    <!--android:layout_below="@id/character_count_view"-->
-                                    <!--android:singleLine="true"-->
+                                    >
+
+                                    <TextView
+                                        android:id="@+id/jr_preview_text_view_1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:bufferType="spannable"
+                                        android:textSize="12dip"
+                                        />
+                                        <!--android:maxLines="3"-->
+                                        <!--android:layout_below="@id/character_count_view"-->
+                                        <!--android:singleLine="true"-->
+
+                                    <TextView
+                                        android:id="@+id/jr_preview_text_view_2"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:bufferType="spannable"
+                                        android:textSize="12dip"
+                                        />
+
+                                </RelativeLayout>
 
                                 <RelativeLayout
                                     android:id="@+id/jr_media_content_view"
