@@ -1284,9 +1284,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 //                    ANIMATION_DURATION, true, mMediaContentView, true));
 
         if (displayMediaContentView && !mMediaContentIsDisplayed)
-            mMediaContentView.startAnimation(mPreviewBoxScaler.getShowMediaBoxAnimationSet(1, 1, true, true));
+            mMediaContentView.startAnimation(mPreviewBoxScaler.getShowMediaBoxAnimationSet(
+                    mPreviewLabelView.getOldHeight(), mPreviewLabelView.getNewHeight(), true, true));
         else if (!displayMediaContentView && mMediaContentIsDisplayed)
-            mMediaContentView.startAnimation(mPreviewBoxScaler.getHideMediaBoxAnimationSet(1, 1, true, true));
+            mMediaContentView.startAnimation(mPreviewBoxScaler.getHideMediaBoxAnimationSet(
+                    mPreviewLabelView.getOldHeight(), mPreviewLabelView.getNewHeight(), true, true));
 
 
 //        Animation animation = new AlphaAnimation(
@@ -1514,10 +1516,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         public Animation/*Set*/ getShowMediaBoxAnimationSet(int oldPreviewTextHeight, int newPreviewTextHeight,
                                                         boolean setFillAfter, boolean vanishAfter) {
+            int previewTextHeightDifference = mPreviewLabelView.getmHeightDifference();
             AnimationSet set = new AnimationSet(true);
 
             Animation scalerAnimation = new Scaler(1.0f, 1.0f, tempScaleSize, 1.0f,
-                    mShrunkenBottomMargin, mFullBottomMargin, mMediaContentView);
+                    mShrunkenBottomMargin, mFullBottomMargin, previewTextHeightDifference, mMediaContentView);
             Animation alphaAnimation = new AlphaAnimation(0.5f, 1.0f);
 
             scalerAnimation.setDuration(ANIMATION_DURATION);
@@ -1536,10 +1539,11 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         public Animation/*Set*/ getHideMediaBoxAnimationSet(int oldPreviewTextHeight, int newPreviewTextHeight,
                                                         boolean setFillAfter, boolean vanishAfter) {
+            int previewTextHeightDifference = mPreviewLabelView.getmHeightDifference();
             AnimationSet set = new AnimationSet(true);
 
             Animation scalerAnimation = new Scaler(1.0f, 1.0f, 1.0f, tempScaleSize,
-                    mFullBottomMargin, mShrunkenBottomMargin, mMediaContentView);
+                    mFullBottomMargin, mShrunkenBottomMargin, previewTextHeightDifference, mMediaContentView);
             Animation alphaAnimation = new AlphaAnimation(1.0f, 0.5f);
 
             scalerAnimation.setDuration(ANIMATION_DURATION);
@@ -1557,15 +1561,16 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         }
 
         public class Scaler extends ScaleAnimation {
-            private int mMarginBottomFromY, mMarginBottomToY;
+            private int mMarginBottomFromY, mMarginBottomToY, mOriginalTopMargin, mTopMarginChange;
             public Scaler(float fromX, float toX, float fromY, float toY,
-                          int fromMarginY, int toMarginY, View view) {
+                          int fromBottomMarginY, int toBottomMarginY, int topMarginChange, View view) {
                 super(fromX, toX, fromY, toY);
                 mView = view;
 
-                mMarginBottomFromY = fromMarginY;
-                mMarginBottomToY = toMarginY;
-
+                mMarginBottomFromY = fromBottomMarginY;
+                mMarginBottomToY = toBottomMarginY;
+                mTopMarginChange = topMarginChange;
+                mOriginalTopMargin = mLayoutParams.topMargin;
 //                if (!vanishAfter)
 //                    mView.setVisibility(View.VISIBLE);
             }
@@ -1576,8 +1581,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 if (interpolatedTime < 1.0f) {
                     int newMarginBottom = mMarginBottomFromY
                             + (int) ((mMarginBottomToY - mMarginBottomFromY) * interpolatedTime);
-                    mLayoutParams.setMargins(mLayoutParams.leftMargin, mLayoutParams.topMargin,
-                        mLayoutParams.rightMargin, newMarginBottom);
+                    int newMarginTop = mOriginalTopMargin
+                            + (int) (mTopMarginChange * interpolatedTime);
+                    mLayoutParams.setMargins(mLayoutParams.leftMargin, newMarginTop,//mLayoutParams.topMargin,
+                            mLayoutParams.rightMargin, newMarginBottom);
                     mView.getParent().requestLayout();
                 } else {//if (mVanishAfter) {
                     Log.d(TAG, "[applyTransformation] final margin: " + mLayoutParams.bottomMargin);
@@ -1593,6 +1600,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         private TextView[] mTextViews;
         int counter;
+
+        int mHeightDifference;
 
         public PreviewTextViewToggle(TextView textView1, TextView textView2) {
             mTextView1 = textView1;
@@ -1612,15 +1621,18 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             Log.d(TAG, "[setText] text.toString(): " + text.toString());
 
 
+            mHeightDifference = 0;
+
             if(mTextViews[counter%2].getText().toString().equals(text.toString()))
                 return;
-
 
             Log.d(TAG, "[setText] counter (before): " + ((Integer)counter).toString());
             counter += 1;
             Log.d(TAG, "[setText] counter (after): " + ((Integer)counter).toString());
 
             mTextViews[counter%2].setText(text);
+
+            mHeightDifference = mTextViews[counter%2].getHeight() - mTextViews[(counter-1)%2].getHeight();
 
             if (!animate)
             {
@@ -1650,6 +1662,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             return mTextViews[counter%2].getText();
         }
 
+        public int getmHeightDifference() {
+            return mHeightDifference;
+        }
+        
         public int getOldHeight() {
             return mTextViews[(counter-1)%2].getHeight();
         }
