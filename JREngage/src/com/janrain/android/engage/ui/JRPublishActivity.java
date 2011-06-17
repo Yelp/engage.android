@@ -49,10 +49,7 @@ import android.text.TextWatcher;
 import android.util.Config;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.view.animation.*;
 import android.widget.*;
 import com.janrain.android.engage.JREngage;
@@ -92,7 +89,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private static final int JANRAIN_BLUE_100PERCENT = 0xFF074764;
     private static final String EMAIL_SMS_TAB_TAG = "email_sms";
 
-    private static final int ANIMATION_DURATION = 500;
+    private static final int ANIMATION_DURATION = 2000;
     /**
      * @internal
      *
@@ -179,6 +176,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     /* Helper class for the JRUserInterfaceMaestro */
     private FinishReceiver mFinishReceiver;
+
+    private PreviewBoxScaler mPreviewBoxScaler;
 
     /* Activity life-cycle methods */
     public void onCreate(Bundle savedInstanceState) {
@@ -1144,6 +1143,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private void configureViewElementsBasedOnProvider() {
         JRDictionary socialSharingProperties = mSelectedProvider.getSocialSharingProperties();
+        boolean animate = (mInitialNetworkConnectionsAreDone == NUMBER_OF_INITIAL_NETWORK_CONNECTIONS);
 
         mNestedLayoutManiaSundaySundaySunday.invalidate();
         mNestedLayoutManiaSundaySundaySunday.requestLayout();
@@ -1165,7 +1165,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         /* Switch on or off the media content view based on the presence of media and ability to
          * display it */
         boolean showMediaContentView = mActivityObject.getMedia().size() > 0 && can_share_media;
-        animateDisplayingMediaContentView(showMediaContentView);
+        animateDisplayingMediaContentView(showMediaContentView, animate);
         //mMediaContentView.setVisibility(showMediaContentView ? View.VISIBLE : View.GONE);
 
         /* Switch on or off the action label view based on the provider accepting an action */
@@ -1237,16 +1237,93 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private boolean mMediaContentIsDisplayed = true;
-    private void animateDisplayingMediaContentView(boolean displayMediaContentView) {
-        if (true) return;
+    private void animateDisplayingMediaContentView(final boolean displayMediaContentView, boolean animate) {
+        //if (true) return;
+
+        /* If it's already in the state we want, do nothing... */
+        if ((displayMediaContentView && mMediaContentIsDisplayed) ||
+            (!displayMediaContentView && !mMediaContentIsDisplayed))
+            return;
+
+        /* If we're not animating yet, or if the media content view hasn't been layed out yet (i.e., it's
+         * height - which is required for the animations - still equals 0), just change the visibility... */
+        if (!animate || mMediaContentView.getHeight() == 0) {// || displayMediaContentView) {
+            if (!displayMediaContentView)
+                mMediaContentView.setVisibility(View.GONE);
+            else
+                mMediaContentView.setVisibility(View.VISIBLE);
+
+            mMediaContentIsDisplayed = displayMediaContentView;
+
+            return;
+        }
+
+        /* If it was GONE and shouldn't be (e.g., we weren't animating before, but now we are), we just need
+         * to set it as VISIBLE this time (i.e., not animate it), and then return. */
+        if (mMediaContentView.getVisibility() == View.GONE && displayMediaContentView) {
+            mMediaContentView.setVisibility(View.VISIBLE);
+        }
+
+        /* Initialize this if it hasn't been already.  We can't initialize it too early, or
+         * mMediaContentView's height will still be equal to 0.  Since we check for that above, we won't
+         * reach this until we know it's had its initial layout. */
+        if (mPreviewBoxScaler == null)
+            mPreviewBoxScaler = new PreviewBoxScaler(mMediaContentView);
+
+
+
+//        if (displayMediaContentView && !mMediaContentIsDisplayed)
+//            mMediaContentView.startAnimation(new MyScaler(0.5f, 1.0f, 0.5f, 1.0f,
+//                    ANIMATION_DURATION, true, mMediaContentView, false));
+//        else if (!displayMediaContentView && mMediaContentIsDisplayed)
+//            mMediaContentView.startAnimation(new MyScaler(1.0f, 0.5f, 1.0f, 0.5f,
+//                    ANIMATION_DURATION, true, mMediaContentView, true));
 
         if (displayMediaContentView && !mMediaContentIsDisplayed)
-            mMediaContentView.startAnimation(new MyScaler(0.5f, 1.0f, 0.5f, 1.0f,
-                    ANIMATION_DURATION, true, mMediaContentView, false));
+            mMediaContentView.startAnimation(mPreviewBoxScaler.getShowMediaBoxAnimationSet(1, 1, true, true));
         else if (!displayMediaContentView && mMediaContentIsDisplayed)
-            mMediaContentView.startAnimation(new MyScaler(1.0f, 0.5f, 1.0f, 0.5f,
-                    ANIMATION_DURATION, true, mMediaContentView, true));
-        
+            mMediaContentView.startAnimation(mPreviewBoxScaler.getHideMediaBoxAnimationSet(1, 1, true, true));
+
+
+//        Animation animation = new AlphaAnimation(
+//                displayMediaContentView ? 0.0f : 1.0f,
+//                displayMediaContentView ? 1.0f : 0.0f);
+//
+//        animation.setDuration(ANIMATION_DURATION);
+//        //animation.setFillAfter(true);
+//        animation.setAnimationListener(new Animation.AnimationListener() {
+//            public void onAnimationEnd(Animation anim){
+//                float oldHeight = mPreviewBorder.getHeight();
+//                float newHeight = (displayMediaContentView) ?
+//                        mPreviewLabelView.getHeight() + mMediaContentView.getHeight() :
+//                        mPreviewLabelView.getHeight();
+//
+//                float foo = (displayMediaContentView) ?
+//                        1.0f :
+//                        (mPreviewBorder.getHeight() - mMediaContentView.getHeight()) / mPreviewBorder.getHeight();
+//
+//                ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, 1.0f, 1.0f, foo);//newHeight/oldHeight);
+//                scaleAnimation.setDuration(ANIMATION_DURATION);
+//                scaleAnimation.setFillAfter(true);
+//                mPreviewBorder.startAnimation(scaleAnimation);
+//
+////                if (!displayMediaContentView)
+////                    mMediaContentView.setVisibility(View.GONE);
+////                else
+////                    mMediaContentView.setVisibility(View.VISIBLE);
+//            }
+//
+//            public void onAnimationStart(Animation anim) { }
+//            public void onAnimationRepeat(Animation anim) { }
+//        });
+//        mMediaContentView.startAnimation(animation);
+//
+////        if (displayMediaContentView && !mMediaContentIsDisplayed)
+////            animateViewDisappearing(mMediaContentView, false, true);
+////        else if (!displayMediaContentView && mMediaContentIsDisplayed)
+////            animateViewDisappearing(mMediaContentView, true, true);
+
+
         mMediaContentIsDisplayed = displayMediaContentView;
     }
 
@@ -1411,47 +1488,143 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     }
 
-    public class MyScaler extends ScaleAnimation {
+    public class PreviewBoxScaler {
         private View mView;
         private LinearLayout.LayoutParams mLayoutParams;
 
-        private int mMarginBottomFromY, mMarginBottomToY;
+        private int mShrunkenBottomMargin, mFullBottomMargin;
         private boolean mVanishAfter = false;
 
-        public MyScaler(float fromX, float toX, float fromY, float toY, int duration, boolean setFillAfter,
-                        View view, boolean vanishAfter) {
-            super(fromX, toX, fromY, toY);
-            setDuration(duration);
-            setFillAfter(setFillAfter);
+        float tempScaleSize = 0.5f;
+
+        public PreviewBoxScaler(View view) {
             mView = view;
-            mVanishAfter = vanishAfter;
             mLayoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
             int height = mView.getHeight();
-            mMarginBottomFromY = (int) (0- ((height * (1.0f - fromY)) + mLayoutParams.bottomMargin));
-            mMarginBottomToY = (int) (0 - ((height * (1.0f - toY)) + mLayoutParams.bottomMargin));
-//            mMarginBottomFromY = (int) (height * fromY) + mLayoutParams.bottomMargin - height;
-//            mMarginBottomToY = (int) (0 - ((height * toY) + mLayoutParams.bottomMargin)) - height;
+            mShrunkenBottomMargin = (int) (0- ((height * (1.0f - tempScaleSize)) + mLayoutParams.bottomMargin));
+            mFullBottomMargin = mLayoutParams.bottomMargin;
 
-            if (!vanishAfter)
-                mView.setVisibility(View.VISIBLE);
+            Log.d(TAG, "[PreviewBoxScaler] mShrunkenBottomMargin: " + mShrunkenBottomMargin);
+            Log.d(TAG, "[PreviewBoxScaler] mFullBottomMargin: " + mFullBottomMargin);
         }
 
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-            super.applyTransformation(interpolatedTime, t);
-            if (interpolatedTime < 1.0f) {
-                int newMarginBottom = mMarginBottomFromY
-                        + (int) ((mMarginBottomToY - mMarginBottomFromY) * interpolatedTime);
-                mLayoutParams.setMargins(mLayoutParams.leftMargin, mLayoutParams.topMargin,
-                    mLayoutParams.rightMargin, newMarginBottom);
-                mView.getParent().requestLayout();
-            } else if (mVanishAfter) {
-                Log.d(TAG, "[applyTransformation] final margin: " + mLayoutParams.bottomMargin);
-                //mView.setVisibility(View.GONE);
+        public Animation/*Set*/ getShowMediaBoxAnimationSet(int oldPreviewTextHeight, int newPreviewTextHeight,
+                                                        boolean setFillAfter, boolean vanishAfter) {
+            AnimationSet set = new AnimationSet(true);
+
+            Animation scalerAnimation = new Scaler(1.0f, 1.0f, tempScaleSize, 1.0f,
+                    mShrunkenBottomMargin, mFullBottomMargin, mMediaContentView);
+            Animation alphaAnimation = new AlphaAnimation(0.5f, 1.0f);
+
+            scalerAnimation.setDuration(ANIMATION_DURATION);
+            set.addAnimation(scalerAnimation);
+
+            alphaAnimation.setDuration(ANIMATION_DURATION);
+            set.addAnimation(alphaAnimation);
+
+            set.setFillAfter(setFillAfter);
+//            alphaAnimation.setFillAfter(setFillAfter);
+//            scalerAnimation.setFillAfter(setFillAfter);
+//            scalerAnimation.setDuration(ANIMATION_DURATION);
+
+            return set;//scalerAnimation;//set;
+        }
+
+        public Animation/*Set*/ getHideMediaBoxAnimationSet(int oldPreviewTextHeight, int newPreviewTextHeight,
+                                                        boolean setFillAfter, boolean vanishAfter) {
+            AnimationSet set = new AnimationSet(true);
+
+            Animation scalerAnimation = new Scaler(1.0f, 1.0f, 1.0f, tempScaleSize,
+                    mFullBottomMargin, mShrunkenBottomMargin, mMediaContentView);
+            Animation alphaAnimation = new AlphaAnimation(1.0f, 0.5f);
+
+            scalerAnimation.setDuration(ANIMATION_DURATION);
+            set.addAnimation(scalerAnimation);
+
+            alphaAnimation.setDuration(ANIMATION_DURATION);
+            set.addAnimation(alphaAnimation);
+
+            set.setFillAfter(setFillAfter);
+//            alphaAnimation.setFillAfter(setFillAfter);
+//            scalerAnimation.setFillAfter(setFillAfter);
+//            scalerAnimation.setDuration(ANIMATION_DURATION);
+
+            return set;//scalerAnimation;//set;
+        }
+
+        public class Scaler extends ScaleAnimation {
+            private int mMarginBottomFromY, mMarginBottomToY;
+            public Scaler(float fromX, float toX, float fromY, float toY,
+                          int fromMarginY, int toMarginY, View view) {
+                super(fromX, toX, fromY, toY);
+                mView = view;
+
+                mMarginBottomFromY = fromMarginY;
+                mMarginBottomToY = toMarginY;
+
+//                if (!vanishAfter)
+//                    mView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                super.applyTransformation(interpolatedTime, t);
+                if (interpolatedTime < 1.0f) {
+                    int newMarginBottom = mMarginBottomFromY
+                            + (int) ((mMarginBottomToY - mMarginBottomFromY) * interpolatedTime);
+                    mLayoutParams.setMargins(mLayoutParams.leftMargin, mLayoutParams.topMargin,
+                        mLayoutParams.rightMargin, newMarginBottom);
+                    mView.getParent().requestLayout();
+                } else {//if (mVanishAfter) {
+                    Log.d(TAG, "[applyTransformation] final margin: " + mLayoutParams.bottomMargin);
+                    //mView.setVisibility(View.GONE);
+                }
             }
         }
-
     }
+
+//    public class MyScaler extends ScaleAnimation {
+//        private View mView;
+//        private LinearLayout.LayoutParams mLayoutParams;
+//
+//        private int mMarginBottomFromY, mMarginBottomToY;
+//        private boolean mVanishAfter = false;
+//
+//        public MyScaler(float fromX, float toX, float fromY, float toY, int duration, boolean setFillAfter,
+//                        View view, boolean vanishAfter) {
+//            super(fromX, toX, fromY, toY);
+//            setDuration(duration);
+//            setFillAfter(setFillAfter);
+//            mView = view;
+//            mVanishAfter = vanishAfter;
+//            mLayoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+//            int height = mView.getHeight();
+//            mMarginBottomFromY = (int) (0- ((height * (1.0f - fromY)) + mLayoutParams.bottomMargin));
+//            mMarginBottomToY = (int) (0 - ((height * (1.0f - toY)) + mLayoutParams.bottomMargin));
+////            mMarginBottomFromY = (int) (height * fromY) + mLayoutParams.bottomMargin - height;
+////            mMarginBottomToY = (int) (0 - ((height * toY) + mLayoutParams.bottomMargin)) - height;
+//            Log.d(TAG, "[applyTransformation] mMarginBottomFromY: " + mMarginBottomFromY);
+//            Log.d(TAG, "[applyTransformation] mMarginBottomToY: " + mMarginBottomToY);
+//
+//            if (!vanishAfter)
+//                mView.setVisibility(View.VISIBLE);
+//        }
+//
+//        @Override
+//        protected void applyTransformation(float interpolatedTime, Transformation t) {
+//            super.applyTransformation(interpolatedTime, t);
+//            if (interpolatedTime < 1.0f) {
+//                int newMarginBottom = mMarginBottomFromY
+//                        + (int) ((mMarginBottomToY - mMarginBottomFromY) * interpolatedTime);
+//                mLayoutParams.setMargins(mLayoutParams.leftMargin, mLayoutParams.topMargin,
+//                    mLayoutParams.rightMargin, newMarginBottom);
+//                mView.getParent().requestLayout();
+//            } else if (mVanishAfter) {
+//                Log.d(TAG, "[applyTransformation] final margin: " + mLayoutParams.bottomMargin);
+//                //mView.setVisibility(View.GONE);
+//            }
+//        }
+//    }
 
     private void configureLoggedInUserBasedOnProvider() {
         mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
