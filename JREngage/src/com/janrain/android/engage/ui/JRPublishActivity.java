@@ -976,7 +976,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 characterCountText = getText(R.string.jr_calculating_remaining_characters);
             } else {
               /* LinkedIn */
-                int preview_length = mPreviewLabelView.getText().length();
+                int preview_length = mPreviewLabelView.getFullText().length();
                 int chars_remaining = mMaxCharacters - preview_length;
                 if (chars_remaining < 0)
                     characterCountText = Html.fromHtml("Remaining characters: <font color=red>"
@@ -1244,11 +1244,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private void animateDisplayingMediaContentView(final boolean displayMediaContentView, boolean animate) {
         //if (true) return;
 
-        /* If it's already in the state we want, do nothing... */
-        if ((displayMediaContentView && mMediaContentIsDisplayed) ||
-            (!displayMediaContentView && !mMediaContentIsDisplayed))
-            return;
-
         /* If we're not animating yet, or if the media content view hasn't been layed out yet (i.e., it's
          * height - which is required for the animations - still equals 0), just change the visibility... */
         if (!animate || mMediaContentView.getHeight() == 0) {// || displayMediaContentView) {
@@ -1274,6 +1269,16 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         if (mPreviewBoxScaler == null)
             mPreviewBoxScaler = new PreviewBoxScaler(mMediaContentView);
 
+        /* If it's already in the state we want, do nothing... */
+        if ((displayMediaContentView && mMediaContentIsDisplayed) ||
+            (!displayMediaContentView && !mMediaContentIsDisplayed)) {
+            if(mPreviewLabelView.getmHeightDifference() == 0) {
+                return;
+            } else {
+                mMediaContentView.startAnimation(mPreviewBoxScaler.justMoveAnimation(1,1,true,mMediaContentIsDisplayed));
+                return;
+            }
+        }
 
 
 //        if (displayMediaContentView && !mMediaContentIsDisplayed)
@@ -1503,6 +1508,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         float tempScaleSize = 0.5f;
 
+        private float mLastDeltaY;
+
         public PreviewBoxScaler(View view) {
             mView = view;
             mLayoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
@@ -1517,11 +1524,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         public Animation/*Set*/ getShowMediaBoxAnimationSet(int oldPreviewTextHeight, int newPreviewTextHeight,
                                                         boolean setFillAfter, boolean vanishAfter) {
             int previewTextHeightDifference = mPreviewLabelView.getmHeightDifference();
+
             AnimationSet set = new AnimationSet(true);
 
             Animation scalerAnimation = new Scaler(1.0f, 1.0f, tempScaleSize, 1.0f,
-                    mShrunkenBottomMargin, mFullBottomMargin, previewTextHeightDifference, mMediaContentView);
+                    (int)(mShrunkenBottomMargin + mLastDeltaY), (int)(mFullBottomMargin + mLastDeltaY + previewTextHeightDifference), previewTextHeightDifference, mMediaContentView);
             Animation alphaAnimation = new AlphaAnimation(0.5f, 1.0f);
+            Animation translateAnimation = new TranslateAnimation(
+                    0.0f, 0.0f, mLastDeltaY, mLastDeltaY + previewTextHeightDifference);
 
             scalerAnimation.setDuration(ANIMATION_DURATION);
             set.addAnimation(scalerAnimation);
@@ -1529,10 +1539,15 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             alphaAnimation.setDuration(ANIMATION_DURATION);
             set.addAnimation(alphaAnimation);
 
+            translateAnimation.setDuration(ANIMATION_DURATION);
+            set.addAnimation(translateAnimation);
+
             set.setFillAfter(setFillAfter);
 //            alphaAnimation.setFillAfter(setFillAfter);
 //            scalerAnimation.setFillAfter(setFillAfter);
 //            scalerAnimation.setDuration(ANIMATION_DURATION);
+
+            mLastDeltaY = mLastDeltaY + previewTextHeightDifference;
 
             return set;//scalerAnimation;//set;
         }
@@ -1543,8 +1558,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             AnimationSet set = new AnimationSet(true);
 
             Animation scalerAnimation = new Scaler(1.0f, 1.0f, 1.0f, tempScaleSize,
-                    mFullBottomMargin, mShrunkenBottomMargin, previewTextHeightDifference, mMediaContentView);
+                    (int)(mFullBottomMargin + mLastDeltaY), (int)(mShrunkenBottomMargin + mLastDeltaY + previewTextHeightDifference), previewTextHeightDifference, mMediaContentView);
             Animation alphaAnimation = new AlphaAnimation(1.0f, 0.5f);
+            Animation translateAnimation = new TranslateAnimation(
+                                0.0f, 0.0f, mLastDeltaY, mLastDeltaY + previewTextHeightDifference);
 
             scalerAnimation.setDuration(ANIMATION_DURATION);
             set.addAnimation(scalerAnimation);
@@ -1552,13 +1569,54 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             alphaAnimation.setDuration(ANIMATION_DURATION);
             set.addAnimation(alphaAnimation);
 
+            translateAnimation.setDuration(ANIMATION_DURATION);
+            set.addAnimation(translateAnimation);
+
             set.setFillAfter(setFillAfter);
 //            alphaAnimation.setFillAfter(setFillAfter);
 //            scalerAnimation.setFillAfter(setFillAfter);
 //            scalerAnimation.setDuration(ANIMATION_DURATION);
 
+            mLastDeltaY = mLastDeltaY + previewTextHeightDifference;
+            
             return set;//scalerAnimation;//set;
         }
+
+        public Animation/*Set*/ justMoveAnimation(int oldPreviewTextHeight, int newPreviewTextHeight,
+                                                        boolean setFillAfter, boolean isItShowing) {
+            int previewTextHeightDifference = mPreviewLabelView.getmHeightDifference();
+            AnimationSet set = new AnimationSet(true);
+            float scaleSize = isItShowing ? 1.0f : tempScaleSize;
+            int staticMargin = isItShowing ? mFullBottomMargin : mShrunkenBottomMargin;
+
+            Animation scalerAnimation = new Scaler(1.0f, 1.0f, scaleSize, scaleSize,
+                    (int)(staticMargin + mLastDeltaY), (int)(staticMargin + mLastDeltaY + previewTextHeightDifference),
+                    previewTextHeightDifference, mMediaContentView);
+            Animation alphaAnimation = new AlphaAnimation(scaleSize, scaleSize);
+            Animation translateAnimation = new TranslateAnimation(
+                                0.0f, 0.0f, mLastDeltaY, mLastDeltaY + previewTextHeightDifference);
+
+            scalerAnimation.setDuration(ANIMATION_DURATION);
+            set.addAnimation(scalerAnimation);
+
+            alphaAnimation.setDuration(ANIMATION_DURATION);
+            set.addAnimation(alphaAnimation);
+
+            translateAnimation.setDuration(ANIMATION_DURATION);
+//            translateAnimation.setFillAfter(setFillAfter);
+            set.addAnimation(translateAnimation);
+
+            set.setFillAfter(setFillAfter);
+//            alphaAnimation.setFillAfter(setFillAfter);
+//            scalerAnimation.setFillAfter(setFillAfter);
+//            scalerAnimation.setDuration(ANIMATION_DURATION);
+
+            mLastDeltaY = mLastDeltaY + previewTextHeightDifference;
+
+            return set;//scalerAnimation;//set;
+        }
+
+
 
         public class Scaler extends ScaleAnimation {
             private int mMarginBottomFromY, mMarginBottomToY, mOriginalTopMargin, mTopMarginChange;
@@ -1570,7 +1628,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 mMarginBottomFromY = fromBottomMarginY;
                 mMarginBottomToY = toBottomMarginY;
                 mTopMarginChange = topMarginChange;
-                mOriginalTopMargin = mLayoutParams.topMargin;
+                mOriginalTopMargin = mMediaContentView.getTop();//mLayoutParams.topMargin;
 //                if (!vanishAfter)
 //                    mView.setVisibility(View.VISIBLE);
             }
@@ -1581,9 +1639,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 if (interpolatedTime < 1.0f) {
                     int newMarginBottom = mMarginBottomFromY
                             + (int) ((mMarginBottomToY - mMarginBottomFromY) * interpolatedTime);
-                    int newMarginTop = mOriginalTopMargin
-                            + (int) (mTopMarginChange * interpolatedTime);
-                    mLayoutParams.setMargins(mLayoutParams.leftMargin, newMarginTop,//mLayoutParams.topMargin,
+//                    int newMarginTop = mOriginalTopMargin
+//                            + (int) (mTopMarginChange * interpolatedTime);
+                    mLayoutParams.setMargins(mLayoutParams.leftMargin, mLayoutParams.topMargin,
                             mLayoutParams.rightMargin, newMarginBottom);
                     mView.getParent().requestLayout();
                 } else {//if (mVanishAfter) {
@@ -1602,6 +1660,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         int counter;
 
         int mHeightDifference;
+        String fullText = "";
 
         public PreviewTextViewToggle(TextView textView1, TextView textView2) {
             mTextView1 = textView1;
@@ -1623,8 +1682,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
             mHeightDifference = 0;
 
-            if(mTextViews[counter%2].getText().toString().equals(text.toString()))
+            if (fullText.equals(text.toString()))//if(mTextViews[counter%2].getText().toString().equals(text.toString()))
                 return;
+
+            fullText = text.toString();
 
             Log.d(TAG, "[setText] counter (before): " + ((Integer)counter).toString());
             counter += 1;
@@ -1660,6 +1721,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         public CharSequence getText() {
             return mTextViews[counter%2].getText();
+        }
+
+        public String getFullText() {
+            return fullText;
         }
 
         public int getmHeightDifference() {

@@ -288,6 +288,7 @@
                                         android:layout_height="wrap_content"
                                         android:bufferType="spannable"
                                         android:textSize="12dip"
+                                        android:maxLines="3"
                                         />
                                         <!--android:maxLines="3"-->
                                         <!--android:layout_below="@id/character_count_view"-->
@@ -299,6 +300,7 @@
                                         android:layout_height="wrap_content"
                                         android:bufferType="spannable"
                                         android:textSize="12dip"
+                                        android:maxLines="3"
                                         />
 
                                 </RelativeLayout>
