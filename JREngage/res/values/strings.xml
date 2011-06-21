@@ -2,7 +2,7 @@
 <resources>
     <!-- This version number is used to "validate" serialized objects before loading them from
          disk. -->
-    <string name="jr_engage_version">0422f7e0901e1d33673a9e1ac5a4df4f755c721e</string>
+    <string name="jr_engage_version">0422f7e0901e1adsaqfd33673a9e1ac5a4df4f755c721e</string>
 
     <!-- - Server URL strings for each of the three typical environments. -->
     <string name="jr_server_url_lilli">http://lilli.janrain.com:8080</string>
@@ -17,7 +17,7 @@
     <!-- - About menu/dialog strings. -->
     <string name="jr_about_menu_item">About Janrain Engage</string>
     <string name="jr_about_title">Janrain Engage for Android Library</string>
-    <string name="jr_about_version">Version 1.1.0</string>
+    <string name="jr_about_version">Version 1.2.0</string>
     <string name="jr_about_url">www.janrain.com</string>
     <string name="jr_about_button_ok">OK</string>
 
