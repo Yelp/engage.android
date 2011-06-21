@@ -29,8 +29,12 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.types;
 
+/*
+ * XXX some of these getAs<T> methods return a copy of the value (getAsDictionary,
+ * getAsProviderList) and some return a reference to the value.
+ */
+
 import android.text.TextUtils;
-import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.utils.Archiver;
@@ -38,7 +42,6 @@ import com.janrain.android.engage.utils.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +51,7 @@ import java.util.Map;
  * @brief A dictionary that maps \e String keys to values of different types
  *
  * @nosubgrouping
- * 
+ *
  * @internal
  * iPhone dictionary work-alike class
  * @endinternal
@@ -58,12 +61,9 @@ public final class JRDictionary extends HashMap<String,Object> {
 	public static final String DEFAULT_VALUE_STRING = "";
 	public static final int DEFAULT_VALUE_INT = -1;
 	public static final boolean DEFAULT_VALUE_BOOLEAN = false;
-	
+
 	/* Required for unique object identification. */
 	private static final long serialVersionUID = 3798456277521362434L;
-
-    /* Type identifier used by GSON library for [de]serialization. */
-    private static Type sJRDictionaryType = null;
 
     /* Tag used for logging. */
     private static final String TAG = JRDictionary.class.getSimpleName();
@@ -95,11 +95,14 @@ public final class JRDictionary extends HashMap<String,Object> {
      * Copy constructor (for base type).
      *
      * @param map
-     *      The \e HashMap instance to clone
+     *      The \e Map instance to clone
      **/
-    public JRDictionary(Map<String,Object> map) {
+    public JRDictionary(Map map) {
         if (map != null) {
-            putAll(map);
+            for (Object k : map.keySet()) {
+                assert k instanceof String;
+                put((String) k, map.get(k));
+            }
         }
     }
 
@@ -195,14 +198,15 @@ public final class JRDictionary extends HashMap<String,Object> {
      *      A JRDictionary object representation of the JSON string
      **/
     public static JRDictionary fromJSON(String json) {
-        if (Config.LOGD) {
-            Log.d(TAG, "[fromJSON] json: " + json);
-        }
+        //if (Config.LOGD) {
+        //    Log.d(TAG, "[fromJSON] json: " + json);
+        //}
 
         JRDictionary retval = null;
 
         try {
             ObjectMapper mapper = new ObjectMapper();
+
             retval = mapper.readValue(json, JRDictionary.class);
         } catch (IOException e) {
             Log.w(TAG, "[fromJSON] problem deserializing JSON string: ", e);
@@ -219,52 +223,52 @@ public final class JRDictionary extends HashMap<String,Object> {
 /*@{*/
 	/**
 	 * Convenience method used to retrieve a named value as a \e String object.
-	 *  
+	 *
 	 * @param key
 	 * 		The key of the value to be retrieved
-	 * 
+	 *
 	 * @return
 	 * 		The \e String object if found, empty string otherwise
 	 **/
 	public String getAsString(String key) {
 		return getAsString(key, DEFAULT_VALUE_STRING);
 	}
-	
+
 	/**
 	 * Convenience method used to retrieve a named value as a \e String object.
-	 *  
+	 *
 	 * @param key
 	 * 		The key of the value to be retrieved
-	 * 
+	 *
 	 * @param defaultValue
 	 * 		The value to be returned if the key is not found
-	 * 
+	 *
 	 * @return
 	 * 		The \e String value if found, value of \e defaultValue otherwise
 	 **/
 	public String getAsString(String key, String defaultValue) {
 		return (containsKey(key)) ? (String)get(key) : defaultValue;
 	}
-	
+
 	/**
 	 * Convenience method used to retrieve a named value as an \e int.
-	 *  
+	 *
 	 * @param key
 	 * 		The key of the value to be retrieved
-	 * 
+	 *
 	 * @return
 	 * 		The \e int value if found, \c -1 otherwise
 	 **/
 	public int getAsInt(String key) {
 		return getAsInt(key, DEFAULT_VALUE_INT);
 	}
-	
+
 	/**
 	 * Convenience method used to retrieve a named value as an \e int.
-	 *  
+	 *
 	 * @param key
 	 * 		The key of the value to be retrieved
-	 * 
+	 *
 	 * @param defaultValue
 	 * 		The value to be returned if the key is not found
 	 *
@@ -290,26 +294,26 @@ public final class JRDictionary extends HashMap<String,Object> {
 		}
 		return retval;
 	}
-	
+
 	/**
 	 * Convenience method used to retrieve a named value as a \e boolean.
-	 *  
+	 *
 	 * @param key
 	 * 		The key of the value to be retrieved
-	 * 
+	 *
 	 * @return
 	 * 		The \e boolean value if found, \c false otherwise
 	 **/
 	public boolean getAsBoolean(String key) {
 		return getAsBoolean(key, DEFAULT_VALUE_BOOLEAN);
 	}
-	
+
 	/**
 	 * Convenience method used to retrieve a named value as a \e boolean.
-	 *  
+	 *
 	 * @param key
 	 * 		The key of the value to be retrieved
-	 * 
+	 *
 	 * @param defaultValue
 	 * 		The value to be returned if the key is not found
 	 *
@@ -321,7 +325,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 		if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
 			Object value = get(key);
 			if (value instanceof Boolean) {
-				retval = ((Boolean)value).booleanValue();
+				retval = (Boolean) value;
 			} else if (value instanceof String) {
 				String strValue = (String)value;
                 retval = StringUtils.stringToBoolean(strValue, false);
@@ -332,7 +336,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 
 	/**
 	 * Convenience method used to retrieve a named value as a JRDictionary.
-	 * 
+	 *
 	 * @param key
 	 * 		The key of the value to be retrieved
 	 *
@@ -342,17 +346,17 @@ public final class JRDictionary extends HashMap<String,Object> {
 	public JRDictionary getAsDictionary(String key) {
 		return getAsDictionary(key, false);
 	}
-	
+
 	/**
 	 * Convenience method used to retrieve a named value as a JRDictionary.
-	 * 
+	 *
 	 * @param key
 	 * 		The key of the value to be retrieved
-	 * 
+	 *
 	 * @param shouldCreateIfNotFound
-	 * 		Flag indicating whether or not a new JRDictionary object should be created if the 
+	 * 		Flag indicating whether or not a new JRDictionary object should be created if the
 	 * 		specified key does not exist
-	 * 
+	 *
 	 * @return
 	 * 		The JRDictionary value if key is found, empty object or \e null otherwise (based on value
 	 *      of the \e shouldCreateIfNotFound flag)
@@ -363,11 +367,11 @@ public final class JRDictionary extends HashMap<String,Object> {
 			Object value = get(key);
 			if (value instanceof JRDictionary) {
 				retval = (JRDictionary)value;
-			} else if (value instanceof HashMap) {
-                retval = new JRDictionary((HashMap<String,Object>)value);
+			} else if (value instanceof Map) {
+                retval = new JRDictionary((Map) value);
             }
 		}
-		
+
 		return ((retval == null) && shouldCreateIfNotFound)
 			? new JRDictionary()
 			: retval;
@@ -400,11 +404,16 @@ public final class JRDictionary extends HashMap<String,Object> {
      * 		The \e ArrayList<String> value if key is found, empty array or \e null otherwise (based on value
 	 *      of the \e shouldCreateIfNotFound flag)
      **/
+
+    // We runtime type check the return value so we can safely ignore this unchecked
+    // assignment error.
+    @SuppressWarnings("unchecked")
     public ArrayList<String> getAsListOfStrings(String key, boolean shouldCreateIfNotFound) {
         ArrayList<String> retval = null;
         if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
             Object value = get(key);
             if (value instanceof ArrayList) {
+                for (Object v : (ArrayList) value) assert v instanceof String;
                 retval = (ArrayList<String>)value;
             }
         }
@@ -466,14 +475,20 @@ public final class JRDictionary extends HashMap<String,Object> {
      * 		The JRProviderList value if key is found, empty JRProviderList or \e null otherwise (based on value
 	 *      of the \e shouldCreateIfNotFound flag)
      **/
-    public JRProviderList getAsProviderList(String key, boolean shouldCreateIfNotFound) {
+
+
+    // We runtime type check the return value so we can safely ignore this unchecked
+    // assignment error.
+    @SuppressWarnings({ "unchecked" })
+	public JRProviderList getAsProviderList(String key, boolean shouldCreateIfNotFound) {
         JRProviderList retval = null;
         if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
             Object value = get(key);
             if (value instanceof JRProviderList) {
                 retval = (JRProviderList)value;
             } else if (value instanceof ArrayList) {
-                retval = new JRProviderList((ArrayList<JRProvider>)value);
+                for (Object v : (ArrayList) value) assert v instanceof JRProvider;
+            	retval = new JRProviderList((ArrayList<JRProvider>)value);
             }
         }
 

@@ -64,7 +64,6 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
         mRefreshBlog.setOnClickListener(this);
         mRefreshBlog.setVisibility(View.GONE);
 
-
         mFeedData = FeedData.getInstance(this);
 
         mStories = new ArrayList<Story>();
@@ -82,7 +81,8 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
     protected void onStart() {
         super.onStart();
 
-        Log.d(TAG, "onStart");
+        if (Config.LOGD)
+            Log.d(TAG, "onStart");
     }
 
     @Override
@@ -109,6 +109,9 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
     }
 
     public void AsyncFeedReadSucceeded() {
+        if (Config.LOGD)
+            Log.d(TAG, "[AsyncFeedReadSucceeded]");
+
         mRefreshBlog.setText("Refresh");
 
         getUpdatedStoriesList();
@@ -116,6 +119,9 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
     }
 
     public void AsyncFeedReadFailed() {
+        if (Config.LOGD)
+            Log.d(TAG, "[AsyncFeedReadFailed]");
+
         mRefreshBlog.setText("Refresh");
 
         getUpdatedStoriesList();
@@ -142,17 +148,16 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "[onOptionsItemSelected] here");
+        if (Config.LOGD)
+            Log.d(TAG, "[onOptionsItemSelected] here");
+
         switch (item.getItemId()) {
             case R.id.delete_all_stories:
-                Log.d(TAG, "[onOptionsItemSelected] delete all stories option selected");
+                if (Config.LOGD)
+                    Log.d(TAG, "[onOptionsItemSelected] delete all stories option selected");
+
                 mFeedData.deleteAllStories();
                 getUpdatedStoriesList();
-
-//                mAdapter = new StoryAdapter(this, R.layout.feed_summary_listview_row, mStories);
-//                setListAdapter(mAdapter);
-//                mAdapter.notifyDataSetInvalidated();
-
                 mAdapter.notifyDataSetChanged();
                 return true;
             default:
@@ -207,17 +212,19 @@ public class FeedSummaryActivity extends ListActivity implements View.OnClickLis
                 title.setGravity(Gravity.CENTER_HORIZONTAL);
             }
             else {
+                if (Config.LOGD)
+                    Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " + story.getTitle());
+
                 v.setTag("STORY_ROW");
-                Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " + story.getTitle());
 
                 title.setGravity(Gravity.LEFT);
 
-//                icon.setVisibility(View.VISIBLE);
-//                text.setVisibility(View.VISIBLE);
-//                date.setVisibility(View.VISIBLE);
+                if (story.getImageUrls().isEmpty())
+                    icon.setVisibility(View.GONE);
+                else
+                    icon.setImageBitmap(story.getImage());
 
                 title.setText(story.getTitle());
-                icon.setImageBitmap(story.getImage());
                 text.setText(story.getPlainText());
                 date.setText(story.getDate());
             }

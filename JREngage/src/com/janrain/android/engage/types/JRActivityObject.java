@@ -29,7 +29,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.types;
 
-import android.text.Html;
 import android.util.Log;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
@@ -121,7 +120,7 @@ public class JRActivityObject {
      * @par Getter/Setter:
      *      #getUserGeneratedContent(), #setUserGeneratedContent()
      **/
-    private String mUserGeneratedContent;
+    private String mUserGeneratedContent = "";
 
     /**
      * The title of the resource being mentioned in the activity update.
@@ -441,7 +440,7 @@ public class JRActivityObject {
      * @param properties
      *      An object with attributes describing properties of the update. An attribute value can be
      *      a string or an object with two attributes, \e text and \e href.
-     **/    
+     **/
     public void setProperties(Map<String, Object> properties) {
         mProperties = properties;
     }
@@ -485,6 +484,7 @@ public class JRActivityObject {
     public void setSms(JRSmsObject sms) {
         mSms = sms;
     }
+
 /*@}*/
 
     /**
@@ -541,8 +541,8 @@ public class JRActivityObject {
                     .endObject();
 
             // Make the URL
-            final String jsonEncodedActivityUrl = jss.toString();
-            String urlEncodedJson = URLEncoder.encode(jsonEncodedActivityUrl, "UTF8");
+            final String jsonEncodedUrlsMap = jss.toString();
+            String urlEncodedJson = URLEncoder.encode(jsonEncodedUrlsMap, "UTF8");
             final String getUrlsUrl =
                     sessionData.getBaseUrl() + "/openid/get_urls?"
                     + "urls=" + urlEncodedJson

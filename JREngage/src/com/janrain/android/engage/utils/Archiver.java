@@ -122,7 +122,7 @@ public final class Archiver {
 
     /**
      * Loads (unarchives) the specified string object from the local (protected) file system.
-     * 
+     *
      * @param name
      * 		The name of the string to be loaded from disk.  This parameter cannot be null.
      *
@@ -189,7 +189,7 @@ public final class Archiver {
      *
      * @param defaultValue
      *      The default boolean value to be returned if the lookup fails.
-     * 
+     *
      * @return
      * 		The boolean if found and loaded, null otherwise.
      *

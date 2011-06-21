@@ -158,7 +158,7 @@ public class JRSmsObject {
      * each URL found in the body of the sms.
      *
      * @param urls
-     *      The sms object's list of URLs to be shortened, not more than five URLs
+     *      The SMS object's list of URLs to be shortened, not more than five URLs
      **/
     public void setUrls(List<String> urls) {
         if (urls == null) urls = new ArrayList<String>();

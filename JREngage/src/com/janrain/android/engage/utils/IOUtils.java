@@ -53,7 +53,7 @@ public final class IOUtils {
     // ------------------------------------------------------------------------
 
 	private static final String TAG = IOUtils.class.getSimpleName();
-	
+
     // ------------------------------------------------------------------------
     // STATIC METHODS
     // ------------------------------------------------------------------------
@@ -61,10 +61,10 @@ public final class IOUtils {
 	/**
 	 * Converts an Object to a byte array.  Will not throw an exception if an error occurs, rather
 	 * it will return null.
-	 * 
+	 *
 	 * @param obj
 	 * 		The object to be converted to byte array.
-	 * 
+	 *
 	 * @return
 	 * 		The object as a byte array, null if the specified object was null.
 	 */
@@ -76,17 +76,17 @@ public final class IOUtils {
 		}
         throw new RuntimeException("sanity failure");
 	}
-	
+
 	/**
 	 * Converts an Object to a byte array.
-	 * 
+	 *
 	 * @param obj
 	 * 		The object to be converted to byte array.
-	 * 
+	 *
 	 * @param shouldThrowOnError
 	 *		Flag indicating whether or not the user wants to handle exceptions that are thrown
-	 *		during this operation. 
-	 * 
+	 *		during this operation.
+	 *
 	 * @return
 	 * 		The object as a byte array, null if the specified object was null.
 	 *
@@ -113,14 +113,14 @@ public final class IOUtils {
         //this is a good byte[] representation of null that won't cause the file writer to crash
 		return new byte[0];
 	}
-	
+
 	/**
 	 * Converts a byte array to an Object.  Will not throw an exception if an error occurs, rather
 	 * it will return null.
-	 * 
+	 *
 	 * @param bytes
 	 * 		The byte array to be converted to Object form.
-	 * 
+	 *
 	 * @return
 	 * 		The Object if successful, null if the specified object was null or the conversion
 	 * 		failed.
@@ -138,35 +138,35 @@ public final class IOUtils {
 	/**
 	 * Converts a byte array to an Object.  Will not throw an exception if an error occurs, rather
 	 * it will return null.
-	 * 
+	 *
 	 * @param bytes
 	 * 		The byte array to be converted to Object form.
-	 * 
+	 *
 	 * @param shouldThrowOnError
 	 *		Flag indicating whether or not the user wants to handle exceptions that are thrown
-	 *		during this operation. 
-	 * 
+	 *		during this operation.
+	 *
 	 * @return
 	 * 		The Object if successful, null if the specified object was null.
-	 * 
+	 *
 	 * @throws StreamCorruptedException
 	 * 		If the user passed <code>true</code> for 'shouldThrowOnError' and a
 	 * 		StreamCorruptedException has occurred.
-	 * 
+	 *
 	 * @throws OptionalDataException
-	 * 		If the user passed <code>true</code> for 'shouldThrowOnError' and an 
+	 * 		If the user passed <code>true</code> for 'shouldThrowOnError' and an
 	 * 		OptionalDataException has occurred.
-	 * 
+	 *
 	 * @throws IOException
 	 * 		If the user passed <code>true</code> for 'shouldThrowOnError' and an IOException has
 	 * 		occurred.
-	 * 
+	 *
 	 * @throws ClassNotFoundException
 	 * 		If the user passed <code>true</code> for 'shouldThrowOnError' and a
 	 * 		ClassNotFoundException has occurred.
 	 */
-	public static Object bytesToObject(byte[] bytes, boolean shouldThrowOnError) throws 
-			StreamCorruptedException, OptionalDataException, 
+	public static Object bytesToObject(byte[] bytes, boolean shouldThrowOnError) throws
+			StreamCorruptedException, OptionalDataException,
 			IOException, ClassNotFoundException {
 		Object retval = null;
 		if (bytes != null) {
@@ -195,13 +195,13 @@ public final class IOUtils {
 		}
 		return retval;
 	}
-	
+
 	/**
 	 * Reads the entire contents of the specified stream to a byte array.
-	 * 
+	 *
 	 * @param in
 	 * 		The input stream to read the contents of.
-	 * 
+	 *
 	 * @return
 	 * 		A byte array representing the full contents of the stream, null if stream is null or
 	 * 		operation failed.
@@ -215,25 +215,25 @@ public final class IOUtils {
 		}
 		return retval;
 	}
-	
+
 	/**
 	 * Reads the entire contents of the specified stream to a byte array.
-	 * 
+	 *
 	 * @param in
 	 * 		The input stream to read the contents of.
-	 * 
+	 *
 	 * @param shouldThrowOnError
 	 *		Flag indicating whether or not the user wants to handle exceptions that are thrown
-	 *		during this operation. 
-	 * 
+	 *		during this operation.
+	 *
 	 * @return
 	 * 		A byte array representing the full contents of the stream, null if stream is null.
-	 * 
+	 *
 	 * @throws IOException
 	 * 		If the user passed <code>true</code> for 'shouldThrowOnError' and an IOException has
 	 * 		occurred.
 	 */
-	public static byte[] readFromStream(InputStream in, boolean shouldThrowOnError) 
+	public static byte[] readFromStream(InputStream in, boolean shouldThrowOnError)
 			throws IOException {
         ///todo XXX audit this code.
 		byte[] retval = null;

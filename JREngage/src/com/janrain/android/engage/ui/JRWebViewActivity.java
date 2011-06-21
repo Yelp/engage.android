@@ -37,27 +37,28 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.webkit.*;
-import android.widget.Toast;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.utils.StringUtils;
+import com.janrain.android.engage.utils.Android;
 
 import java.net.URL;
+import java.util.List;
 
 /**
  * @internal
@@ -72,6 +73,8 @@ public class JRWebViewActivity extends Activity {
 
     private static final String TAG = JRWebViewActivity.class.getSimpleName();
     private static final String RPX_RESULT_TAG = "rpx_result";
+    private JRProvider mProvider;
+    private WebSettings mWebViewSettings;
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -118,7 +121,6 @@ public class JRWebViewActivity extends Activity {
     private WebView mWebView;
     private boolean mIsAlertShowing = false;
     private boolean mIsFinishPending = false;
-    private boolean mIsMobileEndpointUrlLoading = false;
     private FinishReceiver mFinishReceiver;
 
     // ------------------------------------------------------------------------
@@ -149,38 +151,63 @@ public class JRWebViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
 
-        // Request progress bar
+        // Request progress indicator
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.provider_webview);
+        //requestWindowFeature(Window.FEATURE_PROGRESS);
+        setContentView(R.layout.jr_provider_webview);
 
         CookieSyncManager.createInstance(this);
-        
+
         mSessionData = JRSessionData.getInstance();
         mLayoutHelper = new SharedLayoutHelper(this);
 
-//        for the case when this activity is relaunched after the process was killed
+        // For the case when this activity is relaunched after the process was killed
         if (mSessionData == null) {
             finish();
             return;
         }
 
-        mWebView = (WebView)findViewById(R.id.webview);
-        WebSettings webSettings = mWebView.getSettings();
+        mWebView = (WebView)findViewById(R.id.jr_webview);
+        mWebViewSettings = mWebView.getSettings();
+        // Shim some information about the OS version into the WebView for use by hax ala Yahoo!
+        mWebView.addJavascriptInterface(new Object() {
+        			// These functions may be invoked via the javascript binding, but they are
+        			// never invoked from this Java code, so they will always generate compiler
+        			// warnings, so we suppress those warnings safely.
+                    @SuppressWarnings("unused")
+					String getAndroidIncremental() {
+                        return Build.VERSION.INCREMENTAL;
+                    }
 
-        //mWebView.clearView();
-        //mWebView.setInitialScale(100);
-        //webSettings.setUseWideViewPort(true);
-        //webSettings.setUseWideViewPort(false);
-        mWebView.setInitialScale(100);
+                    @SuppressWarnings("unused")
+					String getAndroidRelease() {
+                        return Build.VERSION.RELEASE;
+                    }
 
-        webSettings.setBuiltInZoomControls(true);
-        webSettings.setLoadsImagesAutomatically(true);
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(false);
-        webSettings.setSupportZoom(true);
+                    @SuppressWarnings("unused")
+					int getAndroidSdkInt() {
+                        return Android.getAndroidSdkInt();
+                    }
+                }, "jrengage_mobile");
 
-        JRProvider provider = mSessionData.getCurrentlyAuthenticatingProvider();
-        mLayoutHelper.setHeaderText(provider.getFriendlyName());
+        // Dormant progress bar code.
+        //final Activity activity = this;
+        //mWebView.setWebChromeClient(new WebChromeClient() {
+        //   public void onProgressChanged(WebView view, int progress) {
+        //     // Activities and WebViews measure progress with different scales.
+        //     // The progress meter will automatically disappear when we reach 100%
+        //     activity.setProgress(progress * 100);
+        //   }
+        //});
+
+        mWebViewSettings.setBuiltInZoomControls(true);
+        mWebViewSettings.setLoadsImagesAutomatically(true);
+        mWebViewSettings.setJavaScriptEnabled(true);
+        mWebViewSettings.setJavaScriptCanOpenWindowsAutomatically(false);
+        mWebViewSettings.setSupportZoom(true);
+
+        mProvider = mSessionData.getCurrentlyAuthenticatingProvider();
+        mLayoutHelper.setHeaderText(mProvider.getFriendlyName());
 
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
@@ -188,10 +215,14 @@ public class JRWebViewActivity extends Activity {
         }
 
         mWebView.setWebViewClient(mWebviewClient);
-        mWebView.setDownloadListener(mWebviewDownloadListener);
+        mWebView.setDownloadListener(mWebViewDownloadListener);
+
+        String customUa = mProvider.getWebViewOptions().getAsString("user_agent");
+        if (customUa != null) mWebViewSettings.setUserAgentString(customUa);
 
         URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
         mWebView.loadUrl(startUrl.toString());
+        //mWebView.loadUrl("http://google.com");
     }
 
     @Override
@@ -228,6 +259,19 @@ public class JRWebViewActivity extends Activity {
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (com.janrain.android.engage.utils.Android.isCupcake()
+                && keyCode == KeyEvent.KEYCODE_BACK
+                && event.getRepeatCount() == 0) {
+            // Take care of calling this method on earlier versions of
+            // the platform where it doesn't exist.
+            onBackPressed();
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed");
         mWebView.stopLoading();
@@ -255,7 +299,7 @@ public class JRWebViewActivity extends Activity {
             mWebView.reload();
             return true;
         }
-        
+
         return mLayoutHelper.handleAboutMenu(item) || super.onOptionsItemSelected(item);
     }
 
@@ -298,8 +342,6 @@ public class JRWebViewActivity extends Activity {
     }
 
     private void loadMobileEndpointUrl(String url) {
-        mIsMobileEndpointUrlLoading = true;
-
         mLayoutHelper.showProgressDialog();
 
         String urlToLoad = url + "&auth_info=true";
@@ -309,16 +351,18 @@ public class JRWebViewActivity extends Activity {
 
         JRConnectionManager.createConnection(
                 urlToLoad, mMobileEndPointConnectionDelegate, false, RPX_RESULT_TAG);
-        // TODO:  is windows live hack necessary here, as it is on iPhone?
     }
 
-    DownloadListener mWebviewDownloadListener = new DownloadListener() {
+    DownloadListener mWebViewDownloadListener = new DownloadListener() {
         /**
          * Invoked by WebKit when there is something to be downloaded that it does not
          * typically handle (e.g. result of post, mobile endpoint url results, etc).
          */
-        public void onDownloadStart(String url, String userAgent,
-                String contentDisposition, String mimetype, long contentLength) {
+        public void onDownloadStart(String url,
+                                    String userAgent,
+                                    String contentDisposition,
+                                    String mimetype,
+                                    long contentLength) {
 
             if (Config.LOGD) {
                 Log.d(TAG, "[onDownloadStart] url: " + url + " | mimetype: " + mimetype
@@ -335,21 +379,19 @@ public class JRWebViewActivity extends Activity {
     private WebViewClient mWebviewClient = new WebViewClient(){
         private final String TAG = this.getClass().getSimpleName();
 
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            //Log.d(TAG, "[shouldOverrideUrlLoading]: " + view + ", " + url);
+            view.loadUrl(url);
+            return true;
+        }
+
+
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[onPageStarted] url: " + url);
-            }
+            if (Config.LOGD) Log.d(TAG, "[onPageStarted] url: " + url);
 
-//            mLayoutHelper.showProgressDialog();
-
-            /*
-             * Check for mobile endpoint URL.
-             */
-            final String mobileEndpointUrl = mSessionData.getBaseUrl() + "/signin/device";
-            if ((!TextUtils.isEmpty(url)) && (url.startsWith(mobileEndpointUrl))) {
-                Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
-            }
+            /* Check for mobile endpoint URL. */
+            if (isMobileEndpointUrl(url)) Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
 
             setProgressBarIndeterminateVisibility(true);
 
@@ -362,12 +404,15 @@ public class JRWebViewActivity extends Activity {
                 Log.d(TAG, "[onPageFinished] url: " + url);
             }
 
-//
-//            if (!mIsMobileEndpointUrlLoading) {
-//                mLayoutHelper.dismissProgressDialog();
-//            }
-
             setProgressBarIndeterminateVisibility(false);
+
+            List<String> jsInjects =
+                    mProvider.getWebViewOptions().getAsListOfStrings("js_injections", true);
+            for (String i : jsInjects) mWebView.loadUrl("javascript:" + i);
+
+            boolean showZoomControl =
+                    mProvider.getWebViewOptions().getAsBoolean("show_zoom_control");
+            if (showZoomControl) mWebView.invokeZoomPicker();
 
             super.onPageFinished(view, url);
         }
@@ -380,7 +425,7 @@ public class JRWebViewActivity extends Activity {
 
             setProgressBarIndeterminateVisibility(false);
 
-//            mIsFinishPending = true;
+            //mIsFinishPending = true;
             showAlertDialog("Log In Failed", "An error occurred while attempting to sign in.");
 
             JREngageError err = new JREngageError(
@@ -391,9 +436,11 @@ public class JRWebViewActivity extends Activity {
         }
     };
 
-    private JRConnectionManagerDelegate mMobileEndPointConnectionDelegate = new JRConnectionManagerDelegate() {
+    private JRConnectionManagerDelegate mMobileEndPointConnectionDelegate =
+            new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
         public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
-            Log.d(TAG, "[connectionDidFinishLoading] userdata: " + userdata + " | payload: " + payload);
+            Log.d(TAG, "[connectionDidFinishLoading] userdata: "
+                    + userdata + " | payload: " + payload);
 
             mLayoutHelper.dismissProgressDialog();
 
@@ -402,30 +449,38 @@ public class JRWebViewActivity extends Activity {
                 JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
                 final String result = resultDictionary.getAsString("stat");
                 if ("ok".equals(result)) {
-                    // back button?
+                    // Back should be disabled at this point because the progress modal dialog is
+                    // being displayed.
                     mSessionData.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
                 } else {
-                    //todo for OpenID errors we're just firing a dialog and then calling
-                    //finish when it's dismissed in order to get back to the landing page
-                    //instead of calling triggerAuthenticationDidRestart because that would
-                    //return us to the provider selection activity, when the user probably just
-                    //wants to correct a minor OpenID typo.
                     final String error = resultDictionary.getAsString("error");
                     String alertTitle, alertMessage, logMessage;
+
+                    // for OpenID errors we're just firing a dialog and then calling
+                    // finish when it's dismissed in order to get back to the landing page
+                    // instead of calling triggerAuthenticationDidRestart because that would
+                    // return us to the provider selection activity, when the user probably just
+                    // wants to correct a minor OpenID typo.
+                    // TODO there are inconsistencies in the managed activity stack in the UI
+                    // maestro caused by this, but they're benign.  Verify this harmlessness.
                     if ("Discovery failed for the OpenID you entered".equals(error) ||
                             "Your OpenID must be a URL".equals(error)) {
                         alertTitle = "Invalid Input";
-                        alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
-                                ? String.format("The %s you entered was not valid. Please try again.",
-                                    mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
-                                : "There was a problem authenticating with this provider. Please try again.";
+                        if (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput()) {
+                            String shortText = mSessionData.getCurrentlyAuthenticatingProvider()
+                                    .getShortText();
+                            alertMessage = "The " + shortText +
+                                    " you entered was not valid. Please try again.";
+                        } else {
+                            alertMessage = "There was a problem authenticating with this provider. Please try again.";
+                        }
+
                         logMessage = "Discovery failed for the OpenID you entered: ";
 
                         Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
 
                         mIsFinishPending = true;
                         showAlertDialog(alertTitle, alertMessage);
-//                            mSessionData.triggerAuthenticationDidRestart();
                     } else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
                         alertTitle = "Invalid Input";
                         alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
@@ -438,21 +493,12 @@ public class JRWebViewActivity extends Activity {
 
                         mIsFinishPending = true;
                         showAlertDialog(alertTitle, alertMessage);
-//                            mSessionData.triggerAuthenticationDidRestart();
                     } else if ("Please enter your OpenID".equals(error)) {
-                        //todo what case is causing this?
-                        //entering a ~blank OpenID URL
-                        //todo verify
-//                            JREngageError err = new JREngageError(
-//                                    "Authentication failed: " + payload,
-//                                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-//                                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
+                        // Caused by entering a ~blank OpenID URL
 
                         mIsFinishPending = true;
                         showAlertDialog("OpenID Error",
                                 "The URL you entered does not appear to be an OpenID");
-
-//                            mSessionData.triggerAuthenticationDidRestart();
                     } else {
                         Log.e(TAG, "unrecognized error");
                         JREngageError err = new JREngageError(
@@ -471,13 +517,6 @@ public class JRWebViewActivity extends Activity {
             } else if (userdata.equals("request")) {
                 mWebView.loadDataWithBaseURL(requestUrl, payload, null, "utf-8", null);
             }
-        }
-
-        public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object userdata) {
-            Log.d(TAG, "[connectionDidFinishLoading-2] userdata: " + userdata + " | payload: "
-                    + StringUtils.decodeUtf8(payload, null));
-            // Not used
-            throw new RuntimeException("unexpected JRConnectionmanager callback invoked");
         }
 
         public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {

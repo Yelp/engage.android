@@ -75,10 +75,13 @@ public class MainActivity extends Activity implements View.OnClickListener, Feed
             Log.d(TAG, "[onClick] button clicked, " +
                     (mFeedHasLoaded ? "view feed summary" : "reloading blog"));
 
-        if (mFeedHasLoaded)
+        if (mFeedHasLoaded) {
             this.startActivity(new Intent(this, FeedSummaryActivity.class));
-        else
+        }
+        else {
+            mViewFeedSummary.setText(R.string.loading_janrain_blog);
             FeedData.getInstance(this).asyncLoadJanrainBlog(this);
+        }
     }
 
     public void AsyncFeedReadSucceeded() {

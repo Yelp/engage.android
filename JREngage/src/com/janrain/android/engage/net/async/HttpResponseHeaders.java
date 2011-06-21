@@ -35,8 +35,6 @@ package com.janrain.android.engage.net.async;
 
 import android.util.Config;
 import android.util.Log;
-import com.janrain.android.engage.types.JRDictionary;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 /**
@@ -73,9 +71,9 @@ public class HttpResponseHeaders {
         if (Config.LOGD) {
             Log.d(TAG, "[fromConnection] BEGIN");
         }
-        
+
         HttpResponseHeaders headers = new HttpResponseHeaders();
-        
+
         headers.setResponseCode(connection.getResponseCode());
         headers.setContentEncoding(connection.getContentEncoding());
         headers.setContentLength(connection.getContentLength());
@@ -85,7 +83,7 @@ public class HttpResponseHeaders {
         headers.setLastModifiedUtc(connection.getHeaderField(HEADER_LAST_MODIFIED));
         headers.setETag(connection.getHeaderField(HEADER_ETAG));
         headers.setConnection(connection);
-        
+
         return headers;
     }
 
@@ -119,7 +117,7 @@ public class HttpResponseHeaders {
     public HttpResponseHeaders() {
         mResponseCode = RESPONSE_CODE_INVALID;
     }
-    
+
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
     // ------------------------------------------------------------------------

@@ -36,9 +36,11 @@ package com.janrain.android.engage;
  * Enumeration used to encapsulate environment-specific data.
  */
 public enum JREnvironment {
-    PRODUCTION(R.string.server_url_production),
-    STAGING(R.string.server_url_staging),
-    LOCAL(R.string.server_url_local);
+    PRODUCTION(R.string.jr_server_url_production),
+    STAGING(R.string.jr_server_url_staging),
+    LILLI(R.string.jr_server_url_lilli),
+    NATHAN(R.string.jr_server_url_nathan);
+
 
     private int mServerUrlResourceId;
 

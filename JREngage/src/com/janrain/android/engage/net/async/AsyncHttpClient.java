@@ -33,7 +33,6 @@ import android.os.Handler;
 import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.utils.IOUtils;
-import com.janrain.android.engage.utils.StringUtils;
 import org.apache.http.NameValuePair;
 
 import java.io.DataOutputStream;
@@ -41,7 +40,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @internal
@@ -74,7 +72,7 @@ public final class AsyncHttpClient {
         private byte[] mPostData;
 		private Handler mHandler;
 		private HttpCallbackWrapper mWrapper;
-		
+
         public HttpSender(String url, List<NameValuePair> requestHeaders,
                           Handler handler, HttpCallbackWrapper wrapper) {
             mUrl = url;
@@ -112,8 +110,6 @@ public final class AsyncHttpClient {
 
                 addRequestHeaders(connection);
 
-                //todo fail gracefully when there's no net connection
-
                 if (mPostData == null) {
                     // HTTP GET OPERATION
                     if (Config.LOGD) { Log.d(TAG, "[run] HTTP GET"); }
@@ -130,7 +126,7 @@ public final class AsyncHttpClient {
                 //debugging to test connection failures.
                 //boolean random = (new Random()).nextBoolean();
 
-                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {//  && random) {
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {// && random) {
                     HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
                     byte[] data = IOUtils.readFromStream(connection.getInputStream(), true);
 
@@ -138,7 +134,7 @@ public final class AsyncHttpClient {
                     if (data == null) {
                         Log.d(TAG, "[run] data is null");
                     } else {
-                        Log.d(TAG, "[run] data: " + StringUtils.decodeUtf8(data, ""));
+                        Log.d(TAG, "[run] data: " + new String(data));
                     }
 
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
@@ -150,18 +146,20 @@ public final class AsyncHttpClient {
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, null));
                     mHandler.post(mWrapper);
                 } else if (connection.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+                    // Response from the Engage trail creation and maybe URL shortening calls
                     Log.d(TAG, "[run] HTTP_CREATED");
                     HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
 
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, null));
                     mHandler.post(mWrapper);
                 } else {
-                    //todo maybe this shouldn't be globbed together, but instead be structured
-                    //to allow the error response handler to make meaninful use of the web
-                    //servers response (here read into String r)
                     byte[] b = IOUtils.readFromStream(connection.getErrorStream());
                     String r = null;
                     if (b != null) r = new String(b);
+
+                    // Maybe this shouldn't be globbed together, but instead be structured
+                    // to allow the error response handler to make meaningful use of the web
+                    // servers response (here contained in String r)
                     String message = "[run] Unexpected HTTP response:  [code: "
                             + connection.getResponseCode() + " | message: "
                             + connection.getResponseMessage() + " error: "
@@ -224,25 +222,25 @@ public final class AsyncHttpClient {
             }
         }
 	}
-	
+
 	/*
 	 * Sends full response (or exception) back to the listener.
 	 */
 	private static class HttpCallbackWrapper implements Runnable {
 
 		private static final String TAG = HttpCallbackWrapper.class.getSimpleName();
-		
+
 		private AsyncHttpResponseListener mListener;
 		private AsyncHttpResponseHolder mResponse;
-		
+
 		public HttpCallbackWrapper(AsyncHttpResponseListener listener) {
 			mListener = listener;
 		}
-		
+
 		public void run() {
 			mListener.onResponseReceived(mResponse);
 		}
-		
+
 		public void setResponse(AsyncHttpResponseHolder holder) {
 			mResponse = holder;
 			Log.d(TAG, "[setResponse] response set.");
@@ -260,7 +258,7 @@ public final class AsyncHttpClient {
     private static final String USER_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
     private static final String ACCEPT_ENCODING = "identity";
 
-	
+
     // ------------------------------------------------------------------------
     // STATIC METHODS
     // ------------------------------------------------------------------------
@@ -268,7 +266,7 @@ public final class AsyncHttpClient {
 	/**
 	 * Executes the specified HTTP GET request asynchronously.  The results will be returned to
 	 * the specified listener.
-	 * 
+	 *
 	 * @param url
 	 * 		The URL to be executed asynchronously.
      * @param requestHeaders

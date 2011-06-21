@@ -39,9 +39,9 @@ public class JREngageError extends Exception {
     // ------------------------------------------------------------------------
 
     public static final class ErrorType {
-        public static final String NO_NETWORK_CONNECTION = "noNetwork";
-        public static final String MINOR = "minor";
-        public static final String MAJOR = "major";
+        //public static final String NO_NETWORK_CONNECTION = "noNetwork";
+        //public static final String MINOR = "minor";
+        //public static final String MAJOR = "major";
         public static final String CONFIGURATION_FAILED = "configurationFailed";
         public static final String CONFIGURATION_INFORMATION_MISSING = "missingInformation";
         public static final String AUTHENTICATION_FAILED = "authenticationFailed";

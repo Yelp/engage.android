@@ -56,21 +56,21 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 		private boolean mShouldReturnFullResponse;
 		private Object mTag;
 		private JRConnectionManagerDelegate mDelegate;
-		
-		public ConnectionData(JRConnectionManagerDelegate delegate, 
+
+		public ConnectionData(JRConnectionManagerDelegate delegate,
 				boolean shouldReturnFullResponse, Object userdata) {
 			mShouldReturnFullResponse = shouldReturnFullResponse;
 			mDelegate = delegate;
 			mTag = userdata;
 		}
 	}
-	
+
     // ------------------------------------------------------------------------
     // STATIC FIELDS
     // ------------------------------------------------------------------------
 
 	private static JRConnectionManager sInstance;
-	
+
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
     // ------------------------------------------------------------------------
@@ -201,33 +201,6 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
     }
 
     /**
-     * Stop all connections for the specified delegate.
-     *
-     * TODO: see below
-     *
-     * @param delegate
-     *      The delegate to stop all connections for.
-     *
-     * @return
-     *      Currently always returns true...
-     */
-	public static boolean stopConnectionsForDelegate(JRConnectionManagerDelegate delegate) {
-		// get singleton instance (lazy init)
-		JRConnectionManager instance = getInstance();
-
-		for (String requestUrl : instance.mConnectionBuffers.keySet()) {
-			if (instance.mConnectionBuffers.get(requestUrl).mDelegate == delegate) {
-				/* TODO:  
-				 * need to figure out how to stop connection - not as straightforward w/
-				 * the Android/Apache HTTP classes.  For now, just remove from the hash map.
-				 */
-				instance.mConnectionBuffers.remove(requestUrl);
-			}
-		}
-		return true;
-	}
-
-    /**
      * Returns the number of current (actively managed) connections.
      *
      * @return
@@ -243,7 +216,7 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 
     /* Map of managed connections, where connection data is mapped to URL. */
 	private HashMap<String, ConnectionData> mConnectionBuffers;
-	
+
     // ------------------------------------------------------------------------
     // INITIALIZERS
     // ------------------------------------------------------------------------
@@ -255,7 +228,7 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 	private JRConnectionManager() {
 		mConnectionBuffers = new HashMap<String, ConnectionData>();
 	}
-	
+
     // ------------------------------------------------------------------------
     // GETTERS/SETTERS
     // ------------------------------------------------------------------------
@@ -266,7 +239,9 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 
 	public void onResponseReceived(AsyncHttpResponseHolder response) {
         String requestUrl = response.getUrl();
-        ConnectionData connectionData = mConnectionBuffers.get(requestUrl);
+
+        // map.remove instead of map.get so that we don't leak memory.
+        ConnectionData connectionData = mConnectionBuffers.remove(requestUrl);
         JRConnectionManagerDelegate delegate = connectionData.mDelegate;
 
         if (response.hasException()) {
@@ -291,11 +266,4 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 
         }
 	}
-
-	/*
-	private boolean thisIsThatStupidWindowsLiveResponse(HttpResponseHeaders headers) {
-		// TODO:  need to see how to get the redirect URL (if possible) into the headers.
-		return false;
-	}
-	*/
 }

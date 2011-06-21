@@ -49,12 +49,9 @@ public class JRAuthenticatedUser implements Serializable {
     // STATIC FIELDS
     // ------------------------------------------------------------------------
 
-    public static final String KEY_AUTH_INFO = "auth_info";
 	public static final String KEY_DEVICE_TOKEN = "device_token";
     public static final String KEY_PHOTO = "photo";
     public static final String KEY_PREFERRED_USERNAME = "preferred_username";
-    //TODO remove authinfo field
-    //TODO use keychain or something to store device token
 
     // ------------------------------------------------------------------------
     // STATIC INITIALIZERS
@@ -71,7 +68,6 @@ public class JRAuthenticatedUser implements Serializable {
     private String mPhoto;
     private String mPreferredUsername;
     private String mDeviceToken;
-    //private JRDictionary mAuthInfo;
     private String mProviderName;
 
     // ------------------------------------------------------------------------
@@ -82,15 +78,18 @@ public class JRAuthenticatedUser implements Serializable {
     // CONSTRUCTORS
     // ------------------------------------------------------------------------
 
-    private JRAuthenticatedUser() {
-    }
-    
+    // We don't need a private default constructor so long as we have another constructor as we 
+    // do, found immediately below.
+    // Declaring this raises an irresolvable compiler warning that requires a suppression
+    // annotation.
+	//private JRAuthenticatedUser() {
+    //}
+
     public JRAuthenticatedUser(JRDictionary mobileEndPointResponse, String providerName) {
         mProviderName = providerName;
         mDeviceToken = mobileEndPointResponse.getAsString(KEY_DEVICE_TOKEN);
         mPhoto = mobileEndPointResponse.getAsString(KEY_PHOTO);
         mPreferredUsername = mobileEndPointResponse.getAsString(KEY_PREFERRED_USERNAME);
-        //mAuthInfo = mobileEndPointResponse.getAsDictionary(KEY_AUTH_INFO);
     }
 
     // ------------------------------------------------------------------------
@@ -108,10 +107,6 @@ public class JRAuthenticatedUser implements Serializable {
     public String getDeviceToken() {        /* (readonly) */
         return mDeviceToken;
     }
-
-//    public JRDictionary getAuthInfo() {     /* (readonly) */
-//        return mAuthInfo;
-//    }
 
     public String getProviderName() {       /* (readonly) */
         return mProviderName;

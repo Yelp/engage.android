@@ -79,7 +79,7 @@ public class JRImageMediaObject extends JRMediaObject {
      * Contains the downloaded preview of the image for display in the publish activity dialog.
      **/
     private Bitmap mPreview;
-    
+
 /**
  * @name Constructors
  * Constructor for JRImageMediaObject
@@ -130,7 +130,7 @@ public class JRImageMediaObject extends JRMediaObject {
         return mHref;
     }
 /*@}*/
-    
+
     @JsonIgnore
     public Bitmap getPreview() {
         return mPreview;
@@ -151,5 +151,5 @@ public class JRImageMediaObject extends JRMediaObject {
     public String getType() {
         return "image";
     }
-    
+
 }

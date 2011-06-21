@@ -36,7 +36,7 @@ import com.janrain.android.engage.types.JRDictionary;
 /**
  * @brief
  * The interface implemented by an object in order to receive notifications when a user
- * authenticates, or publishes an activity to their social networks.
+ * authenticates or publishes an activity to their social networks.
  *
  * The methods of this interface are invoked upon the success or failure of the Janrain Engage for
  * Android Activities. They provide a conduit for the authenticated user's profile data, and if
@@ -45,9 +45,9 @@ import com.janrain.android.engage.types.JRDictionary;
  * @nosubgrouping
  **/
 public interface JREngageDelegate {
-	
+
 /**
- * \name Configuration
+ * @name Configuration
  * Messages sent by JREngage during dialog launch/configuration
  **/
 /*@{*/
@@ -56,7 +56,7 @@ public interface JREngageDelegate {
 	 * Notifies the delegate when the application invokes the display of a library Activity, but the
      * Activity fails to start. May occur if the library failed to connect to the Engage server, or
      * if the JRActivityObject was null, etc.
-	 *  
+	 *
 	 * @param error
 	 *   The error that occurred during configuration
 	 *
@@ -71,10 +71,10 @@ public interface JREngageDelegate {
 	 **/
     void jrEngageDialogDidFailToShowWithError(JREngageError error);
 /*@}*/
-    
+
 
 /**
- * \name Authentication
+ * @name Authentication
  * Messages sent  by JREngage during authentication
  **/
 /*@{*/
@@ -85,7 +85,7 @@ public interface JREngageDelegate {
      * or configuration of the library timed out.
      **/
     void jrAuthenticationDidNotComplete();
-    
+
     /**
      * Notifies the delegate that the user has successfully authenticated with the given provider,
      * passing to the delegate a JRDictionary object with the user's profile data.
@@ -96,8 +96,10 @@ public interface JREngageDelegate {
      *   user's profile information.
      *
      * @param provider
-     *   The name of the provider on which the user authenticated.  For a list of possible strings,
-     *   please see the \ref basicProviders "List of Providers"
+     *   The name of the provider on which the user authenticated.
+     *   For a list of possible strings, please see the
+     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">
+     *   List of Providers</a>
      *
      * @note:
      *   The structure of the \e auth_info JRDictionary (represented here in JSON) will be like the
@@ -130,11 +132,13 @@ public interface JREngageDelegate {
      *   The error that occurred during authentication
      *
      * @param provider
-     *   The name of the provider on which the user tried to authenticate.  For a list of possible
-     *   strings, please see the \ref basicProviders "List of Providers"
+     *   The name of the provider on which the user tried to authenticate.
+     *   For a list of possible strings, please see the
+     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">
+     *   List of Providers</a>
      *
      * @note
-     * This message is not sent if authentication was canceled.  To be notified of a canceled 
+     * This message is not sent if authentication was canceled.  To be notified of a canceled
      * authentication, see jrAuthenticationDidNotComplete().
      **/
     void jrAuthenticationDidFailWithError(JREngageError error, String provider);
@@ -152,8 +156,10 @@ public interface JREngageDelegate {
 //     *   The response from the server
 //     *
 //     * @param provider
-//     *   The name of the provider on which the user authenticated.  For a list of possible strings,
-//     *   please see the \ref basicProviders "List of Providers"
+//     *   The name of the provider on which the user authenticated.
+//     *   For a list of possible strings, please see the
+//     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">
+//     *   List of Providers</a>
 //     *
 //     * @deprecated
 //     * This function has been deprecated
@@ -177,8 +183,10 @@ public interface JREngageDelegate {
      *   The response from the server
      *
      * @param provider
-     *   The name of the provider on which the user authenticated.  For a list of possible strings,
-     *   please see the \ref basicProviders "List of Providers"
+     *   The name of the provider on which the user authenticated.
+     *   For a list of possible strings, please see the
+     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">
+     *   List of Providers</a>
      **/
     void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response,
                                           String tokenUrlPayload, String provider);
@@ -194,14 +202,16 @@ public interface JREngageDelegate {
      *   The error that occurred during server-side authentication
      *
      * @param provider
-     *   The name of the provider on which the user authenticated.  For a list of possible strings,
-     *   please see the \ref basicProviders "List of Providers"
+     *   The name of the provider on which the user authenticated.
+     *   For a list of possible strings, please see the
+     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">
+     *   List of Providers</a>
      **/
     void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider);
 /*@}*/
 
 /**
- * \name SocialPublishing
+ * @name SocialPublishing
  * Messages sent by JREngage during social publishing
  **/
 /*@{*/
@@ -212,7 +222,7 @@ public interface JREngageDelegate {
      * the cancelPublishing method, or if configuration of the library times out.
      **/
     void jrSocialDidNotCompletePublishing();
-    
+
     /**
      * Notifies the delegate after the social publishing dialog is closed (e.g., the user presses
      * the back button) and publishing is complete. You may receive multiple \ref didPublish
@@ -229,11 +239,14 @@ public interface JREngageDelegate {
      *   The shared activity
      *
      * @param provider
-     *   The name of the provider on which the user published the activity.  For a list of possible
-     *   strings, please see the \ref socialProviders "List of Social Providers"
+     *   The name of the provider on which the user published the activity.
+     *   For a list of possible strings, please see the
+     *   For a list of possible strings, please see the
+     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#socialProviders">
+     *   List of Social Providers</a>
      **/
     void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider);
-    
+
     /**
      * Notifies the delegate when publishing an activity failed and could not be recovered by the
      * library.
@@ -245,8 +258,10 @@ public interface JREngageDelegate {
      *   The error that occurred during publishing
      *
      * @param provider
-     *   The name of the provider on which the user attempted to publish the activity.  For a list
-     *   of possible strings, please see the \ref socialProviders "List of Social Providers"
+     *   The name of the provider on which the user attempted to publish the activity.
+     *   For a list of possible strings, please see the
+     *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#socialProviders">
+     *   List of Social Providers</a>
      **/
     void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
 /*@}*/

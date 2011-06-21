@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+   - Layout for JRWebViewActivity
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <!-- Header (title) area -->
+    <!--<include layout="@layout/shared_header" />-->
+
+    <!-- Web view -->
+    <WebView
+        android:id="@+id/jr_webview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1.0"/>
+        />
+    <!--android:paddingBottom="30dip"-->
+    <!--android:layout_below="@+id/header"-->
+
+
+    <!-- Footer (powered by) area -->
+    <include layout="@layout/jr_shared_footer" />
+
+</LinearLayout>
