@@ -1,0 +1,548 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers" kind="class" prot="public">
+    <compoundname>com::janrain::android::engage::net::async::HttpResponseHeaders</compoundname>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a844c5efdea72aa6bf76fb98b1072572a" prot="private" static="yes" mutable="no">
+        <type>final String</type>
+        <definition>final String TAG</definition>
+        <argsstring></argsstring>
+        <name>TAG</name>
+        <initializer> HttpResponseHeaders.class.getSimpleName()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="52" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1af087385d54088a88297d197dcbf3326d" prot="public" static="yes" mutable="no">
+        <type>final String</type>
+        <definition>final String HEADER_LAST_MODIFIED</definition>
+        <argsstring></argsstring>
+        <name>HEADER_LAST_MODIFIED</name>
+        <initializer>&quot;Last-Modified&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="55" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a6671afb894a1a75227018d2c7fdeb287" prot="public" static="yes" mutable="no">
+        <type>final String</type>
+        <definition>final String HEADER_ETAG</definition>
+        <argsstring></argsstring>
+        <name>HEADER_ETAG</name>
+        <initializer>&quot;ETag&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="58" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1aacd045cba1153a64f72bee973962f7e0" prot="public" static="yes" mutable="no">
+        <type>final int</type>
+        <definition>final int RESPONSE_CODE_INVALID</definition>
+        <argsstring></argsstring>
+        <name>RESPONSE_CODE_INVALID</name>
+        <initializer> -1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="61" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ae50e7bcd3075fa65493d10a4a46bdd55" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int mResponseCode</definition>
+        <argsstring></argsstring>
+        <name>mResponseCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="94" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a24ccf00094de2f48d757a3cd800f456c" prot="private" static="no" mutable="no">
+        <type>String</type>
+        <definition>String mContentEncoding</definition>
+        <argsstring></argsstring>
+        <name>mContentEncoding</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="95" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a9c2d12a10fc13ff196e331cec6389604" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int mContentLength</definition>
+        <argsstring></argsstring>
+        <name>mContentLength</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="96" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a59616e313299c1e3f38f83d17102181e" prot="private" static="no" mutable="no">
+        <type>String</type>
+        <definition>String mContentType</definition>
+        <argsstring></argsstring>
+        <name>mContentType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="97" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1af92240fefb50494970c6626b14c55718" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long mDate</definition>
+        <argsstring></argsstring>
+        <name>mDate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="98" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ab72a001d0341cbaac83cdc29a778631c" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long mLastModified</definition>
+        <argsstring></argsstring>
+        <name>mLastModified</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="99" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a700084d048c9fcec043cab60df645f17" prot="private" static="no" mutable="no">
+        <type>String</type>
+        <definition>String mLastModifiedUtc</definition>
+        <argsstring></argsstring>
+        <name>mLastModifiedUtc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="100" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a3f38f188b66f127a1b8cf5def1d18fcb" prot="private" static="no" mutable="no">
+        <type>String</type>
+        <definition>String mETag</definition>
+        <argsstring></argsstring>
+        <name>mETag</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="101" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a54b4d171257efa55db80482a82c1a5a6" prot="private" static="no" mutable="no">
+        <type>HttpURLConnection</type>
+        <definition>HttpURLConnection mConnection</definition>
+        <argsstring></argsstring>
+        <name>mConnection</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="111" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a5c07c0bbe4d5c7a75e0c7b603faf7a73" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>HttpResponseHeaders</type>
+        <definition>static HttpResponseHeaders fromConnection</definition>
+        <argsstring>(HttpURLConnection connection)</argsstring>
+        <name>fromConnection</name>
+        <param>
+          <type>HttpURLConnection</type>
+          <declname>connection</declname>
+        </param>
+        <exceptions> throws IOException </exceptions>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="69" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="68" bodyend="88"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ac60746bd383b46a479b3bc10ff696557" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void setConnection</definition>
+        <argsstring>(HttpURLConnection connection)</argsstring>
+        <name>setConnection</name>
+        <param>
+          <type>HttpURLConnection</type>
+          <declname>connection</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="103" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="103" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1adf4cf90e6ef0143cac830401750136c1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>String</type>
+        <definition>String getHeaderField</definition>
+        <argsstring>(String headerFieldName)</argsstring>
+        <name>getHeaderField</name>
+        <param>
+          <type>String</type>
+          <declname>headerFieldName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="107" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="107" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ae365628913cd3ec42ae04c62d4706a93" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>HttpResponseHeaders</definition>
+        <argsstring>()</argsstring>
+        <name>HttpResponseHeaders</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="117" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="117" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ade596c9c69586d55473c033fabfd80bf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int getResponseCode</definition>
+        <argsstring>()</argsstring>
+        <name>getResponseCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="125" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="125" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a3e371400c86009fd047a7a30fb4aecaa" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void setResponseCode</definition>
+        <argsstring>(int responseCode)</argsstring>
+        <name>setResponseCode</name>
+        <param>
+          <type>int</type>
+          <declname>responseCode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="129" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="129" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a0a1549c9015f03e954f33836519a8960" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>String</type>
+        <definition>String getContentEncoding</definition>
+        <argsstring>()</argsstring>
+        <name>getContentEncoding</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="133" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="133" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1aee42cb82e9ba4e388f8e9cc210b8ac23" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void setContentEncoding</definition>
+        <argsstring>(String contentEncoding)</argsstring>
+        <name>setContentEncoding</name>
+        <param>
+          <type>String</type>
+          <declname>contentEncoding</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="137" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="137" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a96a5beb195e8f3be4d3ec22892773cf5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int getContentLength</definition>
+        <argsstring>()</argsstring>
+        <name>getContentLength</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="141" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="141" bodyend="143"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ab59aaa7206c12a88a3bb00812ca5dd9a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void setContentLength</definition>
+        <argsstring>(int contentLength)</argsstring>
+        <name>setContentLength</name>
+        <param>
+          <type>int</type>
+          <declname>contentLength</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="145" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="145" bodyend="147"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a5d5e9cba737b192604fdb597b4e3b2a8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>String</type>
+        <definition>String getContentType</definition>
+        <argsstring>()</argsstring>
+        <name>getContentType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="149" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="149" bodyend="151"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ab2eb9c18088458f39e857a7a04478bb7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void setContentType</definition>
+        <argsstring>(String contentType)</argsstring>
+        <name>setContentType</name>
+        <param>
+          <type>String</type>
+          <declname>contentType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="153" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="153" bodyend="155"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a9885bc8bb7b059cfc2997572b120d413" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long getDate</definition>
+        <argsstring>()</argsstring>
+        <name>getDate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="157" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="157" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a9a8cef470fc7b5164a21feaa44d10111" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void setDate</definition>
+        <argsstring>(long date)</argsstring>
+        <name>setDate</name>
+        <param>
+          <type>long</type>
+          <declname>date</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="161" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="161" bodyend="163"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a1c42274c945e23b7d54b5d588401cb53" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>long</type>
+        <definition>long getLastModified</definition>
+        <argsstring>()</argsstring>
+        <name>getLastModified</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="165" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="165" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a1ec194a8c070883095b1b8ae17524215" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void setLastModified</definition>
+        <argsstring>(long lastModified)</argsstring>
+        <name>setLastModified</name>
+        <param>
+          <type>long</type>
+          <declname>lastModified</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="169" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="169" bodyend="171"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a9e4e248a9c2e7cfa0273e4b9f9f0eee7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>String</type>
+        <definition>String getLastModifiedUtc</definition>
+        <argsstring>()</argsstring>
+        <name>getLastModifiedUtc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="173" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="173" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a2280cebd2f41b0c89da03f576cecd5e5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void setLastModifiedUtc</definition>
+        <argsstring>(String lastModifiedUtc)</argsstring>
+        <name>setLastModifiedUtc</name>
+        <param>
+          <type>String</type>
+          <declname>lastModifiedUtc</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="177" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="177" bodyend="179"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1affac2e196109a65560ab16edad25885a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>String</type>
+        <definition>String getETag</definition>
+        <argsstring>()</argsstring>
+        <name>getETag</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="181" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="181" bodyend="183"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a28d525e933645e9986f41a87f0e49ae4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void setETag</definition>
+        <argsstring>(String eTag)</argsstring>
+        <name>setETag</name>
+        <param>
+          <type>String</type>
+          <declname>eTag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="185" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="185" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ad146fa8579a5f8a876c4688cc5a68520" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>String</type>
+        <definition>String toString</definition>
+        <argsstring>()</argsstring>
+        <name>toString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="194" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="194" bodyend="206"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" line="45" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/HttpResponseHeaders.java" bodystart="45" bodyend="207"/>
+    <listofallmembers>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a5c07c0bbe4d5c7a75e0c7b603faf7a73" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>fromConnection</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a0a1549c9015f03e954f33836519a8960" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>getContentEncoding</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a96a5beb195e8f3be4d3ec22892773cf5" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>getContentLength</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a5d5e9cba737b192604fdb597b4e3b2a8" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>getContentType</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a9885bc8bb7b059cfc2997572b120d413" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>getDate</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1affac2e196109a65560ab16edad25885a" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>getETag</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1adf4cf90e6ef0143cac830401750136c1" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>getHeaderField</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a1c42274c945e23b7d54b5d588401cb53" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>getLastModified</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a9e4e248a9c2e7cfa0273e4b9f9f0eee7" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>getLastModifiedUtc</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ade596c9c69586d55473c033fabfd80bf" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>getResponseCode</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a6671afb894a1a75227018d2c7fdeb287" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>HEADER_ETAG</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1af087385d54088a88297d197dcbf3326d" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>HEADER_LAST_MODIFIED</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ae365628913cd3ec42ae04c62d4706a93" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>HttpResponseHeaders</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a54b4d171257efa55db80482a82c1a5a6" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>mConnection</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a24ccf00094de2f48d757a3cd800f456c" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>mContentEncoding</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a9c2d12a10fc13ff196e331cec6389604" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>mContentLength</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a59616e313299c1e3f38f83d17102181e" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>mContentType</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1af92240fefb50494970c6626b14c55718" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>mDate</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a3f38f188b66f127a1b8cf5def1d18fcb" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>mETag</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ab72a001d0341cbaac83cdc29a778631c" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>mLastModified</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a700084d048c9fcec043cab60df645f17" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>mLastModifiedUtc</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ae50e7bcd3075fa65493d10a4a46bdd55" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>mResponseCode</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1aacd045cba1153a64f72bee973962f7e0" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>RESPONSE_CODE_INVALID</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ac60746bd383b46a479b3bc10ff696557" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>setConnection</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1aee42cb82e9ba4e388f8e9cc210b8ac23" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>setContentEncoding</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ab59aaa7206c12a88a3bb00812ca5dd9a" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>setContentLength</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ab2eb9c18088458f39e857a7a04478bb7" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>setContentType</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a9a8cef470fc7b5164a21feaa44d10111" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>setDate</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a28d525e933645e9986f41a87f0e49ae4" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>setETag</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a1ec194a8c070883095b1b8ae17524215" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>setLastModified</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a2280cebd2f41b0c89da03f576cecd5e5" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>setLastModifiedUtc</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a3e371400c86009fd047a7a30fb4aecaa" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>setResponseCode</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a844c5efdea72aa6bf76fb98b1072572a" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>TAG</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ad146fa8579a5f8a876c4688cc5a68520" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::HttpResponseHeaders</scope><name>toString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

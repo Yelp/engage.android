@@ -1,0 +1,227 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper" kind="class" prot="public">
+    <compoundname>com::janrain::android::engage::ui::SharedLayoutHelper</compoundname>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1ad83ff26fa30e0ea002d6206cefa47eb3" prot="public" static="yes" mutable="no">
+        <type>final int</type>
+        <definition>final int DIALOG_ABOUT_ID</definition>
+        <argsstring></argsstring>
+        <name>DIALOG_ABOUT_ID</name>
+        <initializer> 1000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>ID for common about dialog. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="60" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a844c5efdea72aa6bf76fb98b1072572a" prot="private" static="yes" mutable="no">
+        <type>final String</type>
+        <definition>final String TAG</definition>
+        <argsstring></argsstring>
+        <name>TAG</name>
+        <initializer> SharedLayoutHelper.class.getSimpleName()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="63" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a2739ad115ffbd113d64c36a275aa0217" prot="private" static="no" mutable="no">
+        <type>WeakReference&lt; Activity &gt;</type>
+        <definition>WeakReference&lt;Activity&gt; mOwner</definition>
+        <argsstring></argsstring>
+        <name>mOwner</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="73" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1ac274de0c86513c66673990f223a2851a" prot="private" static="no" mutable="no">
+        <type>ProgressDialog</type>
+        <definition>ProgressDialog mProgressDialog</definition>
+        <argsstring></argsstring>
+        <name>mProgressDialog</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="75" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1ab77f98a6dce1d0c4f9292303213dc372" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SharedLayoutHelper</definition>
+        <argsstring>(Activity owner)</argsstring>
+        <name>SharedLayoutHelper</name>
+        <param>
+          <type>Activity</type>
+          <declname>owner</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates instance of this class, binding it to the owner. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="84" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="84" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a3c526ced1e5211cbf1d434c50df37c8b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void setHeaderText</definition>
+        <argsstring>(String text)</argsstring>
+        <name>setHeaderText</name>
+        <param>
+          <type>String</type>
+          <declname>text</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Changes the header text. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="115" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="115" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a4c5e30c6fd02a6ee594f7d578f202952" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void inflateAboutMenu</definition>
+        <argsstring>(Menu menu)</argsstring>
+        <name>inflateAboutMenu</name>
+        <param>
+          <type>Menu</type>
+          <declname>menu</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Inflates the common/shared menu. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="125" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="125" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a2eace41f8af2d0960647cccb91d6be7a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean handleAboutMenu</definition>
+        <argsstring>(MenuItem item)</argsstring>
+        <name>handleAboutMenu</name>
+        <param>
+          <type>MenuItem</type>
+          <declname>item</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Common handler for about menu. If the menu item is the about item, the about dialog is displayed and <computeroutput>true</computeroutput> is returned. Otherwise <computeroutput>false</computeroutput> is returned. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="134" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="134" bodyend="142"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a1286fe77adde4f6325588c56c7ab1bc6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void showProgressDialog</definition>
+        <argsstring>()</argsstring>
+        <name>showProgressDialog</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Shows the progress dialog associated with the owner. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="147" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="147" bodyend="164"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a0540765cef7a5b4e72504dacdf4858bb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void dismissProgressDialog</definition>
+        <argsstring>()</argsstring>
+        <name>dismissProgressDialog</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Dismisses the progress dialog, if valid and visible. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="169" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="169" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a3c6dd4273e9b563fbffdd8bad1cc6cf2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>Dialog</type>
+        <definition>Dialog onCreateDialog</definition>
+        <argsstring>(int id)</argsstring>
+        <name>onCreateDialog</name>
+        <param>
+          <type>int</type>
+          <declname>id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Common/shared onCreateDialog method. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="180" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="180" bodyend="190"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a4012a640d353af0720158bec2bc25988" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean getProgressDialogShowing</definition>
+        <argsstring>()</argsstring>
+        <name>getProgressDialogShowing</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="217" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="217" bodyend="219"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1acb12b4b2bce96f6c0e541efb7cfc752c" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>AlertDialog</type>
+        <definition>AlertDialog getAboutDialog</definition>
+        <argsstring>()</argsstring>
+        <name>getAboutDialog</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Builds the common/shared about dialog. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="195" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="195" bodyend="215"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" line="53" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/SharedLayoutHelper.java" bodystart="53" bodyend="220"/>
+    <listofallmembers>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1ad83ff26fa30e0ea002d6206cefa47eb3" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::SharedLayoutHelper</scope><name>DIALOG_ABOUT_ID</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a0540765cef7a5b4e72504dacdf4858bb" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::SharedLayoutHelper</scope><name>dismissProgressDialog</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1acb12b4b2bce96f6c0e541efb7cfc752c" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::SharedLayoutHelper</scope><name>getAboutDialog</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a4012a640d353af0720158bec2bc25988" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::SharedLayoutHelper</scope><name>getProgressDialogShowing</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a2eace41f8af2d0960647cccb91d6be7a" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::SharedLayoutHelper</scope><name>handleAboutMenu</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a4c5e30c6fd02a6ee594f7d578f202952" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::SharedLayoutHelper</scope><name>inflateAboutMenu</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a2739ad115ffbd113d64c36a275aa0217" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::SharedLayoutHelper</scope><name>mOwner</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1ac274de0c86513c66673990f223a2851a" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::SharedLayoutHelper</scope><name>mProgressDialog</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a3c6dd4273e9b563fbffdd8bad1cc6cf2" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::SharedLayoutHelper</scope><name>onCreateDialog</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a3c526ced1e5211cbf1d434c50df37c8b" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::SharedLayoutHelper</scope><name>setHeaderText</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1ab77f98a6dce1d0c4f9292303213dc372" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::SharedLayoutHelper</scope><name>SharedLayoutHelper</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a1286fe77adde4f6325588c56c7ab1bc6" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::SharedLayoutHelper</scope><name>showProgressDialog</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a844c5efdea72aa6bf76fb98b1072572a" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::SharedLayoutHelper</scope><name>TAG</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

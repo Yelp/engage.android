@@ -1,0 +1,291 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils" kind="class" prot="public">
+    <compoundname>com::janrain::android::engage::utils::IOUtils</compoundname>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1a844c5efdea72aa6bf76fb98b1072572a" prot="private" static="yes" mutable="no">
+        <type>final String</type>
+        <definition>final String TAG</definition>
+        <argsstring></argsstring>
+        <name>TAG</name>
+        <initializer> IOUtils.class.getSimpleName()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" line="55" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1a9e5db2a09e4e2907840ca1e907ab9550" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>byte[]</type>
+        <definition>static byte [] objectToBytes</definition>
+        <argsstring>(Object obj)</argsstring>
+        <name>objectToBytes</name>
+        <param>
+          <type>Object</type>
+          <declname>obj</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts an Object to a byte array. Will not throw an exception if an error occurs, rather it will return null.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The object to be converted to byte array.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The object as a byte array, null if the specified object was null. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" line="71" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" bodystart="71" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1ae6a829ed3d5f094b9789c65ad35acdbb" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>byte[]</type>
+        <definition>static byte [] objectToBytes</definition>
+        <argsstring>(Object obj, boolean shouldThrowOnError)</argsstring>
+        <name>objectToBytes</name>
+        <param>
+          <type>Object</type>
+          <declname>obj</declname>
+        </param>
+        <param>
+          <type>boolean</type>
+          <declname>shouldThrowOnError</declname>
+        </param>
+        <exceptions> throws IOException </exceptions>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts an Object to a byte array.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The object to be converted to byte array.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shouldThrowOnError</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Flag indicating whether or not the user wants to handle exceptions that are thrown during this operation.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The object as a byte array, null if the specified object was null.</para></simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>IOException</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the user passed <computeroutput>true</computeroutput> for &apos;shouldThrowOnError&apos; and an IOException has occurred. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" line="97" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" bodystart="97" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1adef8daa73499ae6255f83796b0ae1b99" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>Object</type>
+        <definition>static Object bytesToObject</definition>
+        <argsstring>(byte[] bytes)</argsstring>
+        <name>bytesToObject</name>
+        <param>
+          <type>byte[]</type>
+          <declname>bytes</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts a byte array to an Object. Will not throw an exception if an error occurs, rather it will return null.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The byte array to be converted to Object form.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The Object if successful, null if the specified object was null or the conversion failed. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" line="128" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" bodystart="128" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1a3b76a16dba4c407f73b31c0345dd3a90" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>Object</type>
+        <definition>static Object bytesToObject</definition>
+        <argsstring>(byte[] bytes, boolean shouldThrowOnError)</argsstring>
+        <name>bytesToObject</name>
+        <param>
+          <type>byte[]</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>boolean</type>
+          <declname>shouldThrowOnError</declname>
+        </param>
+        <exceptions> throws StreamCorruptedException, OptionalDataException, 			IOException, ClassNotFoundException </exceptions>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts a byte array to an Object. Will not throw an exception if an error occurs, rather it will return null.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The byte array to be converted to Object form.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shouldThrowOnError</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Flag indicating whether or not the user wants to handle exceptions that are thrown during this operation.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The Object if successful, null if the specified object was null.</para></simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>StreamCorruptedException</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the user passed <computeroutput>true</computeroutput> for &apos;shouldThrowOnError&apos; and a StreamCorruptedException has occurred.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OptionalDataException</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the user passed <computeroutput>true</computeroutput> for &apos;shouldThrowOnError&apos; and an OptionalDataException has occurred.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>IOException</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the user passed <computeroutput>true</computeroutput> for &apos;shouldThrowOnError&apos; and an IOException has occurred.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ClassNotFoundException</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the user passed <computeroutput>true</computeroutput> for &apos;shouldThrowOnError&apos; and a ClassNotFoundException has occurred. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" line="170" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" bodystart="168" bodyend="197"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1a96881dc0bd687adf3c4bde5beb430cc0" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>byte[]</type>
+        <definition>static byte [] readFromStream</definition>
+        <argsstring>(InputStream in)</argsstring>
+        <name>readFromStream</name>
+        <param>
+          <type>InputStream</type>
+          <declname>in</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reads the entire contents of the specified stream to a byte array.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>in</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input stream to read the contents of.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A byte array representing the full contents of the stream, null if stream is null or operation failed. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" line="209" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" bodystart="209" bodyend="217"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1ad8bcf7d95043d960841da8d510101fd5" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>byte[]</type>
+        <definition>static byte [] readFromStream</definition>
+        <argsstring>(InputStream in, boolean shouldThrowOnError)</argsstring>
+        <name>readFromStream</name>
+        <param>
+          <type>InputStream</type>
+          <declname>in</declname>
+        </param>
+        <param>
+          <type>boolean</type>
+          <declname>shouldThrowOnError</declname>
+        </param>
+        <exceptions> throws IOException </exceptions>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reads the entire contents of the specified stream to a byte array.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>in</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input stream to read the contents of.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shouldThrowOnError</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Flag indicating whether or not the user wants to handle exceptions that are thrown during this operation.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A byte array representing the full contents of the stream, null if stream is null.</para></simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>IOException</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the user passed <computeroutput>true</computeroutput> for &apos;shouldThrowOnError&apos; and an IOException has occurred. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+<para>todo XXX audit this code. </para>        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" line="237" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" bodystart="236" bodyend="262"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1ad812781ca3b6bcd84b47a298fd2bbd44" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>IOUtils</definition>
+        <argsstring>()</argsstring>
+        <name>IOUtils</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Private default constructor -- Utility class, no instance. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" line="271" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" bodystart="271" bodyend="273"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" line="49" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/IOUtils.java" bodystart="49" bodyend="274"/>
+    <listofallmembers>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1adef8daa73499ae6255f83796b0ae1b99" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::utils::IOUtils</scope><name>bytesToObject</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1a3b76a16dba4c407f73b31c0345dd3a90" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::utils::IOUtils</scope><name>bytesToObject</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1ad812781ca3b6bcd84b47a298fd2bbd44" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::utils::IOUtils</scope><name>IOUtils</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1a9e5db2a09e4e2907840ca1e907ab9550" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::utils::IOUtils</scope><name>objectToBytes</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1ae6a829ed3d5f094b9789c65ad35acdbb" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::utils::IOUtils</scope><name>objectToBytes</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1a96881dc0bd687adf3c4bde5beb430cc0" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::utils::IOUtils</scope><name>readFromStream</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1ad8bcf7d95043d960841da8d510101fd5" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::utils::IOUtils</scope><name>readFromStream</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1a844c5efdea72aa6bf76fb98b1072572a" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::utils::IOUtils</scope><name>TAG</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

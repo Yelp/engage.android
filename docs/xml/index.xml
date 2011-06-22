@@ -1,0 +1,1080 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.7.4">
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_android" kind="class"><name>com::janrain::android::engage::utils::Android</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_android_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_android_1ae6697558c4f238118ed8eac695125d79" kind="function"><name>Android</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_android_1aef3d41ea2a09344c73efe33903311c82" kind="function"><name>isCupcake</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_android_1a416dbc0f6e0e8f954e2e490f72546ebd" kind="function"><name>getAndroidSdkInt</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_android_1a22dadf504daf3e56c82fc332b96c7092" kind="function"><name>getApplicationInfo</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver" kind="class"><name>com::janrain::android::engage::utils::Archiver</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_1ab63e7e1fe9ad1e3f03f4a44e5bbd763e" kind="variable"><name>DICTIONARY_FILE_SEPARATOR</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_1a9d053638a5874f79d850e23d9bddde06" kind="variable"><name>DICTIONARY_BASE_FORMAT</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_1adf48141f86132a66a843197e900de40a" kind="function"><name>save</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_1ad9d02ee9364dfa9a38f694309197b4c3" kind="function"><name>load</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_1ae340dfb4bdd772ba1a52870c683f1250" kind="function"><name>loadString</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_1af172b5eaf9c8091b229214b59317fd31" kind="function"><name>loadInteger</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_1acf3bd2e0cf2907d0e49764d875606c92" kind="function"><name>loadBoolean</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_1aedcfe86888ebc0217ab630422f117be2" kind="function"><name>loadBooleanWithDefault</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_1a6344f2e05eb44b2e60174ac81d26a50e" kind="function"><name>saveObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_1a3b541ae844f97c2980fed3d350b557f3" kind="function"><name>loadObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_1a9bd7a518d31886cc725e6a210f9e44fc" kind="function"><name>Archiver</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client" kind="class"><name>com::janrain::android::engage::net::async::AsyncHttpClient</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1af60d5685ebcabb3a7757fce70efe000c" kind="variable"><name>HTTP_METHOD_GET</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1a809f6a92b3b74e8c175f32a8b43a04e4" kind="variable"><name>HTTP_METHOD_POST</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1a46271af1bf04293304a24ba410b861a3" kind="variable"><name>USER_AGENT</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1a84395d478e70853236c9d54916b606ff" kind="variable"><name>ACCEPT_ENCODING</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1a707237d31b606c7a3de1e923b7dcad77" kind="function"><name>executeHttpGet</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1a8d0a3193fdc785b40d3cf50b694a469f" kind="function"><name>executeHttpPost</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1ab9114ea86dbb39b4ab0c644a409a8ada" kind="function"><name>AsyncHttpClient</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder" kind="class"><name>com::janrain::android::engage::net::async::AsyncHttpResponseHolder</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder_1ab34fa6a32bb5e2724ccf38e29b8deedb" kind="variable"><name>mUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder_1ac7d05cc8777d40e519e6842799695587" kind="variable"><name>mHeaders</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder_1a88777c862abc6df0829353436550a3c4" kind="variable"><name>mPayload</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder_1a4bd9bbdd153d3f68a069c485a484c1a9" kind="variable"><name>mException</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder_1ad703ee77e28c1cb4d4bb077ce2294e77" kind="function"><name>AsyncHttpResponseHolder</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder_1ad7b9817e9745d6f56c4a099421460bad" kind="function"><name>AsyncHttpResponseHolder</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder_1ad2ea28664c7db5089385e62816477d28" kind="function"><name>getUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder_1ae3607c6a358221b3790bb51f915628f6" kind="function"><name>getHeaders</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder_1a6b6a5e739db3ed5bddbab1153e0fcf22" kind="function"><name>getPayload</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder_1a4e035c25549a8f6cb7d45e238c989e8e" kind="function"><name>getException</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder_1a81dcfb5022fe8f146d676bbb2f923fff" kind="function"><name>hasHeaders</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder_1a75e0ad92d413e59a27ea419744bbd169" kind="function"><name>hasPayload</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_holder_1aca91ab5b7feb80edb463577fda5d2dbb" kind="function"><name>hasException</name></member>
+  </compound>
+  <compound refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_listener" kind="interface"><name>com::janrain::android::engage::net::async::AsyncHttpResponseListener</name>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_response_listener_1a7fe4c1d6c4659e09e1c6b214a1c81a70" kind="function"><name>onResponseReceived</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_authentication_error" kind="class"><name>com::janrain::android::engage::JREngageError::AuthenticationError</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_authentication_error_1a422a703df864c3b879186e13631846b2" kind="variable"><name>START</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_authentication_error_1a2a7bcbe1d3c039bfdd57b21077249ec7" kind="variable"><name>AUTHENTICATION_FAILED</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1_1_button_event_listener" kind="class"><name>com::janrain::android::engage::ui::JRLandingActivity::ButtonEventListener</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1_1_button_event_listener_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1_1_button_event_listener_1ac4ff82449681d676e10fdf04df677276" kind="function"><name>onClick</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button" kind="class"><name>com::janrain::android::engage::ui::ColorButton</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1a0952f265d07bb5464b89bf4018eb1fb1" kind="variable"><name>mColor</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1a75710d8635eceedab497bc83c2c95d4e" kind="function"><name>ColorButton</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1a92d96eb6acb7c252f58c0a203f6796b8" kind="function"><name>ColorButton</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1acd0b65b543191ffb0922b690c723fe2e" kind="function"><name>ColorButton</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1a75b9cb32ff80bf061791beb01a8433d0" kind="function"><name>setColor</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1afec131de5b751995a8838794956cf6d3" kind="function"><name>processAttributes</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1a99346d6654fd231b5e171fa27d3a2095" kind="function"><name>colorify</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper" kind="class"><name>com::janrain::android::engage::ui::ColorButton::ColorFilterRejectingDrawableWrapper</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a375627fd04d0d5cb81ebcaad39a7fe92" kind="variable"><name>mDrawable</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a028de719382f2904bf6f25e0cfbfd270" kind="function"><name>ColorFilterRejectingDrawableWrapper</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a722caa842c64f7f62459a4d69d2a1d96" kind="function"><name>_setColorFilter</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a25bca9a1352e622b784056afad242b25" kind="function"><name>draw</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a8bd29819819ef7f76692e19e17eb3c2e" kind="function"><name>setAlpha</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a187b1a3105d9bc2aebd6e6b503ce1a56" kind="function"><name>setColorFilter</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a0c8618c617e65d5ab8400704bbc09ed1" kind="function"><name>getOpacity</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a4465ad295cfad6e476a6cff47779ecde" kind="function"><name>setBounds</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1afc2bab77937fec51b7951616cdbde2b8" kind="function"><name>setBounds</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a2c4ccc73fa8da48959766514f12d27dd" kind="function"><name>setChangingConfigurations</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1aaacf21c197eef87d34f030f4053ea4d5" kind="function"><name>getChangingConfigurations</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ab099d887876a862f357debccfbba7b9e" kind="function"><name>setDither</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a5d700c4270a3e1b7118ed8d5f8e2e364" kind="function"><name>setFilterBitmap</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1af10524a54f278f14be831e31aa1c64ac" kind="function"><name>invalidateSelf</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a0461b41e48dc08299506944ce5187ca3" kind="function"><name>scheduleSelf</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1aa85d1fcb44494d6bf58f3c67b27036cd" kind="function"><name>unscheduleSelf</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ae3dd74abb39f44673cb76e48772572e7" kind="function"><name>setColorFilter</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ab61e58618b4ad5ae77e66597e0c34df4" kind="function"><name>clearColorFilter</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ae9631672f6225904a3ac0e3a6fee4d2d" kind="function"><name>isStateful</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a96231ac279e3e004b8afbb0413f20e5a" kind="function"><name>setState</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1aab22c0e314b7797f960d859ba885a8ef" kind="function"><name>getState</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1aefe901398ac8afec1ed3fa3b611a32a5" kind="function"><name>getCurrent</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a0b3a1a29d1f00a71d76267900b046b34" kind="function"><name>setVisible</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a1991344faa8a332a36de30f16ab3fef4" kind="function"><name>getTransparentRegion</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1aeba92462a1b31a326957c34fe12eef86" kind="function"><name>getIntrinsicWidth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ae3432e55107fbe29491fcdfb04423fd5" kind="function"><name>getIntrinsicHeight</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ac99a2e6f8ae510770bb984583d297633" kind="function"><name>getMinimumWidth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ac64b27285edf4c4411591ef2844f802e" kind="function"><name>getMinimumHeight</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ace6f47e769ff982240f92b3bf9dc3428" kind="function"><name>getPadding</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a4f25cdfda3d19c5df77bf47e9ac39d77" kind="function"><name>mutate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1abd51a03f7e3828c3566625b25cd54e1b" kind="function"><name>inflate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a8a6c5bb6565ff2e8d50fa493e6c2eb01" kind="function"><name>getConstantState</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_configuration_error" kind="class"><name>com::janrain::android::engage::JREngageError::ConfigurationError</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_configuration_error_1a422a703df864c3b879186e13631846b2" kind="variable"><name>START</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_configuration_error_1a401256e1929a0b6faf2d0ce010336505" kind="variable"><name>URL_ERROR</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_configuration_error_1ac4b4ee3f1e8bda042c96a3c537061847" kind="variable"><name>DATA_PARSING_ERROR</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_configuration_error_1af5e94dfcd7f1e83f53167235a706540e" kind="variable"><name>JSON_ERROR</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_configuration_error_1adc52cd58cd5f6b566ec13f0a407bf509" kind="variable"><name>CONFIGURATION_INFORMATION_ERROR</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_configuration_error_1aed0b41deed356a02651bfd58efffa488" kind="variable"><name>SESSION_DATA_FINISH_GET_PROVIDERS_ERROR</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data" kind="class"><name>com::janrain::android::engage::net::JRConnectionManager::ConnectionData</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data_1ac1a0feae2303d8c8a55e163636d3207c" kind="variable"><name>mShouldReturnFullResponse</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data_1a7870d8118584a06b12188920bbc4deb1" kind="variable"><name>mTag</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data_1ac1a175f5b75fa3aac4998c03866e843c" kind="variable"><name>mDelegate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data_1a0a7b7283899ba23660fc7016a82fd523" kind="function"><name>ConnectionData</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type" kind="class"><name>com::janrain::android::engage::JREngageError::ErrorType</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1ac2837260a237df9c11feebf84d26fd3d" kind="variable"><name>CONFIGURATION_FAILED</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a5b437058532046ab521d6511a81b7847" kind="variable"><name>CONFIGURATION_INFORMATION_MISSING</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1aa68ab1ad27fd39a9d45d1838bd849b15" kind="variable"><name>AUTHENTICATION_FAILED</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a300bb87da77e1fe095e344c7a62568e2" kind="variable"><name>PUBLISH_FAILED</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1aa3ee11055506ccb85af37ce26086b16d" kind="variable"><name>PUBLISH_NEEDS_REAUTHENTICATION</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a958d71a06cc65ebc2fa08c44bd1d0901" kind="variable"><name>PUBLISH_INVALID_ACTIVITY</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1_1_finish_receiver" kind="class"><name>com::janrain::android::engage::ui::JRLandingActivity::FinishReceiver</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1_1_finish_receiver_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1_1_finish_receiver_1afe2ab6137f59f9ff640f1e3b74080ad7" kind="function"><name>onReceive</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1_1_finish_receiver" kind="class"><name>com::janrain::android::engage::ui::JRProvidersActivity::FinishReceiver</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1_1_finish_receiver_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1_1_finish_receiver_1afe2ab6137f59f9ff640f1e3b74080ad7" kind="function"><name>onReceive</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1_1_finish_receiver" kind="class"><name>com::janrain::android::engage::ui::JRPublishActivity::FinishReceiver</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1_1_finish_receiver_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1_1_finish_receiver_1afe2ab6137f59f9ff640f1e3b74080ad7" kind="function"><name>onReceive</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1_1_finish_receiver" kind="class"><name>com::janrain::android::engage::ui::JRWebViewActivity::FinishReceiver</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1_1_finish_receiver_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1_1_finish_receiver_1afe2ab6137f59f9ff640f1e3b74080ad7" kind="function"><name>onReceive</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_callback_wrapper" kind="class"><name>com::janrain::android::engage::net::async::AsyncHttpClient::HttpCallbackWrapper</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_callback_wrapper_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_callback_wrapper_1ae544d93b6b3119dba37c0f2ad80f6686" kind="variable"><name>mListener</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_callback_wrapper_1a6bcd6ef711f5c2cdfce0570a58273ad8" kind="variable"><name>mResponse</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_callback_wrapper_1a91b86b6b827ad9a90d70e464c9dd42fa" kind="function"><name>HttpCallbackWrapper</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_callback_wrapper_1a13a43e6d814de94978c515cb084873b1" kind="function"><name>run</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_callback_wrapper_1a67c6038a96a615208112787a7047d7bb" kind="function"><name>setResponse</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers" kind="class"><name>com::janrain::android::engage::net::async::HttpResponseHeaders</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1af087385d54088a88297d197dcbf3326d" kind="variable"><name>HEADER_LAST_MODIFIED</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a6671afb894a1a75227018d2c7fdeb287" kind="variable"><name>HEADER_ETAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1aacd045cba1153a64f72bee973962f7e0" kind="variable"><name>RESPONSE_CODE_INVALID</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ae50e7bcd3075fa65493d10a4a46bdd55" kind="variable"><name>mResponseCode</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a24ccf00094de2f48d757a3cd800f456c" kind="variable"><name>mContentEncoding</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a9c2d12a10fc13ff196e331cec6389604" kind="variable"><name>mContentLength</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a59616e313299c1e3f38f83d17102181e" kind="variable"><name>mContentType</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1af92240fefb50494970c6626b14c55718" kind="variable"><name>mDate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ab72a001d0341cbaac83cdc29a778631c" kind="variable"><name>mLastModified</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a700084d048c9fcec043cab60df645f17" kind="variable"><name>mLastModifiedUtc</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a3f38f188b66f127a1b8cf5def1d18fcb" kind="variable"><name>mETag</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a54b4d171257efa55db80482a82c1a5a6" kind="variable"><name>mConnection</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a5c07c0bbe4d5c7a75e0c7b603faf7a73" kind="function"><name>fromConnection</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ac60746bd383b46a479b3bc10ff696557" kind="function"><name>setConnection</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1adf4cf90e6ef0143cac830401750136c1" kind="function"><name>getHeaderField</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ae365628913cd3ec42ae04c62d4706a93" kind="function"><name>HttpResponseHeaders</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ade596c9c69586d55473c033fabfd80bf" kind="function"><name>getResponseCode</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a3e371400c86009fd047a7a30fb4aecaa" kind="function"><name>setResponseCode</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a0a1549c9015f03e954f33836519a8960" kind="function"><name>getContentEncoding</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1aee42cb82e9ba4e388f8e9cc210b8ac23" kind="function"><name>setContentEncoding</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a96a5beb195e8f3be4d3ec22892773cf5" kind="function"><name>getContentLength</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ab59aaa7206c12a88a3bb00812ca5dd9a" kind="function"><name>setContentLength</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a5d5e9cba737b192604fdb597b4e3b2a8" kind="function"><name>getContentType</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ab2eb9c18088458f39e857a7a04478bb7" kind="function"><name>setContentType</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a9885bc8bb7b059cfc2997572b120d413" kind="function"><name>getDate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a9a8cef470fc7b5164a21feaa44d10111" kind="function"><name>setDate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a1c42274c945e23b7d54b5d588401cb53" kind="function"><name>getLastModified</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a1ec194a8c070883095b1b8ae17524215" kind="function"><name>setLastModified</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a9e4e248a9c2e7cfa0273e4b9f9f0eee7" kind="function"><name>getLastModifiedUtc</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a2280cebd2f41b0c89da03f576cecd5e5" kind="function"><name>setLastModifiedUtc</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1affac2e196109a65560ab16edad25885a" kind="function"><name>getETag</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1a28d525e933645e9986f41a87f0e49ae4" kind="function"><name>setETag</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_http_response_headers_1ad146fa8579a5f8a876c4688cc5a68520" kind="function"><name>toString</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender" kind="class"><name>com::janrain::android::engage::net::async::AsyncHttpClient::HttpSender</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1ab34fa6a32bb5e2724ccf38e29b8deedb" kind="variable"><name>mUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1aa637455eac95228253728e043c88882b" kind="variable"><name>mHeaders</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1af99b1f30cdb1d653c8a1fa168f8e1932" kind="variable"><name>mPostData</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1a0372c9fadd84874ec204dcd3f6209f9b" kind="variable"><name>mHandler</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1af993791bcc87196f67a9420fb0e59b0d" kind="variable"><name>mWrapper</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1a2e87c5ede6b7235170d287cd2e254454" kind="function"><name>[static initializer]</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1a93e03b44194aa62250fa005cff924566" kind="function"><name>HttpSender</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1aec9a621cb28c203f264f95e226b8d83d" kind="function"><name>HttpSender</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1a13a43e6d814de94978c515cb084873b1" kind="function"><name>run</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1aca36712b75b24cdf7c95f6e475beb3a4" kind="function"><name>addRequestHeaders</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1a0a89e85611c127b3d9ca06fb6b796f40" kind="function"><name>prepareConnectionForHttpGet</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1aa52d716c3d6e8a0e53d3bb234640b113" kind="function"><name>prepareConnectionForHttpPost</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1aed1e4f6551c06d39a2c8a1a35ef7391e" kind="function"><name>doHttpPost</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils" kind="class"><name>com::janrain::android::engage::utils::IOUtils</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1a9e5db2a09e4e2907840ca1e907ab9550" kind="function"><name>objectToBytes</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1ae6a829ed3d5f094b9789c65ad35acdbb" kind="function"><name>objectToBytes</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1adef8daa73499ae6255f83796b0ae1b99" kind="function"><name>bytesToObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1a3b76a16dba4c407f73b31c0345dd3a90" kind="function"><name>bytesToObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1a96881dc0bd687adf3c4bde5beb430cc0" kind="function"><name>readFromStream</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1ad8bcf7d95043d960841da8d510101fd5" kind="function"><name>readFromStream</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_i_o_utils_1ad812781ca3b6bcd84b47a298fd2bbd44" kind="function"><name>IOUtils</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link" kind="class"><name>com::janrain::android::engage::types::JRActionLink</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1ad286627be2e2470bd7f917c103faecbf" kind="variable"><name>mText</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1a9207c3b8ef8469f1d9101379d48550ce" kind="variable"><name>mHref</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1aa550387930016cdfada35d59aadf892f" kind="function"><name>JRActionLink</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1afab766445043570e6a82c14851366933" kind="function"><name>getText</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1a8043ef8d1352a42f35dceb50021a5923" kind="function"><name>getHref</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1aeed0a2e99b9fe422a1a538f76960d006" kind="function"><name>dictionaryForObject</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object" kind="class"><name>com::janrain::android::engage::types::JRActivityObject</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a23a0fef34f1a97a5566ae77ab6ee7d70" kind="variable"><name>mAction</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1ab34fa6a32bb5e2724ccf38e29b8deedb" kind="variable"><name>mUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1ae94df254bffa6663d441027d7d8275c0" kind="variable"><name>mUserGeneratedContent</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6a07e9575c466f0cfeb02907ae8d0973" kind="variable"><name>mTitle</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6393a44879537429fc8269dda0086f20" kind="variable"><name>mDescription</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a9808cd0aa65b882929ba8be9a974b496" kind="variable"><name>mActionLinks</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a3d89cbb011a9839da0b559556acad5f3" kind="variable"><name>mMedia</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1afd9064d65c67347bee51e205abccbb00" kind="variable"><name>mProperties</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa82a78e3b966073395f5a3e26921c839" kind="variable"><name>mEmail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a3140d87ea48963c09a373cb4eb1e60a1" kind="variable"><name>mSms</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a50adc0dbac14d515124196b3f605109b" kind="function"><name>JRActivityObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a86e636bbfd02a39e0d345c5b9f46fc6f" kind="function"><name>getAction</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1ad2ea28664c7db5089385e62816477d28" kind="function"><name>getUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a8be50b9e9701b2ebda10ec9b79245175" kind="function"><name>getUserGeneratedContent</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1ae086330e2c43749d05930c201e2c8a6d" kind="function"><name>setUserGeneratedContent</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a888f94790c968e3f0b5de17e509098aa" kind="function"><name>getTitle</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a7d4a73d6a1db487dd96f658bdbc98ae9" kind="function"><name>setTitle</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1ac7feffb7a33f63504ff1f87f19e2d2d8" kind="function"><name>getDescription</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a1d15d718177c4f5411ce6ab339889fd4" kind="function"><name>setDescription</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa6c896c3414d99e74895eda895025573" kind="function"><name>getActionLinks</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a081d9f6608b311f1d09baccfc22d765d" kind="function"><name>setActionLinks</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aeeaceaacba0d9f5a50626b0ab60ae48d" kind="function"><name>addActionLink</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a52553e9e6b54169e7479f988c09c4532" kind="function"><name>getMedia</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa891704e795b404d59b3b59f63103056" kind="function"><name>setMedia</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a09645c0a971972737f7b0463cd8c5b9b" kind="function"><name>setMedia</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1abbb9f5024dbb91acb1d08f22c11b7661" kind="function"><name>getProperties</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6f8bd80cdc8f93045131b5b413170294" kind="function"><name>setProperties</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a4f7ef1030ad7fb742f8ee9fa3cb122d0" kind="function"><name>getEmail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a0184e83c255e2eb71d7acd22d57ec017" kind="function"><name>setEmail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1adf134ff82d7bea22d1a8102aad55fa80" kind="function"><name>getSms</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6d80526f97601fd760df82361b7a3402" kind="function"><name>setSms</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a985a1b0429a8a359a4783c7409b91e3a" kind="function"><name>toJRDictionary</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a61b3a8492c935603d5276131bcd0600d" kind="function"><name>shortenUrls</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user" kind="class"><name>com::janrain::android::engage::session::JRAuthenticatedUser</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user_1af36d45f3448b2bad5d2f07f025611f89" kind="variable"><name>KEY_DEVICE_TOKEN</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user_1a9ddeb492505754f8a849b221687ccc02" kind="variable"><name>KEY_PHOTO</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user_1a24c0ce0d0907db19023c160e0bac27c5" kind="variable"><name>KEY_PREFERRED_USERNAME</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user_1a7851356efce1c0d693cabaaaca49ed99" kind="variable"><name>mPhoto</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user_1a4f86b4d67a16b9ec95c3b531326016c9" kind="variable"><name>mPreferredUsername</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user_1a688bfe8761df5e02f25080ffac47c8ab" kind="variable"><name>mDeviceToken</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user_1aaa686bd65aa19ca8fea7479f39e8a36f" kind="variable"><name>mProviderName</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user_1a88bcbd1e93dda3dd96a6a99cc3b0877e" kind="function"><name>JRAuthenticatedUser</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user_1af089dbeb23931b760f04111f70ae7df5" kind="function"><name>getPhoto</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user_1ad78d4ed99ba798e1f3f3ca744bb57fb6" kind="function"><name>getPreferredUsername</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user_1a034a4121b14ae238845a1a951ccbb9da" kind="function"><name>getDeviceToken</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user_1ae151df64ed9709b56ffeba6ae4fe8c14" kind="function"><name>getProviderName</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user_1a066fc61dabbea45700ad9e4b230ea789" kind="function"><name>getCachedProfilePicKey</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager" kind="class"><name>com::janrain::android::engage::net::JRConnectionManager</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a4696109ef6b502489f69e03dd96e67fc" kind="variable"><name>sInstance</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a2868ea574f860a5df5240d8fb1fa0b75" kind="variable"><name>mConnectionBuffers</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a76b95e0d04d0382c343ad46fd12f8719" kind="function"><name>getInstance</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1acb4c2340dd8ab5c687fde307aa1b7eaa" kind="function"><name>createConnection</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a281375474a80600edfa85f25c2be1a1f" kind="function"><name>createConnection</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a54bdf8dd8620586ec714402cbe60a8ad" kind="function"><name>createConnection</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1aeb97390d20767453d6b5c75872df98e4" kind="function"><name>openConnections</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a711b91ddc79c9622b2a25e238e5e1f32" kind="function"><name>JRConnectionManager</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a7fe4c1d6c4659e09e1c6b214a1c81a70" kind="function"><name>onResponseReceived</name></member>
+  </compound>
+  <compound refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate" kind="interface"><name>com::janrain::android::engage::net::JRConnectionManagerDelegate</name>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1a173221d2f70856e79fa6f6d112cb875a" kind="function"><name>connectionDidFinishLoading</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1a29b9fa0c1b8e696b58a5a0185f493d4a" kind="function"><name>connectionDidFinishLoading</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1affa481336180f3188c8363fbf6c7e4cf" kind="function"><name>connectionDidFail</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1a7cfea0f39a7786256b98d3d38835bbda" kind="function"><name>connectionWasStopped</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary" kind="class"><name>com::janrain::android::engage::types::JRDictionary</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a3d6b06229461e0972db38b25eae82c53" kind="function"><name>JRDictionary</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a80ee8f20b3006ddfbbaeee16fcc9cef4" kind="function"><name>JRDictionary</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1aa98cde8f15cc23a710562dc4d2cfc913" kind="function"><name>JRDictionary</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a4bc06064c7df37c2a110ec67785942d7" kind="function"><name>JRDictionary</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a9da45b437f058b058faa379845793cb0" kind="function"><name>archive</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a353f92c749fdf6380325de3c8a130142" kind="function"><name>unarchive</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a693608dec873ba750e1bf45f50d81817" kind="function"><name>toJSON</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a6d1e53c79bf2c04fa81079f01b301016" kind="function"><name>fromJSON</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1aa658996dc3ad784535daf3c877006496" kind="function"><name>getAsString</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1af532552e3bacf033ede4b38388575763" kind="function"><name>getAsString</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1ac63bf7999f4c6cd32eff4bb21dd41eae" kind="function"><name>getAsInt</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1aee5a70494e7163fa1cdee66df51b90ae" kind="function"><name>getAsInt</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a21316c4269c7b15e172aa48e1c7dc883" kind="function"><name>getAsBoolean</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a983d6d591c054d5c6fc0cd359f584d04" kind="function"><name>getAsBoolean</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a21cc44cc5264cee8252891600b28e669" kind="function"><name>getAsDictionary</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a755a04e077b2d3fa3a873291a88bc5ca" kind="function"><name>getAsDictionary</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1aba6c601cd9f8eca420682dfffae8aaf3" kind="function"><name>getAsListOfStrings</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1afec71e1565a79ca196c3c5411eb4f136" kind="function"><name>getAsListOfStrings</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a9f1e3128dfb718f3c73be956f1c9fa63" kind="function"><name>isEmpty</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a868d785d9acf2c64430719d6f46a5cee" kind="variable"><name>DEFAULT_VALUE_STRING</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a87a25aef84ef8c1dbe0c07aa6e09ce22" kind="variable"><name>DEFAULT_VALUE_INT</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1ac10d4b03c7463f3b1322475f8eef3d98" kind="variable"><name>DEFAULT_VALUE_BOOLEAN</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a3238d314ecdee14d2966760945d00c3b" kind="variable"><name>serialVersionUID</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1abfc2e2a58233fbafaf0f656ea1605159" kind="function"><name>getAsProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1a3d43f450a54f2551649bc91d4bc455e0" kind="function"><name>getAsProviderList</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary_1afbdfbae12eecf224274969948522f65e" kind="function"><name>getAsProviderList</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object" kind="class"><name>com::janrain::android::engage::types::JREmailObject</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1a19f1dff35df3fbabce86adea0b90fffc" kind="variable"><name>mSubject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1ace7af73cf1ec9b97f73ac9badb12c321" kind="variable"><name>mBody</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1a927dee6b6e7145029fe7bcc3a3bd19e0" kind="variable"><name>mUrls</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1a1d9a3cdeb592ba75d95b14ab6d2abbda" kind="function"><name>JREmailObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1a3198347307e17cd38fe6cd00ba6eb253" kind="function"><name>JREmailObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1a37c754e78ee57cba705ef0660f0a0e26" kind="function"><name>getSubject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1a39f0298f055f0b78ad2ac781d38f326f" kind="function"><name>setSubject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1aff2f2ca4042b71a1c005ef33d796073f" kind="function"><name>getBody</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1aafa2e1148f40b8c77b01e849324620ce" kind="function"><name>setBody</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1a3fe96da2a85dff14969500fa13159121" kind="function"><name>getUrls</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1a744f055478816813bc41d7db2979430f" kind="function"><name>setUrls</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1ab482a851576f3766af32a2988ca25f59" kind="function"><name>addUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1a23071d8a9b9a7c8c2f17095e4b87e217" kind="variable"><name>mShortUrls</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object_1af25e20b23d3c51764e32fb991d5f63b1" kind="function"><name>setShortUrls</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kind="class"><name>com::janrain::android::engage::JREngage</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a7c79a12fbe98d3dc3567f481b164e4f4" kind="function"><name>initInstance</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a9ce0c212c5efaf0f55bc44a36a1ac688" kind="function"><name>getInstance</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a85a4829f1caab300e8b01dc47aee638d" kind="function"><name>signoutUserForProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a7877c06caf812fc767c43352f0509380" kind="function"><name>signoutUserForAllProviders</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a11ec9d4e5b5d2cbbbd8e02f95d799979" kind="function"><name>setAlwaysForceReauthentication</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a5d37932565edbaf3d879f5848a7bc889" kind="function"><name>cancelAuthentication</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a45445132f9f15aa224c19e11bec26982" kind="function"><name>cancelPublishing</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a9cae37926c51b92a0d934b65cd14829c" kind="function"><name>setTokenUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a7bbc6073780da1e97b3809d15a9394e1" kind="function"><name>addDelegate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1adf46ec2da28c76195c2aa4eb8339d519" kind="function"><name>removeDelegate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a0de1aa16e951a1b62e2ef459b1596e83" kind="function"><name>showAuthenticationDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1ad1f8c683188718a475f7bb6276b6d45b" kind="function"><name>showAuthenticationDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a4b029811d11b8a46483a22ecb5b87a53" kind="function"><name>showSocialPublishingDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1aa0d5707e9dcc35ed6506a27c4cbde3d8" kind="variable"><name>sInstance</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a0955d62bfc6a1612a30e099025ca9165" kind="variable"><name>mContext</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a8aadc8de7bbfeb12364b6e25fa3df1c7" kind="variable"><name>mSessionData</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1ad8a0cc0678a5877bd001eeb25c101598" kind="variable"><name>mDelegates</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1aefe70b6ec24e3b343e4e114e25413f51" kind="variable"><name>mInterfaceMaestro</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1aeeb0765e4b1c8ff6b171de4065f9cac3" kind="variable"><name>mJRSD</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1ad04a8cdf9f047d3578cf40af5a4b927d" kind="function"><name>getContext</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a3ad4e7fa2c037cf6da20941c283941ba" kind="function"><name>setContext</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a3bdb7ed962738a097c0a9a2ef534c9b7" kind="function"><name>JREngage</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a17d4b5cbc3619ff2254d4483279bc70e" kind="function"><name>initialize</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a27038b64c4e8d9a2fb68baa8a31bbe50" kind="function"><name>engageDidFailWithError</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a90ec3f7e536c11e330a71a6dd255f470" kind="function"><name>checkSessionDataError</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a3e746026f30432304348ccd24ee9e7c9" kind="function"><name>getDelegatesCopy</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a19eec2727094a0c06db572ee13d2d276" kind="function"><name>clone</name></member>
+  </compound>
+  <compound refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate" kind="interface"><name>com::janrain::android::engage::JREngageDelegate</name>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1acd5e5b9fdaeeec8deca0cf60ae3f2ec7" kind="function"><name>jrEngageDialogDidFailToShowWithError</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a388f6ea1d314132c85a215c952fb7901" kind="function"><name>jrAuthenticationDidNotComplete</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a589d849b42af1061bac4697ab9982bba" kind="function"><name>jrAuthenticationDidSucceedForUser</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a35444c1f8c0fec9d14274e9a615cba0a" kind="function"><name>jrAuthenticationDidFailWithError</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a4b00beabacace5dd67a7bc60f133dcb4" kind="function"><name>jrAuthenticationDidReachTokenUrl</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a424d0bbf6dd2dbfe81a382406e5ac5ad" kind="function"><name>jrAuthenticationCallToTokenUrlDidFail</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a5ef7762d503eb0f583d172d4a10f7869" kind="function"><name>jrSocialDidNotCompletePublishing</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1afc069beff80daac09cc1e06566a45320" kind="function"><name>jrSocialDidCompletePublishing</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1ace972ad01c27e01a5ccf27ad70a4d0d9" kind="function"><name>jrSocialDidPublishJRActivity</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a6abc64d6097987fd7e7d603b1b220650" kind="function"><name>jrSocialPublishJRActivityDidFail</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kind="class"><name>com::janrain::android::engage::JREngageError</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a5d0e96578d3b58cac95214fac3c245d1" kind="variable"><name>CODE_UNKNOWN</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a3238d314ecdee14d2966760945d00c3b" kind="variable"><name>serialVersionUID</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1adc00833722df4f26a365c53a43a04631" kind="variable"><name>mCode</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a84262b4adb38cc036235e6f973b922fe" kind="variable"><name>mType</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1ae4451919f716c2d2c274b0d2b2d9104e" kind="function"><name>JREngageError</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a3e557172a9c2da6a96351bbd29ce1f8b" kind="function"><name>JREngageError</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a8361b009dd85dd991e5e684d648ffabf" kind="function"><name>getCode</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a2520b3fc10894bb8fc4a96014dfb0d08" kind="function"><name>setCode</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a68adac94351807681f1b2828b9c68734" kind="function"><name>getType</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a57d2e31f0bf85615d4dc6a4407d80c6f" kind="function"><name>setType</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object" kind="class"><name>com::janrain::android::engage::types::JRFlashMediaObject</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a9b17f35d97f72efb09e749a042dfde9f" kind="variable"><name>mSwfSrc</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a41b79808af056e6c361bf90129f2f9e9" kind="variable"><name>mImgSrc</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1aa39f004a83a206ca8644d441c792e45b" kind="variable"><name>mWidth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a3d6a057795437ab1becbd09b09ea7a90" kind="variable"><name>mHeight</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a89c309c9877e843c2a151f91759be11b" kind="variable"><name>mExpandedWidth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a43b25e7ecfdedf6ff98bde0e4b48c71c" kind="variable"><name>mExpandedHeight</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a6517406c8905055f31f287bb63a94b8a" kind="function"><name>JRFlashMediaObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1ae7f94344f09b598d41a30f2037d4adf0" kind="function"><name>getSwfSrc</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a328eb639ec47e6998651863dba8df1ee" kind="function"><name>getImgSrc</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a67a0997183f24da19b776d96c1052998" kind="function"><name>getWidth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a8b4c8bccc530aa0a9b0139e04913af32" kind="function"><name>setWidth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a07efb2a4e9a982688c8bb3c3f21d1092" kind="function"><name>getHeight</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a7013185ad2825ade83994b396c4fdfcd" kind="function"><name>setHeight</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a488c9275c225e6345bca93f2c4a34a73" kind="function"><name>getExpandedWidth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1ac00b039224f01f568a1633e339310329" kind="function"><name>setExpandedWidth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a36714f2a3f9f1d491e5e92d63d786cbc" kind="function"><name>getExpandedHeight</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a55ac98e9566ed6ee286122a3b05bf9cc" kind="function"><name>setExpandedHeight</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1afd23d95f33ec654d50fd5f77f7162c8e" kind="variable"><name>mPreview</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1aa35d8f551eaf3515c78e7493c5f02ee7" kind="function"><name>getPreview</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a25540df8a46ce2c9df1cab038150f983" kind="function"><name>setPreview</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1aced99e4192a47fe0592231db2e10f27c" kind="function"><name>hasThumbnail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1ac086e95fc7fdfe34853c5bcf18ba62a6" kind="function"><name>getThumbnail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a68adac94351807681f1b2828b9c68734" kind="function"><name>getType</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object" kind="class"><name>com::janrain::android::engage::types::JRImageMediaObject</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1a55bae62e4521511e834270cbb7910aa6" kind="variable"><name>mSrc</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1a9207c3b8ef8469f1d9101379d48550ce" kind="variable"><name>mHref</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1ad7f202d58a8adb7dc5ca477fb4eb2cf5" kind="function"><name>JRImageMediaObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1a942f1490911b90f61fcc82f4f0674838" kind="function"><name>getSrc</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1a8043ef8d1352a42f35dceb50021a5923" kind="function"><name>getHref</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1afd23d95f33ec654d50fd5f77f7162c8e" kind="variable"><name>mPreview</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1aa35d8f551eaf3515c78e7493c5f02ee7" kind="function"><name>getPreview</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1a25540df8a46ce2c9df1cab038150f983" kind="function"><name>setPreview</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1aced99e4192a47fe0592231db2e10f27c" kind="function"><name>hasThumbnail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1ac086e95fc7fdfe34853c5bcf18ba62a6" kind="function"><name>getThumbnail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1a68adac94351807681f1b2828b9c68734" kind="function"><name>getType</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity" kind="class"><name>com::janrain::android::engage::ui::JRLandingActivity</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a51733fdfa0d00ab427266a9e9c74ea87" kind="variable"><name>mLayoutHelper</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a8aadc8de7bbfeb12364b6e25fa3df1c7" kind="variable"><name>mSessionData</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a544518c611eaeaad476062b802021054" kind="variable"><name>mFinishReceiver</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a5c1b0783cb6fcc63064558e1274552f4" kind="variable"><name>mIsAlertShowing</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1ace16f8d3e69c798ec139f3248bb33b37" kind="variable"><name>mIsFinishPending</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1afced60e5f7b7a920620b3ffc99697fb6" kind="variable"><name>mImageView</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a4f2537d1b909166ac5cc72eb589e3402" kind="variable"><name>mEditText</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a693ffdd4df42c794579a9632630e7527" kind="variable"><name>mWelcomeLabel</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1ab653d879bd97feeca2fbcc79c61abb0a" kind="variable"><name>mSwitchAccountButton</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a06e10fd929b997af5a19351b9d477ef4" kind="variable"><name>mSigninButton</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a85e87cb5ced88dff7c8173ecc4f636d1" kind="function"><name>onCreate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1af09f6e77f8fb370071383504a006758f" kind="function"><name>onKeyDown</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1acb776333595cb036bf935852041cb088" kind="function"><name>onBackPressed</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a11bcf4e3177fdb549350a4aa149e9e67" kind="function"><name>onStart</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a14768c382cfd134f7688413a3eb56d08" kind="function"><name>onResume</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a8a744b43949a3939f448facad211e3d2" kind="function"><name>onDestroy</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a6ce1507fe9de7a4200017e1af35fe634" kind="function"><name>handlePrimaryButtonClick</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1ac6b1259783af49ce23a3b897bbde4f29" kind="function"><name>handleSecondaryButtonClick</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1abeb364d96830b00f06303d12c2c80098" kind="function"><name>showAlertDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a6e82a4f092104fff8ea7997ae00d918d" kind="function"><name>tryToFinishActivity</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a2da68f2bebea628194f8bc85aee4ba48" kind="function"><name>prepareUserInterface</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a138294aade1a91bbf1740d666fee9218" kind="function"><name>configureButtonVisibility</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_activity_1a27d9d991257d0e31910ee2af58ea4d12" kind="function"><name>getCustomTitle</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_media_object" kind="class"><name>com::janrain::android::engage::types::JRMediaObject</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_media_object_1aced99e4192a47fe0592231db2e10f27c" kind="function"><name>hasThumbnail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_media_object_1ac086e95fc7fdfe34853c5bcf18ba62a6" kind="function"><name>getThumbnail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_media_object_1a55d6bb68e1fe624c2a6ee8410d91f1b1" kind="function"><name>getType</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object" kind="class"><name>com::janrain::android::engage::types::JRMp3MediaObject</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1a55bae62e4521511e834270cbb7910aa6" kind="variable"><name>mSrc</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1a6a07e9575c466f0cfeb02907ae8d0973" kind="variable"><name>mTitle</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1a447e5238acd3b656ad1658af4d1d585b" kind="variable"><name>mArtist</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1a0beebc1720c6f4bcf3190b3a112658b4" kind="variable"><name>mAlbum</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1af0943c007a4be987b3441b4317061306" kind="function"><name>JRMp3MediaObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1a942f1490911b90f61fcc82f4f0674838" kind="function"><name>getSrc</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1a888f94790c968e3f0b5de17e509098aa" kind="function"><name>getTitle</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1a7d4a73d6a1db487dd96f658bdbc98ae9" kind="function"><name>setTitle</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1a1b9f565753d008491c59887680bd570e" kind="function"><name>getArtist</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1ad3502580239a5b59adb83dbbd4651fe4" kind="function"><name>setArtist</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1a11ac7b770ff2135e877c241ddb5db662" kind="function"><name>getAlbum</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1a90033ebe6c28a946a4c88965365961fb" kind="function"><name>setAlbum</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1a68adac94351807681f1b2828b9c68734" kind="function"><name>getType</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider" kind="class"><name>com::janrain::android::engage::session::JRProvider</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a98a70021dbca301562452b81e4b9e76a" kind="variable"><name>KEY_FRIENDLY_NAME</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1ad178a73499dbce86242839486ab5bed0" kind="variable"><name>KEY_INPUT_PROMPT</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1ac02af6b163c67dc9b9e346163ed276d1" kind="variable"><name>KEY_OPENID_IDENTIFIER</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1ae97315beea95395e0f381aedd2ff13f9" kind="variable"><name>KEY_URL</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a6c7cbc19140ad9cfd642b9eba2910f13" kind="variable"><name>KEY_REQUIRES_INPUT</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1ad461d1ee9bd6c87e6845ccea14818675" kind="variable"><name>KEY_SOCIAL_SHARING_PROPERTIES</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a2776cc6ed9c931e175602bd57fbedb6f" kind="variable"><name>KEY_COOKIE_DOMAINS</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a14c39680294a16bab3da737e0a2fe050" kind="variable"><name>KEY_ANDROID_WEBVIEW_OPTIONS</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1aa3859620e002c90c68cf08f8a5383c47" kind="variable"><name>provider_list_icon_drawables</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a851eee31c7500cad2ee3255ab38b8493" kind="variable"><name>provider_list_icon_resources</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a547f06c5135caf54756cc1ac427b4d26" kind="variable"><name>provider_logo_drawables</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1ae7edc22a11406768ee78eaf0d013716f" kind="variable"><name>provider_logo_resources</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a3e0018763e60939d5c4b735eed427978" kind="variable"><name>mName</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a0a499bcfb6e92a9ad9ff2501b9295531" kind="variable"><name>mFriendlyName</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1acc20f926a5a8de53b6d00569717f2e58" kind="variable"><name>mPlaceholderText</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a25a0ce25f92393ab8801f65a9c00d6d2" kind="variable"><name>mShortText</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1aa41574ac39e166b0685394a2d190de56" kind="variable"><name>mRequiresInput</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a25b4a31e846d956829cf627260f24598" kind="variable"><name>mOpenIdentifier</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1aee286e0eb51f7a1e0a25a2d17e7c910f" kind="variable"><name>mStartAuthenticationUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a0f34fc267cd2ac4c6c2674e9f4953b6a" kind="variable"><name>mCookieDomains</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1ad0450118ee30db7ec14ebeb9bb349700" kind="variable"><name>mSocialSharingProperties</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1ac3a7f30e1f7b4e5685425f02a7451485" kind="variable"><name>mWebViewOptions</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a5aa45946f5300718b3bf0d9051473541" kind="variable"><name>mForceReauth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1acaae283e8c6a7b8e7bb53857203449de" kind="variable"><name>mUserInput</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1ae5ae3ca82572d088ce82f7729dc9d0c7" kind="variable"><name>mWelcomeString</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1abcbcd32353f1cbaefd1fbe9fdca4c2db" kind="variable"><name>mCurrentlyDownloading</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1ac0d5271e22a09feae99a5a13b6ead42d" kind="function"><name>JRProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1af791944a498d90d7ae100d1bb86601d9" kind="function"><name>getCookieDomains</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a78ee178b6a73658d65ca60da4d1e6683" kind="function"><name>getName</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a9672085ebb092712cd3c63c03d7f41cc" kind="function"><name>getFriendlyName</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1abc03f48679495b2d9ac59631877ce6a7" kind="function"><name>getPlaceholderText</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a5ebb661a63836571d920dc7b91db5a8b" kind="function"><name>getShortText</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1afaa6664d61d4457e0ba96e7108245027" kind="function"><name>requiresInput</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a77e20b0fb85124ab06be81b68aaeafc3" kind="function"><name>getOpenIdentifier</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a85109e923686c8ee0134fa0d1421121c" kind="function"><name>getStartAuthenticationUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1ae51314d521e20a11808832f505afc58b" kind="function"><name>getSocialSharingProperties</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a3893ecbb6c6e33daec44eabb9d195222" kind="function"><name>getWebViewOptions</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1ad10f977d8d35743e990c92cfc510388d" kind="function"><name>getForceReauth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a695f8d465c01f8070bc7f9575c0bedc4" kind="function"><name>setForceReauth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a0ed69559e8c02c2023a338ada72eb724" kind="function"><name>getUserInput</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a46a7420fd73f8cb248461bcc3a260cca" kind="function"><name>setUserInput</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a1a59fc49b45552cc097e5bd072fd1315" kind="function"><name>getWelcomeString</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1aaf3ea80eab29ecaa24bebf5e0a199dfe" kind="function"><name>setWelcomeString</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1af579b7cdbe9b263ea259097eaec5eac1" kind="function"><name>getProviderIcon</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a1696845867a60cf59384b22dc1eae233" kind="function"><name>getProviderLogo</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a209936d7dd34d07fe1860cd37824f9ff" kind="function"><name>getTabSpecIndicatorDrawable</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1a6c2ffef2bc44c7623c80391c8c73f400" kind="function"><name>loadDynamicVariables</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1ad146fa8579a5f8a876c4688cc5a68520" kind="function"><name>toString</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1afa2a81a0defb82feffdc7e283aa22971" kind="function"><name>getDrawable</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider_1ae0f3a124d14445cec093c6f62d7450f9" kind="function"><name>downloadIcons</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list" kind="class"><name>com::janrain::android::engage::types::JRProviderList</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1ae9b34b075744f552bfbff6d578ae9a98" kind="function"><name>isEmpty</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1a8aaeca6e66292fe4d732b9725b07d202" kind="function"><name>archive</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1a134eb432a9400ec2ff093045e20b0b7e" kind="function"><name>unarchive</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1a08b3b1c53a6ba0e94dc59855220a6caf" kind="function"><name>JRProviderList</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1afe60aa616cf8badc0b38484b7b461e87" kind="function"><name>JRProviderList</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1ade643cc5e966786fffd29d766e35950e" kind="function"><name>JRProviderList</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1ae903a5ba4c196ca581e0c2ec7d978056" kind="function"><name>JRProviderList</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity" kind="class"><name>com::janrain::android::engage::ui::JRProvidersActivity</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1acd2d6eefd4c04637702456e9c2d2f18c" kind="variable"><name>mListView</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a885f25ddf1b2f613a1dfc475f3648588" kind="variable"><name>mEmptyTextView</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a51733fdfa0d00ab427266a9e9c74ea87" kind="variable"><name>mLayoutHelper</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a8aadc8de7bbfeb12364b6e25fa3df1c7" kind="variable"><name>mSessionData</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a4cfec47cf5135e04b838df02f034d3cd" kind="variable"><name>mProviderList</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1aed8eac847605893faa91083d36c582ff" kind="variable"><name>mAdapter</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a1c10e5c66145e34cfe720dd128023094" kind="variable"><name>mTimer</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a3868113e2a6c5c66d59238ef4a32bead" kind="variable"><name>mTimerCount</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a544518c611eaeaad476062b802021054" kind="variable"><name>mFinishReceiver</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a90bcf3440063885caffeb2f34db10ba6" kind="variable"><name>mNoProvidersFoundRunner</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a21123f3c3a1c2f6fe22c406d22819dbf" kind="variable"><name>mProvidersLoadedRunner</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a1dd1428027c0bf4240006e8b343eb777" kind="variable"><name>itemClickListener</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a8d2fc9590a6a7b928d513812ccedc8a3" kind="variable"><name>TIMER_MAX_ITERATIONS</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a85e87cb5ced88dff7c8173ecc4f636d1" kind="function"><name>onCreate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a14768c382cfd134f7688413a3eb56d08" kind="function"><name>onResume</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1af09f6e77f8fb370071383504a006758f" kind="function"><name>onKeyDown</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1acb776333595cb036bf935852041cb088" kind="function"><name>onBackPressed</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a8f7d87763ddaf085205a54e8477ecfce" kind="function"><name>onCreateOptionsMenu</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a37a55c533c74b60c0290ef1329d74e65" kind="function"><name>onOptionsItemSelected</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a6e82a4f092104fff8ea7997ae00d918d" kind="function"><name>tryToFinishActivity</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a11bcf4e3177fdb549350a4aa149e9e67" kind="function"><name>onStart</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a8a744b43949a3939f448facad211e3d2" kind="function"><name>onDestroy</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1a3c6dd4273e9b563fbffdd8bad1cc6cf2" kind="function"><name>onCreateDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1ae8958d62d1de815ca07fedadb61a280f" kind="function"><name>doSessionPoll</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity" kind="class"><name>com::janrain::android::engage::ui::JRPublishActivity</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a049c0d0691859a0e4f981b62a4040d85" kind="variable"><name>DIALOG_FAILURE</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a7864df27121b22ad591732115a42d8bb" kind="variable"><name>DIALOG_CONFIRM_SIGNOUT</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1af0643e06c8266901505bca5757fa63ae" kind="variable"><name>DIALOG_MOBILE_CONFIG_LOADING</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a03ab28f988849d560636018ae10a5d0e" kind="variable"><name>DIALOG_NO_EMAIL_CLIENT</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a6ceeefa64d60a4bd69db046cd27f0fbd" kind="variable"><name>DIALOG_NO_SMS_CLIENT</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a7895808495b67fced68bd21c5309b8c1" kind="variable"><name>JANRAIN_BLUE_20PERCENT</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ae1d4ed6e70531bc57c0734967f48a85f" kind="variable"><name>JANRAIN_BLUE_100PERCENT</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a510ec468fc90b4cd5ff39efe8f53a82b" kind="variable"><name>EMAIL_SMS_TAB_TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a8aadc8de7bbfeb12364b6e25fa3df1c7" kind="variable"><name>mSessionData</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ad8d6b3f2ba89d1e530be137bffe2cd06" kind="variable"><name>mSessionDelegate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a06098b78b62bcea31f1436b07fa61092" kind="variable"><name>mSelectedProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a30949168607610052b35086a92612788" kind="variable"><name>mAuthenticatedUser</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a56db64b32b8f7fdfb08a6c75cb2ab4da" kind="variable"><name>mActivityObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a49db4f8f77de02f864f2e1c3f6822073" kind="variable"><name>mShortenedActivityURL</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1aabe0e02542e8d19bf253c24f8c745d5d" kind="variable"><name>mMaxCharacters</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a34f088b4fbf92f419c3eed95d606fe6b" kind="variable"><name>mDialogErrorMessage</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1aaa92f99f454302655fa3b817e76de943" kind="variable"><name>mWeHaveJustAuthenticated</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1affac0c755f71ec22692ba6a45938c3c3" kind="variable"><name>mWaitingForMobileConfig</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a91cb18b577b1e1e9665a30d645ab7880" kind="variable"><name>mPreviewBorder</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ae3d36f29e2aff900a07e490ec747dd9f" kind="variable"><name>mPreviewBox</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a4aa6cac1820385e3dede43b3adef59c4" kind="variable"><name>mMediaContentView</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1af23adb66a3fdf07de36fc4d84755fa65" kind="variable"><name>mCharacterCountView</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a47b6e3d1befcf7f110ed6b0cd6d0e4ba" kind="variable"><name>mPreviewLabelView</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ad43908d332a09af71ff6cb4d20ced98a" kind="variable"><name>mProviderIcon</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ae1ca2eecf1e5b7f19c75aa74ac643c9a" kind="variable"><name>mUserCommentView</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a67332faba685323375dc7a0d62554795" kind="variable"><name>mTriangleIconView</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a0974a898c0718146359dbc4880de1a52" kind="variable"><name>mUserProfileInformationAndShareButtonContainer</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a092fe1c8d3c0f049f5989b7dcb35fd52" kind="variable"><name>mUserProfileContainer</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a7f3f6feca4b1186ee13250dea4045179" kind="variable"><name>mUserProfilePic</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a0131ba15c1e676d0d40017156ef95ca9" kind="variable"><name>mUserNameView</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1af26266e1cccb109fa383f5e8dcd23ccc" kind="variable"><name>mSignOutButton</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a1c272f1d8e647f2aa13dde1180abebfd" kind="variable"><name>mJustShareButton</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ae76efe3045442bb4d7f64925f5a04f94" kind="variable"><name>mConnectAndShareButton</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a4ba8124b30255bbe93024237965a052d" kind="variable"><name>mSharedTextAndCheckMarkContainer</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a181059e0498c45c12cf322af9580b462" kind="variable"><name>mEmailButton</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a13226903fe406f1156cac10cf8022ade" kind="variable"><name>mSmsButton</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a82e2dc4d19478bea86b5705350dad859" kind="variable"><name>mEmailSmsComment</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a98063f5e5f20c1b28494bc1a56943fe0" kind="variable"><name>mEmailSmsButtonContainer</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a9c40d239840c24f6a317abb609fc3ebc" kind="variable"><name>mProvidersThatHaveAlreadyShared</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a51733fdfa0d00ab427266a9e9c74ea87" kind="variable"><name>mLayoutHelper</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a544518c611eaeaad476062b802021054" kind="variable"><name>mFinishReceiver</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a8bf4ae5e1b3748c3b9d856dab1349def" kind="variable"><name>mShareButtonListener</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a394ce1621181669edf0366e76f1ee1f5" kind="variable"><name>mSignoutButtonListener</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ac72ead79ac2956d6e4436fff9a14a46b" kind="variable"><name>mUserCommentTextWatcher</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a2fe87946b62447aa71b3d13e9b3ea1c6" kind="variable"><name>mEmailButtonListener</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a7c63a7b21cf86d323b67eed85ed9dbae" kind="variable"><name>mSmsButtonListener</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a85e87cb5ced88dff7c8173ecc4f636d1" kind="function"><name>onCreate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ad539240d964251febfd9aee25f05c5bc" kind="function"><name>onConfigurationChanged</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1af09f6e77f8fb370071383504a006758f" kind="function"><name>onKeyDown</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1acb776333595cb036bf935852041cb088" kind="function"><name>onBackPressed</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a88e5e77b2eb9c3a4acb10c348d04db8c" kind="function"><name>onTabChanged</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a3bc85abb35d480f743e4b74d5de3d549" kind="function"><name>onActivityResult</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a3c6dd4273e9b563fbffdd8bad1cc6cf2" kind="function"><name>onCreateDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1aaf5366b734ca474e71992d65bdf4cc22" kind="function"><name>updateCharacterCount</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a5122c0e057509f57c14be92d135beec2" kind="function"><name>doesActivityUrlAffectCharacterCountForSelectedProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a11bcf4e3177fdb549350a4aa149e9e67" kind="function"><name>onStart</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a78cea7fc8842531f82c0dde817130d2a" kind="function"><name>onRestart</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a14768c382cfd134f7688413a3eb56d08" kind="function"><name>onResume</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ad36a232bff79e67140875eff1a578827" kind="function"><name>onPause</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a458397229d0b2076a739955b1cb8be35" kind="function"><name>onStop</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a8a744b43949a3939f448facad211e3d2" kind="function"><name>onDestroy</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a11d74513aa7d3d765ad8b2ea2f289ebf" kind="function"><name>onPrepareDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ac58002c9c6443f9de53f156d1a9d62b1" kind="function"><name>loadViewElementPropertiesWithActivityObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a3db39aa1236b36c38a1b8849422676ef" kind="function"><name>initializeWithProviderConfiguration</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1af26d80974ef63d10953120d22ba30f77" kind="function"><name>createTabs</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a81f2748f414a874320e14859b6636e90" kind="function"><name>setTabSpecIndicator</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a08169d9a451b6ac569102570b40c7a01" kind="function"><name>createTabSpecIndicator</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a6e82a4f092104fff8ea7997ae00d918d" kind="function"><name>tryToFinishActivity</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a4eb8ccbae86c15926dc66f8a3379e340" kind="function"><name>signOutButtonHandler</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a7530e937b52d8cef7294a0133bca96cb" kind="function"><name>configureSharedStatusBasedOnProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ace962e366560debfcd70a441c36f52d6" kind="function"><name>updateUserCommentView</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1afd19470f433689878c2cb6efcd6a5471" kind="function"><name>updatePreviewTextWhenContentReplacesAction</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ac610c69761efd46ab69793bf896ca43b" kind="function"><name>updatePreviewTextWhenContentDoesNotReplaceAction</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ae872b386764f44135b7340a3b63dc07e" kind="function"><name>getUserDisplayName</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a3a062daad06b4869c1dcb488fa9fec1d" kind="function"><name>loadUserNameAndProfilePicForUserForProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ae69486d89e45c42615fd61fd06f432c7" kind="function"><name>showActivityAsShared</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a6b875e2351bdb33ca919cb0fdcef9083" kind="function"><name>showUserAsLoggedIn</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a252b1e9cd6318c010b62ae40c644d324" kind="function"><name>configureViewElementsBasedOnProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a16a8069c6ce90edc503333a3dbc19f0e" kind="function"><name>colorForProviderFromArray</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ad4b18c1a7443250a71b23fd8695b488f" kind="function"><name>configureLoggedInUserBasedOnProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1a5396f32587a153b55434b75f9f3741ab" kind="function"><name>logUserOutForProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ae24eff4443ad157fa6f3b9a8efa079b9" kind="function"><name>authenticateUserForSharing</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1af8c57f2737f8b09528f8d140398a0f13" kind="function"><name>shareActivity</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ad9cc14f621bba896fc0ac26e497d2ae2" kind="function"><name>isPublishThunk</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1af1f4781f32a325d5a31331add99a8057" kind="function"><name>scaleDipPixels</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_activity_1ac80d48dc871ba545456a4b078538b8dd" kind="function"><name>createSessionDelegate</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data" kind="class"><name>com::janrain::android::engage::session::JRSessionData</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a2bd1a9c1972e3343ab4b35ff12ee79c9" kind="variable"><name>sInstance</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ae45e4cb81a6ff467a64d4366ceea07e2" kind="variable"><name>ENVIRONMENT</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a3fc0bf08d123c1f8cf1796dcdd0c005f" kind="variable"><name>ARCHIVE_ALL_PROVIDERS</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a6983e11be53d4fa9fe56968019da2f08" kind="variable"><name>ARCHIVE_BASIC_PROVIDERS</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a7c3ab8c732a7ad8fbf7f52a1f7424273" kind="variable"><name>ARCHIVE_SOCIAL_PROVIDERS</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a618125731e6e539c9bde1c662915c0d1" kind="variable"><name>ARCHIVE_AUTH_USERS_BY_PROVIDER</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a1bf502011867145e896c8f710d88b71f" kind="variable"><name>FMT_CONFIG_URL</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a26ea70854f160457dfda104bb800507a" kind="variable"><name>TAG_GET_CONFIGURATION</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1af17675a514c290fef460f224c1ac7a35" kind="variable"><name>TAG_NOTIFY_EMAIL_SMS</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1aed4256ae77203346fac6607b075ba80f" kind="variable"><name>mDelegates</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ab543a84c647394ac7c911a739cbe35c3" kind="variable"><name>mCurrentlyAuthenticatingProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a61df990458602a92f10a777b37e9b53a" kind="variable"><name>mCurrentlyPublishingProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1aefe5124522b5ab4f2e120a306a0ff2d0" kind="variable"><name>mReturningBasicProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1aad47351a1a87e403ee8c1a868ab24169" kind="variable"><name>mReturningSocialProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a809be21fb0fd74273ce2c1742880bd4f" kind="variable"><name>mAllProviders</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1addc0431a3bd128222c700b06c762bd8c" kind="variable"><name>mBasicProviders</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a57de5f6cae263c5e1e8802215097dcb9" kind="variable"><name>mSocialProviders</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a3c1ca51ad3219a193da19e1250c59226" kind="variable"><name>mAuthenticatedUsersByProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ab6dc87a7712bfb4313347f38026f2cd4" kind="variable"><name>mSavedConfigurationBlock</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a58e430f8f019d65a442501207f80d1eb" kind="variable"><name>mSavedEtag</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a5e280786aa5dfd8a0767275948cf81a8" kind="variable"><name>mNewEtag</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a8ac8c0cb4954509ae599742a2192d074" kind="variable"><name>mActivity</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1af3408deb97cdeb3fc95d1c1508807f87" kind="variable"><name>mTokenUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1af60cb1c1ab6907a32eec9fe40dd28629" kind="variable"><name>mBaseUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1aa17aa05a446615ddfd707b2ba6ad9b39" kind="variable"><name>mAppId</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a988c6a3845f6b5e27a5e7fff1ce76117" kind="variable"><name>mGetConfigDone</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ab33748a7fdd90dfbde2b56c0d559b1a1" kind="variable"><name>mOldEtag</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ada0f41b54fae986b34b555eb283c3a3b" kind="variable"><name>mUrlEncodedAppName</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a7fc95ccf8913400728a8f3fb31532250" kind="variable"><name>mLibraryVersion</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ac12e15ac4c1357440c1febdf4cf1d9a4" kind="variable"><name>mHidePoweredBy</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a78cf7313973dc675708f55a9e1291877" kind="variable"><name>mAlwaysForceReauth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a8c4f694baeb4472ada1da937a4d69291" kind="variable"><name>mSkipLandingPage</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1aaaf5b80c04af9fc934bcc59260999b49" kind="variable"><name>mSocialSharingMode</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a0db485d6d4d4e93b79cc604827021cb0" kind="variable"><name>mDialogIsShowing</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a2d75b269368bad9f1c5be907a366a863" kind="variable"><name>mError</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a3d3bd087ef23736a14198db9bc81d228" kind="function"><name>getInstance</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a7724cd67c6ae55d23e52a6838d1eb31f" kind="function"><name>getInstance</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ac6e5d155921f79a482828691257fe797" kind="function"><name>getEnvironment</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a085e6d03c9f82404fcb2157bccc2cca4" kind="function"><name>JRSessionData</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ac8c57252724b47a81211b0adfe453c4f" kind="function"><name>processShareActivityResponse</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a055581b888adb32f574ada131818c9e7" kind="function"><name>startGetConfiguration</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ab2347023e09f6bd6bc3f54bc06e3240d" kind="function"><name>finishGetConfiguration</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1aa4e2ad7a9c0feee62c8d09af39b44093" kind="function"><name>finishGetConfiguration</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a634670d874180a00d7f565017cf9910a" kind="function"><name>getWelcomeMessageFromCookieString</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1acd71a4e4b3abb2e3111ddff07f4700b5" kind="function"><name>saveLastUsedSocialProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1aa56e4bd8733172a2945c43309615ce1c" kind="function"><name>saveLastUsedBasicProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a4b40d3b453d55e6ef89da6090086cca3" kind="function"><name>deleteWebviewCookiesForDomain</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ac3fb85f449e70fb06db19572d357a311" kind="function"><name>makeCallToTokenUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a1293a06c1195125aec8aa134d7b334fc" kind="function"><name>triggerMobileConfigDidFinish</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a2dae9cdb36c6aab2398351e870c49bab" kind="function"><name>getDelegatesCopy</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a5c629926a8842769945c98f3cc4d286d" kind="function"><name>getError</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1af67c8d71ad348bd7d405e8ef31c7fe00" kind="function"><name>getJRActivity</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a2ca12d362f33909c404356521bc8101f" kind="function"><name>setJRActivity</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1af5485a991e2ceb0ec8b916bb1b4623fc" kind="function"><name>setSkipLandingPage</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a49750f36f2a33c38a42a137b574f23d4" kind="function"><name>getAlwaysForceReauth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a923d43a5a8091d8fe3fb98e05bcf3193" kind="function"><name>setAlwaysForceReauth</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a5485e26791f30f6cdd3b66d891c6e469" kind="function"><name>getTokenUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ab5da61dce6332cb7d2a9c7b123665d4d" kind="function"><name>setTokenUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a1c10966c1a7ac546945b2bdacdfd3451" kind="function"><name>getCurrentlyAuthenticatingProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a0a5354db2bd148c2453349cd8641f85d" kind="function"><name>setCurrentlyAuthenticatingProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a89dde6addf97286b5692d047a220dd26" kind="function"><name>setCurrentlyAuthenticatingProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a5b643b07772094899759a52f78b92c44" kind="function"><name>getBasicProviders</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1abfba33239690e8074ca23227bf0c5f7c" kind="function"><name>getSocialProviders</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ad64451c3c75d2a2f3a128df8524d59d5" kind="function"><name>getReturningBasicProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a30bfc5d7e5fcf484fa788090f0447a56" kind="function"><name>setReturningBasicProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a47966b446ddc762bd256845879da5355" kind="function"><name>getReturningSocialProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ad533c7ea4a1ac1f6afe518870dc57df6" kind="function"><name>setReturningSocialProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a8a9f62a40e52e81915eb92f51906796a" kind="function"><name>getBaseUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1afa14488f54ec948090592efcd037b2d4" kind="function"><name>getSocialSharingMode</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ac00c39e82283ae4109869aeeab85ff62" kind="function"><name>setSocialSharingMode</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a86c34c695dd3b04a02deb78d8b36639a" kind="function"><name>getHidePoweredBy</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a44478e51e3d956e82ea9d4e760fb1e52" kind="function"><name>setDialogIsShowing</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1affa481336180f3188c8363fbf6c7e4cf" kind="function"><name>connectionDidFail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a173221d2f70856e79fa6f6d112cb875a" kind="function"><name>connectionDidFinishLoading</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a29b9fa0c1b8e696b58a5a0185f493d4a" kind="function"><name>connectionDidFinishLoading</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a7cfea0f39a7786256b98d3d38835bbda" kind="function"><name>connectionWasStopped</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a63eb87424ec440dd78aea13ffc6e5396" kind="function"><name>addDelegate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a1efa3a78347313421ef419ef1a6e67b2" kind="function"><name>removeDelegate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1aeb251bc1b5490930ba845b88bab4ed7c" kind="function"><name>tryToReconfigureLibrary</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1acf56fb99c12f7d1851fc651fd76258a1" kind="function"><name>startUrlForCurrentlyAuthenticatingProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a16ba0258394485be5741a5462544f771" kind="function"><name>getAuthenticatedUserForProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a8d9bd8a6060361d1f80aeb8a0ce3d2d5" kind="function"><name>authenticatedUserForProviderNamed</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a5513566402c1c11a439c50a2c94f9558" kind="function"><name>forgetAuthenticatedUserForProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a9941cbf251d618f1e7f403b322c01c34" kind="function"><name>forgetAllAuthenticatedUsers</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a073367e7166d56a44a337bc09c3eab31" kind="function"><name>getProviderByName</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a7404e2dbbab95e21d639cc09cee659fe" kind="function"><name>notifyEmailSmsShare</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1afe0367b1b40f64549b6d5601e0b9ca27" kind="function"><name>shareActivityForUser</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1ae9efc2117bdee43480b7780c3d147694" kind="function"><name>setStatusForUser</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a081d87b66740160c6e4ce2edf02081ed" kind="function"><name>triggerAuthenticationDidCompleteWithPayload</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a8dabf34f7f4dd7e4566bce7396f83d8c" kind="function"><name>triggerAuthenticationDidFail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a05631b7ed5d88934b0aecc025cf72f7a" kind="function"><name>triggerAuthenticationDidCancel</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a1751d96c7649994a7c1eff7a9cb4f52b" kind="function"><name>triggerAuthenticationDidRestart</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1af64c440bc38775503c8a48c4855db80c" kind="function"><name>triggerPublishingDidComplete</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a9a3c56e4a6efc40d89d6fa9aed205fe3" kind="function"><name>triggerPublishingJRActivityDidFail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a81758613754890f0df2b96468efaebe6" kind="function"><name>triggerPublishingDialogDidFail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a9334bc1721b88809580a2f11f0e15168" kind="function"><name>triggerPublishingDidCancel</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a69ad0d200e4b9be5a226cb998bf77851" kind="function"><name>getCurrentlyPublishingProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1aeb6506faf859ac509c69708642b45415" kind="function"><name>setCurrentlyPublishingProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a2a4502a9f296025e95f66f7d71e48e10" kind="function"><name>isGetMobileConfigDone</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data_1a13bf163c289a90f4791e057ce1d587de" kind="function"><name>getUrlEncodedAppName</name></member>
+  </compound>
+  <compound refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate" kind="interface"><name>com::janrain::android::engage::session::JRSessionDelegate</name>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a92bc8b2d7c8d96fbf9e4a21325805d6c" kind="function"><name>authenticationDidRestart</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1aa4c2de831860745adf27e776a3e536a8" kind="function"><name>authenticationDidCancel</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1aadf96eff3d00ac136456de892fd74f69" kind="function"><name>authenticationDidComplete</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ad3bc0153588fbb980e281b30df799fee" kind="function"><name>authenticationDidComplete</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ae1b5bd7c8d7cc8571558a70b71665b0a" kind="function"><name>authenticationDidFail</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ac33c554fc00a38506c1d73116e81d1ca" kind="function"><name>authenticationDidReachTokenUrl</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a465923aab8bfd6dc060616eb7f1d592e" kind="function"><name>authenticationCallToTokenUrlDidFail</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a5cab82831f034aeead2194e290f5dc2b" kind="function"><name>publishingDidCancel</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a8d90b754df01540d43629225e14d97fd" kind="function"><name>publishingDidComplete</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ad1ac8e6b2eb9fbe12c60e786ff807b2e" kind="function"><name>publishingJRActivityDidSucceed</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1aba48b8f27348a7a1c5c47239bed2aaf2" kind="function"><name>publishingJRActivityDidFail</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a779b1eac07a63243168c0f114c48b918" kind="function"><name>publishingDialogDidFail</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a7e42ed07cce359f79748f0ba6ac53733" kind="function"><name>mobileConfigDidFinish</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" kind="class"><name>com::janrain::android::engage::types::JRSmsObject</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1ace7af73cf1ec9b97f73ac9badb12c321" kind="variable"><name>mBody</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a927dee6b6e7145029fe7bcc3a3bd19e0" kind="variable"><name>mUrls</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a2450ff04db11c169f9dad9e827b46c95" kind="function"><name>JRSmsObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a0d0cd1dc307661667347ef34c9975db0" kind="function"><name>JRSmsObject</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1aff2f2ca4042b71a1c005ef33d796073f" kind="function"><name>getBody</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1aafa2e1148f40b8c77b01e849324620ce" kind="function"><name>setBody</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a3fe96da2a85dff14969500fa13159121" kind="function"><name>getUrls</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a744f055478816813bc41d7db2979430f" kind="function"><name>setUrls</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1ab482a851576f3766af32a2988ca25f59" kind="function"><name>addUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a23071d8a9b9a7c8c2f17095e4b87e217" kind="variable"><name>mShortUrls</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1af25e20b23d3c51764e32fb991d5f63b1" kind="function"><name>setShortUrls</name></member>
+  </compound>
+  <compound refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_user_interface_delegate" kind="interface"><name>com::janrain::android::engage::session::JRUserInterfaceDelegate</name>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_user_interface_delegate_1ab1c4b8312fe1ac6de089881b332f56dc" kind="function"><name>userInterfaceWillClose</name></member>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_user_interface_delegate_1af88ab8e70d0ff342bb6cb072fe29f3c6" kind="function"><name>userInterfaceDidClose</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro" kind="class"><name>com::janrain::android::engage::ui::JRUserInterfaceMaestro</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a23dc06994382352436ade6bcbbef37b8" kind="variable"><name>ACTION_FINISH_ACTIVITY</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a4f9f2daf34c9a111ee87028fe1fc59d2" kind="variable"><name>EXTRA_FINISH_ACTIVITY_TARGET</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a40fe6f4108018469985ee2d293f05cf7" kind="variable"><name>FINISH_INTENT_FILTER</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a1fa8c86c3df3f75e75ade64b7699686c" kind="variable"><name>sInstance</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1acd23c5c592363f22394eb17906d784cd" kind="variable"><name>mActivityStack</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a8aadc8de7bbfeb12364b6e25fa3df1c7" kind="variable"><name>mSessionData</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a1fb47810a2c063c26c6e28a70daae614" kind="function"><name>getInstance</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a43fcc184c77a6bd8215b4e3a6d8b2a0c" kind="function"><name>JRUserInterfaceMaestro</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1ae4d66bc79f95fffc665e02ea572cf82d" kind="function"><name>startActivity</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a0cf853d1a13c5f1ba4342530b42a0d0e" kind="function"><name>popAll</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a505fe791a9fea61c9baf2876446dbffe" kind="function"><name>popToOriginal</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a1e57a748361ce4de322a859c7afa4311" kind="function"><name>popAndFinishActivitiesUntil</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1aa70d23d8803d8a47bfda1912e7a294c3" kind="function"><name>doFinishActivity</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a91bf9f3a559514bd35f8ff575c1cf926" kind="function"><name>showProviderSelectionDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a75b67466d69bbcc7e8db2114b5d0cc5a" kind="function"><name>showProviderSelectionDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a965ed0c6b9b447aab33b7a1e378ba1ce" kind="function"><name>showUserLanding</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a57906a9365280fa996bd8f7672f97f6c" kind="function"><name>showWebView</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a5eebecee363baad269f545dda2185648" kind="function"><name>showPublishingDialogWithActivity</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a49724f486912abb4cd5a6bb9529e9b44" kind="function"><name>authenticationRestarted</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a51f1f54fff9823c933669f1535a6de65" kind="function"><name>authenticationCompleted</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1ac01e8b3cb4a1533aca997661648f35e4" kind="function"><name>authenticationFailed</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a8b4784667495540ee47459a943a3aa94" kind="function"><name>authenticationCanceled</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a096a44341e9e26aaaa207183731a1307" kind="function"><name>setUpSocialPublishing</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a341d10e330499774a07faaac0144a883" kind="function"><name>tearDownSocialPublishing</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1ac37f2f3d6294b6e7b52f49bd51a3c8b8" kind="function"><name>publishingRestarted</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1ad8a0ce32a05cde8b625e2e604f558ff5" kind="function"><name>publishingCompleted</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a2f7c17cb3270ed73250a25c2b6c8f7bf" kind="function"><name>publishingJRActivityFailed</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1aeed09666f372d18c7de96ea77b83a7f2" kind="function"><name>publishingDialogFailed</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1a4505eab81703a070998f7672802904fb" kind="function"><name>publishingCanceled</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_user_interface_maestro_1aeccf37ae7d849db1358d82cd599ca938" kind="function"><name>getManagedActivityStack</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity" kind="class"><name>com::janrain::android::engage::ui::JRWebViewActivity</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a7714a88d77be38a374fccf20526af024" kind="variable"><name>RPX_RESULT_TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1aa0450c1736ae6dcd2906e6829e71f3b6" kind="variable"><name>mProvider</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a087f0cc74c408b67151b86889a98b4a8" kind="variable"><name>mWebViewSettings</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a51733fdfa0d00ab427266a9e9c74ea87" kind="variable"><name>mLayoutHelper</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a8aadc8de7bbfeb12364b6e25fa3df1c7" kind="variable"><name>mSessionData</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1afc4ac98688b7562f5e01beba7e9bc381" kind="variable"><name>mWebView</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a5c1b0783cb6fcc63064558e1274552f4" kind="variable"><name>mIsAlertShowing</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1ace16f8d3e69c798ec139f3248bb33b37" kind="variable"><name>mIsFinishPending</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a544518c611eaeaad476062b802021054" kind="variable"><name>mFinishReceiver</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a244c93e5878e13aefac95531183ada96" kind="variable"><name>mWebviewClient</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1aba3e15f366cf5489516128e585269d1d" kind="variable"><name>mMobileEndPointConnectionDelegate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a2681d2074332d50a76fd5eb1fa705f1e" kind="variable"><name>mWebViewDownloadListener</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a85e87cb5ced88dff7c8173ecc4f636d1" kind="function"><name>onCreate</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1af09f6e77f8fb370071383504a006758f" kind="function"><name>onKeyDown</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1acb776333595cb036bf935852041cb088" kind="function"><name>onBackPressed</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a8f7d87763ddaf085205a54e8477ecfce" kind="function"><name>onCreateOptionsMenu</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a37a55c533c74b60c0290ef1329d74e65" kind="function"><name>onOptionsItemSelected</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a6e82a4f092104fff8ea7997ae00d918d" kind="function"><name>tryToFinishActivity</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a11bcf4e3177fdb549350a4aa149e9e67" kind="function"><name>onStart</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a14768c382cfd134f7688413a3eb56d08" kind="function"><name>onResume</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a458397229d0b2076a739955b1cb8be35" kind="function"><name>onStop</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a8a744b43949a3939f448facad211e3d2" kind="function"><name>onDestroy</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a3c6dd4273e9b563fbffdd8bad1cc6cf2" kind="function"><name>onCreateDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1abeb364d96830b00f06303d12c2c80098" kind="function"><name>showAlertDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1a1fe2d89f801b1ae11a02363c12ffb23c" kind="function"><name>isMobileEndpointUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_activity_1aa9122f1a28154b62fd3bf3572c023d45" kind="function"><name>loadMobileEndpointUrl</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_list_utils" kind="class"><name>com::janrain::android::engage::utils::ListUtils</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_list_utils_1a153fc61de8b1af89ef3fad58429eeac5" kind="function"><name>isEmpty</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs" kind="class"><name>com::janrain::android::engage::prefs::Prefs</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1af7a2d757666732a1866e76df5efb7860" kind="variable"><name>KEY_JR_USER_INPUT</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1ae7e85e7b86832ef7f9f92ebf9866b3f3" kind="variable"><name>KEY_JR_WELCOME_STRING</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1aef3d7128345abe448881b0ec99780421" kind="variable"><name>KEY_JR_FORCE_REAUTH</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1a16eb62e92b715cb1de1f5e6d4db21f7a" kind="variable"><name>KEY_JR_HIDE_POWERED_BY</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1aa40a58a21528f388fa4ccd1330d89d13" kind="variable"><name>KEY_JR_CONFIGURATION_ETAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1a73c714189c6c1caf130487dc1316e417" kind="variable"><name>KEY_JR_LAST_USED_BASIC_PROVIDER</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1ad5182a4ac559f6e44779c0599f533588" kind="variable"><name>KEY_JR_LAST_USED_SOCIAL_PROVIDER</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1a112ea56cd1ffdadf915071f0416e1ad5" kind="variable"><name>KEY_JR_BASE_URL</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1a66e83376739646d46bc119d0a3f81f77" kind="variable"><name>KEY_JR_ENGAGE_LIBRARY_VERSION</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1a13c34e78a24eab22e11204559348f15a" kind="function"><name>getAsString</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1a97b54b3304f1fb57463274b5f4a3dee9" kind="function"><name>getAsBoolean</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1acd454c545c9dc947f6f34f0f940c1d5c" kind="function"><name>getAsInt</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1afcb68fee513bc23f5eba920555796cc3" kind="function"><name>putString</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1a38668ed35e39c8a2cb46c65e63f59998" kind="function"><name>putBoolean</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1a3d306184984530436e5362f789a36ab0" kind="function"><name>putInt</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1a9e28724d0db50836c28e09fdc173721d" kind="function"><name>getSharedPreferences</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1aafb73cee42e408668778e4dbbe3a572b" kind="function"><name>getEditor</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1prefs_1_1_prefs_1a52d4b1940d64acd524bef0169d7472ff" kind="function"><name>Prefs</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1_1_provider_adapter" kind="class"><name>com::janrain::android::engage::ui::JRProvidersActivity::ProviderAdapter</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1_1_provider_adapter_1ac9eb71021bed335f7630e1ca6d6dab84" kind="variable"><name>li</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1_1_provider_adapter_1aec1382b41dee22efa5d4793a128bb1bf" kind="function"><name>ProviderAdapter</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_providers_activity_1_1_provider_adapter_1af6292d542d7937de5b4044234a2db905" kind="function"><name>getView</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper" kind="class"><name>com::janrain::android::engage::ui::SharedLayoutHelper</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1ad83ff26fa30e0ea002d6206cefa47eb3" kind="variable"><name>DIALOG_ABOUT_ID</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a844c5efdea72aa6bf76fb98b1072572a" kind="variable"><name>TAG</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a2739ad115ffbd113d64c36a275aa0217" kind="variable"><name>mOwner</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1ac274de0c86513c66673990f223a2851a" kind="variable"><name>mProgressDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1ab77f98a6dce1d0c4f9292303213dc372" kind="function"><name>SharedLayoutHelper</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a3c526ced1e5211cbf1d434c50df37c8b" kind="function"><name>setHeaderText</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a4c5e30c6fd02a6ee594f7d578f202952" kind="function"><name>inflateAboutMenu</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a2eace41f8af2d0960647cccb91d6be7a" kind="function"><name>handleAboutMenu</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a1286fe77adde4f6325588c56c7ab1bc6" kind="function"><name>showProgressDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a0540765cef7a5b4e72504dacdf4858bb" kind="function"><name>dismissProgressDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a3c6dd4273e9b563fbffdd8bad1cc6cf2" kind="function"><name>onCreateDialog</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1a4012a640d353af0720158bec2bc25988" kind="function"><name>getProgressDialogShowing</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_shared_layout_helper_1acb12b4b2bce96f6c0e541efb7cfc752c" kind="function"><name>getAboutDialog</name></member>
+  </compound>
+  <compound refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1_1_shortened_url_callback" kind="interface"><name>com::janrain::android::engage::types::JRActivityObject::ShortenedUrlCallback</name>
+    <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1_1_shortened_url_callback_1ac3d77734d891c6cf73949fcdee9c927c" kind="function"><name>setShortenedUrl</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1_1_simple_j_r_connection_manager_delegate" kind="class"><name>com::janrain::android::engage::net::JRConnectionManagerDelegate::SimpleJRConnectionManagerDelegate</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1_1_simple_j_r_connection_manager_delegate_1a173221d2f70856e79fa6f6d112cb875a" kind="function"><name>connectionDidFinishLoading</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1_1_simple_j_r_connection_manager_delegate_1a29b9fa0c1b8e696b58a5a0185f493d4a" kind="function"><name>connectionDidFinishLoading</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1_1_simple_j_r_connection_manager_delegate_1affa481336180f3188c8363fbf6c7e4cf" kind="function"><name>connectionDidFail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1_1_simple_j_r_connection_manager_delegate_1a7cfea0f39a7786256b98d3d38835bbda" kind="function"><name>connectionWasStopped</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate" kind="class"><name>com::janrain::android::engage::session::JRSessionDelegate::SimpleJRSessionDelegate</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1a92bc8b2d7c8d96fbf9e4a21325805d6c" kind="function"><name>authenticationDidRestart</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1aa4c2de831860745adf27e776a3e536a8" kind="function"><name>authenticationDidCancel</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1aadf96eff3d00ac136456de892fd74f69" kind="function"><name>authenticationDidComplete</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1ad3bc0153588fbb980e281b30df799fee" kind="function"><name>authenticationDidComplete</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1ae1b5bd7c8d7cc8571558a70b71665b0a" kind="function"><name>authenticationDidFail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1ac33c554fc00a38506c1d73116e81d1ca" kind="function"><name>authenticationDidReachTokenUrl</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1a465923aab8bfd6dc060616eb7f1d592e" kind="function"><name>authenticationCallToTokenUrlDidFail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1a20ab268c1d06ba8c0056376259e66d68" kind="function"><name>publishingDidRestart</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1a5cab82831f034aeead2194e290f5dc2b" kind="function"><name>publishingDidCancel</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1a8d90b754df01540d43629225e14d97fd" kind="function"><name>publishingDidComplete</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1ad1ac8e6b2eb9fbe12c60e786ff807b2e" kind="function"><name>publishingJRActivityDidSucceed</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1a4bfe5c525542a0c6aac2cf4efa943763" kind="function"><name>publishingDialogDidFail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1aba48b8f27348a7a1c5c47239bed2aaf2" kind="function"><name>publishingJRActivityDidFail</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate_1a7e42ed07cce359f79748f0ba6ac53733" kind="function"><name>mobileConfigDidFinish</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_social_publishing_error" kind="class"><name>com::janrain::android::engage::JREngageError::SocialPublishingError</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_social_publishing_error_1a422a703df864c3b879186e13631846b2" kind="variable"><name>START</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_social_publishing_error_1af0c33320c2f6dbeaa0cbcb387c342094" kind="variable"><name>FAILED</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_social_publishing_error_1a0bc55b82f9bcb7072bc60bb5f89bcdbf" kind="variable"><name>ACTIVITY_NIL</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_social_publishing_error_1a0ca7943d34ac5428e6a50f792f5657a1" kind="variable"><name>MISSING_API_KEY</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_social_publishing_error_1a1662b58ed1f81b95e3794ce3df252844" kind="variable"><name>INVALID_OAUTH_TOKEN</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_social_publishing_error_1a439570f460717f08c4a2430fac3cf728" kind="variable"><name>DUPLICATE_TWITTER</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_social_publishing_error_1a5201c4729f0d1eba2ef74bb9124f90eb" kind="variable"><name>LINKEDIN_CHARACTER_EXCEEDED</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_social_publishing_error_1a03ee812583965aa5c6174a7ce3a46782" kind="variable"><name>FEED_ACTION_REQUEST_LIMIT</name></member>
+  </compound>
+  <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_string_utils" kind="class"><name>com::janrain::android::engage::utils::StringUtils</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_string_utils_1a826874f3950a33cd31c1f84f11e3a144" kind="function"><name>chomp</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_string_utils_1aea266f32f2ef7da868e1601f1b79d5cf" kind="function"><name>stringToBoolean</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_string_utils_1aa998d16b8eabb7d19d36a13f295aaf42" kind="function"><name>isTrue</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_string_utils_1a9907691932c9dbd0f9b7ff0f28743c74" kind="function"><name>isFalse</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_string_utils_1a75b2612c1da9ff28892e930f3f816d5d" kind="function"><name>StringUtils</name></member>
+  </compound>
+  <compound refid="namespaceandroid_1_1content_1_1" kind="namespace"><name>android::content::</name>
+  </compound>
+  <compound refid="namespaceandroid_1_1graphics_1_1" kind="namespace"><name>android::graphics::</name>
+  </compound>
+  <compound refid="namespaceandroid_1_1view_1_1" kind="namespace"><name>android::view::</name>
+  </compound>
+  <compound refid="namespaceandroid_1_1webkit_1_1" kind="namespace"><name>android::webkit::</name>
+  </compound>
+  <compound refid="namespaceandroid_1_1widget_1_1" kind="namespace"><name>android::widget::</name>
+  </compound>
+  <compound refid="namespacecom" kind="namespace"><name>com</name>
+  </compound>
+  <compound refid="namespacecom_1_1janrain" kind="namespace"><name>com::janrain</name>
+  </compound>
+  <compound refid="namespacecom_1_1janrain_1_1android" kind="namespace"><name>com::janrain::android</name>
+  </compound>
+  <compound refid="namespacecom_1_1janrain_1_1android_1_1engage" kind="namespace"><name>com::janrain::android::engage</name>
+    <member refid="namespacecom_1_1janrain_1_1android_1_1engage_1a7d3ee258af7a2e6f2928a726ef91db2c" kind="enum"><name>JREnvironment</name></member>
+    <member refid="namespacecom_1_1janrain_1_1android_1_1engage_1a7d3ee258af7a2e6f2928a726ef91db2c" kind="enumvalue"><name>PRODUCTION</name></member>
+    <member refid="namespacecom_1_1janrain_1_1android_1_1engage_1a7d3ee258af7a2e6f2928a726ef91db2c" kind="enumvalue"><name>STAGING</name></member>
+    <member refid="namespacecom_1_1janrain_1_1android_1_1engage_1a7d3ee258af7a2e6f2928a726ef91db2c" kind="enumvalue"><name>LILLI</name></member>
+    <member refid="namespacecom_1_1janrain_1_1android_1_1engage_1a7d3ee258af7a2e6f2928a726ef91db2c" kind="enumvalue"><name>NATHAN</name></member>
+  </compound>
+  <compound refid="namespacecom_1_1janrain_1_1android_1_1engage_1_1net" kind="namespace"><name>com::janrain::android::engage::net</name>
+  </compound>
+  <compound refid="namespacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1async" kind="namespace"><name>com::janrain::android::engage::net::async</name>
+  </compound>
+  <compound refid="namespacecom_1_1janrain_1_1android_1_1engage_1_1prefs" kind="namespace"><name>com::janrain::android::engage::prefs</name>
+  </compound>
+  <compound refid="namespacecom_1_1janrain_1_1android_1_1engage_1_1session" kind="namespace"><name>com::janrain::android::engage::session</name>
+  </compound>
+  <compound refid="namespacecom_1_1janrain_1_1android_1_1engage_1_1types" kind="namespace"><name>com::janrain::android::engage::types</name>
+  </compound>
+  <compound refid="namespacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1" kind="namespace"><name>com::janrain::android::engage::types::</name>
+  </compound>
+  <compound refid="namespacecom_1_1janrain_1_1android_1_1engage_1_1ui" kind="namespace"><name>com::janrain::android::engage::ui</name>
+  </compound>
+  <compound refid="namespacecom_1_1janrain_1_1android_1_1engage_1_1utils" kind="namespace"><name>com::janrain::android::engage::utils</name>
+  </compound>
+  <compound refid="namespacejava_1_1io_1_1" kind="namespace"><name>java::io::</name>
+  </compound>
+  <compound refid="namespacejava_1_1net_1_1" kind="namespace"><name>java::net::</name>
+  </compound>
+  <compound refid="namespacejava_1_1util_1_1" kind="namespace"><name>java::util::</name>
+  </compound>
+  <compound refid="_j_r_engage_8java" kind="file"><name>JREngage.java</name>
+  </compound>
+  <compound refid="_j_r_engage_delegate_8java" kind="file"><name>JREngageDelegate.java</name>
+  </compound>
+  <compound refid="_j_r_engage_error_8java" kind="file"><name>JREngageError.java</name>
+  </compound>
+  <compound refid="_j_r_environment_8java" kind="file"><name>JREnvironment.java</name>
+  </compound>
+  <compound refid="_async_http_client_8java" kind="file"><name>AsyncHttpClient.java</name>
+  </compound>
+  <compound refid="_async_http_response_holder_8java" kind="file"><name>AsyncHttpResponseHolder.java</name>
+  </compound>
+  <compound refid="_async_http_response_listener_8java" kind="file"><name>AsyncHttpResponseListener.java</name>
+  </compound>
+  <compound refid="_http_response_headers_8java" kind="file"><name>HttpResponseHeaders.java</name>
+  </compound>
+  <compound refid="_j_r_connection_manager_8java" kind="file"><name>JRConnectionManager.java</name>
+  </compound>
+  <compound refid="_j_r_connection_manager_delegate_8java" kind="file"><name>JRConnectionManagerDelegate.java</name>
+  </compound>
+  <compound refid="_prefs_8java" kind="file"><name>Prefs.java</name>
+  </compound>
+  <compound refid="_j_r_authenticated_user_8java" kind="file"><name>JRAuthenticatedUser.java</name>
+  </compound>
+  <compound refid="_j_r_provider_8java" kind="file"><name>JRProvider.java</name>
+  </compound>
+  <compound refid="_j_r_session_data_8java" kind="file"><name>JRSessionData.java</name>
+  </compound>
+  <compound refid="_j_r_session_delegate_8java" kind="file"><name>JRSessionDelegate.java</name>
+  </compound>
+  <compound refid="_j_r_user_interface_delegate_8java" kind="file"><name>JRUserInterfaceDelegate.java</name>
+  </compound>
+  <compound refid="_j_r_action_link_8java" kind="file"><name>JRActionLink.java</name>
+  </compound>
+  <compound refid="_j_r_activity_object_8java" kind="file"><name>JRActivityObject.java</name>
+  </compound>
+  <compound refid="_j_r_dictionary_8java" kind="file"><name>JRDictionary.java</name>
+  </compound>
+  <compound refid="_j_r_email_object_8java" kind="file"><name>JREmailObject.java</name>
+  </compound>
+  <compound refid="_j_r_flash_media_object_8java" kind="file"><name>JRFlashMediaObject.java</name>
+  </compound>
+  <compound refid="_j_r_image_media_object_8java" kind="file"><name>JRImageMediaObject.java</name>
+  </compound>
+  <compound refid="_j_r_media_object_8java" kind="file"><name>JRMediaObject.java</name>
+  </compound>
+  <compound refid="_j_r_mp3_media_object_8java" kind="file"><name>JRMp3MediaObject.java</name>
+  </compound>
+  <compound refid="_j_r_provider_list_8java" kind="file"><name>JRProviderList.java</name>
+  </compound>
+  <compound refid="_j_r_sms_object_8java" kind="file"><name>JRSmsObject.java</name>
+  </compound>
+  <compound refid="_color_button_8java" kind="file"><name>ColorButton.java</name>
+  </compound>
+  <compound refid="_j_r_landing_activity_8java" kind="file"><name>JRLandingActivity.java</name>
+  </compound>
+  <compound refid="_j_r_providers_activity_8java" kind="file"><name>JRProvidersActivity.java</name>
+  </compound>
+  <compound refid="_j_r_publish_activity_8java" kind="file"><name>JRPublishActivity.java</name>
+  </compound>
+  <compound refid="_j_r_user_interface_maestro_8java" kind="file"><name>JRUserInterfaceMaestro.java</name>
+  </compound>
+  <compound refid="_j_r_web_view_activity_8java" kind="file"><name>JRWebViewActivity.java</name>
+  </compound>
+  <compound refid="_shared_layout_helper_8java" kind="file"><name>SharedLayoutHelper.java</name>
+  </compound>
+  <compound refid="_android_8java" kind="file"><name>Android.java</name>
+  </compound>
+  <compound refid="_archiver_8java" kind="file"><name>Archiver.java</name>
+  </compound>
+  <compound refid="_i_o_utils_8java" kind="file"><name>IOUtils.java</name>
+  </compound>
+  <compound refid="_list_utils_8java" kind="file"><name>ListUtils.java</name>
+  </compound>
+  <compound refid="_string_utils_8java" kind="file"><name>StringUtils.java</name>
+  </compound>
+  <compound refid="_providers" kind="page"><name>Providers</name>
+  </compound>
+  <compound refid="dir_01e9380dd128cb2d85eeefdda46bbb89" kind="dir"><name>/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/</name>
+  </compound>
+  <compound refid="dir_4888ab4d4c83c94a9804383038dcfd44" kind="dir"><name>/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/</name>
+  </compound>
+  <compound refid="dir_490a41f5afe90c4803be592342d14839" kind="dir"><name>/Users/nathan/android-code/engage.android/JREngage/src/com/</name>
+  </compound>
+  <compound refid="dir_6292107b33b23e76fc6a32ac214538c7" kind="dir"><name>/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/</name>
+  </compound>
+  <compound refid="dir_b3fd1ae92ebf3dd808fd9573d3602a42" kind="dir"><name>/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/</name>
+  </compound>
+  <compound refid="dir_d79b51fc8e9e85dad59eb4be28756680" kind="dir"><name>/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/</name>
+  </compound>
+  <compound refid="dir_101b64887b692f7bb10bf63e860e9c0e" kind="dir"><name>/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/prefs/</name>
+  </compound>
+  <compound refid="dir_9a813c0b1dedee6230a5ef0efb5fcae3" kind="dir"><name>/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/</name>
+  </compound>
+  <compound refid="dir_748167cec104e22267848f71f00a0932" kind="dir"><name>/Users/nathan/android-code/engage.android/JREngage/src/</name>
+  </compound>
+  <compound refid="dir_0502098f6949e4e37f347726422c5f04" kind="dir"><name>/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/</name>
+  </compound>
+  <compound refid="dir_f33ba3b75bed06ad5bcca4368da895da" kind="dir"><name>/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/</name>
+  </compound>
+  <compound refid="dir_5bf555b90e7f7463c5554aa9f501ba05" kind="dir"><name>/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/</name>
+  </compound>
+  <compound refid="indexpage" kind="page"><name>index</name>
+  </compound>
+</doxygenindex>

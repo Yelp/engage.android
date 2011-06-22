@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list" kind="class" prot="public">
+    <compoundname>com::janrain::android::engage::types::JRProviderList</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">java::util::ArrayList&lt; JRProvider &gt;</basecompoundref>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1ae9b34b075744f552bfbff6d578ae9a98" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>boolean</type>
+        <definition>static boolean isEmpty</definition>
+        <argsstring>(JRProviderList list)</argsstring>
+        <name>isEmpty</name>
+        <param>
+          <type>JRProviderList</type>
+          <declname>list</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Checks to see if the specified list is null or empty.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list instance to be checked.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if the list is null or empty, <computeroutput>false</computeroutput> otherwise. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" line="59" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" bodystart="59" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1a8aaeca6e66292fe4d732b9725b07d202" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>boolean</type>
+        <definition>static boolean archive</definition>
+        <argsstring>(String name, JRProviderList list)</argsstring>
+        <name>archive</name>
+        <param>
+          <type>String</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>JRProviderList</type>
+          <declname>list</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Saves (archives) the provider list to local disk using the specified name.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the list of providers to be saved.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list of providers to be saved.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if the list is saved, <computeroutput>false</computeroutput> otherwise. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" line="75" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" bodystart="75" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1a134eb432a9400ec2ff093045e20b0b7e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>JRProviderList</type>
+        <definition>static JRProviderList unarchive</definition>
+        <argsstring>(String name)</argsstring>
+        <name>unarchive</name>
+        <param>
+          <type>String</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Loads (unarchives) the specified provider list from disk.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the list of providers to be loaded.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The contents of the archived list if found, null otherwise. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" line="88" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" bodystart="88" bodyend="94"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1a08b3b1c53a6ba0e94dc59855220a6caf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>JRProviderList</definition>
+        <argsstring>()</argsstring>
+        <name>JRProviderList</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a new empty list of JRProvider objects. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" line="104" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" bodystart="104" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1afe60aa616cf8badc0b38484b7b461e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>JRProviderList</definition>
+        <argsstring>(int capacity)</argsstring>
+        <name>JRProviderList</name>
+        <param>
+          <type>int</type>
+          <declname>capacity</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a new empty list of JRProvider objects with the specified initial capacity. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" line="111" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" bodystart="111" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1ade643cc5e966786fffd29d766e35950e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>JRProviderList</definition>
+        <argsstring>(ArrayList&lt; JRProvider &gt; list)</argsstring>
+        <name>JRProviderList</name>
+        <param>
+          <type>ArrayList&lt; JRProvider &gt;</type>
+          <declname>list</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a new list with the contents of the specified list (base type) cloned. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" line="118" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" bodystart="118" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1ae903a5ba4c196ca581e0c2ec7d978056" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>JRProviderList</definition>
+        <argsstring>(JRProviderList providerList)</argsstring>
+        <name>JRProviderList</name>
+        <param>
+          <type>JRProviderList</type>
+          <declname>providerList</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a new list with the contents of the specified list cloned. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" line="128" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" bodystart="128" bodyend="133"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" line="44" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRProviderList.java" bodystart="44" bodyend="134"/>
+    <listofallmembers>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1a8aaeca6e66292fe4d732b9725b07d202" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRProviderList</scope><name>archive</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1ae9b34b075744f552bfbff6d578ae9a98" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRProviderList</scope><name>isEmpty</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1a08b3b1c53a6ba0e94dc59855220a6caf" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRProviderList</scope><name>JRProviderList</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1afe60aa616cf8badc0b38484b7b461e87" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRProviderList</scope><name>JRProviderList</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1ade643cc5e966786fffd29d766e35950e" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRProviderList</scope><name>JRProviderList</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1ae903a5ba4c196ca581e0c2ec7d978056" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRProviderList</scope><name>JRProviderList</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list_1a134eb432a9400ec2ff093045e20b0b7e" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRProviderList</scope><name>unarchive</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type" kind="class" prot="public">
+    <compoundname>com::janrain::android::engage::JREngageError::ErrorType</compoundname>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1ac2837260a237df9c11feebf84d26fd3d" prot="public" static="yes" mutable="no">
+        <type>final String</type>
+        <definition>final String CONFIGURATION_FAILED</definition>
+        <argsstring></argsstring>
+        <name>CONFIGURATION_FAILED</name>
+        <initializer>&quot;configurationFailed&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="45" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a5b437058532046ab521d6511a81b7847" prot="public" static="yes" mutable="no">
+        <type>final String</type>
+        <definition>final String CONFIGURATION_INFORMATION_MISSING</definition>
+        <argsstring></argsstring>
+        <name>CONFIGURATION_INFORMATION_MISSING</name>
+        <initializer>&quot;missingInformation&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="46" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1aa68ab1ad27fd39a9d45d1838bd849b15" prot="public" static="yes" mutable="no">
+        <type>final String</type>
+        <definition>final String AUTHENTICATION_FAILED</definition>
+        <argsstring></argsstring>
+        <name>AUTHENTICATION_FAILED</name>
+        <initializer>&quot;authenticationFailed&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="47" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a300bb87da77e1fe095e344c7a62568e2" prot="public" static="yes" mutable="no">
+        <type>final String</type>
+        <definition>final String PUBLISH_FAILED</definition>
+        <argsstring></argsstring>
+        <name>PUBLISH_FAILED</name>
+        <initializer>&quot;publishFailed&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="48" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1aa3ee11055506ccb85af37ce26086b16d" prot="public" static="yes" mutable="no">
+        <type>final String</type>
+        <definition>final String PUBLISH_NEEDS_REAUTHENTICATION</definition>
+        <argsstring></argsstring>
+        <name>PUBLISH_NEEDS_REAUTHENTICATION</name>
+        <initializer>&quot;publishNeedsReauthentication&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="49" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a958d71a06cc65ebc2fa08c44bd1d0901" prot="public" static="yes" mutable="no">
+        <type>final String</type>
+        <definition>final String PUBLISH_INVALID_ACTIVITY</definition>
+        <argsstring></argsstring>
+        <name>PUBLISH_INVALID_ACTIVITY</name>
+        <initializer>&quot;publishInvalidActivity&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="50" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="41" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="41" bodyend="51"/>
+    <listofallmembers>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1aa68ab1ad27fd39a9d45d1838bd849b15" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::JREngageError::ErrorType</scope><name>AUTHENTICATION_FAILED</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1ac2837260a237df9c11feebf84d26fd3d" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::JREngageError::ErrorType</scope><name>CONFIGURATION_FAILED</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a5b437058532046ab521d6511a81b7847" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::JREngageError::ErrorType</scope><name>CONFIGURATION_INFORMATION_MISSING</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a300bb87da77e1fe095e344c7a62568e2" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::JREngageError::ErrorType</scope><name>PUBLISH_FAILED</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a958d71a06cc65ebc2fa08c44bd1d0901" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::JREngageError::ErrorType</scope><name>PUBLISH_INVALID_ACTIVITY</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1aa3ee11055506ccb85af37ce26086b16d" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::JREngageError::ErrorType</scope><name>PUBLISH_NEEDS_REAUTHENTICATION</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

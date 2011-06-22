@@ -1,0 +1,316 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager" kind="class" prot="public">
+    <compoundname>com::janrain::android::engage::net::JRConnectionManager</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">AsyncHttpResponseListener</basecompoundref>
+    <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data" prot="private">com::janrain::android::engage::net::JRConnectionManager::ConnectionData</innerclass>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a4696109ef6b502489f69e03dd96e67fc" prot="private" static="yes" mutable="no">
+        <type>JRConnectionManager</type>
+        <definition>JRConnectionManager sInstance</definition>
+        <argsstring></argsstring>
+        <name>sInstance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="72" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a2868ea574f860a5df5240d8fb1fa0b75" prot="private" static="no" mutable="no">
+        <type>HashMap&lt; String, ConnectionData &gt;</type>
+        <definition>HashMap&lt;String, ConnectionData&gt; mConnectionBuffers</definition>
+        <argsstring></argsstring>
+        <name>mConnectionBuffers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="218" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a76b95e0d04d0382c343ad46fd12f8719" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>synchronized JRConnectionManager</type>
+        <definition>static synchronized JRConnectionManager getInstance</definition>
+        <argsstring>()</argsstring>
+        <name>getInstance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="82" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="82" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1acb4c2340dd8ab5c687fde307aa1b7eaa" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>boolean</type>
+        <definition>static boolean createConnection</definition>
+        <argsstring>(String requestUrl, JRConnectionManagerDelegate delegate, boolean shouldReturnFullResponse, Object userdata)</argsstring>
+        <name>createConnection</name>
+        <param>
+          <type>String</type>
+          <declname>requestUrl</declname>
+        </param>
+        <param>
+          <type>JRConnectionManagerDelegate</type>
+          <declname>delegate</declname>
+        </param>
+        <param>
+          <type>boolean</type>
+          <declname>shouldReturnFullResponse</declname>
+        </param>
+        <param>
+          <type>Object</type>
+          <declname>userdata</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a managed HTTP GET connection.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>requestUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The URL to be executed.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>delegate</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The delegate (listener) class instance.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shouldReturnFullResponse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not a full response should be returned. Quite frankly, this doesn&apos;t make a lot of sense on Android and it&apos;s not used...</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>userdata</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tag object associated with the connection.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if the connection is created successfully, <computeroutput>false</computeroutput> otherwise. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="112" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="109" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a281375474a80600edfa85f25c2be1a1f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>boolean</type>
+        <definition>static boolean createConnection</definition>
+        <argsstring>(String requestUrl, JRConnectionManagerDelegate delegate, boolean shouldReturnFullResponse, List&lt; NameValuePair &gt; requestHeaders, Object userdata)</argsstring>
+        <name>createConnection</name>
+        <param>
+          <type>String</type>
+          <declname>requestUrl</declname>
+        </param>
+        <param>
+          <type>JRConnectionManagerDelegate</type>
+          <declname>delegate</declname>
+        </param>
+        <param>
+          <type>boolean</type>
+          <declname>shouldReturnFullResponse</declname>
+        </param>
+        <param>
+          <type>List&lt; NameValuePair &gt;</type>
+          <declname>requestHeaders</declname>
+        </param>
+        <param>
+          <type>Object</type>
+          <declname>userdata</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a managed HTTP GET connection.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>requestUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The URL to be executed.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>delegate</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The delegate (listener) class instance.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shouldReturnFullResponse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not a full response should be returned. Quite frankly, this doesn&apos;t make a lot of sense on Android and it&apos;s not used...</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>requestHeaders</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Any additional headers to be sent with the connection.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>userdata</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tag object associated with the connection.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if the connection is created successfully, <computeroutput>false</computeroutput> otherwise. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="145" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="141" bodyend="158"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a54bdf8dd8620586ec714402cbe60a8ad" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>boolean</type>
+        <definition>static boolean createConnection</definition>
+        <argsstring>(String requestUrl, byte[] postData, JRConnectionManagerDelegate delegate, boolean shouldReturnFullResponse, Object userdata)</argsstring>
+        <name>createConnection</name>
+        <param>
+          <type>String</type>
+          <declname>requestUrl</declname>
+        </param>
+        <param>
+          <type>byte[]</type>
+          <declname>postData</declname>
+        </param>
+        <param>
+          <type>JRConnectionManagerDelegate</type>
+          <declname>delegate</declname>
+        </param>
+        <param>
+          <type>boolean</type>
+          <declname>shouldReturnFullResponse</declname>
+        </param>
+        <param>
+          <type>Object</type>
+          <declname>userdata</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a managed HTTP POST connection.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>requestUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The URL to be executed.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>postData</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The data to be sent to the server via POST.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>delegate</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The delegate (listener) class instance.</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shouldReturnFullResponse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not a full response should be returned. Quite frankly, this doesn&apos;t make a lot of sense on Android and it&apos;s not used...</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>userdata</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tag object associated with the connection.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if the connection is created successfully, <computeroutput>false</computeroutput> otherwise. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="187" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="183" bodyend="201"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1aeb97390d20767453d6b5c75872df98e4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int openConnections</definition>
+        <argsstring>()</argsstring>
+        <name>openConnections</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the number of current (actively managed) connections.</para><para><simplesect kind="return"><para>The number of current (actively managed) connections. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="209" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="209" bodyend="211"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a711b91ddc79c9622b2a25e238e5e1f32" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>JRConnectionManager</definition>
+        <argsstring>()</argsstring>
+        <name>JRConnectionManager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="228" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="228" bodyend="230"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a7fe4c1d6c4659e09e1c6b214a1c81a70" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void onResponseReceived</definition>
+        <argsstring>(AsyncHttpResponseHolder response)</argsstring>
+        <name>onResponseReceived</name>
+        <param>
+          <type>AsyncHttpResponseHolder</type>
+          <declname>response</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="240" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="240" bodyend="268"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="46" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="46" bodyend="269"/>
+    <listofallmembers>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1acb4c2340dd8ab5c687fde307aa1b7eaa" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManager</scope><name>createConnection</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a281375474a80600edfa85f25c2be1a1f" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManager</scope><name>createConnection</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a54bdf8dd8620586ec714402cbe60a8ad" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManager</scope><name>createConnection</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a76b95e0d04d0382c343ad46fd12f8719" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManager</scope><name>getInstance</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a711b91ddc79c9622b2a25e238e5e1f32" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManager</scope><name>JRConnectionManager</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a2868ea574f860a5df5240d8fb1fa0b75" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManager</scope><name>mConnectionBuffers</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a7fe4c1d6c4659e09e1c6b214a1c81a70" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManager</scope><name>onResponseReceived</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1aeb97390d20767453d6b5c75872df98e4" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManager</scope><name>openConnections</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1a4696109ef6b502489f69e03dd96e67fc" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManager</scope><name>sInstance</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

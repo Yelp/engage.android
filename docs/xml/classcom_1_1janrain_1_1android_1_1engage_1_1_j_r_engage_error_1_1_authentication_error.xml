@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_authentication_error" kind="class" prot="public">
+    <compoundname>com::janrain::android::engage::JREngageError::AuthenticationError</compoundname>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_authentication_error_1a422a703df864c3b879186e13631846b2" prot="private" static="yes" mutable="no">
+        <type>final int</type>
+        <definition>final int START</definition>
+        <argsstring></argsstring>
+        <name>START</name>
+        <initializer> 200</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="64" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_authentication_error_1a2a7bcbe1d3c039bfdd57b21077249ec7" prot="public" static="yes" mutable="no">
+        <type>final int</type>
+        <definition>final int AUTHENTICATION_FAILED</definition>
+        <argsstring></argsstring>
+        <name>AUTHENTICATION_FAILED</name>
+        <initializer> START</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="66" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="63" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="63" bodyend="67"/>
+    <listofallmembers>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_authentication_error_1a2a7bcbe1d3c039bfdd57b21077249ec7" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::JREngageError::AuthenticationError</scope><name>AUTHENTICATION_FAILED</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_authentication_error_1a422a703df864c3b879186e13631846b2" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::JREngageError::AuthenticationError</scope><name>START</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

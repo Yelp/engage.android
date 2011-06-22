@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_user_interface_delegate" kind="interface" prot="public">
+    <compoundname>com::janrain::android::engage::session::JRUserInterfaceDelegate</compoundname>
+      <sectiondef kind="package-func">
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_user_interface_delegate_1ab1c4b8312fe1ac6de089881b332f56dc" prot="package" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void userInterfaceWillClose</definition>
+        <argsstring>()</argsstring>
+        <name>userInterfaceWillClose</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRUserInterfaceDelegate.java" line="39"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_user_interface_delegate_1af88ab8e70d0ff342bb6cb072fe29f3c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void userInterfaceDidClose</definition>
+        <argsstring>()</argsstring>
+        <name>userInterfaceDidClose</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRUserInterfaceDelegate.java" line="40"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRUserInterfaceDelegate.java" line="37" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRUserInterfaceDelegate.java" bodystart="37" bodyend="42"/>
+    <listofallmembers>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_user_interface_delegate_1af88ab8e70d0ff342bb6cb072fe29f3c6" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRUserInterfaceDelegate</scope><name>userInterfaceDidClose</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_user_interface_delegate_1ab1c4b8312fe1ac6de089881b332f56dc" prot="package" virt="non-virtual"><scope>com::janrain::android::engage::session::JRUserInterfaceDelegate</scope><name>userInterfaceWillClose</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,277 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate" kind="interface" prot="public">
+    <compoundname>com::janrain::android::engage::session::JRSessionDelegate</compoundname>
+    <derivedcompoundref refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate" prot="public" virt="non-virtual">JRSessionDelegate.SimpleJRSessionDelegate</derivedcompoundref>
+    <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1_1_simple_j_r_session_delegate" prot="public">com::janrain::android::engage::session::JRSessionDelegate::SimpleJRSessionDelegate</innerclass>
+      <sectiondef kind="package-func">
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a92bc8b2d7c8d96fbf9e4a21325805d6c" prot="package" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void authenticationDidRestart</definition>
+        <argsstring>()</argsstring>
+        <name>authenticationDidRestart</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Triggered when </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="47"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1aa4c2de831860745adf27e776a3e536a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void authenticationDidCancel</definition>
+        <argsstring>()</argsstring>
+        <name>authenticationDidCancel</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Triggered when </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="53"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1aadf96eff3d00ac136456de892fd74f69" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void authenticationDidComplete</definition>
+        <argsstring>(String token, String provider)</argsstring>
+        <name>authenticationDidComplete</name>
+        <param>
+          <type>String</type>
+          <declname>token</declname>
+        </param>
+        <param>
+          <type>String</type>
+          <declname>provider</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Triggered when </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="59"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ad3bc0153588fbb980e281b30df799fee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void authenticationDidComplete</definition>
+        <argsstring>(JRDictionary profile, String provider)</argsstring>
+        <name>authenticationDidComplete</name>
+        <param>
+          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary" kindref="compound">JRDictionary</ref></type>
+          <declname>profile</declname>
+        </param>
+        <param>
+          <type>String</type>
+          <declname>provider</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Triggered when JRWebViewActivity receieves a success message from Engage. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="64"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ae1b5bd7c8d7cc8571558a70b71665b0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void authenticationDidFail</definition>
+        <argsstring>(JREngageError error, String provider)</argsstring>
+        <name>authenticationDidFail</name>
+        <param>
+          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>String</type>
+          <declname>provider</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Triggered when the Engage authentication flow completes with an Engage error, or when there is an error loading a URL during that authentication flow. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="70"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ac33c554fc00a38506c1d73116e81d1ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void authenticationDidReachTokenUrl</definition>
+        <argsstring>(String tokenUrl, HttpResponseHeaders response, String payload, String provider)</argsstring>
+        <name>authenticationDidReachTokenUrl</name>
+        <param>
+          <type>String</type>
+          <declname>tokenUrl</declname>
+        </param>
+        <param>
+          <type>HttpResponseHeaders</type>
+          <declname>response</declname>
+        </param>
+        <param>
+          <type>String</type>
+          <declname>payload</declname>
+        </param>
+        <param>
+          <type>String</type>
+          <declname>provider</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Triggered when </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="75"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a465923aab8bfd6dc060616eb7f1d592e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void authenticationCallToTokenUrlDidFail</definition>
+        <argsstring>(String tokenUrl, JREngageError error, String provider)</argsstring>
+        <name>authenticationCallToTokenUrlDidFail</name>
+        <param>
+          <type>String</type>
+          <declname>tokenUrl</declname>
+        </param>
+        <param>
+          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>String</type>
+          <declname>provider</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>triggered when </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="80"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a5cab82831f034aeead2194e290f5dc2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void publishingDidCancel</definition>
+        <argsstring>()</argsstring>
+        <name>publishingDidCancel</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Triggered when Triggered when </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="92"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a8d90b754df01540d43629225e14d97fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void publishingDidComplete</definition>
+        <argsstring>()</argsstring>
+        <name>publishingDidComplete</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Triggered when </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="99"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ad1ac8e6b2eb9fbe12c60e786ff807b2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void publishingJRActivityDidSucceed</definition>
+        <argsstring>(JRActivityObject activity, String provider)</argsstring>
+        <name>publishingJRActivityDidSucceed</name>
+        <param>
+          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object" kindref="compound">JRActivityObject</ref></type>
+          <declname>activity</declname>
+        </param>
+        <param>
+          <type>String</type>
+          <declname>provider</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Triggered when a success response is received from Engage from the activity api </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="104"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1aba48b8f27348a7a1c5c47239bed2aaf2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void publishingJRActivityDidFail</definition>
+        <argsstring>(JRActivityObject activity, JREngageError error, String provider)</argsstring>
+        <name>publishingJRActivityDidFail</name>
+        <param>
+          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object" kindref="compound">JRActivityObject</ref></type>
+          <declname>activity</declname>
+        </param>
+        <param>
+          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>String</type>
+          <declname>provider</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Triggered when </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="111"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a779b1eac07a63243168c0f114c48b918" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void publishingDialogDidFail</definition>
+        <argsstring>(JREngageError err)</argsstring>
+        <name>publishingDialogDidFail</name>
+        <param>
+          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
+          <declname>err</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>triggered when the JRPublishActivity fails to load </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="116"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a7e42ed07cce359f79748f0ba6ac53733" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mobileConfigDidFinish</definition>
+        <argsstring>()</argsstring>
+        <name>mobileConfigDidFinish</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Triggered when JRSessionData has finished loading the mobile configuration </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="121"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="42" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" bodystart="42" bodyend="146"/>
+    <listofallmembers>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a465923aab8bfd6dc060616eb7f1d592e" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>authenticationCallToTokenUrlDidFail</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1aa4c2de831860745adf27e776a3e536a8" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>authenticationDidCancel</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1aadf96eff3d00ac136456de892fd74f69" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>authenticationDidComplete</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ad3bc0153588fbb980e281b30df799fee" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>authenticationDidComplete</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ae1b5bd7c8d7cc8571558a70b71665b0a" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>authenticationDidFail</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ac33c554fc00a38506c1d73116e81d1ca" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>authenticationDidReachTokenUrl</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a92bc8b2d7c8d96fbf9e4a21325805d6c" prot="package" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>authenticationDidRestart</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a7e42ed07cce359f79748f0ba6ac53733" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>mobileConfigDidFinish</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a779b1eac07a63243168c0f114c48b918" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>publishingDialogDidFail</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a5cab82831f034aeead2194e290f5dc2b" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>publishingDidCancel</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a8d90b754df01540d43629225e14d97fd" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>publishingDidComplete</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1aba48b8f27348a7a1c5c47239bed2aaf2" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>publishingJRActivityDidFail</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ad1ac8e6b2eb9fbe12c60e786ff807b2e" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>publishingJRActivityDidSucceed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

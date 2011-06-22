@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data" kind="class" prot="private">
+    <compoundname>com::janrain::android::engage::net::JRConnectionManager::ConnectionData</compoundname>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data_1ac1a0feae2303d8c8a55e163636d3207c" prot="private" static="no" mutable="no">
+        <type>boolean</type>
+        <definition>boolean mShouldReturnFullResponse</definition>
+        <argsstring></argsstring>
+        <name>mShouldReturnFullResponse</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="56" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data_1a7870d8118584a06b12188920bbc4deb1" prot="private" static="no" mutable="no">
+        <type>Object</type>
+        <definition>Object mTag</definition>
+        <argsstring></argsstring>
+        <name>mTag</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="57" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data_1ac1a175f5b75fa3aac4998c03866e843c" prot="private" static="no" mutable="no">
+        <type>JRConnectionManagerDelegate</type>
+        <definition>JRConnectionManagerDelegate mDelegate</definition>
+        <argsstring></argsstring>
+        <name>mDelegate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="58" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data_1a0a7b7283899ba23660fc7016a82fd523" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ConnectionData</definition>
+        <argsstring>(JRConnectionManagerDelegate delegate, boolean shouldReturnFullResponse, Object userdata)</argsstring>
+        <name>ConnectionData</name>
+        <param>
+          <type>JRConnectionManagerDelegate</type>
+          <declname>delegate</declname>
+        </param>
+        <param>
+          <type>boolean</type>
+          <declname>shouldReturnFullResponse</declname>
+        </param>
+        <param>
+          <type>Object</type>
+          <declname>userdata</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="61" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="60" bodyend="65"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Connection data for managed connections. </para>    </detaileddescription>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" line="55" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManager.java" bodystart="55" bodyend="66"/>
+    <listofallmembers>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data_1a0a7b7283899ba23660fc7016a82fd523" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManager::ConnectionData</scope><name>ConnectionData</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data_1ac1a175f5b75fa3aac4998c03866e843c" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManager::ConnectionData</scope><name>mDelegate</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data_1ac1a0feae2303d8c8a55e163636d3207c" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManager::ConnectionData</scope><name>mShouldReturnFullResponse</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_1_1_connection_data_1a7870d8118584a06b12188920bbc4deb1" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManager::ConnectionData</scope><name>mTag</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
