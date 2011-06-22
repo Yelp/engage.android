@@ -116,9 +116,9 @@ public class JRUserInterfaceMaestro {
         mSessionData.setSkipLandingPage(skipReturningUserLandingPage);
         mSessionData.setDialogIsShowing(true);
         mSessionData.setSocialSharingMode(false);
-        startActivity(JRProvidersActivity.class);
+        startActivity(JRProviderListActivity.class);
 
-        /* See JRProvidersActivity.onCreate for an explanation of the flow control when there's a
+        /* See JRProviderListFragment.onCreate for an explanation of the flow control when there's a
          * "returning provider." */
     }
 
@@ -258,7 +258,7 @@ public class JRUserInterfaceMaestro {
         }
 
         Class<? extends Activity> originalRootActivity = (mSessionData.getSocialSharingMode())
-                ? JRPublishActivity.class : JRProvidersActivity.class;
+                ? JRPublishActivity.class : JRProviderListActivity.class;
 
         popAndFinishActivitiesUntil(originalRootActivity);
     }
@@ -305,7 +305,7 @@ public class JRUserInterfaceMaestro {
         // If we're done, we're done.
         if (mActivityStack.peek().equals(untilManagedActivity)) return;
 
-        // Pop and recurse.
+        // Else pop and recurse.
         doFinishActivity(mActivityStack.pop());
         popAndFinishActivitiesUntil(untilManagedActivity);
     }

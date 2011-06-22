@@ -301,7 +301,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public String getReturningBasicProvider() {
         /* This is here so that when a calling application sets mSkipLandingPage, the dialog always opens
-         * to the providers list. (See JRProvidersActivity.onCreate for an explanation of the flow control
+         * to the providers list. (See JRProviderListFragment.onCreate for an explanation of the flow control
          * when there's a "returning provider.") */
         if (mSkipLandingPage)
             return null;

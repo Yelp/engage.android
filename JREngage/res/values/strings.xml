@@ -21,7 +21,7 @@
     <string name="jr_about_url">www.janrain.com</string>
     <string name="jr_about_button_ok">OK</string>
 
-    <!-- - JRProvidersActivity strings. -->
+    <!-- - JRProviderListFragment strings. -->
     <string name="jr_provider_list_empty">No configured providers</string>
     <string name="jr_provider_unknown">Unknown provider</string>
     <string name="jr_provider_sign_in_with">Sign in with...</string>
