@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/JREngage/JREngage.iml" filepath="$PROJECT_DIR$/JREngage/JREngage.iml" />
       <module fileurl="file://$PROJECT_DIR$/QuickShare/QuickShare.iml" filepath="$PROJECT_DIR$/QuickShare/QuickShare.iml" />
       <module fileurl="file://$PROJECT_DIR$/QuickSignIn/QuickSignIn.iml" filepath="$PROJECT_DIR$/QuickSignIn/QuickSignIn.iml" />
-      <module fileurl="file://$PROJECT_DIR$/SimpleDemo/SimpleDemo.iml" filepath="$PROJECT_DIR$/SimpleDemo/SimpleDemo.iml" />
     </modules>
   </component>
 </project>

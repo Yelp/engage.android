@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="android-support-v4">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/JREngage/libs/android-support-v4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$USER_HOME$/android-sdk/android-sdk-mac_x86/android-compatibility/v4/src/java" />
+      <root url="file://$USER_HOME$/android-sdk/android-sdk-mac_x86/android-compa/ibility/v4/src/honeycomb" />
+    </SOURCES>
+  </library>
+</component>
