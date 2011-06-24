@@ -107,7 +107,7 @@ public class JRProvider implements Serializable {
                         put("icon_blogger", R.drawable.jr_icon_blogger);
                         put("icon_facebook", R.drawable.jr_icon_facebook);
                         put("icon_flickr", R.drawable.jr_icon_flickr);
-                        //put("icon_foursquare", R.drawable.jr_icon_foursquare);
+                        put("icon_foursquare", R.drawable.jr_icon_foursquare);
                         put("icon_google", R.drawable.jr_icon_google);
                         put("icon_hyves", R.drawable.jr_icon_hyves);
                         put("icon_linkedin", R.drawable.jr_icon_linkedin);
@@ -343,6 +343,7 @@ public class JRProvider implements Serializable {
                 //if you pass in the DPI as an int
 
                 //icon.setDensity(320);
+                // TODO move reflection to util.Android
                 try {
                     Method setDensity = icon.getClass().getDeclaredMethod("setDensity", int.class);
                     setDensity.invoke(icon, 320);
@@ -360,6 +361,7 @@ public class JRProvider implements Serializable {
                 return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
             }
 
+            // TODO move reflection to util.Android
             //return new BitmapDrawable(c.getResources(), icon);
             try {
                 Class bitmapDrawableClass = Class.forName("android.graphics.drawable.BitmapDrawable");

@@ -1,12 +1,19 @@
 package com.janrain.android.engage.utils;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Created by IntelliJ IDEA.
@@ -44,6 +51,41 @@ public class Android {
         try {
             return JREngage.getContext().getPackageManager().getApplicationInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean setBitmapDensity (Bitmap bitmap, int density) {
+        try {
+            Method setDensity = bitmap.getClass().getDeclaredMethod("setDensity", int.class);
+            setDensity.invoke(bitmap, density);
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        } catch (IllegalAccessException e) {
+            Log.e(TAG, "Unexpected: " + e);
+            return false;
+        } catch (InvocationTargetException e) {
+            Log.e(TAG, "Unexpected: " + e);
+            return false;
+        }
+    }
+
+    public static BitmapDrawable newBitmapDrawable(Context c, Bitmap b) {
+        try {
+            Class bitmapDrawableClass = Class.forName("android.graphics.drawable.BitmapDrawable");
+            Constructor nbd =
+                    bitmapDrawableClass.getDeclaredConstructor(Resources.class, Bitmap.class);
+            return (BitmapDrawable) nbd.newInstance(c.getResources(), b);
+        } catch (NoSuchMethodException e) {
+            throw new UnsupportedOperationException("Instantiator not found", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }

@@ -209,7 +209,8 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
                 Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
                 if (icon != null) {
-                    icon.setDensity(android.util.DisplayMetrics.DENSITY_MEDIUM);
+                    com.janrain.android.engage.utils.Android.setBitmapDensity(icon,
+                            android.util.DisplayMetrics.DENSITY_MEDIUM);
                 }
                 else {
                     c.deleteFile(iconFileName);
@@ -217,7 +218,8 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
                     return c.getResources().getDrawable(com.janrain.android.engage.R.drawable.icon_unknown);
                 }
 
-                return new BitmapDrawable(c.getResources(), icon);
+                //return new BitmapDrawable(c.getResources(), icon);
+                return com.janrain.android.engage.utils.Android.newBitmapDrawable(c, icon);
             }
             catch (FileNotFoundException e) {
                 //downloadIcons(c);
