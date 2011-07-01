@@ -76,11 +76,14 @@ package com.janrain.android.engage;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 
+import android.view.View;
+import android.widget.FrameLayout;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.session.JRSessionDelegate;
@@ -229,7 +232,6 @@ public class JREngage {
 	private JREngage() {
 	}
 
-
 	/*
 	 * Initializer.
 	 */
@@ -245,8 +247,19 @@ public class JREngage {
 
         mSessionData = JRSessionData.getInstance(appId, tokenUrl, mJRSD);
         mInterfaceMaestro = JRUserInterfaceMaestro.getInstance();
-	}
 
+        if (context instanceof Activity) {
+            FrameLayout fragmentContainer =
+                    (FrameLayout) ((Activity) context).findViewById(R.id.jr_signin_fragment);
+            if (fragmentContainer != null) {
+                mInterfaceMaestro.showProviderSelectionDialog(fragmentContainer);
+            }
+            fragmentContainer = (FrameLayout) ((Activity) context).findViewById(R.id.jr_sharing_fragment);
+            if (fragmentContainer != null) {
+                //mInterfaceMaestro.showPublishingDialogWithActivity();
+            }
+        }
+	}
 
     private JRSessionDelegate mJRSD = new JRSessionDelegate() {
         // ------------------------------------------------------------------------
@@ -577,6 +590,7 @@ public class JREngage {
 
         if (checkSessionDataError()) return;
 
+        mSessionData.setSkipLandingPage(false);
         mInterfaceMaestro.showProviderSelectionDialog();
     }
 
@@ -599,8 +613,8 @@ public class JREngage {
 
         if (checkSessionDataError()) return;
 
-        mInterfaceMaestro.showProviderSelectionDialog(skipReturningUserLandingPage);
-
+        mSessionData.setSkipLandingPage(skipReturningUserLandingPage);
+        mInterfaceMaestro.showProviderSelectionDialog();
     }
 
 

@@ -29,6 +29,8 @@
 */
 package com.janrain.android.engage.net.async;
 
+import com.janrain.android.engage.net.JRConnectionManager;
+
 /**
  * @internal
  *
@@ -46,6 +48,7 @@ public class AsyncHttpResponseHolder {
     private HttpResponseHeaders mHeaders;
     private byte[] mPayload;
     private Exception mException;
+    private JRConnectionManager.ConnectionData mConnectionData;
 
     // ------------------------------------------------------------------------
     // INITIALIZERS
@@ -166,5 +169,13 @@ public class AsyncHttpResponseHolder {
      */
     public boolean hasException() {
         return (mException != null);
+    }
+
+    public JRConnectionManager.ConnectionData getConnectionData() {
+        return mConnectionData;
+    }
+
+    public void setConnectionData(JRConnectionManager.ConnectionData cd) {
+        mConnectionData = cd;
     }
 }

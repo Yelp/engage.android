@@ -36,6 +36,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -46,7 +47,6 @@ import com.janrain.android.engage.*;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.*;
 
-import com.janrain.android.engage.utils.Android;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -57,9 +57,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
-public class MainActivity extends Activity implements View.OnClickListener, JREngageDelegate {
+public class MainActivity extends FragmentActivity implements View.OnClickListener, JREngageDelegate {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int DIALOG_JRENGAGE_ERROR = 1;
@@ -80,7 +82,6 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
     private Button mBtnTestAuth;
     private Button mBtnTestPub;
-    private Button mBtnTestLand;
     private String mDialogErrorMessage;
 
     // Blog fetching variables
@@ -104,17 +105,6 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
 
         mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
         mBtnTestPub.setOnClickListener(this);
-
-        mBtnTestLand = (Button)findViewById(R.id.btn_test_land);
-        mBtnTestLand.setOnClickListener(this);
-
-        // Test button code to test setAlwaysForceReauth
-        //final ToggleButton tb = ((ToggleButton)findViewById(R.id.btn_always_force_reauth));
-        //tb.setOnClickListener(new View.OnClickListener() {
-        //    public void onClick(View v) {
-        //        mEngage.setAlwaysForceReauthentication(tb.isChecked());
-        //    }
-        //});
 
         String engageAppId = readAsset("app_id.txt").trim();
         String engageTokenUrl = readAsset("token_url.txt").trim();
@@ -143,32 +133,20 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
     void buildActivity() {
         mActivity = new JRActivityObject("shared an article from the Janrain Blog!",
             mActionLink);
-        //mActivity = new JRActivityObject("shared an article from the Janrain Blog!", "");
+
         mActivity.setTitle(mTitleText);
         mActivity.setDescription(mDescriptionText);
         mActivity.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
-
-        //List<String> urls = new ArrayList<String>();
-        //Pattern urlPattern = Pattern.compile("(https?://[\\S&&[^\"']]{4,})");
-        //Matcher urlMatcher = urlPattern.matcher(mDescriptionHtml);
-        //while (urls.size() < 5 && urlMatcher.find()) urls.add(urlMatcher.group());
-        //
-        //String smsBody = mDescriptionText;
-        //if (urls.size() > 0) smsBody = (urls.get(0) + smsBody);
-        //smsBody = smsBody.substring(0, Math.min(139, smsBody.length()));
 
         String smsBody = "Check out this article!\n" + mActionLink;
         String emailBody = mActionLink + "\n" + mDescriptionText;
 
         JRSmsObject sms = new JRSmsObject(smsBody);
         JREmailObject email = new JREmailObject("Check out this article!", emailBody);
-        //sms.setUrls(urls);
-        //email.setUrls(urls);
         sms.addUrl(mActionLink);
         email.addUrl(mActionLink);
         mActivity.setEmail(email);
         mActivity.setSms(sms);
-        //mActivity.setUserGeneratedContent("Now is the time for all great men to come to the aid of their country.");
     }
 
     @Override
@@ -259,7 +237,7 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
                 // Rebuild the Activity now that the blog is loaded.
                 buildActivity();
             }
-        }.execute();
+        };//.execute();
     }
 
     public Dialog onCreateDialog(int dialogId) {
@@ -293,13 +271,6 @@ public class MainActivity extends Activity implements View.OnClickListener, JREn
         if (view == mBtnTestAuth) {
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
-            //JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!",
-            //  mActionLink);
-            //JRActivityObject jra = new JRActivityObject("shared an article from the Janrain Blog!",
-            //        "");
-            //jra.setTitle(mTitleText);
-            //jra.setDescription(mDescriptionText);
-            //jra.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
             mEngage.showSocialPublishingDialog(mActivity);
         }
     }

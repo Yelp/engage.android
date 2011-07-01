@@ -36,7 +36,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Config;
 import android.util.Log;
 import android.view.*;
@@ -56,7 +57,7 @@ import java.util.TimerTask;
  * @class JRProvidersActivity
  * Displays list of [basic] providers.
  */
-public class JRProvidersActivity extends Activity {
+public class JRProviderListFragment extends DialogFragment {
     private ListView mListView;
     private TextView mEmptyTextView;
 
@@ -69,7 +70,7 @@ public class JRProvidersActivity extends Activity {
      **/
     private class FinishReceiver extends BroadcastReceiver {
 
-        private final String TAG = JRProvidersActivity.TAG
+        private final String TAG = JRProviderListFragment.TAG
                 + "-"
                 + FinishReceiver.class.getSimpleName();
 
@@ -77,7 +78,7 @@ public class JRProvidersActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             String target = intent.getStringExtra(
                     JRUserInterfaceMaestro.EXTRA_FINISH_ACTIVITY_TARGET);
-            if (JRProvidersActivity.class.toString().equals(target)) {
+            if (JRProviderListFragment.class.toString().equals(target)) {
                 tryToFinishActivity();
                 Log.i(TAG, "[onReceive] handled");
             } else if (Config.LOGD) {
@@ -93,19 +94,22 @@ public class JRProvidersActivity extends Activity {
      * Array adapter used to render individual providers in list view.
      **/
     private class ProviderAdapter extends ArrayAdapter<JRProvider> {
-        LayoutInflater li = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater li = (LayoutInflater)
+                JREngage.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         public ProviderAdapter() {
             // The super class only ends up using the last parameter passed into this super constructor,
             // the List.  The first two parameters are never used.
-            super(JRProvidersActivity.this, 0, mProviderList);
+            //getActivity()
+
+            super(JREngage.getContext(), 0, mProviderList);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 // This line is pretty much copied from the super implementation, which doesn't attach
-                // the newly inflated View to it's parent.
+                // the newly inflated View to it's parent. I don't know why.
                 convertView = li.inflate(R.layout.jr_provider_listview_row, parent, false);
             }
 
@@ -122,7 +126,7 @@ public class JRProvidersActivity extends Activity {
         }
     }
 
-    private static final String TAG = JRProvidersActivity.class.getSimpleName();
+    private static final String TAG = JRProviderListFragment.class.getSimpleName();
     private static final int TIMER_MAX_ITERATIONS = 30;
 
     private SharedLayoutHelper mLayoutHelper;
@@ -134,14 +138,14 @@ public class JRProvidersActivity extends Activity {
     private FinishReceiver mFinishReceiver;
 
     /**
-     * Used to alert user that no providers can be found on the UI thread.
+     * Used to alert user that no providers can be found.  Runs on the UI thread.
      */
     private Runnable mNoProvidersFoundRunner = new Runnable() {
         public void run() {
             mEmptyTextView.setVisibility(View.VISIBLE);
 
             mLayoutHelper.dismissProgressDialog();
-            Toast.makeText(JRProvidersActivity.this,
+            Toast.makeText(getActivity(),
                     "No providers found.",
                     Toast.LENGTH_LONG).show();
         }
@@ -159,31 +163,52 @@ public class JRProvidersActivity extends Activity {
         }
     };
 
-    /**
-     * Called when the activity is first created.
-     *
-     * @param savedInstanceState
-     *      If the activity is being re-initialized after previously being shut down then this
-     *      Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
-     *      Note: Otherwise it is null.
-     */
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.jr_provider_listview);
-
-        mListView = (ListView) findViewById(android.R.id.list);
-        mEmptyTextView = (TextView) findViewById(android.R.id.empty);
-
-        mLayoutHelper = new SharedLayoutHelper(this);
 
         mSessionData = JRSessionData.getInstance();
 
+        // todo fixme for fragments
         /* For the case when this activity is relaunched after the process was killed */
         if (mSessionData == null) {
-            Log.e(TAG, "JRProvidersActivity bailing out after a process kill/restart");
-            finish();
+            Log.e(TAG, "JRProviderListFragment bailing out after a process kill/restart");
             return;
         }
+
+        //switch ((mNum-1)%6) {
+        //    case 1: style = DialogFragment.STYLE_NO_TITLE; break;
+        //    case 2: style = DialogFragment.STYLE_NO_FRAME; break;
+        //    case 3: style = DialogFragment.STYLE_NO_INPUT; break;
+        //    case 4: style = DialogFragment.STYLE_NORMAL; break;
+        //    case 5: style = DialogFragment.STYLE_NORMAL; break;
+        //    case 6: style = DialogFragment.STYLE_NO_TITLE; break;
+        //    case 7: style = DialogFragment.STYLE_NO_FRAME; break;
+        //    case 8: style = DialogFragment.STYLE_NORMAL; break;
+        //}
+        //switch ((mNum-1)%6) {
+        //    case 4: theme = android.R.style.Theme_Holo; break;
+        //    case 5: theme = android.R.style.Theme_Holo_Light_Dialog; break;
+        //    case 6: theme = android.R.style.Theme_Holo_Light; break;
+        //    case 7: theme = android.R.style.Theme_Holo_Light_Panel; break;
+        //    case 8: theme = android.R.style.Theme_Holo_Light; break;
+        //}
+        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            //if (container == null) {
+            //    // Currently in a layout without a container, so no
+            //    // reason to create our view.
+            //    return null;
+            //}
+        View listView = inflater.inflate(R.layout.jr_provider_listview, container, false);
+
+        mListView = (ListView) listView.findViewById(android.R.id.list);
+        mEmptyTextView = (TextView) listView.findViewById(android.R.id.empty);
+
+        //mLayoutHelper = new SharedLayoutHelper(this);
 
         mProviderList = mSessionData.getBasicProviders();
 
@@ -209,70 +234,54 @@ public class JRProvidersActivity extends Activity {
             }, 0, 500);
         }
 
-        if (mFinishReceiver == null) {
-            mFinishReceiver = new FinishReceiver();
-            registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
-        }
+        // TODO maybe this should go in the hosting activity? not sure.
+        //if (mFinishReceiver == null) {
+        //    mFinishReceiver = new FinishReceiver();
+        //    registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
+        //}
 
-        /* What's happening is that we need to start the LandingActivity from this onCreate method
-         * (as opposed to the LandingActivity being created from the UI maestro class) so that this
-         * activity's FinishHandler is registered (which happens in this onCreate).  Otherwise this activity
-         * isn't created until it's popped back into view (from the LandingActivity), at which point the
-         * FinishHandler is registered, but by which time this activity has already missed it's finish
-         * message. The getStack call allows us to add the LandingActivity to the managed activity stack
-         * after we start it with startActivityForResult. startActivityForResult has a special case for
-         * requestCodes >= 0 that makes this activity's window not draw.  That can only be called from within
-         * an Activity, however, so the UI maestro can't use it (because it uses a generic application
-         * Context.)
-         *
-         * If there is a returning basic provider, we open to the LandingActivity, otherwise, we stay here.
-         * If skipReturningUserLandingPage was set to "true" getReturningBasicProvider will return null
-         * (and we'll stay here). */
-        if (!TextUtils.isEmpty(mSessionData.getReturningBasicProvider())) {
-            mSessionData.setCurrentlyAuthenticatingProvider(
-                    mSessionData.getReturningBasicProvider());
-            startActivityForResult(new Intent(this, JRLandingActivity.class), 0);
-            JRUserInterfaceMaestro.getInstance()
-                    .getManagedActivityStack().push(JRLandingActivity.class);
-        }
-    }
-
-    public void onResume () {
-        super.onResume();
-        JREngage.setContext(this);
+        return listView;
     }
 
     @Override
-    protected void onStart() {
+    public void onResume () {
+        super.onResume();
+        //JREngage.setContext(this);
+    }
+
+    @Override
+    public void onStart() {
         super.onStart();
 
         Log.d(TAG, "onStart");
     }
 
+    // TODO fragment fixme.
+    //@Override
+    //public boolean onKeyDown(int keyCode, KeyEvent event)  {
+    //    if (com.janrain.android.engage.utils.Android.isCupcake()
+    //            && keyCode == KeyEvent.KEYCODE_BACK
+    //            && event.getRepeatCount() == 0) {
+    //        // Take care of calling this method on earlier versions of
+    //        // the platform where it doesn't exist.
+    //        onBackPressed();
+    //    }
+    //
+    //    return super.onKeyDown(keyCode, event);
+    //}
+    //
+    //public void onBackPressed() {
+    //    Log.d(TAG, "onBackPressed");
+    //    mSessionData.triggerAuthenticationDidCancel();
+    //}
+
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (com.janrain.android.engage.utils.Android.isCupcake()
-                && keyCode == KeyEvent.KEYCODE_BACK
-                && event.getRepeatCount() == 0) {
-            // Take care of calling this method on earlier versions of
-            // the platform where it doesn't exist.
-            onBackPressed();
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
-
-    public void onBackPressed() {
-        Log.d(TAG, "onBackPressed");
-        mSessionData.triggerAuthenticationDidCancel();
-    }
-
-    @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
 
-        if (mFinishReceiver != null)
-        unregisterReceiver(mFinishReceiver);
+        // todo fragment fixme.
+        //if (mFinishReceiver != null)
+        //unregisterReceiver(mFinishReceiver);
 
         if (mTimer != null) mTimer.cancel();
     }
@@ -326,12 +335,13 @@ public class JRProvidersActivity extends Activity {
     /**
      * Initialize the contents of the Activity's standard options menu.
      */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // use the shared menu
-        mLayoutHelper.inflateAboutMenu(menu);
-        return true;
-    }
+    //todo fragment
+    //@Override
+    //public boolean onCreateOptionsMenu(Menu menu) {
+    //    // use the shared menu
+    //    mLayoutHelper.inflateAboutMenu(menu);
+    //    return true;
+    //}
 
     /**
      * This hook is called whenever an item in your options menu is selected.
@@ -350,7 +360,8 @@ public class JRProvidersActivity extends Activity {
 
     public void tryToFinishActivity() {
         Log.i(TAG, "[tryToFinishActivity]");
-        finish();
+        //todo fragment
+        //finish();
     }
 
     /**
@@ -365,13 +376,13 @@ public class JRProvidersActivity extends Activity {
 
         if (mTimerCount > TIMER_MAX_ITERATIONS) {
             mTimer.cancel();
-            runOnUiThread(mNoProvidersFoundRunner);
+            getActivity().runOnUiThread(mNoProvidersFoundRunner);
             Log.w(TAG, "[doSessionPoll] providers not found, max iterations hit, timer cancelled...");
         } else {
             ArrayList<JRProvider> providers = mSessionData.getBasicProviders();
             if (providers.size() > 0) {
                 mProviderList = providers;
-                runOnUiThread(mProvidersLoadedRunner);
+                getActivity().runOnUiThread(mProvidersLoadedRunner);
                 mTimer.cancel();
                 Log.i(TAG, "[doSessionPoll] providers found, timer cancelled...");
             } else {

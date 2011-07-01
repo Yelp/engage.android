@@ -32,6 +32,7 @@ package com.janrain.android.engage.net.async;
 import android.os.Handler;
 import android.util.Config;
 import android.util.Log;
+import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.utils.IOUtils;
 import org.apache.http.NameValuePair;
 
@@ -227,13 +228,15 @@ public final class AsyncHttpClient {
 	 * Sends full response (or exception) back to the listener.
 	 */
 	private static class HttpCallbackWrapper implements Runnable {
-
 		private static final String TAG = HttpCallbackWrapper.class.getSimpleName();
 
 		private AsyncHttpResponseListener mListener;
 		private AsyncHttpResponseHolder mResponse;
+        private JRConnectionManager.ConnectionData mConnectionData;
 
-		public HttpCallbackWrapper(AsyncHttpResponseListener listener) {
+		public HttpCallbackWrapper(AsyncHttpResponseListener listener,
+                                   JRConnectionManager.ConnectionData cd) {
+            mConnectionData = cd;
 			mListener = listener;
 		}
 
@@ -243,6 +246,7 @@ public final class AsyncHttpClient {
 
 		public void setResponse(AsyncHttpResponseHolder holder) {
 			mResponse = holder;
+            mResponse.setConnectionData(mConnectionData);
 			Log.d(TAG, "[setResponse] response set.");
 		}
 	}
@@ -267,44 +271,43 @@ public final class AsyncHttpClient {
 	 * Executes the specified HTTP GET request asynchronously.  The results will be returned to
 	 * the specified listener.
 	 *
-	 * @param url
-	 * 		The URL to be executed asynchronously.
-     * @param requestHeaders
-     *      Any additional headers to be sent with the get.
+	 * @param cd
+     *      The connection 
 	 * @param listener
 	 * 		The AsyncHttpResponseListener to return the results to.
 	 **/
-    public static void executeHttpGet(final String url,
-                                      List<NameValuePair> requestHeaders,
+    public static void executeHttpGet(JRConnectionManager.ConnectionData cd,
                                       AsyncHttpResponseListener listener) {
+        final String url = cd.getRequestUrl();
+        List<NameValuePair> requestHeaders = cd.getRequestHeaders();
         if (Config.LOGD) {
             Log.d(TAG, "[executeHttpGet] invoked");
         }
 
         (new HttpSender(url, requestHeaders, new Handler(),
-                new HttpCallbackWrapper(listener))).start();
+                new HttpCallbackWrapper(listener, cd))).start();
     }
 
     /**
      * Executes the specified HTTP POST request asynchronously.  The results will be returned to
      * the specified listener.
      *
-     * @param url
-     * 		The URL to be executed asynchronously.
-     * @param data
-     *      The data to be posted (written) to the server.
+     * @param cd
+     * 		The connection data, which must include URL and \c byte[] data.
      * @param listener
      * 		The AsyncHttpResponseListener to return the results to.
      **/
-    public static void executeHttpPost(final String url,
-                                       byte[] data,
+    public static void executeHttpPost(JRConnectionManager.ConnectionData cd,
                                        AsyncHttpResponseListener listener) {
+        final String url = cd.getRequestUrl();
+        byte[] data = cd.getPostData();
+
         if (Config.LOGD) {
             Log.d(TAG, "[executeHttpPost] invoked");
         }
 
         (new HttpSender(url, data, new Handler(),
-                new HttpCallbackWrapper(listener))).start();
+                new HttpCallbackWrapper(listener, cd))).start();
 
     }
 

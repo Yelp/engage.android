@@ -30,12 +30,21 @@
 package com.janrain.android.engage.ui;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Config;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.widget.FrameLayout;
 import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSessionData;
 
 import java.util.Stack;
@@ -47,35 +56,24 @@ import java.util.Stack;
  * Helper class for UI display/state.
  */
 public class JRUserInterfaceMaestro {
-
-    // ------------------------------------------------------------------------
-    // TYPES
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
     public static final String ACTION_FINISH_ACTIVITY =
             "com.janrain.android.engage.ACTION_FINISH_ACTIVITY";
-
     public static final String EXTRA_FINISH_ACTIVITY_TARGET =
             "com.janrain.android.engage.EXTRA_FINISH_ACTIVITY_TARGET";
-
     public static final IntentFilter FINISH_INTENT_FILTER =
             new IntentFilter(ACTION_FINISH_ACTIVITY);
-
     private static final String TAG = JRUserInterfaceMaestro.class.getSimpleName();
-
     private static JRUserInterfaceMaestro sInstance = null;
 
-    // ------------------------------------------------------------------------
-    // STATIC INITIALIZERS
-    // ------------------------------------------------------------------------
+    private Stack<Class<? extends Activity>> mActivityStack;
+    private JRSessionData mSessionData;
+    private FrameLayout mFragmentContainer;
+    private FragmentManager mFragmentManager;
 
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
+    private JRUserInterfaceMaestro() {
+        mActivityStack = new Stack<Class<? extends Activity>>();
+        mSessionData = JRSessionData.getInstance();
+    }
 
     public static JRUserInterfaceMaestro getInstance() {
         if (sInstance == null) {
@@ -85,50 +83,68 @@ public class JRUserInterfaceMaestro {
         return sInstance;
     }
 
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
-    private Stack<Class<? extends Activity>> mActivityStack;
-    private JRSessionData mSessionData;
-
-    // ------------------------------------------------------------------------
-    // INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
-
-    private JRUserInterfaceMaestro() {
-        mActivityStack = new Stack<Class<? extends Activity>>();
-        mSessionData = JRSessionData.getInstance();
+    /**
+     * Displays the provider list for authentication.
+     */
+    public void showProviderSelectionDialog() {
+        showProviderSelectionDialog(null);
     }
 
     /**
      * Displays the provider list for authentication.
      *
-     * @param skipReturningUserLandingPage
-     *      Prevents the dialog from opening to the LandingActivity when \c true, falls back to default
-     *      behavior when false
+     * @param fragmentContainer
+     *  A FrameLayout in which to display library UI fragments.  If \c null the library operates in modal
+     *  dialog mode.
      */
-    public void showProviderSelectionDialog(boolean skipReturningUserLandingPage) {
-        mSessionData.setSkipLandingPage(skipReturningUserLandingPage);
+    public void showProviderSelectionDialog(FrameLayout fragmentContainer) {
+        mFragmentContainer = fragmentContainer;
         mSessionData.setDialogIsShowing(true);
         mSessionData.setSocialSharingMode(false);
-        startActivity(JRProviderListActivity.class);
 
-        /* See JRProviderListFragment.onCreate for an explanation of the flow control when there's a
-         * "returning provider." */
+        if (fragmentContainer != null) {
+            mFragmentManager = ((FragmentActivity) getContext()).getSupportFragmentManager();
+            showFragmentProviderSelection();
+        } else {
+            showModalProviderSelection();
+        }
     }
 
-    /**
-     * Displays the provider list for authentication.
-     */
-    public void showProviderSelectionDialog() {
-        showProviderSelectionDialog(false);
+    private void showFragmentProviderSelection() {
+        Fragment plf = new JRProviderListFragment();
+        mFragmentManager.beginTransaction().add(mFragmentContainer.getId(), plf).commit();
     }
 
+    private void showModalProviderSelection() {
+        int screenConfig = JREngage.getContext().getResources().getConfiguration().screenLayout;
+        screenConfig &= Configuration.SCREENLAYOUT_SIZE_MASK;
+        // Galaxy Tab 7" (the first one) reports SCREENLAYOUT_SIZE_NORMAL
+        // Motorola Xoom reports SCREENLAYOUT_SIZE_XLARGE
+        // Nexus S reports SCREENLAYOUT_SIZE_NORMAL
+        
+        boolean smallOrNormal = screenConfig == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
+                screenConfig == Configuration.SCREENLAYOUT_SIZE_SMALL;
+
+        if (smallOrNormal) {
+            /* Phone sized device, use the whole screen, start a new Activity */
+
+            /* See JRProviderListFragment.onCreate for an explanation of the flow control when there's a
+             * "returning provider." */
+
+            startActivity(JRProviderListActivity.class);
+        } else {
+            /* Tablet sized? Use the dialog box overlay mode */
+            Context c = JREngage.getContext();
+            DialogFragment f = new JRProviderListFragment();
+            f.onCreate(null);
+
+            Dialog d = new Dialog(c, R.style.jr_dialog_no_title);
+            LayoutInflater li = d.getLayoutInflater();
+            d.setContentView(f.onCreateView(li, null, null));
+            d.setOwnerActivity((Activity) c);
+            d.show();
+        }
+    }
 
     /**
      * Shows the user landing page.
@@ -152,6 +168,20 @@ public class JRUserInterfaceMaestro {
         mSessionData.setDialogIsShowing(true);
         startActivity(JRPublishActivity.class);
     }
+
+    public boolean isModal() {
+        return mFragmentContainer == null;
+    }
+
+    public boolean isEmbedded() {
+        return !isModal();
+    }
+
+    private Context getContext() {
+        return JREngage.getContext();
+    }
+
+    /* */
 
     public void authenticationRestarted() {
         popToOriginal();
@@ -227,13 +257,11 @@ public class JRUserInterfaceMaestro {
      * @param managedActivity
      *      The ManagedActivity to be started/displayed.
      */
-    //10600000
-    //FLAG_ACTIVITY_BROUGHT_TO_FRONT 0x00400000
-    //FLAG_ACTIVITY_NEW_TASK 0x10000000
-    //FLAG_ACTIVITY_RESET_TASK_IF_NEEDED 0x00200000
     private void startActivity(Class<? extends Activity> managedActivity) {
         Context context = JREngage.getContext();
-        context.startActivity(new Intent(context, managedActivity));
+        Intent intent = new Intent(context, managedActivity);
+        // I was thinking about setting theme here but that can't be done.
+        context.startActivity(intent);
         mActivityStack.push(managedActivity);
         Log.i(TAG, "[startActivity] pushed and started: " + managedActivity);
     }
@@ -265,37 +293,6 @@ public class JRUserInterfaceMaestro {
 
     private void popAndFinishActivitiesUntil(Class<? extends Activity> untilManagedActivity) {
         Log.i(TAG, "[popAndFinishActivitiesUntil] until: " + untilManagedActivity);
-
-        // This seems way broken. :(
-        // Specifically, there are two loops that are doing the same thing for no fathomable reason.
-        // The second one does basically nothing AFAICS, but crash when the first loop bails out
-        // of an empty stack.  Rewritten below.
-
-        //Class top;
-        //do {
-        //    if (mActivityStack.size() < 1) {
-        //        if (Config.LOGD) {
-        //            Log.d(TAG, "[popAndFinishActivitiesUntil] stack empty");
-        //        }
-        //        break;
-        //    }
-        //    top = mActivityStack.peek();
-        //    if (top.equals(untilManagedActivity)) {
-        //        if (Config.LOGD) {
-        //            Log.d(TAG, "[popAndFinishActivitiesUntil] found until");
-        //        }
-        //        break;
-        //    }
-        //    top = mActivityStack.pop();
-        //    doFinishActivity(top);
-        //    Log.i(TAG, "[popAndFinishActivitiesUntil] popped: " + top);
-        //} while (top != null);
-        //
-        //while (mActivityStack.peek() != untilManagedActivity) {
-        //    Class managedActivity = mActivityStack.pop();
-        //    doFinishActivity(managedActivity);
-        //    Log.i(TAG, "[popAndFinishActivitiesUntil] popped and finished: " + managedActivity);
-        //}
 
         if (mActivityStack.size() == 0) {
             // Crash horribly

@@ -35,7 +35,7 @@ import com.janrain.android.engage.net.async.AsyncHttpResponseListener;
 import org.apache.http.NameValuePair;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -44,40 +44,51 @@ import java.util.List;
  * @class JRConnectionManager
  **/
 public class JRConnectionManager implements AsyncHttpResponseListener {
-
-    // ------------------------------------------------------------------------
-    // TYPES
-    // ------------------------------------------------------------------------
-
     /**
      * Connection data for managed connections.
      */
-	private static class ConnectionData {
+	public static class ConnectionData {
 		private boolean mShouldReturnFullResponse;
 		private Object mTag;
 		private JRConnectionManagerDelegate mDelegate;
+        private String mRequestUrl;
+        private byte[] mPostData;
 
-		public ConnectionData(JRConnectionManagerDelegate delegate,
+        public String getRequestUrl() {
+            return mRequestUrl;
+        }
+
+        public byte[] getPostData() {
+            return mPostData;
+        }
+
+        public List<NameValuePair> getRequestHeaders() {
+            return mRequestHeaders;
+        }
+
+        private List<NameValuePair> mRequestHeaders;
+
+        public ConnectionData(JRConnectionManagerDelegate delegate,
 				boolean shouldReturnFullResponse, Object userdata) {
 			mShouldReturnFullResponse = shouldReturnFullResponse;
 			mDelegate = delegate;
 			mTag = userdata;
 		}
-	}
 
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
+        public void setRequestUrl(String r) {
+            mRequestUrl = r;
+        }
+
+        public void setPostData(byte[] d) {
+            mPostData = d;
+        }
+
+        public void setRequestHeaders(List<NameValuePair> requestHeaders) {
+            mRequestHeaders = requestHeaders;
+        }
+    }
 
 	private static JRConnectionManager sInstance;
-
-    // ------------------------------------------------------------------------
-    // STATIC INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
 
 	public static synchronized JRConnectionManager getInstance() {
 		if (sInstance == null) {
@@ -147,12 +158,15 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 		// get singleton instance (lazy init)
 		JRConnectionManager instance = getInstance();
 
+        ConnectionData cd = new ConnectionData(delegate, shouldReturnFullResponse, userdata);
+        cd.setRequestUrl(requestUrl);
+        cd.setRequestHeaders(requestHeaders);
+
 		// create/store connection data
-		instance.mConnectionBuffers.put(requestUrl,
-				new ConnectionData(delegate, shouldReturnFullResponse, userdata));
+		instance.mConnectionBuffers.add(cd);
 
 		// execute HTTP GET request
-		AsyncHttpClient.executeHttpGet(requestUrl, requestHeaders, instance);
+		AsyncHttpClient.executeHttpGet(cd, instance);
 
 		return true;
     }
@@ -188,60 +202,32 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 
 		// get singleton instance (lazy init)
 		JRConnectionManager instance = getInstance();
+        ConnectionData cd = new ConnectionData(delegate, shouldReturnFullResponse, userdata);
+        cd.setRequestUrl(requestUrl);
+        cd.setPostData(postData);
 
 		// create/store connection data
-		instance.mConnectionBuffers.put(requestUrl,
-				new ConnectionData(delegate, shouldReturnFullResponse, userdata));
+		instance.mConnectionBuffers.add(cd);
 
 		// execute HTTP POST request
-		AsyncHttpClient.executeHttpPost(requestUrl, postData, instance);
+		AsyncHttpClient.executeHttpPost(cd, instance);
 
 		return true;
 
     }
 
-    /**
-     * Returns the number of current (actively managed) connections.
-     *
-     * @return
-     *      The number of current (actively managed) connections.
-     */
-	public static int openConnections() {
-		return getInstance().mConnectionBuffers.size();
-	}
-
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
     /* Map of managed connections, where connection data is mapped to URL. */
-	private HashMap<String, ConnectionData> mConnectionBuffers;
-
-    // ------------------------------------------------------------------------
-    // INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
+	//private HashMap<String, ConnectionData> mConnectionBuffers;
+    private HashSet<ConnectionData> mConnectionBuffers = new HashSet<ConnectionData>();
 
 	private JRConnectionManager() {
-		mConnectionBuffers = new HashMap<String, ConnectionData>();
 	}
-
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
 
 	public void onResponseReceived(AsyncHttpResponseHolder response) {
         String requestUrl = response.getUrl();
+        ConnectionData connectionData = response.getConnectionData();
 
-        // map.remove instead of map.get so that we don't leak memory.
-        ConnectionData connectionData = mConnectionBuffers.remove(requestUrl);
+        mConnectionBuffers.remove(connectionData);
         JRConnectionManagerDelegate delegate = connectionData.mDelegate;
 
         if (response.hasException()) {
