@@ -15,7 +15,7 @@
 
     <application>
         <!-- For Janrain Engage library -->
-        <activity android:name=".ui.JRProviderListActivity"
+        <activity android:name="com.janrain.android.engage.ui.JRProviderListActivity"
                   android:theme="@android:style/Theme.Light"
                   android:configChanges="orientation"/>
         <activity android:name="com.janrain.android.engage.ui.JRLandingActivity"
@@ -27,6 +27,7 @@
         <activity android:name="com.janrain.android.engage.ui.JRPublishActivity"
                   android:theme="@android:style/Theme.Light.NoTitleBar"
                   android:configChanges="orientation"/>
-        <activity android:name=".ui.JRProviderListActivity"/>
+        <activity android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
+                  android:configChanges="orientation"/>
     </application>
 </manifest>

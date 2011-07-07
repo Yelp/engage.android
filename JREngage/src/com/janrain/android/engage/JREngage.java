@@ -588,10 +588,7 @@ public class JREngage {
             Log.d(TAG, "[showProviderSelectionDialog]");
         }
 
-        if (checkSessionDataError()) return;
-
-        mSessionData.setSkipLandingPage(false);
-        mInterfaceMaestro.showProviderSelectionDialog();
+        showAuthenticationDialog(false);
     }
 
     /**

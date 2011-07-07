@@ -36,20 +36,15 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
-import android.media.MediaRecorder;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.text.AndroidCharacter;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
-import android.view.View;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.ui.ColorButton;
-import com.janrain.android.engage.utils.Android;
+import com.janrain.android.engage.utils.AndroidUtils;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
@@ -327,7 +322,7 @@ public class JRProvider implements Serializable {
             return r;
         }
 
-        if (Android.isCupcake()) {
+        if (AndroidUtils.isCupcake()) {
             // 1.5 can't handle our programmatic XHDPI resource instantiation
             return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
         }

@@ -49,6 +49,7 @@ import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Archiver;
 import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.StringUtils;
@@ -146,7 +147,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 		mAppId = appId;
 		mTokenUrl = tokenUrl;
 
-        ApplicationInfo ai = com.janrain.android.engage.utils.Android.getApplicationInfo();
+        ApplicationInfo ai = AndroidUtils.getApplicationInfo();
         String appName = JREngage.getContext().getPackageManager().getApplicationLabel(ai)
                 .toString();
         try { mUrlEncodedAppName = URLEncoder.encode(appName, "UTF-8"); }
@@ -1136,6 +1137,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
+    /**
+     *
+     */
     public void triggerPublishingDidComplete() {
         if (Config.LOGD)
             Log.d(TAG, "[triggerPublishingDidComplete]");
@@ -1147,6 +1151,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mSocialSharingMode = false;
     }
 
+    // todo session data connection callback should trigger this
     public void triggerPublishingJRActivityDidFail(JREngageError error) {
         if (Config.LOGD)
             Log.d(TAG, "[triggerPublishingJRActivityDidFail]");
@@ -1161,6 +1166,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
+    /**
+     *
+     * @param err
+     */
     public void triggerPublishingDialogDidFail(JREngageError err) {
        if (Config.LOGD)
             Log.d(TAG, "[triggerPublishingDialogDidFail]");
@@ -1168,6 +1177,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         for (JRSessionDelegate delegate : getDelegatesCopy()) delegate.publishingDialogDidFail(err);
     }
 
+    /**
+     *
+     */
     public void triggerPublishingDidCancel() {
         if (Config.LOGD)
             Log.d(TAG, "[triggerPublishingDidCancel]");

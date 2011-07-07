@@ -29,9 +29,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,15 +37,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.Window;
+import android.view.*;
 import android.webkit.*;
-import com.janrain.android.engage.JREngage;
+import android.widget.ProgressBar;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -55,7 +51,7 @@ import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.utils.Android;
+import com.janrain.android.engage.utils.AndroidUtils;
 
 import java.net.URL;
 import java.util.List;
@@ -66,19 +62,9 @@ import java.util.List;
  * @class JRWebViewActivity
  * Container for authentication web view.  Mimics JRWebViewController iPhone interface.
  */
-public class JRWebViewActivity extends Activity {
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
-    private static final String TAG = JRWebViewActivity.class.getSimpleName();
+public class JRWebViewFragment extends Fragment {
+    private static final String TAG = JRWebViewFragment.class.getSimpleName();
     private static final String RPX_RESULT_TAG = "rpx_result";
-    private JRProvider mProvider;
-    private WebSettings mWebViewSettings;
-
-    // ------------------------------------------------------------------------
-    // TYPES
-    // ------------------------------------------------------------------------
 
     /**
      * @internal
@@ -89,13 +75,14 @@ public class JRWebViewActivity extends Activity {
      **/
     private class FinishReceiver extends BroadcastReceiver {
 
-        private final String TAG = JRWebViewActivity.TAG + "-" + FinishReceiver.class.getSimpleName();
+        private final String TAG = JRWebViewFragment.TAG + "-" + FinishReceiver.class.getSimpleName();
 
         @Override
         public void onReceive(Context context, Intent intent) {
             String target = intent.getStringExtra(
-                    JRUserInterfaceMaestro.EXTRA_FINISH_ACTIVITY_TARGET);
-            if (JRWebViewActivity.class.toString().equals(target)) {
+                    JRUserInterfaceMaestro.EXTRA_FINISH_FRAGMENT_TARGET);
+            //if (JRWebViewActivity.class.toString().equals(target)) {
+            if (JRWebViewFragment.class.toString().equals(target)) {
                 tryToFinishActivity();
                 Log.i(TAG, "[onReceive] handled");
             } else if (Config.LOGD) {
@@ -104,40 +91,15 @@ public class JRWebViewActivity extends Activity {
         }
     }
 
-    // ------------------------------------------------------------------------
-    // STATIC INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
     private SharedLayoutHelper mLayoutHelper;
     private JRSessionData mSessionData;
     private WebView mWebView;
     private boolean mIsAlertShowing = false;
     private boolean mIsFinishPending = false;
     private FinishReceiver mFinishReceiver;
-
-    // ------------------------------------------------------------------------
-    // INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
+    private JRProvider mProvider;
+    private WebSettings mWebViewSettings;
+    private ProgressBar mProgressBar;
 
     /**
      * Called when the activity is first created.
@@ -150,25 +112,22 @@ public class JRWebViewActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+    }
 
-        // Request progress indicator
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        //requestWindowFeature(Window.FEATURE_PROGRESS);
-        setContentView(R.layout.jr_provider_webview);
-
-        CookieSyncManager.createInstance(this);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        CookieSyncManager.createInstance(getActivity());
 
         mSessionData = JRSessionData.getInstance();
-        mLayoutHelper = new SharedLayoutHelper(this);
+        View view = inflater.inflate(R.layout.jr_provider_webview, container, false);
 
-        // For the case when this activity is relaunched after the process was killed
-        if (mSessionData == null) {
-            finish();
-            return;
-        }
+        mLayoutHelper = new SharedLayoutHelper(getActivity());
 
-        mWebView = (WebView)findViewById(R.id.jr_webview);
+        mWebView = (WebView)view.findViewById(R.id.jr_webview);
+        mProgressBar = (ProgressBar)view.findViewById(R.id.jr_webview_progress);
+
         mWebViewSettings = mWebView.getSettings();
+
         // Shim some information about the OS version into the WebView for use by hax ala Yahoo!
         mWebView.addJavascriptInterface(new Object() {
         			// These functions may be invoked via the javascript binding, but they are
@@ -186,7 +145,7 @@ public class JRWebViewActivity extends Activity {
 
                     @SuppressWarnings("unused")
 					int getAndroidSdkInt() {
-                        return Android.getAndroidSdkInt();
+                        return AndroidUtils.getAndroidSdkInt();
                     }
                 }, "jrengage_mobile");
 
@@ -211,10 +170,11 @@ public class JRWebViewActivity extends Activity {
 
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
-            registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
+            getActivity().registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
 
         mWebView.setWebViewClient(mWebviewClient);
+        mWebView.setWebChromeClient(mWebChromeClient);
         mWebView.setDownloadListener(mWebViewDownloadListener);
 
         String customUa = mProvider.getWebViewOptions().getAsString("user_agent");
@@ -223,31 +183,17 @@ public class JRWebViewActivity extends Activity {
         URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
         mWebView.loadUrl(startUrl.toString());
         //mWebView.loadUrl("http://google.com");
+
+        return view;
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    protected void onResume() {
-        super.onResume();
-        JREngage.setContext(this);
-    }
-
-    protected void onStop() {
-        super.onStop();
-
-    }
-
-    @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
 
         mLayoutHelper.dismissProgressDialog();
 
-        if (mFinishReceiver != null) unregisterReceiver(mFinishReceiver);
-
+        if (mFinishReceiver != null) getActivity().unregisterReceiver(mFinishReceiver);
 
         // This listener's callback assumes the activity is running, but if the user presses
         // the back button while the WebView is transitioning between pages the activity may
@@ -259,60 +205,9 @@ public class JRWebViewActivity extends Activity {
         }
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (com.janrain.android.engage.utils.Android.isCupcake()
-                && keyCode == KeyEvent.KEYCODE_BACK
-                && event.getRepeatCount() == 0) {
-            // Take care of calling this method on earlier versions of
-            // the platform where it doesn't exist.
-            onBackPressed();
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
-
-    public void onBackPressed() {
-        Log.d(TAG, "onBackPressed");
-        mWebView.stopLoading();
-        mSessionData.triggerAuthenticationDidRestart();
-    }
-
-    /**
-     * Initialize the contents of the Activity's standard options menu.
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // use the shared menu
-        mLayoutHelper.inflateAboutMenu(menu);
-        menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "Refresh");
-        return true;
-    }
-
-    /**
-     * This hook is called whenever an item in your options menu is selected.
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getTitle().toString().equals("Refresh")) {
-            Log.d(TAG, "refreshing WebView");
-            mWebView.reload();
-            return true;
-        }
-
-        return mLayoutHelper.handleAboutMenu(item) || super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Callback for creating dialogs that are managed.
-     */
-    protected Dialog onCreateDialog(int id) {
-        return mLayoutHelper.onCreateDialog(id);
-    }
-
     private void showAlertDialog(String title, String message) {
         mIsAlertShowing = true;
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(getActivity())
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -320,11 +215,10 @@ public class JRWebViewActivity extends Activity {
                     mIsAlertShowing = false;
                     if (mIsFinishPending) {
                         mIsFinishPending = false;
-                        finish();
+                        getActivity().finish();
                     }
                 }
-            })
-            .show();
+            }).show();
     }
 
     public void tryToFinishActivity() {
@@ -332,7 +226,7 @@ public class JRWebViewActivity extends Activity {
         if (mIsAlertShowing) {
             mIsFinishPending = true;
         } else {
-            finish();
+            getActivity().finish();
         }
     }
 
@@ -393,7 +287,8 @@ public class JRWebViewActivity extends Activity {
             /* Check for mobile endpoint URL. */
             if (isMobileEndpointUrl(url)) Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
 
-            setProgressBarIndeterminateVisibility(true);
+            //setProgressBarIndeterminateVisibility(true);
+            mProgressBar.setVisibility(View.VISIBLE);
 
             super.onPageStarted(view, url, favicon);
         }
@@ -404,14 +299,14 @@ public class JRWebViewActivity extends Activity {
                 Log.d(TAG, "[onPageFinished] url: " + url);
             }
 
-            setProgressBarIndeterminateVisibility(false);
+            //setProgressBarIndeterminateVisibility(false);
+            mProgressBar.setVisibility(View.GONE);
 
             List<String> jsInjects =
                     mProvider.getWebViewOptions().getAsListOfStrings("js_injections", true);
             for (String i : jsInjects) mWebView.loadUrl("javascript:" + i);
 
-            boolean showZoomControl =
-                    mProvider.getWebViewOptions().getAsBoolean("show_zoom_control");
+            boolean showZoomControl = mProvider.getWebViewOptions().getAsBoolean("show_zoom_control");
             if (showZoomControl) mWebView.invokeZoomPicker();
 
             super.onPageFinished(view, url);
@@ -423,7 +318,8 @@ public class JRWebViewActivity extends Activity {
             Log.e(TAG, "[onReceivedError] code: " + errorCode + " | description: " + description
                 + " | url: " + url);
 
-            setProgressBarIndeterminateVisibility(false);
+            //setProgressBarIndeterminateVisibility(false);
+            mProgressBar.setVisibility(View.GONE);
 
             //mIsFinishPending = true;
             showAlertDialog("Log In Failed", "An error occurred while attempting to sign in.");
@@ -433,6 +329,15 @@ public class JRWebViewActivity extends Activity {
                     JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
                     JREngageError.ErrorType.AUTHENTICATION_FAILED);
             mSessionData.triggerAuthenticationDidFail(err);
+        }
+    };
+
+    private WebChromeClient mWebChromeClient = new WebChromeClient() {
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+            if (newProgress > 50) {
+                mProgressBar.setVisibility(View.GONE);
+            }
         }
     };
 
@@ -497,8 +402,7 @@ public class JRWebViewActivity extends Activity {
                         // Caused by entering a ~blank OpenID URL
 
                         mIsFinishPending = true;
-                        showAlertDialog("OpenID Error",
-                                "The URL you entered does not appear to be an OpenID");
+                        showAlertDialog("OpenID Error", "The URL you entered does not appear to be an OpenID");
                     } else {
                         Log.e(TAG, "unrecognized error");
                         JREngageError err = new JREngageError(
@@ -544,4 +448,8 @@ public class JRWebViewActivity extends Activity {
             Log.i(TAG, "[connectionWasStopped] userdata: " + userdata);
         }
     };
+
+    public SharedLayoutHelper getLayoutHelper() {
+        return mLayoutHelper;
+    }
 }

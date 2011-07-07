@@ -30,23 +30,18 @@
 package com.janrain.android.engage.ui;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Config;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSessionData;
-
 import java.util.Stack;
 
 /**
@@ -56,22 +51,23 @@ import java.util.Stack;
  * Helper class for UI display/state.
  */
 public class JRUserInterfaceMaestro {
-    public static final String ACTION_FINISH_ACTIVITY =
-            "com.janrain.android.engage.ACTION_FINISH_ACTIVITY";
-    public static final String EXTRA_FINISH_ACTIVITY_TARGET =
-            "com.janrain.android.engage.EXTRA_FINISH_ACTIVITY_TARGET";
+    public static final String ACTION_FINISH_FRAGMENT = "com.janrain.android.engage.ACTION_FINISH_FRAGMENT";
+    public static final String EXTRA_FINISH_FRAGMENT_TARGET =
+            "com.janrain.android.engage.EXTRA_FINISH_FRAGMENT_TARGET";
     public static final IntentFilter FINISH_INTENT_FILTER =
-            new IntentFilter(ACTION_FINISH_ACTIVITY);
+            new IntentFilter(ACTION_FINISH_FRAGMENT);
     private static final String TAG = JRUserInterfaceMaestro.class.getSimpleName();
     private static JRUserInterfaceMaestro sInstance = null;
 
-    private Stack<Class<? extends Activity>> mActivityStack;
+    //private Stack<Class<? extends Activity>> mActivityStack;
+    private Stack<Class<? extends Fragment>> mFragmentStack;
     private JRSessionData mSessionData;
     private FrameLayout mFragmentContainer;
     private FragmentManager mFragmentManager;
 
     private JRUserInterfaceMaestro() {
-        mActivityStack = new Stack<Class<? extends Activity>>();
+        //mActivityStack = new Stack<Class<? extends Activity>>();
+        mFragmentStack = new Stack<Class<? extends Fragment>>();
         mSessionData = JRSessionData.getInstance();
     }
 
@@ -104,45 +100,53 @@ public class JRUserInterfaceMaestro {
 
         if (fragmentContainer != null) {
             mFragmentManager = ((FragmentActivity) getContext()).getSupportFragmentManager();
-            showFragmentProviderSelection();
+        }
+
+        showUiPiece(JRProviderListFragment.class, JRFragmentHostActivity.JR_PROVIDER_LIST);
+    }
+
+    private void showUiPiece(Class<? extends Fragment> f, int fragId) {
+        if (isEmbeddedMode()) {
+            try {
+                Object o = f.newInstance();
+                mFragmentManager.beginTransaction().add(mFragmentContainer.getId(), (Fragment) o).commit();
+            } catch (InstantiationException e) {
+                throw new RuntimeException("Error instantiating fragment: ", e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("Error instantiating fragment: ", e);
+            }
         } else {
-            showModalProviderSelection();
+            Intent i = new Intent(JREngage.getContext(), JRFragmentHostActivity.class);
+            i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, fragId);
+            startActivity(i);
         }
     }
 
-    private void showFragmentProviderSelection() {
-        Fragment plf = new JRProviderListFragment();
-        mFragmentManager.beginTransaction().add(mFragmentContainer.getId(), plf).commit();
-    }
-
-    private void showModalProviderSelection() {
-        int screenConfig = JREngage.getContext().getResources().getConfiguration().screenLayout;
-        screenConfig &= Configuration.SCREENLAYOUT_SIZE_MASK;
-        // Galaxy Tab 7" (the first one) reports SCREENLAYOUT_SIZE_NORMAL
-        // Motorola Xoom reports SCREENLAYOUT_SIZE_XLARGE
-        // Nexus S reports SCREENLAYOUT_SIZE_NORMAL
-        
-        boolean smallOrNormal = screenConfig == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
-                screenConfig == Configuration.SCREENLAYOUT_SIZE_SMALL;
-
-        if (smallOrNormal) {
+    private void showModalUiPiece(Class<? extends Fragment> f, Class<? extends Activity> a) {
+        if (isSmallOrNormalScreen()) {
             /* Phone sized device, use the whole screen, start a new Activity */
 
             /* See JRProviderListFragment.onCreate for an explanation of the flow control when there's a
              * "returning provider." */
 
-            startActivity(JRProviderListActivity.class);
+            startActivity(a);
         } else {
             /* Tablet sized? Use the dialog box overlay mode */
-            Context c = JREngage.getContext();
-            DialogFragment f = new JRProviderListFragment();
-            f.onCreate(null);
-
-            Dialog d = new Dialog(c, R.style.jr_dialog_no_title);
-            LayoutInflater li = d.getLayoutInflater();
-            d.setContentView(f.onCreateView(li, null, null));
-            d.setOwnerActivity((Activity) c);
-            d.show();
+            //try {
+            //    Fragment newF = f.newInstance();
+            //    newF.onCreate(null);
+            //
+            //    Dialog d = new Dialog(c, R.style.jr_dialog_no_title);
+            //    LayoutInflater li = d.getLayoutInflater();
+            //    d.setContentView(newF.onCreateView(li, null, null));
+            //    d.setOwnerActivity((Activity) c);
+            //    d.show();
+            //} catch (InstantiationException e) {
+            //    throw new RuntimeException("Error instantiating fragment: ", e);
+            //} catch (IllegalAccessException e) {
+            //    throw new RuntimeException("Error instantiating fragment: ", e);
+            //}
+            startActivity(a);
         }
     }
 
@@ -150,31 +154,54 @@ public class JRUserInterfaceMaestro {
      * Shows the user landing page.
      */
     public void showUserLanding() {
-        startActivity(JRLandingActivity.class);
+        showUiPiece(JRLandingFragment.class, JRFragmentHostActivity.JR_LANDING);
     }
 
     /**
      * Shows the web view for authentication.
      */
     public void showWebView() {
-        startActivity(JRWebViewActivity.class);
+        showUiPiece(JRWebViewFragment.class, JRFragmentHostActivity.JR_WEBVIEW);
     }
 
     /**
      * Shows the social publishing activity.
      */
     public void showPublishingDialogWithActivity() {
+        showPublishingDialogWithActivity(null);
+    }
+
+    public void showPublishingDialogWithActivity(FrameLayout fragmentContainer) {
+        mFragmentContainer = fragmentContainer;
         setUpSocialPublishing();
         mSessionData.setDialogIsShowing(true);
-        startActivity(JRPublishActivity.class);
+
+        if (fragmentContainer != null) {
+            mFragmentManager = ((FragmentActivity) getContext()).getSupportFragmentManager();
+        }
+
+        showUiPiece(JRPublishFragment.class, JRFragmentHostActivity.JR_PUBLISH);
     }
 
-    public boolean isModal() {
-        return mFragmentContainer == null;
+    public boolean isSmallOrNormalScreen() {
+        int screenConfig = JREngage.getContext().getResources().getConfiguration().screenLayout;
+        screenConfig &= Configuration.SCREENLAYOUT_SIZE_MASK;
+
+        // Galaxy Tab 7" (the first one) reports SCREENLAYOUT_SIZE_NORMAL
+        // Motorola Xoom reports SCREENLAYOUT_SIZE_XLARGE
+        // Nexus S reports SCREENLAYOUT_SIZE_NORMAL
+
+        return screenConfig == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
+                screenConfig == Configuration.SCREENLAYOUT_SIZE_SMALL;
     }
 
-    public boolean isEmbedded() {
-        return !isModal();
+    public boolean isDialogMode() {
+        return !isEmbeddedMode() && !isSmallOrNormalScreen();
+
+    }
+
+    public boolean isEmbeddedMode() {
+        return mFragmentContainer != null;
     }
 
     private Context getContext() {
@@ -254,20 +281,37 @@ public class JRUserInterfaceMaestro {
     /**
      * Helper method used to launch a new display managedActivity.
      *
-     * @param managedActivity
-     *      The ManagedActivity to be started/displayed.
+     * @param intent
+     *      The Intent for the managed activity to be started/displayed.
      */
-    private void startActivity(Class<? extends Activity> managedActivity) {
+    private void startActivity(Intent intent) {
         Context context = JREngage.getContext();
-        Intent intent = new Intent(context, managedActivity);
-        // I was thinking about setting theme here but that can't be done.
         context.startActivity(intent);
-        mActivityStack.push(managedActivity);
-        Log.i(TAG, "[startActivity] pushed and started: " + managedActivity);
+        //try {
+            /* We run time type check the cast immediately below in an assertion */
+            //@SuppressWarnings("unchecked")
+            //Class<? extends Activity> managedActivity;
+            //managedActivity = (Class<? extends Activity>) Class.forName(intent.getComponent().getClassName());
+            //assert (Activity.class.isAssignableFrom(managedActivity));
+
+            int fragId = intent.getIntExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, 0);
+            Class<? extends Fragment> f = JRFragmentHostActivity.getFragmentClassForId(fragId);
+            mFragmentStack.push(f);
+            //Log.i(TAG, "[startActivity] pushed and started: " + managedActivity);
+        //} catch (ClassNotFoundException e) {
+        //    throw new RuntimeException(e);
+        //}
     }
 
-    protected Stack<Class<? extends Activity>> getManagedActivityStack() {
-        return mActivityStack;
+    private void startActivity(Class<? extends Activity> managedActivity) {
+        startActivity(new Intent(JREngage.getContext(), managedActivity));
+    }
+
+    //protected Stack<Class<? extends Activity>> getManagedActivityStack() {
+    //    return mActivityStack;
+    //}
+    protected Stack<Class<? extends Fragment>> getManagedFragmentStack() {
+        return mFragmentStack;
     }
 
     private void popAll() {
@@ -275,8 +319,11 @@ public class JRUserInterfaceMaestro {
             Log.d(TAG, "[popAll]");
         }
 
-        while (!mActivityStack.isEmpty()) {
-            doFinishActivity(mActivityStack.pop());
+        //while (!mActivityStack.isEmpty()) {
+        //    doFinishActivity(mActivityStack.pop());
+        //}
+        while (!mFragmentStack.isEmpty()) {
+            doFinishFragment(mFragmentStack.pop());
         }
     }
 
@@ -285,33 +332,39 @@ public class JRUserInterfaceMaestro {
             Log.d(TAG, "[popToOriginal]");
         }
 
-        Class<? extends Activity> originalRootActivity = (mSessionData.getSocialSharingMode())
-                ? JRPublishActivity.class : JRProviderListActivity.class;
+        //Class<? extends Activity> originalRootActivity = (mSessionData.getSocialSharingMode())
+        //        ? JRPublishActivity.class : JRProviderListActivity.class;
+        Class<? extends Fragment> originalRootFragment = (mSessionData.getSocialSharingMode())
+                ? JRPublishFragment.class : JRProviderListFragment.class;
 
-        popAndFinishActivitiesUntil(originalRootActivity);
+        //popAndFinishActivitiesUntil(originalRootActivity);
+        popAndFinishFragmentsUntil(originalRootFragment);
+
     }
 
-    private void popAndFinishActivitiesUntil(Class<? extends Activity> untilManagedActivity) {
-        Log.i(TAG, "[popAndFinishActivitiesUntil] until: " + untilManagedActivity);
+    //private void popAndFinishActivitiesUntil(Class<? extends Activity> untilManagedActivity) {
+    private void popAndFinishFragmentsUntil(Class<? extends Fragment> untilManagedFragment) {
+        Log.i(TAG, "[popAndFinishActivitiesUntil] until: " + untilManagedFragment);
 
-        if (mActivityStack.size() == 0) {
+        if (mFragmentStack.size() == 0) {
             // Crash horribly
             throw new IllegalStateException("JRUserInterfaceMaestro activity stack illegal state");
         }
 
         // If we're done, we're done.
-        if (mActivityStack.peek().equals(untilManagedActivity)) return;
+        if (mFragmentStack.peek().equals(untilManagedFragment)) return;
 
         // Else pop and recurse.
-        doFinishActivity(mActivityStack.pop());
-        popAndFinishActivitiesUntil(untilManagedActivity);
+        doFinishFragment(mFragmentStack.pop());
+        popAndFinishFragmentsUntil(untilManagedFragment);
     }
 
-    private void doFinishActivity(Class<? extends Activity> managedActivity) {
-        Log.d(TAG, "[doFinishActivity] sending broadcast to: " + managedActivity);
+    //private void doFinishActivity(Class<? extends Activity> managedActivity) {
+    private void doFinishFragment(Class<? extends Fragment> managedFragment) {
+        Log.d(TAG, "[doFinishActivity] sending broadcast to: " + managedFragment);
         Context context = JREngage.getContext();
-        Intent intent = new Intent(ACTION_FINISH_ACTIVITY);
-        intent.putExtra(EXTRA_FINISH_ACTIVITY_TARGET, managedActivity.toString());
+        Intent intent = new Intent(ACTION_FINISH_FRAGMENT);
+        intent.putExtra(EXTRA_FINISH_FRAGMENT_TARGET, managedFragment.toString());
         context.sendBroadcast(intent);
     }
 }

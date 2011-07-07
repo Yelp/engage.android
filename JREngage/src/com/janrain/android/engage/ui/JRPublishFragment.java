@@ -29,10 +29,10 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.TabActivity;
 import android.content.*;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -42,6 +42,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
@@ -50,10 +51,10 @@ import android.util.Config;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRAuthenticatedUser;
@@ -61,6 +62,7 @@ import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.*;
+import com.janrain.android.engage.utils.AndroidUtils;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -78,7 +80,7 @@ import java.util.List;
  * @class JRPublishActivity
  * Publishing UI
  */
-public class JRPublishActivity extends TabActivity implements TabHost.OnTabChangeListener {
+public class JRPublishFragment extends Fragment implements TabHost.OnTabChangeListener {
     private static final int DIALOG_FAILURE = 1;
     //private static final int DIALOG_SUCCESS = 2;
     private static final int DIALOG_CONFIRM_SIGNOUT = 3;
@@ -89,6 +91,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     private static final int JANRAIN_BLUE_20PERCENT = 0x33074764;
     private static final int JANRAIN_BLUE_100PERCENT = 0xFF074764;
     private static final String EMAIL_SMS_TAB_TAG = "email_sms";
+    private static final String TAG = JRPublishFragment.class.getSimpleName();
 
     /**
      * @internal
@@ -99,13 +102,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
      **/
     private class FinishReceiver extends BroadcastReceiver {
 
-        private final String TAG = JRPublishActivity.TAG + "-" + FinishReceiver.class.getSimpleName();
+        private final String TAG = JRPublishFragment.TAG + "-" + FinishReceiver.class.getSimpleName();
 
         @Override
         public void onReceive(Context context, Intent intent) {
             String target = intent.getStringExtra(
-                    JRUserInterfaceMaestro.EXTRA_FINISH_ACTIVITY_TARGET);
-            if (JRPublishActivity.class.toString().equals(target)) {
+                    JRUserInterfaceMaestro.EXTRA_FINISH_FRAGMENT_TARGET);
+            if (JRPublishFragment.class.toString().equals(target)) {
                 tryToFinishActivity();
                 Log.i(TAG, "[onReceive] handled");
             } else if (Config.LOGD) {
@@ -113,10 +116,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             }
         }
     }
-
-    private static final String TAG = JRPublishActivity.class.getSimpleName();
-
-    //private FinishReceiver mFinishReceiver;
 
     /* Reference to the library model */
     private JRSessionData mSessionData;
@@ -170,46 +169,38 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     /* Helper class for the JRUserInterfaceMaestro */
     private FinishReceiver mFinishReceiver;
 
-    /* Activity life-cycle methods */
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate");
-        setContentView(R.layout.jr_publish_activity);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View content = inflater.inflate(R.layout.jr_publish_activity, container, false);
 
         mSessionData = JRSessionData.getInstance();
-
-        /* For the case when this activity is relaunched after the process was killed */
-        if (mSessionData == null) {
-            finish();
-            return;
-        }
 
         mActivityObject = mSessionData.getJRActivity();
         mSessionDelegate = createSessionDelegate();
 
         /* View References */
-        mPreviewBox = (RelativeLayout) findViewById(R.id.jr_preview_box);
-        mPreviewBorder = (LinearLayout) findViewById(R.id.jr_preview_box_border);
-        mMediaContentView = (RelativeLayout) findViewById(R.id.jr_media_content_view);
-        mCharacterCountView = (TextView) findViewById(R.id.jr_character_count_view);
-        mProviderIcon = (ImageView) findViewById(R.id.jr_provider_icon);
-        mUserCommentView = (EditText) findViewById(R.id.jr_edit_comment);
-        mPreviewLabelView = (TextView) findViewById(R.id.jr_preview_text_view);
-        mTriangleIconView = (ImageView) findViewById(R.id.jr_triangle_icon_view);
-        mUserProfileInformationAndShareButtonContainer = (LinearLayout) findViewById(
+        mPreviewBox = (RelativeLayout) content.findViewById(R.id.jr_preview_box);
+        mPreviewBorder = (LinearLayout) content.findViewById(R.id.jr_preview_box_border);
+        mMediaContentView = (RelativeLayout) content.findViewById(R.id.jr_media_content_view);
+        mCharacterCountView = (TextView) content.findViewById(R.id.jr_character_count_view);
+        mProviderIcon = (ImageView) content.findViewById(R.id.jr_provider_icon);
+        mUserCommentView = (EditText) content.findViewById(R.id.jr_edit_comment);
+        mPreviewLabelView = (TextView) content.findViewById(R.id.jr_preview_text_view);
+        mTriangleIconView = (ImageView) content.findViewById(R.id.jr_triangle_icon_view);
+        mUserProfileInformationAndShareButtonContainer = (LinearLayout) content.findViewById(
                 R.id.jr_user_profile_information_and_share_button_container);
-        mUserProfileContainer = (LinearLayout) findViewById(R.id.jr_user_profile_container);
-        mUserProfilePic = (ImageView) findViewById(R.id.jr_profile_pic);
-        mUserNameView = (TextView) findViewById(R.id.jr_user_name);
-        mSignOutButton = (Button) findViewById(R.id.jr_sign_out_button);
-        mJustShareButton = (ColorButton) findViewById(R.id.jr_just_share_button);
-        mConnectAndShareButton = (ColorButton) findViewById(R.id.jr_connect_and_share_button);
-        mSharedTextAndCheckMarkContainer = (LinearLayout) findViewById(
+        mUserProfileContainer = (LinearLayout) content.findViewById(R.id.jr_user_profile_container);
+        mUserProfilePic = (ImageView) content.findViewById(R.id.jr_profile_pic);
+        mUserNameView = (TextView) content.findViewById(R.id.jr_user_name);
+        mSignOutButton = (Button) content.findViewById(R.id.jr_sign_out_button);
+        mJustShareButton = (ColorButton) content.findViewById(R.id.jr_just_share_button);
+        mConnectAndShareButton = (ColorButton) content.findViewById(R.id.jr_connect_and_share_button);
+        mSharedTextAndCheckMarkContainer = (LinearLayout) content.findViewById(
                 R.id.jr_shared_text_and_check_mark_horizontal_layout);
-        mEmailButton = (ColorButton) findViewById(R.id.jr_email_button);
-        mSmsButton = (ColorButton) findViewById(R.id.jr_sms_button);
-        mEmailSmsComment = (EditText) findViewById(R.id.jr_email_sms_edit_comment);
-        mEmailSmsButtonContainer = (LinearLayout) findViewById(R.id.jr_email_sms_button_container);
+        mEmailButton = (ColorButton) content.findViewById(R.id.jr_email_button);
+        mSmsButton = (ColorButton) content.findViewById(R.id.jr_sms_button);
+        mEmailSmsComment = (EditText) content.findViewById(R.id.jr_email_sms_edit_comment);
+        mEmailSmsButtonContainer = (LinearLayout) content.findViewById(R.id.jr_email_sms_button_container);
 
         /* Set the user comment field here before the text change listener is registered so that
          * it can be displayed while the providers are being loaded if this is a first run.
@@ -219,23 +210,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         /* View listeners */
         mEmailButton.setOnClickListener(mEmailButtonListener);
         mSmsButton.setOnClickListener(mSmsButtonListener);
-        //ButtonEventColorChangingListener colorChangingListener =
-        //        new ButtonEventColorChangingListener();
-        //mEmailButton.setOnFocusChangeListener(colorChangingListener);
-        //mEmailButton.setOnTouchListener(colorChangingListener);
-        //mSmsButton.setOnFocusChangeListener(colorChangingListener);
-        //mSmsButton.setOnTouchListener(colorChangingListener);
 
         mUserCommentView.addTextChangedListener(mUserCommentTextWatcher);
         mSignOutButton.setOnClickListener(mSignoutButtonListener);
 
         mConnectAndShareButton.setOnClickListener(mShareButtonListener);
-        //mConnectAndShareButton.setOnFocusChangeListener(colorChangingListener);
-        //mConnectAndShareButton.setOnTouchListener(colorChangingListener);
 
         mJustShareButton.setOnClickListener(mShareButtonListener);
-        //mJustShareButton.setOnFocusChangeListener(colorChangingListener);
-        //mJustShareButton.setOnTouchListener(colorChangingListener);
 
         mSmsButton.setColor(JANRAIN_BLUE_100PERCENT);
         mEmailButton.setColor(JANRAIN_BLUE_100PERCENT);
@@ -244,15 +225,22 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
 
         /* SharedLayoutHelper provides a spinner dialog */
-        mLayoutHelper = new SharedLayoutHelper(this);
+        mLayoutHelper = new SharedLayoutHelper(getActivity());
 
         /* JRUserInterfaceMaestro's hook into calling this.finish() */
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
-            registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
+            getActivity().registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
 
         mSessionData.addDelegate(mSessionDelegate);
+
+        return content;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         loadViewElementPropertiesWithActivityObject();
 
@@ -264,18 +252,19 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         if ((socialProviders == null || socialProviders.size() == 0)
                 && !mSessionData.isGetMobileConfigDone()) {
             /* Hide the email/SMS tab so things look nice as we load the providers */
-            findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
+            getActivity().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
             mWaitingForMobileConfig = true;
-            showDialog(DIALOG_MOBILE_CONFIG_LOADING);
+            //todo fixme showDialog isn't implemented because of the fragments refactor
+            //showDialog(DIALOG_MOBILE_CONFIG_LOADING);
         } else {
             initializeWithProviderConfiguration();
         }
     }
 
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart");
-    }
+    //protected void onStart() {
+    //    super.onStart();
+    //    Log.d(TAG, "onStart");
+    //}
 
     private void loadViewElementPropertiesWithActivityObject() {
         /* This sets up pieces of the UI before the provider configuration information
@@ -284,9 +273,9 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         JRMediaObject mo = null;
         if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
 
-        final ImageView mci = (ImageView) findViewById(R.id.jr_media_content_image);
-        final TextView  mcd = (TextView)  findViewById(R.id.jr_media_content_description);
-        final TextView  mct = (TextView)  findViewById(R.id.jr_media_content_title);
+        final ImageView mci = (ImageView) getActivity().findViewById(R.id.jr_media_content_image);
+        final TextView  mcd = (TextView)  getActivity().findViewById(R.id.jr_media_content_description);
+        final TextView  mct = (TextView)  getActivity().findViewById(R.id.jr_media_content_title);
 
         /* Set the media_content_view = a thumbnail of the media */
         if (mo != null) if (mo.hasThumbnail()) {
@@ -360,14 +349,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private void createTabs() {
-        TabHost tabHost = getTabHost();
+        TabHost tabHost = (TabHost) getActivity().findViewById(android.R.id.tabhost);
         tabHost.setup();
 
         List<JRProvider> socialProviders = mSessionData.getSocialProviders();
 
         /* Make a tab for each social provider */
         for (JRProvider provider : socialProviders) {
-            Drawable providerIconSet = provider.getTabSpecIndicatorDrawable(this);
+            Drawable providerIconSet = provider.getTabSpecIndicatorDrawable(getActivity());
 
             TabHost.TabSpec spec = tabHost.newTabSpec(provider.getName());
             spec.setContent(R.id.jr_tab_view_content);
@@ -400,7 +389,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         /* XXX TabHost is setting our FrameLayout's only child to View.GONE when loading.
          * XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
          * XXX This is a workaround: */
-        findViewById(R.id.jr_tab_view_content).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.jr_tab_view_content).setVisibility(View.VISIBLE);
     }
 
     private void setTabSpecIndicator(TabHost.TabSpec spec, Drawable iconSet, String label) {
@@ -427,17 +416,17 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
     }
 
     private LinearLayout createTabSpecIndicator(String labelText, Drawable providerIconSet) {
-        LinearLayout ll = new LinearLayout(this);
+        LinearLayout ll = new LinearLayout(getActivity());
         ll.setOrientation(LinearLayout.VERTICAL);
 
         /* Icon */
-        ImageView icon = new ImageView(this);
+        ImageView icon = new ImageView(getActivity());
         icon.setImageDrawable(providerIconSet);
         icon.setPadding(
-                scaleDipPixels(10),
-                scaleDipPixels(10),
-                scaleDipPixels(10),
-                scaleDipPixels(3)
+                AndroidUtils.scaleDipPixels(10),
+                AndroidUtils.scaleDipPixels(10),
+                AndroidUtils.scaleDipPixels(10),
+                AndroidUtils.scaleDipPixels(3)
         );
         ll.addView(icon);
 
@@ -450,38 +439,38 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         ll.setBackgroundDrawable(tabBackground);
 
         /* Label */
-        TextView label = new TextView(this);
+        TextView label = new TextView(getActivity());
         label.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
         label.setText(labelText);
         label.setGravity(Gravity.CENTER);
         label.setPadding(
-                scaleDipPixels(0),
-                scaleDipPixels(0),
-                scaleDipPixels(0),
-                scaleDipPixels(4)
+                AndroidUtils.scaleDipPixels(0),
+                AndroidUtils.scaleDipPixels(0),
+                AndroidUtils.scaleDipPixels(0),
+                AndroidUtils.scaleDipPixels(4)
         );
         ll.addView(label);
 
         return ll;
     }
 
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG, "onRestart");
+    //protected void onRestart() {
+    //    super.onRestart();
+    //    Log.d(TAG, "onRestart");
+    //
+    //    if (mLayoutHelper.getProgressDialogShowing()) {
+    //        Log.e(TAG, "onRestart: progress dialog still showing");
+    //    }
+    //}
 
-        if (mLayoutHelper.getProgressDialogShowing()) {
-            Log.e(TAG, "onRestart: progress dialog still showing");
-        }
-    }
-
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
 
         // Why set the context here?
         // IIRC this was added in an earlier attempt to support resumption of JREngage dialogs
         // after a process death and restart.
-        JREngage.setContext(this);
+        //JREngage.setContext(this);
 
         //if (mSelectedProvider != null) {
         //    Object colorArray = mSelectedProvider.getSocialSharingProperties().get("color_values");
@@ -498,6 +487,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         //        PorterDuff.Mode.MULTIPLY);
     }
 
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
@@ -512,17 +502,17 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         }
     }
 
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause");
-    }
+    //protected void onPause() {
+    //    super.onPause();
+    //    Log.d(TAG, "onPause");
+    //}
 
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop");
-    }
+    //protected void onStop() {
+    //    super.onStop();
+    //    Log.d(TAG, "onStop");
+    //}
 
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
 
@@ -530,32 +520,13 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             mSessionData.removeDelegate(mSessionDelegate);
 
         if (mFinishReceiver != null)
-            unregisterReceiver(mFinishReceiver);
+            getActivity().unregisterReceiver(mFinishReceiver);
     }
 
     private void tryToFinishActivity() {
         /* Invoked by JRUserInterfaceMaestro via FinishReceiver to close this activity. */
         Log.i(TAG, "[tryToFinishActivity]");
-        finish();
-    }
-
-    /* UI event listeners */
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (com.janrain.android.engage.utils.Android.isCupcake()
-                && keyCode == KeyEvent.KEYCODE_BACK
-                && event.getRepeatCount() == 0) {
-            // Take care of calling this method on earlier versions of
-            // the platform where it doesn't exist.
-            onBackPressed();
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
-
-    public void onBackPressed() {
-        Log.d(TAG, "onBackPressed");
-        mSessionData.triggerPublishingDidComplete();
+        getActivity().finish();
     }
 
     //private class ButtonEventColorChangingListener implements
@@ -640,7 +611,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
     private View.OnClickListener mSignoutButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
-           showDialog(DIALOG_CONFIRM_SIGNOUT);
+            //todo fixme
+            //showDialog(DIALOG_CONFIRM_SIGNOUT);
         }
     };
 
@@ -674,8 +646,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
             configureLoggedInUserBasedOnProvider();
             configureSharedStatusBasedOnProvider();
 
-            mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(
-                    getApplicationContext()));
+            mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(getActivity()));
         }
     }
 
@@ -716,7 +687,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 startActivityForResult(intent, 0);
                 mSessionData.notifyEmailSmsShare("email");
             } catch (ActivityNotFoundException exception) {
-                showDialog(DIALOG_NO_EMAIL_CLIENT);
+                //todo fixme
+                //showDialog(DIALOG_NO_EMAIL_CLIENT);
             }
         }
     };
@@ -751,7 +723,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 startActivityForResult(intent, 0);
                 mSessionData.notifyEmailSmsShare("sms");
             } catch (ActivityNotFoundException exception) {
-                showDialog(DIALOG_NO_SMS_CLIENT);
+                //todo fixme
+                //showDialog(DIALOG_NO_SMS_CLIENT);
             }
         }
     };
@@ -784,12 +757,12 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 //                        .setPositiveButton("Dismiss", null)
 //                        .create();
             case DIALOG_FAILURE:
-                return new AlertDialog.Builder(JRPublishActivity.this)
+                return new AlertDialog.Builder(getActivity())
                         .setMessage(mDialogErrorMessage)
                         .setPositiveButton("Dismiss", null)
                         .create();
             case DIALOG_CONFIRM_SIGNOUT:
-                return new AlertDialog.Builder(JRPublishActivity.this)
+                return new AlertDialog.Builder(getActivity())
                         .setMessage("Sign out of " + mSelectedProvider.getFriendlyName() + "?")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -799,19 +772,19 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                         .setNegativeButton("Cancel", null)
                         .create();
             case DIALOG_MOBILE_CONFIG_LOADING:
-                ProgressDialog pd = new ProgressDialog(JRPublishActivity.this);
+                ProgressDialog pd = new ProgressDialog(getActivity());
                 pd.setCancelable(false);
                 pd.setTitle("");
                 pd.setMessage("Loading first run configuration data. Please wait...");
                 pd.setIndeterminate(false);
                 return pd;
             case DIALOG_NO_EMAIL_CLIENT:
-                return new AlertDialog.Builder(JRPublishActivity.this)
+                return new AlertDialog.Builder(getActivity())
                         .setMessage("You do not have an email client configured.")
                         .setPositiveButton("OK", null)
                         .create();
             case DIALOG_NO_SMS_CLIENT:
-                return new AlertDialog.Builder(JRPublishActivity.this)
+                return new AlertDialog.Builder(getActivity())
                         .setMessage("You do not have an sms client configured.")
                         .setPositiveButton("OK", null)
                         .create();
@@ -826,6 +799,10 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mAuthenticatedUser = null;
         mProvidersThatHaveAlreadyShared.put(mSelectedProvider.getName(), false);
         onTabChanged(getTabHost().getCurrentTabTag());
+    }
+
+    private TabHost getTabHost() {
+        return (TabHost) getActivity().findViewById(android.R.id.tabhost);
     }
 
     protected void onPrepareDialog(int id, Dialog d) {
@@ -942,7 +919,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         FileInputStream fis;
         try {
-            fis = openFileInput("userpic~" + user.getCachedProfilePicKey());
+            fis = getActivity().openFileInput("userpic~" + user.getCachedProfilePicKey());
         } catch (FileNotFoundException e) {
             fis = null;
         } catch (UnsupportedOperationException e) {
@@ -963,8 +940,8 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                         InputStream is = urlc.getInputStream();
                         BufferedInputStream bis = new BufferedInputStream(is);
                         bis.mark(urlc.getContentLength());
-                        FileOutputStream fos = openFileOutput("userpic~" +
-                                user.getCachedProfilePicKey(), MODE_PRIVATE);
+                        FileOutputStream fos = getActivity().openFileOutput("userpic~" +
+                                user.getCachedProfilePicKey(), Activity.MODE_PRIVATE);
                         int x;
                         while ((x = bis.read()) != -1) fos.write(x);
                         fos.close();
@@ -1017,7 +994,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         else
             updatePreviewTextWhenContentDoesNotReplaceAction();
 
-        int scaledPadding = scaleDipPixels(240);
+        int scaledPadding = AndroidUtils.scaleDipPixels(240);
         if (loggedIn) mTriangleIconView.setPadding(0, 0, scaledPadding, 0);
         else mTriangleIconView.setPadding(0, 0, 0, 0);
     }
@@ -1063,7 +1040,7 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
         mConnectAndShareButton.setColor(colorNoAlpha);
         mPreviewBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
 
-        mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(this));
+        mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(getActivity()));
     }
 
     private int colorForProviderFromArray(Object arrayOfColorStrings, boolean withAlpha) {
@@ -1167,11 +1144,6 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
 
         /* Twitter/MySpace -> true */
         return (url_reduces_max_chars && shows_url_as_url);
-    }
-
-    private int scaleDipPixels(int dip) {
-        final float scale = getResources().getDisplayMetrics().density;
-        return (int) (((float) dip) * scale);
     }
 
     /* JRSessionDelegate definition */
@@ -1302,12 +1274,14 @@ public class JRPublishActivity extends TabActivity implements TabHost.OnTabChang
                 //mWeAreCurrentlyPostingSomething = false;
                 mWeHaveJustAuthenticated = false;
 
-                showDialog(DIALOG_FAILURE);
+                //todo fixme
+                //showDialog(DIALOG_FAILURE);
             }
 
             public void mobileConfigDidFinish() {
                 if (mWaitingForMobileConfig) {
-                    dismissDialog(DIALOG_MOBILE_CONFIG_LOADING);
+                    //todo fixme
+                    //dismissDialog(DIALOG_MOBILE_CONFIG_LOADING);
                     mWaitingForMobileConfig = false;
                     initializeWithProviderConfiguration();
                 }

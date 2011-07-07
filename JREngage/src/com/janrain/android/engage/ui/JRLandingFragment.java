@@ -29,21 +29,21 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
-import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
@@ -54,7 +54,7 @@ import com.janrain.android.engage.session.JRSessionData;
  * @class JRLandingActivity
  * Landing Page Activity
  **/
-public class JRLandingActivity extends Activity {
+public class JRLandingFragment extends Fragment {
 
     // ------------------------------------------------------------------------
     // TYPES
@@ -69,14 +69,15 @@ public class JRLandingActivity extends Activity {
      **/
     private class FinishReceiver extends BroadcastReceiver {
 
-        private final String TAG = JRLandingActivity.TAG + "-" +
+        private final String TAG = JRLandingFragment.TAG + "-" +
                 FinishReceiver.class.getSimpleName();
 
         @Override
         public void onReceive(Context context, Intent intent) {
             String target = intent.getStringExtra(
-                    JRUserInterfaceMaestro.EXTRA_FINISH_ACTIVITY_TARGET);
-            if (JRLandingActivity.class.toString().equals(target)) {
+                    JRUserInterfaceMaestro.EXTRA_FINISH_FRAGMENT_TARGET);
+            //if (JRLandingActivity.class.toString().equals(target)) {
+            if (JRLandingFragment.class.toString().equals(target)) {
                 tryToFinishActivity();
                 Log.i(TAG, "[onReceive] handled");
             } else if (Config.LOGD) {
@@ -85,67 +86,19 @@ public class JRLandingActivity extends Activity {
         }
     }
 
-    private class ButtonEventListener implements
-            View.OnClickListener {//}, View.OnFocusChangeListener, View.OnTouchListener {
-
-        private final String TAG = JRLandingActivity.TAG + "-" +
-                ButtonEventListener.class.getSimpleName();
-
+    private View.OnClickListener mButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
             Log.i(TAG, "[onClick] handled");
 
             if (view.equals(mSigninButton)) {// || view.equals(mBigSigninButton)) {
-                handlePrimaryButtonClick();
+                handleSigninClick();
             } else if (view.equals(mSwitchAccountButton)) {
-                handleSecondaryButtonClick();
+                handleSwitchAccountsClick();
             }
         }
+    };
 
-        //public void onFocusChange(View view, boolean hasFocus) {
-        //    Log.i(TAG, "[onFocusChange] hasFocus = " + (hasFocus ? "true" : "false"));
-        //
-        //    if (hasFocus)
-        //        view.getBackground().clearColorFilter();
-        //    else
-        //        if (view == mSwitchAccountButton)
-        //            view.getBackground().setColorFilter(0xFFAAAAAA, PorterDuff.Mode.MULTIPLY);
-        //        else if (view == mSigninButton)
-        //            view.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
-        //}
-
-        //public boolean onTouch(View view, MotionEvent motionEvent) {
-        //    Log.i(TAG, "[onTouch] motionEvent = " + motionEvent.toString());
-        //
-        //    if (view == mSwitchAccountButton)
-        //        mSwitchAccountButton.getBackground().setColorFilter(0xFFAAAAAA, PorterDuff.Mode.MULTIPLY);
-        //    else if (view == mSigninButton)
-        //        mSigninButton.getBackground().setColorFilter(0xFF1A557C, PorterDuff.Mode.MULTIPLY);
-        //
-        //    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN)
-        //        view.getBackground().clearColorFilter();
-        //
-        //    return false;
-        //}
-    }
-
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
-    private static final String TAG = JRLandingActivity.class.getSimpleName();
-
-    // ------------------------------------------------------------------------
-    // STATIC INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
+    private static final String TAG = JRLandingFragment.class.getSimpleName();
 
     private SharedLayoutHelper mLayoutHelper;
     private JRSessionData mSessionData;
@@ -162,107 +115,47 @@ public class JRLandingActivity extends Activity {
     private ColorButton mSwitchAccountButton;
     private ColorButton mSigninButton;
 
-    // ------------------------------------------------------------------------
-    // INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
-
-    /**
-     * Called when the activity is first created.
-     *
-     * @param savedInstanceState
-     *      If the activity is being re-initialized after previously being shut down then this
-     *      Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
-     *      Note: Otherwise it is null.
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mSessionData = JRSessionData.getInstance();
 
-        // For the case when this activity is relaunched after the process was killed
-        if (mSessionData == null) {
-            Log.e(TAG, "JRLandingActivity bailing out after a process kill/restart");
-            finish();
-            return;
-        }
-
-        setContentView(R.layout.jr_provider_landing);
-        mLayoutHelper = new SharedLayoutHelper(this);
-
-        mImageView = (ImageView)findViewById(R.id.jr_landing_logo);
-        mEditText = (EditText)findViewById(R.id.jr_landing_edit);
-
-        mWelcomeLabel = (TextView)findViewById(R.id.jr_landing_welcome_label);
-
-        ButtonEventListener bel = new ButtonEventListener();
-
-        mSwitchAccountButton = (ColorButton)findViewById(R.id.jr_landing_switch_account_button);
-        mSwitchAccountButton.setOnClickListener(bel);
-        mSigninButton = (ColorButton)findViewById(R.id.jr_landing_small_signin_button);
-        mSigninButton.setOnClickListener(bel);
-
-        mSwitchAccountButton.setColor(0xffaaaaaa);
-        mSigninButton.setColor(0xff1a557c);
-        prepareUserInterface();
+        //todo fragments
+        //mLayoutHelper = new SharedLayoutHelper(this);
 
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
-            registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
+            getActivity().registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
         }
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.jr_provider_landing, container, false);
 
-    protected void onResume() {
-        super.onResume();
-        JREngage.setContext(this);
-    }
+        mLayoutHelper = new SharedLayoutHelper(getActivity());
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (com.janrain.android.engage.utils.Android.isCupcake()
-                && keyCode == KeyEvent.KEYCODE_BACK
-                && event.getRepeatCount() == 0) {
-            // Take care of calling this method on earlier versions of
-            // the platform where it doesn't exist.
-            onBackPressed();
-        }
+        mImageView = (ImageView)view.findViewById(R.id.jr_landing_logo);
+        mEditText = (EditText)view.findViewById(R.id.jr_landing_edit);
+        mWelcomeLabel = (TextView)view.findViewById(R.id.jr_landing_welcome_label);
+        mSwitchAccountButton = (ColorButton)view.findViewById(R.id.jr_landing_switch_account_button);
+        mSigninButton = (ColorButton)view.findViewById(R.id.jr_landing_small_signin_button);
 
-        return super.onKeyDown(keyCode, event);
-    }
+        prepareUserInterface();
 
-    //@Override
-    public void onBackPressed() {
-        Log.d(TAG, "onBackPressed");
-        mSessionData.triggerAuthenticationDidRestart();
+        return view;
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
 
-        if (mFinishReceiver != null) unregisterReceiver(mFinishReceiver);
+        if (mFinishReceiver != null) getActivity().unregisterReceiver(mFinishReceiver);
     }
 
-    private void handlePrimaryButtonClick() {
-        if (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
-        {
+    private void handleSigninClick() {
+        if (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput()) {
             //TODO validate OpenID URLs so they don't hang the WebView
             String text = mEditText.getText().toString().trim();
             if (TextUtils.isEmpty(text)) {
@@ -270,27 +163,26 @@ public class JRLandingActivity extends Activity {
                 showAlertDialog("Invalid Input",
                         "The input you have entered is not valid. Please try again.");
             } else {
-//                showHideKeyboard(false);
                 mSessionData.getCurrentlyAuthenticatingProvider().setUserInput(text);
                 JRUserInterfaceMaestro.getInstance().showWebView();
             }
         } else {
-//            showHideKeyboard(false);
             JRUserInterfaceMaestro.getInstance().showWebView();
         }
     }
 
-    private void handleSecondaryButtonClick() {
-        Log.i(TAG, "[handleSecondaryButtonClick]");
-        //todo this should also call the forget function or no ... ?
+    private void handleSwitchAccountsClick() {
+        Log.i(TAG, "[handleSwitchAccountsClick]");
+
         mSessionData.getCurrentlyAuthenticatingProvider().setForceReauth(true);
         mSessionData.setReturningBasicProvider("");
-        finish();
+        mSessionData.triggerAuthenticationDidRestart();
+        //finish();
     }
 
     private void showAlertDialog(String title, String message) {
         mIsAlertShowing = true;
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(getActivity())
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -298,11 +190,10 @@ public class JRLandingActivity extends Activity {
                     mIsAlertShowing = false;
                     if (mIsFinishPending) {
                         mIsFinishPending = false;
-                        finish();
+                        tryToFinishActivity();
                     }
                 }
-            })
-            .show();
+            }).show();
     }
 
     private void tryToFinishActivity() {
@@ -310,11 +201,17 @@ public class JRLandingActivity extends Activity {
         if (mIsAlertShowing) {
             mIsFinishPending = true;
         } else {
-            finish();
+            getActivity().finish();
         }
     }
 
     private void prepareUserInterface() {
+        mSwitchAccountButton.setOnClickListener(mButtonListener);
+        mSigninButton.setOnClickListener(mButtonListener);
+
+        mSwitchAccountButton.setColor(0xffaaaaaa);
+        mSigninButton.setColor(0xff1a557c);
+
         JRProvider currentlyAuthenticatingProvider =
                 mSessionData.getCurrentlyAuthenticatingProvider();
         if (currentlyAuthenticatingProvider.getName().equals("openid")) {
@@ -323,7 +220,7 @@ public class JRLandingActivity extends Activity {
 
         mLayoutHelper.setHeaderText(getCustomTitle());
 
-        mImageView.setImageDrawable(currentlyAuthenticatingProvider.getProviderLogo(this));
+        mImageView.setImageDrawable(currentlyAuthenticatingProvider.getProviderLogo(getActivity()));
 
         if (currentlyAuthenticatingProvider.getName().equals(
                 mSessionData.getReturningBasicProvider())) {
@@ -340,7 +237,6 @@ public class JRLandingActivity extends Activity {
                 String userInput = currentlyAuthenticatingProvider.getUserInput();
                 if (!TextUtils.isEmpty(userInput)) {
                     mEditText.setText(userInput);
-                    //configureButtonVisibility(false);
                 } else { // Will probably never happen
                     mEditText.setText("");
                     configureButtonVisibility(true);
@@ -377,21 +273,17 @@ public class JRLandingActivity extends Activity {
 
                 mEditText.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
 
-            } else { // Will never happen
-
+            } else {
+                // Will never happen
             }
         }
     }
 
     private void configureButtonVisibility(boolean isSingleButtonLayout) {
         if (isSingleButtonLayout) {
-            // TODO: If we go with Gabe/Alexis's suggestions, big button will always be gone and
-            // small button will always be visible... Clean this code up...
-            mSwitchAccountButton.setVisibility(View.INVISIBLE);//(View.GONE);
-            mSigninButton.setVisibility(View.VISIBLE);//(View.GONE);
-            //mBigSigninButton.setVisibility(View.VISIBLE);
+            mSwitchAccountButton.setVisibility(View.INVISIBLE);
+            mSigninButton.setVisibility(View.VISIBLE);
         } else {
-            //mBigSigninButton.setVisibility(View.GONE);
             mSwitchAccountButton.setVisibility(View.VISIBLE);
             mSigninButton.setVisibility(View.VISIBLE);
         }
@@ -403,29 +295,4 @@ public class JRLandingActivity extends Activity {
                 ? provider.getShortText()
                 : getString(R.string.jr_landing_default_custom_title);
     }
-
-//    private void showHideKeyboard(boolean show) {
-//        if (show) {
-//            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                .showSoftInput(mEditText, 0);
-//        } else {
-//            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-//                .hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-//        }
-//    }
-
-//    private void focusEditAndPopKeyboard() {
-//        if ((TextUtils.isEmpty(mEditText.getText()) && (mEditText.requestFocus()))) {
-//            if (SHOW_KEYBOARD_ON_LAUNCH) {
-//                InputMethodManager imm =
-//                    (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//
-//                imm.toggleSoftInput(
-//                    InputMethodManager.SHOW_FORCED,
-//                    InputMethodManager.HIDE_IMPLICIT_ONLY);
-//            }
-//        } else {
-//            Log.d(TAG, "[focusEditAndPopKeyboard] FAIL");
-//        }
-//    }
 }

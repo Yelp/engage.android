@@ -51,32 +51,14 @@ import java.lang.ref.WeakReference;
  * XML layout.
  */
 public class SharedLayoutHelper {
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
     /** ID for common about dialog. */
     public static final int DIALOG_ABOUT_ID = 1000;
 
     /* Tag used for logging. */
     private static final String TAG = SharedLayoutHelper.class.getSimpleName();
 
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
     private WeakReference<Activity> mOwner;
-    //private Activity mOwner;
     private ProgressDialog mProgressDialog;
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
 
     /**
      * Creates instance of this class, binding it to the owner.
@@ -87,27 +69,15 @@ public class SharedLayoutHelper {
 
         boolean hideTagline = JRSessionData.getInstance().getHidePoweredBy();
         int visibility = hideTagline ? View.GONE : View.VISIBLE;
-        owner.findViewById(R.id.jr_tagline).setVisibility(visibility);
-        try {
-            // This View is only found in JRPublishActivity
-            owner.findViewById(R.id.jr_email_sms_powered_by_text).setVisibility(visibility);
-        } catch (NullPointerException e) {
-            // Do nothing, we're not displaying JRPublishActivity
-        }
+
+        //todo fixme, commented this out because i was initializing this class in the wrong place, but i'm
+        //not sure where it should be initialized and/or how to fix
+        //View tagline = owner.findViewById(R.id.jr_tagline);
+        //if (tagline != null) tagline.setVisibility(visibility);
+        //
+        //View bonusTagline = owner.findViewById(R.id.jr_email_sms_powered_by_text);
+        //if (bonusTagline != null) bonusTagline.setVisibility(visibility);
     }
-
-    // Declare the default constructor private so this class is only instantiated with an owner
-    // Activity
-    // We don't need a private default constructor so long as we have another constructor as we 
-    // do, found immediately above.
-    // Declaring this raises an irresolvable compiler warning that requires a suppression
-    // annotation.
-    //private SharedLayoutHelper() {
-    //}
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
 
     /**
      * Changes the header text.

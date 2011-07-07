@@ -1,9 +1,9 @@
 package com.janrain.android.engage.utils;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.util.Log;
 import com.janrain.android.engage.JREngage;
 
 import java.lang.reflect.Field;
@@ -15,14 +15,13 @@ import java.lang.reflect.Field;
  * Time: 4:49 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Android {
-    public static final String TAG = Android.class.getSimpleName();
-    private Android() {}
+public class AndroidUtils {
+    public static final String TAG = AndroidUtils.class.getSimpleName();
+    private AndroidUtils() {}
 
     public static boolean isCupcake() {
         return Build.VERSION.RELEASE.startsWith("1.5");
     }
-
 
     public static int getAndroidSdkInt() {
         Field SDK_INT = null;
@@ -46,5 +45,11 @@ public class Android {
         } catch (PackageManager.NameNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static int scaleDipPixels(int dip) {
+        Context c = JREngage.getContext();
+        final float scale = c.getResources().getDisplayMetrics().density;
+        return (int) (((float) dip) * scale);
     }
 }
