@@ -32,7 +32,6 @@ package com.janrain.android.engage.ui;
 import android.app.AlertDialog;
 import android.content.*;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
@@ -46,7 +45,6 @@ import android.widget.TextView;
 
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
-import com.janrain.android.engage.session.JRSessionData;
 
 /**
  * @internal
@@ -54,43 +52,16 @@ import com.janrain.android.engage.session.JRSessionData;
  * @class JRLandingActivity
  * Landing Page Activity
  **/
-public class JRLandingFragment extends Fragment {
-
-    // ------------------------------------------------------------------------
-    // TYPES
-    // ------------------------------------------------------------------------
-
-    /**
-     * @internal
-     *
-     * @class FinishReceiver
-     * Used to listen to "Finish" broadcast messages sent by JRUserInterfaceMaestro.  A facility
-     * for iPhone-like ability to close this activity from the maestro class.
-     **/
-    private class FinishReceiver extends BroadcastReceiver {
-
-        private final String TAG = JRLandingFragment.TAG + "-" +
-                FinishReceiver.class.getSimpleName();
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String target = intent.getStringExtra(
-                    JRUserInterfaceMaestro.EXTRA_FINISH_FRAGMENT_TARGET);
-            //if (JRLandingActivity.class.toString().equals(target)) {
-            if (JRLandingFragment.class.toString().equals(target)) {
-                tryToFinishActivity();
-                Log.i(TAG, "[onReceive] handled");
-            } else if (Config.LOGD) {
-                Log.i(TAG, "[onReceive] ignored");
-            }
-        }
+public class JRLandingFragment extends JRUiFragment {
+    static {
+        TAG = JRLandingFragment.class.getSimpleName();
     }
 
     private View.OnClickListener mButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
             Log.i(TAG, "[onClick] handled");
 
-            if (view.equals(mSigninButton)) {// || view.equals(mBigSigninButton)) {
+            if (view.equals(mSignInButton)) {
                 handleSigninClick();
             } else if (view.equals(mSwitchAccountButton)) {
                 handleSwitchAccountsClick();
@@ -98,70 +69,45 @@ public class JRLandingFragment extends Fragment {
         }
     };
 
-    private static final String TAG = JRLandingFragment.class.getSimpleName();
-
-    private SharedLayoutHelper mLayoutHelper;
-    private JRSessionData mSessionData;
-    private FinishReceiver mFinishReceiver;
-
     private boolean mIsAlertShowing = false;
     private boolean mIsFinishPending = false;
 
-    private ImageView mImageView;
-    private EditText mEditText;
+    private ImageView mLogo;
+    private EditText mUserInput;
 
     private TextView mWelcomeLabel;
 
     private ColorButton mSwitchAccountButton;
-    private ColorButton mSigninButton;
+    private ColorButton mSignInButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mSessionData = JRSessionData.getInstance();
-
-        //todo fragments
-        //mLayoutHelper = new SharedLayoutHelper(this);
-
-        if (mFinishReceiver == null) {
-            mFinishReceiver = new FinishReceiver();
-            getActivity().registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.jr_provider_landing, container, false);
 
-        mLayoutHelper = new SharedLayoutHelper(getActivity());
-
-        mImageView = (ImageView)view.findViewById(R.id.jr_landing_logo);
-        mEditText = (EditText)view.findViewById(R.id.jr_landing_edit);
+        mLogo = (ImageView)view.findViewById(R.id.jr_landing_logo);
+        mUserInput = (EditText)view.findViewById(R.id.jr_landing_edit);
         mWelcomeLabel = (TextView)view.findViewById(R.id.jr_landing_welcome_label);
         mSwitchAccountButton = (ColorButton)view.findViewById(R.id.jr_landing_switch_account_button);
-        mSigninButton = (ColorButton)view.findViewById(R.id.jr_landing_small_signin_button);
+        mSignInButton = (ColorButton)view.findViewById(R.id.jr_landing_small_signin_button);
 
         prepareUserInterface();
 
         return view;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if (mFinishReceiver != null) getActivity().unregisterReceiver(mFinishReceiver);
-    }
-
     private void handleSigninClick() {
         if (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput()) {
             //TODO validate OpenID URLs so they don't hang the WebView
-            String text = mEditText.getText().toString().trim();
+            String text = mUserInput.getText().toString().trim();
             if (TextUtils.isEmpty(text)) {
-                //todo turn this string into a resource
-                showAlertDialog("Invalid Input",
-                        "The input you have entered is not valid. Please try again.");
+                String title = getString(R.string.jr_landing_bad_user_input);
+                String message = getString(R.string.jr_landing_bad_input_long);
+                showAlertDialog(title, message);
             } else {
                 mSessionData.getCurrentlyAuthenticatingProvider().setUserInput(text);
                 JRUserInterfaceMaestro.getInstance().showWebView();
@@ -196,7 +142,7 @@ public class JRLandingFragment extends Fragment {
             }).show();
     }
 
-    private void tryToFinishActivity() {
+    protected void tryToFinishActivity() {
         Log.i(TAG, "[tryToFinishActivity]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
@@ -207,20 +153,20 @@ public class JRLandingFragment extends Fragment {
 
     private void prepareUserInterface() {
         mSwitchAccountButton.setOnClickListener(mButtonListener);
-        mSigninButton.setOnClickListener(mButtonListener);
+        mSignInButton.setOnClickListener(mButtonListener);
 
         mSwitchAccountButton.setColor(0xffaaaaaa);
-        mSigninButton.setColor(0xff1a557c);
+        mSignInButton.setColor(0xff1a557c);
 
         JRProvider currentlyAuthenticatingProvider =
                 mSessionData.getCurrentlyAuthenticatingProvider();
         if (currentlyAuthenticatingProvider.getName().equals("openid")) {
-            mEditText.setInputType(EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_URI);
+            mUserInput.setInputType(EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_URI);
         }
 
-        mLayoutHelper.setHeaderText(getCustomTitle());
+        getActivity().setTitle(getCustomTitle());
 
-        mImageView.setImageDrawable(currentlyAuthenticatingProvider.getProviderLogo(getActivity()));
+        mLogo.setImageDrawable(currentlyAuthenticatingProvider.getProviderLogo(getActivity()));
 
         if (currentlyAuthenticatingProvider.getName().equals(
                 mSessionData.getReturningBasicProvider())) {
@@ -231,24 +177,24 @@ public class JRLandingFragment extends Fragment {
                     Log.d(TAG, "[prepareUserInterface] current provider requires input");
                 }
 
-                mEditText.setVisibility(View.VISIBLE);
+                mUserInput.setVisibility(View.VISIBLE);
                 mWelcomeLabel.setVisibility(View.GONE);
 
                 String userInput = currentlyAuthenticatingProvider.getUserInput();
                 if (!TextUtils.isEmpty(userInput)) {
-                    mEditText.setText(userInput);
+                    mUserInput.setText(userInput);
                 } else { // Will probably never happen
-                    mEditText.setText("");
+                    mUserInput.setText("");
                     configureButtonVisibility(true);
                 }
 
-                mEditText.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
+                mUserInput.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
             } else {
                 if (Config.LOGD) {
                     Log.d(TAG, "[prepareUserInterface] current provider doesn't require input");
                 }
 
-                mEditText.setVisibility(View.GONE);
+                mUserInput.setVisibility(View.GONE);
                 mWelcomeLabel.setVisibility(View.VISIBLE);
 
                 mWelcomeLabel.setText(currentlyAuthenticatingProvider.getWelcomeString());
@@ -261,17 +207,17 @@ public class JRLandingFragment extends Fragment {
                     Log.d(TAG, "[prepareUserInterface] current provider requires input");
                 }
 
-                mEditText.setVisibility(View.VISIBLE);
+                mUserInput.setVisibility(View.VISIBLE);
                 mWelcomeLabel.setVisibility(View.GONE);
 
                 String userInput = currentlyAuthenticatingProvider.getUserInput();
                 if (!TextUtils.isEmpty(userInput)) {
-                    mEditText.setText(userInput);
+                    mUserInput.setText(userInput);
                 } else {
-                    mEditText.setText("");
+                    mUserInput.setText("");
                 }
 
-                mEditText.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
+                mUserInput.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
 
             } else {
                 // Will never happen
@@ -282,10 +228,10 @@ public class JRLandingFragment extends Fragment {
     private void configureButtonVisibility(boolean isSingleButtonLayout) {
         if (isSingleButtonLayout) {
             mSwitchAccountButton.setVisibility(View.INVISIBLE);
-            mSigninButton.setVisibility(View.VISIBLE);
+            mSignInButton.setVisibility(View.VISIBLE);
         } else {
             mSwitchAccountButton.setVisibility(View.VISIBLE);
-            mSigninButton.setVisibility(View.VISIBLE);
+            mSignInButton.setVisibility(View.VISIBLE);
         }
     }
 

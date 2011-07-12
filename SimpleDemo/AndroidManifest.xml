@@ -26,9 +26,11 @@
     -->
 
     <application
-            android:icon="@drawable/icon"
-            android:label="@string/app_name"
-            android:debuggable="true">
+        android:icon="@drawable/icon"
+        android:label="@string/app_name"
+        android:debuggable="true"
+        android:theme="@android:style/Theme.Holo"
+        >
 
         <activity android:name=".MainActivity">
             <!--android:launchMode="singleTask">-->
@@ -45,25 +47,11 @@
         </activity>
 
         <!-- For Janrain Engage library -->
-        <activity android:name="com.janrain.android.engage.ui.JRProviderListActivity"
-                  android:configChanges="orientation"/>
-        <!--android:theme="@android:style/Theme.Light"-->
-                  <!--android:configChanges="orientation|keyboardHidden"-->
-        <activity android:name="com.janrain.android.engage.ui.JRLandingActivity"
-                  android:configChanges="orientation"/>
-        <!--android:theme="@android:style/Theme.Light"-->
-                  <!--android:configChanges="orientation|keyboardHidden"-->
-        <activity android:name="com.janrain.android.engage.ui.JRWebViewActivity"
-                  android:configChanges="orientation"/>
-        <!--android:theme="@android:style/Theme.Holo"-->
-        <!--android:theme="@android:style/Theme.Light"-->
-                  <!--android:configChanges="orientation|keyboardHidden"-->
-        <activity android:name="com.janrain.android.engage.ui.JRPublishActivity"
-                  android:configChanges="orientation"/>
-        <activity android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
-                  android:configChanges="orientation"/>
-        <!--android:theme="@android:style/Theme.Light.NoTitleBar"-->
-                  <!--android:configChanges="orientation|keyboardHidden"-->
+        <activity
+            android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
+            android:theme="@android:style/Theme.Dialog"
+            android:configChanges="orientation"
+            />
     </application>
 
 </manifest>

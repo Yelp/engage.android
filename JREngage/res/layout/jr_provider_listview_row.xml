@@ -29,9 +29,5 @@
         android:textSize="20dip"
         android:padding="6dip"
         />
-    <!-- TODO create a custom Theme that inherits from Theme.LIGHT and sets this textColor and then use
-         that theme in the AndroidManifest.xmls, so that we don't have to specify textColor here, thereby
-         breaking the text color for the display of these UI elements when they're in a Dialog that is themed
-         according to its host Activity which may not obey our personal Theme preferences. -->
-    <!--android:textColor="#333333"-->
+
 </RelativeLayout>

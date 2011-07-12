@@ -1219,26 +1219,4 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     public String getUrlEncodedAppName() {
         return mUrlEncodedAppName;
     }
-
-    // Unused application name collection code.
-    //private String appNameAndVersion() {
-    //    final String FMT = "mUrlEncodedAppName=%s.%s&version=%d_%s";
-    //
-    //    Context ctx = JREngage.getContext();
-    //    PackageManager pkgMgr = ctx.getPackageManager();
-    //    PackageInfo pkgInfo = null;
-    //    try {
-    //        pkgInfo = pkgMgr.getPackageInfo(ctx.getPackageName(), 0);
-    //    } catch (PackageManager.NameNotFoundException e) {
-    //        Log.w(TAG, "[appNameAndVersion] package manager issue -> ", e);
-    //    }
-    //
-    //    return (pkgInfo != null)
-    //            ? String.format(FMT,
-    //                pkgInfo.packageName,
-    //                pkgInfo.applicationInfo.nonLocalizedLabel,
-    //                pkgInfo.versionCode,
-    //                pkgInfo.versionName)
-    //            : "";
-    //}
 }

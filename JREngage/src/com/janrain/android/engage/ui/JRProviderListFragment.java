@@ -54,34 +54,9 @@ import java.util.TimerTask;
  * @class JRProvidersActivity
  * Displays list of [basic] providers.
  */
-public class JRProviderListFragment extends Fragment {
-    private ListView mListView;
-    private TextView mEmptyTextView;
-
-    /**
-     * @internal
-     *
-     * @class FinishReceiver
-     * Used to listen to "Finish" broadcast messages sent by JRUserInterfaceMaestro.  A facility
-     * for iPhone-like ability to close this activity from the maestro class.
-     **/
-    private class FinishReceiver extends BroadcastReceiver {
-
-        private final String TAG = JRProviderListFragment.TAG
-                + "-"
-                + FinishReceiver.class.getSimpleName();
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String target = intent.getStringExtra(JRUserInterfaceMaestro.EXTRA_FINISH_FRAGMENT_TARGET);
-            //if (JRProviderListActivity.class.toString().equals(target)) {
-            if (JRProviderListFragment.class.toString().equals(target)) {
-                tryToFinishActivity();
-                Log.i(TAG, "[onReceive] handled");
-            } else if (Config.LOGD) {
-                Log.i(TAG, "[onReceive] ignored");
-            }
-        }
+public class JRProviderListFragment extends JRUiFragment {
+    static {
+        TAG = JRLandingFragment.class.getSimpleName();
     }
 
     /**
@@ -123,25 +98,25 @@ public class JRProviderListFragment extends Fragment {
         }
     }
 
-    private static final String TAG = JRProviderListFragment.class.getSimpleName();
     private static final int TIMER_MAX_ITERATIONS = 30;
 
-    private SharedLayoutHelper mLayoutHelper;
-    private JRSessionData mSessionData;
     private ArrayList<JRProvider> mProviderList;
     private ProviderAdapter mAdapter;
     private Timer mTimer;
     private int mTimerCount = 0;
-    private FinishReceiver mFinishReceiver;
+
+    private ListView mListView;
+    private TextView mEmptyTextLabel;
+    private ProgressBar mLoadingProgress;
 
     /**
      * Used to alert user that no providers can be found.  Runs on the UI thread.
      */
     private Runnable mNoProvidersFoundRunner = new Runnable() {
         public void run() {
-            mEmptyTextView.setVisibility(View.VISIBLE);
+            mEmptyTextLabel.setVisibility(View.VISIBLE);
+            mLoadingProgress.setVisibility(View.GONE);
 
-            mLayoutHelper.dismissProgressDialog();
             Toast.makeText(getActivity(),
                     "No providers found.",
                     Toast.LENGTH_LONG).show();
@@ -154,34 +129,12 @@ public class JRProviderListFragment extends Fragment {
     private Runnable mProvidersLoadedRunner = new Runnable() {
         public void run() {
             mListView.setVisibility(View.VISIBLE);
+            mLoadingProgress.setVisibility(View.GONE);
+
             for (JRProvider p : mProviderList) mAdapter.add(p);
             mAdapter.notifyDataSetChanged();
-            mLayoutHelper.dismissProgressDialog();
         }
     };
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        //switch ((mNum-1)%6) {
-        //    case 1: style = DialogFragment.STYLE_NO_TITLE; break;
-        //    case 2: style = DialogFragment.STYLE_NO_FRAME; break;
-        //    case 3: style = DialogFragment.STYLE_NO_INPUT; break;
-        //    case 4: style = DialogFragment.STYLE_NORMAL; break;
-        //    case 5: style = DialogFragment.STYLE_NORMAL; break;
-        //    case 6: style = DialogFragment.STYLE_NO_TITLE; break;
-        //    case 7: style = DialogFragment.STYLE_NO_FRAME; break;
-        //    case 8: style = DialogFragment.STYLE_NORMAL; break;
-        //}
-        //switch ((mNum-1)%6) {
-        //    case 4: theme = android.R.style.Theme_Holo; break;
-        //    case 5: theme = android.R.style.Theme_Holo_Light_Dialog; break;
-        //    case 6: theme = android.R.style.Theme_Holo_Light; break;
-        //    case 7: theme = android.R.style.Theme_Holo_Light_Panel; break;
-        //    case 8: theme = android.R.style.Theme_Holo_Light; break;
-        //}
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -190,15 +143,13 @@ public class JRProviderListFragment extends Fragment {
         View listView = inflater.inflate(R.layout.jr_provider_listview, container, false);
 
         mListView = (ListView) listView.findViewById(android.R.id.list);
-        mEmptyTextView = (TextView) listView.findViewById(android.R.id.empty);
+        mEmptyTextLabel = (TextView) listView.findViewById(R.id.jr_empty_label);
+        mLoadingProgress = (ProgressBar) listView.findViewById(android.R.id.empty);
 
-        mLayoutHelper = new SharedLayoutHelper(getActivity());
+        getActivity().setTitle(R.string.jr_provider_list_title);
 
         mProviderList = mSessionData.getBasicProviders();
-
-        if (mProviderList == null) {
-            mProviderList = new ArrayList<JRProvider>();
-        }
+        if (mProviderList == null) mProviderList = new ArrayList<JRProvider>();
 
         mAdapter = new ProviderAdapter();
         mListView.setAdapter(mAdapter);
@@ -206,9 +157,9 @@ public class JRProviderListFragment extends Fragment {
 
         if (mProviderList.size() == 0) {
             mListView.setVisibility(View.GONE);
-
             /* Show progress and poll for results */
-            mLayoutHelper.showProgressDialog();
+            mLoadingProgress.setVisibility(View.VISIBLE);
+
             mTimer = new Timer();
             mTimer.schedule(new TimerTask() {
                 @Override
@@ -218,34 +169,12 @@ public class JRProviderListFragment extends Fragment {
             }, 0, 500);
         }
 
-        if (mFinishReceiver == null) {
-            mFinishReceiver = new FinishReceiver();
-            getActivity().registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
-        }
-
         return listView;
-    }
-
-    @Override
-    public void onResume () {
-        super.onResume();
-
-        Log.d(TAG, "onResume");
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        Log.d(TAG, "onStart");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        if (mFinishReceiver != null)
-        getActivity().unregisterReceiver(mFinishReceiver);
 
         if (mTimer != null) mTimer.cancel();
     }

@@ -39,6 +39,7 @@ import android.view.*;
 import android.widget.TextView;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSessionData;
+import com.janrain.android.engage.utils.AndroidUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -66,17 +67,17 @@ public class SharedLayoutHelper {
     public SharedLayoutHelper(Activity owner) {
         mOwner = new WeakReference<Activity>(owner);
         mProgressDialog = null;
+    }
 
+    public void showHideTaglines() {
         boolean hideTagline = JRSessionData.getInstance().getHidePoweredBy();
         int visibility = hideTagline ? View.GONE : View.VISIBLE;
 
-        //todo fixme, commented this out because i was initializing this class in the wrong place, but i'm
-        //not sure where it should be initialized and/or how to fix
-        //View tagline = owner.findViewById(R.id.jr_tagline);
-        //if (tagline != null) tagline.setVisibility(visibility);
-        //
-        //View bonusTagline = owner.findViewById(R.id.jr_email_sms_powered_by_text);
-        //if (bonusTagline != null) bonusTagline.setVisibility(visibility);
+        View tagline = mOwner.get().findViewById(R.id.jr_tagline);
+        if (tagline != null) tagline.setVisibility(visibility);
+
+        View bonusTagline = mOwner.get().findViewById(R.id.jr_email_sms_powered_by_text);
+        if (bonusTagline != null) bonusTagline.setVisibility(visibility);
     }
 
     /**
@@ -116,12 +117,19 @@ public class SharedLayoutHelper {
      */
     public void showProgressDialog() {
         if (mProgressDialog == null) {
-            // Progress dialog has not been displayed yet, need to create & show.
-            mProgressDialog = ProgressDialog.show(
-                    mOwner.get(),
-                    "",
-                    mOwner.get().getString(R.string.jr_progress_loading),
-                    true);
+            if (AndroidUtils.getAndroidSdkInt() >= 11) {
+                //todo fix dialogs on honeycomb, they're too big and don't contrast nicely over the webview
+                /* 16973936 == android.R.style.Theme_Holo_Dialog_MinWidth */
+                /* 16973940 == android.R.style.Theme_Holo_Light_Dialog_MinWidth */
+                mProgressDialog = new ProgressDialog(mOwner.get(), android.R.style.Theme_Dialog);
+            } else {
+                mProgressDialog = new ProgressDialog(mOwner.get());
+            }
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setMessage(mOwner.get().getString(R.string.jr_progress_loading));
+            mProgressDialog.getWindow().setLayout(AndroidUtils.scaleDipPixels(150), AndroidUtils.scaleDipPixels(100));
+            mProgressDialog.show();
+
             Log.d(TAG, "[showProgressDialog] create/show");
         } else if (!mProgressDialog.isShowing()) {
             // Progress dialog already exists, but not visible...just show.

@@ -22,11 +22,14 @@
     <string name="jr_about_button_ok">OK</string>
 
     <!-- - JRProviderListFragment strings. -->
+    <string name="jr_provider_list_title">Sign in with...</string>
     <string name="jr_provider_list_empty">No configured providers</string>
     <string name="jr_provider_unknown">Unknown provider</string>
     <string name="jr_provider_sign_in_with">Sign in with...</string>
 
     <!-- - JRLandingActivity strings. -->
+    <string name="jr_landing_bad_user_input">Invalid Input</string>
+    <string name="jr_landing_bad_input_long">The input you have entered is not valid. Please try again.</string>
     <string name="jr_landing_switch_account_button_text">Switch Accounts</string>
     <string name="jr_landing_signin_button_text">Sign In</string>
     <string name="jr_landing_default_custom_title">Welcome Back!</string>

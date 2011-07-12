@@ -59,14 +59,12 @@ public class JRUserInterfaceMaestro {
     private static final String TAG = JRUserInterfaceMaestro.class.getSimpleName();
     private static JRUserInterfaceMaestro sInstance = null;
 
-    //private Stack<Class<? extends Activity>> mActivityStack;
     private Stack<Class<? extends Fragment>> mFragmentStack;
     private JRSessionData mSessionData;
     private FrameLayout mFragmentContainer;
     private FragmentManager mFragmentManager;
 
     private JRUserInterfaceMaestro() {
-        //mActivityStack = new Stack<Class<? extends Activity>>();
         mFragmentStack = new Stack<Class<? extends Fragment>>();
         mSessionData = JRSessionData.getInstance();
     }
@@ -118,7 +116,7 @@ public class JRUserInterfaceMaestro {
         } else {
             Intent i = new Intent(JREngage.getContext(), JRFragmentHostActivity.class);
             i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, fragId);
-            startActivity(i);
+            startFragmentActivity(i);
         }
     }
 
@@ -173,7 +171,7 @@ public class JRUserInterfaceMaestro {
 
     public void showPublishingDialogWithActivity(FrameLayout fragmentContainer) {
         mFragmentContainer = fragmentContainer;
-        setUpSocialPublishing();
+        mSessionData.setSocialSharingMode(true);
         mSessionData.setDialogIsShowing(true);
 
         if (fragmentContainer != null) {
@@ -208,8 +206,6 @@ public class JRUserInterfaceMaestro {
         return JREngage.getContext();
     }
 
-    /* */
-
     public void authenticationRestarted() {
         popToOriginal();
     }
@@ -224,36 +220,12 @@ public class JRUserInterfaceMaestro {
     }
 
     public void authenticationFailed() {
-        //todo what's this doing, what should it be doing?
-//        if (mSessionData.getSocialSharingMode()) popToOriginal();
-//        else popAll();
         popToOriginal();
     }
 
     public void authenticationCanceled() {
         popAll();
         mSessionData.setDialogIsShowing(false);
-    }
-
-    public void setUpSocialPublishing() {
-        mSessionData.setSocialSharingMode(true);
-
-        // TODO:
-        // if (myPublishActivityController)
-        //      [sessionData addDelegate:myPublishActivityController];
-    }
-
-    public void tearDownSocialPublishing() {
-        mSessionData.setSocialSharingMode(false);
-        mSessionData.setJRActivity(null);
-
-        // TODO:
-        // if (myPublishActivityController)
-        //      [sessionData removeDelegate:myPublishActivityController];
-    }
-
-    public void publishingRestarted() {
-        popToOriginal();
     }
 
     public void publishingCompleted() {
@@ -284,32 +256,30 @@ public class JRUserInterfaceMaestro {
      * @param intent
      *      The Intent for the managed activity to be started/displayed.
      */
-    private void startActivity(Intent intent) {
+    private void startFragmentActivity(Intent intent) {
         Context context = JREngage.getContext();
         context.startActivity(intent);
-        //try {
+
+        try {
             /* We run time type check the cast immediately below in an assertion */
-            //@SuppressWarnings("unchecked")
-            //Class<? extends Activity> managedActivity;
-            //managedActivity = (Class<? extends Activity>) Class.forName(intent.getComponent().getClassName());
-            //assert (Activity.class.isAssignableFrom(managedActivity));
+            @SuppressWarnings("unchecked")
+            Class<? extends Activity> managedActivity;
+            managedActivity = (Class<? extends Activity>) Class.forName(intent.getComponent().getClassName());
+            assert (Activity.class.isAssignableFrom(managedActivity));
 
             int fragId = intent.getIntExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, 0);
             Class<? extends Fragment> f = JRFragmentHostActivity.getFragmentClassForId(fragId);
             mFragmentStack.push(f);
-            //Log.i(TAG, "[startActivity] pushed and started: " + managedActivity);
-        //} catch (ClassNotFoundException e) {
-        //    throw new RuntimeException(e);
-        //}
+            Log.i(TAG, "[startFragmentActivity] pushed and started: " + managedActivity);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void startActivity(Class<? extends Activity> managedActivity) {
-        startActivity(new Intent(JREngage.getContext(), managedActivity));
+        startFragmentActivity(new Intent(JREngage.getContext(), managedActivity));
     }
 
-    //protected Stack<Class<? extends Activity>> getManagedActivityStack() {
-    //    return mActivityStack;
-    //}
     protected Stack<Class<? extends Fragment>> getManagedFragmentStack() {
         return mFragmentStack;
     }
@@ -319,9 +289,6 @@ public class JRUserInterfaceMaestro {
             Log.d(TAG, "[popAll]");
         }
 
-        //while (!mActivityStack.isEmpty()) {
-        //    doFinishActivity(mActivityStack.pop());
-        //}
         while (!mFragmentStack.isEmpty()) {
             doFinishFragment(mFragmentStack.pop());
         }
@@ -332,17 +299,13 @@ public class JRUserInterfaceMaestro {
             Log.d(TAG, "[popToOriginal]");
         }
 
-        //Class<? extends Activity> originalRootActivity = (mSessionData.getSocialSharingMode())
-        //        ? JRPublishActivity.class : JRProviderListActivity.class;
         Class<? extends Fragment> originalRootFragment = (mSessionData.getSocialSharingMode())
                 ? JRPublishFragment.class : JRProviderListFragment.class;
 
-        //popAndFinishActivitiesUntil(originalRootActivity);
         popAndFinishFragmentsUntil(originalRootFragment);
 
     }
 
-    //private void popAndFinishActivitiesUntil(Class<? extends Activity> untilManagedActivity) {
     private void popAndFinishFragmentsUntil(Class<? extends Fragment> untilManagedFragment) {
         Log.i(TAG, "[popAndFinishActivitiesUntil] until: " + untilManagedFragment);
 
@@ -359,7 +322,6 @@ public class JRUserInterfaceMaestro {
         popAndFinishFragmentsUntil(untilManagedFragment);
     }
 
-    //private void doFinishActivity(Class<? extends Activity> managedActivity) {
     private void doFinishFragment(Class<? extends Fragment> managedFragment) {
         Log.d(TAG, "[doFinishActivity] sending broadcast to: " + managedFragment);
         Context context = JREngage.getContext();

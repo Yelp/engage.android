@@ -29,12 +29,17 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
+//import android.R;
+import android.R;
 import android.app.Dialog;
+import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.*;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.utils.AndroidUtils;
 
@@ -53,15 +58,15 @@ public class JRFragmentHostActivity extends FragmentActivity {
     public static final int JR_WEBVIEW = 2;
     public static final int JR_PUBLISH = 3;
 
-    // todo fixme: how does this layout helper get initialized, and/or are there two separate ones for the
-    // host activity and the fragment? or just one?
-    private SharedLayoutHelper mLayoutHelper = new SharedLayoutHelper(this);
     private int mFragmentId;
+    private JRUiFragment mUiFragment;
     private JRSessionData mSessionData;
+    private SharedLayoutHelper mLayoutHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        JREngage.setContext(this);
         mFragmentId = getIntent().getExtras().getInt(JR_FRAGMENT_ID);
 
         mSessionData = JRSessionData.getInstance();
@@ -75,7 +80,21 @@ public class JRFragmentHostActivity extends FragmentActivity {
         if (JRUserInterfaceMaestro.getInstance().isDialogMode()) {
             //setTheme(R.style.jr_dialog_no_title);
             if (AndroidUtils.getAndroidSdkInt() >= 11) {
-                setTheme(16973943); // Theme_Holo_DialogWhenLarge
+                switch (mFragmentId) {
+                    case JR_LANDING:
+                        /* fall through to provider list */
+                    case JR_PROVIDER_LIST:
+                        setTheme(16973945); // R.style.Theme_Holo_Light_DialogWhenLarge
+                        //setTheme(R.style.Theme_Dialog);
+                        break;
+                    case JR_WEBVIEW:
+                        /* fall through to publish */
+                    case JR_PUBLISH:
+                        setTheme(16973946); // R.style.Theme_Holo_Light_DialogWhenLarge_NoActionBar
+                        //setTheme(R.style.Theme_Dialog);
+                        break;
+                    default: throw new IllegalFragmentIdException(mFragmentId);
+                }
             }
         } else if (JRUserInterfaceMaestro.getInstance().isEmbeddedMode()) {
             // 
@@ -89,33 +108,69 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
         if (savedInstanceState == null) {
             // todo verify this flow control path -- when will savedInstanceState != null?
-            Fragment f;
             switch (mFragmentId) {
                 case JR_PROVIDER_LIST:
-                    f = new JRProviderListFragment();
+                    mUiFragment = new JRProviderListFragment();
                     break;
                 case JR_LANDING:
-                    f = new JRLandingFragment();
+                    mUiFragment = new JRLandingFragment();
                     break;
                 case JR_WEBVIEW:
-                    f = new JRWebViewFragment();
+                    mUiFragment = new JRWebViewFragment();
                     break;
                 case JR_PUBLISH:
-                    f = new JRPublishFragment();
+                    mUiFragment = new JRPublishFragment();
                     break;
                 default:
                     throw new IllegalFragmentIdException(mFragmentId);
             }
 
-            getSupportFragmentManager().beginTransaction().add(android.R.id.content, f).commit();
-
-            if (JRUserInterfaceMaestro.getInstance().isDialogMode()) {
-                View content = findViewById(android.R.id.content);
-                content.setMinimumHeight(AndroidUtils.scaleDipPixels(600));
-            }
+            getSupportFragmentManager().beginTransaction().add(android.R.id.content, mUiFragment).commit();
         } else {
         }
-        //todo set mlayouthelper
+
+        mLayoutHelper = mUiFragment.getSharedLayoutHelper();
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        autoSetSize();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        autoSetSize();
+    }
+
+    private void autoSetSize() {
+        if (JRUserInterfaceMaestro.getInstance().isDialogMode()) {
+            //View content = findViewById(android.R.id.content);
+            //content.setMinimumHeight(AndroidUtils.scaleDipPixels(600));
+            //content.setMinimumHeight(AndroidUtils.scaleDipPixels(height));
+            //content.setMinimumWidth(AndroidUtils.scaleDipPixels(width));
+
+            int height = (int) (1.0 / Math.sqrt(2.0) * getResources().getDisplayMetrics().heightPixels);
+            int width = (int) (1.0 / Math.sqrt(2.0) * getResources().getDisplayMetrics().widthPixels);
+            getWindow().setLayout(width, height);
+
+            //if (mFragmentId == JR_PUBLISH) {
+            //    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            //    lp.copyFrom(getWindow().getAttributes());
+            //    lp.width = WindowManager.LayoutParams.FILL_PARENT;
+            //    //lp.height = WindowManager.LayoutParams.FILL_PARENT;
+            //    getWindow().setAttributes(lp);
+            //}
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        JREngage.setContext(this);
     }
 
     @Override

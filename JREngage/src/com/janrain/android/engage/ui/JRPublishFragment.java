@@ -42,12 +42,10 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Config;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -80,48 +78,23 @@ import java.util.List;
  * @class JRPublishActivity
  * Publishing UI
  */
-public class JRPublishFragment extends Fragment implements TabHost.OnTabChangeListener {
+public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChangeListener {
+    static {
+        TAG = JRPublishFragment.class.getSimpleName();
+    }
+
     private static final int DIALOG_FAILURE = 1;
     //private static final int DIALOG_SUCCESS = 2;
     private static final int DIALOG_CONFIRM_SIGNOUT = 3;
     private static final int DIALOG_MOBILE_CONFIG_LOADING = 4;
     private static final int DIALOG_NO_EMAIL_CLIENT = 5;
     private static final int DIALOG_NO_SMS_CLIENT = 6;
-    //private static final int LIGHT_BLUE_BACKGROUND = 0xFF1A557C;
     private static final int JANRAIN_BLUE_20PERCENT = 0x33074764;
     private static final int JANRAIN_BLUE_100PERCENT = 0xFF074764;
     private static final String EMAIL_SMS_TAB_TAG = "email_sms";
-    private static final String TAG = JRPublishFragment.class.getSimpleName();
-
-    /**
-     * @internal
-     *
-     * @class FinishReceiver
-     * Used to listen to "Finish" broadcast messages sent by JRUserInterfaceMaestro.  A facility
-     * for iPhone-like ability to close this activity from the maestro class.
-     **/
-    private class FinishReceiver extends BroadcastReceiver {
-
-        private final String TAG = JRPublishFragment.TAG + "-" + FinishReceiver.class.getSimpleName();
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String target = intent.getStringExtra(
-                    JRUserInterfaceMaestro.EXTRA_FINISH_FRAGMENT_TARGET);
-            if (JRPublishFragment.class.toString().equals(target)) {
-                tryToFinishActivity();
-                Log.i(TAG, "[onReceive] handled");
-            } else if (Config.LOGD) {
-                Log.i(TAG, "[onReceive] ignored");
-            }
-        }
-    }
-
-    /* Reference to the library model */
-    private JRSessionData mSessionData;
-    private JRSessionDelegate mSessionDelegate; //call backs for JRSessionData
 
     /* JREngage objects we're operating with */
+    private JRSessionDelegate mSessionDelegate; //call backs for JRSessionData
     private JRProvider mSelectedProvider; //the provider for the selected tab
     private JRAuthenticatedUser mAuthenticatedUser; //the user (if logged in) for the selected tab
     private JRActivityObject mActivityObject;
@@ -163,12 +136,6 @@ public class JRPublishFragment extends Fragment implements TabHost.OnTabChangeLi
 
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
 
-    /* Helper class used to control display of a nice loading dialog */
-    private SharedLayoutHelper mLayoutHelper;
-
-    /* Helper class for the JRUserInterfaceMaestro */
-    private FinishReceiver mFinishReceiver;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View content = inflater.inflate(R.layout.jr_publish_activity, container, false);
@@ -203,7 +170,7 @@ public class JRPublishFragment extends Fragment implements TabHost.OnTabChangeLi
         mEmailSmsButtonContainer = (LinearLayout) content.findViewById(R.id.jr_email_sms_button_container);
 
         /* Set the user comment field here before the text change listener is registered so that
-         * it can be displayed while the providers are being loaded if this is a first run.
+         * it can be displayed while the providers are being loaded (if this is a first run.)
          * The text change listener will be fired when the first tab is initially selected. */
         mUserCommentView.setText(mActivityObject.getUserGeneratedContent());
 
@@ -223,15 +190,6 @@ public class JRPublishFragment extends Fragment implements TabHost.OnTabChangeLi
 
         /* Initialize the provider shared-ness state map */
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
-
-        /* SharedLayoutHelper provides a spinner dialog */
-        mLayoutHelper = new SharedLayoutHelper(getActivity());
-
-        /* JRUserInterfaceMaestro's hook into calling this.finish() */
-        if (mFinishReceiver == null) {
-            mFinishReceiver = new FinishReceiver();
-            getActivity().registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
-        }
 
         mSessionData.addDelegate(mSessionDelegate);
 
@@ -260,11 +218,6 @@ public class JRPublishFragment extends Fragment implements TabHost.OnTabChangeLi
             initializeWithProviderConfiguration();
         }
     }
-
-    //protected void onStart() {
-    //    super.onStart();
-    //    Log.d(TAG, "onStart");
-    //}
 
     private void loadViewElementPropertiesWithActivityObject() {
         /* This sets up pieces of the UI before the provider configuration information
@@ -395,9 +348,14 @@ public class JRPublishFragment extends Fragment implements TabHost.OnTabChangeLi
     private void setTabSpecIndicator(TabHost.TabSpec spec, Drawable iconSet, String label) {
         boolean doBasicTabs = false;
         try {
-            LinearLayout ll = createTabSpecIndicator(label, iconSet);
-            Method setIndicator = spec.getClass().getDeclaredMethod("setIndicator", View.class);
-            setIndicator.invoke(spec, ll);
+            //todo basic tabs? should be part of custom ui seems
+            if (AndroidUtils.getAndroidSdkInt() >= 11 && false) {
+                doBasicTabs = true;
+            } else {
+                LinearLayout ll = createTabSpecIndicator(label, iconSet);
+                Method setIndicator = spec.getClass().getDeclaredMethod("setIndicator", View.class);
+                setIndicator.invoke(spec, ll);
+            }
         } catch (NoSuchMethodException e) {
             doBasicTabs = true;
         } catch (IllegalAccessException e) {
@@ -431,11 +389,12 @@ public class JRPublishFragment extends Fragment implements TabHost.OnTabChangeLi
         ll.addView(icon);
 
         /* Background */
+        int selectedColor = android.R.color.transparent;
+        int unselectedColor = android.R.color.darker_gray;
         StateListDrawable tabBackground = new StateListDrawable();
         tabBackground.addState(new int[]{android.R.attr.state_selected},
-                getResources().getDrawable(android.R.color.transparent));
-        tabBackground.addState(new int[]{},
-                getResources().getDrawable(android.R.color.darker_gray));
+                getResources().getDrawable(selectedColor));
+        tabBackground.addState(new int[]{}, getResources().getDrawable(unselectedColor));
         ll.setBackgroundDrawable(tabBackground);
 
         /* Label */
@@ -454,44 +413,12 @@ public class JRPublishFragment extends Fragment implements TabHost.OnTabChangeLi
         return ll;
     }
 
-    //protected void onRestart() {
-    //    super.onRestart();
-    //    Log.d(TAG, "onRestart");
-    //
-    //    if (mLayoutHelper.getProgressDialogShowing()) {
-    //        Log.e(TAG, "onRestart: progress dialog still showing");
-    //    }
-    //}
-
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume");
-
-        // Why set the context here?
-        // IIRC this was added in an earlier attempt to support resumption of JREngage dialogs
-        // after a process death and restart.
-        //JREngage.setContext(this);
-
-        //if (mSelectedProvider != null) {
-        //    Object colorArray = mSelectedProvider.getSocialSharingProperties().get("color_values");
-        //    int color = colorForProviderFromArray(colorArray, false);
-        //
-        //    //mJustShareButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-        //    //mConnectAndShareButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-        //}
-
-
-        //mEmailButton.getBackground().setColorFilter(JANRAIN_BLUE_100PERCENT,
-        //        PorterDuff.Mode.MULTIPLY);
-        //mSmsButton.getBackground().setColorFilter(JANRAIN_BLUE_100PERCENT,
-        //        PorterDuff.Mode.MULTIPLY);
-    }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (JRUserInterfaceMaestro.getInstance().isSmallOrNormalScreen())
             mPreviewBox.setVisibility(View.GONE);
             mEmailSmsComment.setLines(3);
             mEmailSmsButtonContainer.setOrientation(LinearLayout.HORIZONTAL);
@@ -502,96 +429,19 @@ public class JRPublishFragment extends Fragment implements TabHost.OnTabChangeLi
         }
     }
 
-    //protected void onPause() {
-    //    super.onPause();
-    //    Log.d(TAG, "onPause");
-    //}
-
-    //protected void onStop() {
-    //    super.onStop();
-    //    Log.d(TAG, "onStop");
-    //}
-
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
 
         if (mSessionData != null && mSessionDelegate != null)
             mSessionData.removeDelegate(mSessionDelegate);
-
-        if (mFinishReceiver != null)
-            getActivity().unregisterReceiver(mFinishReceiver);
     }
 
-    private void tryToFinishActivity() {
+    protected void tryToFinishActivity() {
         /* Invoked by JRUserInterfaceMaestro via FinishReceiver to close this activity. */
         Log.i(TAG, "[tryToFinishActivity]");
         getActivity().finish();
     }
-
-    //private class ButtonEventColorChangingListener implements
-    //        View.OnFocusChangeListener, View.OnTouchListener {
-    //
-    //    public void onFocusChange(View view, boolean hasFocus) {
-    //        if (hasFocus)
-    //            view.getBackground().clearColorFilter();
-    //        else {
-    //            int providerColor = colorForProviderFromArray(
-    //                    mSelectedProvider.getSocialSharingProperties().get("color_values"), false);
-    //            int color = getTabHost().getCurrentTabTag().equals(EMAIL_SMS_TAB_TAG) ?
-    //                    JANRAIN_BLUE_100PERCENT
-    //                    : providerColor;
-    //            view.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-    //        }
-    //    }
-    //
-    //    public boolean onTouch(View view, MotionEvent motionEvent) {
-    //        boolean onButton = (motionEvent.getX() >= view.getLeft()) &&
-    //                (motionEvent.getX() <= view.getLeft() + view.getWidth()) &&
-    //                (motionEvent.getY() >= view.getTop()) &&
-    //                (motionEvent.getY() <= view.getTop() + view.getHeight());
-    //
-    //        int providerColor = colorForProviderFromArray(
-    //                mSelectedProvider.getSocialSharingProperties().get("color_values"), false);
-    //
-    //        boolean isEmailSmsTab = getTabHost().getCurrentTabTag().equals(EMAIL_SMS_TAB_TAG);
-    //        int color = isEmailSmsTab ? JANRAIN_BLUE_100PERCENT : providerColor;
-    //
-    //        switch (motionEvent.getAction()) {
-    //            case MotionEvent.ACTION_UP:
-    //                if (!view.isPressed() || isEmailSmsTab) {
-    //                    view.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-    //
-    //                    // For some reason both email/SMS buttons' colorfilters are being cleared
-    //                    // this is a hack to make sure they're both applied.
-    //
-    //                    mEmailButton.getBackground().setColorFilter(color,
-    //                            PorterDuff.Mode.MULTIPLY);
-    //                    mSmsButton.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-    //                }
-    //                break;
-    //            case MotionEvent.ACTION_CANCEL:
-    //                view.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-    //                break;
-    //            case MotionEvent.ACTION_DOWN:
-    //                view.getBackground().clearColorFilter();
-    //                break;
-    //            case MotionEvent.ACTION_MOVE:
-    //                if (!onButton & !view.isPressed()) {
-    //                    view.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-    //                    view.invalidate();
-    //                } else if (view.isPressed()) view.getBackground().clearColorFilter();
-    //                break;
-    //            case MotionEvent.ACTION_OUTSIDE:
-    //                break;
-    //        }
-    //
-    //        Log.d(TAG, "ColorFilter " + motionEvent.getAction() + " " + view.toString()
-    //                + " " + onButton + " " + view.isPressed());
-    //
-    //        return false;
-    //    }
-    //}
 
     private View.OnClickListener mShareButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
@@ -669,7 +519,7 @@ public class JRPublishFragment extends Fragment implements TabHost.OnTabChangeLi
 
             intent = new Intent(android.content.Intent.ACTION_SEND);
 
-            /* XXX HACK XXX:
+            /* XXX hack
              * By setting this MIME type we cajole the right behavior out of the platform.  This
              * MIME type is not valid (normally it would be text/plain) but the email apps respond
              * to ACTION_SEND type so it works.

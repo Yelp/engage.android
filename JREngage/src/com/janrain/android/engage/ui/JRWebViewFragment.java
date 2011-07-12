@@ -62,57 +62,19 @@ import java.util.List;
  * @class JRWebViewActivity
  * Container for authentication web view.  Mimics JRWebViewController iPhone interface.
  */
-public class JRWebViewFragment extends Fragment {
-    private static final String TAG = JRWebViewFragment.class.getSimpleName();
-    private static final String RPX_RESULT_TAG = "rpx_result";
-
-    /**
-     * @internal
-     *
-     * @class FinishReceiver
-     * Used to listen to "Finish" broadcast messages sent by JRUserInterfaceMaestro.  A facility
-     * for iPhone-like ability to close this activity from the maestro class.
-     **/
-    private class FinishReceiver extends BroadcastReceiver {
-
-        private final String TAG = JRWebViewFragment.TAG + "-" + FinishReceiver.class.getSimpleName();
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String target = intent.getStringExtra(
-                    JRUserInterfaceMaestro.EXTRA_FINISH_FRAGMENT_TARGET);
-            //if (JRWebViewActivity.class.toString().equals(target)) {
-            if (JRWebViewFragment.class.toString().equals(target)) {
-                tryToFinishActivity();
-                Log.i(TAG, "[onReceive] handled");
-            } else if (Config.LOGD) {
-                Log.i(TAG, "[onReceive] ignored");
-            }
-        }
+public class JRWebViewFragment extends JRUiFragment {
+    static {
+        TAG = JRWebViewFragment.class.getSimpleName();
     }
 
-    private SharedLayoutHelper mLayoutHelper;
-    private JRSessionData mSessionData;
+    private static final String RPX_RESULT_TAG = "rpx_result";
+
     private WebView mWebView;
     private boolean mIsAlertShowing = false;
     private boolean mIsFinishPending = false;
-    private FinishReceiver mFinishReceiver;
     private JRProvider mProvider;
     private WebSettings mWebViewSettings;
     private ProgressBar mProgressBar;
-
-    /**
-     * Called when the activity is first created.
-     *
-     * @param savedInstanceState
-     *      If the activity is being re-initialized after previously being shut down then this
-     *      Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
-     *      Note: Otherwise it is null.
-     */
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate");
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -120,8 +82,6 @@ public class JRWebViewFragment extends Fragment {
 
         mSessionData = JRSessionData.getInstance();
         View view = inflater.inflate(R.layout.jr_provider_webview, container, false);
-
-        mLayoutHelper = new SharedLayoutHelper(getActivity());
 
         mWebView = (WebView)view.findViewById(R.id.jr_webview);
         mProgressBar = (ProgressBar)view.findViewById(R.id.jr_webview_progress);
@@ -149,16 +109,6 @@ public class JRWebViewFragment extends Fragment {
                     }
                 }, "jrengage_mobile");
 
-        // Dormant progress bar code.
-        //final Activity activity = this;
-        //mWebView.setWebChromeClient(new WebChromeClient() {
-        //   public void onProgressChanged(WebView view, int progress) {
-        //     // Activities and WebViews measure progress with different scales.
-        //     // The progress meter will automatically disappear when we reach 100%
-        //     activity.setProgress(progress * 100);
-        //   }
-        //});
-
         mWebViewSettings.setBuiltInZoomControls(true);
         mWebViewSettings.setLoadsImagesAutomatically(true);
         mWebViewSettings.setJavaScriptEnabled(true);
@@ -166,12 +116,7 @@ public class JRWebViewFragment extends Fragment {
         mWebViewSettings.setSupportZoom(true);
 
         mProvider = mSessionData.getCurrentlyAuthenticatingProvider();
-        mLayoutHelper.setHeaderText(mProvider.getFriendlyName());
-
-        if (mFinishReceiver == null) {
-            mFinishReceiver = new FinishReceiver();
-            getActivity().registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
-        }
+        getActivity().setTitle(mProvider.getFriendlyName());
 
         mWebView.setWebViewClient(mWebviewClient);
         mWebView.setWebChromeClient(mWebChromeClient);
@@ -182,7 +127,6 @@ public class JRWebViewFragment extends Fragment {
 
         URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
         mWebView.loadUrl(startUrl.toString());
-        //mWebView.loadUrl("http://google.com");
 
         return view;
     }
@@ -191,9 +135,8 @@ public class JRWebViewFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
 
+        //todo fragment fixme dialogs are going away what do
         mLayoutHelper.dismissProgressDialog();
-
-        if (mFinishReceiver != null) getActivity().unregisterReceiver(mFinishReceiver);
 
         // This listener's callback assumes the activity is running, but if the user presses
         // the back button while the WebView is transitioning between pages the activity may
@@ -274,8 +217,21 @@ public class JRWebViewFragment extends Fragment {
         private final String TAG = this.getClass().getSimpleName();
 
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            //Log.d(TAG, "[shouldOverrideUrlLoading]: " + view + ", " + url);
-            view.loadUrl(url);
+            // Seems to be broken according to this:
+            // http://code.google.com/p/android/issues/detail?id=2887
+            // This method is getting called only once in the Engage flow, when there are at least two
+            // redirects involved.
+            // Another bug documents that this method isn't called on a form submission via POST
+            // http://code.google.com/p/android/issues/detail?id=9122
+            if (Config.LOGD) Log.d(TAG, "[shouldOverrideUrlLoading]: " + view + ", " + url);
+
+            if (isMobileEndpointUrl(url)) {
+                loadMobileEndpointUrl(url);
+                return true;
+            } else {
+                view.loadUrl(url);
+            }
+
             return true;
         }
 
@@ -285,12 +241,16 @@ public class JRWebViewFragment extends Fragment {
             if (Config.LOGD) Log.d(TAG, "[onPageStarted] url: " + url);
 
             /* Check for mobile endpoint URL. */
-            if (isMobileEndpointUrl(url)) Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
+            if (isMobileEndpointUrl(url)) {
+                Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
+                loadMobileEndpointUrl(url);
+                mWebView.stopLoading();
+            }
 
             //setProgressBarIndeterminateVisibility(true);
             mProgressBar.setVisibility(View.VISIBLE);
 
-            super.onPageStarted(view, url, favicon);
+            //super.onPageStarted(view, url, favicon);
         }
 
         @Override
@@ -448,8 +408,4 @@ public class JRWebViewFragment extends Fragment {
             Log.i(TAG, "[connectionWasStopped] userdata: " + userdata);
         }
     };
-
-    public SharedLayoutHelper getLayoutHelper() {
-        return mLayoutHelper;
-    }
 }

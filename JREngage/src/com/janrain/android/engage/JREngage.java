@@ -192,9 +192,9 @@ public class JREngage {
 	 * @return
 	 * 		The Context object used to initialize this library
 	 **/
-	public static Context getContext() {
+    public static Context getContext() {
         return (sInstance == null) ? null : sInstance.mContext;
-	}
+    }
 
     public static void setContext(Context c) {
         sInstance.mContext = c;
