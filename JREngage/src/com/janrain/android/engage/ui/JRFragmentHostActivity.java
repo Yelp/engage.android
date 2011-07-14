@@ -33,10 +33,10 @@ package com.janrain.android.engage.ui;
 import android.R;
 import android.app.Dialog;
 import android.content.res.Configuration;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.*;
 import com.janrain.android.engage.JREngage;
@@ -125,17 +125,20 @@ public class JRFragmentHostActivity extends FragmentActivity {
                     throw new IllegalFragmentIdException(mFragmentId);
             }
 
-            getSupportFragmentManager().beginTransaction().add(android.R.id.content, mUiFragment).commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(android.R.id.content, mUiFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_NONE)
+                    .commit();
         } else {
         }
-
-        mLayoutHelper = mUiFragment.getSharedLayoutHelper();
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
+        mLayoutHelper = mUiFragment.getSharedLayoutHelper();
         autoSetSize();
     }
 
@@ -222,7 +225,12 @@ public class JRFragmentHostActivity extends FragmentActivity {
      */
     @Override
     protected Dialog onCreateDialog(int id) {
-        return mLayoutHelper.onCreateDialog(id);
+        return mUiFragment.onCreateDialog(id);
+    }
+
+    @Override
+    protected void onPrepareDialog(int id, Dialog d) {
+        mUiFragment.onPrepareDialog(id, d);
     }
 
     /**

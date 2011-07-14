@@ -78,6 +78,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
@@ -211,21 +212,6 @@ public class JREngage {
 
 	private JRUserInterfaceMaestro mInterfaceMaestro;
 
-	/*
-	 * Initializing constructor.
-	 */
-//	private JREngage(Context context, String appId, String tokenUrl, JREngageDelegate delegate) {
-//        mContext = context;
-//        mAppId = appId;
-//        mTokenUrl = tokenUrl;
-//        mDelegates = new ArrayList<JREngageDelegate>();
-//        if (delegate != null) {
-//            mDelegates.add(delegate);
-//        }
-//        mSessionData = JRSessionData.getInstance(mAppId, mTokenUrl, this);
-//        mInterfaceMaestro = JRUserInterfaceMaestro.getInstance();
-//	}
-
     /*
      * Hide default constructor (singleton pattern).
      */
@@ -241,27 +227,20 @@ public class JREngage {
                             JREngageDelegate delegate) {
         mContext = context;
         mDelegates = new ArrayList<JREngageDelegate>();
-        if (delegate != null) {
-            mDelegates.add(delegate);
-        }
-
-        mSessionData = JRSessionData.getInstance(appId, tokenUrl, mJRSD);
+        if (delegate != null) mDelegates.add(delegate);
+        mSessionData = JRSessionData.getInstance(appId, tokenUrl, mJrsd);
         mInterfaceMaestro = JRUserInterfaceMaestro.getInstance();
 
-        if (context instanceof Activity) {
+        if (context instanceof FragmentActivity) {
             FrameLayout fragmentContainer =
                     (FrameLayout) ((Activity) context).findViewById(R.id.jr_signin_fragment);
             if (fragmentContainer != null) {
-                mInterfaceMaestro.showProviderSelectionDialog(fragmentContainer);
-            }
-            fragmentContainer = (FrameLayout) ((Activity) context).findViewById(R.id.jr_sharing_fragment);
-            if (fragmentContainer != null) {
-                //mInterfaceMaestro.showPublishingDialogWithActivity();
+                mInterfaceMaestro.showProviderSelection(fragmentContainer);
             }
         }
 	}
 
-    private JRSessionDelegate mJRSD = new JRSessionDelegate() {
+    private JRSessionDelegate mJrsd = new JRSessionDelegate() {
         // ------------------------------------------------------------------------
         // DELEGATE METHODS
         // moved into a private inner class to keep the internal interface hidden
@@ -585,7 +564,7 @@ public class JREngage {
      **/
     public void showAuthenticationDialog() {
         if (Config.LOGD) {
-            Log.d(TAG, "[showProviderSelectionDialog]");
+            Log.d(TAG, "[showProviderSelection]");
         }
 
         showAuthenticationDialog(false);
@@ -623,10 +602,7 @@ public class JREngage {
      *   The activity you wish to share
      **/
     public void showSocialPublishingDialog(JRActivityObject activity) {
-        if (Config.LOGD) {
-            Log.d(TAG, "[showSocialPublishingDialog]");
-        }
-
+        if (Config.LOGD) Log.d(TAG, "[showSocialPublishingDialog]");
         /* If there was error configuring the library, sessionData.error will not be null. */
         if (checkSessionDataError()) return;
 
@@ -642,7 +618,32 @@ public class JREngage {
         mSessionData.setJRActivity(activity);
 
         mInterfaceMaestro.showPublishingDialogWithActivity();
+    }
 
+    public void showSocialPublishingFragment(JRActivityObject activity) {
+        if (Config.LOGD) Log.d(TAG, "[showSocialPublishingFragment]");
+        /* If there was error configuring the library, sessionData.error will not be null. */
+        if (checkSessionDataError()) return;
+
+        if (activity == null) {
+            engageDidFailWithError(new JREngageError(
+                    "Activity object cannot be null",
+                    JREngageError.SocialPublishingError.ACTIVITY_NIL,
+                    JREngageError.ErrorType.PUBLISH_FAILED
+            ));
+        }
+
+        mSessionData.setJRActivity(activity);
+        if (!(mContext instanceof FragmentActivity)) {
+            throw new IllegalStateException("Can't show Engage fragments without a host FragmentActivity.");
+        }
+
+        View fragmentContainer = ((FragmentActivity) mContext).findViewById(R.id.jr_publish_fragment);
+        if (!(fragmentContainer instanceof FrameLayout)) {
+            throw new IllegalStateException("No FrameLayout with id == jr_publish_fragment found.");
+        }
+        
+        mInterfaceMaestro.showPublishing((FrameLayout) fragmentContainer);
     }
 /*@}*/
 

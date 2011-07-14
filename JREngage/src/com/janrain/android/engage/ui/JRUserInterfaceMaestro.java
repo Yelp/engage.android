@@ -41,6 +41,7 @@ import android.util.Config;
 import android.util.Log;
 import android.widget.FrameLayout;
 import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSessionData;
 import java.util.Stack;
 
@@ -81,7 +82,7 @@ public class JRUserInterfaceMaestro {
      * Displays the provider list for authentication.
      */
     public void showProviderSelectionDialog() {
-        showProviderSelectionDialog(null);
+        showProviderSelection(null);
     }
 
     /**
@@ -91,7 +92,7 @@ public class JRUserInterfaceMaestro {
      *  A FrameLayout in which to display library UI fragments.  If \c null the library operates in modal
      *  dialog mode.
      */
-    public void showProviderSelectionDialog(FrameLayout fragmentContainer) {
+    public void showProviderSelection(FrameLayout fragmentContainer) {
         mFragmentContainer = fragmentContainer;
         mSessionData.setDialogIsShowing(true);
         mSessionData.setSocialSharingMode(false);
@@ -103,11 +104,16 @@ public class JRUserInterfaceMaestro {
         showUiPiece(JRProviderListFragment.class, JRFragmentHostActivity.JR_PROVIDER_LIST);
     }
 
-    private void showUiPiece(Class<? extends Fragment> f, int fragId) {
+    private void showUiPiece(Class<? extends Fragment> fragmentClass, int fragId) {
         if (isEmbeddedMode()) {
             try {
-                Object o = f.newInstance();
-                mFragmentManager.beginTransaction().add(mFragmentContainer.getId(), (Fragment) o).commit();
+                Fragment f = fragmentClass.newInstance();
+                mFragmentManager
+                        .beginTransaction()
+                        .add(mFragmentContainer.getId(), f)
+                        .addToBackStack(fragmentClass.getSimpleName())
+                        .commit();
+                mFragmentStack.push(fragmentClass);
             } catch (InstantiationException e) {
                 throw new RuntimeException("Error instantiating fragment: ", e);
             } catch (IllegalAccessException e) {
@@ -166,10 +172,10 @@ public class JRUserInterfaceMaestro {
      * Shows the social publishing activity.
      */
     public void showPublishingDialogWithActivity() {
-        showPublishingDialogWithActivity(null);
+        showPublishing(null);
     }
 
-    public void showPublishingDialogWithActivity(FrameLayout fragmentContainer) {
+    public void showPublishing(FrameLayout fragmentContainer) {
         mFragmentContainer = fragmentContainer;
         mSessionData.setSocialSharingMode(true);
         mSessionData.setDialogIsShowing(true);
@@ -303,7 +309,6 @@ public class JRUserInterfaceMaestro {
                 ? JRPublishFragment.class : JRProviderListFragment.class;
 
         popAndFinishFragmentsUntil(originalRootFragment);
-
     }
 
     private void popAndFinishFragmentsUntil(Class<? extends Fragment> untilManagedFragment) {
@@ -328,5 +333,18 @@ public class JRUserInterfaceMaestro {
         Intent intent = new Intent(ACTION_FINISH_FRAGMENT);
         intent.putExtra(EXTRA_FINISH_FRAGMENT_TARGET, managedFragment.toString());
         context.sendBroadcast(intent);
+
+        if (isEmbeddedMode()) {
+            if (Config.LOGD) Log.d(TAG, "popping fragment backstack");
+            FragmentManager.BackStackEntry peek =
+                    mFragmentManager.getBackStackEntryAt(mFragmentManager.getBackStackEntryCount() - 1);
+            //Fragment f = mFragmentManager.findFragmentByTag(managedFragment.getSimpleName());
+            //mFragmentManager.beginTransaction()
+            //        .remove(f)
+            //        .commit();
+            assert mFragmentManager.findFragmentById(peek.getId()).getClass().getSimpleName().equals(
+                    managedFragment.getSimpleName());
+            mFragmentManager.popBackStackImmediate();
+        }
     }
 }

@@ -155,7 +155,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         mLibraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
         String diskVersion = Prefs.getAsString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, "");
-        if (diskVersion.equals(mLibraryVersion)) {
+        if (diskVersion.equals(mLibraryVersion) && false) {  // todo
             /* Load dictionary of authenticated users.  If the dictionary is not found, the
              * archiver will return a new (empty) list.  This will throw and catch an exception if it isn't
              * found, so if it's empty, we save the empty dictionary to stop this exception in the future. */

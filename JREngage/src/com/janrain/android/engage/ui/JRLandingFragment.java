@@ -136,12 +136,15 @@ public class JRLandingFragment extends JRUiFragment {
                     mIsAlertShowing = false;
                     if (mIsFinishPending) {
                         mIsFinishPending = false;
+                        /* If there is a pending Finish that we deferred because the dialog was displayed
+                         * it is called here, now. */
                         tryToFinishActivity();
                     }
                 }
             }).show();
     }
 
+    @Override
     protected void tryToFinishActivity() {
         Log.i(TAG, "[tryToFinishActivity]");
         if (mIsAlertShowing) {

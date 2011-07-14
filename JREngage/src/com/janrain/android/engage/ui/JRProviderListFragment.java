@@ -203,11 +203,6 @@ public class JRProviderListFragment extends JRUiFragment {
         }
     };
 
-    public void tryToFinishActivity() {
-        Log.i(TAG, "[tryToFinishActivity]");
-        getActivity().finish();
-    }
-
     /**
      * Called by timer (on fire interval).  Used when providers are not found in JRSessionData.
      * Continues polling until providers are found or the polling threshold is hit.

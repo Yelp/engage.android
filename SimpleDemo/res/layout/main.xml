@@ -32,15 +32,8 @@
         android:textSize="18dip"
         />
 
-    <!--<fragment-->
-        <!--android:name="com.janrain.android.engage.JRSigninFragment"-->
-        <!--android:layout_height="fill_parent"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:id="@id/jr_signin_fragment"-->
-        <!--/>-->
-
     <FrameLayout
-        android:id="@id/jr_signin_fragment"
+        android:id="@id/jr_publish_fragment"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         />

@@ -72,6 +72,7 @@ public class JRWebViewFragment extends JRUiFragment {
     private WebView mWebView;
     private boolean mIsAlertShowing = false;
     private boolean mIsFinishPending = false;
+    private boolean mIsLoadingMobileEndpoint = false;
     private JRProvider mProvider;
     private WebSettings mWebViewSettings;
     private ProgressBar mProgressBar;
@@ -164,7 +165,8 @@ public class JRWebViewFragment extends JRUiFragment {
             }).show();
     }
 
-    public void tryToFinishActivity() {
+    @Override
+    protected void tryToFinishActivity() {
         Log.i(TAG, "[tryToFinishActivity]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
@@ -178,8 +180,21 @@ public class JRWebViewFragment extends JRUiFragment {
         return ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl)));
     }
 
+    private void showProgressSpinner() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgressSpinner() {
+        if (!mIsLoadingMobileEndpoint) mProgressBar.setVisibility(View.GONE);
+    }
+
     private void loadMobileEndpointUrl(String url) {
-        mLayoutHelper.showProgressDialog();
+        if (JRUserInterfaceMaestro.getInstance().isDialogMode()) {
+            mIsLoadingMobileEndpoint = true;
+            showProgressSpinner();
+        } else { // full screen mode
+            mLayoutHelper.showProgressDialog();
+        }
 
         String urlToLoad = url + "&auth_info=true";
         if (Config.LOGD) {
@@ -248,7 +263,7 @@ public class JRWebViewFragment extends JRUiFragment {
             }
 
             //setProgressBarIndeterminateVisibility(true);
-            mProgressBar.setVisibility(View.VISIBLE);
+            showProgressSpinner();
 
             //super.onPageStarted(view, url, favicon);
         }
@@ -260,7 +275,7 @@ public class JRWebViewFragment extends JRUiFragment {
             }
 
             //setProgressBarIndeterminateVisibility(false);
-            mProgressBar.setVisibility(View.GONE);
+            hideProgressSpinner();
 
             List<String> jsInjects =
                     mProvider.getWebViewOptions().getAsListOfStrings("js_injections", true);
@@ -279,7 +294,7 @@ public class JRWebViewFragment extends JRUiFragment {
                 + " | url: " + url);
 
             //setProgressBarIndeterminateVisibility(false);
-            mProgressBar.setVisibility(View.GONE);
+            hideProgressSpinner();
 
             //mIsFinishPending = true;
             showAlertDialog("Log In Failed", "An error occurred while attempting to sign in.");
@@ -296,7 +311,7 @@ public class JRWebViewFragment extends JRUiFragment {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             if (newProgress > 50) {
-                mProgressBar.setVisibility(View.GONE);
+                hideProgressSpinner();
             }
         }
     };

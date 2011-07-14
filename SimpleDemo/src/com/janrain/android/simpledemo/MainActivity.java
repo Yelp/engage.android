@@ -131,6 +131,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             asyncLoadJanrainBlog();
         }
+
+        mEngage.showSocialPublishingFragment(mActivity);
     }
 
     void buildActivity() {
