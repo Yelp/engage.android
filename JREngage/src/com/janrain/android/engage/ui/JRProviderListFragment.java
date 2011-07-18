@@ -98,7 +98,7 @@ public class JRProviderListFragment extends JRUiFragment {
         }
     }
 
-    private static final int TIMER_MAX_ITERATIONS = 30;
+    private static final int TIMER_MAX_ITERATIONS = 40;
 
     private ArrayList<JRProvider> mProviderList;
     private ProviderAdapter mAdapter;

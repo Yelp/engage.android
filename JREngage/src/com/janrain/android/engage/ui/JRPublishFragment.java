@@ -34,6 +34,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.*;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -134,6 +136,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private LinearLayout mEmailSmsButtonContainer;
 
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
+    private boolean mSmsActivityExists;
+    private boolean mEmailActivityExists;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -194,6 +198,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        configureEmailSmsButtons();
         loadViewElementPropertiesWithActivityObject();
 
         /* Call by hand the configuration change listener so that it sets up correctly if this
@@ -204,13 +209,34 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         if ((socialProviders == null || socialProviders.size() == 0)
                 && !mSessionData.isGetMobileConfigDone()) {
             /* Hide the email/SMS tab so things look nice as we load the providers */
-            getActivity().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
+            getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
             mWaitingForMobileConfig = true;
-            //todo fixme showDialog in fragment mode
-            getActivity().showDialog(DIALOG_MOBILE_CONFIG_LOADING);
+            showDialog(DIALOG_MOBILE_CONFIG_LOADING);
         } else {
             initializeWithProviderConfiguration();
         }
+    }
+
+    private void configureEmailSmsButtons() {
+        List<ResolveInfo> resolves;
+        Intent intent;
+        intent = newSmsIntent("");
+        resolves = getActivity().getPackageManager().queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        mSmsActivityExists = resolves.size() > 0;
+
+        intent = newEmailIntent("", "");
+        resolves = getActivity().getPackageManager().queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        mEmailActivityExists = resolves.size() > 0;
+
+        showHideView(mEmailButton, mEmailActivityExists);
+        showHideView(mSmsButton, mSmsActivityExists);
+    }
+
+    private void showHideView(View v, boolean showHide) {
+        if (showHide) v.setVisibility(View.VISIBLE);
+        else v.setVisibility(View.GONE);
     }
 
     private void loadViewElementPropertiesWithActivityObject() {
@@ -220,9 +246,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         JRMediaObject mo = null;
         if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
 
-        final ImageView mci = (ImageView) getActivity().findViewById(R.id.jr_media_content_image);
-        final TextView  mcd = (TextView)  getActivity().findViewById(R.id.jr_media_content_description);
-        final TextView  mct = (TextView)  getActivity().findViewById(R.id.jr_media_content_title);
+        final ImageView mci = (ImageView) getView().findViewById(R.id.jr_media_content_image);
+        final TextView  mcd = (TextView)  getView().findViewById(R.id.jr_media_content_description);
+        final TextView  mct = (TextView)  getView().findViewById(R.id.jr_media_content_title);
 
         /* Set the media_content_view = a thumbnail of the media */
         if (mo != null) if (mo.hasThumbnail()) {
@@ -296,7 +322,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void createTabs() {
-        TabHost tabHost = (TabHost) getActivity().findViewById(android.R.id.tabhost);
+        TabHost tabHost = (TabHost) getView().findViewById(android.R.id.tabhost);
         tabHost.setup();
 
         List<JRProvider> socialProviders = mSessionData.getSocialProviders();
@@ -316,12 +342,16 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
         }
 
-        /* Make a tab for email/SMS */
-        TabHost.TabSpec emailSmsSpec = tabHost.newTabSpec(EMAIL_SMS_TAB_TAG);
-        Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
-        setTabSpecIndicator(emailSmsSpec, d, "Email/SMS");
-        emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
-        tabHost.addTab(emailSmsSpec);
+        if (mSmsActivityExists || mEmailActivityExists) {
+            /* Make a tab for email/SMS */
+            TabHost.TabSpec emailSmsSpec = tabHost.newTabSpec(EMAIL_SMS_TAB_TAG);
+            Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
+            setTabSpecIndicator(emailSmsSpec, d, "Email/SMS");
+            emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
+            tabHost.addTab(emailSmsSpec);
+        } else {
+            showHideView(getView().findViewById(R.id.jr_tab_email_sms_content), false);
+        }
 
         tabHost.setOnTabChangedListener(this);
 
@@ -336,7 +366,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         /* XXX TabHost is setting our FrameLayout's only child to View.GONE when loading.
          * XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
          * XXX This is a workaround: */
-        getActivity().findViewById(R.id.jr_tab_view_content).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.jr_tab_view_content).setVisibility(View.VISIBLE);
     }
 
     private void setTabSpecIndicator(TabHost.TabSpec spec, Drawable iconSet, String label) {
@@ -407,6 +437,66 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         return ll;
     }
 
+    private void configureViewElementsBasedOnProvider() {
+        JRDictionary socialSharingProperties = mSelectedProvider.getSocialSharingProperties();
+
+        if (socialSharingProperties.getAsBoolean("content_replaces_action"))
+            updatePreviewTextWhenContentReplacesAction();
+        else
+            updatePreviewTextWhenContentDoesNotReplaceAction();
+
+        if (isPublishThunk()) {
+            mMaxCharacters = socialSharingProperties
+                    .getAsDictionary("set_status_properties").getAsInt("max_characters");
+        } else {
+            mMaxCharacters = socialSharingProperties.getAsInt("max_characters");
+        }
+
+        if (mMaxCharacters != -1) mCharacterCountView.setVisibility(View.VISIBLE);
+        else mCharacterCountView.setVisibility(View.GONE);
+
+        updateCharacterCount();
+
+        boolean can_share_media = socialSharingProperties.getAsBoolean("can_share_media");
+
+        /* Switch on or off the media content view based on the presence of media and ability to
+         * display it */
+        boolean showMediaContentView = mActivityObject.getMedia().size() > 0 && can_share_media;
+        mMediaContentView.setVisibility(showMediaContentView ? View.VISIBLE : View.GONE);
+
+        /* Switch on or off the action label view based on the provider accepting an action */
+        //boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
+        //mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
+
+        Object colorValues = socialSharingProperties.get("color_values");
+        int colorWithAlpha = colorForProviderFromArray(colorValues, true);
+        int colorNoAlpha = colorForProviderFromArray(colorValues, false);
+
+        mUserProfileInformationAndShareButtonContainer.setBackgroundColor(colorWithAlpha);
+
+        mJustShareButton.setColor(colorNoAlpha);
+        mConnectAndShareButton.setColor(colorNoAlpha);
+        mPreviewBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
+
+        mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(getActivity()));
+    }
+
+    public void onTabChanged(String tabId) {
+        Log.d(TAG, "[onTabChange]: " + tabId);
+
+        if (tabId.equals(EMAIL_SMS_TAB_TAG)) {
+            mEmailSmsComment.setText(mUserCommentView.getText());
+        } else { /* ... else a "real" provider -- Facebook, Twitter, etc. */
+            mSelectedProvider = mSessionData.getProviderByName(tabId);
+
+            configureViewElementsBasedOnProvider();
+            configureLoggedInUserBasedOnProvider();
+            configureSharedStatusBasedOnProvider();
+
+            mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(getActivity()));
+        }
+    }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -449,8 +539,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private View.OnClickListener mSignoutButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
-            //todo fixme embedded mode
-            getActivity().showDialog(DIALOG_CONFIRM_SIGNOUT);
+            showDialog(DIALOG_CONFIRM_SIGNOUT);
         }
     };
 
@@ -470,26 +559,27 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         }
     };
 
-    public void onTabChanged(String tabId) {
-        Log.d(TAG, "[onTabChange]: " + tabId);
+    private Intent newEmailIntent(String subject, String body) {
+        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
 
-        if (tabId.equals(EMAIL_SMS_TAB_TAG)) {
-            mEmailSmsComment.setText(mUserCommentView.getText());
-        } else { /* ... else a "real" provider -- Facebook, Twitter, etc. */
-            mSelectedProvider = mSessionData.getProviderByName(tabId);
-    
-            configureViewElementsBasedOnProvider();
-            configureLoggedInUserBasedOnProvider();
-            configureSharedStatusBasedOnProvider();
+        /* XXX hack
+         * By setting this MIME type we cajole the right behavior out of the platform.  This
+         * MIME type is not valid (normally it would be text/plain) but the email apps respond
+         * to ACTION_SEND type so it works.
+         * The reason that using ACTION_SENDTO with a URI with scheme mailto: does not work is
+         * that the "Email" app fills the To: field with a single comma.
+         * (Because it's expecting an actual email address in the URI, but we're not
+         * supplying one, we're supplying only a scheme.) */
+        intent.setType("plain/text");
+        //intent.setData(Uri.parse("mailto:"));
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(android.content.Intent.EXTRA_TEXT, body);
 
-            mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(getActivity()));
-        }
+        return intent;
     }
 
     private View.OnClickListener mEmailButtonListener = new View.OnClickListener() {
         public void onClick(View v) {
-            Intent intent;
-
             JREmailObject jrEmail = mActivityObject.getEmail();
             String body, subject;
 
@@ -503,20 +593,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                         : jrEmail.getSubject();
             }
 
-            intent = new Intent(android.content.Intent.ACTION_SEND);
-
-            /* XXX hack
-             * By setting this MIME type we cajole the right behavior out of the platform.  This
-             * MIME type is not valid (normally it would be text/plain) but the email apps respond
-             * to ACTION_SEND type so it works.
-             * The reason that using ACTION_SENDTO with a URI with scheme mailto: does not work is
-             * that the "Email" app fills the To: field with a single comma.
-             * (Because it's expecting an actual email address in the URI, but we're not
-             * supplying one, we're supplying only a scheme.) */
-            intent.setType("plain/text");
-            //intent.setData(Uri.parse("mailto:"));
-            intent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
-            intent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+            Intent intent = newEmailIntent(subject, body);
 
             try {
                 //Intent chooser = Intent.createChooser(intent, getString(R.string.jr_choose_email_handler));
@@ -524,15 +601,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 mSessionData.notifyEmailSmsShare("email");
             } catch (ActivityNotFoundException exception) {
                 //todo fixme embedded mode
-                getActivity().showDialog(DIALOG_NO_EMAIL_CLIENT);
+                showDialog(DIALOG_NO_EMAIL_CLIENT);
             }
         }
     };
 
     private View.OnClickListener mSmsButtonListener = new View.OnClickListener() {
         public void onClick(View v) {
-            Intent intent;
-
             JRSmsObject jrSms = mActivityObject.getSms();
             String body;
 
@@ -542,34 +617,36 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 body = mUserCommentView.getText().toString() + "\n" + jrSms.getBody();
             }
 
-            /* Google Voice does not respect passing the body, so this Intent is constructed
-             * specifically to be responded to only by Mms (the platform messaging app).
-             * http://stackoverflow.com/questions/4646508/how-to-pass-text-to-google-voice-sms-programmatically */
-
-            //intent = new Intent(android.content.Intent.ACTION_SEND);
-            intent = new Intent(android.content.Intent.ACTION_VIEW);
-            intent.setType("vnd.android-dir/mms-sms");
-            //intent.setData(Uri.parse("smsto:"));
-            //intent.setData(Uri.parse("sms:"));
-            //intent.putExtra(android.content.Intent.EXTRA_TEXT, body.substring(0,130));
-            intent.putExtra("sms_body", body.substring(0, Math.min(139, body.length())));
-            intent.putExtra("exit_on_sent", true);
-
+            Intent intent = newSmsIntent(body);
             try {
                 startActivityForResult(intent, 0);
                 mSessionData.notifyEmailSmsShare("sms");
             } catch (ActivityNotFoundException exception) {
                 //todo fixme embedded mode
-                getActivity().showDialog(DIALOG_NO_SMS_CLIENT);
+                showDialog(DIALOG_NO_SMS_CLIENT);
             }
         }
     };
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        /* Callback from startActivityForResult for email sharing.
-         * This code path hasn't set mSelectedProvider yet, so we use the value previously
-         * set and "unselect" the email SMS tab, making it kind of a button in tab clothing. */
+    private Intent newSmsIntent(String body) {
+        /* Google Voice does not respect passing the body, so this Intent is constructed
+         * specifically to be responded to only by Mms (the platform messaging app).
+         * http://stackoverflow.com/questions/4646508/how-to-pass-text-to-google-voice-sms-programmatically */
 
+        //intent = new Intent(android.content.Intent.ACTION_SEND);
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+        intent.setType("vnd.android-dir/mms-sms");
+        //intent.setData(Uri.parse("smsto:"));
+        //intent.setData(Uri.parse("sms:"));
+        //intent.putExtra(android.content.Intent.EXTRA_TEXT, body.substring(0,130));
+        intent.putExtra("sms_body", body.substring(0, Math.min(139, body.length())));
+        intent.putExtra("exit_on_sent", true);
+
+        return intent;
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /* Callback from startActivityForResult for email sharing. */
         mUserCommentView.setText(mEmailSmsComment.getText());
 
         /* Email and SMS intents are returning 0, 0, null */
@@ -577,6 +654,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         //        + " data=" + data);
     }
 
+    @Override
     /* package */ Dialog onCreateDialog(int id) {
         // TODO: make resources out of these strings
 
@@ -638,7 +716,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private TabHost getTabHost() {
-        return (TabHost) getActivity().findViewById(android.R.id.tabhost);
+        return (TabHost) getView().findViewById(android.R.id.tabhost);
     }
 
     /* UI property updaters */
@@ -825,50 +903,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         int scaledPadding = AndroidUtils.scaleDipPixels(240);
         if (loggedIn) mTriangleIconView.setPadding(0, 0, scaledPadding, 0);
         else mTriangleIconView.setPadding(0, 0, 0, 0);
-    }
-
-    private void configureViewElementsBasedOnProvider() {
-        JRDictionary socialSharingProperties = mSelectedProvider.getSocialSharingProperties();
-
-        if (socialSharingProperties.getAsBoolean("content_replaces_action"))
-            updatePreviewTextWhenContentReplacesAction();
-        else
-            updatePreviewTextWhenContentDoesNotReplaceAction();
-
-        if (isPublishThunk()) {
-            mMaxCharacters = socialSharingProperties
-                    .getAsDictionary("set_status_properties").getAsInt("max_characters");
-        } else {
-            mMaxCharacters = socialSharingProperties.getAsInt("max_characters");
-        }
-        
-        if (mMaxCharacters != -1) mCharacterCountView.setVisibility(View.VISIBLE);
-        else mCharacterCountView.setVisibility(View.GONE);
-
-        updateCharacterCount();
-
-        boolean can_share_media = socialSharingProperties.getAsBoolean("can_share_media");
-
-        /* Switch on or off the media content view based on the presence of media and ability to
-         * display it */
-        boolean showMediaContentView = mActivityObject.getMedia().size() > 0 && can_share_media;
-        mMediaContentView.setVisibility(showMediaContentView ? View.VISIBLE : View.GONE);
-
-        /* Switch on or off the action label view based on the provider accepting an action */
-        //boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
-        //mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
-
-        Object colorValues = socialSharingProperties.get("color_values");
-        int colorWithAlpha = colorForProviderFromArray(colorValues, true);
-        int colorNoAlpha = colorForProviderFromArray(colorValues, false);
-
-        mUserProfileInformationAndShareButtonContainer.setBackgroundColor(colorWithAlpha);
-
-        mJustShareButton.setColor(colorNoAlpha);
-        mConnectAndShareButton.setColor(colorNoAlpha);
-        mPreviewBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
-
-        mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(getActivity()));
     }
 
     private int colorForProviderFromArray(Object arrayOfColorStrings, boolean withAlpha) {
@@ -1103,13 +1137,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mWeHaveJustAuthenticated = false;
 
             //todo fixme embedded mode
-            getActivity().showDialog(DIALOG_FAILURE);
+            showDialog(DIALOG_FAILURE);
         }
 
         public void mobileConfigDidFinish() {
             if (mWaitingForMobileConfig) {
                 //todo fixme embedded mode
-                getActivity().dismissDialog(DIALOG_MOBILE_CONFIG_LOADING);
+                dismissDialog(DIALOG_MOBILE_CONFIG_LOADING);
                 mWaitingForMobileConfig = false;
                 initializeWithProviderConfiguration();
             }

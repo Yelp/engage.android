@@ -131,8 +131,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             asyncLoadJanrainBlog();
         }
-
-        mEngage.showSocialPublishingFragment(mActivity);
     }
 
     void buildActivity() {
@@ -276,7 +274,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         if (view == mBtnTestAuth) {
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
-            mEngage.showSocialPublishingDialog(mActivity);
+            if (findViewById(R.id.jr_publish_fragment) != null) {
+                mEngage.showSocialPublishingFragment(mActivity);
+            } else {
+                mEngage.showSocialPublishingDialog(mActivity);
+            }
         }
     }
 

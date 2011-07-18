@@ -10,6 +10,8 @@ import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.session.JRSessionData;
 
+import java.util.HashMap;
+
 /**
  * Created by IntelliJ IDEA.
  * User: nathan
@@ -22,6 +24,7 @@ public abstract class JRUiFragment extends Fragment {
     protected SharedLayoutHelper mLayoutHelper;
     protected JRSessionData mSessionData;
     protected static String TAG = JRUiFragment.class.getSimpleName();
+    private HashMap<Integer, Dialog> mManagedDialogs = new HashMap<Integer, Dialog>();
 
     /**
      * @internal
@@ -72,6 +75,12 @@ public abstract class JRUiFragment extends Fragment {
         mLayoutHelper.showHideTaglines();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (mFinishReceiver != null) getActivity().unregisterReceiver(mFinishReceiver);
+    }
 
     /* package */ Dialog onCreateDialog(int id) {
         return mLayoutHelper.onCreateDialog(id);
@@ -79,11 +88,29 @@ public abstract class JRUiFragment extends Fragment {
 
     /* package */ void onPrepareDialog(int id, Dialog d) {}
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+    protected void showDialog(int dialogId) {
+        if (JRUserInterfaceMaestro.getInstance().isEmbeddedMode()) {
+            Dialog d;
+            if (mManagedDialogs.containsKey(dialogId)) {
+                d = mManagedDialogs.get(dialogId);
+            } else {
+                d = onCreateDialog(dialogId);
+                mManagedDialogs.put(dialogId, d);
+            }
+            onPrepareDialog(dialogId, d);
+            d.show();
+        } else {
+            getActivity().showDialog(dialogId);
+        }
+    }
 
-        if (mFinishReceiver != null) getActivity().unregisterReceiver(mFinishReceiver);
+    protected void dismissDialog(int dialogId) {
+        if (JRUserInterfaceMaestro.getInstance().isEmbeddedMode()) {
+            Dialog d = mManagedDialogs.get(dialogId);
+            d.dismiss();
+        } else {
+            getActivity().dismissDialog(dialogId);
+        }
     }
 
     /* package */ SharedLayoutHelper getSharedLayoutHelper() {
@@ -94,5 +121,4 @@ public abstract class JRUiFragment extends Fragment {
         Log.i(TAG, "[tryToFinishActivity]");
         getActivity().finish();
     }
-
 }

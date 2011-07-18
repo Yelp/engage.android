@@ -88,12 +88,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	public static JRSessionData getInstance(String appId,
                                             String tokenUrl,
                                             JRSessionDelegate delegate) {
-        if (sInstance != null) Log.e(TAG, "reinitializing JRSessionData");
-
-		sInstance = new JRSessionData(appId, tokenUrl, delegate);
-
-        if (Config.LOGD)
-            Log.d(TAG, "[getInstance] returning new instance.");
+        if (sInstance != null) {
+            if (Config.LOGD) Log.w(TAG, "reinitializing JRSessionData");
+            sInstance.initialize(appId, tokenUrl, delegate);
+        } else {
+            if (Config.LOGD) Log.d(TAG, "[getInstance] returning new instance.");
+            sInstance = new JRSessionData(appId, tokenUrl, delegate);
+        }
 
 		return sInstance;
 	}
@@ -134,12 +135,15 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     private JREngageError mError;
 
+	private JRSessionData(String appId, String tokenUrl, JRSessionDelegate delegate) {
+        initialize(appId, tokenUrl, delegate);
+    }
+
     /* We runtime type check the deserialized generics so we can safely ignore these unchecked
      * assignment errors. */
     @SuppressWarnings("unchecked")
-	private JRSessionData(String appId, String tokenUrl, JRSessionDelegate delegate) {
-        if (Config.LOGD)
-            Log.d(TAG, "[ctor] creating instance.");
+    private void initialize(String appId, String tokenUrl, JRSessionDelegate delegate) {
+        if (Config.LOGD) Log.d(TAG, "[ctor] creating instance.");
 
 		mDelegates = new ArrayList<JRSessionDelegate>();
 		mDelegates.add(delegate);
@@ -148,10 +152,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 		mTokenUrl = tokenUrl;
 
         ApplicationInfo ai = AndroidUtils.getApplicationInfo();
-        String appName = JREngage.getContext().getPackageManager().getApplicationLabel(ai)
-                .toString();
+        String appName = JREngage.getContext().getPackageManager().getApplicationLabel(ai).toString();
         try { mUrlEncodedAppName = URLEncoder.encode(appName, "UTF-8"); }
-        catch (UnsupportedEncodingException e) { Log.e(TAG, e.toString()); }
+        catch (UnsupportedEncodingException e) { throw new RuntimeException(e); }
 
         mLibraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
         String diskVersion = Prefs.getAsString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, "");
@@ -209,8 +212,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             /* If the configuration for this rp has changed, the etag will have changed, and we need
              * to update our current configuration information. */
             mOldEtag = Prefs.getAsString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
-        }
-        else {
+        } else {
             mAuthenticatedUsersByProvider = new JRDictionary();
             mAllProviders = new JRDictionary();
             mBasicProviders = new ArrayList<String>();

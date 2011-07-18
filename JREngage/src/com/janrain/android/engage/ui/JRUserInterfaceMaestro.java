@@ -41,7 +41,6 @@ import android.util.Config;
 import android.util.Log;
 import android.widget.FrameLayout;
 import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSessionData;
 import java.util.Stack;
 
@@ -98,7 +97,11 @@ public class JRUserInterfaceMaestro {
         mSessionData.setSocialSharingMode(false);
 
         if (fragmentContainer != null) {
-            mFragmentManager = ((FragmentActivity) getContext()).getSupportFragmentManager();
+            if (getContext() instanceof FragmentActivity) {
+                mFragmentManager = ((FragmentActivity) getContext()).getSupportFragmentManager();
+            } else {
+                throw new IllegalStateException("Embdedded Engage for Android fragments must be hosted by a android.support.v4.app.FragmentActivity");
+            }
         }
 
         showUiPiece(JRProviderListFragment.class, JRFragmentHostActivity.JR_PROVIDER_LIST);
@@ -181,7 +184,11 @@ public class JRUserInterfaceMaestro {
         mSessionData.setDialogIsShowing(true);
 
         if (fragmentContainer != null) {
-            mFragmentManager = ((FragmentActivity) getContext()).getSupportFragmentManager();
+            if (getContext() instanceof FragmentActivity) {
+                mFragmentManager = ((FragmentActivity) getContext()).getSupportFragmentManager();
+            } else {
+                throw new IllegalStateException("Embdedded Engage for Android fragments must be hosted by a android.support.v4.app.FragmentActivity");
+            }
         }
 
         showUiPiece(JRPublishFragment.class, JRFragmentHostActivity.JR_PUBLISH);

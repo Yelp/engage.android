@@ -39,7 +39,6 @@ import android.view.*;
 import android.widget.TextView;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSessionData;
-import com.janrain.android.engage.utils.AndroidUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -52,10 +51,7 @@ import java.lang.ref.WeakReference;
  * XML layout.
  */
 public class SharedLayoutHelper {
-    /** ID for common about dialog. */
-    public static final int DIALOG_ABOUT_ID = 1000;
-
-    /* Tag used for logging. */
+    public static final int DIALOG_ABOUT = 1000;
     private static final String TAG = SharedLayoutHelper.class.getSimpleName();
 
     private WeakReference<Activity> mOwner;
@@ -105,7 +101,7 @@ public class SharedLayoutHelper {
     public boolean handleAboutMenu(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.jr_about_janrain:
-                mOwner.get().showDialog(DIALOG_ABOUT_ID);
+                mOwner.get().showDialog(DIALOG_ABOUT);
                 return true;
             default:
                 return false;
@@ -150,7 +146,7 @@ public class SharedLayoutHelper {
     public Dialog onCreateDialog(int id) {
         Dialog dialog;
         switch (id) {
-            case DIALOG_ABOUT_ID:
+            case DIALOG_ABOUT:
                 dialog = getAboutDialog();
                 break;
             default:
