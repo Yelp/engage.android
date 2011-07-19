@@ -55,7 +55,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRAuthenticatedUser;
@@ -495,21 +497,29 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
             mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(getActivity()));
         }
+
+        //InputMethodManager imm =
+        //        (InputMethodManager) JREngage.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        //imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (JRUserInterfaceMaestro.getInstance().isSmallOrNormalScreen())
-            mPreviewBox.setVisibility(View.GONE);
-            mEmailSmsComment.setLines(3);
-            mEmailSmsButtonContainer.setOrientation(LinearLayout.HORIZONTAL);
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mPreviewBox.setVisibility(View.VISIBLE);
+        if (JRUserInterfaceMaestro.getInstance().isSmallOrNormalScreen()) {
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                mPreviewBox.setVisibility(View.GONE);
+                mEmailSmsComment.setLines(3);
+                mEmailSmsButtonContainer.setOrientation(LinearLayout.HORIZONTAL);
+            } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                mPreviewBox.setVisibility(View.VISIBLE);
+                mEmailSmsComment.setLines(4);
+                mEmailSmsButtonContainer.setOrientation(LinearLayout.VERTICAL);
+            }
+        } else {
+            showHideView(mPreviewBox, true);
             mEmailSmsComment.setLines(4);
-            mEmailSmsButtonContainer.setOrientation(LinearLayout.VERTICAL);
         }
     }
 

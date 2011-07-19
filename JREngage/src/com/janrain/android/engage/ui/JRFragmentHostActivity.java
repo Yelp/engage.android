@@ -102,7 +102,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
             if (mFragmentId == JR_WEBVIEW) {
                 //Request progress indicator
                 requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-                requestWindowFeature(Window.FEATURE_PROGRESS);
+                //requestWindowFeature(Window.FEATURE_PROGRESS);
             }
         }
 
@@ -131,7 +131,11 @@ public class JRFragmentHostActivity extends FragmentActivity {
                     .setTransition(FragmentTransaction.TRANSIT_NONE)
                     .commit();
         } else {
+            //savedInstanceState != null
         }
+
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        //    | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
     }
 
     @Override

@@ -89,8 +89,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                                             String tokenUrl,
                                             JRSessionDelegate delegate) {
         if (sInstance != null) {
-            if (Config.LOGD) Log.w(TAG, "reinitializing JRSessionData");
-            sInstance.initialize(appId, tokenUrl, delegate);
+            if (Config.LOGD) Log.w(TAG, "[getInstance] reinitializing existing instance");
+            //sInstance.initialize(appId, tokenUrl, delegate);
         } else {
             if (Config.LOGD) Log.d(TAG, "[getInstance] returning new instance.");
             sInstance = new JRSessionData(appId, tokenUrl, delegate);
@@ -140,10 +140,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     /* We runtime type check the deserialized generics so we can safely ignore these unchecked
-     * assignment errors. */
+     * assignment warnings. */
     @SuppressWarnings("unchecked")
     private void initialize(String appId, String tokenUrl, JRSessionDelegate delegate) {
-        if (Config.LOGD) Log.d(TAG, "[ctor] creating instance.");
+        if (Config.LOGD) Log.d(TAG, "[ctor] initializing instance.");
 
 		mDelegates = new ArrayList<JRSessionDelegate>();
 		mDelegates.add(delegate);

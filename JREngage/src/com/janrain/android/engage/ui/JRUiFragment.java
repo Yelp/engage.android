@@ -54,13 +54,17 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        if (Config.LOGD) Log.d(TAG, "[onActivityCreated]");
         super.onActivityCreated(savedInstanceState);
         mLayoutHelper = new SharedLayoutHelper(getActivity());
     }
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
+        if (Config.LOGD) Log.d(TAG, "[onCreate]");
         super.onCreate(savedInstanceState);
 
+        setRetainInstance(true);
         mSessionData = JRSessionData.getInstance();
 
         if (mFinishReceiver == null) {
@@ -71,12 +75,14 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onResume() {
+        if (Config.LOGD) Log.d(TAG, "[onResume]");
         super.onResume();
         mLayoutHelper.showHideTaglines();
     }
 
     @Override
     public void onDestroy() {
+        if (Config.LOGD) Log.d(TAG, "[onDestroy]");
         super.onDestroy();
 
         if (mFinishReceiver != null) getActivity().unregisterReceiver(mFinishReceiver);
