@@ -96,7 +96,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
                     default: throw new IllegalFragmentIdException(mFragmentId);
                 }
             }
-        } else if (JRUserInterfaceMaestro.getInstance().isEmbeddedMode()) {
+        } else if (mUiFragment.isEmbeddedMode()) {
             // 
         } else { // Full screen mode
             if (mFragmentId == JR_WEBVIEW) {

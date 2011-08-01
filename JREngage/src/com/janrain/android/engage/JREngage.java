@@ -622,7 +622,6 @@ public class JREngage {
 
     public void showSocialPublishingFragment(JRActivityObject activity) {
         if (Config.LOGD) Log.d(TAG, "[showSocialPublishingFragment]");
-        /* If there was error configuring the library, sessionData.error will not be null. */
         if (checkSessionDataError()) return;
 
         if (activity == null) {

@@ -94,7 +94,7 @@ public class JRUserInterfaceMaestro {
     public void showProviderSelection(FrameLayout fragmentContainer) {
         mFragmentContainer = fragmentContainer;
         mSessionData.setDialogIsShowing(true);
-        mSessionData.setSocialSharingMode(false);
+        //mSessionData.setSocialSharingMode(false);
 
         if (fragmentContainer != null) {
             if (getContext() instanceof FragmentActivity) {
@@ -107,16 +107,17 @@ public class JRUserInterfaceMaestro {
         showUiPiece(JRProviderListFragment.class, JRFragmentHostActivity.JR_PROVIDER_LIST);
     }
 
-    private void showUiPiece(Class<? extends Fragment> fragmentClass, int fragId) {
+    private void showUiPiece(Class<? extends JRUiFragment> fragmentClass, int fragId) {
         if (isEmbeddedMode()) {
             try {
-                Fragment f = fragmentClass.newInstance();
+                JRUiFragment f = fragmentClass.newInstance();
+                f.setEmbeddedMode(true);
                 mFragmentManager
                         .beginTransaction()
-                        .add(mFragmentContainer.getId(), f)
+                        .add(mFragmentContainer.getId(), f, f.getClass().getSimpleName())
                         .addToBackStack(fragmentClass.getSimpleName())
                         .commit();
-                mFragmentStack.push(fragmentClass);
+                //mFragmentStack.push(fragmentClass);
             } catch (InstantiationException e) {
                 throw new RuntimeException("Error instantiating fragment: ", e);
             } catch (IllegalAccessException e) {
@@ -180,15 +181,11 @@ public class JRUserInterfaceMaestro {
 
     public void showPublishing(FrameLayout fragmentContainer) {
         mFragmentContainer = fragmentContainer;
-        mSessionData.setSocialSharingMode(true);
+        //mSessionData.setSocialSharingMode(true);
         mSessionData.setDialogIsShowing(true);
 
         if (fragmentContainer != null) {
-            if (getContext() instanceof FragmentActivity) {
-                mFragmentManager = ((FragmentActivity) getContext()).getSupportFragmentManager();
-            } else {
-                throw new IllegalStateException("Embdedded Engage for Android fragments must be hosted by a android.support.v4.app.FragmentActivity");
-            }
+            mFragmentManager = ((FragmentActivity) getContext()).getSupportFragmentManager();
         }
 
         showUiPiece(JRPublishFragment.class, JRFragmentHostActivity.JR_PUBLISH);
@@ -211,7 +208,7 @@ public class JRUserInterfaceMaestro {
 
     }
 
-    public boolean isEmbeddedMode() {
+    private boolean isEmbeddedMode() {
         return mFragmentContainer != null;
     }
 
@@ -224,7 +221,7 @@ public class JRUserInterfaceMaestro {
     }
 
     public void authenticationCompleted() {
-        if (!mSessionData.getSocialSharingMode()) {
+        if (!mSessionData.isSocialSharingMode()) {
             popAll();
             mSessionData.setDialogIsShowing(false);
         } else {
@@ -233,7 +230,11 @@ public class JRUserInterfaceMaestro {
     }
 
     public void authenticationFailed() {
-        popToOriginal();
+        if (mFragmentManager.findFragmentByTag(JRPublishFragment.class.getSimpleName()) != null) {
+            popAll();
+        } else {
+            popToOriginal();
+        }
     }
 
     public void authenticationCanceled() {
@@ -312,7 +313,7 @@ public class JRUserInterfaceMaestro {
             Log.d(TAG, "[popToOriginal]");
         }
 
-        Class<? extends Fragment> originalRootFragment = (mSessionData.getSocialSharingMode())
+        Class<? extends Fragment> originalRootFragment = (mSessionData.isSocialSharingMode())
                 ? JRPublishFragment.class : JRProviderListFragment.class;
 
         popAndFinishFragmentsUntil(originalRootFragment);

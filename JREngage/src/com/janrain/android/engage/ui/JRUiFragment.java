@@ -21,10 +21,13 @@ import java.util.HashMap;
  */
 public abstract class JRUiFragment extends Fragment {
     private FinishReceiver mFinishReceiver;
+    private HashMap<Integer, Dialog> mManagedDialogs = new HashMap<Integer, Dialog>();
+    private boolean mEmbeddedMode = false;
+
     protected SharedLayoutHelper mLayoutHelper;
     protected JRSessionData mSessionData;
     protected static String TAG = JRUiFragment.class.getSimpleName();
-    private HashMap<Integer, Dialog> mManagedDialogs = new HashMap<Integer, Dialog>();
+
 
     /**
      * @internal
@@ -42,7 +45,7 @@ public abstract class JRUiFragment extends Fragment {
                     JRUserInterfaceMaestro.EXTRA_FINISH_FRAGMENT_TARGET);
 
             if (JRUiFragment.this.getClass().toString().equals(target)) {
-                if (!JRUserInterfaceMaestro.getInstance().isEmbeddedMode()) {
+                if (!isEmbeddedMode()) {
                     tryToFinishActivity();
                 }
                 Log.i(TAG, "[onReceive] handled");
@@ -88,6 +91,14 @@ public abstract class JRUiFragment extends Fragment {
         if (mFinishReceiver != null) getActivity().unregisterReceiver(mFinishReceiver);
     }
 
+    public boolean isEmbeddedMode() {
+        return mEmbeddedMode;
+    }
+
+    public void setEmbeddedMode(boolean embeddedMode) {
+        mEmbeddedMode = embeddedMode;
+    }
+
     /* package */ Dialog onCreateDialog(int id) {
         return mLayoutHelper.onCreateDialog(id);
     }
@@ -95,7 +106,7 @@ public abstract class JRUiFragment extends Fragment {
     /* package */ void onPrepareDialog(int id, Dialog d) {}
 
     protected void showDialog(int dialogId) {
-        if (JRUserInterfaceMaestro.getInstance().isEmbeddedMode()) {
+        if (isEmbeddedMode()) {
             Dialog d;
             if (mManagedDialogs.containsKey(dialogId)) {
                 d = mManagedDialogs.get(dialogId);
@@ -111,7 +122,7 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     protected void dismissDialog(int dialogId) {
-        if (JRUserInterfaceMaestro.getInstance().isEmbeddedMode()) {
+        if (isEmbeddedMode()) {
             Dialog d = mManagedDialogs.get(dialogId);
             d.dismiss();
         } else {

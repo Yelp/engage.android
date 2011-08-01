@@ -338,7 +338,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mBaseUrl;
     }
 
-    public boolean getSocialSharingMode() {
+    public boolean isSocialSharingMode() {
         return mSocialSharingMode;
     }
 
@@ -964,7 +964,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[shareActivityForUser]");
 
         setCurrentlyPublishingProvider(user.getProviderName());
-        setSocialSharingMode(true);
+        //setSocialSharingMode(true);
 
         StringBuilder body = new StringBuilder();
         String deviceToken = user.getDeviceToken();
@@ -1006,7 +1006,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             Log.d(TAG, "[shareActivityForUser]");
 
         setCurrentlyPublishingProvider(user.getProviderName());
-        setSocialSharingMode(true);
+        //setSocialSharingMode(true);
 
         String deviceToken = user.getDeviceToken();
         String status = mActivity.getUserGeneratedContent();

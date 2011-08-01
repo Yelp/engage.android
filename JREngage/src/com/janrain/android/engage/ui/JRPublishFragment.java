@@ -112,6 +112,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private boolean mWeHaveJustAuthenticated = false;
     //private boolean mWeAreCurrentlyPostingSomething = false;
     private boolean mWaitingForMobileConfig = false;
+    private boolean mAuthenticatingForShare = false;
 
     /* UI views */
     private LinearLayout mPreviewBorder;
@@ -540,6 +541,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mLayoutHelper.showProgressDialog();
 
             if (mAuthenticatedUser == null) {
+                mAuthenticatingForShare = true;
                 authenticateUserForSharing();
             } else {
                 shareActivity();
@@ -1057,11 +1059,17 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(
                     mSelectedProvider);
 
-            mLayoutHelper.showProgressDialog();
-            loadUserNameAndProfilePicForUserForProvider(mAuthenticatedUser, provider);
-            showUserAsLoggedIn(true);
+            if (mAuthenticatedUser != null) {
+                loadUserNameAndProfilePicForUserForProvider(mAuthenticatedUser, provider);
+                showUserAsLoggedIn(true);
+            }
 
-            shareActivity();
+            if (mAuthenticatingForShare) {
+                mAuthenticatingForShare = false;
+                mLayoutHelper.showProgressDialog();
+
+                shareActivity();
+            }
         }
 
         //public void publishingDidRestart() {

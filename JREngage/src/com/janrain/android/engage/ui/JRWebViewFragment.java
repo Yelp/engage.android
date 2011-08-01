@@ -30,14 +30,10 @@
 package com.janrain.android.engage.ui;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
@@ -378,6 +374,12 @@ public class JRWebViewFragment extends JRUiFragment {
 
                         mIsFinishPending = true;
                         showAlertDialog("OpenID Error", "The URL you entered does not appear to be an OpenID");
+                    } else if ("canceled".equals(error)) {
+                        if (mSessionData.isSocialSharingMode()) {
+                            mSessionData.triggerAuthenticationDidCancel();
+                        } else {
+                            mSessionData.triggerAuthenticationDidRestart();
+                        }
                     } else {
                         Log.e(TAG, "unrecognized error");
                         JREngageError err = new JREngageError(
@@ -388,7 +390,7 @@ public class JRWebViewFragment extends JRUiFragment {
                         showAlertDialog(
                                 "Log In Failed",
                                 "An error occurred while attempting to sign in."
-                            );
+                        );
 
                         mSessionData.triggerAuthenticationDidFail(err);
                     }
