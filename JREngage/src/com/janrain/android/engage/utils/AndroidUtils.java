@@ -3,6 +3,7 @@ package com.janrain.android.engage.utils;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Build;
 import com.janrain.android.engage.JREngage;
 
@@ -18,6 +19,18 @@ import java.lang.reflect.Field;
 public class AndroidUtils {
     public static final String TAG = AndroidUtils.class.getSimpleName();
     private AndroidUtils() {}
+
+    public static boolean isSmallOrNormalScreen() {
+        int screenConfig = JREngage.getContext().getResources().getConfiguration().screenLayout;
+        screenConfig &= Configuration.SCREENLAYOUT_SIZE_MASK;
+
+        // Galaxy Tab 7" (the first one) reports SCREENLAYOUT_SIZE_NORMAL
+        // Motorola Xoom reports SCREENLAYOUT_SIZE_XLARGE
+        // Nexus S reports SCREENLAYOUT_SIZE_NORMAL
+
+        return screenConfig == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
+                screenConfig == Configuration.SCREENLAYOUT_SIZE_SMALL;
+    }
 
     public static boolean isCupcake() {
         return Build.VERSION.RELEASE.startsWith("1.5");

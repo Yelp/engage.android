@@ -508,7 +508,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        if (JRUserInterfaceMaestro.getInstance().isSmallOrNormalScreen()) {
+        if (AndroidUtils.isSmallOrNormalScreen()) {
             if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 mPreviewBox.setVisibility(View.GONE);
                 mEmailSmsComment.setLines(3);
@@ -987,9 +987,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
       * the user started on the user landing page, went back to the list of providers, then selected
       * the same provider as their last-used provider, go back to the user landing view. */
         if (mSelectedProvider.requiresInput()) {
-            JRUserInterfaceMaestro.getInstance().showUserLanding();
+            showUserLanding();
         } else { /* Otherwise, go straight to the web view. */
-            JRUserInterfaceMaestro.getInstance().showWebView();
+            showWebView();
         }
     }
 

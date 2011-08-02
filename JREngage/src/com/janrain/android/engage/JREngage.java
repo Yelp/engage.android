@@ -78,7 +78,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
@@ -90,8 +92,9 @@ import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.ui.JRUserInterfaceMaestro;
-
+import com.janrain.android.engage.ui.JRFragmentHostActivity;
+import com.janrain.android.engage.ui.JRPublishFragment;
+import com.janrain.android.engage.ui.JRUiFragment;
 
 /**
  * @brief
@@ -210,8 +213,6 @@ public class JREngage {
 	/* Delegates (listeners) array */
 	private ArrayList<JREngageDelegate> mDelegates;
 
-	private JRUserInterfaceMaestro mInterfaceMaestro;
-
     /*
      * Hide default constructor (singleton pattern).
      */
@@ -229,13 +230,12 @@ public class JREngage {
         mDelegates = new ArrayList<JREngageDelegate>();
         if (delegate != null) mDelegates.add(delegate);
         mSessionData = JRSessionData.getInstance(appId, tokenUrl, mJrsd);
-        mInterfaceMaestro = JRUserInterfaceMaestro.getInstance();
 
         if (context instanceof FragmentActivity) {
             FrameLayout fragmentContainer =
                     (FrameLayout) ((Activity) context).findViewById(R.id.jr_signin_fragment);
             if (fragmentContainer != null) {
-                mInterfaceMaestro.showProviderSelection(fragmentContainer);
+                //mInterfaceMaestro.showProviderSelection(fragmentContainer);
             }
         }
 	}
@@ -250,7 +250,7 @@ public class JREngage {
             if (Config.LOGD) {
                 Log.d(TAG, "[authenticationDidRestart]");
             }
-            mInterfaceMaestro.authenticationRestarted();
+            //mInterfaceMaestro.authenticationRestarted();
         }
 
         public void authenticationDidCancel() {
@@ -262,13 +262,10 @@ public class JREngage {
                 delegate.jrAuthenticationDidNotComplete();
             }
 
-            mInterfaceMaestro.authenticationCanceled();
+            //mInterfaceMaestro.authenticationCanceled();
         }
 
         public void authenticationDidComplete(String token, String provider) {
-            //
-            // NOTE:  METHOD COMMENTED OUT IN IPHONE VERSION
-            //
             if (Config.LOGD) {
                 Log.d(TAG, "[authenticationDidComplete]");
             }
@@ -283,7 +280,7 @@ public class JREngage {
                 delegate.jrAuthenticationDidSucceedForUser(profile, provider);
             }
 
-            mInterfaceMaestro.authenticationCompleted();
+            //mInterfaceMaestro.authenticationCompleted();
         }
 
         public void authenticationDidFail(JREngageError error, String provider) {
@@ -295,7 +292,7 @@ public class JREngage {
                 delegate.jrAuthenticationDidFailWithError(error, provider);
             }
 
-            mInterfaceMaestro.authenticationFailed();
+            //mInterfaceMaestro.authenticationFailed();
         }
 
         public void authenticationDidReachTokenUrl(String tokenUrl,
@@ -324,15 +321,6 @@ public class JREngage {
             }
         }
 
-//        public void publishingDidRestart() {
-//            if (Config.LOGD) {
-//                Log.d(TAG, "[publishingDidRestart]");
-//            }
-//
-//            // TODO:  implement UI stuff
-//            // interfaceMaestro.publishingRestarted();
-//        }
-
         public void publishingDidCancel() {
             if (Config.LOGD) {
                 Log.d(TAG, "[publishingDidCancel]");
@@ -342,7 +330,7 @@ public class JREngage {
                 delegate.jrSocialDidNotCompletePublishing();
             }
 
-            mInterfaceMaestro.publishingCanceled();
+            //mInterfaceMaestro.publishingCanceled();
         }
 
         public void publishingDidComplete() {
@@ -354,11 +342,11 @@ public class JREngage {
                 delegate.jrSocialDidCompletePublishing();
             }
 
-            JRUserInterfaceMaestro.getInstance().publishingCompleted();
+            // mSessionData.setUiIsShowing ?
         }
 
         public void publishingDialogDidFail(JREngageError err) {
-            mInterfaceMaestro.publishingDialogFailed();
+            //mInterfaceMaestro.publishingDialogFailed();
             engageDidFailWithError(err);
         }
 
@@ -383,7 +371,7 @@ public class JREngage {
                 delegate.jrSocialPublishJRActivityDidFail(activity, error, provider);
             }
 
-            mInterfaceMaestro.publishingJRActivityFailed();
+            //mInterfaceMaestro.publishingJRActivityFailed();
         }
 
         public void mobileConfigDidFinish() {}
@@ -450,6 +438,7 @@ public class JREngage {
             Log.d(TAG, "[cancelAuthentication]");
         }
         mSessionData.triggerAuthenticationDidCancel();
+        //todo fixme UI maestro refactor need a new way to do this
     }
 
     /**
@@ -461,6 +450,7 @@ public class JREngage {
             Log.d(TAG, "[cancelPublishing]");
         }
         mSessionData.triggerPublishingDidCancel();
+        //todo fixme UI maestro refactor need a new way to do this
     }
 /*@}*/
 
@@ -590,9 +580,10 @@ public class JREngage {
         if (checkSessionDataError()) return;
 
         mSessionData.setSkipLandingPage(skipReturningUserLandingPage);
-        mInterfaceMaestro.showProviderSelectionDialog();
+        Intent i = new Intent(mContext, JRFragmentHostActivity.class);
+        i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PROVIDER_LIST);
+        mContext.startActivity(i);
     }
-
 
     /**
      * Begin social publishing.  The library will start a new Android \e Activity enabling the user to
@@ -617,7 +608,9 @@ public class JREngage {
 
         mSessionData.setJRActivity(activity);
 
-        mInterfaceMaestro.showPublishingDialogWithActivity();
+        Intent i = new Intent(mContext, JRFragmentHostActivity.class);
+        i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
+        mContext.startActivity(i);
     }
 
     public void showSocialPublishingFragment(JRActivityObject activity) {
@@ -639,10 +632,20 @@ public class JREngage {
 
         View fragmentContainer = ((FragmentActivity) mContext).findViewById(R.id.jr_publish_fragment);
         if (!(fragmentContainer instanceof FrameLayout)) {
-            throw new IllegalStateException("No FrameLayout with id == jr_publish_fragment found.");
+            throw new IllegalStateException("No FrameLayout with id == jr_publish_fragment found: " +
+                    (fragmentContainer != null ? fragmentContainer.toString() : "null"));
         }
-        
-        mInterfaceMaestro.showPublishing((FrameLayout) fragmentContainer);
+
+        mSessionData.setUiIsShowing(true);
+
+        FragmentManager fm = ((FragmentActivity) mContext).getSupportFragmentManager();
+
+        JRUiFragment f = new JRPublishFragment();
+        f.setEmbeddedMode(true);
+        fm.beginTransaction()
+                .add(fragmentContainer.getId(), f, f.getClass().getSimpleName())
+                .addToBackStack(JRPublishFragment.class.getSimpleName())
+                .commit();
     }
 /*@}*/
 

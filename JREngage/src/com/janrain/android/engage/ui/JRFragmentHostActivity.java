@@ -31,7 +31,10 @@ package com.janrain.android.engage.ui;
 
 //import android.R;
 import android.R;
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -57,6 +60,10 @@ public class JRFragmentHostActivity extends FragmentActivity {
     public static final int JR_LANDING = 1;
     public static final int JR_WEBVIEW = 2;
     public static final int JR_PUBLISH = 3;
+    public static final String ACTION_FINISH_FRAGMENT = "com.janrain.android.engage.ACTION_FINISH_FRAGMENT";
+    public static final String EXTRA_FINISH_FRAGMENT_TARGET =
+            "com.janrain.android.engage.EXTRA_FINISH_FRAGMENT_TARGET";
+    public static final IntentFilter FINISH_INTENT_FILTER = new IntentFilter(ACTION_FINISH_FRAGMENT);
 
     private int mFragmentId;
     private JRUiFragment mUiFragment;
@@ -66,7 +73,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        JREngage.setContext(this);
         mFragmentId = getIntent().getExtras().getInt(JR_FRAGMENT_ID);
 
         mSessionData = JRSessionData.getInstance();
@@ -77,8 +83,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
             return;
         }
 
-        if (JRUserInterfaceMaestro.getInstance().isDialogMode()) {
-            //setTheme(R.style.jr_dialog_no_title);
+        if (!AndroidUtils.isSmallOrNormalScreen()) {
             if (AndroidUtils.getAndroidSdkInt() >= 11) {
                 switch (mFragmentId) {
                     case JR_LANDING:
@@ -97,7 +102,8 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 }
             }
         } else if (mUiFragment.isEmbeddedMode()) {
-            // 
+            // This shouldn't happen, embedded Fragments don't run in a JRFragmentHostActivity
+            throw new IllegalStateException("Unexpected embedded fragment mode inside of JRFragmentHostActivity");
         } else { // Full screen mode
             if (mFragmentId == JR_WEBVIEW) {
                 //Request progress indicator
@@ -154,7 +160,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
     }
 
     private void autoSetSize() {
-        if (JRUserInterfaceMaestro.getInstance().isDialogMode()) {
+        if (!AndroidUtils.isSmallOrNormalScreen()) {
             //View content = findViewById(android.R.id.content);
             //content.setMinimumHeight(AndroidUtils.scaleDipPixels(600));
             //content.setMinimumHeight(AndroidUtils.scaleDipPixels(height));
@@ -177,7 +183,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        JREngage.setContext(this);
     }
 
     @Override
@@ -199,15 +204,23 @@ public class JRFragmentHostActivity extends FragmentActivity {
         switch (mFragmentId) {
             case JR_PROVIDER_LIST:
                 mSessionData.triggerAuthenticationDidCancel();
+                setResult(Activity.RESULT_CANCELED);
+                finish();
                 break;
             case JR_LANDING:
                 mSessionData.triggerAuthenticationDidRestart();
+                setResult(JRLandingFragment.RESULT_RESTART);
+                finish();
                 break;
             case JR_WEBVIEW:
                 mSessionData.triggerAuthenticationDidRestart();
+                setResult(JRWebViewFragment.RESULT_RESTART);
+                finish();
                 break;
             case JR_PUBLISH:
                 mSessionData.triggerPublishingDidComplete();
+                setResult(Activity.RESULT_OK);
+                finish();
                 break;
             default:
                 throw new IllegalStateException(new IllegalFragmentIdException(mFragmentId));

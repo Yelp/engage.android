@@ -29,6 +29,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -72,7 +73,6 @@ public class JRProviderListFragment extends JRUiFragment {
         public ProviderAdapter() {
             // The super class only ends up using the last parameter passed into this super constructor,
             // the List.  The first two parameters are never used.
-            //getActivity()
 
             super(JREngage.getContext(), 0, mProviderList);
         }
@@ -196,12 +196,28 @@ public class JRProviderListFragment extends JRUiFragment {
             // possibility.
 
             if (provider.requiresInput()) {
-                JRUserInterfaceMaestro.getInstance().showUserLanding();
+                showUserLanding();
             } else {
-                JRUserInterfaceMaestro.getInstance().showWebView();
+                showWebView();
             }
         }
     };
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case JRUiFragment.REQUEST_LANDING:
+                //if (resultCode == JRLandingFragment.RESULT_RESTART)
+                break;
+            case JRUiFragment.REQUEST_WEBVIEW:
+                if (resultCode == Activity.RESULT_OK) {
+                    getActivity().setResult(Activity.RESULT_OK);
+                    getActivity().finish();
+                }
+                break;
+            default:
+                //throw new RuntimeException("unexpected requestCode");
+        }
+    }
 
     /**
      * Called by timer (on fire interval).  Used when providers are not found in JRSessionData.

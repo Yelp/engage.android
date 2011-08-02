@@ -20,6 +20,9 @@ import java.util.HashMap;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class JRUiFragment extends Fragment {
+    public static final int REQUEST_LANDING = 1;
+    public static final int REQUEST_WEBVIEW = 2;
+
     private FinishReceiver mFinishReceiver;
     private HashMap<Integer, Dialog> mManagedDialogs = new HashMap<Integer, Dialog>();
     private boolean mEmbeddedMode = false;
@@ -41,8 +44,7 @@ public abstract class JRUiFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String target = intent.getStringExtra(
-                    JRUserInterfaceMaestro.EXTRA_FINISH_FRAGMENT_TARGET);
+            String target = intent.getStringExtra(JRFragmentHostActivity.EXTRA_FINISH_FRAGMENT_TARGET);
 
             if (JRUiFragment.this.getClass().toString().equals(target)) {
                 if (!isEmbeddedMode()) {
@@ -72,7 +74,7 @@ public abstract class JRUiFragment extends Fragment {
 
         if (mFinishReceiver == null) {
             mFinishReceiver = new FinishReceiver();
-            getActivity().registerReceiver(mFinishReceiver, JRUserInterfaceMaestro.FINISH_INTENT_FILTER);
+            getActivity().registerReceiver(mFinishReceiver, JRFragmentHostActivity.FINISH_INTENT_FILTER);
         }
     }
 
@@ -128,6 +130,20 @@ public abstract class JRUiFragment extends Fragment {
         } else {
             getActivity().dismissDialog(dialogId);
         }
+    }
+
+    private void startActivityForFragId(int fragId, int requestCode) {
+        Intent i = new Intent(getActivity(), JRFragmentHostActivity.class);
+        i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, fragId);
+        startActivityForResult(i, requestCode);
+    }
+
+    protected void showUserLanding() {
+        startActivityForFragId(JRFragmentHostActivity.JR_LANDING, REQUEST_LANDING);
+    }
+
+    protected void showWebView() {
+        startActivityForFragId(JRFragmentHostActivity.JR_WEBVIEW, REQUEST_WEBVIEW);
     }
 
     /* package */ SharedLayoutHelper getSharedLayoutHelper() {

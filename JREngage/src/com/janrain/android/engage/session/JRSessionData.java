@@ -131,7 +131,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 	private boolean mAlwaysForceReauth;
     private boolean mSkipLandingPage;
 	private boolean mSocialSharingMode;
-    private boolean mDialogIsShowing = false;
+    private boolean mUiIsShowing = false;
 
     private JREngageError mError;
 
@@ -350,9 +350,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mHidePoweredBy;
     }
 
-    public void setDialogIsShowing(boolean mDialogIsShowing) {
-        this.mDialogIsShowing = mDialogIsShowing;
-        if (!mDialogIsShowing & !mSavedConfigurationBlock.equals("")) {
+    public void setUiIsShowing(boolean mUiIsShowing) {
+        this.mUiIsShowing = mUiIsShowing;
+        if (!mUiIsShowing & !mSavedConfigurationBlock.equals("")) {
             String s = mSavedConfigurationBlock;
             mSavedConfigurationBlock = "";
             mNewEtag = mSavedEtag;
@@ -744,7 +744,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
              * where a dialog is showing but there isn't any data that it could be using (that
              * is, the lists of basic and social providers are nil), go ahead and update it too.
              * The dialogs won't try and do anything until we're done updating the lists. */
-            if (!mDialogIsShowing ||
+            if (!mUiIsShowing ||
                     (ListUtils.isEmpty(mBasicProviders) && ListUtils.isEmpty(mSocialProviders))) {
                 mNewEtag = etag;
                 return finishGetConfiguration(dataStr);

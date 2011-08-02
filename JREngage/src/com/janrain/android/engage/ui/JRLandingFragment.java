@@ -53,6 +53,9 @@ import com.janrain.android.engage.session.JRProvider;
  * Landing Page Activity
  **/
 public class JRLandingFragment extends JRUiFragment {
+    public static final int RESULT_SWITCH_ACCOUNTS = 1;
+    public static final int RESULT_RESTART = 2;
+
     static {
         TAG = JRLandingFragment.class.getSimpleName();
     }
@@ -62,9 +65,9 @@ public class JRLandingFragment extends JRUiFragment {
             Log.i(TAG, "[onClick] handled");
 
             if (view.equals(mSignInButton)) {
-                handleSigninClick();
+                onSignInClick();
             } else if (view.equals(mSwitchAccountButton)) {
-                handleSwitchAccountsClick();
+                onSwitchAccountsClick();
             }
         }
     };
@@ -100,7 +103,7 @@ public class JRLandingFragment extends JRUiFragment {
         return view;
     }
 
-    private void handleSigninClick() {
+    private void onSignInClick() {
         if (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput()) {
             //TODO validate OpenID URLs so they don't hang the WebView
             String text = mUserInput.getText().toString().trim();
@@ -110,20 +113,21 @@ public class JRLandingFragment extends JRUiFragment {
                 showAlertDialog(title, message);
             } else {
                 mSessionData.getCurrentlyAuthenticatingProvider().setUserInput(text);
-                JRUserInterfaceMaestro.getInstance().showWebView();
+                showWebView();
             }
         } else {
-            JRUserInterfaceMaestro.getInstance().showWebView();
+            showWebView();
         }
     }
 
-    private void handleSwitchAccountsClick() {
-        Log.i(TAG, "[handleSwitchAccountsClick]");
+    private void onSwitchAccountsClick() {
+        Log.i(TAG, "[onSwitchAccountsClick]");
 
         mSessionData.getCurrentlyAuthenticatingProvider().setForceReauth(true);
         mSessionData.setReturningBasicProvider("");
         mSessionData.triggerAuthenticationDidRestart();
-        //finish();
+        getActivity().setResult(RESULT_SWITCH_ACCOUNTS);
+        getActivity().finish();
     }
 
     private void showAlertDialog(String title, String message) {

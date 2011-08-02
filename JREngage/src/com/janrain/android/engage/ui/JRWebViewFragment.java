@@ -29,6 +29,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -59,6 +60,9 @@ import java.util.List;
  * Container for authentication web view.  Mimics JRWebViewController iPhone interface.
  */
 public class JRWebViewFragment extends JRUiFragment {
+    public static final int RESULT_RESTART = 1;
+    public static final int RESULT_FAIL = 2;
+
     static {
         TAG = JRWebViewFragment.class.getSimpleName();
     }
@@ -185,7 +189,7 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     private void loadMobileEndpointUrl(String url) {
-        if (JRUserInterfaceMaestro.getInstance().isDialogMode()) {
+        if (!AndroidUtils.isSmallOrNormalScreen()) {
             mIsLoadingMobileEndpoint = true;
             showProgressSpinner();
         } else { // full screen mode
@@ -328,17 +332,12 @@ public class JRWebViewFragment extends JRUiFragment {
                     // Back should be disabled at this point because the progress modal dialog is
                     // being displayed.
                     mSessionData.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
+                    getActivity().setResult(Activity.RESULT_OK);
+                    getActivity().finish();
                 } else {
                     final String error = resultDictionary.getAsString("error");
                     String alertTitle, alertMessage, logMessage;
 
-                    // for OpenID errors we're just firing a dialog and then calling
-                    // finish when it's dismissed in order to get back to the landing page
-                    // instead of calling triggerAuthenticationDidRestart because that would
-                    // return us to the provider selection activity, when the user probably just
-                    // wants to correct a minor OpenID typo.
-                    // TODO there are inconsistencies in the managed activity stack in the UI
-                    // maestro caused by this, but they're benign.  Verify this harmlessness.
                     if ("Discovery failed for the OpenID you entered".equals(error) ||
                             "Your OpenID must be a URL".equals(error)) {
                         alertTitle = "Invalid Input";
@@ -375,11 +374,11 @@ public class JRWebViewFragment extends JRUiFragment {
                         mIsFinishPending = true;
                         showAlertDialog("OpenID Error", "The URL you entered does not appear to be an OpenID");
                     } else if ("canceled".equals(error)) {
-                        if (mSessionData.isSocialSharingMode()) {
-                            mSessionData.triggerAuthenticationDidCancel();
-                        } else {
+                        if (!mSessionData.isSocialSharingMode()) {
                             mSessionData.triggerAuthenticationDidRestart();
                         }
+                        getActivity().setResult(RESULT_RESTART);
+                        getActivity().finish();
                     } else {
                         Log.e(TAG, "unrecognized error");
                         JREngageError err = new JREngageError(
@@ -393,6 +392,8 @@ public class JRWebViewFragment extends JRUiFragment {
                         );
 
                         mSessionData.triggerAuthenticationDidFail(err);
+                        getActivity().setResult(RESULT_FAIL);
+                        getActivity().finish();
                     }
                 }
             } else if (userdata.equals("request")) {
