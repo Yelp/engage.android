@@ -33,9 +33,11 @@ package com.janrain.android.engage.ui;
 import android.R;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -101,10 +103,21 @@ public class JRFragmentHostActivity extends FragmentActivity {
                     default: throw new IllegalFragmentIdException(mFragmentId);
                 }
             }
-        } else if (mUiFragment.isEmbeddedMode()) {
-            // This shouldn't happen, embedded Fragments don't run in a JRFragmentHostActivity
-            throw new IllegalStateException("Unexpected embedded fragment mode inside of JRFragmentHostActivity");
         } else { // Full screen mode
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            lp.copyFrom(getWindow().getAttributes());
+            lp.width = WindowManager.LayoutParams.FILL_PARENT;
+            lp.height = WindowManager.LayoutParams.FILL_PARENT;
+            getWindow().setAttributes(lp);
+
+            Context c = JREngage.getContext();
+            if (c instanceof Activity) {
+                Resources.Theme t = c.getTheme();
+                getTheme().setTo(t);
+                //setTheme();
+            }
+            //setTheme(R.style.Theme_Light);
+
             if (mFragmentId == JR_WEBVIEW) {
                 //Request progress indicator
                 requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -258,15 +271,15 @@ public class JRFragmentHostActivity extends FragmentActivity {
         return mLayoutHelper.handleAboutMenu(item) || super.onOptionsItemSelected(item);
     }
 
-    public static Class<? extends Fragment> getFragmentClassForId(int fragId) {
-        switch (fragId) {
-            case JR_PROVIDER_LIST: return JRProviderListFragment.class;
-            case JR_LANDING: return JRLandingFragment.class;
-            case JR_WEBVIEW: return JRWebViewFragment.class;
-            case JR_PUBLISH: return JRPublishFragment.class;
-            default: throw new IllegalFragmentIdException(fragId);
-        }
-    }
+    //public static Class<? extends Fragment> getFragmentClassForId(int fragId) {
+    //    switch (fragId) {
+    //        case JR_PROVIDER_LIST: return JRProviderListFragment.class;
+    //        case JR_LANDING: return JRLandingFragment.class;
+    //        case JR_WEBVIEW: return JRWebViewFragment.class;
+    //        case JR_PUBLISH: return JRPublishFragment.class;
+    //        default: throw new IllegalFragmentIdException(fragId);
+    //    }
+    //}
 
     public static class IllegalFragmentIdException extends RuntimeException {
         int mFragId;
@@ -277,6 +290,14 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
         public String toString() {
             return "Bad fragment ID: " + mFragId;
+        }
+    }
+
+    public static Intent makeIntentForCurrentScreen(Context c) {
+        if (AndroidUtils.isSmallOrNormalScreen()) {
+            return new Intent(c, JRFragmentHostActivityFullscreen.class);
+        } else {
+            return new Intent(c, JRFragmentHostActivity.class);
         }
     }
 }

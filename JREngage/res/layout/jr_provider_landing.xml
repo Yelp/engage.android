@@ -42,8 +42,8 @@
 
         <EditText
             android:id="@+id/jr_landing_edit"
-            android:layout_width="280dp"
             android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
             android:layout_marginRight="4dp"
@@ -52,6 +52,8 @@
             android:singleLine="true"
             android:textColorHint="@color/jr_TEXT_COLOR_HINT"
             />
+        <!--android:layout_width="280dp"-->
+
 
         <TextView
             android:id="@+id/jr_landing_welcome_label"

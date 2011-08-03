@@ -133,7 +133,7 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     private void startActivityForFragId(int fragId, int requestCode) {
-        Intent i = new Intent(getActivity(), JRFragmentHostActivity.class);
+        Intent i = JRFragmentHostActivity.makeIntentForCurrentScreen(getActivity());
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, fragId);
         startActivityForResult(i, requestCode);
     }

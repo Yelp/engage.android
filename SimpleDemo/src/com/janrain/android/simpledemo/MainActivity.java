@@ -135,7 +135,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     void buildActivity() {
         mActivity = new JRActivityObject("shared an article from the Janrain Blog!",
-            mActionLink);
+            "");
+        //mActivity = new JRActivityObject("shared an article from the Janrain Blog!",
+        //    mActionLink);
 
         mActivity.setTitle(mTitleText);
         mActivity.setDescription(mDescriptionText);

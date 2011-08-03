@@ -29,6 +29,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
 import android.os.Bundle;
@@ -146,6 +147,24 @@ public class JRLandingFragment extends JRUiFragment {
                     }
                 }
             }).show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_WEBVIEW) {
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    getActivity().setResult(Activity.RESULT_OK);
+                    getActivity().finish();
+                    break;
+                case JRWebViewFragment.RESULT_RESTART:
+                    break;
+                default:
+                    throw new RuntimeException("unrecognized result code");
+            }
+        } else {
+            throw new RuntimeException("unrecognized request code");
+        }
     }
 
     @Override

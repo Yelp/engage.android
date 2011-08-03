@@ -56,6 +56,8 @@ import java.util.TimerTask;
  * Displays list of [basic] providers.
  */
 public class JRProviderListFragment extends JRUiFragment {
+    public static final int RESULT_FAIL = Activity.RESULT_FIRST_USER;
+
     static {
         TAG = JRLandingFragment.class.getSimpleName();
     }
@@ -206,16 +208,34 @@ public class JRProviderListFragment extends JRUiFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case JRUiFragment.REQUEST_LANDING:
-                //if (resultCode == JRLandingFragment.RESULT_RESTART)
+                switch (resultCode) {
+                    case JRLandingFragment.RESULT_RESTART:
+                    case JRLandingFragment.RESULT_SWITCH_ACCOUNTS:
+                        break;
+                    case Activity.RESULT_OK:
+                        getActivity().setResult(Activity.RESULT_OK);
+                        getActivity().finish();
+                        break;
+                    default:
+                        throw new RuntimeException("unrecognized result code");
+                }
                 break;
             case JRUiFragment.REQUEST_WEBVIEW:
-                if (resultCode == Activity.RESULT_OK) {
-                    getActivity().setResult(Activity.RESULT_OK);
-                    getActivity().finish();
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        getActivity().setResult(Activity.RESULT_OK);
+                        getActivity().finish();
+                        break;
+                    case JRWebViewFragment.RESULT_FAIL:
+                        getActivity().setResult(RESULT_FAIL);
+                        getActivity().finish();
+                        break;
+                    case JRWebViewFragment.RESULT_RESTART:
+                        break;
                 }
                 break;
             default:
-                //throw new RuntimeException("unexpected requestCode");
+                throw new RuntimeException("unexpected requestCode");
         }
     }
 

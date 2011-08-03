@@ -52,6 +52,11 @@
             android:theme="@android:style/Theme.Dialog"
             android:configChanges="orientation"
             />
+
+        <activity
+            android:name="com.janrain.android.engage.ui.JRFragmentHostActivityFullscreen"
+            android:configChanges="orientation"
+            />
     </application>
 
 </manifest>

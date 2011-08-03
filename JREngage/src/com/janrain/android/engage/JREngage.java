@@ -438,7 +438,7 @@ public class JREngage {
             Log.d(TAG, "[cancelAuthentication]");
         }
         mSessionData.triggerAuthenticationDidCancel();
-        //todo fixme UI maestro refactor need a new way to do this
+        //todo fixme UI maestro refactor
     }
 
     /**
@@ -450,7 +450,7 @@ public class JREngage {
             Log.d(TAG, "[cancelPublishing]");
         }
         mSessionData.triggerPublishingDidCancel();
-        //todo fixme UI maestro refactor need a new way to do this
+        //todo fixme UI maestro refactor
     }
 /*@}*/
 
@@ -580,7 +580,8 @@ public class JREngage {
         if (checkSessionDataError()) return;
 
         mSessionData.setSkipLandingPage(skipReturningUserLandingPage);
-        Intent i = new Intent(mContext, JRFragmentHostActivity.class);
+
+        Intent i = JRFragmentHostActivity.makeIntentForCurrentScreen(mContext);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PROVIDER_LIST);
         mContext.startActivity(i);
     }
@@ -608,7 +609,7 @@ public class JREngage {
 
         mSessionData.setJRActivity(activity);
 
-        Intent i = new Intent(mContext, JRFragmentHostActivity.class);
+        Intent i = JRFragmentHostActivity.makeIntentForCurrentScreen(mContext);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
         mContext.startActivity(i);
     }
