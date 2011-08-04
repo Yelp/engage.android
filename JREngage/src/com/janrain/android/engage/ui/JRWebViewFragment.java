@@ -57,7 +57,7 @@ import java.util.List;
  * @internal
  *
  * @class JRWebViewActivity
- * Container for authentication web view.  Mimics JRWebViewController iPhone interface.
+ * Container for authentication web view.
  */
 public class JRWebViewFragment extends JRUiFragment {
     public static final int RESULT_RESTART = 1;
@@ -89,7 +89,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
         mWebViewSettings = mWebView.getSettings();
 
-        // Shim some information about the OS version into the WebView for use by hax ala Yahoo!
+        // Shim some information about the OS version into the WebView for use by hax ala Yahoo!:
         mWebView.addJavascriptInterface(new Object() {
         			// These functions may be invoked via the javascript binding, but they are
         			// never invoked from this Java code, so they will always generate compiler
@@ -189,12 +189,12 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     private void loadMobileEndpointUrl(String url) {
-        if (!AndroidUtils.isSmallOrNormalScreen()) {
+        //if (!AndroidUtils.isSmallOrNormalScreen()) {
             mIsLoadingMobileEndpoint = true;
             showProgressSpinner();
-        } else { // full screen mode
-            mLayoutHelper.showProgressDialog();
-        }
+        //} else { // full screen mode
+        //    mLayoutHelper.showProgressDialog();
+        //}
 
         String urlToLoad = url + "&auth_info=true";
         if (Config.LOGD) {

@@ -91,7 +91,13 @@ public class JRFragmentHostActivity extends FragmentActivity {
                     case JR_LANDING:
                         /* fall through to provider list */
                     case JR_PROVIDER_LIST:
-                        setTheme(16973945); // R.style.Theme_Holo_Light_DialogWhenLarge
+                        //getTheme().applyStyle(16973945, true);
+                        //Resources.Theme t = Resources.getSystem().newTheme();
+                        //t.applyStyle(R.style.Theme_Holo_Light, true);
+                        //t.applyStyle(16973945, true);
+                        //getTheme().setTo(t);
+                        //getTheme().
+                        //setTheme(16973945); // R.style.Theme_Holo_Light_DialogWhenLarge
                         //setTheme(R.style.Theme_Dialog);
                         break;
                     case JR_WEBVIEW:
@@ -99,6 +105,19 @@ public class JRFragmentHostActivity extends FragmentActivity {
                     case JR_PUBLISH:
                         setTheme(16973946); // R.style.Theme_Holo_Light_DialogWhenLarge_NoActionBar
                         //setTheme(R.style.Theme_Dialog);
+                        break;
+                    default: throw new IllegalFragmentIdException(mFragmentId);
+                }
+            } else {
+                switch (mFragmentId) {
+                    case JR_LANDING:
+                    case JR_PROVIDER_LIST:
+                        setTheme(R.style.Theme_NoTitleBar);
+                        //this.getTheme().
+                        break;
+                    case JR_WEBVIEW:
+                    case JR_PUBLISH:
+                        setTheme(R.style.Theme_Light_NoTitleBar);
                         break;
                     default: throw new IllegalFragmentIdException(mFragmentId);
                 }
@@ -155,6 +174,12 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
         //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         //    | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+    }
+
+    @Override
+    public void setTheme(int r) {
+        Log.d(TAG, "test");
+        super.setTheme(r);
     }
 
     @Override

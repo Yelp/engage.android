@@ -206,6 +206,7 @@ public class JRProviderListFragment extends JRUiFragment {
     };
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
         switch (requestCode) {
             case JRUiFragment.REQUEST_LANDING:
                 switch (resultCode) {
@@ -232,6 +233,8 @@ public class JRProviderListFragment extends JRUiFragment {
                         break;
                     case JRWebViewFragment.RESULT_RESTART:
                         break;
+                    default:
+                        throw new RuntimeException("unrecognized result code");
                 }
                 break;
             default:
