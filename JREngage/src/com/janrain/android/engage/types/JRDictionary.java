@@ -198,21 +198,17 @@ public final class JRDictionary extends HashMap<String,Object> {
      *      A JRDictionary object representation of the JSON string
      **/
     public static JRDictionary fromJSON(String json) {
-        //if (Config.LOGD) {
-        //    Log.d(TAG, "[fromJSON] json: " + json);
-        //}
-
-        JRDictionary retval = null;
+        JRDictionary retVal = null;
 
         try {
             ObjectMapper mapper = new ObjectMapper();
 
-            retval = mapper.readValue(json, JRDictionary.class);
+            retVal = mapper.readValue(json, JRDictionary.class);
         } catch (IOException e) {
             Log.w(TAG, "[fromJSON] problem deserializing JSON string: ", e);
         }
 
-        return retval;
+        return retVal;
     }
 /*@}*/
 

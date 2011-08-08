@@ -93,7 +93,7 @@ public final class AsyncHttpClient {
         }
 
 		public void run() {
-			if (Config.LOGD) { Log.d(TAG, "[run] BEGIN, url: " + mUrl); }
+			if (Config.LOGD) Log.d(TAG, "[run] BEGIN, url: " + mUrl);
 
             URL url;
             HttpURLConnection connection = null;
@@ -113,12 +113,12 @@ public final class AsyncHttpClient {
 
                 if (mPostData == null) {
                     // HTTP GET OPERATION
-                    if (Config.LOGD) { Log.d(TAG, "[run] HTTP GET"); }
+                    if (Config.LOGD) Log.d(TAG, "[run] HTTP GET");
                     prepareConnectionForHttpGet(connection);
                     connection.connect();
                 } else {
                     // HTTP POST OPERATION
-                    if (Config.LOGD) { Log.d(TAG, "[run] HTTP POST data: " + new String(mPostData)); }
+                    if (Config.LOGD) Log.d(TAG, "[run] HTTP POST data: " + new String(mPostData));
                     prepareConnectionForHttpPost(connection);
                     connection.connect();
                     doHttpPost(connection);
@@ -131,24 +131,24 @@ public final class AsyncHttpClient {
                     HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
                     byte[] data = IOUtils.readFromStream(connection.getInputStream(), true);
 
-                    Log.d(TAG, "[run] " + headers.toString());
+                    if (Config.LOGD) Log.d(TAG, "[run] " + headers.toString());
                     if (data == null) {
-                        Log.d(TAG, "[run] data is null");
+                        if (Config.LOGD) Log.d(TAG, "[run] data is null");
                     } else {
-                        Log.d(TAG, "[run] data: " + new String(data));
+                        if (Config.LOGD) Log.d(TAG, "[run] data: " + new String(data));
                     }
 
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
                     mHandler.post(mWrapper);
                 } else if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
-                    Log.d(TAG, "[run] HTTP_NOT_MODIFIED");
+                    if (Config.LOGD) Log.d(TAG, "[run] HTTP_NOT_MODIFIED");
                     HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
 
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, null));
                     mHandler.post(mWrapper);
                 } else if (connection.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
                     // Response from the Engage trail creation and maybe URL shortening calls
-                    Log.d(TAG, "[run] HTTP_CREATED");
+                    if (Config.LOGD) Log.d(TAG, "[run] HTTP_CREATED");
                     HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
 
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, null));
@@ -184,7 +184,7 @@ public final class AsyncHttpClient {
             if ((mHeaders != null) && (mHeaders.size() > 0)) {
                 for (NameValuePair nvp : mHeaders) {
                     connection.setRequestProperty(nvp.getName(), nvp.getValue());
-                    Log.d(TAG, "[addRequestHeaders] added header --> " +
+                    if (Config.LOGD) Log.d(TAG, "[addRequestHeaders] added header --> " +
                             nvp.getName() + ": " + nvp.getValue());
                 }
             }
@@ -247,7 +247,7 @@ public final class AsyncHttpClient {
 		public void setResponse(AsyncHttpResponseHolder holder) {
 			mResponse = holder;
             mResponse.setConnectionData(mConnectionData);
-			Log.d(TAG, "[setResponse] response set.");
+			if (Config.LOGD) Log.d(TAG, "[setResponse] response set.");
 		}
 	}
 
@@ -280,9 +280,8 @@ public final class AsyncHttpClient {
                                       AsyncHttpResponseListener listener) {
         final String url = cd.getRequestUrl();
         List<NameValuePair> requestHeaders = cd.getRequestHeaders();
-        if (Config.LOGD) {
-            Log.d(TAG, "[executeHttpGet] invoked");
-        }
+        if (Config.LOGD) Log.d(TAG, "[executeHttpGet] invoked");
+
 
         (new HttpSender(url, requestHeaders, new Handler(),
                 new HttpCallbackWrapper(listener, cd))).start();
@@ -302,9 +301,7 @@ public final class AsyncHttpClient {
         final String url = cd.getRequestUrl();
         byte[] data = cd.getPostData();
 
-        if (Config.LOGD) {
-            Log.d(TAG, "[executeHttpPost] invoked");
-        }
+        if (Config.LOGD) Log.d(TAG, "[executeHttpPost] invoked");
 
         (new HttpSender(url, data, new Handler(),
                 new HttpCallbackWrapper(listener, cd))).start();

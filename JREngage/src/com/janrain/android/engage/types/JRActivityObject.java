@@ -227,6 +227,9 @@ public class JRActivityObject {
      * A JRSmsObject to use to prefill a sharing SMS sent by the user
      */
     private JRSmsObject mSms;
+
+    private boolean mIsShortening = false;
+    private String mShortenedUrl;
 /*@}*/
 
 /**
@@ -482,7 +485,14 @@ public class JRActivityObject {
         public void setShortenedUrl(String shortenedUrl);
     }
 
-    public void shortenUrls(final ShortenedUrlCallback callback) {
+    public synchronized void shortenUrls(final ShortenedUrlCallback callback) {
+        if (mShortenedUrl != null) {
+            callback.setShortenedUrl(mShortenedUrl);
+            return;
+        }
+        if (mIsShortening) return;
+        mIsShortening = true;
+
         final JRSessionData sessionData = JRSessionData.getInstance();
         try {
             // todo invoke when the activity object is created (or maybe when publish is called?)
@@ -497,10 +507,12 @@ public class JRActivityObject {
                         .array()
                             .value(getUrl())
                         .endArray()
+
                         .key("email")
                         .array();
                             for (String url : emailUrls) jss.value(url);
                         jss.endArray()
+                                
                         .key("sms")
                         .array();
                             for (String url : smsUrls) jss.value(url);
@@ -551,6 +563,8 @@ public class JRActivityObject {
                         Log.e(TAG, "URL shortening JSON parse error", e);
                     }
 
+                    mIsShortening = false;
+                    mShortenedUrl = shortUrl;
                     updateUI(shortUrl);
                 }
 
@@ -559,10 +573,12 @@ public class JRActivityObject {
                 }
 
                 public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
+                    mIsShortening = false;
                     updateUI(getUrl());
                 }
 
                 public void connectionWasStopped(Object userdata) {
+                    mIsShortening = false;
                     updateUI(getUrl());
                 }
             };

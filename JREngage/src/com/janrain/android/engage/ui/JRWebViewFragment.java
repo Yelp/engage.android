@@ -197,9 +197,8 @@ public class JRWebViewFragment extends JRUiFragment {
         //}
 
         String urlToLoad = url + "&auth_info=true";
-        if (Config.LOGD) {
-            Log.d(TAG, "[loadMobileEndpointUrl] loading url: " + urlToLoad);
-        }
+        if (Config.LOGD) Log.d(TAG, "[loadMobileEndpointUrl] loading url: " + urlToLoad);
+
 
         JRConnectionManager.createConnection(
                 urlToLoad, mMobileEndPointConnectionDelegate, false, RPX_RESULT_TAG);
@@ -270,9 +269,8 @@ public class JRWebViewFragment extends JRUiFragment {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[onPageFinished] url: " + url);
-            }
+            if (Config.LOGD) Log.d(TAG, "[onPageFinished] url: " + url);
+
 
             //setProgressBarIndeterminateVisibility(false);
             hideProgressSpinner();

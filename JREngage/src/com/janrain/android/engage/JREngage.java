@@ -241,70 +241,45 @@ public class JREngage {
 	}
 
     private JRSessionDelegate mJrsd = new JRSessionDelegate() {
-        // ------------------------------------------------------------------------
-        // DELEGATE METHODS
-        // moved into a private inner class to keep the internal interface hidden
-        // ------------------------------------------------------------------------
-
         public void authenticationDidRestart() {
-            if (Config.LOGD) {
-                Log.d(TAG, "[authenticationDidRestart]");
-            }
-            //mInterfaceMaestro.authenticationRestarted();
+            if (Config.LOGD) Log.d(TAG, "[authenticationDidRestart]");
         }
 
         public void authenticationDidCancel() {
-            if (Config.LOGD) {
-                Log.d(TAG, "[authenticationDidCancel]");
-            }
+            if (Config.LOGD) Log.d(TAG, "[authenticationDidCancel]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
                 delegate.jrAuthenticationDidNotComplete();
             }
 
-            //mInterfaceMaestro.authenticationCanceled();
         }
 
         public void authenticationDidComplete(String token, String provider) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[authenticationDidComplete]");
-            }
+            if (Config.LOGD) Log.d(TAG, "[authenticationDidComplete]");
         }
 
         public void authenticationDidComplete(JRDictionary profile, String provider) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[authenticationDidComplete]");
-            }
+            if (Config.LOGD) Log.d(TAG, "[authenticationDidComplete]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
                 delegate.jrAuthenticationDidSucceedForUser(profile, provider);
             }
-
-            //mInterfaceMaestro.authenticationCompleted();
         }
 
         public void authenticationDidFail(JREngageError error, String provider) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[authenticationDidFail]");
-            }
-
+            if (Config.LOGD) Log.d(TAG, "[authenticationDidFail]");
             for (JREngageDelegate delegate : getDelegatesCopy()) {
                 delegate.jrAuthenticationDidFailWithError(error, provider);
             }
-
-            //mInterfaceMaestro.authenticationFailed();
         }
 
         public void authenticationDidReachTokenUrl(String tokenUrl,
                                                    HttpResponseHeaders headers,
                                                    String payload,
                                                    String provider) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[authenticationDidReachTokenUrl]");
-            }
+            if (Config.LOGD) Log.d(TAG, "[authenticationDidReachTokenUrl]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
-                //delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, payload, provider);
                 delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, headers, payload, provider);
             }
         }
@@ -312,9 +287,7 @@ public class JREngage {
         public void authenticationCallToTokenUrlDidFail(String tokenUrl,
                                                         JREngageError error,
                                                         String provider) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[authenticationCallToTokenUrlDidFail]");
-            }
+            if (Config.LOGD) Log.d(TAG, "[authenticationCallToTokenUrlDidFail]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
                 delegate.jrAuthenticationCallToTokenUrlDidFail(tokenUrl, error, provider);
@@ -322,38 +295,27 @@ public class JREngage {
         }
 
         public void publishingDidCancel() {
-            if (Config.LOGD) {
-                Log.d(TAG, "[publishingDidCancel]");
-            }
+            if (Config.LOGD) Log.d(TAG, "[publishingDidCancel]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
                 delegate.jrSocialDidNotCompletePublishing();
             }
-
-            //mInterfaceMaestro.publishingCanceled();
         }
 
         public void publishingDidComplete() {
-            if (Config.LOGD) {
-                Log.d(TAG, "[publishingDidComplete]");
-            }
+            if (Config.LOGD) Log.d(TAG, "[publishingDidComplete]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
                 delegate.jrSocialDidCompletePublishing();
             }
-
-            // mSessionData.setUiIsShowing ?
         }
 
         public void publishingDialogDidFail(JREngageError err) {
-            //mInterfaceMaestro.publishingDialogFailed();
             engageDidFailWithError(err);
         }
 
         public void publishingJRActivityDidSucceed(JRActivityObject activity, String provider) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[publishingJRActivityDidSucceed]");
-            }
+            if (Config.LOGD) Log.d(TAG, "[publishingJRActivityDidSucceed]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
                 delegate.jrSocialDidPublishJRActivity(activity, provider);
@@ -363,15 +325,11 @@ public class JREngage {
         public void publishingJRActivityDidFail(JRActivityObject activity,
                                                 JREngageError error,
                                                 String provider) {
-            if (Config.LOGD) {
-                Log.d(TAG, "[publishingJRActivityDidFail]");
-            }
+            if (Config.LOGD) Log.d(TAG, "[publishingJRActivityDidFail]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
                 delegate.jrSocialPublishJRActivityDidFail(activity, error, provider);
             }
-
-            //mInterfaceMaestro.publishingJRActivityFailed();
         }
 
         public void mobileConfigDidFinish() {}
@@ -392,9 +350,7 @@ public class JREngage {
      *   List of Providers</a>
      **/
     public void signoutUserForProvider(String provider) {
-        if (Config.LOGD) {
-            Log.d(TAG, "[signoutUserForProvider]");
-        }
+        if (Config.LOGD) Log.d(TAG, "[signoutUserForProvider]");
         mSessionData.forgetAuthenticatedUserForProvider(provider);
     }
 
@@ -402,9 +358,7 @@ public class JREngage {
      * Remove the user's credentials for all providers from the library.
      **/
     public void signoutUserForAllProviders() {
-        if (Config.LOGD) {
-            Log.d(TAG, "[signoutUserForAllProviders]");
-        }
+        if (Config.LOGD) Log.d(TAG, "[signoutUserForAllProviders]");
         mSessionData.forgetAllAuthenticatedUsers();
     }
 
@@ -417,9 +371,7 @@ public class JREngage {
      *   library should allow cached credentials to authenticate the user
      **/
     public void setAlwaysForceReauthentication(boolean force) {
-        if (Config.LOGD) {
-            Log.d(TAG, "[setAlwaysForceReauthentication]");
-        }
+        if (Config.LOGD) Log.d(TAG, "[setAlwaysForceReauthentication]");
         mSessionData.setAlwaysForceReauth(force);
     }
 /*@}*/
@@ -434,9 +386,7 @@ public class JREngage {
      * the calling Activity to the top of the application's activity stack.
      **/
     public void cancelAuthentication() {
-        if (Config.LOGD) {
-            Log.d(TAG, "[cancelAuthentication]");
-        }
+        if (Config.LOGD) Log.d(TAG, "[cancelAuthentication]");
         mSessionData.triggerAuthenticationDidCancel();
         //todo fixme UI maestro refactor
     }
@@ -446,9 +396,7 @@ public class JREngage {
      * the calling Activity to the top of the application's activity stack.
      **/
     public void cancelPublishing() {
-        if (Config.LOGD) {
-            Log.d(TAG, "[cancelPublishing]");
-        }
+        if (Config.LOGD) Log.d(TAG, "[cancelPublishing]");
         mSessionData.triggerPublishingDidCancel();
         //todo fixme UI maestro refactor
     }
@@ -468,9 +416,7 @@ public class JREngage {
      *   The new token URL you wish authentications to post the Engage \e auth_info \e token to
      **/
     public void setTokenUrl(String newTokenUrl) {
-        if (Config.LOGD) {
-            Log.d(TAG, "[setTokenUrl]");
-        }
+        if (Config.LOGD) Log.d(TAG, "[setTokenUrl]");
         mSessionData.setTokenUrl(newTokenUrl);
     }
 /*@}*/
@@ -493,9 +439,7 @@ public class JREngage {
      *   The object that implements the JREngageDelegate protocol
      **/
     public void addDelegate(JREngageDelegate delegate) {
-		if (Config.LOGD) {
-			Log.d(TAG, "[addDelegate]");
-		}
+		if (Config.LOGD) Log.d(TAG, "[addDelegate]");
 		mDelegates.add(delegate);
 	}
 
@@ -506,9 +450,7 @@ public class JREngage {
      *   The object that implements the JREngageDelegate protocol
      **/
 	public void removeDelegate(JREngageDelegate delegate) {
-		if (Config.LOGD) {
-			Log.d(TAG, "[removeDelegate]");
-		}
+		if (Config.LOGD) Log.d(TAG, "[removeDelegate]");
 		mDelegates.remove(delegate);
 	}
 /*@}*/
@@ -553,9 +495,7 @@ public class JREngage {
      * start a new Android Activity and take the user through the sign-in process.
      **/
     public void showAuthenticationDialog() {
-        if (Config.LOGD) {
-            Log.d(TAG, "[showProviderSelection]");
-        }
+        if (Config.LOGD) Log.d(TAG, "[showProviderSelection]");
 
         showAuthenticationDialog(false);
     }
@@ -574,8 +514,7 @@ public class JREngage {
      *  setAlwaysForceReauthentication().
      **/
     public void showAuthenticationDialog(boolean skipReturningUserLandingPage) {
-        if (Config.LOGD)
-            Log.d(TAG, "[showAuthenticationDialog(boolean skipReturningUserLandingPage)]");
+        if (Config.LOGD) Log.d(TAG, "[showAuthenticationDialog(boolean skipReturningUserLandingPage)]");
 
         if (checkSessionDataError()) return;
 
@@ -649,11 +588,6 @@ public class JREngage {
                 .commit();
     }
 /*@}*/
-
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
-	}
 
     private synchronized List<JREngageDelegate> getDelegatesCopy() {
         return (mDelegates == null) ?

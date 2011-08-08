@@ -68,9 +68,7 @@ public class HttpResponseHeaders {
     public static HttpResponseHeaders fromConnection(HttpURLConnection connection)
             throws IOException {
 
-        if (Config.LOGD) {
-            Log.d(TAG, "[fromConnection] BEGIN");
-        }
+        if (Config.LOGD) Log.d(TAG, "[fromConnection] BEGIN");
 
         HttpResponseHeaders headers = new HttpResponseHeaders();
 

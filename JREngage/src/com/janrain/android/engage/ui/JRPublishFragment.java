@@ -237,8 +237,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         showHideView(mSmsButton, mSmsActivityExists);
     }
 
-    private void showHideView(View v, boolean showHide) {
-        if (showHide) v.setVisibility(View.VISIBLE);
+    private void showHideView(View v, boolean show) {
+        if (show) v.setVisibility(View.VISIBLE);
         else v.setVisibility(View.GONE);
     }
 
@@ -612,7 +612,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 startActivityForResult(intent, 0);
                 mSessionData.notifyEmailSmsShare("email");
             } catch (ActivityNotFoundException exception) {
-                //todo fixme embedded mode
                 showDialog(DIALOG_NO_EMAIL_CLIENT);
             }
         }
@@ -634,7 +633,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 startActivityForResult(intent, 0);
                 mSessionData.notifyEmailSmsShare("sms");
             } catch (ActivityNotFoundException exception) {
-                //todo fixme embedded mode
                 showDialog(DIALOG_NO_SMS_CLIENT);
             }
         }
@@ -795,16 +793,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                     "<b>" + userNameForPreview + "</b> " + newText + " <font color=\"#808080\">" +
                     ((mShortenedActivityURL != null) ? mShortenedActivityURL : shorteningText) +
                     "</font>"));
-
-//            SpannableStringBuilder str = new SpannableStringBuilder(userNameForPreview + " " + newText + " " +
-//                                            ((mShortenedActivityURL != null) ? mShortenedActivityURL : R.string.jr_shortening_url));//mPreviewLabelView.getText();//.getText();
-//
-//            // Create our span sections, and assign a format to each.
-//            str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, userNameForPreview.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            str.setSpan(new ColorSpan(android.graphics.Typeface. 0xFFFFFF00), 8, 19, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 21, str.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//
-//            mPreviewLabelView.setText(,);
         } else {
             mPreviewLabelView.setText(Html.fromHtml("<b> " + userNameForPreview + "</b> "
                     + newText));
@@ -825,7 +813,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private void loadUserNameAndProfilePicForUserForProvider(
             final JRAuthenticatedUser user,
             final String providerName) {
-        Log.d(TAG, "loadUserNameAndProfilePicForUserForProvider");
+        if (Config.LOGD) Log.d(TAG, "loadUserNameAndProfilePicForUserForProvider");
 
         if (user == null || providerName == null) {
             mUserNameView.setText("");
@@ -926,7 +914,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             else
                 return JANRAIN_BLUE_100PERCENT;
 
-        // todo see if we can write this in a more compile-time type-safe way
+        // todo see if we can write this in a compile-time--type-safe way
         @SuppressWarnings("unchecked")
         ArrayList<Double> colorArray = new ArrayList<Double>(
                 (ArrayList<Double>) arrayOfColorStrings);

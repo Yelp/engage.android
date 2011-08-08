@@ -1,11 +1,14 @@
 package com.janrain.android.engage.ui;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.AttributeSet;
 import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.session.JRSessionData;
@@ -62,6 +65,60 @@ public abstract class JRUiFragment extends Fragment {
         if (Config.LOGD) Log.d(TAG, "[onActivityCreated]");
         super.onActivityCreated(savedInstanceState);
         mLayoutHelper = new SharedLayoutHelper(getActivity());
+    }
+
+    @Override
+    public void onDetach() {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onDetach();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (Config.LOGD) Log.d(TAG, "[onDestroyView]");
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onPause() {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onPause();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onStart() {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onStart();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onHiddenChanged(hidden);
+    }
+
+    @Override
+    public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onInflate(activity, attrs, savedInstanceState);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onAttach(activity);
     }
 
     @Override

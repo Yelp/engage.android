@@ -7,30 +7,32 @@
     >
 
     <Button
+        android:layout_height="wrap_content"
         android:id="@+id/btn_test_auth"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_width="fill_parent"
-        android:layout_height="90dp"
         android:gravity="center_horizontal|center_vertical"
         android:layout_gravity="center_horizontal|center_vertical"
         android:text="@string/btn_auth_label"
         android:textSize="18dip"
         />
+    <!--android:layout_height="90dp"-->
+    <!--android:layout_marginTop="10dp"-->
+    <!--android:layout_marginRight="8dp"-->
+    <!--android:layout_marginLeft="8dp"-->
 
     <Button
+        android:layout_height="wrap_content"
         android:id="@+id/btn_test_pub"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_width="fill_parent"
-        android:layout_height="90dp"
         android:gravity="center_horizontal|center_vertical"
         android:layout_gravity="center_horizontal|center_vertical"
         android:text="@string/btn_pub_label"
         android:textSize="18dip"
         />
+    <!--android:layout_marginTop="10dp"-->
+    <!--android:layout_marginRight="8dp"-->
+    <!--android:layout_marginLeft="8dp"-->
+    <!--android:layout_height="90dp"-->
 
     <FrameLayout
         android:id="@id/jr_publish_fragment"

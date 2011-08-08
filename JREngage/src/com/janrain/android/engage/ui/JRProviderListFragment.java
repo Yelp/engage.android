@@ -248,9 +248,7 @@ public class JRProviderListFragment extends JRUiFragment {
      */
     private void doSessionPoll() {
         ++mTimerCount;
-        if (Config.LOGD) {
-            Log.d(TAG, "[doSessionPoll] timer count: " + mTimerCount);
-        }
+        if (Config.LOGD) Log.d(TAG, "[doSessionPoll] timer count: " + mTimerCount);
 
         if (mTimerCount > TIMER_MAX_ITERATIONS) {
             mTimer.cancel();

@@ -412,7 +412,7 @@ public class JRProvider implements Serializable {
     }
 
     private void downloadIcons(final Context c) {
-        Log.d(TAG, "downloadIcons: " + mName);
+        if (Config.LOGD) Log.d(TAG, "downloadIcons: " + mName);
 
         synchronized (this) {
             if (mCurrentlyDownloading) return;
@@ -432,7 +432,7 @@ public class JRProvider implements Serializable {
                         if (Arrays.asList(c.fileList()).contains("providericon~" + iconFileName))
                             continue;
 
-                        Log.d(TAG, "Downloading icon: " + iconFileName);
+                        if (Config.LOGD) Log.d(TAG, "Downloading icon: " + iconFileName);
                         URL url = new URL(JRSessionData.getEnvironment().getServerUrl()
                                 + "/cdn/images/mobile_icons/android/" + iconFileName);
                         InputStream is = url.openStream();
@@ -442,13 +442,12 @@ public class JRProvider implements Serializable {
                         byte buffer[] = new byte[1000];
                         int code;
                         while ((code = is.read(buffer, 0, buffer.length)) > 0) fos.write(buffer, 0, code);
-                        //while (is.available() > 0) fos.write(is.read());
 
                         fos.close();
                     } catch (MalformedURLException e) {
-                        Log.d(TAG, e.toString());
+                        if (Config.LOGD) Log.d(TAG, e.toString());
                     } catch (IOException e) {
-                        Log.d(TAG, e.toString());
+                        if (Config.LOGD) Log.d(TAG, e.toString());
                     }
                 }
                 mCurrentlyDownloading = false;

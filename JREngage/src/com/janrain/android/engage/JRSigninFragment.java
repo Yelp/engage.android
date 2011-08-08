@@ -21,13 +21,13 @@ public class JRSigninFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "[onCreate]");
+        if (Config.LOGD) Log.d(TAG, "[onCreate]");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        Log.d(TAG, "[onCreateView]");
+        if (Config.LOGD) Log.d(TAG, "[onCreateView]");
 
         View v = new View(getActivity());
         v.setBackgroundColor(0xffffffff);
@@ -37,7 +37,7 @@ public class JRSigninFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "[onResume]");
+        if (Config.LOGD) Log.d(TAG, "[onResume]");
 
         JRProviderListFragment plf = new JRProviderListFragment();
 
@@ -48,18 +48,18 @@ public class JRSigninFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "[onPause]");
+        if (Config.LOGD) Log.d(TAG, "[onPause]");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG, "[onDestroyView]");
+        if (Config.LOGD) Log.d(TAG, "[onDestroyView]");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "[onDestroy]");
+        if (Config.LOGD) Log.d(TAG, "[onDestroy]");
     }
 }

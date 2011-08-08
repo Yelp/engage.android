@@ -101,17 +101,19 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
      * Creates a managed HTTP GET connection.
      *
      * @param requestUrl
-     *      The URL to be executed.
+     *      The URL to be executed. May not be null.
      *
      * @param delegate
-     *      The delegate (listener) class instance.
+     *      The delegate (listener) class instance. May be null.
      *
      * @param shouldReturnFullResponse
-     *      Whether or not a full response should be returned.  Quite frankly, this doesn't make
-     *      a lot of sense on Android and it's not used...
+     *      <code>true</code> to call the "full response" connectionDidFinishLoading delegate method --
+     *      connectionDidFinishLoading(HttpResponseHeaders, byte[], String,  Object) --  which
+     *      includes the HTTP headers, or <code>false</code> to call
+     *      connectionDidFinishLoading(String, String, Object)
      *
      * @param userdata
-     *      The tag object associated with the connection.
+     *      The tag object associated with the connection. May be null.
      *
      * @return
      *      <code>true</code> if the connection is created successfully, <code>false</code>
@@ -130,24 +132,27 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
      * Creates a managed HTTP GET connection.
      *
      * @param requestUrl
-     *      The URL to be executed.
+     *      The URL to be executed. May not be null.
      *
      * @param delegate
-     *      The delegate (listener) class instance.
+     *      The delegate (listener) class instance. May be null.
      *
      * @param shouldReturnFullResponse
-     *      Whether or not a full response should be returned.  Quite frankly, this doesn't make
-     *      a lot of sense on Android and it's not used...
+     *      <code>true</code> to call the "full response" connectionDidFinishLoading delegate method --
+     *      connectionDidFinishLoading(HttpResponseHeaders, byte[], String,  Object) --  which
+     *      includes the HTTP headers, or <code>false</code> to call
+     *      connectionDidFinishLoading(String, String, Object)
+     *
+     * @param userdata
+     *      The tag object associated with the connection. May be null.
      *
      * @param requestHeaders
      *      Any additional headers to be sent with the connection.
      *
-     * @param userdata
-     *      The tag object associated with the connection.
-     *
      * @return
      *      <code>true</code> if the connection is created successfully, <code>false</code>
      *      otherwise.
+     *
      */
     public static boolean createConnection(String requestUrl,
                                            JRConnectionManagerDelegate delegate,
@@ -172,23 +177,25 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
     }
 
     /**
-     * Creates a managed HTTP POST connection.
+     *  Creates a managed HTTP POST connection.
      *
      * @param requestUrl
-     *      The URL to be executed.
+     *      The URL to be executed. May not be null.
      *
      * @param postData
-     *      The data to be sent to the server via POST.
+     *      The data to be sent to the server via POST. May be null.
      *
      * @param delegate
-     *      The delegate (listener) class instance.
+     *      The delegate (listener) class instance. May be null.
      *
      * @param shouldReturnFullResponse
-     *      Whether or not a full response should be returned.  Quite frankly, this doesn't make
-     *      a lot of sense on Android and it's not used...
+     *      <code>true</code> to call the "full response" connectionDidFinishLoading delegate method --
+     *      connectionDidFinishLoading(HttpResponseHeaders, byte[], String,  Object) --  which
+     *      includes the HTTP headers, or <code>false</code> to call
+     *      connectionDidFinishLoading(String, String, Object)
      *
      * @param userdata
-     *      The tag object associated with the connection.
+     *      The tag object associated with the connection. May be null.
      *
      * @return
      *      <code>true</code> if the connection is created successfully, <code>false</code>
@@ -199,8 +206,7 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
                                            JRConnectionManagerDelegate delegate,
                                            boolean shouldReturnFullResponse,
                                            Object userdata) {
-
-		// get singleton instance (lazy init)
+        if (postData == null) postData = new byte[0];
 		JRConnectionManager instance = getInstance();
         ConnectionData cd = new ConnectionData(delegate, shouldReturnFullResponse, userdata);
         cd.setRequestUrl(requestUrl);
@@ -229,6 +235,8 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 
         mConnectionBuffers.remove(connectionData);
         JRConnectionManagerDelegate delegate = connectionData.mDelegate;
+
+        if (delegate == null) return;
 
         if (response.hasException()) {
             delegate.connectionDidFail(response.getException(), requestUrl, connectionData.mTag);
