@@ -29,22 +29,23 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
-//import android.R;
-import android.R;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.support.v4.app.Fragment;
+//import android.content.res.Resources;
+//import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
+import android.util.Config;
 import android.util.Log;
 import android.view.*;
-import com.janrain.android.engage.JREngage;
+//import android.view.inputmethod.InputMethodManager;
+//import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.utils.AndroidUtils;
 
@@ -56,7 +57,6 @@ import com.janrain.android.engage.utils.AndroidUtils;
  **/
 public class JRFragmentHostActivity extends FragmentActivity {
     private static final String TAG = JRFragmentHostActivity.class.getSimpleName();
-
     public static final String JR_FRAGMENT_ID = "JR_FRAGMENT_ID";
     public static final int JR_PROVIDER_LIST = 4;
     public static final int JR_LANDING = 1;
@@ -76,6 +76,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFragmentId = getIntent().getExtras().getInt(JR_FRAGMENT_ID);
+        Log.d(TAG, "[onCreate]: " + mFragmentId);
 
         mSessionData = JRSessionData.getInstance();
         /* For the case when this activity is relaunched after the process was killed */
@@ -91,63 +92,44 @@ public class JRFragmentHostActivity extends FragmentActivity {
                     case JR_LANDING:
                         /* fall through to provider list */
                     case JR_PROVIDER_LIST:
-                        //getTheme().applyStyle(16973945, true);
-                        //Resources.Theme t = Resources.getSystem().newTheme();
-                        //t.applyStyle(R.style.Theme_Holo_Light, true);
-                        //t.applyStyle(16973945, true);
-                        //getTheme().setTo(t);
-                        //getTheme().
-                        //setTheme(16973945); // R.style.Theme_Holo_Light_DialogWhenLarge
-                        //setTheme(R.style.Theme_Dialog);
+                        setTheme(16973945); // R.style.Theme_Holo_Light_DialogWhenLarge
                         break;
                     case JR_WEBVIEW:
                         /* fall through to publish */
                     case JR_PUBLISH:
                         setTheme(16973946); // R.style.Theme_Holo_Light_DialogWhenLarge_NoActionBar
-                        //setTheme(R.style.Theme_Dialog);
                         break;
                     default: throw new IllegalFragmentIdException(mFragmentId);
                 }
-            } else {
-                switch (mFragmentId) {
-                    case JR_LANDING:
-                    case JR_PROVIDER_LIST:
-                        setTheme(R.style.Theme_NoTitleBar);
-                        //this.getTheme().
-                        break;
-                    case JR_WEBVIEW:
-                    case JR_PUBLISH:
-                        setTheme(R.style.Theme_Light_NoTitleBar);
-                        break;
-                    default: throw new IllegalFragmentIdException(mFragmentId);
-                }
+            } else { // else less than Honeycomb and bigger than normal screen
+                //switch (mFragmentId) {
+                //    case JR_LANDING:
+                //    case JR_PROVIDER_LIST:
+                //        setTheme(android.R.style.Theme_NoTitleBar);
+                //        //this.getTheme().
+                //        break;
+                //    case JR_WEBVIEW:
+                //    case JR_PUBLISH:
+                //        setTheme(android.R.style.Theme_Light_NoTitleBar);
+                //        break;
+                //    default: throw new IllegalFragmentIdException(mFragmentId);
+                //}
             }
-        } else { // Full screen mode
-            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-            lp.copyFrom(getWindow().getAttributes());
-            lp.width = WindowManager.LayoutParams.FILL_PARENT;
-            lp.height = WindowManager.LayoutParams.FILL_PARENT;
-            getWindow().setAttributes(lp);
-
-            Context c = JREngage.getContext();
-            if (c instanceof Activity) {
-                Resources.Theme t = c.getTheme();
-                getTheme().setTo(t);
-                //setTheme();
-            }
-            //setTheme(R.style.Theme_Light);
-
-            if (mFragmentId == JR_WEBVIEW) {
-                //Request progress indicator
-                requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-                //requestWindowFeature(Window.FEATURE_PROGRESS);
-            }
+        } else { // else full screen mode
         }
 
         if (savedInstanceState == null) {
-            // todo verify this flow control path -- when will savedInstanceState != null?
             switch (mFragmentId) {
                 case JR_PROVIDER_LIST:
+                    /* check and see whether we should start the landing page */
+                    String rbp = mSessionData.getReturningBasicProvider();
+                    if (!TextUtils.isEmpty(rbp)) {
+                        mSessionData.setCurrentlyAuthenticatingProvider(rbp);
+                        Intent i = createIntentForCurrentScreen(this, true);
+                        i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JR_LANDING);
+                        startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
+                    }
+
                     mUiFragment = new JRProviderListFragment();
                     break;
                 case JR_LANDING:
@@ -170,15 +152,14 @@ public class JRFragmentHostActivity extends FragmentActivity {
                     .commit();
         } else {
             //savedInstanceState != null
-        }
 
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
-        //    | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+            // todo verify this flow control path -- when will savedInstanceState != null?
+        }
     }
 
     @Override
     public void setTheme(int r) {
-        Log.d(TAG, "test");
+        Log.d(TAG, "setTheme");
         super.setTheme(r);
     }
 
@@ -193,34 +174,34 @@ public class JRFragmentHostActivity extends FragmentActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
         autoSetSize();
     }
 
     private void autoSetSize() {
         if (!AndroidUtils.isSmallOrNormalScreen()) {
-            //View content = findViewById(android.R.id.content);
-            //content.setMinimumHeight(AndroidUtils.scaleDipPixels(600));
-            //content.setMinimumHeight(AndroidUtils.scaleDipPixels(height));
-            //content.setMinimumWidth(AndroidUtils.scaleDipPixels(width));
-
             int height = (int) (1.0 / Math.sqrt(2.0) * getResources().getDisplayMetrics().heightPixels);
             int width = (int) (1.0 / Math.sqrt(2.0) * getResources().getDisplayMetrics().widthPixels);
-            getWindow().setLayout(width, height);
 
-            //if (mFragmentId == JR_PUBLISH) {
-            //    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-            //    lp.copyFrom(getWindow().getAttributes());
-            //    lp.width = WindowManager.LayoutParams.FILL_PARENT;
-            //    //lp.height = WindowManager.LayoutParams.FILL_PARENT;
-            //    getWindow().setAttributes(lp);
-            //}
+            //View v = findViewById(android.R.id.content);
+            //ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
+            //layoutParams.
+            //v.setLayoutParams(layoutParams);
+            //v.setMinimumHeight(height);
+            //v.setMinimumWidth(width);
+            getWindow().setLayout(width, height);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (Config.LOGD) Log.d(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode <= 1<<16) mUiFragment.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -296,16 +277,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
         return mLayoutHelper.handleAboutMenu(item) || super.onOptionsItemSelected(item);
     }
 
-    //public static Class<? extends Fragment> getFragmentClassForId(int fragId) {
-    //    switch (fragId) {
-    //        case JR_PROVIDER_LIST: return JRProviderListFragment.class;
-    //        case JR_LANDING: return JRLandingFragment.class;
-    //        case JR_WEBVIEW: return JRWebViewFragment.class;
-    //        case JR_PUBLISH: return JRPublishFragment.class;
-    //        default: throw new IllegalFragmentIdException(fragId);
-    //    }
-    //}
-
     public static class IllegalFragmentIdException extends RuntimeException {
         int mFragId;
 
@@ -318,10 +289,15 @@ public class JRFragmentHostActivity extends FragmentActivity {
         }
     }
 
-    public static Intent makeIntentForCurrentScreen(Context c) {
+    public static Intent createIntentForCurrentScreen(Context c, boolean showTitleBar) {
         if (AndroidUtils.isSmallOrNormalScreen()) {
-            return new Intent(c, JRFragmentHostActivityFullscreen.class);
+            if (showTitleBar) {
+                return new Intent(c, JRFragmentHostActivityFullscreen.class);
+            } else {
+                return new Intent(c, JRFragmentHostActivityFullscreenNoTitleBar.class);
+            }
         } else {
+            // ignore showTitleBar, this activity dynamically enables and disables its title
             return new Intent(c, JRFragmentHostActivity.class);
         }
     }

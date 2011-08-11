@@ -101,14 +101,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
 
-        setContentView(R.layout.main);
-
-        mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
-        mBtnTestAuth.setOnClickListener(this);
-
-        mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
-        mBtnTestPub.setOnClickListener(this);
-
         String engageAppId = readAsset("app_id.txt").trim();
         String engageTokenUrl = readAsset("token_url.txt").trim();
 
@@ -128,9 +120,22 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         } else {
             // Build an ~empty Activity
             buildActivity();
-
-            asyncLoadJanrainBlog();
         }
+
+        setContentView(R.layout.main);
+
+        mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
+        mBtnTestAuth.setOnClickListener(this);
+        mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
+        mBtnTestPub.setOnClickListener(this);
+        mBtnTestPub.setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View v) {
+                mEngage.showSocialPublishingDialog(mActivity);
+                return true;
+            }
+        });
+
+        if (savedInstanceState == null) asyncLoadJanrainBlog();
     }
 
     void buildActivity() {
@@ -288,7 +293,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     // JREngage DELEGATE METHODS
     // ------------------------------------------------------------------------
     public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-        mDialogErrorMessage = "JREngage dialog failed to show, error: " +
+        mDialogErrorMessage = "Simpledemo:\nJREngage dialog failed to show.\nError: " +
                 ((error == null) ? "unknown" : error.getMessage());
 
         showDialog(DIALOG_JRENGAGE_ERROR);

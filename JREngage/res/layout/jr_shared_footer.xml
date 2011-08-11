@@ -7,7 +7,7 @@
     android:layout_weight="0.0"
     android:id="@+id/jr_tagline"
     android:orientation="horizontal"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="30dip"
     android:layout_alignParentBottom="true"
     android:background="@drawable/jr_bg_provider_footer"
@@ -15,7 +15,7 @@
 
     <TextView
         android:id="@+id/jr_footer_text"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:text="@string/jr_powered_by"

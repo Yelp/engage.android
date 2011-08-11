@@ -48,6 +48,7 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.AttributeSet;
 import android.util.Config;
 import android.util.Log;
 import android.util.TypedValue;
@@ -84,7 +85,7 @@ import java.util.List;
  * Publishing UI
  */
 public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChangeListener {
-    static {
+    {
         TAG = JRPublishFragment.class.getSimpleName();
     }
 
@@ -176,7 +177,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         /* Set the user comment field here before the text change listener is registered so that
          * it can be displayed while the providers are being loaded (if this is a first run.)
          * The text change listener will be fired when the first tab is initially selected. */
-        mUserCommentView.setText(mActivityObject.getUserGeneratedContent());
+        String userContent = mActivityObject.getUserGeneratedContent();
+        mUserCommentView.setText(userContent);
 
         /* View listeners */
         mEmailButton.setOnClickListener(mEmailButtonListener);
@@ -688,7 +690,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 ProgressDialog pd = new ProgressDialog(getActivity());
                 pd.setCancelable(false);
                 pd.setTitle("");
-                pd.setMessage("Loading first run configuration data. Please wait...");
+                pd.setMessage("Loading configuration data.\nPlease wait...");
                 pd.setIndeterminate(false);
                 return pd;
             case DIALOG_NO_EMAIL_CLIENT:

@@ -20,7 +20,6 @@ import java.util.HashMap;
  * User: nathan
  * Date: 7/11/11
  * Time: 1:51 PM
- * To change this template use File | Settings | File Templates.
  */
 public abstract class JRUiFragment extends Fragment {
     public static final int REQUEST_LANDING = 1;
@@ -32,7 +31,7 @@ public abstract class JRUiFragment extends Fragment {
 
     protected SharedLayoutHelper mLayoutHelper;
     protected JRSessionData mSessionData;
-    protected static String TAG = JRUiFragment.class.getSimpleName();
+    protected String TAG = JRUiFragment.class.getSimpleName();
 
 
     /**
@@ -43,7 +42,7 @@ public abstract class JRUiFragment extends Fragment {
      * for iPhone-like ability to close this activity from the maestro class.
      **/
     private class FinishReceiver extends BroadcastReceiver {
-        private final String TAG = JRUiFragment.TAG + "-" + FinishReceiver.class.getSimpleName();
+        private String TAG = JRUiFragment.this.TAG + "-" + FinishReceiver.class.getSimpleName();
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -61,64 +60,12 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        if (Config.LOGD) Log.d(TAG, "[onActivityCreated]");
-        super.onActivityCreated(savedInstanceState);
-        mLayoutHelper = new SharedLayoutHelper(getActivity());
-    }
-
-    @Override
-    public void onDetach() {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
-        super.onDetach();
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (Config.LOGD) Log.d(TAG, "[onDestroyView]");
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onPause() {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
-        super.onPause();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
-        super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public void onStart() {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
-        super.onStart();
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
-        super.onHiddenChanged(hidden);
-    }
-
-    @Override
-    public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
-        super.onInflate(activity, attrs, savedInstanceState);
-    }
-
-    @Override
     public void onAttach(Activity activity) {
         if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
         super.onAttach(activity);
+
+        if (mFinishReceiver == null) mFinishReceiver = new FinishReceiver();
+        getActivity().registerReceiver(mFinishReceiver, JRFragmentHostActivity.FINISH_INTENT_FILTER);
     }
 
     @Override
@@ -128,11 +75,21 @@ public abstract class JRUiFragment extends Fragment {
 
         setRetainInstance(true);
         mSessionData = JRSessionData.getInstance();
+    }
 
-        if (mFinishReceiver == null) {
-            mFinishReceiver = new FinishReceiver();
-            getActivity().registerReceiver(mFinishReceiver, JRFragmentHostActivity.FINISH_INTENT_FILTER);
-        }
+    //onCreateView
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        if (Config.LOGD) Log.d(TAG, "[onActivityCreated]");
+        super.onActivityCreated(savedInstanceState);
+        mLayoutHelper = new SharedLayoutHelper(getActivity());
+    }
+
+    @Override
+    public void onStart() {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onStart();
     }
 
     @Override
@@ -143,12 +100,67 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (Config.LOGD) Log.d(TAG, "[onDestroyView]");
+        super.onDestroyView();
+    }
+
+    @Override
     public void onDestroy() {
         if (Config.LOGD) Log.d(TAG, "[onDestroy]");
         super.onDestroy();
-
-        if (mFinishReceiver != null) getActivity().unregisterReceiver(mFinishReceiver);
     }
+
+    @Override
+    public void onDetach() {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        if (mFinishReceiver != null) getActivity().unregisterReceiver(mFinishReceiver);
+
+        super.onDetach();
+    }
+
+    //--
+    @Override
+    public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onInflate(activity, attrs, savedInstanceState);
+
+        if (JRSessionData.getInstance() == null) {
+            throw new IllegalStateException("You must call JREngage.initInstance before inflating " +
+                    "JREngage fragments.");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        super.onHiddenChanged(hidden);
+    }
+    //--
 
     public boolean isEmbeddedMode() {
         return mEmbeddedMode;
@@ -190,7 +202,18 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     private void startActivityForFragId(int fragId, int requestCode) {
-        Intent i = JRFragmentHostActivity.makeIntentForCurrentScreen(getActivity());
+        boolean showTitle;
+        switch (fragId) {
+            case JRFragmentHostActivity.JR_LANDING:
+                showTitle = true;
+                break;
+            case JRFragmentHostActivity.JR_WEBVIEW:
+                showTitle = false;
+                break;
+            default: throw new JRFragmentHostActivity.IllegalFragmentIdException(fragId);
+        }
+
+        Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(getActivity(), showTitle);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, fragId);
         startActivityForResult(i, requestCode);
     }

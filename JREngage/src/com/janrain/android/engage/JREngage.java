@@ -495,7 +495,7 @@ public class JREngage {
      * start a new Android Activity and take the user through the sign-in process.
      **/
     public void showAuthenticationDialog() {
-        if (Config.LOGD) Log.d(TAG, "[showProviderSelection]");
+        if (Config.LOGD) Log.d(TAG, "[showAuthenticationDialog]");
 
         showAuthenticationDialog(false);
     }
@@ -514,13 +514,16 @@ public class JREngage {
      *  setAlwaysForceReauthentication().
      **/
     public void showAuthenticationDialog(boolean skipReturningUserLandingPage) {
-        if (Config.LOGD) Log.d(TAG, "[showAuthenticationDialog(boolean skipReturningUserLandingPage)]");
+        if (Config.LOGD) {
+            Log.d(TAG, "[showAuthenticationDialog(boolean skipReturningUserLandingPage)] "
+                    + skipReturningUserLandingPage);
+        }
 
         if (checkSessionDataError()) return;
 
         mSessionData.setSkipLandingPage(skipReturningUserLandingPage);
 
-        Intent i = JRFragmentHostActivity.makeIntentForCurrentScreen(mContext);
+        Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mContext, true);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PROVIDER_LIST);
         mContext.startActivity(i);
     }
@@ -548,7 +551,7 @@ public class JREngage {
 
         mSessionData.setJRActivity(activity);
 
-        Intent i = JRFragmentHostActivity.makeIntentForCurrentScreen(mContext);
+        Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mContext, false);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
         mContext.startActivity(i);
     }
@@ -583,9 +586,11 @@ public class JREngage {
         JRUiFragment f = new JRPublishFragment();
         f.setEmbeddedMode(true);
         fm.beginTransaction()
-                .add(fragmentContainer.getId(), f, f.getClass().getSimpleName())
-                .addToBackStack(JRPublishFragment.class.getSimpleName())
+                //.add(fragmentContainer.getId(), f, f.getClass().getSimpleName())
+                .replace(fragmentContainer.getId(), f, f.getClass().getSimpleName())
+                //.addToBackStack(JRPublishFragment.class.getSimpleName())
                 .commit();
+        //stopped here
     }
 /*@}*/
 

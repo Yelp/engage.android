@@ -4,8 +4,8 @@
    - Layout for JRLandingActivity
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="#FFFFFFFF"
     >
 
@@ -30,7 +30,7 @@
 
         <ImageView
             android:id="@+id/jr_landing_logo"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
@@ -43,7 +43,7 @@
         <EditText
             android:id="@+id/jr_landing_edit"
             android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
             android:layout_marginRight="4dp"
@@ -70,7 +70,7 @@
 
         <LinearLayout
             android:id="@+id/jr_landing_buttons"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:orientation="horizontal"
@@ -79,7 +79,7 @@
             <com.janrain.android.engage.ui.ColorButton
                 android:id="@+id/jr_landing_switch_account_button"
                 android:visibility="invisible"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginTop="4dp"
@@ -95,7 +95,7 @@
             <com.janrain.android.engage.ui.ColorButton
                 android:id="@+id/jr_landing_small_signin_button"
                 android:visibility="visible"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginTop="4dp"

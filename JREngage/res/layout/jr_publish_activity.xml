@@ -5,28 +5,28 @@
   -->
 <TabHost xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/tabhost"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     >
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         >
         <!--android:padding="0dp"-->
 
         <TabWidget
             android:id="@android:id/tabs"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
         <!--android:background="#888888"-->
 
         <FrameLayout
             android:id="@android:id/tabcontent"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             >
             <!--android:paddingTop="0dp"-->
             <!--According to
@@ -36,15 +36,15 @@
 
             <RelativeLayout
                 android:id="@+id/jr_tab_email_sms_content"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:padding="5dp"
                 android:orientation="vertical"
                 >
 
                 <EditText
                     android:id="@+id/jr_email_sms_edit_comment"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dip"
                     android:layout_marginRight="4dip"
@@ -60,7 +60,7 @@
                 <LinearLayout
                     android:id="@+id/jr_email_sms_button_layout"
                     android:layout_height="wrap_content"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:background="@color/jr_JANRAIN_BLUE_20PERCENT"
                     android:layout_alignParentBottom="true"
                     android:orientation="vertical"
@@ -79,7 +79,7 @@
                     <LinearLayout
                         android:id="@+id/jr_email_sms_button_container"
                         android:layout_height="wrap_content"
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:orientation="vertical"
                         >
 
@@ -91,7 +91,7 @@
                         <com.janrain.android.engage.ui.ColorButton
                             android:id="@+id/jr_email_button"
                             android:layout_height="wrap_content"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:text="Email"
                             android:gravity="center_horizontal|center_vertical"
                             android:textSize="20dip"
@@ -106,7 +106,7 @@
                         <com.janrain.android.engage.ui.ColorButton
                             android:id="@+id/jr_sms_button"
                             android:layout_height="wrap_content"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_above="@id/jr_email_button"
                             android:text="SMS"
                             android:gravity="center_horizontal|center_vertical"
@@ -143,14 +143,14 @@
             <RelativeLayout
                 android:id="@+id/jr_tab_view_content"
                 android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:padding="5dp"
                 >
 
                 <EditText
                     android:id="@+id/jr_edit_comment"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dip"
                     android:layout_marginRight="4dip"
@@ -184,7 +184,7 @@
                      weird. -->
                 <RelativeLayout
                     android:id="@+id/jr_nested_layout_mania_sunday_sunday_sunday"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/jr_character_count_view"
                     android:layout_above="@+id/jr_provider_icon"
@@ -198,7 +198,7 @@
                     <!--Cute name, btw...-->
                     <RelativeLayout
                         android:id="@+id/jr_preview_box"
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/jr_bg_publish_preview"
                         android:paddingBottom="4dip"
@@ -207,7 +207,7 @@
 
                         <LinearLayout
                             android:id="@+id/jr_preview_box_border"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:layout_alignParentLeft="true"
@@ -239,7 +239,7 @@
 
                             <RelativeLayout
                                 android:id="@+id/jr_media_content_view"
-                                android:layout_width="fill_parent"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="3dip"
                                 android:layout_marginLeft="4dip"
@@ -368,7 +368,7 @@
                 <LinearLayout
                     android:id="@+id/jr_user_profile_information_and_share_button_container"
                     android:orientation="vertical"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:gravity="top|center_horizontal"
@@ -388,7 +388,7 @@
                         android:id="@+id/jr_profile_pic_and_buttons_horizontal_layout"
                         android:orientation="horizontal"
                         android:layout_height="wrap_content"
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:gravity="center_horizontal|center_vertical"
                         android:paddingTop="0dip"
                         android:paddingRight="10dip"
@@ -403,7 +403,7 @@
                             android:id="@+id/jr_user_profile_container"
                             android:orientation="horizontal"
                             android:layout_height="wrap_content"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:visibility="gone"
                             android:padding="0dip"
                             android:layout_weight="1"
@@ -428,7 +428,7 @@
                                 android:id="@+id/jr_name_and_sign_out_container"
                                 android:orientation="vertical"
                                 android:layout_height="wrap_content"
-                                android:layout_width="fill_parent"
+                                android:layout_width="match_parent"
                                 android:paddingTop="0dip"
                                 android:paddingRight="5dip"
                                 android:paddingBottom="0dip"
@@ -439,14 +439,14 @@
                                 <!--android:layout_width="130dip"-->
                                 <!--android:paddingTop="0dip"-->
                                 <!--android:background="#330000ff"-->
-                                <!--android:layout_width="fill_parent"-->
+                                <!--android:layout_width="match_parent"-->
                                 <!--android:layout_alignParentBottom="true"-->
                                 <!--android:gravity="top|center_horizontal"-->
 
                                 <TextView
                                     android:id="@+id/jr_user_name"
-                                    android:layout_width="fill_parent"
-                                    android:layout_height="fill_parent"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
                                     android:gravity="top|left"
                                     android:singleLine="true"
                                     android:paddingBottom="5dip"
@@ -462,8 +462,8 @@
 
                                 <Button
                                     android:id="@+id/jr_sign_out_button"
-                                    android:layout_width="fill_parent"
-                                    android:layout_height="fill_parent"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
                                     android:text="Sign Out"
                                     android:textSize="10dip"
                                     android:gravity="bottom|left"
@@ -485,7 +485,7 @@
 
                         <com.janrain.android.engage.ui.ColorButton
                             android:id="@+id/jr_just_share_button"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:gravity="center_horizontal|center_vertical"
@@ -508,7 +508,7 @@
                             android:id="@+id/jr_shared_text_and_check_mark_horizontal_layout"
                             android:orientation="horizontal"
                             android:layout_height="wrap_content"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:gravity="right|center_vertical"
                             android:visibility="gone"
                             android:layout_weight="1"
@@ -516,7 +516,7 @@
 
                             <TextView
                                 android:id="@+id/jr_shared"
-                                android:layout_width="fill_parent"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="right"
                                 android:layout_centerVertical="true"
@@ -541,7 +541,7 @@
 
                         <com.janrain.android.engage.ui.ColorButton
                             android:id="@+id/jr_connect_and_share_button"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:gravity="center_horizontal|center_vertical"

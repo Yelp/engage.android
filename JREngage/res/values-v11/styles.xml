@@ -11,7 +11,5 @@
         <!--<item name="android:textStyle">bold</item>-->
         <!--<item name="android:textColor">?textColorPrimary</item>-->
     </style>
-    <style name="jr_fullscreen" parent="@android:style/Theme.Holo.Light">
-
-    </style>
+    <style name="jr_fullscreen" parent="@android:style/Theme.Holo.Light" />
 </resources>

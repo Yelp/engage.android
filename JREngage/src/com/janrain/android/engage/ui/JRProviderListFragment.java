@@ -58,8 +58,8 @@ import java.util.TimerTask;
 public class JRProviderListFragment extends JRUiFragment {
     public static final int RESULT_FAIL = Activity.RESULT_FIRST_USER;
 
-    static {
-        TAG = JRLandingFragment.class.getSimpleName();
+    {
+        TAG = JRProviderListFragment.class.getSimpleName();
     }
 
     /**
@@ -205,8 +205,9 @@ public class JRProviderListFragment extends JRUiFragment {
         }
     };
 
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
+        if (Config.LOGD) Log.d(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
         switch (requestCode) {
             case JRUiFragment.REQUEST_LANDING:
                 switch (resultCode) {
@@ -243,7 +244,7 @@ public class JRProviderListFragment extends JRUiFragment {
     }
 
     /**
-     * Called by timer (on fire interval).  Used when providers are not found in JRSessionData.
+     * Called by timer.  Used when providers are not found in JRSessionData.
      * Continues polling until providers are found or the polling threshold is hit.
      */
     private void doSessionPoll() {

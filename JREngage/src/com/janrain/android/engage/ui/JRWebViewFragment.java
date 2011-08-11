@@ -63,7 +63,7 @@ public class JRWebViewFragment extends JRUiFragment {
     public static final int RESULT_RESTART = 1;
     public static final int RESULT_FAIL = 2;
 
-    static {
+    {
         TAG = JRWebViewFragment.class.getSimpleName();
     }
 
@@ -135,6 +135,7 @@ public class JRWebViewFragment extends JRUiFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mWebView.stopLoading();
 
         //todo fragment fixme dialogs are going away what do
         mLayoutHelper.dismissProgressDialog();
@@ -261,18 +262,13 @@ public class JRWebViewFragment extends JRUiFragment {
                 mWebView.stopLoading();
             }
 
-            //setProgressBarIndeterminateVisibility(true);
             showProgressSpinner();
-
-            //super.onPageStarted(view, url, favicon);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             if (Config.LOGD) Log.d(TAG, "[onPageFinished] url: " + url);
 
-
-            //setProgressBarIndeterminateVisibility(false);
             hideProgressSpinner();
 
             List<String> jsInjects =
@@ -291,7 +287,6 @@ public class JRWebViewFragment extends JRUiFragment {
             Log.e(TAG, "[onReceivedError] code: " + errorCode + " | description: " + description
                 + " | url: " + url);
 
-            //setProgressBarIndeterminateVisibility(false);
             hideProgressSpinner();
 
             //mIsFinishPending = true;
@@ -411,7 +406,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
                 final String tag = (String)userdata;
                 if (tag.equals(RPX_RESULT_TAG)) {
-                    // Back button?
+                    // Back button? race condition
                     mSessionData.triggerAuthenticationDidFail(error);
                 } else if (tag.equals("request")) {
                     // Back button?

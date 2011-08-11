@@ -4,14 +4,14 @@
    - Layout for JRProviderListFragment
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     >
 
     <!-- List view (list) -->
     <ListView
         android:id="@id/android:list"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/jr_tagline"
         android:layout_alignParentTop="true"
@@ -30,8 +30,8 @@
     <!-- List view (empty state) -->
     <TextView
         android:id="@+id/jr_empty_label"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:text="@string/jr_provider_list_empty"
         android:gravity="center_horizontal|center_vertical"
         android:layout_above="@+id/jr_tagline"
@@ -41,7 +41,7 @@
     <!-- Footer (powered by) area -->
     <include layout="@layout/jr_shared_footer"
             android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_alignParentBottom="true"
             />
 

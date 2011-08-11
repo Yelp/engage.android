@@ -50,14 +50,13 @@ import com.janrain.android.engage.session.JRProvider;
 /**
  * @internal
  *
- * @class JRLandingActivity
- * Landing Page Activity
+ * @class JRLandingFragment
  **/
 public class JRLandingFragment extends JRUiFragment {
     public static final int RESULT_SWITCH_ACCOUNTS = 1;
     public static final int RESULT_RESTART = 2;
 
-    static {
+    {
         TAG = JRLandingFragment.class.getSimpleName();
     }
 
@@ -158,6 +157,7 @@ public class JRLandingFragment extends JRUiFragment {
                     getActivity().finish();
                     break;
                 case JRWebViewFragment.RESULT_RESTART:
+                    // todo backup?
                     break;
                 default:
                     throw new RuntimeException("unrecognized result code");
@@ -263,8 +263,10 @@ public class JRLandingFragment extends JRUiFragment {
 
     private String getCustomTitle() {
         JRProvider provider = mSessionData.getCurrentlyAuthenticatingProvider();
-        return provider.requiresInput()
-                ? provider.getShortText()
-                : getString(R.string.jr_landing_default_custom_title);
+        if (provider.requiresInput()) {
+            return provider.getShortText();
+        } else {
+            return getString(R.string.jr_landing_default_custom_title);
+        }
     }
 }
