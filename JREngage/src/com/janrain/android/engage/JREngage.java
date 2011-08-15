@@ -33,7 +33,7 @@ package com.janrain.android.engage;
 // package.html type package documentation tag for Doxygen
 
 // removed from the docs until these features are implemented:
-//- Customize the login experience by displaying native and social login options on the same screen
+//- Customize the sign-in experience by displaying native and social sign-in options on the same screen
 //- Match the look and feel of the iPhone app with customizable background colors, images, and navigation bar tints
 
 

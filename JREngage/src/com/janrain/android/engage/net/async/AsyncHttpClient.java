@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @internal
@@ -99,15 +100,18 @@ public final class AsyncHttpClient {
             HttpURLConnection connection = null;
 
             //Debugging statement to simulate slow networks
-            //try { Thread.sleep(10000); } catch (InterruptedException e) {}
+            try { Thread.sleep(10000); } catch (InterruptedException e) {}
 
             //float f = new Random().nextFloat();
-            //try { Thread.sleep((int) (20000 * f)); } catch (InterruptedException e) {}
+            //try { Thread.sleep((int) (4000 * f)); } catch (InterruptedException e) {}
 
             try {
                 url = new URL(mUrl);
 
                 connection = (HttpURLConnection) url.openConnection();
+                // 20 second timeouts
+                connection.setConnectTimeout(20 * 1000);
+                connection.setReadTimeout(20 * 1000);
 
                 addRequestHeaders(connection);
 
@@ -159,8 +163,8 @@ public final class AsyncHttpClient {
                     if (b != null) r = new String(b);
 
                     // Maybe this shouldn't be globbed together, but instead be structured
-                    // to allow the error response handler to make meaningful use of the web
-                    // servers response (here contained in String r)
+                    // to allow the error handler to make meaningful use of the web
+                    // servers response (contained in String r)
                     String message = "[run] Unexpected HTTP response:  [code: "
                             + connection.getResponseCode() + " | message: "
                             + connection.getResponseMessage() + " error: "

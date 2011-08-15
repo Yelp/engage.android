@@ -140,8 +140,6 @@ public class JRProviderListFragment extends JRUiFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mSessionData = JRSessionData.getInstance();
-
         View listView = inflater.inflate(R.layout.jr_provider_listview, container, false);
 
         mListView = (ListView) listView.findViewById(android.R.id.list);
@@ -233,6 +231,12 @@ public class JRProviderListFragment extends JRUiFragment {
                         getActivity().finish();
                         break;
                     case JRWebViewFragment.RESULT_RESTART:
+                        break;
+                    case JRWebViewFragment.RESULT_BAD_OPENID_URL:
+                        // This result is not expected, but I can't test extensively enough to verify
+                        // that it cannot be returned, therefore if it is returned we log it and display
+                        // the provider selection as usual.
+                        Log.e(TAG, "Unexpected RESULT_BAD_OPENID_URL from JRWebView");
                         break;
                     default:
                         throw new RuntimeException("unrecognized result code");

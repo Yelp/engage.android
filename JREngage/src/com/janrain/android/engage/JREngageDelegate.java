@@ -93,7 +93,7 @@ public interface JREngageDelegate {
      *
      * @param auth_info
      *   A JRDictionary of fields containing all the information that Janrain Engage knows about
-     *   the user logging into your application.  Includes the field \e "profile" which contains the
+     *   the user signing in to your application.  Includes the field \e "profile" which contains the
      *   user's profile information.
      *
      * @param provider

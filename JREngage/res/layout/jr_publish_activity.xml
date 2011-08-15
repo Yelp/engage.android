@@ -361,7 +361,6 @@
                     android:layout_alignParentRight="true"
                     android:layout_above="@+id/jr_user_profile_information_and_share_button_container"
                     android:layout_marginBottom="4dip"
-                    android:src="@drawable/jr_icon_facebook"
                     />
                     <!--android:layout_marginRight="4dip"-->
 

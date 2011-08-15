@@ -238,20 +238,21 @@ public class JRActivityObject {
  **/
 /*@{*/
     /**
-     * Returns a JRActivityObject initialized with the given action and url.
+     * Returns a JRActivityObject initialized with the given action and URL.
      *
      * @param action
      *   A string describing what the user did, written in the third person.  This value cannot
-     *   be null
+     *   be null.
      *
      * @param url
-     *   The URL of the resource being mentioned in the activity update
+     *   The URL of the resource being mentioned in the activity update. May be null
      *
      * @throws IllegalArgumentException
-     *   if text or href is null
+     *   if action is null
      **/
     public JRActivityObject(String action, String url) {
-        if (action == null) throw new IllegalArgumentException("illegal null action or null href");
+        if (action == null) throw new IllegalArgumentException("illegal null action");
+        if (url == null) url = "";
 
         Log.d(TAG, "created with action: " + action + " url: " + url);
         mAction = action;
@@ -471,7 +472,7 @@ public class JRActivityObject {
     public JRDictionary toJRDictionary() {
         JRDictionary map = new JRDictionary();
         map.put("url", mUrl);
-        map.put("action", mAction);
+        map.put(JRSessionData.USERDATA_ACTION_KEY, mAction);
         map.put("user_generated_content", mUserGeneratedContent);
         map.put("title", mTitle);
         map.put("description", mDescription);
@@ -503,7 +504,7 @@ public class JRActivityObject {
             // Make the JSON string
             JSONStringer jss = (new JSONStringer())
                     .object()
-                        .key("activity")
+                        .key(JRSessionData.USERDATA_ACTIVITY_KEY)
                         .array()
                             .value(getUrl())
                         .endArray()
@@ -531,6 +532,7 @@ public class JRActivityObject {
             // Define the network callback
             JRConnectionManagerDelegate jrcmd =
                     new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
+                @Override
                 public void connectionDidFinishLoading(String payload,
                                                        String requestUrl,
                                                        Object userdata) {
@@ -540,7 +542,7 @@ public class JRActivityObject {
                         Log.d(TAG, "fetchShortenedURLs connectionDidFinishLoading: " + payload);
                         JSONObject jso = (JSONObject) (new JSONTokener(payload)).nextValue();
                         jso = jso.getJSONObject("urls");
-                        JSONObject jsonActivityUrls = jso.getJSONObject("activity");
+                        JSONObject jsonActivityUrls = jso.getJSONObject(JRSessionData.USERDATA_ACTIVITY_KEY);
                         JSONObject jsonSmsUrls = jso.getJSONObject("sms");
                         JSONObject jsonEmailUrls = jso.getJSONObject("email");
 
@@ -572,12 +574,8 @@ public class JRActivityObject {
                     callback.setShortenedUrl(shortenedUrl);
                 }
 
+                @Override
                 public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
-                    mIsShortening = false;
-                    updateUI(getUrl());
-                }
-
-                public void connectionWasStopped(Object userdata) {
                     mIsShortening = false;
                     updateUI(getUrl());
                 }

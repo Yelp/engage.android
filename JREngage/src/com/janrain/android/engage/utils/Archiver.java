@@ -47,21 +47,11 @@ import java.io.IOException;
  * the object to a binary format and saves to the protected storage area (disk).
  */
 public final class Archiver {
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
-	// tag used for logging
 	private static final String TAG = Archiver.class.getSimpleName();
 	// token used to separate parts of dictionary file name
 	private static final String DICTIONARY_FILE_SEPARATOR = "~";
 	// prefix + dictionary name
 	private static final String DICTIONARY_BASE_FORMAT = "dict" + DICTIONARY_FILE_SEPARATOR + "%s";
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
 
     /**
      * Saves (archives) the specified object to the local (protected) file system.
@@ -259,10 +249,6 @@ public final class Archiver {
         }
         return value;
     }
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
 
 	/**
 	 * Private default constructor, no instance.

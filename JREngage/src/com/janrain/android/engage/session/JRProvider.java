@@ -60,15 +60,6 @@ import java.util.*;
  * @class JRProvider
  **/
 public class JRProvider implements Serializable {
-
-    // ------------------------------------------------------------------------
-    // TYPES
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
 //	public static final String KEY_NAME = "name";
 	public static final String KEY_FRIENDLY_NAME = "friendly_name";
 //	public static final String KEY_PLACEHOLDER_TEXT = "placeholder_text";
@@ -87,7 +78,7 @@ public class JRProvider implements Serializable {
             new HashMap<String, Drawable>();
 
 
-    // Suppressed because this class is not expected to be serialized
+    // Suppressed because this inner class is not expected to be serialized
     @SuppressWarnings("serial")
 	private final static HashMap<String, Integer> provider_list_icon_resources =
             new HashMap<String, Integer>(){
@@ -102,7 +93,7 @@ public class JRProvider implements Serializable {
                         put("icon_blogger", R.drawable.jr_icon_blogger);
                         put("icon_facebook", R.drawable.jr_icon_facebook);
                         put("icon_flickr", R.drawable.jr_icon_flickr);
-                        //put("icon_foursquare", R.drawable.jr_icon_foursquare);
+                        put("icon_foursquare", R.drawable.jr_icon_foursquare);
                         put("icon_google", R.drawable.jr_icon_google);
                         put("icon_hyves", R.drawable.jr_icon_hyves);
                         put("icon_linkedin", R.drawable.jr_icon_linkedin);
@@ -126,7 +117,7 @@ public class JRProvider implements Serializable {
     private static HashMap<String, Drawable> provider_logo_drawables =
             new HashMap<String, Drawable>();
 
-    // Suppressed because this class is not expected to be serialized
+    // Suppressed because this inner class is not expected to be serialized
     @SuppressWarnings("serial")
 	private final static HashMap<String, Integer> provider_logo_resources =
             new HashMap<String, Integer>(){
@@ -155,18 +146,6 @@ public class JRProvider implements Serializable {
                     }
             };
 
-    // ------------------------------------------------------------------------
-    // STATIC INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
     private String mName;
     private String mFriendlyName;
     private String mPlaceholderText;
@@ -182,13 +161,6 @@ public class JRProvider implements Serializable {
     private transient String mUserInput;      // <- across cached provider reloads
     private transient String mWelcomeString;  // <-
     private transient boolean mCurrentlyDownloading;
-    // ------------------------------------------------------------------------
-    // INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
 
     // We don't need a private default constructor so long as we have another constructor as we 
     // do, found immediately below.
@@ -207,10 +179,10 @@ public class JRProvider implements Serializable {
         mSocialSharingProperties = dictionary.getAsDictionary(KEY_SOCIAL_SHARING_PROPERTIES);
         mWebViewOptions = dictionary.getAsDictionary(KEY_ANDROID_WEBVIEW_OPTIONS, true);
 
-//        if (mCookieDomains.size() == 0) {
-//            mCookieDomains.add(mName + ".com");
-//            mCookieDomains.add("www." + mName + ".com");
-//        }
+        //if (mCookieDomains.size() == 0) {
+        //    mCookieDomains.add(mName + ".com");
+        //    mCookieDomains.add("www." + mName + ".com");
+        //}
 
         loadDynamicVariables();
 
@@ -281,8 +253,6 @@ public class JRProvider implements Serializable {
     public void setForceReauth(boolean forceReauth) {
         this.mForceReauth = forceReauth;
 
-        //XXX shouldn't we clear the users cookie too?
-
         Prefs.putBoolean(Prefs.KEY_JR_FORCE_REAUTH + this.mName, this.mForceReauth);
     }
 
@@ -323,7 +293,7 @@ public class JRProvider implements Serializable {
         }
 
         if (AndroidUtils.isCupcake()) {
-            // 1.5 can't handle our programmatic XHDPI resource instantiation
+            // 1.5 can't handle programmatic XHDPI resource instantiation
             return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
         }
 
@@ -333,9 +303,9 @@ public class JRProvider implements Serializable {
 
             Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
             if (icon != null) {
-                //Our downloaded icons are all at xhdpi, but Android 2.1 doesn't have the
-                //DENSITY_XHIGH constant defined yet.  Fortunately it does the right thing
-                //if you pass in the DPI as an int
+                // Downloaded icons are all at xhdpi, but Android 2.1 doesn't have the
+                // DENSITY_XHIGH constant defined yet.  Fortunately it does the right thing
+                // if you pass in the DPI as an int
 
                 //icon.setDensity(320);
                 try {
@@ -348,8 +318,7 @@ public class JRProvider implements Serializable {
                 } catch (InvocationTargetException e) {
                     Log.e(TAG, "Unexpected: " + e);
                 }
-            }
-            else {
+            } else {
                 c.deleteFile(iconFileName);
                 downloadIcons(c);
                 return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
@@ -372,25 +341,19 @@ public class JRProvider implements Serializable {
             } catch (InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             downloadIcons(c);
 
             return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
         }
     }
 
-
     public Drawable getProviderIcon(Context c) {
-        return getDrawable(c,
-                "icon_" + mName,
-                provider_list_icon_drawables,
-                provider_list_icon_resources);
+        return getDrawable(c, "icon_" + mName, provider_list_icon_drawables, provider_list_icon_resources);
     }
 
     public Drawable getProviderLogo(Context c) {
         return getDrawable(c, "logo_" + mName, provider_logo_drawables, provider_logo_resources);
-
     }
 
     public Drawable getTabSpecIndicatorDrawable(Context c) {

@@ -1,9 +1,12 @@
 package com.janrain.android.engage.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -11,8 +14,11 @@ import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.util.Config;
 import android.util.Log;
+import android.view.*;
+import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSessionData;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
 /**
@@ -24,12 +30,13 @@ import java.util.HashMap;
 public abstract class JRUiFragment extends Fragment {
     public static final int REQUEST_LANDING = 1;
     public static final int REQUEST_WEBVIEW = 2;
+    public static final int DIALOG_ABOUT = 1000;
+    public static final int DIALOG_PROGRESS = 1001;
 
     private FinishReceiver mFinishReceiver;
     private HashMap<Integer, Dialog> mManagedDialogs = new HashMap<Integer, Dialog>();
     private boolean mEmbeddedMode = false;
 
-    protected SharedLayoutHelper mLayoutHelper;
     protected JRSessionData mSessionData;
     protected String TAG = JRUiFragment.class.getSimpleName();
 
@@ -70,11 +77,11 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if (Config.LOGD) Log.d(TAG, "[onCreate]");
         super.onCreate(savedInstanceState);
+        if (Config.LOGD) Log.d(TAG, "[onCreate]");
 
-        setRetainInstance(true);
         mSessionData = JRSessionData.getInstance();
+        setRetainInstance(true);
     }
 
     //onCreateView
@@ -83,7 +90,8 @@ public abstract class JRUiFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         if (Config.LOGD) Log.d(TAG, "[onActivityCreated]");
         super.onActivityCreated(savedInstanceState);
-        mLayoutHelper = new SharedLayoutHelper(getActivity());
+
+        mSessionData = JRSessionData.getInstance();
     }
 
     @Override
@@ -96,7 +104,7 @@ public abstract class JRUiFragment extends Fragment {
     public void onResume() {
         if (Config.LOGD) Log.d(TAG, "[onResume]");
         super.onResume();
-        mLayoutHelper.showHideTaglines();
+        showHideTaglines();
     }
 
     @Override
@@ -114,6 +122,10 @@ public abstract class JRUiFragment extends Fragment {
     @Override
     public void onDestroyView() {
         if (Config.LOGD) Log.d(TAG, "[onDestroyView]");
+
+        for (Dialog d : mManagedDialogs.values()) d.dismiss();
+        mManagedDialogs = new HashMap<Integer, Dialog>();
+
         super.onDestroyView();
     }
 
@@ -162,7 +174,75 @@ public abstract class JRUiFragment extends Fragment {
     }
     //--
 
-    public boolean isEmbeddedMode() {
+    private void showHideTaglines() {
+        boolean hideTagline = mSessionData.getHidePoweredBy();
+        int visibility = hideTagline ? View.GONE : View.VISIBLE;
+
+        View tagline = getView().findViewById(R.id.jr_tagline);
+        if (tagline != null) tagline.setVisibility(visibility);
+
+        View bonusTagline = getView().findViewById(R.id.jr_email_sms_powered_by_text);
+        if (bonusTagline != null) bonusTagline.setVisibility(visibility);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        if (mSessionData.getHidePoweredBy()) {
+            return;
+        } else {
+            inflater.inflate(R.menu.jr_about_menu, menu);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.jr_menu_about) {
+            showDialog(DIALOG_ABOUT);
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    protected ProgressDialog getProgressDialog() {
+        ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage(getString(R.string.jr_progress_loading));
+        return progressDialog;
+    }
+
+    protected void showProgressDialog() {
+        showDialog(DIALOG_PROGRESS);
+    }
+
+    protected void dismissProgressDialog() {
+        dismissDialog(DIALOG_PROGRESS);
+    }
+
+    private AlertDialog getAboutDialog() {
+        AlertDialog.Builder builder;
+        AlertDialog dialog;
+
+        LayoutInflater inflater =
+                (LayoutInflater) getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.jr_about_dialog, null);
+
+        builder = new AlertDialog.Builder(getActivity());
+        builder.setView(layout);
+        builder.setPositiveButton(R.string.jr_about_button_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog = builder.create();
+
+        return dialog;
+    }
+
+    private boolean isEmbeddedMode() {
         return mEmbeddedMode;
     }
 
@@ -170,38 +250,45 @@ public abstract class JRUiFragment extends Fragment {
         mEmbeddedMode = embeddedMode;
     }
 
-    /* package */ Dialog onCreateDialog(int id) {
-        return mLayoutHelper.onCreateDialog(id);
+    protected Dialog onCreateDialog(int id) {
+        Dialog dialog;
+        switch (id) {
+            case DIALOG_ABOUT:
+                dialog = getAboutDialog();
+                break;
+            case DIALOG_PROGRESS:
+                dialog = getProgressDialog();
+                break;
+            default:
+                dialog = null;
+        }
+        return dialog;
     }
 
-    /* package */ void onPrepareDialog(int id, Dialog d) {}
+    protected void onPrepareDialog(int id, Dialog d) {}
 
     protected void showDialog(int dialogId) {
-        if (isEmbeddedMode()) {
-            Dialog d;
-            if (mManagedDialogs.containsKey(dialogId)) {
-                d = mManagedDialogs.get(dialogId);
-            } else {
-                d = onCreateDialog(dialogId);
-                mManagedDialogs.put(dialogId, d);
-            }
-            onPrepareDialog(dialogId, d);
-            d.show();
+        Dialog d;
+        if (mManagedDialogs.containsKey(dialogId)) {
+            d = mManagedDialogs.get(dialogId);
         } else {
-            getActivity().showDialog(dialogId);
+            d = onCreateDialog(dialogId);
+            mManagedDialogs.put(dialogId, d);
         }
+        onPrepareDialog(dialogId, d);
+        d.show();
     }
 
     protected void dismissDialog(int dialogId) {
-        if (isEmbeddedMode()) {
-            Dialog d = mManagedDialogs.get(dialogId);
-            d.dismiss();
-        } else {
-            getActivity().dismissDialog(dialogId);
-        }
+        Dialog d = mManagedDialogs.get(dialogId);
+        d.dismiss();
     }
 
     private void startActivityForFragId(int fragId, int requestCode) {
+        startActivityForFragId(fragId, requestCode, null);
+    }
+
+    private void startActivityForFragId(int fragId, int requestCode, Bundle opts) {
         boolean showTitle;
         switch (fragId) {
             case JRFragmentHostActivity.JR_LANDING:
@@ -215,6 +302,7 @@ public abstract class JRUiFragment extends Fragment {
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(getActivity(), showTitle);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, fragId);
+        if (opts != null) i.putExtras(opts);
         startActivityForResult(i, requestCode);
     }
 
@@ -222,12 +310,14 @@ public abstract class JRUiFragment extends Fragment {
         startActivityForFragId(JRFragmentHostActivity.JR_LANDING, REQUEST_LANDING);
     }
 
-    protected void showWebView() {
-        startActivityForFragId(JRFragmentHostActivity.JR_WEBVIEW, REQUEST_WEBVIEW);
+    protected void showWebView(boolean socialSharingSignIn) {
+        Bundle opts = new Bundle();
+        opts.putBoolean(JRWebViewFragment.SOCIAL_SHARING_MODE, socialSharingSignIn);
+        startActivityForFragId(JRFragmentHostActivity.JR_WEBVIEW, REQUEST_WEBVIEW, opts);
     }
 
-    /* package */ SharedLayoutHelper getSharedLayoutHelper() {
-        return mLayoutHelper;
+    protected void showWebView() {
+        startActivityForFragId(JRFragmentHostActivity.JR_WEBVIEW, REQUEST_WEBVIEW);
     }
 
     protected void tryToFinishActivity() {

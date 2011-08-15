@@ -65,7 +65,6 @@ public final class JRDictionary extends HashMap<String,Object> {
 	/* Required for unique object identification. */
 	private static final long serialVersionUID = 3798456277521362434L;
 
-    /* Tag used for logging. */
     private static final String TAG = JRDictionary.class.getSimpleName();
 
 /**

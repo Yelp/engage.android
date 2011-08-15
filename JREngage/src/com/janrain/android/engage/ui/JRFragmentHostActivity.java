@@ -46,6 +46,8 @@ import android.util.Log;
 import android.view.*;
 //import android.view.inputmethod.InputMethodManager;
 //import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.R;
+import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.utils.AndroidUtils;
 
@@ -57,7 +59,7 @@ import com.janrain.android.engage.utils.AndroidUtils;
  **/
 public class JRFragmentHostActivity extends FragmentActivity {
     private static final String TAG = JRFragmentHostActivity.class.getSimpleName();
-    public static final String JR_FRAGMENT_ID = "JR_FRAGMENT_ID";
+    public static final String JR_FRAGMENT_ID = "com.janrain.android.engage.JR_FRAGMENT_ID";
     public static final int JR_PROVIDER_LIST = 4;
     public static final int JR_LANDING = 1;
     public static final int JR_WEBVIEW = 2;
@@ -70,7 +72,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
     private int mFragmentId;
     private JRUiFragment mUiFragment;
     private JRSessionData mSessionData;
-    private SharedLayoutHelper mLayoutHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,6 +89,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
         if (!AndroidUtils.isSmallOrNormalScreen()) {
             if (AndroidUtils.getAndroidSdkInt() >= 11) {
+                /* Fiddle with the theme */
                 switch (mFragmentId) {
                     case JR_LANDING:
                         /* fall through to provider list */
@@ -115,16 +117,17 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 //    default: throw new IllegalFragmentIdException(mFragmentId);
                 //}
             }
-        } else { // else full screen mode
+        } else { // else small or normal screen -> full screen mode
         }
 
         if (savedInstanceState == null) {
             switch (mFragmentId) {
                 case JR_PROVIDER_LIST:
                     /* check and see whether we should start the landing page */
-                    String rbp = mSessionData.getReturningBasicProvider();
-                    if (!TextUtils.isEmpty(rbp)) {
-                        mSessionData.setCurrentlyAuthenticatingProvider(rbp);
+                    String rbpName = mSessionData.getReturningBasicProvider();
+                    if (!TextUtils.isEmpty(rbpName)) {
+                        JRProvider provider = mSessionData.getProviderByName(rbpName);
+                        mSessionData.setCurrentlyAuthenticatingProvider(provider);
                         Intent i = createIntentForCurrentScreen(this, true);
                         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JR_LANDING);
                         startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
@@ -159,7 +162,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
     @Override
     public void setTheme(int r) {
-        Log.d(TAG, "setTheme");
+        Log.d(TAG, "setTheme: " + r);
         super.setTheme(r);
     }
 
@@ -167,7 +170,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        mLayoutHelper = mUiFragment.getSharedLayoutHelper();
         autoSetSize();
     }
 
@@ -217,6 +219,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed");
 
@@ -244,37 +247,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
             default:
                 throw new IllegalStateException(new IllegalFragmentIdException(mFragmentId));
         }
-    }
-
-    /**
-     * Initialize the contents of the Activity's standard options menu.
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // use the shared menu
-        mLayoutHelper.inflateAboutMenu(menu);
-        return true;
-    }
-
-    /**
-     * Callback for creating dialogs that are managed.
-     */
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        return mUiFragment.onCreateDialog(id);
-    }
-
-    @Override
-    protected void onPrepareDialog(int id, Dialog d) {
-        mUiFragment.onPrepareDialog(id, d);
-    }
-
-    /**
-     * This hook is called whenever an item in your options menu is selected.
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return mLayoutHelper.handleAboutMenu(item) || super.onOptionsItemSelected(item);
     }
 
     public static class IllegalFragmentIdException extends RuntimeException {

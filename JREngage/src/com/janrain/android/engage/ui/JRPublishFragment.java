@@ -48,7 +48,6 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.AttributeSet;
 import android.util.Config;
 import android.util.Log;
 import android.util.TypedValue;
@@ -56,14 +55,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRAuthenticatedUser;
 import com.janrain.android.engage.session.JRProvider;
-import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.*;
 import com.janrain.android.engage.utils.AndroidUtils;
@@ -71,7 +67,6 @@ import com.janrain.android.engage.utils.AndroidUtils;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -142,13 +137,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
     private boolean mSmsActivityExists;
     private boolean mEmailActivityExists;
+    private String mSelectedTab = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View content = inflater.inflate(R.layout.jr_publish_activity, container, false);
-
-        mSessionData = JRSessionData.getInstance();
-        mActivityObject = mSessionData.getJRActivity();
 
         /* View References */
         mPreviewBox = (RelativeLayout) content.findViewById(R.id.jr_preview_box);
@@ -174,12 +167,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mEmailSmsComment = (EditText) content.findViewById(R.id.jr_email_sms_edit_comment);
         mEmailSmsButtonContainer = (LinearLayout) content.findViewById(R.id.jr_email_sms_button_container);
 
-        /* Set the user comment field here before the text change listener is registered so that
-         * it can be displayed while the providers are being loaded (if this is a first run.)
-         * The text change listener will be fired when the first tab is initially selected. */
-        String userContent = mActivityObject.getUserGeneratedContent();
-        mUserCommentView.setText(userContent);
-
         /* View listeners */
         mEmailButton.setOnClickListener(mEmailButtonListener);
         mSmsButton.setOnClickListener(mSmsButtonListener);
@@ -194,7 +181,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         /* Initialize the provider shared-ness state map */
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
 
-        mSessionData.addDelegate(mSessionDelegate);
+        configureEmailSmsButtons();
 
         return content;
     }
@@ -203,8 +190,12 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        configureEmailSmsButtons();
-        loadViewElementPropertiesWithActivityObject();
+        mSessionData.addDelegate(mSessionDelegate);
+        mActivityObject = mSessionData.getJRActivity();
+        if (mActivityObject == null) mActivityObject = new JRActivityObject("", null);
+        String userContent = mActivityObject.getUserGeneratedContent();
+        mUserCommentView.setText(userContent);
+        loadViewPropertiesWithActivityObject();
 
         /* Call by hand the configuration change listener so that it sets up correctly if this
          * activity started in landscape mode. */
@@ -222,15 +213,23 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        dismissProgressDialog();
+        mSessionData.removeDelegate(mSessionDelegate);
+    }
+
     private void configureEmailSmsButtons() {
         List<ResolveInfo> resolves;
         Intent intent;
-        intent = newSmsIntent("");
+        intent = createSmsIntent("");
         resolves = getActivity().getPackageManager().queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
         mSmsActivityExists = resolves.size() > 0;
 
-        intent = newEmailIntent("", "");
+        intent = createEmailIntent("", "");
         resolves = getActivity().getPackageManager().queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
         mEmailActivityExists = resolves.size() > 0;
@@ -244,7 +243,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         else v.setVisibility(View.GONE);
     }
 
-    private void loadViewElementPropertiesWithActivityObject() {
+    private void loadViewPropertiesWithActivityObject() {
         /* This sets up pieces of the UI before the provider configuration information
          * has been loaded */
 
@@ -257,30 +256,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         /* Set the media_content_view = a thumbnail of the media */
         if (mo != null) if (mo.hasThumbnail()) {
-            Log.d(TAG, "media image url: " + mo.getThumbnail());
-            new AsyncTask<JRMediaObject, Void, Bitmap>(){
-                protected Bitmap doInBackground(JRMediaObject... mo_) {
-                    try {
-                        // TODO: get this cached
-                        URL url = new URL(mo_[0].getThumbnail());
-                        URLConnection urlc = url.openConnection();
-                        urlc.setUseCaches(true);
-                        urlc.setDefaultUseCaches(true);
-                        InputStream is = urlc.getInputStream();
-                        return BitmapFactory.decodeStream(is);
-                    } catch (MalformedURLException e) {
-                        return null;
-                    } catch (IOException e) {
-                        return null;
-                    }
-                }
-
-                protected void onPostExecute(Bitmap bitmap) {
-                    if (bitmap == null) mci.setVisibility(View.INVISIBLE);
+            if (Config.LOGD) Log.d(TAG, "media image url: " + mo.getThumbnail());
+            mo.downloadThumbnail(new JRMediaObject.ThumbnailAvailableListener() {
+                public void onThumbnailAvailable(Bitmap bitmap) {
+                    if(bitmap==null) mci.setVisibility(View.INVISIBLE);
                     else mci.setVisibility(View.VISIBLE);
                     mci.setImageBitmap(bitmap);
-                }
-            }.execute(mo);
+            }});
         }
 
         /* Set the media content description */
@@ -295,10 +277,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         List<JRProvider> socialProviders = mSessionData.getSocialProviders();
         if (socialProviders == null || socialProviders.size() == 0) {
             JREngageError err = new JREngageError(
-                    "Cannot load the Publish Activity, no social sharing providers are configured.",
+                    getString(R.string.jr_no_social_providers),
                     JREngageError.ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
                     JREngageError.ErrorType.CONFIGURATION_INFORMATION_MISSING);
             mSessionData.triggerPublishingDialogDidFail(err);
+            mConnectAndShareButton.setEnabled(false);
+            mUserCommentView.setEnabled(false);
+            getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
             return;
         }
 
@@ -360,8 +345,12 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         tabHost.setOnTabChangedListener(this);
 
-        JRProvider rp = mSessionData.getProviderByName(mSessionData.getReturningSocialProvider());
-        tabHost.setCurrentTab(socialProviders.indexOf(rp));
+        if (mSelectedTab.equals("")) {
+            JRProvider rp = mSessionData.getProviderByName(mSessionData.getReturningSocialProvider());
+            tabHost.setCurrentTab(socialProviders.indexOf(rp));
+        } else {
+            tabHost.setCurrentTabByTag(mSelectedTab);
+        }
 
         /* When TabHost is constructed it defaults to tab 0, so if indexOfLastUsedProvider is 0,
          * the tab change listener won't be invoked, so we call it manually to ensure
@@ -486,13 +475,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(getActivity()));
     }
 
-    public void onTabChanged(String tabId) {
-        Log.d(TAG, "[onTabChange]: " + tabId);
+    public void onTabChanged(String tabTag) {
+        if (Config.LOGD) Log.d(TAG, "[onTabChange]: " + tabTag);
 
-        if (tabId.equals(EMAIL_SMS_TAB_TAG)) {
+        if (tabTag.equals(EMAIL_SMS_TAB_TAG)) {
             mEmailSmsComment.setText(mUserCommentView.getText());
         } else { /* ... else a "real" provider -- Facebook, Twitter, etc. */
-            mSelectedProvider = mSessionData.getProviderByName(tabId);
+            mSelectedProvider = mSessionData.getProviderByName(tabTag);
 
             configureViewElementsBasedOnProvider();
             configureLoggedInUserBasedOnProvider();
@@ -501,9 +490,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(getActivity()));
         }
 
-        //InputMethodManager imm =
-        //        (InputMethodManager) JREngage.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        //imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+        mSelectedTab = tabTag;
     }
 
     @Override
@@ -526,26 +513,24 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         }
     }
 
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        if (Config.LOGD) Log.d(TAG, "onDestroy");
 
-        if (mSessionData != null && mSessionDelegate != null)
+        if (mSessionData != null && mSessionDelegate != null) {
             mSessionData.removeDelegate(mSessionDelegate);
+        }
     }
 
     private View.OnClickListener mShareButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
             //mWeAreCurrentlyPostingSomething = true;
 
-            mActivityObject.setUserGeneratedContent(mUserCommentView.getText().toString());
-
-            mLayoutHelper.showProgressDialog();
-
             if (mAuthenticatedUser == null) {
                 mAuthenticatingForShare = true;
                 authenticateUserForSharing();
             } else {
+                showProgressDialog();
                 shareActivity();
             }
         }
@@ -563,17 +548,25 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
         public void afterTextChanged(Editable editable) {
-            updateUserCommentView();
+            mActivityObject.setUserGeneratedContent(mUserCommentView.getText().toString());
+
+            if (mSelectedProvider == null) return;
+            if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
+                /* Twitter, MySpace, LinkedIn */
+                updatePreviewTextWhenContentReplacesAction();
+            } /* ... else Yahoo or Facebook */
+
             updateCharacterCount();
 
-            for (String k : mProvidersThatHaveAlreadyShared.keySet())
+            for (String k : mProvidersThatHaveAlreadyShared.keySet()) {
                 mProvidersThatHaveAlreadyShared.put(k, false);
+            }
 
             showActivityAsShared(false);
         }
     };
 
-    private Intent newEmailIntent(String subject, String body) {
+    private Intent createEmailIntent(String subject, String body) {
         Intent intent = new Intent(android.content.Intent.ACTION_SEND);
 
         /* XXX hack
@@ -607,7 +600,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                         : jrEmail.getSubject();
             }
 
-            Intent intent = newEmailIntent(subject, body);
+            Intent intent = createEmailIntent(subject, body);
 
             try {
                 //Intent chooser = Intent.createChooser(intent, getString(R.string.jr_choose_email_handler));
@@ -630,7 +623,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 body = mUserCommentView.getText().toString() + "\n" + jrSms.getBody();
             }
 
-            Intent intent = newSmsIntent(body);
+            Intent intent = createSmsIntent(body);
             try {
                 startActivityForResult(intent, 0);
                 mSessionData.notifyEmailSmsShare("sms");
@@ -640,7 +633,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         }
     };
 
-    private Intent newSmsIntent(String body) {
+    private Intent createSmsIntent(String body) {
         /* Google Voice does not respect passing the body, so this Intent is constructed
          * specifically to be responded to only by Mms (the platform messaging app).
          * http://stackoverflow.com/questions/4646508/how-to-pass-text-to-google-voice-sms-programmatically */
@@ -667,7 +660,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     @Override
-    /* package */ Dialog onCreateDialog(int id) {
+    protected Dialog onCreateDialog(int id) {
         // TODO: make resources out of these strings
 
         switch (id) {
@@ -708,10 +701,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         return super.onCreateDialog(id);
     }
 
-    /* package */ void onPrepareDialog(int id, Dialog d) {
+    protected void onPrepareDialog(int id, Dialog d) {
         switch (id) {
             case DIALOG_FAILURE:
                 ((AlertDialog) d).setMessage(mDialogErrorMessage);
+                return;
+            case DIALOG_CONFIRM_SIGNOUT:
+                ((AlertDialog) d).setMessage("Sign out of " + mSelectedProvider.getFriendlyName() + "?");
                 return;
         }
 
@@ -768,23 +764,16 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         }
 
         mCharacterCountView.setText(characterCountText);
-        Log.d(TAG, "updateCharacterCount: " + characterCountText);
-    }
-
-    private void updateUserCommentView() {
-        //mUserHasEditedText = true;
-
-        if (mSelectedProvider.getSocialSharingProperties()
-                .getAsBoolean("content_replaces_action")) {
-            /* Twitter, MySpace, LinkedIn */
-            updatePreviewTextWhenContentReplacesAction();
-        } /* ... else Yahoo or Facebook */
+        if (Config.LOGD) Log.d(TAG, "updateCharacterCount: " + characterCountText);
     }
 
     private void updatePreviewTextWhenContentReplacesAction() {
-        String newText = (!mUserCommentView.getText().toString().equals("")) ?
-                  mUserCommentView.getText().toString()
-                : mActivityObject.getAction();
+        String newText;
+        if (mUserCommentView.getText().toString().equals("")) {
+            newText = mActivityObject.getAction();
+        } else {
+            newText = mUserCommentView.getText().toString();
+        }
 
         String userNameForPreview = getUserDisplayName();
 
@@ -796,8 +785,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                     ((mShortenedActivityURL != null) ? mShortenedActivityURL : shorteningText) +
                     "</font>"));
         } else {
-            mPreviewLabelView.setText(Html.fromHtml("<b> " + userNameForPreview + "</b> "
-                    + newText));
+            mPreviewLabelView.setText(Html.fromHtml("<b> " + userNameForPreview + "</b> " + newText));
         }
     }
 
@@ -856,7 +844,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                         bis.reset();
                         return BitmapFactory.decodeStream(bis);
                     } catch (IOException e) {
-                        Log.d(TAG, "profile pic image loader exception: " + e.toString());
+                        Log.e(TAG, "profile pic image loader exception: " + e.toString());
                         // TODO: set default profile pic?
                         return null;
                     }
@@ -873,7 +861,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void showActivityAsShared(boolean shared) {
-        Log.d(TAG, new Exception().getStackTrace()[0].getMethodName() + ": " + shared);
+        if (Config.LOGD) Log.d(TAG, "[showActivityAsShared]: " + shared);
 
         int visibleIfShared = shared ? View.VISIBLE : View.GONE;
         int visibleIfNotShared = !shared ? View.VISIBLE : View.GONE;
@@ -887,7 +875,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void showUserAsLoggedIn(boolean loggedIn) {
-        Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
+        if (Config.LOGD) Log.d(TAG, "[showUserAsLoggedIn]: " + loggedIn);
 
         int visibleIfLoggedIn = loggedIn ? View.VISIBLE : View.GONE;
         int visibleIfNotLoggedIn = !loggedIn ? View.VISIBLE : View.GONE;
@@ -908,7 +896,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private int colorForProviderFromArray(Object arrayOfColorStrings, boolean withAlpha) {
-
         if (!(arrayOfColorStrings instanceof ArrayList))
             if (withAlpha)
                 /* If there's ever an error, just return Janrain blue (at 20% opacity) */
@@ -961,7 +948,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     /* UI state updaters */
 
     private void logUserOutForProvider(String provider) {
-        Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
+        if (Config.LOGD) Log.d(TAG, "[logUserOutForProvider]: " + provider);
         mSessionData.forgetAuthenticatedUserForProvider(provider);
         mAuthenticatedUser = null;
     }
@@ -978,13 +965,17 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
       * the same provider as their last-used provider, go back to the user landing view. */
         if (mSelectedProvider.requiresInput()) {
             showUserLanding();
+            /* XXX this doesn't pass in the social sharing sign-in mode flag, so flag consequent behavior
+             * will be broken.  However, this code path is not used, since no modern providers "require
+             * input".
+             */
         } else { /* Otherwise, go straight to the web view. */
-            showWebView();
+            showWebView(true);
         }
     }
 
     private void shareActivity() {
-        Log.d(TAG, "shareActivity mAuthenticatedUser: " + mAuthenticatedUser.toString());
+        if (Config.LOGD) Log.d(TAG, "shareActivity mAuthenticatedUser: " + mAuthenticatedUser.toString());
 
         if (isPublishThunk()) {
             mSessionData.setStatusForUser(mAuthenticatedUser);
@@ -1014,40 +1005,35 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     /* JRSessionDelegate definition */
 
     private JRSessionDelegate mSessionDelegate = new JRSessionDelegate.SimpleJRSessionDelegate() {
+        @Override
         public void authenticationDidRestart() {
-            Log.d(TAG, "[authenticationDidRestart]");
+            if (Config.LOGD) Log.d(TAG, "[authenticationDidRestart]");
 
             //mWeAreCurrentlyPostingSomething = false;
             mWeHaveJustAuthenticated = false;
-            mLayoutHelper.dismissProgressDialog();
+            dismissProgressDialog();
         }
 
-        /* Should never have to worry about */
-//            public void authenticationDidCancel() {
-//                Log.d(TAG, "[authenticationDidCancel]");
-//                mWeAreCurrentlyPostingSomething = false;
-//                mWeHaveJustAuthenticated = false;
-//            }
-
+        @Override
         public void authenticationDidFail(JREngageError error, String provider) {
-            Log.d(TAG, "[authenticationDidFail]");
+            if (Config.LOGD) Log.d(TAG, "[authenticationDidFail]");
             /* This happens if the mobile endpoint URL fails to be read correctly
              * or if Engage completes with an error (like rpxstaging via facebook) or maybe if
              * a provider is down. */
 
             mWeHaveJustAuthenticated = false;
             //mWeAreCurrentlyPostingSomething = false;
-            mLayoutHelper.dismissProgressDialog();
+            dismissProgressDialog();
 
             /* We don't need to show a dialog because the WebView has already shown one. */
             //mDialogErrorMessage = error.getMessage();
             //showDialog(DIALOG_FAILURE);
         }
 
+        @Override
         public void authenticationDidComplete(JRDictionary profile, String provider) {
-            Log.d(TAG, "[authenticationDidComplete]");
-            mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(
-                    mSelectedProvider);
+            if (Config.LOGD) Log.d(TAG, "[authenticationDidComplete]");
+            mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
 
             if (mAuthenticatedUser != null) {
                 loadUserNameAndProfilePicForUserForProvider(mAuthenticatedUser, provider);
@@ -1056,85 +1042,70 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
             if (mAuthenticatingForShare) {
                 mAuthenticatingForShare = false;
-                mLayoutHelper.showProgressDialog();
-
+                showProgressDialog();
                 shareActivity();
             }
         }
 
-        //public void publishingDidRestart() {
-        //    //mWeAreCurrentlyPostingSomething = false;
-        //}
-        //public void publishingDidCancel() {
-        //    //mWeAreCurrentlyPostingSomething = false;
-        //}
-        //
-        ////nothing triggers this yet
-        //public void publishingDidComplete() {
-        //    //mWeAreCurrentlyPostingSomething = false;
-        //}
-
+        @Override
         public void publishingJRActivityDidSucceed(JRActivityObject activity, String provider) {
-            Log.d(TAG, "[publishingJRActivityDidSucceed]");
+            if (Config.LOGD) Log.d(TAG, "[publishingJRActivityDidSucceed]");
 
             mProvidersThatHaveAlreadyShared.put(provider, true);
 
-            mLayoutHelper.dismissProgressDialog();
+            dismissProgressDialog();
             showActivityAsShared(true);
 
             //mWeAreCurrentlyPostingSomething = false;
             mWeHaveJustAuthenticated = false;
         }
 
+        @Override
         public void publishingJRActivityDidFail(JRActivityObject activity,
                                                 JREngageError error,
                                                 String provider) {
-            Log.d(TAG, "[publishingJRActivityDidFail]");
+            if (Config.LOGD) Log.d(TAG, "[publishingJRActivityDidFail]");
             boolean reauthenticate = false;
             mDialogErrorMessage = "";
 
-            mLayoutHelper.dismissProgressDialog();
+            dismissProgressDialog();
 
-            switch (error.getCode())
-            { /* TODO: add strings to string resource file */
+            switch (error.getCode()) {
                 case JREngageError.SocialPublishingError.FAILED:
                     //mDialogErrorMessage = "There was an error while sharing this activity.";
                     mDialogErrorMessage = error.getMessage();
                     break;
                 case JREngageError.SocialPublishingError.DUPLICATE_TWITTER:
                     mDialogErrorMessage =
-                            "There was an error while sharing this activity: Twitter does not allow duplicate status updates.";
+                            getString(R.string.jr_error_twitter_no_duplicates_allowed);
                     break;
                 case JREngageError.SocialPublishingError.LINKEDIN_CHARACTER_EXCEEDED:
                     mDialogErrorMessage =
-                            "There was an error while sharing this activity: Status was too long.";
+                            getString(R.string.jr_error_linkedin_too_long);
                     break;
                 case JREngageError.SocialPublishingError.MISSING_API_KEY:
-                    mDialogErrorMessage = "There was an error while sharing this activity.";
-                    reauthenticate = true;
-                    break;
+                    // Fall through
                 case JREngageError.SocialPublishingError.INVALID_OAUTH_TOKEN:
-                    mDialogErrorMessage = "There was an error while sharing this activity.";
+                    mDialogErrorMessage = getString(R.string.jr_error_generic_sharing);
                     reauthenticate = true;
                     break;
                 default:
-                    //mDialogErrorMessage = "There was an error while sharing this activity.";
                     mDialogErrorMessage = error.getMessage();
                     break;
             }
 
-         /* OK, if this gets called right after authentication succeeds, then the navigation
-          * controller won't be done animating back to this view.  If this view isn't loaded
-          * yet, and we call shareButtonPressed, then the library will end up trying to push the
-          * webview controller onto the navigation controller while the navigation controller
-          * is still trying to pop the webview.  This creates craziness, hence we check for
-          * [self isViewLoaded]. Also, this prevents an infinite loop of reauthing-failed
-          * publishing-reauthing-failed publishing. So, only try and reauthenticate is the
-          * publishing activity view is already loaded, which will only happen if we didn't
-          * JUST try and authorize, or if sharing took longer than the time it takes to pop the
-          * view controller. */
+            /* OK, if this gets called right after authentication succeeds, then the navigation
+             * controller won't be done animating back to this view.  If this view isn't loaded
+             * yet, and we call shareButtonPressed, then the library will end up trying to push the
+             * webview controller onto the navigation controller while the navigation controller
+             * is still trying to pop the webview.  This creates craziness, hence we check for
+             * [self isViewLoaded]. Also, this prevents an infinite loop of reauthing-failed
+             * publishing-reauthing-failed publishing. So, only try and reauthenticate is the
+             * publishing activity view is already loaded, which will only happen if we didn't
+             * JUST try and authorize, or if sharing took longer than the time it takes to pop the
+             * view controller. */
             if (reauthenticate && !mWeHaveJustAuthenticated) {
-                Log.d(TAG, "reauthenticating user for sharing");
+                if (Config.LOGD) Log.d(TAG, "reauthenticating user for sharing");
                 logUserOutForProvider(provider);
                 authenticateUserForSharing();
 
@@ -1144,13 +1115,12 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             //mWeAreCurrentlyPostingSomething = false;
             mWeHaveJustAuthenticated = false;
 
-            //todo fixme embedded mode
             showDialog(DIALOG_FAILURE);
         }
 
+        @Override
         public void mobileConfigDidFinish() {
             if (mWaitingForMobileConfig) {
-                //todo fixme embedded mode
                 dismissDialog(DIALOG_MOBILE_CONFIG_LOADING);
                 mWaitingForMobileConfig = false;
                 initializeWithProviderConfiguration();

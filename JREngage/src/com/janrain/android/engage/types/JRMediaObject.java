@@ -29,7 +29,17 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.types;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.view.View;
 import org.codehaus.jackson.annotate.JsonIgnore;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * @internal
@@ -38,10 +48,46 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * Base class for JRImageMediaObject, JRFlashMediaObject, and JRMp3MediaObject.
  **/
 public abstract class JRMediaObject {
+    @JsonIgnore
+    private Bitmap mThumbnailBitmap;
+
     public boolean hasThumbnail() { return false; }
 
     @JsonIgnore
     public String getThumbnail() {return null; }
 
     public abstract String getType();
+
+    public void downloadThumbnail(final ThumbnailAvailableListener tal) {
+        if (mThumbnailBitmap != null) {
+            tal.onThumbnailAvailable(mThumbnailBitmap);
+            return;
+        }
+
+        new AsyncTask<Void, Void, Bitmap>(){
+            @Override
+            protected Bitmap doInBackground(Void... v) {
+                try {
+                    URL url = new URL(getThumbnail());
+                    URLConnection urlc = url.openConnection();
+                    InputStream is = urlc.getInputStream();
+                    return BitmapFactory.decodeStream(is);
+                } catch (MalformedURLException e) {
+                    return null;
+                } catch (IOException e) {
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                mThumbnailBitmap = bitmap;
+                tal.onThumbnailAvailable(bitmap);
+            }
+        }.execute();
+    }
+
+    public interface ThumbnailAvailableListener {
+        public void onThumbnailAvailable(Bitmap b);
+    }
 }

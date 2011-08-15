@@ -84,11 +84,6 @@ public class JRLandingFragment extends JRUiFragment {
     private ColorButton mSignInButton;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.jr_provider_landing, container, false);
 
@@ -135,7 +130,7 @@ public class JRLandingFragment extends JRUiFragment {
         new AlertDialog.Builder(getActivity())
             .setTitle(title)
             .setMessage(message)
-            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            .setPositiveButton(getString(R.string.jr_dialog_ok), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     mIsAlertShowing = false;
                     if (mIsFinishPending) {
@@ -157,13 +152,16 @@ public class JRLandingFragment extends JRUiFragment {
                     getActivity().finish();
                     break;
                 case JRWebViewFragment.RESULT_RESTART:
-                    // todo backup?
+                    getActivity().setResult(RESULT_RESTART);
+                    getActivity().finish();
+                    break;
+                case JRWebViewFragment.RESULT_BAD_OPENID_URL:
                     break;
                 default:
-                    throw new RuntimeException("unrecognized result code");
+                    throw new RuntimeException("unrecognized result code: " + resultCode);
             }
         } else {
-            throw new RuntimeException("unrecognized request code");
+            throw new RuntimeException("unrecognized request code: " + requestCode);
         }
     }
 
@@ -199,9 +197,7 @@ public class JRLandingFragment extends JRUiFragment {
             configureButtonVisibility(false);
 
             if (currentlyAuthenticatingProvider.requiresInput()) {
-                if (Config.LOGD) {
-                    Log.d(TAG, "[prepareUserInterface] current provider requires input");
-                }
+                if (Config.LOGD) Log.d(TAG, "[prepareUserInterface] current provider requires input");
 
                 mUserInput.setVisibility(View.VISIBLE);
                 mWelcomeLabel.setVisibility(View.GONE);
@@ -216,9 +212,7 @@ public class JRLandingFragment extends JRUiFragment {
 
                 mUserInput.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
             } else {
-                if (Config.LOGD) {
-                    Log.d(TAG, "[prepareUserInterface] current provider doesn't require input");
-                }
+                if (Config.LOGD) Log.d(TAG, "[prepareUserInterface] current provider doesn't require input");
 
                 mUserInput.setVisibility(View.GONE);
                 mWelcomeLabel.setVisibility(View.VISIBLE);
@@ -230,8 +224,7 @@ public class JRLandingFragment extends JRUiFragment {
 
             if (currentlyAuthenticatingProvider.requiresInput()) {
                 if (Config.LOGD) {
-                    Log.d(TAG, "[prepareUserInterface] current provider requires input");
-                }
+                    Log.d(TAG, "[prepareUserInterface] current provider requires input"); }
 
                 mUserInput.setVisibility(View.VISIBLE);
                 mWelcomeLabel.setVisibility(View.GONE);
@@ -244,7 +237,6 @@ public class JRLandingFragment extends JRUiFragment {
                 }
 
                 mUserInput.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
-
             } else {
                 // Will never happen
             }

@@ -43,27 +43,13 @@ import java.net.HttpURLConnection;
  * @class HttpResponseHeaders
  **/
 public class HttpResponseHeaders {
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
-    // Tag used for logging
     private static final String TAG = HttpResponseHeaders.class.getSimpleName();
 
-    // HTTP response header for last modified (UTC) value
     public static final String HEADER_LAST_MODIFIED = "Last-Modified";
-
-    // HTTP response header for ETag value
     public static final String HEADER_ETAG = "ETag";
 
     // Invalid response code (initial state of object)
     public static final int RESPONSE_CODE_INVALID = -1;
-
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
 
     public static HttpResponseHeaders fromConnection(HttpURLConnection connection)
             throws IOException {
@@ -85,10 +71,6 @@ public class HttpResponseHeaders {
         return headers;
     }
 
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
     private int mResponseCode;
     private String mContentEncoding;
     private int mContentLength;
@@ -108,17 +90,9 @@ public class HttpResponseHeaders {
 
     private HttpURLConnection mConnection;
 
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
-
     public HttpResponseHeaders() {
         mResponseCode = RESPONSE_CODE_INVALID;
     }
-
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
 
     public int getResponseCode() {
         return mResponseCode;
@@ -183,10 +157,6 @@ public class HttpResponseHeaders {
     public void setETag(String eTag) {
         mETag = eTag;
     }
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
 
     @Override
     public String toString() {
