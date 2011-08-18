@@ -49,7 +49,6 @@ import java.util.List;
 
 public class JREmailObject {
     private String mSubject, mBody;
-    //private boolean mHtml;
     private List<String> mUrls;
     private List<String> mShortUrls;
 
@@ -82,7 +81,7 @@ public class JREmailObject {
      *
      * @param shortUrls
      */
-    void setShortUrls(List<String> shortUrls) {
+    /* package*/ void setShortUrls(List<String> shortUrls) {
         mShortUrls = shortUrls;
 
         for (String longUrl : mUrls) {

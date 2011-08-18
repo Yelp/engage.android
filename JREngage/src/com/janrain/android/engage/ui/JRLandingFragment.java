@@ -31,6 +31,7 @@ package com.janrain.android.engage.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.*;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -40,6 +41,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,6 +55,9 @@ import com.janrain.android.engage.session.JRProvider;
  * @class JRLandingFragment
  **/
 public class JRLandingFragment extends JRUiFragment {
+    public static final String KEY_ALERT_DIALOG_TITLE = "jr_alert_dialog_title";
+    public static final String KEY_ALERT_DIALOG_MESSAGE = "jr_alert_dialog_message";
+    public static final int DIALOG_GENERIC_ALERT = 1;
     public static final int RESULT_SWITCH_ACCOUNTS = 1;
     public static final int RESULT_RESTART = 2;
 
@@ -80,7 +85,7 @@ public class JRLandingFragment extends JRUiFragment {
 
     private TextView mWelcomeLabel;
 
-    private ColorButton mSwitchAccountButton;
+    private Button mSwitchAccountButton;
     private ColorButton mSignInButton;
 
     @Override
@@ -90,7 +95,7 @@ public class JRLandingFragment extends JRUiFragment {
         mLogo = (ImageView)view.findViewById(R.id.jr_landing_logo);
         mUserInput = (EditText)view.findViewById(R.id.jr_landing_edit);
         mWelcomeLabel = (TextView)view.findViewById(R.id.jr_landing_welcome_label);
-        mSwitchAccountButton = (ColorButton)view.findViewById(R.id.jr_landing_switch_account_button);
+        mSwitchAccountButton = (Button)view.findViewById(R.id.jr_landing_switch_account_button);
         mSignInButton = (ColorButton)view.findViewById(R.id.jr_landing_small_signin_button);
 
         prepareUserInterface();
@@ -105,7 +110,11 @@ public class JRLandingFragment extends JRUiFragment {
             if (TextUtils.isEmpty(text)) {
                 String title = getString(R.string.jr_landing_bad_user_input);
                 String message = getString(R.string.jr_landing_bad_input_long);
-                showAlertDialog(title, message);
+                Bundle options = new Bundle();
+                options.putString(KEY_ALERT_DIALOG_TITLE, title);
+                options.putString(KEY_ALERT_DIALOG_MESSAGE, message);
+                showDialog(DIALOG_GENERIC_ALERT, options);
+                mIsAlertShowing = true;
             } else {
                 mSessionData.getCurrentlyAuthenticatingProvider().setUserInput(text);
                 showWebView();
@@ -116,7 +125,7 @@ public class JRLandingFragment extends JRUiFragment {
     }
 
     private void onSwitchAccountsClick() {
-        Log.i(TAG, "[onSwitchAccountsClick]");
+        if (Config.LOGD) Log.d(TAG, "[onSwitchAccountsClick]");
 
         mSessionData.getCurrentlyAuthenticatingProvider().setForceReauth(true);
         mSessionData.setReturningBasicProvider("");
@@ -125,22 +134,38 @@ public class JRLandingFragment extends JRUiFragment {
         getActivity().finish();
     }
 
-    private void showAlertDialog(String title, String message) {
-        mIsAlertShowing = true;
-        new AlertDialog.Builder(getActivity())
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(getString(R.string.jr_dialog_ok), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    mIsAlertShowing = false;
-                    if (mIsFinishPending) {
-                        mIsFinishPending = false;
-                        /* If there is a pending Finish that we deferred because the dialog was displayed
-                         * it is called here, now. */
-                        tryToFinishActivity();
+    @Override
+    protected void onPrepareDialog(int id, Dialog d, Bundle options) {
+        if (id == DIALOG_GENERIC_ALERT) {
+            AlertDialog d_ = (AlertDialog) d;
+            d_.setTitle(options.getString(KEY_ALERT_DIALOG_TITLE));
+            d_.setMessage(options.getString(KEY_ALERT_DIALOG_MESSAGE));
+            return;
+        }
+
+        super.onPrepareDialog(id, d, options);
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id, Bundle options) {
+        if (id == DIALOG_GENERIC_ALERT) {
+            return new AlertDialog.Builder(getActivity())
+                .setTitle(options.getString(KEY_ALERT_DIALOG_TITLE))
+                .setMessage(options.getString(KEY_ALERT_DIALOG_MESSAGE))
+                .setPositiveButton(getString(R.string.jr_dialog_ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        mIsAlertShowing = false;
+                        if (mIsFinishPending) {
+                            mIsFinishPending = false;
+                            /* If there is a pending Finish that we deferred because the dialog was displayed
+                             * it is called here, now. */
+                            tryToFinishActivity();
+                        }
                     }
-                }
-            }).show();
+                }).create();
+        }
+
+        return super.onCreateDialog(id, options);
     }
 
     @Override
@@ -167,7 +192,7 @@ public class JRLandingFragment extends JRUiFragment {
 
     @Override
     protected void tryToFinishActivity() {
-        Log.i(TAG, "[tryToFinishActivity]");
+        if (Config.LOGD) Log.d(TAG, "[tryToFinishActivity]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
         } else {
@@ -178,68 +203,33 @@ public class JRLandingFragment extends JRUiFragment {
     private void prepareUserInterface() {
         mSwitchAccountButton.setOnClickListener(mButtonListener);
         mSignInButton.setOnClickListener(mButtonListener);
+        mSignInButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
+        JRProvider currentlyAuthenticatingProvider = mSessionData.getCurrentlyAuthenticatingProvider();
+        getActivity().setTitle(getCustomTitle());
+        mLogo.setImageDrawable(currentlyAuthenticatingProvider.getProviderLogo(getActivity()));
 
-        mSwitchAccountButton.setColor(0xffaaaaaa);
-        mSignInButton.setColor(0xff1a557c);
-
-        JRProvider currentlyAuthenticatingProvider =
-                mSessionData.getCurrentlyAuthenticatingProvider();
         if (currentlyAuthenticatingProvider.getName().equals("openid")) {
             mUserInput.setInputType(EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_URI);
         }
 
-        getActivity().setTitle(getCustomTitle());
+        if (currentlyAuthenticatingProvider.requiresInput()) {
+            if (Config.LOGD) Log.d(TAG, "[prepareUserInterface] current provider requires input");
+            configureButtonVisibility(true); // one button UI
 
-        mLogo.setImageDrawable(currentlyAuthenticatingProvider.getProviderLogo(getActivity()));
+            mWelcomeLabel.setVisibility(View.GONE);
 
-        if (currentlyAuthenticatingProvider.getName().equals(
-                mSessionData.getReturningBasicProvider())) {
-            configureButtonVisibility(false);
+            mUserInput.setVisibility(View.VISIBLE);
+            mUserInput.setText(currentlyAuthenticatingProvider.getUserInput());
+            mUserInput.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
+        } else { // doesn't require input
+            configureButtonVisibility(false); // = two button UI -> Switch Accounts is showing
+            if (Config.LOGD) Log.d(TAG, "[prepareUserInterface] current provider doesn't require input");
 
-            if (currentlyAuthenticatingProvider.requiresInput()) {
-                if (Config.LOGD) Log.d(TAG, "[prepareUserInterface] current provider requires input");
+            mUserInput.setVisibility(View.GONE);
 
-                mUserInput.setVisibility(View.VISIBLE);
-                mWelcomeLabel.setVisibility(View.GONE);
-
-                String userInput = currentlyAuthenticatingProvider.getUserInput();
-                if (!TextUtils.isEmpty(userInput)) {
-                    mUserInput.setText(userInput);
-                } else { // Will probably never happen
-                    mUserInput.setText("");
-                    configureButtonVisibility(true);
-                }
-
-                mUserInput.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
-            } else {
-                if (Config.LOGD) Log.d(TAG, "[prepareUserInterface] current provider doesn't require input");
-
-                mUserInput.setVisibility(View.GONE);
-                mWelcomeLabel.setVisibility(View.VISIBLE);
-
-                mWelcomeLabel.setText(currentlyAuthenticatingProvider.getWelcomeString());
-            }
-        } else {
-             configureButtonVisibility(true);
-
-            if (currentlyAuthenticatingProvider.requiresInput()) {
-                if (Config.LOGD) {
-                    Log.d(TAG, "[prepareUserInterface] current provider requires input"); }
-
-                mUserInput.setVisibility(View.VISIBLE);
-                mWelcomeLabel.setVisibility(View.GONE);
-
-                String userInput = currentlyAuthenticatingProvider.getUserInput();
-                if (!TextUtils.isEmpty(userInput)) {
-                    mUserInput.setText(userInput);
-                } else {
-                    mUserInput.setText("");
-                }
-
-                mUserInput.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
-            } else {
-                // Will never happen
-            }
+            mWelcomeLabel.setVisibility(View.VISIBLE);
+            mWelcomeLabel.setText(mSessionData.getAuthenticatedUserForProvider(
+                    currentlyAuthenticatingProvider).getWelcomeMessage());
         }
     }
 

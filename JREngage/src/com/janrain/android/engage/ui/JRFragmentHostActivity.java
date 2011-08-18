@@ -125,7 +125,16 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 case JR_PROVIDER_LIST:
                     /* check and see whether we should start the landing page */
                     String rbpName = mSessionData.getReturningBasicProvider();
-                    if (!TextUtils.isEmpty(rbpName)) {
+                    JRProvider rbp = mSessionData.getProviderByName(rbpName);
+                    if (!TextUtils.isEmpty(rbpName)
+                            && mSessionData.getAuthenticatedUserForProvider(rbp) != null
+                            && !mSessionData.getAlwaysForceReauth()
+                            && !rbp.getForceReauth()) {
+                        // These other boolean logic statements are in the iPhone UI Maestro
+                        //&& !sessionData.socialSharing
+                        //&& ![((NSArray*)[customInterface objectForKey:kJRRemoveProvidersFromAuthentication]) containsObject:sessionData.returningBasicProvider]
+                        //&& [sessionData.basicProviders containsObject:sessionData.returningBasicProvider])
+
                         JRProvider provider = mSessionData.getProviderByName(rbpName);
                         mSessionData.setCurrentlyAuthenticatingProvider(provider);
                         Intent i = createIntentForCurrentScreen(this, true);
@@ -268,7 +277,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
             } else {
                 return new Intent(c, JRFragmentHostActivityFullscreenNoTitleBar.class);
             }
-        } else {
+        } else { // Honeycomb (becuase the screen is large+)
             // ignore showTitleBar, this activity dynamically enables and disables its title
             return new Intent(c, JRFragmentHostActivity.class);
         }

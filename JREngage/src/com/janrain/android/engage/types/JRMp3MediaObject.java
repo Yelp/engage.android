@@ -186,6 +186,7 @@ package com.janrain.android.engage.types;
     }
 /*@}*/
 
+    @Override
     public String getType() {
         return "music";
     }

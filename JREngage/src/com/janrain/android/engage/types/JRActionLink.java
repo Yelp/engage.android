@@ -133,24 +133,4 @@ public class JRActionLink {
         return mHref;
     }
 /*@}*/
-
-    /**
-     * @internal
-     * Returns a HashMap (Dictionary) representing the JRActionLink.
-     *
-     * @return
-     *      An HashMap (Dictionary) of String objects representing the JRActionLink
-     *
-     * @note
-     *      This function should not be used directly.  It is intended only for use by the
-     *      JREngage library.
-     *
-     * TODO: revisit visibility/usage
-     * specifically, is this the right jsonification
-     **/
-    public Map<String, String> dictionaryForObject() {
-        Map<String, String> map = new HashMap<String, String>(1);
-        map.put(mText, mHref);
-        return map;
-    }
 }

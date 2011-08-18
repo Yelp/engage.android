@@ -7,7 +7,10 @@ import android.content.res.Configuration;
 import android.os.Build;
 import com.janrain.android.engage.JREngage;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 /**
  * Created by IntelliJ IDEA.
@@ -50,6 +53,24 @@ public class AndroidUtils {
             throw new RuntimeException(e);
         }
     }
+
+    public static String urlEncode(String s) {
+        try {
+            return URLEncoder.encode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String urlDecode(String s) {
+        try {
+            return URLDecoder.decode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static final int SDKINT = getAndroidSdkInt();
 
     public static ApplicationInfo getApplicationInfo() {
         String packageName = JREngage.getContext().getPackageName();

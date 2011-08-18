@@ -55,9 +55,11 @@ import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-
+import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -78,7 +80,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private static final String FMT_CONFIG_URL =
             "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s&version=%s";
     private static final String TAG_GET_CONFIGURATION = "getConfiguration";
-    private static final String TAG_NOTIFY_EMAIL_SMS = "notifyEmailSms";
 
     private static JRSessionData sInstance;
     public static final String USERDATA_ACTION_KEY = "action";
@@ -159,8 +160,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         ApplicationInfo ai = AndroidUtils.getApplicationInfo();
         String appName = JREngage.getContext().getPackageManager().getApplicationLabel(ai).toString();
-        try { mUrlEncodedAppName = URLEncoder.encode(appName, "UTF-8"); }
-        catch (UnsupportedEncodingException e) { throw new RuntimeException(e); }
+        mUrlEncodedAppName = AndroidUtils.urlEncode(appName);
 
         mLibraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
         String diskVersion = Prefs.getAsString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, "");
@@ -227,7 +227,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             mBasicProviders = new ArrayList<String>();
             mSocialProviders = new ArrayList<String>();
             mBaseUrl = "";
-            mHidePoweredBy = false;
+            mHidePoweredBy = true;
             mReturningSocialProvider = "";
             mReturningBasicProvider = "";
             mOldEtag = "";
@@ -370,9 +370,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                         JREngageError.ErrorType.CONFIGURATION_FAILED);
                 mGetConfigDone = true;
                 triggerMobileConfigDidFinish();
-            } else if (userdata.equals(TAG_NOTIFY_EMAIL_SMS)) {
-                /* The notification to Engage of an email/SMS share failed */
-                Log.e(TAG, "[connectionDidFail] Engage email/SMS notification failed: " + ex);
             } else {
                 Log.e(TAG, "[connectionDidFail] unrecognized ConnectionManager tag: "
                         + userdata + " with Exception: " + ex);
@@ -414,13 +411,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         if (Config.LOGD) Log.d(TAG, "[connectionDidFinishLoading] payload: " + payload);
 
         if (userdata instanceof String) {
-            String tag = (String) userdata;
-
-            if (tag.equals(TAG_NOTIFY_EMAIL_SMS)) {
-                /* Nothing to do here, our notification to Engage succeeded */
-            } else {
-                Log.e(TAG, "[connectionDidFinishLoading] unrecognized ConnectionManager tag: " + tag);
-            }
+            Log.e(TAG, "[connectionDidFinishLoading] unrecognized ConnectionManager tag: " + userdata);
         } else if (userdata instanceof JRDictionary) {
             JRDictionary dictionary = (JRDictionary) userdata;
 
@@ -745,27 +736,18 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return null;
     }
 
-    private String getWelcomeMessageFromCookieString(String cookieString) {
+    private String getWelcomeMessageFromCookieString() {
         if (Config.LOGD) Log.d(TAG, "[getWelcomeMessageFromCookieString]");
 
-        String retval = "Welcome back.";
+        String cookies = CookieManager.getInstance().getCookie(getBaseUrl());
+        String cookieString = cookies.replaceAll(".*welcome_info=([^;]*).*", "$1");
 
         if (!TextUtils.isEmpty(cookieString)) {
             String[] parts = cookieString.split("%22");
-            if (parts.length > 5) {
-                String part;
-                try {
-                    part = URLDecoder.decode(parts[5], "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    part = null;
-                }
-                if (!TextUtils.isEmpty(part)) {
-                    retval = "Sign in as " + part;
-                }
-            }
+            if (parts.length > 5) return "Sign in as " + AndroidUtils.urlDecode(parts[5]);
         }
 
-        return retval;
+        return null;
     }
 
     private void saveLastUsedSocialProvider() {
@@ -778,22 +760,16 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     public void saveLastUsedBasicProvider() {
         if (Config.LOGD) Log.d(TAG, "[saveLastUsedBasicProvider]");
 
-        String cookies = CookieManager.getInstance().getCookie(getBaseUrl());
-        String welcome_info = cookies.replaceAll(".*welcome_info=([^;]*).*", "$1");
-        mCurrentlyAuthenticatingProvider.setWelcomeString(
-                getWelcomeMessageFromCookieString(welcome_info));
-
         setReturningBasicProvider(mCurrentlyAuthenticatingProvider.getName());
     }
 
     public URL startUrlForCurrentlyAuthenticatingProvider() {
         if (Config.LOGD) Log.d(TAG, "[startUrlForCurrentlyAuthenticatingProvider]");
 
-        if (mCurrentlyAuthenticatingProvider == null) {
-            return null;
-        }
+        // What's this for?
+        if (mCurrentlyAuthenticatingProvider == null) return null;
 
-        String oid;  /* open identifier */
+        String oid; /* open identifier */
 
         if (!TextUtils.isEmpty(mCurrentlyAuthenticatingProvider.getOpenIdentifier())) {
             oid = String.format("openid_identifier=%s&", mCurrentlyAuthenticatingProvider.getOpenIdentifier());
@@ -808,7 +784,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         String fullStartUrl;
 
-        if (mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) {
+        boolean forceReauth = mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth();
+        if (getAuthenticatedUserForProvider(mCurrentlyAuthenticatingProvider) == null) forceReauth = true;
+        if (forceReauth) {
             deleteWebViewCookiesForDomains(mCurrentlyAuthenticatingProvider.getCookieDomains());
         }
 
@@ -816,8 +794,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 mBaseUrl,
                 mCurrentlyAuthenticatingProvider.getStartAuthenticationUrl(),
                 oid,
-                ((mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth()) ?
-                        "force_reauth=true&" : "")
+                (forceReauth ? "force_reauth=true&" : "")
         );
 
         if (Config.LOGD) {
@@ -850,26 +827,33 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             provider.setForceReauth(true);
             mAuthenticatedUsersByProvider.remove(provider.getName());
 
-            deleteWebViewCookiesForDomains(provider.getCookieDomains());
-
             JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
         }
     }
 
     private void deleteWebViewCookiesForDomains(Collection<String> domains) {
-        for (String d : domains) deleteWebViewCookiesForDomain(d);
+        for (String d : domains) {
+            deleteWebViewCookiesForDomain(d, false);
+            deleteWebViewCookiesForDomain(d, true);
+        }
     }
 
-    private void deleteWebViewCookiesForDomain(String domain) {
+    private void deleteWebViewCookiesForDomain(String domain, boolean secure) {
         CookieSyncManager csm = CookieSyncManager.createInstance(JREngage.getContext());
         CookieManager cm = CookieManager.getInstance();
 
-        /* Trim leading .s */
-        if (domain.startsWith(".")) domain = domain.substring(1);
+        /* http://code.google.com/p/android/issues/detail?id=19294 */
+        if (AndroidUtils.SDKINT >= 11) {
+            // don't trim leading .s
+        } else {
+            /* Trim leading .s */
+            if (domain.startsWith(".")) domain = domain.substring(1);
+        }
 
         /* Cookies are stored by domain, and are not different for different schemes (i.e. http vs
          * https) (although they do have an optional 'secure' flag.) */
-        String cookieGlob = cm.getCookie("http://" + domain);
+        domain = "http" + (secure ? "s" : "") + "://" + domain;
+        String cookieGlob = cm.getCookie(domain);
         if (cookieGlob != null) {
             String[] cookies = cookieGlob.split(";");
             for (String cookieTuple : cookies) {
@@ -892,8 +876,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     public void forgetAllAuthenticatedUsers() {
         if (Config.LOGD) Log.d(TAG, "[forgetAllAuthenticatedUsers]");
 
-        for (String providerName : mAllProviders.keySet())
-            forgetAuthenticatedUserForProvider(providerName);
+        for (String providerName : mAllProviders.keySet()) forgetAuthenticatedUserForProvider(providerName);
     }
 
     public JRProvider getProviderByName(String name) {
@@ -908,23 +891,23 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         String url = ENVIRONMENT.getServerUrl() + "/social/record_activity";
 
-        if (Config.LOGD)
-            Log.d(TAG, "[notifyEmailSmsShare]: " + url + " data: " + body.toString());
+        if (Config.LOGD) Log.d(TAG, "[notifyEmailSmsShare]: " + url + " data: " + body.toString());
 
         JRConnectionManagerDelegate jrcmd = new SimpleJRConnectionManagerDelegate() {
+            @Override
             public void connectionDidFinishLoading(String payload,
                                                    String requestUrl,
                                                    Object userdata) {
-                Log.d(TAG, "[notifyEmailSmsShare]: success");
+                if (Config.LOGD) Log.d(TAG, "[notifyEmailSmsShare]: success");
             }
 
+            @Override
             public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
                 Log.e(TAG, "[notifyEmailSmsShare]: failure", ex);
             }
         };
 
-        String tag = TAG_NOTIFY_EMAIL_SMS;
-        JRConnectionManager.createConnection(url, body.toString().getBytes(), jrcmd, false, tag);
+        JRConnectionManager.createConnection(url, body.toString().getBytes(), jrcmd, false, null);
     }
 
     public void shareActivityForUser(JRAuthenticatedUser user) {
@@ -938,9 +921,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         String activityContent;
         JRDictionary activityDictionary = mActivity.toJRDictionary();
         String activityJSON = activityDictionary.toJSON();
-        try {
-            activityContent = URLEncoder.encode(activityJSON, "UTF-8");
-        } catch (UnsupportedEncodingException e) { throw new RuntimeException(e); }
+        activityContent = AndroidUtils.urlEncode(activityJSON);
 
         body.append("activity=").append(activityContent);
 
@@ -954,8 +935,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         String url = ENVIRONMENT.getServerUrl() + "/api/v2/activity";
 
-        if (Config.LOGD)
-            Log.d(TAG, "[shareActivityForUser]: " + url + " data: " + body.toString());
+        if (Config.LOGD) Log.d(TAG, "[shareActivityForUser]: " + url + " data: " + body.toString());
 
         JRDictionary tag = new JRDictionary();
         tag.put(USERDATA_ACTION_KEY, USERDATA_ACTION_SHARE_ACTIVITY);
@@ -1030,8 +1010,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         if (Config.LOGD) Log.d(TAG, "[triggerAuthenticationDidCompleteWithPayload]");
 
         /* Instantiate a user object, keep track of it. */
-        JRAuthenticatedUser user =
-                new JRAuthenticatedUser(rpx_result, mCurrentlyAuthenticatingProvider.getName());
+        JRAuthenticatedUser user = new JRAuthenticatedUser(
+                rpx_result,
+                mCurrentlyAuthenticatingProvider.getName(),
+                getWelcomeMessageFromCookieString());
         mAuthenticatedUsersByProvider.put(mCurrentlyAuthenticatingProvider.getName(), user);
         JRDictionary.archive(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
 
@@ -1055,17 +1037,12 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     public void triggerAuthenticationDidFail(JREngageError error) {
         if (Config.LOGD) Log.d(TAG, "[triggerAuthenticationDidFailWithError]");
 
-        mCurrentlyAuthenticatingProvider.setForceReauth(true);
         String providerName = mCurrentlyAuthenticatingProvider.getName();
+        mCurrentlyAuthenticatingProvider.setForceReauth(true);
 
         setCurrentlyAuthenticatingProvider(null);
         mReturningBasicProvider = null;
         mReturningSocialProvider = null;
-
-        /* This method is only called by JRWebViewActivity at the moment, when Engage returns an
-         * error or there is a networking problem.  I think that clearing the cookies might be a
-         * good thing to do here. */
-        forgetAuthenticatedUserForProvider(providerName);
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.authenticationDidFail(error, providerName);

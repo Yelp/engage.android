@@ -77,7 +77,7 @@ public class JRSmsObject {
      *
      * @param shortUrls
      */
-    void setShortUrls(List<String> shortUrls) {
+    /* package */ void setShortUrls(List<String> shortUrls) {
         mShortUrls = shortUrls;
 
         for (String longUrl : mUrls) {

@@ -33,13 +33,13 @@ import android.util.Log;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.session.JRSessionData;
+import com.janrain.android.engage.utils.AndroidUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -228,7 +228,7 @@ public class JRActivityObject {
      */
     private JRSmsObject mSms;
 
-    private boolean mIsShortening = false;
+    private transient boolean mIsShortening = false;
     private String mShortenedUrl;
 /*@}*/
 
@@ -522,7 +522,7 @@ public class JRActivityObject {
 
             // Make the URL
             final String jsonEncodedUrlsMap = jss.toString();
-            String urlEncodedJson = URLEncoder.encode(jsonEncodedUrlsMap, "UTF8");
+            String urlEncodedJson = AndroidUtils.urlEncode(jsonEncodedUrlsMap);
             final String getUrlsUrl =
                     sessionData.getBaseUrl() + "/openid/get_urls?"
                     + "urls=" + urlEncodedJson
@@ -585,8 +585,6 @@ public class JRActivityObject {
             JRConnectionManager.createConnection(getUrlsUrl, jrcmd, false, null);
         } catch (JSONException e) {
             Log.e(TAG, "URL shortening JSON error", e);
-        } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, "URL shortening error", e);
         }
     }
 }

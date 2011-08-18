@@ -140,14 +140,18 @@ public class JRImageMediaObject extends JRMediaObject {
         mPreview = preview;
     }
 
+    @Override
     public boolean hasThumbnail() {
         return true;
     }
 
+    @Override
+    @JsonIgnore
     public String getThumbnail() {
         return mSrc;
     }
 
+    @Override
     public String getType() {
         return "image";
     }

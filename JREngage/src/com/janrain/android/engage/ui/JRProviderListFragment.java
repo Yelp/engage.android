@@ -135,6 +135,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
             for (JRProvider p : mProviderList) mAdapter.add(p);
             mAdapter.notifyDataSetChanged();
+            showHideTaglines();
         }
     };
 
@@ -187,15 +188,9 @@ public class JRProviderListFragment extends JRUiFragment {
             JRProvider provider = mAdapter.getItem(position);
             mSessionData.setCurrentlyAuthenticatingProvider(provider);
 
-            // todo
-            // || provider.getName().equals(mSessionData.getReturningBasicProvider())
-            // used to be part of the if conditional, it seems to be related to giving the user an
-            // opportunity to switch accounts if they already have credentials, however if that's the
-            // intention mSessionData.getAuthenticatedUserForProvider() != null or something should be
-            // used so that providers that aren't the returning basic provider are also afforded the same
-            // possibility.
-
-            if (provider.requiresInput()) {
+            if (provider.requiresInput() ||
+                    (mSessionData.getAuthenticatedUserForProvider(provider) != null &&
+                    !provider.getForceReauth()) && !mSessionData.getAlwaysForceReauth()) {
                 showUserLanding();
             } else {
                 showWebView();

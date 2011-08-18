@@ -100,7 +100,7 @@ public final class AsyncHttpClient {
             HttpURLConnection connection = null;
 
             //Debugging statement to simulate slow networks
-            try { Thread.sleep(10000); } catch (InterruptedException e) {}
+            //try { Thread.sleep(10000); } catch (InterruptedException e) {}
 
             //float f = new Random().nextFloat();
             //try { Thread.sleep((int) (4000 * f)); } catch (InterruptedException e) {}

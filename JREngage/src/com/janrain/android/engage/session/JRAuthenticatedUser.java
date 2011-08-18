@@ -29,10 +29,21 @@
 */
 package com.janrain.android.engage.session;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.text.TextUtils;
+import android.util.Log;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.types.JRDictionary;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import com.janrain.android.engage.utils.AndroidUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * @internal
@@ -40,64 +51,46 @@ import java.net.URLEncoder;
  * @class JRAuthenticatedUser
  **/
 public class JRAuthenticatedUser implements Serializable {
-
-    // ------------------------------------------------------------------------
-    // TYPES
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
-	public static final String KEY_DEVICE_TOKEN = "device_token";
+    public static final String TAG = JRAuthenticatedUser.class.getSimpleName();
+    public static final String KEY_DEVICE_TOKEN = "device_token";
     public static final String KEY_PHOTO = "photo";
     public static final String KEY_PREFERRED_USERNAME = "preferred_username";
-
-    // ------------------------------------------------------------------------
-    // STATIC INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
+    public static final String KEY_IDENTIFIER = "identifier";
+    public static final String KEY_AUTH_INFO = "auth_info";
+    public static final String KEY_PROFILE = "profile";
 
     private String mPhoto;
     private String mPreferredUsername;
     private String mDeviceToken;
     private String mProviderName;
+    private String mIdentifier;
+    private String mWelcomeMessage;
 
-    // ------------------------------------------------------------------------
-    // INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
-
-    // We don't need a private default constructor so long as we have another constructor as we 
+    // We don't need to make the default constructor private so long as we have another constructor, which we
     // do, found immediately below.
     // Declaring this raises an irresolvable compiler warning that requires a suppression
     // annotation.
 	//private JRAuthenticatedUser() {
     //}
 
-    public JRAuthenticatedUser(JRDictionary mobileEndPointResponse, String providerName) {
+    public JRAuthenticatedUser(JRDictionary mobileEndPointResponse,
+                               String providerName,
+                               String welcomeMessage) {
         mProviderName = providerName;
         mDeviceToken = mobileEndPointResponse.getAsString(KEY_DEVICE_TOKEN);
         mPhoto = mobileEndPointResponse.getAsString(KEY_PHOTO);
         mPreferredUsername = mobileEndPointResponse.getAsString(KEY_PREFERRED_USERNAME);
+        mIdentifier = mobileEndPointResponse.getAsDictionary(KEY_AUTH_INFO).getAsDictionary(KEY_PROFILE)
+                .getAsString(KEY_IDENTIFIER);
+        mWelcomeMessage = welcomeMessage == null ? "Welcome back " + mPreferredUsername : welcomeMessage;
     }
 
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
-
-    public String getPhoto() {              /* (readonly) */
+    public String getPhoto() { /* (readonly) */
         return mPhoto;
+    }
+
+    public String getWelcomeMessage() {
+        return mWelcomeMessage;
     }
 
     public String getPreferredUsername() {  /* (readonly) */
@@ -112,16 +105,64 @@ public class JRAuthenticatedUser implements Serializable {
         return mProviderName;
     }
 
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
+    public String getIdentifier() {
+        return mIdentifier;
+    }
 
     public String getCachedProfilePicKey() {
         if (mPhoto == null) throw new UnsupportedOperationException("JRAuthenticatedUser has no photo");
+        return AndroidUtils.urlEncode(mPhoto);
+    }
+
+    private Context getContext() {
+        return JREngage.getContext();
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public void downloadProfilePic(final ProfilePicAvailableListener callback) {
+        FileInputStream fis;
         try {
-            return URLEncoder.encode(mPhoto, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            fis = getContext().openFileInput("userpic~" + getCachedProfilePicKey());
+        } catch (FileNotFoundException e) {
+            fis = null;
+        } catch (UnsupportedOperationException e) {
+            fis = null;
         }
+
+        Bitmap cachedProfilePic = BitmapFactory.decodeStream(fis);
+        if (cachedProfilePic != null) {
+            callback.onProfilePicAvailable(cachedProfilePic);
+        } else if (!TextUtils.isEmpty(getPhoto())) {
+            new AsyncTask<Void, Void, Bitmap>() {
+                @Override
+                protected Bitmap doInBackground(Void... voids) {
+                    try {
+                        URL url = new URL(getPhoto());
+                        URLConnection urlc = url.openConnection();
+                        InputStream is = urlc.getInputStream();
+                        BufferedInputStream bis = new BufferedInputStream(is);
+                        bis.mark(urlc.getContentLength());
+                        FileOutputStream fos = getContext().openFileOutput("userpic~" +
+                               getCachedProfilePicKey(), Activity.MODE_PRIVATE);
+                        int x;
+                        while ((x = bis.read()) != -1) fos.write(x);
+                        fos.close();
+                        bis.reset();
+                        return BitmapFactory.decodeStream(bis);
+                    } catch (IOException e) {
+                        Log.e(TAG, "profile pic image loader exception: " + e.toString());
+                        return null;
+                    }
+                }
+
+                protected void onPostExecute(Bitmap b) {
+                    callback.onProfilePicAvailable(b);
+                }
+            }.execute();
+        }
+    }
+
+    public interface ProfilePicAvailableListener {
+        public void onProfilePicAvailable(Bitmap b);
     }
 }

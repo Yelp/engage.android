@@ -29,7 +29,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -38,11 +37,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
@@ -63,13 +60,8 @@ import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.*;
 import com.janrain.android.engage.utils.AndroidUtils;
-
-import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -84,13 +76,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         TAG = JRPublishFragment.class.getSimpleName();
     }
 
+    private static final String KEY_DIALOG_ERROR_MESSAGE = "jr_dialog_error_message";
+    private static final String KEY_DIALOG_PROVIDER_NAME = "jr_dialog_provider_name";
     private static final int DIALOG_FAILURE = 1;
     private static final int DIALOG_CONFIRM_SIGNOUT = 3;
     private static final int DIALOG_MOBILE_CONFIG_LOADING = 4;
     private static final int DIALOG_NO_EMAIL_CLIENT = 5;
     private static final int DIALOG_NO_SMS_CLIENT = 6;
-    private static final int JANRAIN_BLUE_20PERCENT = 0x33074764;
-    private static final int JANRAIN_BLUE_100PERCENT = 0xFF074764;
     private static final String EMAIL_SMS_TAB_TAG = "email_sms";
 
     /* JREngage objects we're operating with */
@@ -101,12 +93,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     /* UI properties */
     private String mShortenedActivityURL = null; //null if it hasn't been shortened
     private int mMaxCharacters;
-    private String mDialogErrorMessage;
 
     /* UI state transitioning variables */
     //private boolean mUserHasEditedText = false;
-    private boolean mWeHaveJustAuthenticated = false;
     //private boolean mWeAreCurrentlyPostingSomething = false;
+    private boolean mWeHaveJustAuthenticated = false;
     private boolean mWaitingForMobileConfig = false;
     private boolean mAuthenticatingForShare = false;
 
@@ -175,8 +166,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mJustShareButton.setOnClickListener(mShareButtonListener);
         mUserCommentView.addTextChangedListener(mUserCommentTextWatcher);
 
-        mSmsButton.setColor(JANRAIN_BLUE_100PERCENT);
-        mEmailButton.setColor(JANRAIN_BLUE_100PERCENT);
+        mSmsButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
+        mEmailButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
 
         /* Initialize the provider shared-ness state map */
         mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
@@ -459,12 +450,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mMediaContentView.setVisibility(showMediaContentView ? View.VISIBLE : View.GONE);
 
         /* Switch on or off the action label view based on the provider accepting an action */
-        //boolean contentReplacesAction = socialSharingProperties.getAsBoolean("content_replaces_action");
-        //mPreviewLabelView.setVisibility(contentReplacesAction ? View.GONE : View.VISIBLE);
 
-        Object colorValues = socialSharingProperties.get("color_values");
-        int colorWithAlpha = colorForProviderFromArray(colorValues, true);
-        int colorNoAlpha = colorForProviderFromArray(colorValues, false);
+        int colorWithAlpha = mSelectedProvider.getProviderColor(true);
+        int colorNoAlpha = mSelectedProvider.getProviderColor(false);
 
         mUserProfileInformationAndShareButtonContainer.setBackgroundColor(colorWithAlpha);
 
@@ -530,7 +518,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 mAuthenticatingForShare = true;
                 authenticateUserForSharing();
             } else {
-                showProgressDialog();
                 shareActivity();
             }
         }
@@ -538,7 +525,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private View.OnClickListener mSignoutButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
-            showDialog(DIALOG_CONFIRM_SIGNOUT);
+            Bundle options = new Bundle();
+            options.putString(KEY_DIALOG_PROVIDER_NAME, mSelectedProvider.getFriendlyName());
+            showDialog(DIALOG_CONFIRM_SIGNOUT, options);
         }
     };
 
@@ -660,18 +649,18 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     @Override
-    protected Dialog onCreateDialog(int id) {
+    protected Dialog onCreateDialog(int id, Bundle options) {
         // TODO: make resources out of these strings
 
         switch (id) {
             case DIALOG_FAILURE:
                 return new AlertDialog.Builder(getActivity())
-                        .setMessage(mDialogErrorMessage)
+                        .setMessage(options.getString(KEY_DIALOG_ERROR_MESSAGE))
                         .setPositiveButton("Dismiss", null)
                         .create();
             case DIALOG_CONFIRM_SIGNOUT:
                 return new AlertDialog.Builder(getActivity())
-                        .setMessage("Sign out of " + mSelectedProvider.getFriendlyName() + "?")
+                        .setMessage("Sign out of " + options.getString(KEY_DIALOG_PROVIDER_NAME) + "?")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 signOutButtonHandler();
@@ -684,7 +673,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 pd.setCancelable(false);
                 pd.setTitle("");
                 pd.setMessage("Loading configuration data.\nPlease wait...");
-                pd.setIndeterminate(false);
+                pd.setIndeterminate(true);
                 return pd;
             case DIALOG_NO_EMAIL_CLIENT:
                 return new AlertDialog.Builder(getActivity())
@@ -698,20 +687,21 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                         .create();
         }
 
-        return super.onCreateDialog(id);
+        return super.onCreateDialog(id, options);
     }
 
-    protected void onPrepareDialog(int id, Dialog d) {
+    @Override
+    protected void onPrepareDialog(int id, Dialog d, Bundle options) {
         switch (id) {
             case DIALOG_FAILURE:
-                ((AlertDialog) d).setMessage(mDialogErrorMessage);
+                ((AlertDialog) d).setMessage(options.getString(KEY_DIALOG_ERROR_MESSAGE));
                 return;
             case DIALOG_CONFIRM_SIGNOUT:
                 ((AlertDialog) d).setMessage("Sign out of " + mSelectedProvider.getFriendlyName() + "?");
                 return;
         }
 
-        super.onPrepareDialog(id, d);
+        super.onPrepareDialog(id, d, options);
     }
 
     private void signOutButtonHandler() {
@@ -801,7 +791,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void loadUserNameAndProfilePicForUserForProvider(
-            final JRAuthenticatedUser user,
+            JRAuthenticatedUser user,
             final String providerName) {
         if (Config.LOGD) Log.d(TAG, "loadUserNameAndProfilePicForUserForProvider");
 
@@ -813,51 +803,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         mUserNameView.setText(user.getPreferredUsername());
 
-        FileInputStream fis;
-        try {
-            fis = getActivity().openFileInput("userpic~" + user.getCachedProfilePicKey());
-        } catch (FileNotFoundException e) {
-            fis = null;
-        } catch (UnsupportedOperationException e) {
-            fis = null;
-        }
-
-        Bitmap cachedProfilePic = BitmapFactory.decodeStream(fis);
-
-        if (cachedProfilePic != null) {
-            mUserProfilePic.setImageBitmap(cachedProfilePic);
-        } else if (user.getPhoto() != null) {
-            mUserProfilePic.setImageResource(R.drawable.jr_profilepic_placeholder);
-            new AsyncTask<Void, Void, Bitmap>() {
-                protected Bitmap doInBackground(Void... voids) {
-                    try {
-                        URL url = new URL(user.getPhoto());
-                        URLConnection urlc = url.openConnection();
-                        InputStream is = urlc.getInputStream();
-                        BufferedInputStream bis = new BufferedInputStream(is);
-                        bis.mark(urlc.getContentLength());
-                        FileOutputStream fos = getActivity().openFileOutput("userpic~" +
-                                user.getCachedProfilePicKey(), Activity.MODE_PRIVATE);
-                        int x;
-                        while ((x = bis.read()) != -1) fos.write(x);
-                        fos.close();
-                        bis.reset();
-                        return BitmapFactory.decodeStream(bis);
-                    } catch (IOException e) {
-                        Log.e(TAG, "profile pic image loader exception: " + e.toString());
-                        // TODO: set default profile pic?
-                        return null;
-                    }
-                }
-
-                protected void onPostExecute(Bitmap b) {
-                    if (mSelectedProvider.getName().equals(providerName))
-                        mUserProfilePic.setImageBitmap(b);
-                }
-            }.execute();
-        } else {
-            mUserProfilePic.setImageResource(R.drawable.jr_profilepic_placeholder);
-        }
+        mUserProfilePic.setImageResource(R.drawable.jr_profilepic_placeholder);
+        user.downloadProfilePic(new JRAuthenticatedUser.ProfilePicAvailableListener() {
+            public void onProfilePicAvailable(Bitmap b) {
+                if (mSelectedProvider.getName().equals(providerName))
+                    mUserProfilePic.setImageBitmap(b);
+            }
+        });
     }
 
     private void showActivityAsShared(boolean shared) {
@@ -868,10 +820,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         mSharedTextAndCheckMarkContainer.setVisibility(visibleIfShared);
 
-        if (mAuthenticatedUser != null)
+        if (mAuthenticatedUser != null) {
             mJustShareButton.setVisibility(visibleIfNotShared);
-        else
+        } else {
             mConnectAndShareButton.setVisibility(visibleIfNotShared);
+        }
     }
 
     private void showUserAsLoggedIn(boolean loggedIn) {
@@ -885,62 +838,21 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         mConnectAndShareButton.setVisibility(visibleIfNotLoggedIn);
 
-        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action"))
+        if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
             updatePreviewTextWhenContentReplacesAction();
-        else
+        } else {
             updatePreviewTextWhenContentDoesNotReplaceAction();
+        }
 
         int scaledPadding = AndroidUtils.scaleDipPixels(240);
         if (loggedIn) mTriangleIconView.setPadding(0, 0, scaledPadding, 0);
         else mTriangleIconView.setPadding(0, 0, 0, 0);
     }
 
-    private int colorForProviderFromArray(Object arrayOfColorStrings, boolean withAlpha) {
-        if (!(arrayOfColorStrings instanceof ArrayList))
-            if (withAlpha)
-                /* If there's ever an error, just return Janrain blue (at 20% opacity) */
-                return JANRAIN_BLUE_20PERCENT;
-            else
-                return JANRAIN_BLUE_100PERCENT;
-
-        // todo see if we can write this in a compile-time--type-safe way
-        @SuppressWarnings("unchecked")
-        ArrayList<Double> colorArray = new ArrayList<Double>(
-                (ArrayList<Double>) arrayOfColorStrings);
-
-        /* We need to reorder the array (which is RGBA, the color format returned by Engage) to the color format
-         * used by Android (which is ARGB), by moving the last element (alpha) to the front */
-        Double alphaValue = colorArray.remove(3);
-        if (withAlpha) {
-            colorArray.add(0, alphaValue);
-        } else {
-            colorArray.add(0, 1.0);
-        }
-
-        int finalColor = 0;
-        for (Object colorValue : colorArray) {
-            /* If there's ever an error, just return Janrain blue (at 20% opacity) */
-            if(!(colorValue instanceof Double))
-                return JANRAIN_BLUE_20PERCENT;
-
-            double colorValue_Fraction = (Double)colorValue;
-
-            /* First, get an int from the double, which is the decimal percentage of 255 */
-            int colorValue_Int = (int)(colorValue_Fraction * 255.0);
-
-            finalColor *= 256;
-            finalColor += colorValue_Int;
-
-        }
-
-        return finalColor;
-    }
-
     private void configureLoggedInUserBasedOnProvider() {
         mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
 
-        loadUserNameAndProfilePicForUserForProvider(mAuthenticatedUser,
-                mSelectedProvider.getName());
+        loadUserNameAndProfilePicForUserForProvider(mAuthenticatedUser, mSelectedProvider.getName());
 
         showUserAsLoggedIn(mAuthenticatedUser != null);
     }
@@ -954,19 +866,19 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void authenticateUserForSharing() {
-     /* Set weHaveJustAuthenticated to true, so that when this view returns (for whatever reason...
-      * successful auth user canceled, etc), the view will know that we just went through the
-      * authentication process. */
+         /* Set weHaveJustAuthenticated to true, so that when this view returns (for whatever reason...
+          * successful auth user canceled, etc), the view will know that we just went through the
+          * authentication process. */
         mWeHaveJustAuthenticated = true;
         mSessionData.setCurrentlyAuthenticatingProvider(mSelectedProvider);
 
-     /* If the selected provider requires input from the user, go to the user landing view. Or if
-      * the user started on the user landing page, went back to the list of providers, then selected
-      * the same provider as their last-used provider, go back to the user landing view. */
+         /* If the selected provider requires input from the user, go to the user landing view. Or if
+          * the user started on the user landing page, went back to the list of providers, then selected
+          * the same provider as their last-used provider, go back to the user landing view. */
         if (mSelectedProvider.requiresInput()) {
             showUserLanding();
             /* XXX this doesn't pass in the social sharing sign-in mode flag, so flag consequent behavior
-             * will be broken.  However, this code path is not used, since no modern providers "require
+             * will be broken.  However, this code path is not used, since no sharing providers "require
              * input".
              */
         } else { /* Otherwise, go straight to the web view. */
@@ -976,6 +888,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private void shareActivity() {
         if (Config.LOGD) Log.d(TAG, "shareActivity mAuthenticatedUser: " + mAuthenticatedUser.toString());
+        showProgressDialog();
 
         if (isPublishThunk()) {
             mSessionData.setStatusForUser(mAuthenticatedUser);
@@ -988,8 +901,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private boolean isPublishThunk() {
         return mActivityObject.getUrl().equals("") &&
-                mSelectedProvider.getSocialSharingProperties()
-                        .getAsBoolean("uses_set_status_if_no_url");
+                mSelectedProvider.getSocialSharingProperties().getAsBoolean("uses_set_status_if_no_url");
     }
 
     public boolean doesActivityUrlAffectCharacterCountForSelectedProvider() {
@@ -1003,7 +915,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     /* JRSessionDelegate definition */
-
     private JRSessionDelegate mSessionDelegate = new JRSessionDelegate.SimpleJRSessionDelegate() {
         @Override
         public void authenticationDidRestart() {
@@ -1011,7 +922,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
             //mWeAreCurrentlyPostingSomething = false;
             mWeHaveJustAuthenticated = false;
-            dismissProgressDialog();
         }
 
         @Override
@@ -1023,9 +933,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
             mWeHaveJustAuthenticated = false;
             //mWeAreCurrentlyPostingSomething = false;
-            dismissProgressDialog();
 
-            /* We don't need to show a dialog because the WebView has already shown one. */
+            /* This UI doesn't need to show a dialog because the JRWebView has already shown one. */
             //mDialogErrorMessage = error.getMessage();
             //showDialog(DIALOG_FAILURE);
         }
@@ -1033,17 +942,25 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         @Override
         public void authenticationDidComplete(JRDictionary profile, String provider) {
             if (Config.LOGD) Log.d(TAG, "[authenticationDidComplete]");
-            mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
 
-            if (mAuthenticatedUser != null) {
-                loadUserNameAndProfilePicForUserForProvider(mAuthenticatedUser, provider);
-                showUserAsLoggedIn(true);
-            }
+            if (provider.equals(mSelectedProvider.getName())) {
+                JRAuthenticatedUser oldUser = mAuthenticatedUser;
+                mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
 
-            if (mAuthenticatingForShare) {
-                mAuthenticatingForShare = false;
-                showProgressDialog();
-                shareActivity();
+                if (oldUser != null && oldUser.getIdentifier().equals(mAuthenticatedUser.getIdentifier())) {
+                    // leave the UI the same
+                } else {
+                    // refresh the UI
+                    mProvidersThatHaveAlreadyShared.put(mSelectedProvider.getName(), false);
+                    onTabChanged(getTabHost().getCurrentTabTag());
+                    loadUserNameAndProfilePicForUserForProvider(mAuthenticatedUser, provider);
+                    showUserAsLoggedIn(true);
+                }
+
+                if (mAuthenticatingForShare) {
+                    mAuthenticatingForShare = false;
+                    shareActivity();
+                }
             }
         }
 
@@ -1066,31 +983,29 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                                                 String provider) {
             if (Config.LOGD) Log.d(TAG, "[publishingJRActivityDidFail]");
             boolean reauthenticate = false;
-            mDialogErrorMessage = "";
+            String dialogErrorMessage = "";
 
             dismissProgressDialog();
 
             switch (error.getCode()) {
                 case JREngageError.SocialPublishingError.FAILED:
                     //mDialogErrorMessage = "There was an error while sharing this activity.";
-                    mDialogErrorMessage = error.getMessage();
+                    dialogErrorMessage = error.getMessage();
                     break;
                 case JREngageError.SocialPublishingError.DUPLICATE_TWITTER:
-                    mDialogErrorMessage =
-                            getString(R.string.jr_error_twitter_no_duplicates_allowed);
+                    dialogErrorMessage = getString(R.string.jr_error_twitter_no_duplicates_allowed);
                     break;
                 case JREngageError.SocialPublishingError.LINKEDIN_CHARACTER_EXCEEDED:
-                    mDialogErrorMessage =
-                            getString(R.string.jr_error_linkedin_too_long);
+                    dialogErrorMessage = getString(R.string.jr_error_linkedin_too_long);
                     break;
                 case JREngageError.SocialPublishingError.MISSING_API_KEY:
                     // Fall through
                 case JREngageError.SocialPublishingError.INVALID_OAUTH_TOKEN:
-                    mDialogErrorMessage = getString(R.string.jr_error_generic_sharing);
+                    dialogErrorMessage = getString(R.string.jr_error_generic_sharing);
                     reauthenticate = true;
                     break;
                 default:
-                    mDialogErrorMessage = error.getMessage();
+                    dialogErrorMessage = error.getMessage();
                     break;
             }
 
@@ -1115,7 +1030,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             //mWeAreCurrentlyPostingSomething = false;
             mWeHaveJustAuthenticated = false;
 
-            showDialog(DIALOG_FAILURE);
+            Bundle options = new Bundle();
+            options.putString(KEY_DIALOG_ERROR_MESSAGE, dialogErrorMessage);
+            showDialog(DIALOG_FAILURE, options);
         }
 
         @Override

@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="jr_dialog" parent="@android:style/Theme.Holo.Light.DialogWhenLarge">
-        <!--<item name="android:windowNoTitle">true</item>-->
-        <!--<item name="android:textColor">#ffffffff</item>-->
-        <!--<item name="android:textAppearance">@android:style/TextAppearance</item>-->
-        <!--<item name="android:textColorAlertDialogListItem">#ffffffff</item>-->
-        <!--<item name="android:textColorPrimary">#ffffffff</item>-->
-        <!--<item name="android:textColorSecondary">#ffffffff</item>-->
-        <!--<item name="android:textColorTertiary">#ffffffff</item>-->
-        <!--<item name="android:textStyle">bold</item>-->
-        <!--<item name="android:textColor">?textColorPrimary</item>-->
-    </style>
+    <style name="jr_dialog" parent="@android:style/Theme.Holo.Light.DialogWhenLarge" />
     <style name="jr_fullscreen" parent="@android:style/Theme.Holo.Light" />
+    <style name="jr_fullscreen_no_title" parent="@android:style/Theme.Holo.Light.NoActionBar" />
 </resources>

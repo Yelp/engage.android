@@ -58,6 +58,7 @@ public abstract class JRMediaObject {
 
     public abstract String getType();
 
+    @SuppressWarnings("unchecked")
     public void downloadThumbnail(final ThumbnailAvailableListener tal) {
         if (mThumbnailBitmap != null) {
             tal.onThumbnailAvailable(mThumbnailBitmap);

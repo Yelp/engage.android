@@ -52,7 +52,7 @@
                     android:layout_alignParentTop="true"
                     android:gravity="top|left"
                     android:hint="@string/jr_please_enter_text"
-                    android:textColorHint="@color/jr_TEXT_COLOR_HINT"
+                    android:textColorHint="@color/jr_text_color_hint"
                     android:lines="4"
                     android:inputType="textMultiLine|textAutoComplete"
                     />
@@ -61,7 +61,7 @@
                     android:id="@+id/jr_email_sms_button_layout"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    android:background="@color/jr_JANRAIN_BLUE_20PERCENT"
+                    android:background="@color/jr_janrain_darkblue_light_20percent"
                     android:layout_alignParentBottom="true"
                     android:orientation="vertical"
                     android:gravity="top|center_horizontal"
@@ -157,7 +157,7 @@
                     android:layout_marginLeft="4dip"
                     android:gravity="top|left"
                     android:hint="@string/jr_please_enter_text"
-                    android:textColorHint="@color/jr_TEXT_COLOR_HINT"
+                    android:textColorHint="@color/jr_text_color_hint"
                     android:lines="3"
                     android:inputType="textMultiLine|textAutoComplete"
                     />
@@ -182,6 +182,7 @@
                      container for the jr_preview_box.  (We can't allow the preview box to grow
                      to this size though, because then it's background does too, and that looks
                      weird. -->
+                <!--Cute name, btw...-->
                 <RelativeLayout
                     android:id="@+id/jr_nested_layout_mania_sunday_sunday_sunday"
                     android:layout_width="match_parent"
@@ -190,12 +191,6 @@
                     android:layout_above="@+id/jr_provider_icon"
                     >
 
-                    <!-- This RelativeLayout expands to the size between the character count view and
-                         the provider icon.  It renders nothing, but only serves as a bounding
-                         container for the jr_preview_box.  (We can't allow the preview box to grow
-                         to this size though, because then it's background does too, and that looks
-                         weird. -->
-                    <!--Cute name, btw...-->
                     <RelativeLayout
                         android:id="@+id/jr_preview_box"
                         android:layout_width="match_parent"
@@ -203,7 +198,6 @@
                         android:background="@drawable/jr_bg_publish_preview"
                         android:paddingBottom="4dip"
                         >
-                        <!--android:gravity="top|left"-->
 
                         <LinearLayout
                             android:id="@+id/jr_preview_box_border"
@@ -219,7 +213,6 @@
                             android:paddingLeft="3dp"
                             android:paddingRight="3dp"
                             >
-                            <!--android:gravity="top|left"-->
 
                             <TextView
                                 android:id="@+id/jr_preview_text_view"
@@ -233,9 +226,6 @@
                                 android:textSize="12dip"
                                 android:layout_weight="1"
                                 />
-                            <!--android:maxLines="3"-->
-                                <!--android:layout_below="@id/character_count_view"-->
-                                <!--android:singleLine="true"-->
 
                             <RelativeLayout
                                 android:id="@+id/jr_media_content_view"
@@ -252,12 +242,6 @@
                                 android:background="@drawable/jr_bg_provider_activity_info"
                                 android:layout_weight="0"
                                 >
-                                <!--android:layout_height="122dip"-->
-                                <!--android:layout_marginTop="10dip"-->
-                                <!--android:layout_marginRight="7dip"-->
-                                <!--android:layout_marginLeft="7dip"-->
-                                <!--android:padding="5dp"-->
-                                <!--android:gravity="top|left|bottom|right"-->
 
                                 <ImageView
                                     android:id="@+id/jr_media_content_image"
@@ -332,7 +316,6 @@
                             android:paddingRight="6dip"
                             android:textSize="10dip"
                             />
-                            <!--android:layout_marginBottom="10dip"-->
 
                     </RelativeLayout>
 
@@ -352,7 +335,6 @@
                     android:paddingRight="6dip"
                     android:textSize="12dip"
                     />
-                    <!--android:layout_marginLeft="12dip"-->
 
                 <ImageView
                     android:id="@+id/jr_provider_icon"
@@ -362,7 +344,6 @@
                     android:layout_above="@+id/jr_user_profile_information_and_share_button_container"
                     android:layout_marginBottom="4dip"
                     />
-                    <!--android:layout_marginRight="4dip"-->
 
                 <LinearLayout
                     android:id="@+id/jr_user_profile_information_and_share_button_container"
@@ -374,7 +355,6 @@
                     android:padding="0dip"
                     android:background="#33074764"
                     >
-                    <!-- android:paddingBottom="22dip" -->
 
                     <ImageView
                         android:id="@+id/jr_triangle_icon_view"
@@ -551,11 +531,6 @@
                             android:layout_marginRight="10dp"
                             android:layout_marginLeft="10dp"
                             />
-                        <!--android:drawableRight="@drawable/icon_facebook"-->
-                        <!--android:paddingBottom="5dip"-->
-                        <!--android:background="@drawable/sel_janrain_280x40"-->
-                        <!--android:textColor="#ffffffff"-->
-                        <!--android:layout_marginTop="4dp"-->
 
                     </LinearLayout>
 

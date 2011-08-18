@@ -6,7 +6,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFFFF"
     >
 
     <!--
@@ -50,7 +49,7 @@
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="4dp"
             android:singleLine="true"
-            android:textColorHint="@color/jr_TEXT_COLOR_HINT"
+            android:textColorHint="@color/jr_text_color_hint"
             />
         <!--android:layout_width="280dp"-->
 
@@ -76,7 +75,7 @@
             android:orientation="horizontal"
             >
 
-            <com.janrain.android.engage.ui.ColorButton
+            <Button
                 android:id="@+id/jr_landing_switch_account_button"
                 android:visibility="invisible"
                 android:layout_width="match_parent"
@@ -87,10 +86,10 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="4dp"
                 android:text="@string/jr_landing_switch_account_button_text"
-                android:textColor="#ffffffff"
                 android:textStyle="bold"
                 android:layout_weight="1"
                 />
+            <!--android:textColor="#ffffffff"-->
 
             <com.janrain.android.engage.ui.ColorButton
                 android:id="@+id/jr_landing_small_signin_button"
@@ -103,16 +102,15 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="2dp"
                 android:text="@string/jr_landing_signin_button_text"
-                android:textColor="#ffffffff"
                 android:textStyle="bold"
                 android:layout_weight="1"
+                android:textColor="#ffffffff"
                 />
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <!-- Footer (powered by) area -->
     <include layout="@layout/jr_shared_footer" />
 
 </RelativeLayout>

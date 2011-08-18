@@ -75,22 +75,22 @@ public class JRWebViewFragment extends JRUiFragment {
     private boolean mIsLoadingMobileEndpoint = false;
     private JRProvider mProvider;
     private WebSettings mWebViewSettings;
-    private ProgressBar mProgressBar;
+    private ProgressBar mProgressSpinner;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.jr_provider_webview, container, false);
 
         mWebView = (WebView)view.findViewById(R.id.jr_webview);
-        mProgressBar = (ProgressBar)view.findViewById(R.id.jr_webview_progress);
+        mProgressSpinner = (ProgressBar)view.findViewById(R.id.jr_webview_progress);
 
         mWebViewSettings = mWebView.getSettings();
 
-        // Shim some information about the OS version into the WebView for use by hax ala Yahoo!:
+        // Shim some information about the OS version into the WebView for use by hax ala Yahoo:
         mWebView.addJavascriptInterface(new Object() {
         			// These functions may be invoked via the javascript binding, but they are
         			// never invoked from this Java code, so they will always generate compiler
-        			// warnings, so we suppress those warnings safely.
+        			// warnings, so those warnings are suppressed safely.
                     @SuppressWarnings("unused")
 					String getAndroidIncremental() {
                         return Build.VERSION.INCREMENTAL;
@@ -135,11 +135,7 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        dismissProgressDialog();
-
+    public void onDestroyView() {
         // onDestroy may be called even if onCreateView never is, guard against NPEs
         if (mWebView != null) {
             mWebView.stopLoading();
@@ -151,9 +147,13 @@ public class JRWebViewFragment extends JRUiFragment {
             mWebView.setWebViewClient(null);
             mWebView.setDownloadListener(null);
         }
+
+        super.onDestroyView();
     }
 
     private void showAlertDialog(String title, String message) {
+        // XXX these Dialogs won't work correctly if this Fragment is embedded in an activity which
+        // destroys and recreates itself on configuration change.
         mIsAlertShowing = true;
         new AlertDialog.Builder(getActivity())
             .setTitle(title)
@@ -185,11 +185,11 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     private void showProgressSpinner() {
-        mProgressBar.setVisibility(View.VISIBLE);
+        mProgressSpinner.setVisibility(View.VISIBLE);
     }
 
     private void hideProgressSpinner() {
-        if (!mIsLoadingMobileEndpoint) mProgressBar.setVisibility(View.GONE);
+        if (!mIsLoadingMobileEndpoint) mProgressSpinner.setVisibility(View.GONE);
     }
 
     @Override
@@ -211,11 +211,11 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     private void loadMobileEndpointUrl(String url) {
+        mIsLoadingMobileEndpoint = true;
         //if (!AndroidUtils.isSmallOrNormalScreen()) {
-            mIsLoadingMobileEndpoint = true;
             showProgressSpinner();
         //} else { // full screen mode
-        //    mLayoutHelper.showProgressDialog();
+        //    showProgressDialog();
         //}
 
         String urlToLoad = url + "&auth_info=true";
@@ -335,19 +335,22 @@ public class JRWebViewFragment extends JRUiFragment {
             new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
         @Override
         public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
-            Log.d(TAG, "[connectionDidFinishLoading] userdata: "
-                    + userdata + " | payload: " + payload);
+            Log.d(TAG, "[connectionDidFinishLoading] userdata: " + userdata + " | payload: " + payload);
 
-            dismissProgressDialog();
+            //if (AndroidUtils.isSmallOrNormalScreen()) {
+            //    dismissProgressDialog();
+            //} else {
+                hideProgressSpinner();
+            //}
 
             JRDictionary payloadDictionary = JRDictionary.fromJSON(payload);
             JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
             final String result = resultDictionary.getAsString("stat");
             if ("ok".equals(result)) {
-                // Back should be disabled at this point because the progress modal dialog is
-                // being displayed.
-                mSessionData.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
+                /* Back should be disabled at this point because the progress modal dialog is
+                being displayed. */
                 if (!mIsSocialSharingSignIn) mSessionData.saveLastUsedBasicProvider();
+                mSessionData.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
                 getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();
             } else {
@@ -358,10 +361,8 @@ public class JRWebViewFragment extends JRUiFragment {
                         "Your OpenID must be a URL".equals(error)) {
                     alertTitle = "Invalid Input";
                     if (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput()) {
-                        String shortText = mSessionData.getCurrentlyAuthenticatingProvider()
-                                .getShortText();
-                        alertMessage = "The " + shortText +
-                                " you entered was not valid. Please try again.";
+                        String shortText = mSessionData.getCurrentlyAuthenticatingProvider().getShortText();
+                        alertMessage = "The " + shortText + " you entered was not valid. Please try again.";
                     } else {
                         alertMessage = "There was a problem authenticating. Please try again.";
                     }
@@ -375,8 +376,8 @@ public class JRWebViewFragment extends JRUiFragment {
                     showAlertDialog(alertTitle, alertMessage);
                 } else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
                     alertTitle = "Invalid Input";
-                    alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput())
-                            ? String.format("The %s you entered was not valid. Please try again.",
+                    alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput()) ?
+                            String.format("The %s you entered was not valid. Please try again.",
                             mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
                             : "There was a problem authenticating. Please try again.";
                     logMessage = "The URL you entered does not appear to be an OpenID: ";
@@ -393,6 +394,7 @@ public class JRWebViewFragment extends JRUiFragment {
                     getActivity().setResult(RESULT_BAD_OPENID_URL);
                     showAlertDialog("OpenID Error", "The URL you entered does not appear to be an OpenID");
                 } else if ("canceled".equals(error)) {
+                    //forgetAuthenticatedUserForProvider
                     mSessionData.getCurrentlyAuthenticatingProvider().setForceReauth(true);
                     mSessionData.triggerAuthenticationDidRestart();
                     getActivity().setResult(RESULT_RESTART);

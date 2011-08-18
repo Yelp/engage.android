@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.util.Config;
@@ -18,7 +19,7 @@ import android.view.*;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSessionData;
 
-import java.lang.ref.WeakReference;
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -28,13 +29,16 @@ import java.util.HashMap;
  * Time: 1:51 PM
  */
 public abstract class JRUiFragment extends Fragment {
+    private static final String KEY_MANAGED_DIALOGS = "jr_managed_dialogs";
+    private static final String KEY_DIALOG_ID = "jr_dialog_id";
+    private static final String KEY_MANAGED_DIALOG_OPTIONS = "jr_dialog_options";
     public static final int REQUEST_LANDING = 1;
     public static final int REQUEST_WEBVIEW = 2;
     public static final int DIALOG_ABOUT = 1000;
     public static final int DIALOG_PROGRESS = 1001;
 
     private FinishReceiver mFinishReceiver;
-    private HashMap<Integer, Dialog> mManagedDialogs = new HashMap<Integer, Dialog>();
+    private HashMap<Integer, ManagedDialog> mManagedDialogs = new HashMap<Integer, ManagedDialog>();
     private boolean mEmbeddedMode = false;
 
     protected JRSessionData mSessionData;
@@ -87,11 +91,27 @@ public abstract class JRUiFragment extends Fragment {
     //onCreateView
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onActivityCreated(Bundle savedInstanceState) {
         if (Config.LOGD) Log.d(TAG, "[onActivityCreated]");
         super.onActivityCreated(savedInstanceState);
 
         mSessionData = JRSessionData.getInstance();
+        if (savedInstanceState != null) {
+            mManagedDialogs = (HashMap) savedInstanceState.get(KEY_MANAGED_DIALOGS);
+            Parcelable[] p = savedInstanceState.getParcelableArray(KEY_MANAGED_DIALOG_OPTIONS);
+            if (mManagedDialogs != null && p != null) {
+                for (Parcelable p_ : p) {
+                    Bundle b = (Bundle) p_;
+                    mManagedDialogs.get(b.getInt(KEY_DIALOG_ID)).mOptions = b;
+                }
+            }
+        }
+
+        if (mManagedDialogs != null) for (ManagedDialog d : mManagedDialogs.values()) {
+            d.mDialog = onCreateDialog(d.mId, d.mOptions);
+            if (d.mShowing) d.mDialog.show();
+        }
     }
 
     @Override
@@ -123,8 +143,7 @@ public abstract class JRUiFragment extends Fragment {
     public void onDestroyView() {
         if (Config.LOGD) Log.d(TAG, "[onDestroyView]");
 
-        for (Dialog d : mManagedDialogs.values()) d.dismiss();
-        mManagedDialogs = new HashMap<Integer, Dialog>();
+        for (ManagedDialog d : mManagedDialogs.values()) d.mDialog.dismiss();
 
         super.onDestroyView();
     }
@@ -155,9 +174,27 @@ public abstract class JRUiFragment extends Fragment {
         }
     }
 
+    private static class ManagedDialog implements Serializable {
+        int mId;
+        transient Dialog mDialog;
+        transient Bundle mOptions;
+        boolean mShowing;
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+
+        Bundle[] dialogOptions = new Bundle[mManagedDialogs.size()];
+        int x = 0;
+        for (ManagedDialog d : mManagedDialogs.values()) {
+            d.mShowing = d.mDialog.isShowing();
+            dialogOptions[x++] = d.mOptions;
+            d.mOptions.putInt(KEY_DIALOG_ID, d.mId);
+        }
+        outState.putSerializable(KEY_MANAGED_DIALOGS, mManagedDialogs);
+        outState.putParcelableArray(KEY_MANAGED_DIALOG_OPTIONS, dialogOptions);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -174,7 +211,7 @@ public abstract class JRUiFragment extends Fragment {
     }
     //--
 
-    private void showHideTaglines() {
+    protected void showHideTaglines() {
         boolean hideTagline = mSessionData.getHidePoweredBy();
         int visibility = hideTagline ? View.GONE : View.VISIBLE;
 
@@ -250,7 +287,7 @@ public abstract class JRUiFragment extends Fragment {
         mEmbeddedMode = embeddedMode;
     }
 
-    protected Dialog onCreateDialog(int id) {
+    protected Dialog onCreateDialog(int id, Bundle options) {
         Dialog dialog;
         switch (id) {
             case DIALOG_ABOUT:
@@ -265,27 +302,44 @@ public abstract class JRUiFragment extends Fragment {
         return dialog;
     }
 
-    protected void onPrepareDialog(int id, Dialog d) {}
+    protected void onPrepareDialog(int id, Dialog d, Bundle options) {}
 
     protected void showDialog(int dialogId) {
-        Dialog d;
-        if (mManagedDialogs.containsKey(dialogId)) {
-            d = mManagedDialogs.get(dialogId);
-        } else {
-            d = onCreateDialog(dialogId);
+        showDialog(dialogId, new Bundle());
+    }
+
+    protected void showDialog(int dialogId, Bundle options) {
+        ManagedDialog d = mManagedDialogs.get(dialogId);
+        if (d == null) {
+            d = new ManagedDialog();
+            d.mDialog = onCreateDialog(dialogId, options);
+            d.mId = dialogId;
             mManagedDialogs.put(dialogId, d);
         }
-        onPrepareDialog(dialogId, d);
-        d.show();
+
+        d.mOptions = options;
+        onPrepareDialog(dialogId, d.mDialog, options);
+        d.mDialog.show();
+        //d.mShowing = true; // See also dismissDialog comment
     }
 
     protected void dismissDialog(int dialogId) {
-        Dialog d = mManagedDialogs.get(dialogId);
-        d.dismiss();
+        ManagedDialog d = mManagedDialogs.get(dialogId);
+        if (d != null) {
+            d.mDialog.dismiss();
+            // Set mShowing in onSaveInstanceState since this isn't a reliable place to write code that
+            // must maintain the integrity of mShowing because a Dialog may be dismissed by hand (i.e.
+            // not with dismissDialog(int)
+            //d.mShowing = false;
+        }
     }
 
     private void startActivityForFragId(int fragId, int requestCode) {
         startActivityForFragId(fragId, requestCode, null);
+    }
+
+    protected int getColor(int colorId) {
+        return getResources().getColor(colorId);
     }
 
     private void startActivityForFragId(int fragId, int requestCode, Bundle opts) {

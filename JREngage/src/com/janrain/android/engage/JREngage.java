@@ -213,15 +213,9 @@ public class JREngage {
 	/* Delegates (listeners) array */
 	private ArrayList<JREngageDelegate> mDelegates;
 
-    /*
-     * Hide default constructor (singleton pattern).
-     */
 	private JREngage() {
 	}
 
-	/*
-	 * Initializer.
-	 */
 	private void initialize(Context context,
                             String appId,
                             String tokenUrl,
@@ -235,7 +229,6 @@ public class JREngage {
             FrameLayout fragmentContainer =
                     (FrameLayout) ((Activity) context).findViewById(R.id.jr_signin_fragment);
             if (fragmentContainer != null) {
-                //mInterfaceMaestro.showProviderSelection(fragmentContainer);
             }
         }
 	}
@@ -387,8 +380,8 @@ public class JREngage {
      **/
     public void cancelAuthentication() {
         if (Config.LOGD) Log.d(TAG, "[cancelAuthentication]");
-        mSessionData.triggerAuthenticationDidCancel();
         //todo fixme UI maestro refactor
+        mSessionData.triggerAuthenticationDidCancel();
     }
 
     /**
@@ -397,8 +390,8 @@ public class JREngage {
      **/
     public void cancelPublishing() {
         if (Config.LOGD) Log.d(TAG, "[cancelPublishing]");
-        mSessionData.triggerPublishingDidCancel();
         //todo fixme UI maestro refactor
+        mSessionData.triggerPublishingDidCancel();
     }
 /*@}*/
 
@@ -465,12 +458,12 @@ public class JREngage {
         /* If there was error configuring the library, sessionData.error will not be null. */
         JREngageError error = mSessionData.getError();
         if (error != null) {
-            /* If there was an error, send a message to the delegates, release the error, then
-          attempt to restart the configuration.  If, for example, the error was temporary
-          (network issues, etc.) reattempting to configure the library could end successfully.
-          Since configuration may happen before the user attempts to use the library, if the
-          user attempts to use the library at all, we only try to reconfigure when the library
-          is needed. */
+            /* If there was an error, send a message to the delegates, then
+              attempt to restart the configuration.  If, for example, the error was temporary
+              (network issues, etc.) reattempting to configure the library could end successfully.
+              Since configuration may happen before the user attempts to use the library, if the
+              user attempts to use the library at all, we only try to reconfigure when the library
+              is needed. */
             if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
                 engageDidFailWithError(error);
                 mSessionData.tryToReconfigureLibrary();

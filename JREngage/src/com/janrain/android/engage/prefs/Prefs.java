@@ -45,7 +45,6 @@ public final class Prefs {
     // ------------------------------------------------------------------------
 
     public static final String KEY_JR_USER_INPUT = "jr_pref_user_input.";
-    public static final String KEY_JR_WELCOME_STRING = "jr_pref_welcome_string.";
     public static final String KEY_JR_FORCE_REAUTH = "jr_pref_force_reauth.";
     public static final String KEY_JR_HIDE_POWERED_BY = "jr_hide_powered_by";
     public static final String KEY_JR_CONFIGURATION_ETAG = "jr_configuration_etag";
@@ -128,23 +127,13 @@ public final class Prefs {
         ed.commit();
     }
 
-    /**
-     * Helper method used to get the default shared preferences instance.
-     */
     private static SharedPreferences getSharedPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(JREngage.getContext());
     }
 
-    /**
-     * Helper method used to get a shared preferences editor instance.
-     */
     private static SharedPreferences.Editor getEditor() {
         return getSharedPreferences().edit();
     }
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
 
     private Prefs() {
         /* private constructor - utility class | no instance */

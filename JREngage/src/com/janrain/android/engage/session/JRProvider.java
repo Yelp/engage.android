@@ -45,6 +45,7 @@ import com.janrain.android.engage.R;
 import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
@@ -157,9 +158,8 @@ public class JRProvider implements Serializable {
     private JRDictionary mSocialSharingProperties;
     private JRDictionary mWebViewOptions;
 
-    private transient boolean mForceReauth;   // <- these three user parameters get preserved
-    private transient String mUserInput;      // <- across cached provider reloads
-    private transient String mWelcomeString;  // <-
+    private transient boolean mForceReauth;   // <- these two user parameters get preserved
+    private transient String mUserInput = ""; // <- across cached provider reloads
     private transient boolean mCurrentlyDownloading;
 
     // We don't need a private default constructor so long as we have another constructor as we 
@@ -179,6 +179,7 @@ public class JRProvider implements Serializable {
         mSocialSharingProperties = dictionary.getAsDictionary(KEY_SOCIAL_SHARING_PROPERTIES);
         mWebViewOptions = dictionary.getAsDictionary(KEY_ANDROID_WEBVIEW_OPTIONS, true);
 
+        // No default cookie domains for now
         //if (mCookieDomains.size() == 0) {
         //    mCookieDomains.add(mName + ".com");
         //    mCookieDomains.add("www." + mName + ".com");
@@ -189,9 +190,7 @@ public class JRProvider implements Serializable {
         if (mRequiresInput) {
             String[] arr = mPlaceholderText.split(" ");
             ArrayList<String> shortList = new ArrayList<String>();
-            for (int i = (arr.length - 2); i < arr.length; i++) {
-                shortList.add(arr[i]);
-            }
+            shortList.addAll(Arrays.asList(arr).subList((arr.length - 2), arr.length));
             mShortText = TextUtils.join(" ", shortList);
         } else {
             mShortText = "";
@@ -261,23 +260,11 @@ public class JRProvider implements Serializable {
     }
 
     public void setUserInput(String userInput) {
-        if (Config.LOGD) {
-            Log.d("JRProvider", "[prov] user input: [" + Prefs.KEY_JR_USER_INPUT + mName + "]");
-            }
+        if (Config.LOGD) Log.d(TAG, "[prov] user input: [" + Prefs.KEY_JR_USER_INPUT + mName + "]");
 
-        this.mUserInput = userInput;
+        mUserInput = userInput;
 
         Prefs.putString(Prefs.KEY_JR_USER_INPUT + this.mName, this.mUserInput);
-    }
-
-    public String getWelcomeString() {
-        return mWelcomeString;
-    }
-
-    public void setWelcomeString(String welcomeString) {
-        this.mWelcomeString = welcomeString;
-
-        Prefs.putString(Prefs.KEY_JR_WELCOME_STRING + this.mName, this.mWelcomeString);
     }
 
     private Drawable getDrawable(Context c,
@@ -374,6 +361,7 @@ public class JRProvider implements Serializable {
         return sld;
     }
 
+    @SuppressWarnings({"unchecked"})
     private void downloadIcons(final Context c) {
         if (Config.LOGD) Log.d(TAG, "downloadIcons: " + mName);
 
@@ -389,6 +377,7 @@ public class JRProvider implements Serializable {
         };
 
         new AsyncTask<Void, Void, Void>(){
+            @Override
             public Void doInBackground(Void... s) {
                 for (String iconFileName : iconFileNames) {
                     try {
@@ -420,16 +409,64 @@ public class JRProvider implements Serializable {
     }
 
     public void loadDynamicVariables() {
-        if (Config.LOGD) {
-            Log.d("JRProvider", "[prov] user input: [" + Prefs.KEY_JR_USER_INPUT + mName + "]");
-        }
+        if (Config.LOGD) Log.d("JRProvider", "[prov] user input: " + Prefs.KEY_JR_USER_INPUT + mName );
 
     	mUserInput = Prefs.getAsString(Prefs.KEY_JR_USER_INPUT + mName, "");
-    	mWelcomeString = Prefs.getAsString(Prefs.KEY_JR_WELCOME_STRING + mName, "");
     	mForceReauth = Prefs.getAsBoolean(Prefs.KEY_JR_FORCE_REAUTH + mName, false);
     }
 
     public String toString() {
         return mName;
+    }
+
+    private Context getContext() {
+        return JREngage.getContext();
+    }
+
+    private Resources getResources() {
+        return getContext().getResources();
+    }
+
+    @JsonIgnore
+    public int getProviderColor(boolean withAlpha) {
+        Object arrayOfColorStrings = getSocialSharingProperties().get("color_values");
+
+        if (!(arrayOfColorStrings instanceof ArrayList)) {
+            /* If there's ever an error, just return Janrain blue */
+            if (withAlpha) return getResources().getColor(R.color.jr_janrain_darkblue_light_20percent);
+            else return getResources().getColor(R.color.jr_janrain_darkblue_light_100percent);
+        }
+
+        // todo see if we can write this in a compile-time--type-safe way
+        @SuppressWarnings("unchecked")
+        ArrayList<Double> colorArray = new ArrayList<Double>(
+                (ArrayList<Double>) arrayOfColorStrings);
+
+        /* We need to reorder the array (which is RGBA, the color format returned by Engage) to the color format
+         * used by Android (which is ARGB), by moving the last element (alpha) to the front */
+        Double alphaValue = colorArray.remove(3);
+        if (withAlpha) {
+            colorArray.add(0, alphaValue);
+        } else {
+            colorArray.add(0, 1.0);
+        }
+
+        int finalColor = 0;
+        for (Object colorValue : colorArray) {
+            /* If there's ever an error, just return Janrain blue (at 20% opacity) */
+            if(!(colorValue instanceof Double)) {
+                return getResources().getColor(R.color.jr_janrain_darkblue_light_20percent);
+            }
+
+            double colorValue_Fraction = (Double)colorValue;
+
+            /* First, get an int from the double, which is the decimal percentage of 255 */
+            int colorValue_Int = (int)(colorValue_Fraction * 255.0);
+
+            finalColor *= 256;
+            finalColor += colorValue_Int;
+        }
+
+        return finalColor;
     }
 }
