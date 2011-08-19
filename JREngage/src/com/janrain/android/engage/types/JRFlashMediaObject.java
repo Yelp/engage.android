@@ -31,6 +31,7 @@ package com.janrain.android.engage.types;
 
 
 import android.graphics.Bitmap;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * @brief Flash object to be included in a post to a user's stream.
@@ -119,7 +120,7 @@ public class JRFlashMediaObject extends JRMediaObject {
      * Contains the downloaded preview of the image for display in the publish
      * activity dialog.
      **/
-    private Bitmap mPreview;
+    private transient Bitmap mPreview;
 /*@}*/
 
 /**
@@ -252,6 +253,7 @@ public class JRFlashMediaObject extends JRMediaObject {
     }
 /*@}*/
 
+    @JsonIgnore
     public Bitmap getPreview() {
         return mPreview;
     }
@@ -265,6 +267,7 @@ public class JRFlashMediaObject extends JRMediaObject {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public String getThumbnail() {
         return mImgSrc;

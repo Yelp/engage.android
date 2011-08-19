@@ -29,6 +29,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.types;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +48,7 @@ import java.util.List;
  * {@link com.janrain.android.engage.types.JREmailObject JREmailObject}
  */
 
-public class JRSmsObject {
+public class JRSmsObject implements Serializable {
     private String mBody;
     private List<String> mUrls;
     private List<String> mShortUrls;

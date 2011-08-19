@@ -76,8 +76,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         TAG = JRPublishFragment.class.getSimpleName();
     }
 
-    private static final String KEY_DIALOG_ERROR_MESSAGE = "jr_dialog_error_message";
-    private static final String KEY_DIALOG_PROVIDER_NAME = "jr_dialog_provider_name";
+    public static final String KEY_ACTIVITY_OBJECT = "jr_activity_object";
+    public static final String KEY_PROVIDER_SHARE_MAP = "jr_provider_sharedness_map";
+    public static final String KEY_DIALOG_ERROR_MESSAGE = "jr_dialog_error_message";
+    public static final String KEY_DIALOG_PROVIDER_NAME = "jr_dialog_provider_name";
+    public static final String KEY_SELECTED_TAB = "jr_selected_tab";
     private static final int DIALOG_FAILURE = 1;
     private static final int DIALOG_CONFIRM_SIGNOUT = 3;
     private static final int DIALOG_MOBILE_CONFIG_LOADING = 4;
@@ -89,6 +92,12 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private JRProvider mSelectedProvider; //the provider for the selected tab
     private JRAuthenticatedUser mAuthenticatedUser; //the user (if logged in) for the selected tab
     private JRActivityObject mActivityObject;
+
+    /* UI state */
+    private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
+    private boolean mSmsActivityExists;
+    private boolean mEmailActivityExists;
+    private String mSelectedTab = "";
 
     /* UI properties */
     private String mShortenedActivityURL = null; //null if it hasn't been shortened
@@ -124,11 +133,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private ColorButton mSmsButton;
     private EditText mEmailSmsComment;
     private LinearLayout mEmailSmsButtonContainer;
-
-    private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
-    private boolean mSmsActivityExists;
-    private boolean mEmailActivityExists;
-    private String mSelectedTab = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -178,14 +182,21 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         mSessionData.addDelegate(mSessionDelegate);
         mActivityObject = mSessionData.getJRActivity();
+        if (mActivityObject == null && savedInstanceState != null) {
+            mActivityObject = (JRActivityObject) savedInstanceState.getSerializable(KEY_ACTIVITY_OBJECT);
+            mSessionData.setJRActivity(mActivityObject);
+            mSelectedTab = savedInstanceState.getString(KEY_SELECTED_TAB);
+            mProvidersThatHaveAlreadyShared =
+                    (HashMap<String, Boolean>) savedInstanceState.getSerializable(KEY_PROVIDER_SHARE_MAP);
+        }
         if (mActivityObject == null) mActivityObject = new JRActivityObject("", null);
-        String userContent = mActivityObject.getUserGeneratedContent();
-        mUserCommentView.setText(userContent);
+        mUserCommentView.setText(mActivityObject.getUserGeneratedContent());
         loadViewPropertiesWithActivityObject();
 
         /* Call by hand the configuration change listener so that it sets up correctly if this
@@ -206,10 +217,19 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-
         dismissProgressDialog();
         mSessionData.removeDelegate(mSessionDelegate);
+
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(KEY_ACTIVITY_OBJECT, mActivityObject);
+        outState.putSerializable(KEY_PROVIDER_SHARE_MAP, mProvidersThatHaveAlreadyShared);
+        outState.putSerializable(KEY_SELECTED_TAB, mSelectedTab);
+
+        super.onSaveInstanceState(outState);
     }
 
     private void configureEmailSmsButtons() {
@@ -294,11 +314,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 updateCharacterCount();
             }
         });
+
         createTabs();
 
-        /* Re-set the user comment with it's existing so the text change listener is fired
-         * and the character count is updated.
-         * See also onCreate */
+        /* Fire the text change listener so the character count is updated.
+         * See also onCreateActivity */
         mUserCommentView.setText(mUserCommentView.getText());
     }
 
@@ -320,7 +340,10 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
             tabHost.addTab(spec);
 
-            mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
+            if (!mProvidersThatHaveAlreadyShared.containsKey(provider.getName())) {
+                // If it's already there then we're reinitializing with saved state
+                mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
+            }
         }
 
         if (mSmsActivityExists || mEmailActivityExists) {
@@ -377,9 +400,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             doBasicTabs = true;
         }
 
-        if (doBasicTabs) {
-            spec.setIndicator(label, iconSet);
-        }
+        if (doBasicTabs) spec.setIndicator(label, iconSet);
     }
 
     private LinearLayout createTabSpecIndicator(String labelText, Drawable providerIconSet) {
@@ -473,7 +494,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
             configureViewElementsBasedOnProvider();
             configureLoggedInUserBasedOnProvider();
-            configureSharedStatusBasedOnProvider();
+            showActivityAsShared(mProvidersThatHaveAlreadyShared.get(mSelectedProvider.getName()));
 
             mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(getActivity()));
         }
@@ -718,10 +739,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     /* UI property updaters */
-
-    private void configureSharedStatusBasedOnProvider() {
-        showActivityAsShared(mProvidersThatHaveAlreadyShared.get(mSelectedProvider.getName()));
-    }
 
     public void updateCharacterCount() {
         // TODO: verify correctness of the 0 remaining characters edge case

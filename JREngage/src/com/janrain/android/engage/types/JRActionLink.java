@@ -29,8 +29,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage.types;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
 
 /**
  * @brief
@@ -59,7 +58,8 @@ import java.util.Map;
  *
  * @nosubgrouping
  **/
-public class JRActionLink {
+//public class JRActionLink implements Serializable, JsonSerializableWithType {
+public class JRActionLink implements Serializable {
 /**
  * @name Private Attributes
  * The various properties of the JRActionLink that you can access and configure through the object's

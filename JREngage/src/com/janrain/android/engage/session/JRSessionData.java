@@ -165,8 +165,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         mLibraryVersion = JREngage.getContext().getString(R.string.jr_engage_version);
         String diskVersion = Prefs.getAsString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, "");
         if (diskVersion.equals(mLibraryVersion)
-                //) {
-                && false) {  // todo
+                ) {
+                //&& false) {  // todo
             /* Load dictionary of authenticated users.  If the dictionary is not found, the
              * archiver will return a new (empty) list.  This will throw and catch an exception if it isn't
              * found, so if it's empty, we save the empty dictionary to stop this exception in the future. */
@@ -177,9 +177,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             /* Load the list of all providers */
             mAllProviders = JRDictionary.unarchive(ARCHIVE_ALL_PROVIDERS);
 
-            for (Object provider : mAllProviders.values()) {
-                ((JRProvider)provider).loadDynamicVariables();
-            }
+            for (Object provider : mAllProviders.values()) ((JRProvider)provider).loadDynamicVariables();
 
             /* Load the list of basic providers */
             mBasicProviders = (ArrayList<String>)Archiver.load(ARCHIVE_BASIC_PROVIDERS);

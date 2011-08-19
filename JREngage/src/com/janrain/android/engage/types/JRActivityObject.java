@@ -39,6 +39,7 @@ import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,7 +85,7 @@ import java.util.Map;
  *
  * @nosubgrouping
  **/
-public class JRActivityObject {
+public class JRActivityObject implements Serializable {
     private static final String TAG = JRActivityObject.class.getSimpleName();
 
 /**
@@ -372,16 +373,27 @@ public class JRActivityObject {
     }
 
     /**
-     * Setter for the activity object's #mActionLinks property.
+     * Add to the activity object's #mActionLinks property.
      *
      * @param actionLink
      *      A single JRActionLink to be added to the array of action links, creating the array if
      *      it hasn't already been created
      **/
     public void addActionLink(JRActionLink actionLink) {
-        if (mActionLinks == null)
-            mActionLinks = new ArrayList<JRActionLink>();
+        if (mActionLinks == null) mActionLinks = new ArrayList<JRActionLink>();
         mActionLinks.add(actionLink);
+    }
+
+    /**
+     * Alias for addMedia(JRMediaObject)
+     *
+     * @param media
+     *        A single JRImageMediaObject, JRFlashMediaObject, or JRMp3MediaObject to be added to
+     *        the array of media objects, creating the array if it hasn't already been created
+     **/
+    public void addMedia(JRMediaObject media) {
+        if (mMedia == null) mMedia = new ArrayList<JRMediaObject>();
+        mMedia.add(media);
     }
 
     /**
@@ -410,12 +422,11 @@ public class JRActivityObject {
      * Setter for the activity object's #mMedia property.
      *
      * @param mediaObject
-     *        An single JRImageMediaObject, JRFlashMediaObject, or JRMp3MediaObject to be added to
+     *        A single JRImageMediaObject, JRFlashMediaObject, or JRMp3MediaObject to be added to
      *        the array of media objects, creating the array if it hasn't already been created
      **/
     public void setMedia(JRMediaObject mediaObject) {
-        if (mMedia == null)
-            mMedia = new ArrayList<JRMediaObject>();
+        if (mMedia == null) mMedia = new ArrayList<JRMediaObject>();
         mMedia.add(mediaObject);
     }
 
@@ -471,8 +482,10 @@ public class JRActivityObject {
      */
     public JRDictionary toJRDictionary() {
         JRDictionary map = new JRDictionary();
+        // XXX these work by json-ifying the action links, media, and properties automatically by
+        // their exposed getter methods.
         map.put("url", mUrl);
-        map.put(JRSessionData.USERDATA_ACTION_KEY, mAction);
+        map.put("action", mAction);
         map.put("user_generated_content", mUserGeneratedContent);
         map.put("title", mTitle);
         map.put("description", mDescription);

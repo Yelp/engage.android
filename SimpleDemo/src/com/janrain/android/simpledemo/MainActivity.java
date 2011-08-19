@@ -138,17 +138,19 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     void buildActivity() {
-        mActivity = new JRActivityObject("shared an article from the Janrain Blog!",
-            "");
         //mActivity = new JRActivityObject("shared an article from the Janrain Blog!",
-        //    mActionLink);
+        //    "");
+        mActivity = new JRActivityObject("shared an article from the Janrain Blog!",
+            mActionLink);
 
         mActivity.setTitle(mTitleText);
         mActivity.setDescription(mDescriptionText);
-        mActivity.setMedia(new JRImageMediaObject(mImageUrl, mImageUrl));
+        mActivity.addMedia(new JRImageMediaObject(mImageUrl, "http://developer.android.com"));
 
         String smsBody = "Check out this article!\n" + mActionLink;
         String emailBody = mActionLink + "\n" + mDescriptionText;
+
+        mActivity.addActionLink(new JRActionLink("test action", "http://android.com"));
 
         JRSmsObject sms = new JRSmsObject(smsBody);
         JREmailObject email = new JREmailObject("Check out this article!", emailBody);

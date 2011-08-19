@@ -37,6 +37,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -47,9 +48,9 @@ import java.net.URLConnection;
  * @class JRMediaObject
  * Base class for JRImageMediaObject, JRFlashMediaObject, and JRMp3MediaObject.
  **/
-public abstract class JRMediaObject {
+public abstract class JRMediaObject implements Serializable {
     @JsonIgnore
-    private Bitmap mThumbnailBitmap;
+    private transient Bitmap mThumbnailBitmap;
 
     public boolean hasThumbnail() { return false; }
 

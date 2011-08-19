@@ -2,5 +2,9 @@
 <resources>
     <style name="jr_dialog" parent="@android:style/Theme.Holo.Light.DialogWhenLarge" />
     <style name="jr_fullscreen" parent="@android:style/Theme.Holo.Light" />
-    <style name="jr_fullscreen_no_title" parent="@android:style/Theme.Holo.Light.NoActionBar" />
+    <!-- http://code.google.com/p/android/issues/detail?id=15862 -->
+    <style name="jr_fullscreen_no_title" parent="@android:style/Theme.Holo.Light">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>

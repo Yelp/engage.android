@@ -77,7 +77,7 @@ public class JRImageMediaObject extends JRMediaObject {
      * @internal
      * Contains the downloaded preview of the image for display in the publish activity dialog.
      **/
-    private Bitmap mPreview;
+    private transient Bitmap mPreview;
 /*@}*/
 
 /**
@@ -98,7 +98,6 @@ public class JRImageMediaObject extends JRMediaObject {
      *   if src or href is null
      **/
     public JRImageMediaObject(String src, String href) {
-        // TODO: if null/empty should we throw?
         if (src == null || href == null) throw new IllegalArgumentException("illegal null src or href");
         mSrc = src;
         mHref = href;
