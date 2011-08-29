@@ -81,6 +81,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
@@ -126,6 +127,17 @@ public class JREngage {
     /* Singleton instance of this class */
 	private static JREngage sInstance;
 
+    /* Application context */
+    private Activity mActivity;
+
+	/* Holds configuration and state for the JREngage library */
+	private JRSessionData mSessionData;
+
+	/* Delegates (listeners) array */
+	private ArrayList<JREngageDelegate> mDelegates = new ArrayList<JREngageDelegate>();
+
+    private JREngage() {}
+
 /**
  * @name Get the JREngage Instance
  * Methods that initialize and return the shared JREngage instance
@@ -134,8 +146,55 @@ public class JREngage {
     /**
      * Initializes and returns the singleton instance of JREngage.
      *
+     * @param activity
+     * 		The Android Activity, used for access to system resources (e.g. global
+     * 		preferences).  This value cannot be null
+     *
+     * @param appId
+     * 		Your 20-character application ID.  You can find this on your application's
+     * 		Engage Dashboard at <a href="http://rpxnow.com">http://rpxnow.com</a>.  This value
+     * 		cannot be null
+     *
+     * @param tokenUrl
+     * 		The url on your server where you wish to complete authentication, or null.  If provided,
+     *   	the JREngage library will post the user's authentication token to this url where it can
+     *   	used for further authentication and processing.  When complete, the library will pass
+     *   	the server's response back to the your application
+
+     * @param delegate
+     * 		The delegate object that implements the JREngageDelegate protocol
+     *
+     * @return
+     * 		The shared instance of the JREngage object initialized with the given
+     *   	appId, tokenUrl, and delegate.  If the given appId is null, returns null
+     **/
+    public static JREngage initInstance(Activity activity,
+                                        String appId,
+                                        String tokenUrl,
+                                        JREngageDelegate delegate) {
+        if (activity == null) {
+            Log.e(TAG, "[initialize] context parameter cannot be null.");
+            throw new IllegalArgumentException("context parameter cannot be null.");
+        }
+
+        if (TextUtils.isEmpty(appId)) {
+            Log.e(TAG, "[initialize] appId parameter cannot be null.");
+            throw new IllegalArgumentException("appId parameter cannot be null.");
+        }
+
+        if (sInstance == null) sInstance = new JREngage();
+        sInstance.initialize(activity, appId, tokenUrl, delegate);
+
+        return sInstance;
+    }
+
+    /**
+     * Initializes and returns the singleton instance of JREngage.
+     *
+     * @deprecated Use #initInstance(Activity, String, String, JREngageDelegate) instead.
+     *
      * @param context
-     * 		The Android application Context, used for access to system resources (e.g. global
+     * 		The Android Activity, used for access to system resources (e.g. global
      * 		preferences).  This value cannot be null
      *
      * @param appId
@@ -160,22 +219,7 @@ public class JREngage {
                                         String appId,
                                         String tokenUrl,
                                         JREngageDelegate delegate) {
-        // todo Display a helpful dialog if appId is null? To point devs in the right direction?
-
-        if (context == null) {
-            Log.e(TAG, "[initialize] context parameter cannot be null.");
-            throw new IllegalArgumentException("context parameter cannot be null.");
-        }
-
-        if (TextUtils.isEmpty(appId)) {
-            Log.e(TAG, "[initialize] appId parameter cannot be null.");
-            throw new IllegalArgumentException("appId parameter cannot be null.");
-        }
-
-        if (sInstance == null) sInstance = new JREngage();
-        sInstance.initialize(context, appId, tokenUrl, delegate);
-
-        return sInstance;
+        return initInstance((Activity) context, appId, tokenUrl, delegate);
     }
 
 	/**
@@ -197,40 +241,48 @@ public class JREngage {
 	 * 		The Context object used to initialize this library
 	 **/
     public static Context getContext() {
-        return (sInstance == null) ? null : sInstance.mContext;
+        return (sInstance == null) ? null : sInstance.mActivity;
     }
 
-    public static void setContext(Context c) {
-        sInstance.mContext = c;
+    /**
+     * @internal
+     * @deprecated
+     * Set the Activity used to start Engage dialogs from
+     *
+     * @param context
+     *      An Activity from which startActivity will be called
+     *
+     **/
+    public static void setContext(Context context) {
+        sInstance.mActivity = (Activity) context;
     }
 
-    /* Application context */
-    private Context mContext;
+    /**
+     * @internal
+     * Returns the application context used to initialize the library.
+     *
+     * @param activity
+     *      An Activity from which startActivity will be called
+     **/
+    public static void setActivityContext(Activity activity) {
+        sInstance.mActivity = activity;
+    }
 
-	/* Holds configuration and state for the JREngage library */
-	private JRSessionData mSessionData;
-
-	/* Delegates (listeners) array */
-	private ArrayList<JREngageDelegate> mDelegates;
-
-	private JREngage() {
-	}
-
-	private void initialize(Context context,
+	private void initialize(Activity activity,
                             String appId,
                             String tokenUrl,
                             JREngageDelegate delegate) {
-        mContext = context;
+        mActivity = activity;
         mDelegates = new ArrayList<JREngageDelegate>();
         if (delegate != null) mDelegates.add(delegate);
         mSessionData = JRSessionData.getInstance(appId, tokenUrl, mJrsd);
 
-        if (context instanceof FragmentActivity) {
-            FrameLayout fragmentContainer =
-                    (FrameLayout) ((Activity) context).findViewById(R.id.jr_signin_fragment);
-            if (fragmentContainer != null) {
-            }
-        }
+        // Sign-in UI fragment is not yet embeddable
+        //if (activity1 instanceof FragmentActivity) {
+        //    FrameLayout fragmentContainer = (FrameLayout) activity1.findViewById(R.id.jr_signin_fragment);
+        //    if (fragmentContainer != null) {
+        //    }
+        //}
 	}
 
     private JRSessionDelegate mJrsd = new JRSessionDelegate() {
@@ -241,21 +293,14 @@ public class JREngage {
         public void authenticationDidCancel() {
             if (Config.LOGD) Log.d(TAG, "[authenticationDidCancel]");
 
-            for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrAuthenticationDidNotComplete();
-            }
-
-        }
-
-        public void authenticationDidComplete(String token, String provider) {
-            if (Config.LOGD) Log.d(TAG, "[authenticationDidComplete]");
+            for (JREngageDelegate delegate : getDelegatesCopy()) delegate.jrAuthenticationDidNotComplete();
         }
 
         public void authenticationDidComplete(JRDictionary profile, String provider) {
             if (Config.LOGD) Log.d(TAG, "[authenticationDidComplete]");
 
-            for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrAuthenticationDidSucceedForUser(profile, provider);
+            for (JREngageDelegate d : getDelegatesCopy()) {
+                d.jrAuthenticationDidSucceedForUser(profile, provider);
             }
         }
 
@@ -267,13 +312,13 @@ public class JREngage {
         }
 
         public void authenticationDidReachTokenUrl(String tokenUrl,
-                                                   HttpResponseHeaders headers,
+                                                   HttpResponseHeaders responseHeaders,
                                                    String payload,
                                                    String provider) {
             if (Config.LOGD) Log.d(TAG, "[authenticationDidReachTokenUrl]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, headers, payload, provider);
+                delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, responseHeaders, payload, provider);
             }
         }
 
@@ -303,8 +348,8 @@ public class JREngage {
             }
         }
 
-        public void publishingDialogDidFail(JREngageError err) {
-            engageDidFailWithError(err);
+        public void publishingDialogDidFail(JREngageError error) {
+            engageDidFailWithError(error);
         }
 
         public void publishingJRActivityDidSucceed(JRActivityObject activity, String provider) {
@@ -380,7 +425,9 @@ public class JREngage {
      **/
     public void cancelAuthentication() {
         if (Config.LOGD) Log.d(TAG, "[cancelAuthentication]");
-        //todo fixme UI maestro refactor
+
+        
+
         mSessionData.triggerAuthenticationDidCancel();
     }
 
@@ -390,7 +437,7 @@ public class JREngage {
      **/
     public void cancelPublishing() {
         if (Config.LOGD) Log.d(TAG, "[cancelPublishing]");
-        //todo fixme UI maestro refactor
+
         mSessionData.triggerPublishingDidCancel();
     }
 /*@}*/
@@ -414,11 +461,6 @@ public class JREngage {
     }
 /*@}*/
 
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
-
-
 /**
  * @name Manage the JREngage Delegates
  * Add/remove delegates that implement the JREngageDelegate protocol
@@ -431,7 +473,7 @@ public class JREngage {
      * @param delegate
      *   The object that implements the JREngageDelegate protocol
      **/
-    public void addDelegate(JREngageDelegate delegate) {
+    public synchronized void addDelegate(JREngageDelegate delegate) {
 		if (Config.LOGD) Log.d(TAG, "[addDelegate]");
 		mDelegates.add(delegate);
 	}
@@ -442,7 +484,7 @@ public class JREngage {
      * @param delegate
      *   The object that implements the JREngageDelegate protocol
      **/
-	public void removeDelegate(JREngageDelegate delegate) {
+	public synchronized void removeDelegate(JREngageDelegate delegate) {
 		if (Config.LOGD) Log.d(TAG, "[removeDelegate]");
 		mDelegates.remove(delegate);
 	}
@@ -507,18 +549,15 @@ public class JREngage {
      *  setAlwaysForceReauthentication().
      **/
     public void showAuthenticationDialog(boolean skipReturningUserLandingPage) {
-        if (Config.LOGD) {
-            Log.d(TAG, "[showAuthenticationDialog(boolean skipReturningUserLandingPage)] "
-                    + skipReturningUserLandingPage);
-        }
+        if (Config.LOGD) Log.d(TAG, "[showAuthenticationDialog]: " + skipReturningUserLandingPage);
 
         if (checkSessionDataError()) return;
 
         mSessionData.setSkipLandingPage(skipReturningUserLandingPage);
 
-        Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mContext, true);
+        Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mActivity, true);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PROVIDER_LIST);
-        mContext.startActivity(i);
+        mActivity.startActivity(i);
     }
 
     /**
@@ -532,64 +571,123 @@ public class JREngage {
         if (Config.LOGD) Log.d(TAG, "[showSocialPublishingDialog]");
         /* If there was error configuring the library, sessionData.error will not be null. */
         if (checkSessionDataError()) return;
-
-
-        if (activity == null) {
-            engageDidFailWithError(new JREngageError(
-                    "Activity object cannot be null",
-                    JREngageError.SocialPublishingError.ACTIVITY_NIL,
-                    JREngageError.ErrorType.PUBLISH_FAILED
-            ));
-        }
+        if (checkNullJRActivity(activity)) return;
 
         mSessionData.setJRActivity(activity);
 
-        Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mContext, false);
+        Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mActivity, false);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
-        mContext.startActivity(i);
+        mActivity.startActivity(i);
     }
 
-    public void showSocialPublishingFragment(JRActivityObject activity) {
+    /**
+     * Begin social publishing.  The library will display a new Android \e Fragment enabling the user to
+     * publish a social share.  The user will also be taken through the sign-in process, if necessary.
+     *
+     * @param activity
+     *   The activity you wish to share
+     * @param hostActivity
+     *   The android.support.v4.app.FragmentActivity which will host the publishing fragment
+     * @param containerId
+     *   The resource ID of a FrameLayout to embed the publishing fragment in
+     * @param addToBackStack
+     *   True if the publishing fragment should be added to the back stack, false otherwise
+     * @param transit
+     *   Select a standard transition animation for this transaction. See FragmentTransaction#setTransition.
+     *   Null for not set
+     * @param transitRes
+     *   Set a custom style resource that will be used for resolving transit animations. Null for not set
+     * @param customEnterAnimation
+     *   Set a custom enter animation. May be null if-and-only-if customExitAnimation is also null
+     * @param customExitAnimation
+     *   Set a custom exit animation.  May be null if-and-only-if customEnterAnimation is also null
+     **/
+    public void showSocialPublishingFragment(JRActivityObject activity,
+                                             FragmentActivity hostActivity,
+                                             int containerId,
+                                             boolean addToBackStack,
+                                             Integer transit,
+                                             Integer transitRes,
+                                             Integer customEnterAnimation,
+                                             Integer customExitAnimation) {
         if (Config.LOGD) Log.d(TAG, "[showSocialPublishingFragment]");
         if (checkSessionDataError()) return;
 
+        if (checkNullJRActivity(activity)) return;
+
+        View fragmentContainer = hostActivity.findViewById(containerId);
+        if (!(fragmentContainer instanceof FrameLayout)) {
+            throw new IllegalStateException("No FrameLayout with ID: " + containerId + ". Found: " +
+                    fragmentContainer);
+        }
+
+        FragmentManager fm = hostActivity.getSupportFragmentManager();
+
+        JRUiFragment f = createSocialPublishingFragment(activity);
+        FragmentTransaction ft = fm.beginTransaction();
+        if (transit != null) ft.setTransition(transit);
+        if (transitRes != null) ft.setTransitionStyle(transitRes);
+        if (customEnterAnimation != null || customExitAnimation != null) {
+            ft.setCustomAnimations(customEnterAnimation, customExitAnimation);
+        }
+        ft.replace(fragmentContainer.getId(), f, f.getClass().getSimpleName());
+        if (addToBackStack) ft.addToBackStack(JRPublishFragment.class.getSimpleName());
+        ft.commit();
+    }
+
+    /**
+     * Begin social publishing.  The library will display a new Android \e Fragment enabling the user to
+     * publish a social share.  The user will also be taken through the sign-in process, if necessary.
+     * This simple variant displays the Fragment, does not add it to the Fragment back stack, and uses default
+     * animations.
+     *
+     * @param activity
+     *   The activity you wish to share
+     * @param hostActivity
+     *   The android.support.v4.app.FragmentActivity which will host the publishing fragment
+     * @param containerId
+     *   The resource ID of a FrameLayout to embed the publishing fragment in
+     **/
+    public void showSocialPublishingFragment(JRActivityObject activity,
+                                             FragmentActivity hostActivity,
+                                             int containerId) {
+        showSocialPublishingFragment(activity, hostActivity, containerId, false, null, null, null, null);
+    }
+
+    /**
+     * Create a new android.support.v4.Fragment for social publishing.  Use this if you wish to manage the
+     * FragmentTransaction yourself.
+     *
+     * @param activity
+     *  The JRActivityObject to share
+     *
+     * @return
+     *  The created fragment, or null upon error
+     */
+    public JRPublishFragment createSocialPublishingFragment(JRActivityObject activity) {
+        if (checkNullJRActivity(activity)) return null;
+
+        mSessionData.setJRActivity(activity);
+        JRPublishFragment f = new JRPublishFragment();
+        f.setEmbeddedMode(true);
+
+        return f;
+    }
+/*@}*/
+
+    private boolean checkNullJRActivity(JRActivityObject activity) {
         if (activity == null) {
             engageDidFailWithError(new JREngageError(
                     "Activity object cannot be null",
                     JREngageError.SocialPublishingError.ACTIVITY_NIL,
                     JREngageError.ErrorType.PUBLISH_FAILED
             ));
+            return true;
         }
-
-        mSessionData.setJRActivity(activity);
-        if (!(mContext instanceof FragmentActivity)) {
-            throw new IllegalStateException("Can't show Engage fragments without a host FragmentActivity.");
-        }
-
-        View fragmentContainer = ((FragmentActivity) mContext).findViewById(R.id.jr_publish_fragment);
-        if (!(fragmentContainer instanceof FrameLayout)) {
-            throw new IllegalStateException("No FrameLayout with id == jr_publish_fragment found: " +
-                    (fragmentContainer != null ? fragmentContainer.toString() : "null"));
-        }
-
-        mSessionData.setUiIsShowing(true);
-
-        FragmentManager fm = ((FragmentActivity) mContext).getSupportFragmentManager();
-
-        JRUiFragment f = new JRPublishFragment();
-        f.setEmbeddedMode(true);
-        fm.beginTransaction()
-                //.add(fragmentContainer.getId(), f, f.getClass().getSimpleName())
-                .replace(fragmentContainer.getId(), f, f.getClass().getSimpleName())
-                //.addToBackStack(JRPublishFragment.class.getSimpleName())
-                .commit();
-        //stopped here
+        return false;
     }
-/*@}*/
 
     private synchronized List<JREngageDelegate> getDelegatesCopy() {
-        return (mDelegates == null) ?
-                new ArrayList<JREngageDelegate>()
-                : new ArrayList<JREngageDelegate>(mDelegates);
+        return new ArrayList<JREngageDelegate>(mDelegates);
     }
 }

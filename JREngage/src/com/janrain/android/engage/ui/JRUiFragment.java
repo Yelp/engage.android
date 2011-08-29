@@ -60,20 +60,18 @@ public abstract class JRUiFragment extends Fragment {
             String target = intent.getStringExtra(JRFragmentHostActivity.EXTRA_FINISH_FRAGMENT_TARGET);
 
             if (JRUiFragment.this.getClass().toString().equals(target)) {
-                if (!isEmbeddedMode()) {
-                    tryToFinishActivity();
-                }
-                Log.i(TAG, "[onReceive] handled");
+                if (!isEmbeddedMode()) tryToFinishActivity();
+                if (Config.LOGD) Log.d(TAG, "[onReceive] handled");
             } else if (Config.LOGD) {
-                Log.i(TAG, "[onReceive] ignored");
+                if (Config.LOGD) Log.d(TAG, "[onReceive] ignored");
             }
         }
     }
 
     @Override
     public void onAttach(Activity activity) {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
         super.onAttach(activity);
+        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
 
         if (mFinishReceiver == null) mFinishReceiver = new FinishReceiver();
         getActivity().registerReceiver(mFinishReceiver, JRFragmentHostActivity.FINISH_INTENT_FILTER);
@@ -85,6 +83,7 @@ public abstract class JRUiFragment extends Fragment {
         if (Config.LOGD) Log.d(TAG, "[onCreate]");
 
         mSessionData = JRSessionData.getInstance();
+        if (mSessionData != null) mSessionData.setUiIsShowing(true);
         setRetainInstance(true);
     }
 
@@ -93,8 +92,8 @@ public abstract class JRUiFragment extends Fragment {
     @Override
     @SuppressWarnings("unchecked")
     public void onActivityCreated(Bundle savedInstanceState) {
-        if (Config.LOGD) Log.d(TAG, "[onActivityCreated]");
         super.onActivityCreated(savedInstanceState);
+        if (Config.LOGD) Log.d(TAG, "[onActivityCreated]");
 
         mSessionData = JRSessionData.getInstance();
         if (savedInstanceState != null) {
@@ -151,6 +150,8 @@ public abstract class JRUiFragment extends Fragment {
     @Override
     public void onDestroy() {
         if (Config.LOGD) Log.d(TAG, "[onDestroy]");
+        if (mSessionData != null) mSessionData.setUiIsShowing(false);
+
         super.onDestroy();
     }
 

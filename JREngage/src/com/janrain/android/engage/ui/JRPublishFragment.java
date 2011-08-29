@@ -104,8 +104,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private int mMaxCharacters;
 
     /* UI state transitioning variables */
-    //private boolean mUserHasEditedText = false;
-    //private boolean mWeAreCurrentlyPostingSomething = false;
     private boolean mWeHaveJustAuthenticated = false;
     private boolean mWaitingForMobileConfig = false;
     private boolean mAuthenticatingForShare = false;
@@ -118,12 +116,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private TextView mPreviewLabelView;
     private ImageView mProviderIcon;
     private EditText mUserCommentView;
-    private ImageView mTriangleIconView;
-    //private LinearLayout mProfilePicAndButtonsHorizontalLayout;
     private LinearLayout mUserProfileInformationAndShareButtonContainer;
     private LinearLayout mUserProfileContainer;
     private ImageView mUserProfilePic;
-    //private LinearLayout mNameAndSignOutContainer;
     private TextView mUserNameView;
     private Button mSignOutButton;
     private ColorButton mJustShareButton;
@@ -146,7 +141,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mProviderIcon = (ImageView) content.findViewById(R.id.jr_provider_icon);
         mUserCommentView = (EditText) content.findViewById(R.id.jr_edit_comment);
         mPreviewLabelView = (TextView) content.findViewById(R.id.jr_preview_text_view);
-        mTriangleIconView = (ImageView) content.findViewById(R.id.jr_triangle_icon_view);
         mUserProfileInformationAndShareButtonContainer = (LinearLayout) content.findViewById(
                 R.id.jr_user_profile_information_and_share_button_container);
         mUserProfileContainer = (LinearLayout) content.findViewById(R.id.jr_user_profile_container);
@@ -195,7 +189,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mProvidersThatHaveAlreadyShared =
                     (HashMap<String, Boolean>) savedInstanceState.getSerializable(KEY_PROVIDER_SHARE_MAP);
         }
-        if (mActivityObject == null) mActivityObject = new JRActivityObject("", null);
+        if (mActivityObject == null) {
+            mActivityObject = new JRActivityObject("", null);
+            Log.e(TAG, "Couldn't reload savedInstanceState or get an activity from JRSessionData, " +
+                    "creating stub activity");
+        }
         mUserCommentView.setText(mActivityObject.getUserGeneratedContent());
         loadViewPropertiesWithActivityObject();
 
@@ -458,8 +456,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mMaxCharacters = socialSharingProperties.getAsInt("max_characters");
         }
 
-        if (mMaxCharacters != -1) mCharacterCountView.setVisibility(View.VISIBLE);
-        else mCharacterCountView.setVisibility(View.GONE);
+        showHideView(mCharacterCountView, mMaxCharacters != -1);
 
         updateCharacterCount();
 
@@ -467,8 +464,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         /* Switch on or off the media content view based on the presence of media and ability to
          * display it */
-        boolean showMediaContentView = mActivityObject.getMedia().size() > 0 && can_share_media;
-        mMediaContentView.setVisibility(showMediaContentView ? View.VISIBLE : View.GONE);
+        showHideView(mMediaContentView, mActivityObject.getMedia().size() > 0 && can_share_media);
 
         /* Switch on or off the action label view based on the provider accepting an action */
 
@@ -681,7 +677,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                         .create();
             case DIALOG_CONFIRM_SIGNOUT:
                 return new AlertDialog.Builder(getActivity())
-                        .setMessage("Sign out of " + options.getString(KEY_DIALOG_PROVIDER_NAME) + "?")
+                        .setMessage(getString(R.string.jr_sign_out_dialog)
+                                + options.getString(KEY_DIALOG_PROVIDER_NAME) + "?")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 signOutButtonHandler();
@@ -847,8 +844,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private void showUserAsLoggedIn(boolean loggedIn) {
         if (Config.LOGD) Log.d(TAG, "[showUserAsLoggedIn]: " + loggedIn);
 
-        int visibleIfLoggedIn = loggedIn ? View.VISIBLE : View.GONE;
-        int visibleIfNotLoggedIn = !loggedIn ? View.VISIBLE : View.GONE;
+        int visibleIfLoggedIn = loggedIn ? View.VISIBLE : View.INVISIBLE;
+        int visibleIfNotLoggedIn = !loggedIn ? View.VISIBLE : View.INVISIBLE;
 
         mJustShareButton.setVisibility(visibleIfLoggedIn);
         mUserProfileContainer.setVisibility(visibleIfLoggedIn);
@@ -860,10 +857,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         } else {
             updatePreviewTextWhenContentDoesNotReplaceAction();
         }
-
-        int scaledPadding = AndroidUtils.scaleDipPixels(240);
-        if (loggedIn) mTriangleIconView.setPadding(0, 0, scaledPadding, 0);
-        else mTriangleIconView.setPadding(0, 0, 0, 0);
     }
 
     private void configureLoggedInUserBasedOnProvider() {
@@ -944,16 +937,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         @Override
         public void authenticationDidFail(JREngageError error, String provider) {
             if (Config.LOGD) Log.d(TAG, "[authenticationDidFail]");
-            /* This happens if the mobile endpoint URL fails to be read correctly
-             * or if Engage completes with an error (like rpxstaging via facebook) or maybe if
+            /* This code path is followed if the mobile endpoint URL fails to be read without error,
+             * or if Engage completes with an error (like rpxstaging via Facebook) or (maybe?) if
              * a provider is down. */
 
             mWeHaveJustAuthenticated = false;
-            //mWeAreCurrentlyPostingSomething = false;
 
             /* This UI doesn't need to show a dialog because the JRWebView has already shown one. */
-            //mDialogErrorMessage = error.getMessage();
-            //showDialog(DIALOG_FAILURE);
         }
 
         @Override

@@ -41,29 +41,28 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends Activity implements View.OnClickListener, FeedReaderListener {
+public class MainActivity extends Activity implements View.OnClickListener, FeedData.FeedReaderListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private Button mViewFeedSummary;
     private boolean mFeedHasLoaded;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        if (Config.LOGD)
-            Log.d(TAG, "[onCreate]");
+    public void onCreate(Bundle savedInstanceState) {
+        if (Config.LOGD) Log.d(TAG, "[onCreate]");
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.splash);
 
-        mViewFeedSummary = (Button)findViewById(R.id.view_feed_summary);
+        mViewFeedSummary = (Button) findViewById(R.id.view_feed_summary);
         mViewFeedSummary.setOnClickListener(this);
 
         if (FeedData.getInstance(this).getFeed().isEmpty()) {
             FeedData.getInstance(this).asyncLoadJanrainBlog(this);
-        }
-        else {
+        } else {
             mViewFeedSummary.setEnabled(true);
             mFeedHasLoaded = true;
             mViewFeedSummary.setText(R.string.view_janrain_blog);
@@ -71,31 +70,29 @@ public class MainActivity extends Activity implements View.OnClickListener, Feed
     }
 
     public void onClick(View view) {
-        if (Config.LOGD)
+        if (Config.LOGD) {
             Log.d(TAG, "[onClick] button clicked, " +
                     (mFeedHasLoaded ? "view feed summary" : "reloading blog"));
+        }
 
         if (mFeedHasLoaded) {
             this.startActivity(new Intent(this, FeedSummaryActivity.class));
-        }
-        else {
+        } else {
             mViewFeedSummary.setText(R.string.loading_janrain_blog);
             FeedData.getInstance(this).asyncLoadJanrainBlog(this);
         }
     }
 
-    public void AsyncFeedReadSucceeded() {
-        if (Config.LOGD)
-            Log.d(TAG, "[AsyncFeedReadSucceeded]");
+    public void asyncFeedReadSucceeded() {
+        if (Config.LOGD) Log.d(TAG, "[asyncFeedReadSucceeded]");
 
         mViewFeedSummary.setEnabled(true);
         mFeedHasLoaded = true;
         mViewFeedSummary.setText(R.string.view_janrain_blog);
     }
 
-    public void AsyncFeedReadFailed() {
-        if (Config.LOGD)
-            Log.d(TAG, "[AsyncFeedReadFailed]");
+    public void asyncFeedReadFailed() {
+        if (Config.LOGD) Log.d(TAG, "[asyncFeedReadFailed]");
 
         mViewFeedSummary.setEnabled(true);
         mFeedHasLoaded = false;

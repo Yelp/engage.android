@@ -34,13 +34,18 @@
 
 package com.janrain.android.quickshare;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Config;
 import android.util.Log;
+import com.google.android.filecache.FileResponseCache;
+import com.google.android.imageloader.BitmapContentHandler;
+import com.google.android.imageloader.ImageLoader;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
@@ -57,16 +62,16 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.UnsupportedEncodingException;
+import java.net.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.*;
 
 import static com.janrain.android.quickshare.QuickShareEnvironment.getAppId;
 import static com.janrain.android.quickshare.QuickShareEnvironment.getTokenUrl;
@@ -87,95 +92,148 @@ public class FeedData implements JREngageDelegate {
     private final HashSet<String> mStoryLinks;
     private final ArrayList<Story> mStories;
 
-    private Story mCurrentStory;
-
     private JREngage mEngage;
 
     private String mUrlToBeLoaded;
+    private ImageLoader mImageLoader;
 
 
-    public static FeedData getInstance(Context context) {
+    public static FeedData getInstance(Activity activity) {
         if (sInstance != null) {
-            if (Config.LOGD)
-                Log.d(TAG, "[getInstance] returning existing instance");
+            if (Config.LOGD) Log.d(TAG, "[getInstance] returning existing instance");
 
             return sInstance;
         }
 
-        sInstance = new FeedData(context);
+        sInstance = new FeedData(activity);
 
-        if (Config.LOGD)
-            Log.d(TAG, "[getInstance] returning new instance.");
+        if (Config.LOGD) Log.d(TAG, "[getInstance] returning new instance.");
 
         return sInstance;
     }
 
-    private FeedData(Context context) {
-        if (Config.LOGD)
-            Log.d(TAG, "[ctor] creating instance");
+    public static FeedData getInstance() {
+        return sInstance;
+    }
 
-        mEngage = JREngage.initInstance(context, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
+    public JREngage getJREngage() {
+        return mEngage;
+    }
 
-        ArrayList<Story> stories = (ArrayList<Story>) Archiver.load(ARCHIVE_STORIES_ARRAY);
-        if (stories == null)
-            stories = new ArrayList<Story>();
+    private class JRFileResponseCache extends FileResponseCache {
+        private Context mContext;
+        public JRFileResponseCache(Context c) {
+            mContext = c;
+        }
+
+        @Override
+        protected File getFile(URI uri, String s, Map<String, List<String>> stringListMap, Object o) {
+            try {
+                File parent = new File(mContext.getCacheDir(), "filecache");
+                MessageDigest digest = MessageDigest.getInstance("MD5");
+                digest.update(String.valueOf(uri).getBytes("UTF-8"));
+                byte[] output = digest.digest();
+                StringBuilder builder = new StringBuilder();
+                for (byte anOutput : output) builder.append(Integer.toHexString(0xFF & anOutput));
+                return new File(parent, builder.toString());
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        protected boolean isStale(File file, URI uri, String requestMethod, Map<String,
+                List<String>> requestHeaders, Object cookie) {
+            boolean r =  super.isStale(file, uri, requestMethod, requestHeaders, cookie);
+            logd("isStale", ": " + r);
+            return r;
+        }
+    }
+
+    private FeedData(final Activity activity) {
+        if (Config.LOGD) Log.d(TAG, "[ctor] creating instance");
+
+        FileResponseCache frc = new JRFileResponseCache(activity);
+        JRFileResponseCache.setDefault(frc);
+        ContentHandler bmch = JRFileResponseCache.capture(new BitmapContentHandler(), null);
+        ContentHandler pfch = JRFileResponseCache.capture(JRFileResponseCache.sink(), null);
+        mImageLoader = new ImageLoader(ImageLoader.DEFAULT_TASK_LIMIT * 5, null, bmch, pfch,
+                ImageLoader.DEFAULT_CACHE_SIZE * 5, null);
+
+        mEngage = JREngage.initInstance(activity, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
+
+        ArrayList<Story> stories = Archiver.load(ARCHIVE_STORIES_ARRAY);
+        if (stories == null) stories = new ArrayList<Story>();
 
         mStories = new ArrayList<Story>(stories);
 
-        if (Config.LOGD)
-            Log.d(TAG, "[ctor] loaded " + ((Integer)mStories.size()).toString() + " stories from disk");
-
-        for (Story story : mStories)
-            story.downloadImage();
+        logd(TAG, "[ctor] loaded " + ((Integer) mStories.size()).toString() + " stories from disk");
 
         /* If the Story class changes, then the Archiver can't load the new stories, which is fine,
             They'll just get redownloaded/added, but we also have to clear the links hash, so that
             the new stories get added. */
-        HashSet<String> links = (HashSet<String>) Archiver.load(ARCHIVE_STORY_LINKS_HASH);
-        if (links == null || mStories.isEmpty())
-            links = new HashSet<String>();
+        HashSet<String> links = Archiver.load(ARCHIVE_STORY_LINKS_HASH);
+        if (links == null || mStories.isEmpty()) links = new HashSet<String>();
 
         mStoryLinks = links;
     }
 
-    private void LOGD(String function, String message) {
-        if (Config.LOGD && function != null && message != null)
-            Log.d(TAG, "[" + function + "] " + message);
+    private void logd(String function, String message) {
+        if (Config.LOGD && function != null && message != null) Log.d(TAG, "[" + function + "] " + message);
+    }
+
+    private void logd(String function, String message, Exception e) {
+        if (Config.LOGD && function != null && message != null) {
+            Log.d(TAG, "[" + function + "] " + message, e);
+        }
+    }
+
+    public ImageLoader getImageLoader() {
+        return mImageLoader;
+    }
+
+    public interface FeedReaderListener {
+        void asyncFeedReadSucceeded();
+
+        void asyncFeedReadFailed();
     }
 
     FeedReaderListener mListener;
 
+    @SuppressWarnings("unchecked")
     public void asyncLoadJanrainBlog(FeedReaderListener listener) {
         mListener = listener;
-        
+
         new AsyncTask<Void, Void, Boolean>() {
             private ArrayList<String> imageUrls;
 
             protected Boolean doInBackground(Void... v) {
-                LOGD("asyncLoadJanrainBlog", "loading blog");
+                logd("asyncLoadJanrainBlog", "loading blog");
 
                 try {
-                    LOGD("asyncLoadJanrainBlog", "opening blog stream");
+                    logd("asyncLoadJanrainBlog", "opening blog stream");
                     URL u = (new URL(FEED_URL.toString()));
                     URLConnection uc = u.openConnection();
                     InputStream is = uc.getInputStream();
-                    LOGD("asyncLoadJanrainBlog", "blog stream open");
+                    logd("asyncLoadJanrainBlog", "blog stream open");
 
-                    LOGD("asyncLoadJanrainBlog", "instantiating blog factory");
+                    logd("asyncLoadJanrainBlog", "instantiating blog factory");
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     dbf.setCoalescing(true);
                     dbf.setValidating(false);
                     dbf.setNamespaceAware(false);
                     DocumentBuilder db = dbf.newDocumentBuilder();
-                    LOGD("asyncLoadJanrainBlog", "blog factory instantiated");
+                    logd("asyncLoadJanrainBlog", "blog factory instantiated");
 
                     /* The following parse call takes ten seconds on a fast phone.
                         XMLPullParser is said to be a faster way to go.
                         Sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
                         Another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser */
-                    LOGD("asyncLoadJanrainBlog", "parsing feed");
+                    logd("asyncLoadJanrainBlog", "parsing feed");
                     Document d = db.parse(is);
-                    LOGD("asyncLoadJanrainBlog", "feed parsed");
+                    logd("asyncLoadJanrainBlog", "feed parsed");
 
                     Element rss = (Element) d.getElementsByTagName("rss").item(0);
                     Element channel = (Element) rss.getElementsByTagName("channel").item(0);
@@ -183,10 +241,10 @@ public class FeedData implements JREngageDelegate {
                     NodeList items = channel.getElementsByTagName("item");
                     int numItems = items.getLength();
 
-                    LOGD("asyncLoadJanrainBlog", "walking " + ((Integer) numItems).toString() + " stories");
+                    logd("asyncLoadJanrainBlog", "walking " + numItems + " stories");
 
                     for (int i = 0; i < numItems; i++) {
-                        Element item = (Element)items.item(i);
+                        Element item = (Element) items.item(i);
 
                         Element title = (Element) item.getElementsByTagName("title").item(0);
                         Element link = (Element) item.getElementsByTagName("link").item(0);
@@ -197,21 +255,21 @@ public class FeedData implements JREngageDelegate {
                         String linkText = link.getFirstChild().getNodeValue();
                         String dateText = date.getFirstChild().getNodeValue();
 
-                        LOGD("asyncLoadJanrainBlog", "adding story: " + titleText);
+                        logd("asyncLoadJanrainBlog", "adding story: " + titleText);
 
                         /* We need to concatenate all the children of the description element (which has
                             ~100s of TextElement children) in order to come up with the complete
                             description text */
                         String descriptionText = "";
                         NodeList nl = description.getChildNodes();
-                        for (int x=0; x<nl.getLength(); x++) {
+                        for (int x = 0; x < nl.getLength(); x++) {
                             String nodeValue = nl.item(x).getNodeValue();
                             descriptionText += nodeValue;
                         }
 
                         imageUrls = new ArrayList<String>();
 
-                        /* The description is in html, so we decode it to display it as plain text,
+                        /* The description is in HTML, so we decode it to display it as plain text,
                             and while decoding it we yoink out a link to an image if there is one. */
                         String plainText = Html.fromHtml(descriptionText, new Html.ImageGetter() {
                             public Drawable getDrawable(String s) {
@@ -219,6 +277,9 @@ public class FeedData implements JREngageDelegate {
                                 return null;
                             }
                         }, null).toString();
+
+                        /* Remove Unicode object characters */
+                        plainText = plainText.replaceAll("\ufffc", "");
 
                         // Parse the blog dates, and then reformat them to be more readable.
                         // Example: 2011-04-25PDT04:30:00-:00
@@ -229,48 +290,48 @@ public class FeedData implements JREngageDelegate {
                             Date parsedDate = sdf.parse(dateText);
                             dateText = moreReadableDate.format(parsedDate);
                         } catch (ParseException e) {
-                            //do nothing, leave the date as it was
+                            //do nothing, leaving the date as it was
                         }
 
                         Story story = new Story(titleText, dateText, descriptionText,
-                                                plainText, linkText, imageUrls);
+                                plainText, linkText, imageUrls);
 
-                        if (!addStoryOnlyIfNew(story, i))
-                            break;
+                        if (!addStoryOnlyIfNew(story, i)) break;
                     }
-                    LOGD("asyncLoadJanrainBlog", "feed walked");
+                    logd("asyncLoadJanrainBlog", "feed walked");
 
-                    LOGD("asyncLoadJanrainBlog", "saving stories");
+                    logd("asyncLoadJanrainBlog", "saving stories");
                     Archiver.save(ARCHIVE_STORIES_ARRAY, mStories);
                     Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
-                    LOGD("asyncLoadJanrainBlog", "stories saved");
+                    logd("asyncLoadJanrainBlog", "stories saved");
 
                     /* If there are no exceptions, then it was a success */
                     return true;
+                } catch (MalformedURLException e) {
+                    logd("asyncLoadJanrainBlog", "MalformedURLException", e);
+                } catch (IOException e) {
+                    logd("asyncLoadJanrainBlog", "IOException", e);
+                } catch (ParserConfigurationException e) {
+                    logd("asyncLoadJanrainBlog", "ParserConfigurationException", e);
+                } catch (SAXException e) {
+                    logd("asyncLoadJanrainBlog", "SAXException", e);
+                } catch (NullPointerException e) {
+                    logd("asyncLoadJanrainBlog", "NullPointerException", e);
                 }
-                catch (MalformedURLException e) { LOGD("asyncLoadJanrainBlog", "MalformedURLException" + e.getLocalizedMessage()); }
-                catch (IOException e) { LOGD("asyncLoadJanrainBlog", "IOException" + e.getLocalizedMessage()); }
-                catch (ParserConfigurationException e) { LOGD("asyncLoadJanrainBlog", "ParserConfigurationException" + e.getLocalizedMessage()); }
-                catch (SAXException e) { LOGD("asyncLoadJanrainBlog", "SAXException" + e.getLocalizedMessage()); }
-                catch (NullPointerException e) { LOGD("asyncLoadJanrainBlog", "NullPointerException" + e.getLocalizedMessage()); }
 
                 /* If there were exceptions, then it was a failure. */
                 return false;
             }
 
-//            private String resizeImage(String nodeValue) {
-//                Log.d(TAG, "[resizeImage] :" + nodeValue);
-//                return nodeValue;
-//            }
-
             protected void onPostExecute(Boolean loadSuccess) {
-                LOGD("onPostExecute", "blog loader onPostExecute, result: " +
+                logd("onPostExecute", "blog loader onPostExecute, result: " +
                         (loadSuccess ? "succeeded" : "failed"));
 
-                if (loadSuccess)
-                    mListener.AsyncFeedReadSucceeded();
-                else
-                    mListener.AsyncFeedReadFailed();
+                if (loadSuccess) {
+                    mListener.asyncFeedReadSucceeded();
+                } else {
+                    mListener.asyncFeedReadFailed();
+                }
             }
         }.execute();
     }
@@ -301,47 +362,18 @@ public class FeedData implements JREngageDelegate {
         }
     }
 
-    public void setCurrentStory(Story story) {
-        mCurrentStory = story;
-    }
-
-    public Story getCurrentStory() {
-        return mCurrentStory;
-    }
-
-    public void shareCurrentStory() {
-        LOGD("shareCurrentStory", "sharing story");
-
-        JRActivityObject activityObject =
-                new JRActivityObject("shared an article from the Janrain Blog", mCurrentStory.getLink());
-
-        activityObject.setTitle(mCurrentStory.getTitle());
-        activityObject.setDescription(mCurrentStory.getPlainText());
-        activityObject.setMedia(new JRImageMediaObject(
-                mCurrentStory.getImageUrls().get(0), mCurrentStory.getImageUrls().get(0)));
-
-        mEngage.showSocialPublishingDialog(activityObject);
-    }
-
     public void deleteAllStories() {
         synchronized (mStories) {
             mStories.clear();
             mStoryLinks.clear();
         }
 
-        if (Config.LOGD)
-            Log.d(TAG, "[deleteAllStories] " + ((Integer)mStories.size()).toString() + " stories remain");
+        if (Config.LOGD) {
+            Log.d(TAG, "[deleteAllStories] " + ((Integer) mStories.size()).toString() + " stories remain");
+        }
 
         Archiver.save(ARCHIVE_STORIES_ARRAY, mStories);
         Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
-    }
-
-    public String getUrlToBeLoaded() {
-        return mUrlToBeLoaded;
-    }
-
-    public void setUrlToBeLoaded(String mUrlToBeLoaded) {
-        this.mUrlToBeLoaded = mUrlToBeLoaded;
     }
 
     public void jrEngageDialogDidFailToShowWithError(JREngageError error) {

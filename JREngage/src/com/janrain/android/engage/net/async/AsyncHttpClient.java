@@ -50,9 +50,13 @@ import java.util.Random;
  * Utility class which performs HTTP operations asynchronously.
  **/
 public final class AsyncHttpClient {
-    // ------------------------------------------------------------------------
-    // TYPES
-    // ------------------------------------------------------------------------
+    private static final String TAG = AsyncHttpClient.class.getSimpleName();
+    private static final String HTTP_METHOD_GET = "GET";
+    private static final String HTTP_METHOD_POST = "POST";
+    private static final String USER_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
+    private static final String ACCEPT_ENCODING = "identity";
+
+    private AsyncHttpClient() {}
 
 	/*
 	 * Sends HTTP request in background, loads header and response, and returns via handler.
@@ -177,6 +181,7 @@ public final class AsyncHttpClient {
                 }
             } catch (IOException e) {
                 Log.e(TAG, "[run] Problem executing HTTP request.", e);
+                Log.e(TAG, this.toString());
                 mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, e));
                 mHandler.post(mWrapper);
             } finally {
@@ -218,13 +223,17 @@ public final class AsyncHttpClient {
                 writer = new DataOutputStream(connection.getOutputStream());
                 writer.write(mPostData);
                 writer.flush();
-            } catch (IOException e) {
-                throw e;
             } finally {
                 if (writer != null) {
                     writer.close();
                 }
             }
+        }
+
+        public String toString() {
+            if (mPostData == null) mPostData = new byte[0];
+            return this.getClass().getSimpleName() + ": {url: " + mUrl + "\nheaders: " + mHeaders +
+                    "\npostData: " + new String(mPostData);
         }
 	}
 
@@ -254,22 +263,6 @@ public final class AsyncHttpClient {
 			if (Config.LOGD) Log.d(TAG, "[setResponse] response set.");
 		}
 	}
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
-	private static final String TAG = AsyncHttpClient.class.getSimpleName();
-
-    private static final String HTTP_METHOD_GET = "GET";
-    private static final String HTTP_METHOD_POST = "POST";
-    private static final String USER_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
-    private static final String ACCEPT_ENCODING = "identity";
-
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
 
 	/**
 	 * Executes the specified HTTP GET request asynchronously.  The results will be returned to
@@ -311,12 +304,4 @@ public final class AsyncHttpClient {
                 new HttpCallbackWrapper(listener, cd))).start();
 
     }
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
-
-	private AsyncHttpClient() {
-		/* no instance */
-	}
 }

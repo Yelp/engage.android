@@ -58,7 +58,6 @@ import java.io.Serializable;
  *
  * @nosubgrouping
  **/
-//public class JRActionLink implements Serializable, JsonSerializableWithType {
 public class JRActionLink implements Serializable {
 /**
  * @name Private Attributes

@@ -283,7 +283,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             mEngage.showAuthenticationDialog();
         } else if (view == mBtnTestPub) {
             if (findViewById(R.id.jr_publish_fragment) != null) {
-                mEngage.showSocialPublishingFragment(mActivity);
+                mEngage.showSocialPublishingFragment(
+                        mActivity,
+                        this,
+                        com.janrain.android.engage.R.id.jr_publish_fragment,
+                        false,
+                        null,
+                        null);
             } else {
                 mEngage.showSocialPublishingDialog(mActivity);
             }

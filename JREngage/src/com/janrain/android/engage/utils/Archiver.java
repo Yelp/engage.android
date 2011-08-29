@@ -98,7 +98,8 @@ public final class Archiver {
      * @throws
      * 		IllegalArgumentException if the context or name parameters are null.
      */
-    public static Object load(String name) {
+    @SuppressWarnings("unchecked")
+    public static <T> T load(String name) {
         Context context = JREngage.getContext();
         if (context == null) {
             throw new IllegalArgumentException("context parameter cannot be null");
@@ -107,7 +108,8 @@ public final class Archiver {
         }
 
         String fileName = String.format(DICTIONARY_BASE_FORMAT, name);
-        return loadObject(fileName);
+        return (T) loadObject(fileName);
+
     }
 
     /**
@@ -249,6 +251,18 @@ public final class Archiver {
         }
         return value;
     }
+
+    //public static <T> T load(String s) {
+    //    return (T) load(s);
+    //}
+
+    //public static final class LOADER<T> {
+    //    private LOADER() {}
+    //
+    //    public static T load(String s) {
+    //        return Archiver.load(s);
+    //    }
+    //}
 
 	/**
 	 * Private default constructor, no instance.

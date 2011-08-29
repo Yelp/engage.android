@@ -421,6 +421,8 @@ public class JRActivityObject implements Serializable {
     /**
      * Setter for the activity object's #mMedia property.
      *
+     * @deprecated use #addMedia(JRMediaObject)
+     *
      * @param mediaObject
      *        A single JRImageMediaObject, JRFlashMediaObject, or JRMp3MediaObject to be added to
      *        the array of media objects, creating the array if it hasn't already been created

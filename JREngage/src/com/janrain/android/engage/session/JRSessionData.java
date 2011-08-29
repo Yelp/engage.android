@@ -55,7 +55,8 @@ import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import java.io.File;
+import org.w3c.dom.Text;
+
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -120,7 +121,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private boolean mHidePoweredBy;
 	private boolean mAlwaysForceReauth;
     private boolean mSkipLandingPage;
-    private boolean mUiIsShowing = false;
+    private int mUiShowingCount = 0;
 
     private JREngageError mError;
 
@@ -315,11 +316,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     public void setReturningBasicProvider(String returningBasicProvider) {
-        if (!TextUtils.isEmpty(returningBasicProvider) &&
-                !mBasicProviders.contains(returningBasicProvider)) {
-            returningBasicProvider = "";
-        }
-        this.mReturningBasicProvider = returningBasicProvider;
+        if (TextUtils.isEmpty(returningBasicProvider)) returningBasicProvider = ""; // nulls -> ""s
+        if (!mBasicProviders.contains(returningBasicProvider)) returningBasicProvider = "";
+
+        mReturningBasicProvider = returningBasicProvider;
         Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, returningBasicProvider);
     }
 
@@ -328,11 +328,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     public void setReturningSocialProvider(String returningSocialProvider) {
-        if (!TextUtils.isEmpty(returningSocialProvider) &&
-                !mSocialProviders.contains(returningSocialProvider)) {
-            returningSocialProvider = "";
-        }
-        this.mReturningSocialProvider = returningSocialProvider;
+        if (TextUtils.isEmpty(returningSocialProvider)) returningSocialProvider = ""; // nulls -> ""s
+        if (!mSocialProviders.contains(returningSocialProvider)) returningSocialProvider = "";
+
+        mReturningSocialProvider = returningSocialProvider;
         Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, returningSocialProvider);
     }
 
@@ -344,9 +343,14 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return mHidePoweredBy;
     }
 
-    public void setUiIsShowing(boolean mUiIsShowing) {
-        this.mUiIsShowing = mUiIsShowing;
-        if (!mUiIsShowing & !mSavedConfigurationBlock.equals("")) {
+    public void setUiIsShowing(boolean uiIsShowing) {
+        if (uiIsShowing) {
+            mUiShowingCount++;
+        } else {
+            mUiShowingCount--;
+        }
+
+        if (mUiShowingCount == 0 && !mSavedConfigurationBlock.equals("")) {
             String s = mSavedConfigurationBlock;
             mSavedConfigurationBlock = "";
             mNewEtag = mSavedEtag;
@@ -355,7 +359,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
-        Log.i(TAG, "[connectionDidFail]");
+        Log.e(TAG, "[connectionDidFail]");
 
         if (userdata == null) {
             Log.e(TAG, "[connectionDidFail] unexpected null userdata");
@@ -437,18 +441,15 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                         new JREngageError(payload,
                                 SocialPublishingError.FAILED,
                                 ErrorType.PUBLISH_FAILED),
-                        providerName);
+                                providerName);
             }
 
         } else if (responseDict.containsKey("stat") && ("ok".equals(responseDict.get("stat")))) {
-            saveLastUsedSocialProvider();
+            setReturningSocialProvider(getCurrentlyPublishingProvider().getName());
             setCurrentlyPublishingProvider(null);
             for (JRSessionDelegate delegate : getDelegatesCopy()) {
-                delegate.publishingJRActivityDidSucceed(
-                        mActivity,
-                        providerName);
+                delegate.publishingJRActivityDidSucceed(mActivity, providerName);
             }
-
         } else {
             setCurrentlyPublishingProvider(null);
             JRDictionary errorDict = responseDict.getAsDictionary("err");
@@ -473,21 +474,22 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                                 ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
                         break;
                     case 4: /* "Facebook Error: Invalid OAuth 2.0 Access Token" */
-                        if (msg.matches(".*nvalid ..uth.*"))
+                        if (msg.matches(".*nvalid ..uth.*")) {
                             publishError = new JREngageError(
                                     msg,
                                     SocialPublishingError.INVALID_OAUTH_TOKEN,
                                     ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
-                        else if (msg.matches(".*eed action request limit.*"))
+                        } else if (msg.matches(".*eed action request limit.*")) {
                             publishError = new JREngageError(
                                     msg,
                                     SocialPublishingError.FEED_ACTION_REQUEST_LIMIT,
                                     ErrorType.PUBLISH_FAILED);
-                        else
+                        } else {
                             publishError = new JREngageError(
                                     msg,
                                     SocialPublishingError.FAILED,
                                     ErrorType.PUBLISH_FAILED);
+                        }
                         break;
                     case 100: // TODO LinkedIn character limit error
                         publishError = new JREngageError(
@@ -496,15 +498,17 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                                 ErrorType.PUBLISH_INVALID_ACTIVITY);
                         break;
                     case 6:
-                        if (msg.matches(".*witter.*")) publishError = new JREngageError(
-                                msg,
-                                SocialPublishingError.DUPLICATE_TWITTER,
-                                ErrorType.PUBLISH_INVALID_ACTIVITY);
-                        else publishError = new JREngageError(
-                                msg,
-                                JREngageError.SocialPublishingError.FAILED,
-                                ErrorType.PUBLISH_INVALID_ACTIVITY
-                        );
+                        if (msg.matches(".*witter.*")) {
+                            publishError = new JREngageError(
+                                    msg,
+                                    SocialPublishingError.DUPLICATE_TWITTER,
+                                    ErrorType.PUBLISH_INVALID_ACTIVITY);
+                        } else {
+                            publishError = new JREngageError(
+                                    msg,
+                                    JREngageError.SocialPublishingError.FAILED,
+                                    ErrorType.PUBLISH_INVALID_ACTIVITY);
+                        }
                         break;
                     case 1000: /* Extracting code failed; Fall through. */
                     default: // TODO Other errors (find them)
@@ -541,8 +545,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             String s = (String)userdata;
 
             if (s.equals("getConfiguration")) {
-                /* If the ETag matched, we're done. */
                 if (headers.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
+                    /* If the ETag matched, we're done. */
                     if (Config.LOGD) {
                         Log.d(TAG, "[connectionDidFinishLoading] found HTTP_NOT_MODIFIED -> matched ETag");
                     }
@@ -551,14 +555,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                     return;
                 }
 
-                String payloadString = "";
-                try {
-                    payloadString = new String(payload, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    Log.e(TAG, "getConfiguration decoding exception: " + e);
-                }
-                if (Config.LOGD)
+                String payloadString = new String(payload);
+                if (Config.LOGD) {
                     Log.d(TAG, "[connectionDidFinishLoading-full] payload string: " + payloadString);
+                }
 
                 if (payloadString.contains("\"provider_info\":{")) {
                     mError = finishGetConfiguration(payloadString, headers.getETag());
@@ -569,7 +569,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                             ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
                             ErrorType.CONFIGURATION_FAILED);
                 }
-            } else Log.e(TAG, "unexpected userdata found in ConnectionDidFinishLoading full");
+            } else {
+                Log.e(TAG, "unexpected userdata found in ConnectionDidFinishLoading full");
+            }
         }
 	}
 
@@ -666,18 +668,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         /* Get the ordered list of social providers */
         mSocialProviders = jsonDict.getAsListOfStrings("social_providers");
 
-        /* Ensure that the returning basic and social providers, if set, are members of the
-         * configured set of providers. */
-        if (!TextUtils.isEmpty(mReturningBasicProvider) &&
-                !mBasicProviders.contains(mReturningBasicProvider)) {
-            mReturningBasicProvider = "";
-            Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, mReturningBasicProvider);
-        }
-        if (!TextUtils.isEmpty(mReturningSocialProvider) &&
-                !mSocialProviders.contains(mReturningSocialProvider)) {
-            mReturningSocialProvider = "";
-            Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, mReturningSocialProvider);
-        }
+        /* By redundantly calling these setters it is ensured that the returning basic and social providers,
+         * if set, are members of the configured set of providers. */
+        setReturningBasicProvider(mReturningBasicProvider);
+        setReturningSocialProvider(mReturningSocialProvider);
 
         /* Done! */
 
@@ -713,7 +707,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
              * where a dialog is showing but there isn't any data that it could be using (that
              * is, the lists of basic and social providers are nil), go ahead and update it too.
              * The dialogs won't try and do anything until we're done updating the lists. */
-            if (!mUiIsShowing ||
+            if (!isUiShowing() ||
                     (ListUtils.isEmpty(mBasicProviders) && ListUtils.isEmpty(mSocialProviders))) {
                 mNewEtag = etag;
                 return finishGetConfiguration(dataStr);
@@ -734,6 +728,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return null;
     }
 
+    private boolean isUiShowing() {
+        return mUiShowingCount == 0;
+    }
+
     private String getWelcomeMessageFromCookieString() {
         if (Config.LOGD) Log.d(TAG, "[getWelcomeMessageFromCookieString]");
 
@@ -746,13 +744,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
 
         return null;
-    }
-
-    private void saveLastUsedSocialProvider() {
-        if (Config.LOGD) Log.d(TAG, "[saveLastUsedSocialProvider]");
-
-        mReturningSocialProvider = getCurrentlyPublishingProvider().getName();
-        Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, mReturningSocialProvider);
     }
 
     public void saveLastUsedBasicProvider() {
@@ -1051,19 +1042,15 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         if (Config.LOGD) Log.d(TAG, "[triggerAuthenticationDidCancel]");
 
         setCurrentlyAuthenticatingProvider(null);
-        mReturningBasicProvider = null;
+        setReturningBasicProvider(null);
 
-        for (JRSessionDelegate delegate : getDelegatesCopy()) {
-            delegate.authenticationDidCancel();
-        }
+        for (JRSessionDelegate delegate : getDelegatesCopy()) delegate.authenticationDidCancel();
     }
 
     public void triggerAuthenticationDidRestart() {
         if (Config.LOGD) Log.d(TAG, "[triggerAuthenticationDidRestart]");
 
-        for (JRSessionDelegate delegate : getDelegatesCopy()) {
-            delegate.authenticationDidRestart();
-        }
+        for (JRSessionDelegate delegate : getDelegatesCopy()) delegate.authenticationDidRestart();
     }
 
     /**
@@ -1072,9 +1059,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     public void triggerPublishingDidComplete() {
         if (Config.LOGD) Log.d(TAG, "[triggerPublishingDidComplete]");
 
-        for (JRSessionDelegate delegate : getDelegatesCopy()) {
-            delegate.publishingDidComplete();
-        }
+        for (JRSessionDelegate delegate : getDelegatesCopy()) delegate.publishingDidComplete();
     }
 
     public void triggerPublishingJRActivityDidFail(JREngageError error,

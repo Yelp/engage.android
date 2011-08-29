@@ -38,6 +38,8 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Config;
 import android.util.Log;
+import com.janrain.android.engage.types.JRActivityObject;
+import com.janrain.android.engage.types.JRImageMediaObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,10 +59,8 @@ public class Story implements Serializable {
     private String mPlainText;
     private String mLink;
     private ArrayList<String> mImageUrls;
-    private transient Bitmap mImage;
 
     private boolean mDescriptionImagesAlreadyScaled;
-    private boolean mCurrentlyDownloading;
 
     public static Story dummyStory() {
         return new Story();
@@ -68,100 +68,24 @@ public class Story implements Serializable {
 
     public Story(String title, String date, String description,
                  String plainText, String link, ArrayList<String> imageUrls) {
-        this.mTitle = title;
-        this.mDate = date;
-        this.mDescription = description;
-        this.mPlainText = plainText;
-        this.mLink = link;
-        this.mImageUrls = imageUrls;
+        mTitle = title;
+        mDate = date;
+        mDescription = description;
+        mPlainText = plainText;
+        mLink = link;
+        mImageUrls = imageUrls;
 
         mDescriptionImagesAlreadyScaled = false;
-
-        if (mImageUrls != null)
-            if (!mImageUrls.isEmpty())
-                startDownloadImage(mImageUrls.get(0));
+        if (getThumbnailUrl() != null) {
+            FeedData.getInstance().getImageLoader().prefetch(getThumbnailUrl());
+        }
     }
 
     private Story() {
     }
 
-    public void downloadImage() {
-        if (mImageUrls != null)
-            if (!mImageUrls.isEmpty())
-                startDownloadImage(mImageUrls.get(0));
-    }
-
-    private void startDownloadImage(final String imageUrl) {
-        if (Config.LOGD)
-            Log.d(TAG, "[startDownloadImage] " + imageUrl);
-
-        synchronized (this) {
-            if (mCurrentlyDownloading) return;
-            else mCurrentlyDownloading = true;
-        }
-
-        new AsyncTask<Void, Void, Void>(){
-            public Void doInBackground(Void... s) {
-                if (Config.LOGD)
-                    Log.d(TAG, "[doInBackground] downloading image");
-                
-                try {
-                    URL url = new URL(imageUrl);
-                    InputStream is = url.openStream();
-
-                    Bitmap bd = BitmapFactory.decodeStream(is);
-
-                    int width = bd.getWidth();
-                    int height = bd.getHeight();
-
-                    if (Config.LOGD)
-                        Log.d(TAG, "[getView] original image size: " +
-                                ((Integer)width).toString() + ", " + ((Integer)height).toString());
-
-                    int x_ratio = width/120, y_ratio = height/120, scale_ratio;
-
-                    if (x_ratio <= 1 || y_ratio <= 1)
-                        scale_ratio = 1;
-                    else if (x_ratio < y_ratio)
-                        scale_ratio = x_ratio;
-                    else
-                        scale_ratio = y_ratio;
-
-                    mImage = Bitmap.createScaledBitmap(bd, width/scale_ratio, height/scale_ratio, true);
-
-                    if (Config.LOGD)
-                        Log.d(TAG, "[getView] scaled image size: " +
-                                ((Integer)mImage.getWidth()).toString() + ", " +
-                                ((Integer)mImage.getHeight()).toString());
-
-                } catch (MalformedURLException e) {
-                    if (Config.LOGD) Log.d(TAG, e.toString());
-                } catch (IOException e) {
-                    if (Config.LOGD) Log.d(TAG, e.toString());
-                } catch (RuntimeException e) {
-                    if (Config.LOGD) Log.d(TAG, e.toString());
-                } catch (OutOfMemoryError e) {
-                    if (Config.LOGD) Log.d(TAG, e.toString());
-                }
-
-                mCurrentlyDownloading = false;
-                return null;
-            }
-
-            protected void onPostExecute(Boolean loadSuccess) {
-                Log.d(TAG, "[onPostExecute] image download onPostExecute, result: " +
-                        (loadSuccess ? "succeeded" : "failed"));
-
-////                if (loadSuccess)
-////                    mListener.AsyncFeedReadSucceeded();
-////                else
-////                    mListener.AsyncFeedReadFailed();
-            }
-        }.execute();
-    }
-
     public String getTitle() {
-            return mTitle;
+        return mTitle;
     }
 
     public String getDate() {
@@ -169,10 +93,9 @@ public class Story implements Serializable {
     }
 
     public String getDescription() {
-        if (!mDescriptionImagesAlreadyScaled)
-            scaleDescriptionImages();
+        if (!mDescriptionImagesAlreadyScaled) scaleDescriptionImages();
 
-            return mDescription;
+        return mDescription;
     }
 
     private void scaleDescriptionImages() {
@@ -182,23 +105,26 @@ public class Story implements Serializable {
 
         String newDescription = splitDescription[0];
 
-        for (int i=1; i<length; i++) {
-            Log.d(TAG, "[scaleDescriptionImages] " + ((Integer)i).toString() + ": " + splitDescription[i]);
+        for (int i = 1; i < length; i++) {
+            Log.d(TAG, "[scaleDescriptionImages] " + ((Integer) i).toString() + ": " + splitDescription[i]);
 
             try {
-                Pattern pattern = Pattern.compile("(.+?)style=\"(.+?)\"(.+?)/>(.+)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+                Pattern pattern = Pattern.compile("(.+?)style=\"(.+?)\"(.+?)/>(.+)", Pattern.CASE_INSENSITIVE
+                        | Pattern.DOTALL);
                 Matcher matcher = pattern.matcher(splitDescription[i]);
 
-                Log.d(TAG, "[scaleDescriptionImages] matcher matches?: " + (matcher.matches() ? "yes" : "no"));
+                Log.d(TAG, "[scaleDescriptionImages] matcher matches?: " + (matcher.matches() ? "yes" :
+                        "no"));
 
-                for (int j=1; j<=matcher.groupCount(); j++)
-                    Log.d(TAG, "[scaleDescriptionImages] matched group " + ((Integer)j).toString() + ": " + matcher.group(j));
+                for (int j = 1; j <= matcher.groupCount(); j++)
+                    Log.d(TAG, "[scaleDescriptionImages] matched group " + ((Integer) j).toString() + ": " +
+                            matcher.group(j));
 
                 newDescription += "<img " + matcher.group(1) +
                         "style=\"" + newWidthAndHeight(matcher.group(2)) + "\"" +
                         matcher.group(3) + "/>" + matcher.group(4);
             } catch (IllegalStateException e) {
-                Log.d(TAG, "[scaleDescriptionImages] exception: " + e.getLocalizedMessage());
+                Log.d(TAG, "[scaleDescriptionImages] exception: " + e);
                 newDescription += "<img " + splitDescription[i];
             }
         }
@@ -209,7 +135,8 @@ public class Story implements Serializable {
     }
 
     private String newWidthAndHeight(String style) {
-        Pattern patternWidth = Pattern.compile("(.*?)width:(.+?)px(.*)", Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
+        Pattern patternWidth = Pattern.compile("(.*?)width:(.+?)px(.*)", Pattern.CASE_INSENSITIVE |
+                Pattern.DOTALL);
         Pattern patternHeight = Pattern.compile("(.*?)height:(.+?)px(.*)", Pattern.CASE_INSENSITIVE);
 
         Matcher matcherWidth = patternWidth.matcher(style);
@@ -219,8 +146,7 @@ public class Story implements Serializable {
                 (matcherWidth.matches() ? "width=yes and " : "width=no and ") +
                 (matcherHeight.matches() ? "height=yes" : "height=no"));
 
-        if (!matcherWidth.matches() || !matcherHeight.matches())
-            return style;
+        if (!matcherWidth.matches() || !matcherHeight.matches()) return style;
 
         Integer width;
         Integer height;
@@ -228,17 +154,19 @@ public class Story implements Serializable {
         try {
             width = new Integer(matcherWidth.group(2).trim());
             height = new Integer(matcherHeight.group(2).trim());
-        } catch (NumberFormatException e) { return style; }
-
-        if (width <= 280)
+        } catch (NumberFormatException e) {
             return style;
+        }
+
+        if (width <= 280) return style;
 
         Double ratio = width / 280.0;
         Integer newHeight = (new Double(height / ratio)).intValue();
 
         Log.d(TAG, "[newWidthAndHeight] style before: " + style);
         style = style.replace("width:" + matcherWidth.group(2) + "px", "width: 280px");
-        style = style.replace("height:" + matcherHeight.group(2) + "px", "height: " + newHeight.toString() + "px");
+        style = style.replace("height:" + matcherHeight.group(2) + "px", "height: " + newHeight.toString() +
+                "px");
         Log.d(TAG, "[newWidthAndHeight] style after: " + style);
 
         return style;
@@ -256,8 +184,19 @@ public class Story implements Serializable {
         return mImageUrls;
     }
 
-    public Bitmap getImage() {
-        return mImage;
+    public String getThumbnailUrl() {
+        if (mImageUrls.size() > 0) return mImageUrls.get(0);
+        else return null;
     }
 
+    public JRActivityObject toJRActivityObject() {
+        JRActivityObject activityObject =
+                new JRActivityObject("shared an article from the Janrain Blog", getLink());
+
+        activityObject.setTitle(getTitle());
+        activityObject.setDescription(getPlainText());
+        activityObject.addMedia(new JRImageMediaObject(getImageUrls().get(0), getImageUrls().get(0)));
+
+        return activityObject;
+    }
 }

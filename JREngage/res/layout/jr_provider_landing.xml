@@ -86,9 +86,9 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="4dp"
                 android:text="@string/jr_landing_switch_account_button_text"
-                android:textStyle="bold"
                 android:layout_weight="1"
                 />
+            <!--android:textStyle="bold"-->
             <!--android:textColor="#ffffffff"-->
 
             <com.janrain.android.engage.ui.ColorButton
@@ -102,10 +102,10 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="2dp"
                 android:text="@string/jr_landing_signin_button_text"
-                android:textStyle="bold"
                 android:layout_weight="1"
-                android:textColor="#ffffffff"
                 />
+            <!--android:textColor="#ffffffff"-->
+            <!--android:textStyle="bold"-->
 
         </LinearLayout>
 

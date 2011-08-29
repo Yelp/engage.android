@@ -24,8 +24,7 @@ public class AndroidUtils {
     private AndroidUtils() {}
 
     public static boolean isSmallOrNormalScreen() {
-        int screenConfig = JREngage.getContext().getResources().getConfiguration().screenLayout;
-        screenConfig &= Configuration.SCREENLAYOUT_SIZE_MASK;
+        int screenConfig = getScreenSize();
 
         // Galaxy Tab 7" (the first one) reports SCREENLAYOUT_SIZE_NORMAL
         // Motorola Xoom reports SCREENLAYOUT_SIZE_XLARGE
@@ -85,5 +84,15 @@ public class AndroidUtils {
         Context c = JREngage.getContext();
         final float scale = c.getResources().getDisplayMetrics().density;
         return (int) (((float) dip) * scale);
+    }
+
+    private static int getScreenSize() {
+        int screenConfig = JREngage.getContext().getResources().getConfiguration().screenLayout;
+        screenConfig &= Configuration.SCREENLAYOUT_SIZE_MASK;
+        return screenConfig;
+    }
+
+    public static boolean isXlarge() {
+        return (getScreenSize() == Configuration.SCREENLAYOUT_SIZE_XLARGE);
     }
 }

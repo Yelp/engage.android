@@ -111,23 +111,15 @@ public class JRProviderListFragment extends JRUiFragment {
     private TextView mEmptyTextLabel;
     private ProgressBar mLoadingProgress;
 
-    /**
-     * Used to alert user that no providers can be found.  Runs on the UI thread.
-     */
     private Runnable mNoProvidersFoundRunner = new Runnable() {
         public void run() {
             mEmptyTextLabel.setVisibility(View.VISIBLE);
             mLoadingProgress.setVisibility(View.GONE);
 
-            Toast.makeText(getActivity(),
-                    "No providers found.",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "No providers found.", Toast.LENGTH_LONG).show();
         }
     };
 
-    /**
-     * Used to update the provider list on the UI thread.
-     */
     private Runnable mProvidersLoadedRunner = new Runnable() {
         public void run() {
             mListView.setVisibility(View.VISIBLE);
