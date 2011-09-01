@@ -37,7 +37,6 @@ package com.janrain.android.engage.types;
 import android.text.TextUtils;
 import android.util.Log;
 import com.janrain.android.engage.session.JRProvider;
-import com.janrain.android.engage.utils.Archiver;
 import com.janrain.android.engage.utils.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -119,52 +118,7 @@ public final class JRDictionary extends HashMap<String,Object> {
 /*@}*/
 
 /**
- * @name Archving
- * Methods that manage archiving/unarchiving of JRDictionaary
- **/
-/*@{*/
-    /**
-     * Archives the specified JRDictionary object to disk.
-     *
-     * @param name
-     *      The name the JRDictionary will be saved as on disk.  This parameter cannot be null
-     *
-     * @param dictionary
-     *      The dictionary object to be saved
-     *
-     * @return
-     *      \c true if the save operation is successful, \c false otherwise
-     *
-     * @throws
-     * 		IllegalArgumentException if the context or name parameters are null
-     **/
-    public static boolean archive(String name, JRDictionary dictionary) {
-        return Archiver.save(name, dictionary);
-    }
-
-    /**
-     * Loads (unarchives) the specified JRDictionary object from the local (protected) file system.
-     *
-     * @param name
-     * 		The name of the JRDictionary to be loaded from disk.  This parameter cannot be null
-     *
-     * @return
-     * 		The JRDictionary if found and loaded, new (empty) JRDictionary otherwise
-     *
-     * @throws
-     * 		IllegalArgumentException if the context or name parameters are null
-     **/
-    public static JRDictionary unarchive(String name) {
-        Object obj = Archiver.load(name);
-        if ((obj != null) && (obj instanceof JRDictionary)) {
-            return (JRDictionary)obj;
-        }
-        return new JRDictionary();
-    }
-/*@}*/
-
-/**
- * @name JSON Seririalization
+ * @name JSON Serialization
  * Methods that serialize/deserialize the JRDictionary to/from JSON
  **/
 /*@{*/
@@ -438,56 +392,6 @@ public final class JRDictionary extends HashMap<String,Object> {
         }
 
         return retval;
-    }
-
-    /**
-     * @internal
-     * Convenience method used to retrieve a named value as a JRProviderList
-     *
-     * @param key
-     * 		The key of the value to be retrieved
-     *
-     * @return
-     * 		The JRProviderList value if key is found, null otherwise
-     **/
-    public JRProviderList getAsProviderList(String key) {
-        return getAsProviderList(key, false);
-    }
-
-    /**
-     * @internal
-     * Convenience method used to retrieve a named value as a JRProviderList
-     *
-     * @param key
-     * 		The key of the value to be retrieved
-     *
-     * @param shouldCreateIfNotFound
-     * 		Flag indicating whether or not a new JRProviderList object should be created if the
-     * 		specified key does not exist
-     *
-     * @return
-     * 		The JRProviderList value if key is found, null otherwise
-     **/
-
-
-    // We runtime type check the return value so we can safely ignore this unchecked
-    // assignment error.
-    @SuppressWarnings({ "unchecked" })
-	public JRProviderList getAsProviderList(String key, boolean shouldCreateIfNotFound) {
-        JRProviderList retval = null;
-        if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
-            Object value = get(key);
-            if (value instanceof JRProviderList) {
-                retval = (JRProviderList)value;
-            } else if (value instanceof ArrayList) {
-                for (Object v : (ArrayList) value) assert v instanceof JRProvider;
-            	retval = new JRProviderList((ArrayList<JRProvider>)value);
-            }
-        }
-
-        return ((retval == null) && shouldCreateIfNotFound)
-            ? new JRProviderList()
-            : retval;
     }
 
 /**

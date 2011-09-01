@@ -36,13 +36,13 @@ package com.janrain.android.quickshare;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Config;
 import android.util.Log;
+import android.widget.Toast;
 import com.google.android.filecache.FileResponseCache;
 import com.google.android.imageloader.BitmapContentHandler;
 import com.google.android.imageloader.ImageLoader;
@@ -52,7 +52,6 @@ import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.types.JRImageMediaObject;
 import com.janrain.android.engage.utils.Archiver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -76,7 +75,7 @@ import java.util.*;
 import static com.janrain.android.quickshare.QuickShareEnvironment.getAppId;
 import static com.janrain.android.quickshare.QuickShareEnvironment.getTokenUrl;
 
-public class FeedData implements JREngageDelegate {
+public class FeedData {
     private static final String TAG = FeedData.class.getSimpleName();
 
     private final Uri FEED_URL = Uri.parse("http://www.janrain.com/feed/blogs");
@@ -94,7 +93,6 @@ public class FeedData implements JREngageDelegate {
 
     private JREngage mEngage;
 
-    private String mUrlToBeLoaded;
     private ImageLoader mImageLoader;
 
 
@@ -162,7 +160,7 @@ public class FeedData implements JREngageDelegate {
         mImageLoader = new ImageLoader(ImageLoader.DEFAULT_TASK_LIMIT * 5, null, bmch, pfch,
                 ImageLoader.DEFAULT_CACHE_SIZE * 5, null);
 
-        mEngage = JREngage.initInstance(activity, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
+        mEngage = JREngage.initInstance(activity, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, mJrEngageDelegate);
 
         ArrayList<Story> stories = Archiver.load(ARCHIVE_STORIES_ARRAY);
         if (stories == null) stories = new ArrayList<Story>();
@@ -376,33 +374,43 @@ public class FeedData implements JREngageDelegate {
         Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
     }
 
-    public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-    }
+    JREngageDelegate mJrEngageDelegate = new JREngageDelegate() {
+        public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
+            String toastText;
+            if (error.hasException()) {
+                toastText = error.getException().toString();
+            } else {
+                toastText = error.getMessage();
+            }
 
-    public void jrAuthenticationDidNotComplete() {
-    }
+            Toast.makeText(JREngage.getActivity(), toastText, Toast.LENGTH_LONG).show();
+        }
 
-    public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
-    }
+        public void jrAuthenticationDidNotComplete() {
+        }
 
-    public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-    }
+        public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
+        }
 
-    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
-    }
+        public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
+        }
 
-    public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
-    }
+        public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
+        }
 
-    public void jrSocialDidNotCompletePublishing() {
-    }
+        public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
+        }
 
-    public void jrSocialDidCompletePublishing() {
-    }
+        public void jrSocialDidNotCompletePublishing() {
+        }
 
-    public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
-    }
+        public void jrSocialDidCompletePublishing() {
+        }
 
-    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
-    }
+        public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
+        }
+
+        public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
+        }
+    };
 }

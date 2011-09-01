@@ -7,7 +7,6 @@
     android:id="@android:id/tabhost"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    style="@style/jr_fullscreen_no_title"
     >
     <!-- todo: test styles applied to the root of this layout, WRT getting the background ~right -->
 
@@ -45,17 +44,21 @@
                     android:id="@+id/jr_email_sms_edit_comment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:layout_marginTop="5dip"
                     android:layout_marginRight="4dip"
                     android:layout_marginLeft="4dip"
                     android:layout_alignParentTop="true"
                     android:gravity="top|left"
+
                     android:hint="@string/jr_please_enter_text"
                     android:textColorHint="@color/jr_text_color_hint"
                     android:lines="4"
-                    android:inputType="textMultiLine|textAutoComplete"
                     android:textSize="@dimen/jr_edit_text_size"
+
+                    android:inputType="textMultiLine|textAutoComplete"
                     />
+                <!--android:imeOptions="actionSend"-->
                 <!--style="?android:attr/textAppearanceMedium"-->
 
                 <LinearLayout
@@ -176,21 +179,22 @@
                     android:textSize="@dimen/jr_character_count_size"
                     />
 
-                <!-- This RelativeLayout expands to the size between the character count view and
+                <!-- This layout expands to the size between the character count view and
                      the provider icon.  It renders nothing, but only server as a bounding
                      container for the jr_preview_box.  (We can't allow the preview box to grow
                      to this size though, because then it's background does too, and that looks
-                     weird. -->
+                     weird.) -->
                 <!--Cute name, btw...-->
-                <RelativeLayout
+                <FrameLayout
                     android:id="@+id/jr_nested_layout_mania_sunday_sunday_sunday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:layout_below="@id/jr_character_count_view"
                     android:layout_above="@+id/jr_provider_icon"
                     >
 
-                    <RelativeLayout
+                    <com.janrain.android.engage.ui.AutoBlankingRelativeLayout
                         android:id="@+id/jr_preview_box"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -237,6 +241,7 @@
                                 android:id="@+id/jr_media_content_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+
                                 android:layout_marginTop="3dip"
                                 android:layout_marginLeft="4dip"
                                 android:layout_marginBottom="4dip"
@@ -245,8 +250,9 @@
                                 android:paddingLeft="3dp"
                                 android:paddingRight="3dp"
                                 android:paddingBottom="7dp"
-                                android:background="@drawable/jr_bg_provider_activity_info"
                                 android:layout_weight="0"
+
+                                android:background="@drawable/jr_bg_provider_activity_info"
                                 >
 
                                 <ImageView
@@ -317,13 +323,12 @@
                             android:text="@string/jr_preview"
                             android:textColor="@color/jr_preview_label"
                             android:background="@color/jr_preview_background"
-                            android:textStyle="normal"
                             android:textSize="@dimen/jr_preview_label_size"
                             />
 
-                    </RelativeLayout>
+                    </com.janrain.android.engage.ui.AutoBlankingRelativeLayout>
 
-                </RelativeLayout>
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/jr_tagline"

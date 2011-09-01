@@ -240,7 +240,7 @@ public class JREngage {
 	 * @return
 	 * 		The Context object used to initialize this library
 	 **/
-    public static Context getContext() {
+    public static Context getActivity() {
         return (sInstance == null) ? null : sInstance.mActivity;
     }
 
@@ -285,7 +285,7 @@ public class JREngage {
         //}
 	}
 
-    private JRSessionDelegate mJrsd = new JRSessionDelegate() {
+    private JRSessionDelegate mJrsd = new JRSessionDelegate.SimpleJRSessionDelegate() {
         public void authenticationDidRestart() {
             if (Config.LOGD) Log.d(TAG, "[authenticationDidRestart]");
         }
@@ -343,21 +343,21 @@ public class JREngage {
         public void publishingDidComplete() {
             if (Config.LOGD) Log.d(TAG, "[publishingDidComplete]");
 
-            for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrSocialDidCompletePublishing();
-            }
+            for (JREngageDelegate delegate : getDelegatesCopy()) delegate.jrSocialDidCompletePublishing();
         }
 
         public void publishingDialogDidFail(JREngageError error) {
             engageDidFailWithError(error);
+
+            if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
+                mSessionData.tryToReconfigureLibrary();
+            }
         }
 
         public void publishingJRActivityDidSucceed(JRActivityObject activity, String provider) {
             if (Config.LOGD) Log.d(TAG, "[publishingJRActivityDidSucceed]");
 
-            for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrSocialDidPublishJRActivity(activity, provider);
-            }
+            for (JREngageDelegate d : getDelegatesCopy()) d.jrSocialDidPublishJRActivity(activity, provider);
         }
 
         public void publishingJRActivityDidFail(JRActivityObject activity,
@@ -365,12 +365,20 @@ public class JREngage {
                                                 String provider) {
             if (Config.LOGD) Log.d(TAG, "[publishingJRActivityDidFail]");
 
-            for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrSocialPublishJRActivityDidFail(activity, error, provider);
+            for (JREngageDelegate d : getDelegatesCopy()) {
+                d.jrSocialPublishJRActivityDidFail(activity, error, provider);
             }
         }
 
-        public void mobileConfigDidFinish() {}
+        // This doesn't work because JREngageDelegate doesn't have an appropriate method to announce an
+        // error event independent of the display of a dialog
+        //@Override
+        //public void mobileConfigDidFinish() {
+        //    JREngageError err = mSessionData.getError();
+        //    if (err != null) {
+        //        engageDidFailWithError(err);
+        //    }
+        //}
     };
 
 /**
@@ -426,9 +434,16 @@ public class JREngage {
     public void cancelAuthentication() {
         if (Config.LOGD) Log.d(TAG, "[cancelAuthentication]");
 
-        
+        finishJrActivities();
 
         mSessionData.triggerAuthenticationDidCancel();
+    }
+
+    private void finishJrActivities() {
+        Intent intent = new Intent(JRFragmentHostActivity.ACTION_FINISH_FRAGMENT);
+        intent.putExtra(JRFragmentHostActivity.EXTRA_FINISH_FRAGMENT_TARGET,
+                JRFragmentHostActivity.FINISH_TARGET_ALL);
+        mActivity.sendBroadcast(intent);
     }
 
     /**
@@ -437,6 +452,8 @@ public class JREngage {
      **/
     public void cancelPublishing() {
         if (Config.LOGD) Log.d(TAG, "[cancelPublishing]");
+
+        finishJrActivities();
 
         mSessionData.triggerPublishingDidCancel();
     }
@@ -516,6 +533,11 @@ public class JREngage {
         return false;
     }
 
+    private void checkNullJRActivity(JRActivityObject activity) {
+        if (activity == null) {
+            throw new IllegalArgumentException("Illegal null activity object");
+        }
+    }
 
 /** @anchor showMethods **/
 /**
@@ -571,8 +593,7 @@ public class JREngage {
         if (Config.LOGD) Log.d(TAG, "[showSocialPublishingDialog]");
         /* If there was error configuring the library, sessionData.error will not be null. */
         if (checkSessionDataError()) return;
-        if (checkNullJRActivity(activity)) return;
-
+        checkNullJRActivity(activity);
         mSessionData.setJRActivity(activity);
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mActivity, false);
@@ -601,6 +622,9 @@ public class JREngage {
      *   Set a custom enter animation. May be null if-and-only-if customExitAnimation is also null
      * @param customExitAnimation
      *   Set a custom exit animation.  May be null if-and-only-if customEnterAnimation is also null
+     *
+     * @throws IllegalArgumentException
+     *  If the supplied activity object is null
      **/
     public void showSocialPublishingFragment(JRActivityObject activity,
                                              FragmentActivity hostActivity,
@@ -613,7 +637,7 @@ public class JREngage {
         if (Config.LOGD) Log.d(TAG, "[showSocialPublishingFragment]");
         if (checkSessionDataError()) return;
 
-        if (checkNullJRActivity(activity)) return;
+        checkNullJRActivity(activity);
 
         View fragmentContainer = hostActivity.findViewById(containerId);
         if (!(fragmentContainer instanceof FrameLayout)) {
@@ -647,6 +671,9 @@ public class JREngage {
      *   The android.support.v4.app.FragmentActivity which will host the publishing fragment
      * @param containerId
      *   The resource ID of a FrameLayout to embed the publishing fragment in
+     *
+     * @throws IllegalArgumentException
+     *  If the supplied activity object is null
      **/
     public void showSocialPublishingFragment(JRActivityObject activity,
                                              FragmentActivity hostActivity,
@@ -659,13 +686,18 @@ public class JREngage {
      * FragmentTransaction yourself.
      *
      * @param activity
-     *  The JRActivityObject to share
+     *  The JRActivityObject to share, may not be null
      *
      * @return
-     *  The created fragment, or null upon error
+     *  The created Fragment, or null upon error
+     *  
+     * @throws IllegalArgumentException
+     *  If the supplied activity object is null
      */
     public JRPublishFragment createSocialPublishingFragment(JRActivityObject activity) {
-        if (checkNullJRActivity(activity)) return null;
+        if (checkSessionDataError()) return null;
+
+        checkNullJRActivity(activity);
 
         mSessionData.setJRActivity(activity);
         JRPublishFragment f = new JRPublishFragment();
@@ -674,18 +706,6 @@ public class JREngage {
         return f;
     }
 /*@}*/
-
-    private boolean checkNullJRActivity(JRActivityObject activity) {
-        if (activity == null) {
-            engageDidFailWithError(new JREngageError(
-                    "Activity object cannot be null",
-                    JREngageError.SocialPublishingError.ACTIVITY_NIL,
-                    JREngageError.ErrorType.PUBLISH_FAILED
-            ));
-            return true;
-        }
-        return false;
-    }
 
     private synchronized List<JREngageDelegate> getDelegatesCopy() {
         return new ArrayList<JREngageDelegate>(mDelegates);

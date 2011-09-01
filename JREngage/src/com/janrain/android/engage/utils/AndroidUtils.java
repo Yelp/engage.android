@@ -72,22 +72,22 @@ public class AndroidUtils {
     public static final int SDKINT = getAndroidSdkInt();
 
     public static ApplicationInfo getApplicationInfo() {
-        String packageName = JREngage.getContext().getPackageName();
+        String packageName = JREngage.getActivity().getPackageName();
         try {
-            return JREngage.getContext().getPackageManager().getApplicationInfo(packageName, 0);
+            return JREngage.getActivity().getPackageManager().getApplicationInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static int scaleDipPixels(int dip) {
-        Context c = JREngage.getContext();
+        Context c = JREngage.getActivity();
         final float scale = c.getResources().getDisplayMetrics().density;
         return (int) (((float) dip) * scale);
     }
 
     private static int getScreenSize() {
-        int screenConfig = JREngage.getContext().getResources().getConfiguration().screenLayout;
+        int screenConfig = JREngage.getActivity().getResources().getConfiguration().screenLayout;
         screenConfig &= Configuration.SCREENLAYOUT_SIZE_MASK;
         return screenConfig;
     }

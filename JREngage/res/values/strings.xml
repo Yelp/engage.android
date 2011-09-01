@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- This version number is used to "validate" serialized objects before loading them from
-         disk. -->
-    <string name="jr_engage_version">0422f7e0901e1d33673a9e1ac5a4df4f755c721e</string>
-
     <!-- - Server URL strings for each of the three typical environments. -->
     <string name="jr_server_url_lilli">http://lilli.janrain.com:8080</string>
     <string name="jr_server_url_nathan">http://nathan-dev.janrain.com:8080</string>
@@ -11,14 +7,16 @@
     <string name="jr_server_url_production">https://rpxnow.com</string>
 
     <!-- - Shared/common strings. -->
-    <string name="jr_powered_by">Powered by Janrain</string>
+    <!-- http://stackoverflow.com/questions/4353836/italic-textview-with-wrap-contents-seems-to-clip-the-text-at-right-edge/5666648#5666648 -->
+    <!-- The right side of the n was being clipped, hence this work around backslash kludge -->
+    <string name="jr_powered_by">Powered by Janrain \</string>
     <string name="jr_progress_loading">Loading. Please wait...</string>
     <string name="jr_dialog_ok">OK</string>
 
     <!-- - About menu/dialog strings. -->
     <string name="jr_about_menu_item">About Janrain Engage</string>
     <string name="jr_about_title">Janrain Engage for Android Library</string>
-    <string name="jr_about_version">Version 1.1.0</string>
+    <string name="jr_about_version">Version 2.0.0</string>
     <string name="jr_about_url">www.janrain.com</string>
     <string name="jr_about_button_ok">OK</string>
 
@@ -60,5 +58,12 @@
     <string name="jr_dialog_sign_in_failed">Sign-in failed</string>
     <string name="jr_dialog_network_error">A network error occurred, please try again.</string>
     <string name="jr_menu_item_refresh">Refresh</string>
+
+    <!-- JRSessionData strings -->
+    <string name="jr_getconfig_network_failure_message">There was a problem communicating with the Janrain server.
+    </string>
+    <string name="jr_getconfig_parse_error_message">There was a problem communicating with the Janrain server
+        while configuring authentication.
+    </string>
 
 </resources>

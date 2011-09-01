@@ -23,9 +23,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".FeedSummaryActivity"/>
+        <activity android:name=".FeedSummaryActivity"
+                  android:label="Janrain Blog Posts"
+            />
 
-        <activity android:name=".StoryDetailActivity"/>
+        <activity android:name=".StoryDetailActivity"
+                  android:label="Blog Post"
+            />
 
         <!-- For Janrain Engage library -->
         <activity

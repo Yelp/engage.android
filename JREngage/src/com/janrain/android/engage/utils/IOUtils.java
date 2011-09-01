@@ -47,154 +47,10 @@ import android.util.Log;
  * @class IOUtils
  **/
 public final class IOUtils {
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
 	private static final String TAG = IOUtils.class.getSimpleName();
 
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
-
-	/**
-	 * Converts an Object to a byte array.  Will not throw an exception if an error occurs, rather
-	 * it will return null.
-	 *
-	 * @param obj
-	 * 		The object to be converted to byte array.
-	 *
-	 * @return
-	 * 		The object as a byte array, null if the specified object was null.
-	 */
-	public static byte[] objectToBytes(Object obj) {
-		try {
-			return objectToBytes(obj, false);
-		} catch (IOException e) {
-			// will never happen because we're sending 'false', but need for compilation
-		}
-        throw new RuntimeException("sanity failure");
-	}
-
-	/**
-	 * Converts an Object to a byte array.
-	 *
-	 * @param obj
-	 * 		The object to be converted to byte array.
-	 *
-	 * @param shouldThrowOnError
-	 *		Flag indicating whether or not the user wants to handle exceptions that are thrown
-	 *		during this operation.
-	 *
-	 * @return
-	 * 		The object as a byte array, null if the specified object was null.
-	 *
-	 * @throws IOException
-	 * 		If the user passed <code>true</code> for 'shouldThrowOnError' and an IOException has
-	 * 		occurred.
-	 */
-	public static byte[] objectToBytes(Object obj, boolean shouldThrowOnError) throws IOException {
-		if (obj != null) {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream oos;
-			try {
-				oos = new ObjectOutputStream(baos);
-				oos.writeObject(obj);
-				oos.close();
-				return baos.toByteArray();
-			} catch (IOException e) {
-				Log.e(TAG, "[objectToBytes] IOException encountered", e);
-				if (shouldThrowOnError) {
-					throw e;
-				}
-			}
-		}
-        //this is a good byte[] representation of null that won't cause the file writer to crash
-		return new byte[0];
-	}
-
-	/**
-	 * Converts a byte array to an Object.  Will not throw an exception if an error occurs, rather
-	 * it will return null.
-	 *
-	 * @param bytes
-	 * 		The byte array to be converted to Object form.
-	 *
-	 * @return
-	 * 		The Object if successful, null if the specified object was null or the conversion
-	 * 		failed.
-	 */
-	public static Object bytesToObject(byte[] bytes) {
-		Object retval = null;
-		try {
-			retval = bytesToObject(bytes, false);
-		} catch (Exception ignore) {
-			// will never happen because we're sending 'false', but need for compilation
-		}
-		return retval;
-	}
-
-	/**
-	 * Converts a byte array to an Object.  Will not throw an exception if an error occurs, rather
-	 * it will return null.
-	 *
-	 * @param bytes
-	 * 		The byte array to be converted to Object form.
-	 *
-	 * @param shouldThrowOnError
-	 *		Flag indicating whether or not the user wants to handle exceptions that are thrown
-	 *		during this operation.
-	 *
-	 * @return
-	 * 		The Object if successful, null if the specified object was null.
-	 *
-	 * @throws StreamCorruptedException
-	 * 		If the user passed <code>true</code> for 'shouldThrowOnError' and a
-	 * 		StreamCorruptedException has occurred.
-	 *
-	 * @throws OptionalDataException
-	 * 		If the user passed <code>true</code> for 'shouldThrowOnError' and an
-	 * 		OptionalDataException has occurred.
-	 *
-	 * @throws IOException
-	 * 		If the user passed <code>true</code> for 'shouldThrowOnError' and an IOException has
-	 * 		occurred.
-	 *
-	 * @throws ClassNotFoundException
-	 * 		If the user passed <code>true</code> for 'shouldThrowOnError' and a
-	 * 		ClassNotFoundException has occurred.
-	 */
-	public static Object bytesToObject(byte[] bytes, boolean shouldThrowOnError) throws
-			StreamCorruptedException, OptionalDataException,
-			IOException, ClassNotFoundException {
-		Object retval = null;
-		if (bytes != null) {
-			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-			ObjectInputStream ois = null;
-			try {
-				ois = new ObjectInputStream(bais);
-				retval = ois.readObject();
-				ois.close();
-			} catch (InvalidClassException e) {
-				Log.e(TAG, "[bytesToObject] InvalidClassException encountered", e);
-				if (shouldThrowOnError) throw e;
-			} catch (StreamCorruptedException e) {
-				Log.e(TAG, "[bytesToObject] StreamCorruptedException encountered", e);
-				if (shouldThrowOnError) throw e;
-			} catch (OptionalDataException e) {
-				Log.e(TAG, "[bytesToObject] OptionalDataException encountered", e);
-				if (shouldThrowOnError) throw e;
-			} catch (IOException e) {
-				Log.e(TAG, "[bytesToObject] IOException encountered", e);
-				if (shouldThrowOnError) throw e;
-			} catch (ClassNotFoundException e) {
-				Log.e(TAG, "[bytesToObject] ClassNotFoundException encountered", e);
-				if (shouldThrowOnError) throw e;
-			}
-		}
-		return retval;
-	}
+    private IOUtils() {
+    }
 
 	/**
 	 * Reads the entire contents of the specified stream to a byte array.
@@ -207,13 +63,12 @@ public final class IOUtils {
 	 * 		operation failed.
 	 */
 	public static byte[] readFromStream(InputStream in) {
-		byte[] retval = null;
 		try {
-			retval = readFromStream(in, false);
+			return  readFromStream(in, false);
 		} catch (IOException ignore) {
 			// will never happen because we're sending 'false', but need for compilation
+            throw new RuntimeException("sanity failure");
 		}
-		return retval;
 	}
 
 	/**
@@ -233,42 +88,22 @@ public final class IOUtils {
 	 * 		If the user passed <code>true</code> for 'shouldThrowOnError' and an IOException has
 	 * 		occurred.
 	 */
-	public static byte[] readFromStream(InputStream in, boolean shouldThrowOnError)
-			throws IOException {
-        ///todo XXX audit this code.
-		byte[] retval = null;
+	public static byte[] readFromStream(InputStream in, boolean shouldThrowOnError) throws IOException {
 		if (in != null) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			try {
 				byte[] buffer = new byte[1024];
 				int len;
-				while ((len = in.read(buffer)) != -1) {
-					baos.write(buffer, 0, len);
-				}
-				retval = baos.toByteArray();
+				while ((len = in.read(buffer)) != -1) baos.write(buffer, 0, len);
+				return baos.toByteArray();
 			} catch (IOException e) {
 				Log.e(TAG, "[readFromStream] problem reading from input stream.", e);
 				if (shouldThrowOnError) throw e;
 			} finally {
-				if (baos != null) {
-					try {
-						baos.close();
-					} catch (IOException ignore) {
-					}
-				}
+                baos.close();
 			}
 		}
-		return retval;
-	}
 
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
-
-	/**
-	 * Private default constructor -- Utility class, no instance.
-	 */
-	private IOUtils() {
-		// no instance
+        return null;
 	}
 }

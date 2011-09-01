@@ -101,6 +101,11 @@ public interface JRSessionDelegate {
     void authenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider);
 
     /**
+     * Triggered when the user is signed out via JREngage#forgetAuthenticatedUser and it's variant
+     */
+    void userWasSignedOut(String provider);
+
+    /**
      * Triggered triggered by the calling application via JREngage.cancelPublishing
      */
     void publishingDidCancel();
@@ -158,7 +163,9 @@ public interface JRSessionDelegate {
         public void authenticationCallToTokenUrlDidFail(String tokenUrl,
                                                         JREngageError error,
                                                         String provider) {}
+        public void userWasSignedOut(String provider) {}
         public void publishingDidCancel() {}
+        public void publishingDidComplete() {}
         public void publishingJRActivityDidSucceed(JRActivityObject activity, String provider) {}
         public void publishingDialogDidFail(JREngageError error) {}
         public void publishingJRActivityDidFail(JRActivityObject activity,

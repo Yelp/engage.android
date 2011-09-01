@@ -289,6 +289,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         com.janrain.android.engage.R.id.jr_publish_fragment,
                         false,
                         null,
+                        null,
+                        null,
                         null);
             } else {
                 mEngage.showSocialPublishingDialog(mActivity);

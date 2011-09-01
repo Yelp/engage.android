@@ -66,18 +66,19 @@
         android:id="@+id/janrain_url"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="0dp"
         android:layout_marginLeft="10dp"
-        android:textSize="@dimen/textSizeMedium"
-        android:singleLine="true"
+
         android:text="@string/janrain_url"
+        android:textSize="@dimen/textSizeMedium"
+        android:autoLink="web"
+        android:singleLine="true"
         android:textColor="@color/jr_janrain_mediumblue_100percent"
         />
-    <!-- TODO make this link clickable. autoLink="web" works, but makes the text invisible -->
-    <!--android:autoLink="web"-->
 
     <Button
         android:id="@+id/view_feed_summary"

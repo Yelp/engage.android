@@ -49,7 +49,7 @@ public enum JREnvironment {
     }
 
     public String getServerUrl() {
-        return JREngage.getContext().getString(mServerUrlResourceId);
+        return JREngage.getActivity().getString(mServerUrlResourceId);
     }
 }
 /**

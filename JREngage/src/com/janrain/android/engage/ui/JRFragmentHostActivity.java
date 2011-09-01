@@ -30,33 +30,21 @@
 package com.janrain.android.engage.ui;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-//import android.content.res.Resources;
-//import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
-import android.view.*;
-//import android.view.inputmethod.InputMethodManager;
-//import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.R;
+import android.view.KeyEvent;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.utils.AndroidUtils;
 
-/**
- * @internal
- *
- * @class JRWebViewActivity
- * Landing Page Activity
- **/
 public class JRFragmentHostActivity extends FragmentActivity {
     private static final String TAG = JRFragmentHostActivity.class.getSimpleName();
     public static final String JR_FRAGMENT_ID = "com.janrain.android.engage.JR_FRAGMENT_ID";
@@ -67,6 +55,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
     public static final String ACTION_FINISH_FRAGMENT = "com.janrain.android.engage.ACTION_FINISH_FRAGMENT";
     public static final String EXTRA_FINISH_FRAGMENT_TARGET =
             "com.janrain.android.engage.EXTRA_FINISH_FRAGMENT_TARGET";
+    public static final String FINISH_TARGET_ALL = "JR_FINISH_ALL";
     public static final IntentFilter FINISH_INTENT_FILTER = new IntentFilter(ACTION_FINISH_FRAGMENT);
 
     private int mFragmentId;
@@ -117,7 +106,8 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 //    default: throw new IllegalFragmentIdException(mFragmentId);
                 //}
             }
-        } else { // else small or normal screen -> full screen mode
+        } else {
+            // else small or normal screen -> full screen mode
         }
 
         if (savedInstanceState == null) {
@@ -130,7 +120,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
                             && mSessionData.getAuthenticatedUserForProvider(rbp) != null
                             && !mSessionData.getAlwaysForceReauth()
                             && !rbp.getForceReauth()) {
-                        // These other boolean logic statements are in the iPhone UI Maestro
+                        // These other conditions are in the iPhone UI Maestro
                         //&& !sessionData.socialSharing
                         //&& ![((NSArray*)[customInterface objectForKey:kJRRemoveProvidersFromAuthentication]) containsObject:sessionData.returningBasicProvider]
                         //&& [sessionData.basicProviders containsObject:sessionData.returningBasicProvider])
@@ -165,7 +155,10 @@ public class JRFragmentHostActivity extends FragmentActivity {
         } else {
             //savedInstanceState != null
 
-            // todo verify this flow control path -- when will savedInstanceState != null?
+            throw new IllegalStateException("unexpected not null savedInstanceState");
+
+            // This control flow path is not reached  because this activity handles configuration changes
+            // and doesn't implement onSaveInstanceState
         }
     }
 

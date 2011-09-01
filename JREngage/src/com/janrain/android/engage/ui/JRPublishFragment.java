@@ -48,10 +48,7 @@ import android.text.TextWatcher;
 import android.util.Config;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.*;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
@@ -131,7 +128,10 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View content = inflater.inflate(R.layout.jr_publish_activity, container, false);
+        //ContextThemeWrapper ctw = new ContextThemeWrapper(inflater.getContext(),
+        //        R.style.jr_fullscreen_no_title);
+        //View content = View.inflate(ctw, R.layout.jr_publish, null);
+        View content = inflater.inflate(R.layout.jr_publish, container, false);
 
         /* View References */
         mPreviewBox = (RelativeLayout) content.findViewById(R.id.jr_preview_box);
@@ -176,7 +176,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // for de-serializing the HashMap below
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -211,6 +211,48 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         } else {
             initializeWithProviderConfiguration();
         }
+    }
+
+    private void initializeWithProviderConfiguration() {
+        /* Check for no suitable providers */
+        List<JRProvider> socialProviders = mSessionData.getSocialProviders();
+        if (socialProviders == null || socialProviders.size() == 0) {
+            JREngageError err = mSessionData.getError();
+            if (err == null) {
+                err = new JREngageError(
+                        getString(R.string.jr_no_social_providers),
+                        JREngageError.ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
+                        JREngageError.ErrorType.CONFIGURATION_INFORMATION_MISSING);
+            }
+            mSessionData.triggerPublishingDialogDidFail(err);
+            mConnectAndShareButton.setEnabled(false);
+            mUserCommentView.setEnabled(false);
+            getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
+            return;
+        }
+
+        /* Configure the properties of the UI */
+        mActivityObject.shortenUrls(new JRActivityObject.ShortenedUrlCallback() {
+            public void setShortenedUrl(String shortenedUrl) {
+                mShortenedActivityURL = shortenedUrl;
+
+                if (mSelectedProvider == null) return;
+                if (!JRPublishFragment.this.isAdded()) return;
+
+                if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
+                    updatePreviewTextWhenContentReplacesAction();
+                } else {
+                    updatePreviewTextWhenContentDoesNotReplaceAction();
+                }
+                updateCharacterCount();
+            }
+        });
+
+        createTabs();
+
+        /* Fire the text change listener so the character count is updated.
+         * See also onCreateActivity */
+        mUserCommentView.setText(mUserCommentView.getText());
     }
 
     @Override
@@ -279,45 +321,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         /* Set the media content title */
         mct.setText(mActivityObject.getTitle());
-    }
-
-    private void initializeWithProviderConfiguration() {
-        /* Check for no suitable providers */
-        List<JRProvider> socialProviders = mSessionData.getSocialProviders();
-        if (socialProviders == null || socialProviders.size() == 0) {
-            JREngageError err = new JREngageError(
-                    getString(R.string.jr_no_social_providers),
-                    JREngageError.ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
-                    JREngageError.ErrorType.CONFIGURATION_INFORMATION_MISSING);
-            mSessionData.triggerPublishingDialogDidFail(err);
-            mConnectAndShareButton.setEnabled(false);
-            mUserCommentView.setEnabled(false);
-            getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
-            return;
-        }
-
-        /* Configure the properties of the UI */
-        mActivityObject.shortenUrls(new JRActivityObject.ShortenedUrlCallback() {
-            public void setShortenedUrl(String shortenedUrl) {
-                mShortenedActivityURL = shortenedUrl;
-
-                if (mSelectedProvider == null) return;
-                if (!JRPublishFragment.this.isAdded()) return;
-
-                if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
-                    updatePreviewTextWhenContentReplacesAction();
-                } else {
-                    updatePreviewTextWhenContentDoesNotReplaceAction();
-                }
-                updateCharacterCount();
-            }
-        });
-
-        createTabs();
-
-        /* Fire the text change listener so the character count is updated.
-         * See also onCreateActivity */
-        mUserCommentView.setText(mUserCommentView.getText());
     }
 
     private void createTabs() {
@@ -510,7 +513,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
                 mPreviewBox.setVisibility(View.VISIBLE);
                 mEmailSmsComment.setLines(4);
-                mEmailSmsButtonContainer.setOrientation(LinearLayout.VERTICAL);
+                //mEmailSmsButtonContainer.setOrientation(LinearLayout.VERTICAL);
+                mEmailSmsButtonContainer.setOrientation(LinearLayout.HORIZONTAL);
             }
         } else {
             showHideView(mPreviewBox, true);
@@ -723,9 +727,12 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void signOutButtonHandler() {
-        logUserOutForProvider(mSelectedProvider.getName());
-        showUserAsLoggedIn(false);
+        String provider = mSelectedProvider.getName();
+        mSessionData.forgetAuthenticatedUserForProvider(provider);
+    }
 
+    private void onUserSignOut() {
+        showUserAsLoggedIn(false);
         mAuthenticatedUser = null;
         mProvidersThatHaveAlreadyShared.put(mSelectedProvider.getName(), false);
         onTabChanged(getTabHost().getCurrentTabTag());
@@ -868,12 +875,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     /* UI state updaters */
-
-    private void logUserOutForProvider(String provider) {
-        if (Config.LOGD) Log.d(TAG, "[logUserOutForProvider]: " + provider);
-        mSessionData.forgetAuthenticatedUserForProvider(provider);
-        mAuthenticatedUser = null;
-    }
 
     private void authenticateUserForSharing() {
          /* Set weHaveJustAuthenticated to true, so that when this view returns (for whatever reason...
@@ -1028,7 +1029,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
              * view controller. */
             if (reauthenticate && !mWeHaveJustAuthenticated) {
                 if (Config.LOGD) Log.d(TAG, "reauthenticating user for sharing");
-                logUserOutForProvider(provider);
+                mSessionData.forgetAuthenticatedUserForProvider(provider);
                 authenticateUserForSharing();
 
                 return;
@@ -1049,6 +1050,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 mWaitingForMobileConfig = false;
                 initializeWithProviderConfiguration();
             }
+        }
+
+        @Override
+        public void userWasSignedOut(String provider) {
+            if (provider.equals(mSelectedProvider.getName())) onUserSignOut();
         }
     };
 }

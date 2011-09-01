@@ -90,6 +90,9 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 
 	private static JRConnectionManager sInstance;
 
+    private JRConnectionManager() {
+    }
+
 	public static synchronized JRConnectionManager getInstance() {
 		if (sInstance == null) {
 			sInstance = new JRConnectionManager();
@@ -114,17 +117,13 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
      *
      * @param userdata
      *      The tag object associated with the connection. May be null.
-     *
-     * @return
-     *      <code>true</code> if the connection is created successfully, <code>false</code>
-     *      otherwise.
      */
-	public static boolean createConnection(String requestUrl,
+	public static void createConnection(String requestUrl,
                                            JRConnectionManagerDelegate delegate,
                                            boolean shouldReturnFullResponse,
                                            Object userdata) {
 
-        return createConnection(requestUrl, delegate, shouldReturnFullResponse,
+        createConnection(requestUrl, delegate, shouldReturnFullResponse,
                 new ArrayList<NameValuePair>(), userdata);
 	}
 
@@ -149,12 +148,8 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
      * @param requestHeaders
      *      Any additional headers to be sent with the connection.
      *
-     * @return
-     *      <code>true</code> if the connection is created successfully, <code>false</code>
-     *      otherwise.
-     *
      */
-    public static boolean createConnection(String requestUrl,
+    public static void createConnection(String requestUrl,
                                            JRConnectionManagerDelegate delegate,
                                            boolean shouldReturnFullResponse,
                                            List<NameValuePair> requestHeaders,
@@ -172,8 +167,6 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 
 		// execute HTTP GET request
 		AsyncHttpClient.executeHttpGet(cd, instance);
-
-		return true;
     }
 
     /**
@@ -196,12 +189,8 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
      *
      * @param userdata
      *      The tag object associated with the connection. May be null.
-     *
-     * @return
-     *      <code>true</code> if the connection is created successfully, <code>false</code>
-     *      otherwise.
      */
-    public static boolean createConnection(String requestUrl,
+    public static void createConnection(String requestUrl,
                                            byte[] postData,
                                            JRConnectionManagerDelegate delegate,
                                            boolean shouldReturnFullResponse,
@@ -217,17 +206,11 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
 
 		// execute HTTP POST request
 		AsyncHttpClient.executeHttpPost(cd, instance);
-
-		return true;
-
     }
 
     /* Map of managed connections, where connection data is mapped to URL. */
 	//private HashMap<String, ConnectionData> mConnectionBuffers;
     private HashSet<ConnectionData> mConnectionBuffers = new HashSet<ConnectionData>();
-
-	private JRConnectionManager() {
-	}
 
 	public void onResponseReceived(AsyncHttpResponseHolder response) {
         String requestUrl = response.getUrl();

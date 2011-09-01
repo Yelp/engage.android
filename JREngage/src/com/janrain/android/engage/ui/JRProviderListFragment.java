@@ -30,12 +30,10 @@
 package com.janrain.android.engage.ui;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Config;
 import android.util.Log;
 import android.view.*;
@@ -43,7 +41,6 @@ import android.widget.*;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
-import com.janrain.android.engage.session.JRSessionData;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -70,13 +67,13 @@ public class JRProviderListFragment extends JRUiFragment {
      **/
     private class ProviderAdapter extends ArrayAdapter<JRProvider> {
         LayoutInflater li = (LayoutInflater)
-                JREngage.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                JREngage.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         public ProviderAdapter() {
             // The super class only ends up using the last parameter passed into this super constructor,
             // the List.  The first two parameters are never used.
 
-            super(JREngage.getContext(), 0, mProviderList);
+            super(JREngage.getActivity(), 0, mProviderList);
         }
 
         @Override

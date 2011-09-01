@@ -48,6 +48,7 @@ import android.widget.TextView;
 
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
+import com.janrain.android.engage.utils.AndroidUtils;
 
 /**
  * @internal
@@ -204,6 +205,10 @@ public class JRLandingFragment extends JRUiFragment {
         mSwitchAccountButton.setOnClickListener(mButtonListener);
         mSignInButton.setOnClickListener(mButtonListener);
         mSignInButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
+        if (AndroidUtils.getAndroidSdkInt() <= 10) {
+            mSignInButton.setTextColor(getColor(android.R.color.white));
+        }
+
         JRProvider currentlyAuthenticatingProvider = mSessionData.getCurrentlyAuthenticatingProvider();
         getActivity().setTitle(getCustomTitle());
         mLogo.setImageDrawable(currentlyAuthenticatingProvider.getProviderLogo(getActivity()));

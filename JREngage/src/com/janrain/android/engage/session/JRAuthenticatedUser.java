@@ -39,7 +39,6 @@ import android.util.Log;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.io.*;
 import java.net.URL;
@@ -115,7 +114,7 @@ public class JRAuthenticatedUser implements Serializable {
     }
 
     private Context getContext() {
-        return JREngage.getContext();
+        return JREngage.getActivity();
     }
 
     @SuppressWarnings({"unchecked"})

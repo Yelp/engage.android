@@ -104,7 +104,6 @@ package com.janrain.android.engage.types;
      *   if src is null
      **/
     public JRMp3MediaObject(String src) {
-        // TODO: if null/empty should we throw?
         if (src == null) throw new IllegalArgumentException("illegal src for JRMp3MediaObject constructor");
         mSrc = src;
     }

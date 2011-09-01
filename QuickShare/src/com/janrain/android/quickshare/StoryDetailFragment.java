@@ -140,8 +140,8 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
 
         JRActivityObject jra = mFeedData.getFeed().get(getShownIndex()).toJRActivityObject();
         if (AndroidUtils.isXlarge()) {
-            mFeedData.getJREngage().showSocialPublishingFragment(jra, getActivity(), getId(), true, null,
-                    null, null, null);
+            mFeedData.getJREngage().showSocialPublishingFragment(jra, getActivity(), getId(), true,
+                    null, null, null, null);
         } else {
             mFeedData.getJREngage().showSocialPublishingDialog(jra);
         }

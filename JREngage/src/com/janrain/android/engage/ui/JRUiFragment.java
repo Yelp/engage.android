@@ -16,6 +16,7 @@ import android.util.AttributeSet;
 import android.util.Config;
 import android.util.Log;
 import android.view.*;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSessionData;
 
@@ -44,7 +45,6 @@ public abstract class JRUiFragment extends Fragment {
     protected JRSessionData mSessionData;
     protected String TAG = JRUiFragment.class.getSimpleName();
 
-
     /**
      * @internal
      *
@@ -59,7 +59,8 @@ public abstract class JRUiFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String target = intent.getStringExtra(JRFragmentHostActivity.EXTRA_FINISH_FRAGMENT_TARGET);
 
-            if (JRUiFragment.this.getClass().toString().equals(target)) {
+            if (JRUiFragment.this.getClass().toString().equals(target) ||
+                    target.equals(JRFragmentHostActivity.FINISH_TARGET_ALL)) {
                 if (!isEmbeddedMode()) tryToFinishActivity();
                 if (Config.LOGD) Log.d(TAG, "[onReceive] handled");
             } else if (Config.LOGD) {
@@ -85,6 +86,7 @@ public abstract class JRUiFragment extends Fragment {
         mSessionData = JRSessionData.getInstance();
         if (mSessionData != null) mSessionData.setUiIsShowing(true);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
     //onCreateView
@@ -227,6 +229,8 @@ public abstract class JRUiFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
+        //menu.add("test");
+
         if (mSessionData.getHidePoweredBy()) {
             return;
         } else {
@@ -240,6 +244,7 @@ public abstract class JRUiFragment extends Fragment {
             showDialog(DIALOG_ABOUT);
             return true;
         } else {
+            //if (item.getTitle().equals("test")) JREngage.getInstance().signoutUserForAllProviders();
             return super.onOptionsItemSelected(item);
         }
     }
@@ -260,14 +265,11 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     private AlertDialog getAboutDialog() {
-        AlertDialog.Builder builder;
-        AlertDialog dialog;
-
         LayoutInflater inflater =
                 (LayoutInflater) getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.jr_about_dialog, null);
 
-        builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(layout);
         builder.setPositiveButton(R.string.jr_about_button_ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -275,9 +277,7 @@ public abstract class JRUiFragment extends Fragment {
             }
         });
 
-        dialog = builder.create();
-
-        return dialog;
+        return builder.create();
     }
 
     private boolean isEmbeddedMode() {
