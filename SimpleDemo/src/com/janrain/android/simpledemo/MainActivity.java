@@ -114,10 +114,21 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             }
         });
 
-        String engageAppId = readAsset("app_id.txt").trim();
-        String engageTokenUrl = readAsset("token_url.txt").trim();
+        String engageAppId;
+        String engageTokenUrl;
+        try {
+            engageAppId = readAsset("app_id.txt").trim();
+            engageTokenUrl = readAsset("token_url.txt").trim();
+        } catch (NullPointerException e) {
+            (new AlertDialog.Builder(this)).setTitle(
+                    "You need to set assets/app_id.txt and assets/token_url.txt, then recompile and "
+                    + "reinstall.").create().show();
+            return;
+        }
 
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, this);
+        //mEngage.setEnabledAuthenticationProviders(new String[] { "google" });
+        //mEngage.setEnabledSharingProviders(new String[] { "twitter" });
 
         if (savedInstanceState != null && savedInstanceState.containsKey("a")) {
             mTitleText = savedInstanceState.getString("a");
@@ -131,7 +142,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             buildActivity();
         } else {
-            // Build an ~empty Activity
+            // Build an ~empty JRActivity
             buildActivity();
             asyncLoadJanrainBlog();
         }

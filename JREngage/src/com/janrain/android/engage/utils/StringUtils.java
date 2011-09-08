@@ -38,16 +38,9 @@ import android.text.TextUtils;
  * String utility methods.
  */
 public final class StringUtils {
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
-    //private static final String TAG = StringUtils.class.getSimpleName();
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
+    private StringUtils() {
+        // no instance allowed, static utility class
+    }
 
     /**
      * <p>Removes <code>separator</code> from the end of
@@ -168,20 +161,5 @@ public final class StringUtils {
             }
         }
         return retval;
-    }
-
-    //public static String generateStackTrace(String msg) {
-    //    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    //    new Exception(msg).printStackTrace(new PrintStream(baos));
-    //    return baos.toString();
-    //}
-
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
-
-    private StringUtils() {
-        // no instance allowed, static utility class
     }
 }

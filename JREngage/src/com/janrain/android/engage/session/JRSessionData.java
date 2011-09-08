@@ -29,6 +29,7 @@
 */
 package com.janrain.android.engage.session;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import android.util.Config;
@@ -96,6 +97,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
 	private JRDictionary mAllProviders;
 	private ArrayList<String> mBasicProviders;
+    private List<String> mEnabledAuthenticationProviders = null;
+    private List<String> mEnabledSharingProviders = null;
 	private ArrayList<String> mSocialProviders;
 	private JRDictionary mAuthenticatedUsersByProvider;
 
@@ -154,8 +157,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 		mTokenUrl = tokenUrl;
 
         ApplicationInfo ai = AndroidUtils.getApplicationInfo();
-        String appName = JREngage.getActivity().getPackageManager().getApplicationLabel(ai).toString();
+        String appName = getContext().getPackageManager().getApplicationLabel(ai).toString();
         mUrlEncodedAppName = AndroidUtils.urlEncode(appName);
+        mLibraryVersion = getContext().getString(R.string.jr_engage_version);
 
         try {
             /* load the last used basic and social providers */
@@ -189,7 +193,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
              * to update our current configuration information. */
             mOldEtag = Prefs.getAsString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
         } catch (Archiver.LoadException e) {
-            /* Blank slate this shit */
+            /* Blank slate */
             mAuthenticatedUsersByProvider = new JRDictionary();
             mAllProviders = new JRDictionary();
             mBasicProviders = new ArrayList<String>();
@@ -251,23 +255,29 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public ArrayList<JRProvider> getBasicProviders() {
         ArrayList<JRProvider> providerList = new ArrayList<JRProvider>();
+
         if ((mBasicProviders != null) && (mBasicProviders.size() > 0)) {
             for (String name : mBasicProviders) {
-                JRProvider provider = mAllProviders.getAsProvider(name);
-                providerList.add(provider);
+                // Filter by enabled provider list if available
+                if (mEnabledAuthenticationProviders != null &&
+                        !mEnabledAuthenticationProviders.contains(name)) continue;
+                providerList.add(mAllProviders.getAsProvider(name));
             }
         }
-        return providerList;
 
-        // Empty return for testing:
-        //return new ArrayList<JRProvider>();
+        return providerList;
     }
 
     public ArrayList<JRProvider> getSocialProviders() {
         ArrayList<JRProvider> providerList = new ArrayList<JRProvider>();
 
         if ((mSocialProviders != null) && (mSocialProviders.size() > 0)) {
-            for (String name : mSocialProviders) providerList.add(mAllProviders.getAsProvider(name));
+            for (String name : mSocialProviders) {
+                // Filter by enabled provider list if available
+                if (mEnabledSharingProviders != null &&
+                        !mEnabledSharingProviders.contains(name)) continue;
+                providerList.add(mAllProviders.getAsProvider(name));
+            }
         }
 
         return providerList;
@@ -285,7 +295,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public void setReturningBasicProvider(String returningBasicProvider) {
         if (TextUtils.isEmpty(returningBasicProvider)) returningBasicProvider = ""; // nulls -> ""s
-        if (!mBasicProviders.contains(returningBasicProvider)) returningBasicProvider = "";
+        if (!getBasicProviders().contains(getProviderByName(returningBasicProvider))) {
+            returningBasicProvider = "";
+        }
 
         mReturningBasicProvider = returningBasicProvider;
         Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, returningBasicProvider);
@@ -297,7 +309,9 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public void setReturningSocialProvider(String returningSocialProvider) {
         if (TextUtils.isEmpty(returningSocialProvider)) returningSocialProvider = ""; // nulls -> ""s
-        if (!mSocialProviders.contains(returningSocialProvider)) returningSocialProvider = "";
+        if (!getSocialProviders().contains(getProviderByName(returningSocialProvider))) {
+            returningSocialProvider = "";
+        }
 
         mReturningSocialProvider = returningSocialProvider;
         Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, returningSocialProvider);
@@ -335,7 +349,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             if (userdata.equals(TAG_GET_CONFIGURATION)) {
                 Log.e(TAG, "[connectionDidFail] for getConfiguration");
                 mError = new JREngageError(
-                        JREngage.getActivity().getString(R.string.jr_getconfig_network_failure_message),
+                        getContext().getString(R.string.jr_getconfig_network_failure_message),
                         ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
                         JREngageError.ErrorType.CONFIGURATION_FAILED,
                         ex);
@@ -468,6 +482,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                         break;
                     case 6:
                         if (msg.matches(".*witter.*")) {
+                            /// XXX TODO this error isn't necessarily a Twitter duplicate
                             publishError = new JREngageError(
                                     msg,
                                     SocialPublishingError.DUPLICATE_TWITTER,
@@ -534,7 +549,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 } else {
                     Log.e(TAG, "failed to parse response for getConfiguration");
                     mError = new JREngageError(
-                            JREngage.getActivity().getString(R.string.jr_getconfig_parse_error_message),
+                            getContext().getString(R.string.jr_getconfig_parse_error_message),
                             ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
                             ErrorType.CONFIGURATION_FAILED);
                 }
@@ -598,7 +613,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         if ((jsonDict == null) || (jsonEx != null)) {
             Log.e(TAG, "[finishGetConfiguration] failed.");
             return new JREngageError(
-                    JREngage.getActivity().getString(R.string.jr_getconfig_parse_error_message),
+                    getContext().getString(R.string.jr_getconfig_parse_error_message),
                     ConfigurationError.JSON_ERROR,
                     ErrorType.CONFIGURATION_FAILED,
                     jsonEx);
@@ -799,7 +814,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     private void deleteWebViewCookiesForDomain(String domain, boolean secure) {
-        CookieSyncManager csm = CookieSyncManager.createInstance(JREngage.getActivity());
+        CookieSyncManager csm = CookieSyncManager.createInstance(getContext());
         CookieManager cm = CookieManager.getInstance();
 
         /* http://code.google.com/p/android/issues/detail?id=19294 */
@@ -1081,5 +1096,23 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     public String getUrlEncodedAppName() {
         return mUrlEncodedAppName;
+    }
+
+    public void setEnabledAuthenticationProviders(List<String> enabledProviders) {
+        mEnabledAuthenticationProviders = enabledProviders;
+
+        // redundantly call the setter to ensure the provider is still available
+        setReturningBasicProvider(mReturningBasicProvider);
+    }
+
+    public void setEnabledSharingProviders(List<String> enabledSharingProviders) {
+        mEnabledSharingProviders = enabledSharingProviders;
+
+        // redundantly call the setter to ensure the provider is still available
+        setReturningSocialProvider(mReturningSocialProvider);
+    }
+
+    private Context getContext() {
+        return JREngage.getActivity();
     }
 }

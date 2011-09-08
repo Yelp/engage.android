@@ -182,12 +182,21 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         mSessionData.addDelegate(mSessionDelegate);
         mActivityObject = mSessionData.getJRActivity();
+
+        if (savedInstanceState != null) {
+            mSelectedTab = savedInstanceState.getString(KEY_SELECTED_TAB);
+            if (mSelectedTab == null) mSelectedTab = "";
+
+            mProvidersThatHaveAlreadyShared =
+                    (HashMap<String, Boolean>) savedInstanceState.getSerializable(KEY_PROVIDER_SHARE_MAP);
+            if (mProvidersThatHaveAlreadyShared == null) {
+                mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
+            }
+        }
+
         if (mActivityObject == null && savedInstanceState != null) {
             mActivityObject = (JRActivityObject) savedInstanceState.getSerializable(KEY_ACTIVITY_OBJECT);
             mSessionData.setJRActivity(mActivityObject);
-            mSelectedTab = savedInstanceState.getString(KEY_SELECTED_TAB);
-            mProvidersThatHaveAlreadyShared =
-                    (HashMap<String, Boolean>) savedInstanceState.getSerializable(KEY_PROVIDER_SHARE_MAP);
         }
         if (mActivityObject == null) {
             mActivityObject = new JRActivityObject("", null);
@@ -505,7 +514,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        if (AndroidUtils.isSmallOrNormalScreen()) {
+        if (AndroidUtils.isSmallNormalOrLargeScreen()) {
             if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 mPreviewBox.setVisibility(View.GONE);
                 mEmailSmsComment.setLines(3);
@@ -536,7 +545,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             //mWeAreCurrentlyPostingSomething = true;
 
             if (mAuthenticatedUser == null) {
-                mAuthenticatingForShare = true;
                 authenticateUserForSharing();
             } else {
                 shareActivity();
@@ -881,6 +889,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
           * successful auth user canceled, etc), the view will know that we just went through the
           * authentication process. */
         mWeHaveJustAuthenticated = true;
+        mAuthenticatingForShare = true;
         mSessionData.setCurrentlyAuthenticatingProvider(mSelectedProvider);
 
          /* If the selected provider requires input from the user, go to the user landing view. Or if
@@ -933,6 +942,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
             //mWeAreCurrentlyPostingSomething = false;
             mWeHaveJustAuthenticated = false;
+            mAuthenticatingForShare = false;
         }
 
         @Override
@@ -943,6 +953,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
              * a provider is down. */
 
             mWeHaveJustAuthenticated = false;
+            mAuthenticatingForShare = false;
 
             /* This UI doesn't need to show a dialog because the JRWebView has already shown one. */
         }

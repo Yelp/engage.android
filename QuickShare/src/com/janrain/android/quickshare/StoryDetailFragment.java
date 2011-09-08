@@ -99,7 +99,7 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
         loadCurrentStory();
 
         return v;
-     }
+    }
 
     public void loadCurrentStory() {
         Story story = mFeedData.getFeed().get(getShownIndex());
@@ -109,20 +109,20 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
 
         String htmlString =
                 "<html>" +
-                        "<head>" +
+                    "<head>" +
                         "<style type=\"text/css\">" +
-                        styleCommon +
-                        style +
+                            styleCommon +
+                            style +
                         "</style>" +
-                        "</head>" +
-                        "<body>" +
+                    "</head>" +
+                    "<body>" +
                         "<div class=\"main\">" +
                         "<div class=\"title\">" + story.getTitle() + "</div>" +
                         "<div class=\"date\">" + story.getDate() + "</div>" +
-                        story.getDescription() +
-                        "</div>" +
-                        "</body>" +
-                        "</html>";
+                        "<div class=\"body\">" + story.getDescription() + "</div>" +
+                        "<div class=\"posted_by\">Posted by: " + story.getPostedBy() + "</div>" +
+                    "</body>" +
+                "</html>";
 
         if (Config.LOGD) Log.d(TAG, "[loadCurrentStory] html: " + htmlString);
 

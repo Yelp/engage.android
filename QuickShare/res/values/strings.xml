@@ -35,6 +35,12 @@
             color:#074764;
         }
 
+        div.posted_by
+        {
+            font-size:12px;
+            color:#999999;
+        }
+
         div.date
         {
             font-size:12px;

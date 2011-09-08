@@ -98,6 +98,7 @@ public abstract class JRUiFragment extends Fragment {
         if (Config.LOGD) Log.d(TAG, "[onActivityCreated]");
 
         mSessionData = JRSessionData.getInstance();
+
         if (savedInstanceState != null) {
             mManagedDialogs = (HashMap) savedInstanceState.get(KEY_MANAGED_DIALOGS);
             Parcelable[] p = savedInstanceState.getParcelableArray(KEY_MANAGED_DIALOG_OPTIONS);
@@ -106,10 +107,12 @@ public abstract class JRUiFragment extends Fragment {
                     Bundle b = (Bundle) p_;
                     mManagedDialogs.get(b.getInt(KEY_DIALOG_ID)).mOptions = b;
                 }
+            } else {
+                mManagedDialogs = new HashMap<Integer, ManagedDialog>();
             }
         }
 
-        if (mManagedDialogs != null) for (ManagedDialog d : mManagedDialogs.values()) {
+        for (ManagedDialog d : mManagedDialogs.values()) {
             d.mDialog = onCreateDialog(d.mId, d.mOptions);
             if (d.mShowing) d.mDialog.show();
         }

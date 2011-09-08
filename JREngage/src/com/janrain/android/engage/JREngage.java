@@ -74,6 +74,7 @@ package com.janrain.android.engage;
  **/
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.app.Activity;
@@ -231,7 +232,7 @@ public class JREngage {
 	public static JREngage getInstance() {
 		return sInstance;
 	}
-/*@}*/
+ /*@}*/
 
 	/**
      * @internal
@@ -246,7 +247,7 @@ public class JREngage {
 
     /**
      * @internal
-     * @deprecated
+     * @deprecated use setActivityContext(Activity) instead
      * Set the Activity used to start Engage dialogs from
      *
      * @param context
@@ -431,19 +432,13 @@ public class JREngage {
      * Stops the authentication flow.  This finishes all Engage for Android activities and returns
      * the calling Activity to the top of the application's activity stack.
      **/
+
     public void cancelAuthentication() {
         if (Config.LOGD) Log.d(TAG, "[cancelAuthentication]");
 
         finishJrActivities();
 
         mSessionData.triggerAuthenticationDidCancel();
-    }
-
-    private void finishJrActivities() {
-        Intent intent = new Intent(JRFragmentHostActivity.ACTION_FINISH_FRAGMENT);
-        intent.putExtra(JRFragmentHostActivity.EXTRA_FINISH_FRAGMENT_TARGET,
-                JRFragmentHostActivity.FINISH_TARGET_ALL);
-        mActivity.sendBroadcast(intent);
     }
 
     /**
@@ -456,6 +451,13 @@ public class JREngage {
         finishJrActivities();
 
         mSessionData.triggerPublishingDidCancel();
+    }
+
+    private void finishJrActivities() {
+        Intent intent = new Intent(JRFragmentHostActivity.ACTION_FINISH_FRAGMENT);
+        intent.putExtra(JRFragmentHostActivity.EXTRA_FINISH_FRAGMENT_TARGET,
+                JRFragmentHostActivity.FINISH_TARGET_ALL);
+        mActivity.sendBroadcast(intent);
     }
 /*@}*/
 
@@ -475,6 +477,46 @@ public class JREngage {
     public void setTokenUrl(String newTokenUrl) {
         if (Config.LOGD) Log.d(TAG, "[setTokenUrl]");
         mSessionData.setTokenUrl(newTokenUrl);
+    }
+
+    /**
+     * Sets the list of providers that are enabled for authentication.  This does not supersede your
+     * RP's deplyoment settings for Android sign-in, as configured on rpxnow.com, it is a supplemental
+     * filter to that configuration.
+     *
+     * @param enabledProviders
+     *  Which providers to enable for authentication, null for all providers.
+     */
+    public void setEnabledAuthenticationProviders(List<String> enabledProviders) {
+        mSessionData.setEnabledAuthenticationProviders(enabledProviders);
+    }
+
+    /**
+     * Convenience variant of setEnabledAuthenticationProviders(List&lt;String>)
+     * @param enabledProviders
+     */
+    public void setEnabledAuthenticationProviders(String[] enabledProviders) {
+        mSessionData.setEnabledAuthenticationProviders(Arrays.asList(enabledProviders));
+    }
+
+    /**
+     * Sets the list of providers that are enabled for social sharing.  This does not supersede your
+     * RP's deplyoment settings for Android social sharing, as configured on rpxnow.com, it is a
+     * supplemental filter to that configuration.
+     *
+     * @param enabledSharingProviders
+     *  Which providers to enable for authentication, null for all providers.
+     */
+    public void setEnabledSharingProviders(List<String> enabledSharingProviders) {
+        mSessionData.setEnabledSharingProviders(enabledSharingProviders);
+    }
+
+    /**
+     * Convenience variant of setEnabledSharingProviders(List&lt;String>)
+     * @param enabledSharingProviders
+     */
+    public void setEnabledSharingProviders(String[] enabledSharingProviders) {
+        mSessionData.setEnabledSharingProviders(Arrays.asList(enabledSharingProviders));
     }
 /*@}*/
 
@@ -689,7 +731,7 @@ public class JREngage {
      *  The JRActivityObject to share, may not be null
      *
      * @return
-     *  The created Fragment, or null upon error
+     *  The created Fragment, or null upon error (caused by library configuration failure)
      *  
      * @throws IllegalArgumentException
      *  If the supplied activity object is null

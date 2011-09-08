@@ -48,7 +48,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.splash);
 
         Button mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
         mBtnTestAuth.setOnClickListener(this);

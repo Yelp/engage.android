@@ -23,7 +23,7 @@ public class AndroidUtils {
     public static final String TAG = AndroidUtils.class.getSimpleName();
     private AndroidUtils() {}
 
-    public static boolean isSmallOrNormalScreen() {
+    public static boolean isSmallNormalOrLargeScreen() {
         int screenConfig = getScreenSize();
 
         // Galaxy Tab 7" (the first one) reports SCREENLAYOUT_SIZE_NORMAL
@@ -31,7 +31,8 @@ public class AndroidUtils {
         // Nexus S reports SCREENLAYOUT_SIZE_NORMAL
 
         return screenConfig == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
-                screenConfig == Configuration.SCREENLAYOUT_SIZE_SMALL;
+                screenConfig == Configuration.SCREENLAYOUT_SIZE_SMALL ||
+                screenConfig == Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
     public static boolean isCupcake() {

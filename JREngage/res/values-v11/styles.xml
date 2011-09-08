@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="jr_dialog" parent="@android:style/Theme.Holo.Light.DialogWhenLarge" />
+    <style name="jr_dialog" parent="@android:style/Theme.Holo.Light.DialogWhenLarge.NoActionBar">
+        <item name="android:windowMinWidthMinor">71%</item>
+        <item name="android:windowMinWidthMajor">71%</item>
+    </style>
 
     <style name="jr_fullscreen" parent="@android:style/Theme.Holo.Light" />
 

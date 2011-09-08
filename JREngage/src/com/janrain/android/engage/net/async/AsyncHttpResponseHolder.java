@@ -39,24 +39,11 @@ import com.janrain.android.engage.net.JRConnectionManager;
  * contain either headers and data (if successful) or an Exception object (if failed).
  */
 public class AsyncHttpResponseHolder {
-
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
     private String mUrl;
     private HttpResponseHeaders mHeaders;
     private byte[] mPayload;
     private Exception mException;
     private JRConnectionManager.ConnectionData mConnectionData;
-
-    // ------------------------------------------------------------------------
-    // INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
 
     /**
      * Creates a "success" instance of this object.
@@ -89,10 +76,6 @@ public class AsyncHttpResponseHolder {
         mPayload = null;
         mException = exception;
     }
-
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
 
     /**
      * Gets the URL that this HTTP response (or error) corresponds to.
@@ -136,10 +119,6 @@ public class AsyncHttpResponseHolder {
     public Exception getException() {
         return mException;
     }
-
-    // ------------------------------------------------------------------------
-    // METHODS
-    // ------------------------------------------------------------------------
 
     /**
      * Checks to see if the holder contains a valid (non-null) headers object.

@@ -76,13 +76,13 @@ public class ProfileData {
             Log.d(TAG, "[ctor] creating instance.");
         }
 
-        mLoginSnapshots = (ArrayList<LoginSnapshot>)Archiver.load(ARCHIVE_LOGIN_SNAPSHOTS);
-        if (mLoginSnapshots == null)
+        try {
+            mLoginSnapshots = Archiver.load(ARCHIVE_LOGIN_SNAPSHOTS);
+            mProfiles = Archiver.load(ARCHIVE_ALL_PROFILES);
+        } catch (Archiver.LoadException e) {
             mLoginSnapshots = new ArrayList<LoginSnapshot>();
-
-        mProfiles = (HashMap<String, JRDictionary>)Archiver.load(ARCHIVE_ALL_PROFILES);
-        if (mProfiles == null)
             mProfiles = new HashMap<String, JRDictionary>();
+        }
     }
 
     public ArrayList<LoginSnapshot> getProfilesList() {
@@ -97,11 +97,8 @@ public class ProfileData {
         String displayName = (profile == null) ? null : profile.getAsString("displayName");
 
         if (profile != null) {
-            if (profile.containsKey("name"))
-                profile.put("name", flattenName(profile));
-
-            if (profile.containsKey("address"))
-                profile.put("address", flattenAddress(profile));
+            if (profile.containsKey("name")) profile.put("name", flattenName(profile));
+            if (profile.containsKey("address")) profile.put("address", flattenAddress(profile));
         }
         
         LoginSnapshot snapshot = new LoginSnapshot(timestamp, identifier, provider, displayName);

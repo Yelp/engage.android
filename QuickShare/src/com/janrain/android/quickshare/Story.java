@@ -55,6 +55,7 @@ public class Story implements Serializable {
 
     private String mTitle;
     private String mDate;
+    private String mPostedBy;
     private String mDescription;
     private String mPlainText;
     private String mLink;
@@ -66,10 +67,13 @@ public class Story implements Serializable {
         return new Story();
     }
 
-    public Story(String title, String date, String description,
+    private Story() {}
+
+    public Story(String title, String date, String postedBy, String description,
                  String plainText, String link, ArrayList<String> imageUrls) {
         mTitle = title;
         mDate = date;
+        mPostedBy = postedBy;
         mDescription = description;
         mPlainText = plainText;
         mLink = link;
@@ -79,9 +83,6 @@ public class Story implements Serializable {
         if (getThumbnailUrl() != null) {
             FeedData.getInstance().getImageLoader().prefetch(getThumbnailUrl());
         }
-    }
-
-    private Story() {
     }
 
     public String getTitle() {
@@ -195,8 +196,14 @@ public class Story implements Serializable {
 
         activityObject.setTitle(getTitle());
         activityObject.setDescription(getPlainText());
-        activityObject.addMedia(new JRImageMediaObject(getImageUrls().get(0), getImageUrls().get(0)));
+        if (getImageUrls().size() > 0) {
+            activityObject.addMedia(new JRImageMediaObject(getImageUrls().get(0), getImageUrls().get(0)));
+        }
 
         return activityObject;
+    }
+
+    public String getPostedBy() {
+        return mPostedBy;
     }
 }

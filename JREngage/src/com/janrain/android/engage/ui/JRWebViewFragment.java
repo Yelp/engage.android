@@ -212,7 +212,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     private void loadMobileEndpointUrl(String url) {
         mIsLoadingMobileEndpoint = true;
-        //if (!AndroidUtils.isSmallOrNormalScreen()) {
+        //if (!AndroidUtils.isSmallNormalOrLargeScreen()) {
             showProgressSpinner();
         //} else { // full screen mode
         //    showProgressDialog();
@@ -337,7 +337,7 @@ public class JRWebViewFragment extends JRUiFragment {
         public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
             Log.d(TAG, "[connectionDidFinishLoading] userdata: " + userdata + " | payload: " + payload);
 
-            //if (AndroidUtils.isSmallOrNormalScreen()) {
+            //if (AndroidUtils.isSmallNormalOrLargeScreen()) {
             //    dismissProgressDialog();
             //} else {
                 hideProgressSpinner();

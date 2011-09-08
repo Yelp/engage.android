@@ -110,7 +110,8 @@ public class FeedSummaryFragment extends ListFragment implements FeedData.FeedRe
             ((TextView) v.findViewById(R.id.row_story_title)).setText("Loading new articles...");
             mFeedData.asyncLoadJanrainBlog(this);
         } else {
-            showDetails(pos);
+            // - 1 because the 0th row is really a reload button
+            showDetails(pos - 1);
         }
     }
 

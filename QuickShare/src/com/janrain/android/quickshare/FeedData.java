@@ -77,6 +77,9 @@ import static com.janrain.android.quickshare.QuickShareEnvironment.getTokenUrl;
 
 public class FeedData {
     private static final String TAG = FeedData.class.getSimpleName();
+    static {
+        System.setProperty("http.keepAlive", "false");
+    }
 
     private final Uri FEED_URL = Uri.parse("http://www.janrain.com/feed/blogs");
 
@@ -88,8 +91,8 @@ public class FeedData {
 
     private static FeedData sInstance;
 
-    private final HashSet<String> mStoryLinks;
-    private final ArrayList<Story> mStories;
+    private HashSet<String> mStoryLinks;
+    private ArrayList<Story> mStories;
 
     private JREngage mEngage;
 
@@ -162,20 +165,20 @@ public class FeedData {
 
         mEngage = JREngage.initInstance(activity, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, mJrEngageDelegate);
 
-        ArrayList<Story> stories = Archiver.load(ARCHIVE_STORIES_ARRAY);
-        if (stories == null) stories = new ArrayList<Story>();
-
-        mStories = new ArrayList<Story>(stories);
+        try {
+            mStories = Archiver.load(ARCHIVE_STORIES_ARRAY);
+            mStoryLinks = Archiver.load(ARCHIVE_STORY_LINKS_HASH);
+        } catch (Archiver.LoadException e) {
+            mStories = new ArrayList<Story>();
+            mStoryLinks = new HashSet<String>();
+        }
 
         logd(TAG, "[ctor] loaded " + ((Integer) mStories.size()).toString() + " stories from disk");
 
         /* If the Story class changes, then the Archiver can't load the new stories, which is fine,
             They'll just get redownloaded/added, but we also have to clear the links hash, so that
             the new stories get added. */
-        HashSet<String> links = Archiver.load(ARCHIVE_STORY_LINKS_HASH);
-        if (links == null || mStories.isEmpty()) links = new HashSet<String>();
 
-        mStoryLinks = links;
     }
 
     private void logd(String function, String message) {
@@ -248,10 +251,12 @@ public class FeedData {
                         Element link = (Element) item.getElementsByTagName("link").item(0);
                         Element description = (Element) item.getElementsByTagName("description").item(0);
                         Element date = (Element) item.getElementsByTagName("pubDate").item(0);
+                        Element postedBy = (Element) item.getElementsByTagName("dc:creator").item(0);
 
                         String titleText = title.getFirstChild().getNodeValue();
                         String linkText = link.getFirstChild().getNodeValue();
                         String dateText = date.getFirstChild().getNodeValue();
+                        String postedByText = postedBy.getFirstChild().getNodeValue();
 
                         logd("asyncLoadJanrainBlog", "adding story: " + titleText);
 
@@ -291,7 +296,7 @@ public class FeedData {
                             //do nothing, leaving the date as it was
                         }
 
-                        Story story = new Story(titleText, dateText, descriptionText,
+                        Story story = new Story(titleText, dateText, postedByText, descriptionText,
                                 plainText, linkText, imageUrls);
 
                         if (!addStoryOnlyIfNew(story, i)) break;

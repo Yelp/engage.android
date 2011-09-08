@@ -76,22 +76,22 @@ public class JRFragmentHostActivity extends FragmentActivity {
             return;
         }
 
-        if (!AndroidUtils.isSmallOrNormalScreen()) {
+        if (!AndroidUtils.isSmallNormalOrLargeScreen()) {
             if (AndroidUtils.getAndroidSdkInt() >= 11) {
                 /* Fiddle with the theme */
-                switch (mFragmentId) {
-                    case JR_LANDING:
-                        /* fall through to provider list */
-                    case JR_PROVIDER_LIST:
-                        setTheme(16973945); // R.style.Theme_Holo_Light_DialogWhenLarge
-                        break;
-                    case JR_WEBVIEW:
-                        /* fall through to publish */
-                    case JR_PUBLISH:
-                        setTheme(16973946); // R.style.Theme_Holo_Light_DialogWhenLarge_NoActionBar
-                        break;
-                    default: throw new IllegalFragmentIdException(mFragmentId);
-                }
+                //switch (mFragmentId) {
+                //    case JR_LANDING:
+                //        /* fall through to provider list */
+                //    case JR_PROVIDER_LIST:
+                //        setTheme(16973945); // R.style.Theme_Holo_Light_DialogWhenLarge
+                //        break;
+                //    case JR_WEBVIEW:
+                //        /* fall through to publish */
+                //    case JR_PUBLISH:
+                //        setTheme(16973946); // R.style.Theme_Holo_Light_DialogWhenLarge_NoActionBar
+                //        break;
+                //    default: throw new IllegalFragmentIdException(mFragmentId);
+                //}
             } else { // else less than Honeycomb and bigger than normal screen
                 //switch (mFragmentId) {
                 //    case JR_LANDING:
@@ -160,6 +160,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
             // This control flow path is not reached  because this activity handles configuration changes
             // and doesn't implement onSaveInstanceState
         }
+        autoSetSize();
     }
 
     @Override
@@ -172,17 +173,17 @@ public class JRFragmentHostActivity extends FragmentActivity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        autoSetSize();
+        //autoSetSize();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        autoSetSize();
+        //autoSetSize();
     }
 
     private void autoSetSize() {
-        if (!AndroidUtils.isSmallOrNormalScreen()) {
+        if (!AndroidUtils.isSmallNormalOrLargeScreen()) {
             int height = (int) (1.0 / Math.sqrt(2.0) * getResources().getDisplayMetrics().heightPixels);
             int width = (int) (1.0 / Math.sqrt(2.0) * getResources().getDisplayMetrics().widthPixels);
 
@@ -264,13 +265,13 @@ public class JRFragmentHostActivity extends FragmentActivity {
     }
 
     public static Intent createIntentForCurrentScreen(Context c, boolean showTitleBar) {
-        if (AndroidUtils.isSmallOrNormalScreen()) {
+        if (AndroidUtils.isSmallNormalOrLargeScreen()) {
             if (showTitleBar) {
                 return new Intent(c, JRFragmentHostActivityFullscreen.class);
             } else {
                 return new Intent(c, JRFragmentHostActivityFullscreenNoTitleBar.class);
             }
-        } else { // Honeycomb (becuase the screen is large+)
+        } else { // Honeycomb (because the screen is large+)
             // ignore showTitleBar, this activity dynamically enables and disables its title
             return new Intent(c, JRFragmentHostActivity.class);
         }

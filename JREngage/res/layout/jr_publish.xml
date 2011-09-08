@@ -3,7 +3,7 @@
 <!--
    - Layout for JRPublishActivity
   -->
-<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+<com.janrain.android.engage.ui.CustomDialogTabHost xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/tabhost"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,9 +11,10 @@
     <!-- todo: test styles applied to the root of this layout, WRT getting the background ~right -->
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
+        android:orientation="vertical"
         >
 
         <TabWidget
@@ -36,7 +37,9 @@
                 android:id="@+id/jr_tab_email_sms_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+
                 android:padding="5dp"
+
                 android:orientation="vertical"
                 >
 
@@ -55,7 +58,6 @@
                     android:textColorHint="@color/jr_text_color_hint"
                     android:lines="4"
                     android:textSize="@dimen/jr_edit_text_size"
-
                     android:inputType="textMultiLine|textAutoComplete"
                     />
                 <!--android:imeOptions="actionSend"-->
@@ -65,13 +67,15 @@
                     android:id="@+id/jr_email_sms_button_layout"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    android:background="@color/jr_janrain_darkblue_light_20percent"
+
                     android:layout_alignParentBottom="true"
-                    android:orientation="vertical"
                     android:gravity="top|center_horizontal"
                     android:paddingBottom="10dip"
                     android:paddingLeft="10dip"
                     android:paddingRight="10dip"
+
+                    android:orientation="vertical"
+                    android:background="@color/jr_janrain_darkblue_light_20percent"
                     >
 
                     <ImageView
@@ -143,20 +147,24 @@
 
             <RelativeLayout
                 android:id="@+id/jr_tab_view_content"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+
                 android:padding="5dp"
                 >
+            <!--android:orientation="vertical"-->
 
                 <EditText
                     android:id="@+id/jr_edit_comment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
+                    android:layout_alignParentTop="true"
                     android:layout_marginTop="5dip"
                     android:layout_marginRight="4dip"
                     android:layout_marginLeft="4dip"
                     android:gravity="top|left"
+
                     android:hint="@string/jr_please_enter_text"
                     android:textColorHint="@color/jr_text_color_hint"
                     android:lines="3"
@@ -168,16 +176,19 @@
                     android:id="@+id/jr_character_count_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
                     android:layout_below="@id/jr_edit_comment"
                     android:layout_alignParentRight="true"
-                    android:singleLine="true"
-                    android:textColor="#ff333333"
-                    android:text="@string/jr_calculating_remaining_characters"
                     android:layout_marginRight="4dip"
                     android:layout_marginLeft="4dip"
                     android:layout_marginBottom="5dip"
+
+                    android:singleLine="true"
+                    android:textColor="#ff333333"
+                    android:text="@string/jr_calculating_remaining_characters"
                     android:textSize="@dimen/jr_character_count_size"
                     />
+                <!--android:layout_gravity="right"-->
 
                 <!-- This layout expands to the size between the character count view and
                      the provider icon.  It renders nothing, but only server as a bounding
@@ -334,26 +345,33 @@
                     android:id="@+id/jr_tagline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_above="@+id/jr_user_profile_information_and_share_button_container"
+
                     android:layout_marginBottom="4dip"
+                    android:paddingRight="6dip"
+                    android:layout_above="@+id/jr_user_profile_information_and_share_button_container"
+                    android:layout_alignParentLeft="true"
+
                     android:singleLine="true"
                     android:text="@string/jr_powered_by"
                     android:textColor="@color/jr_medium_grey"
-                    android:paddingRight="6dip"
                     android:textSize="@dimen/jr_tagline_size"
                     />
+                <!--android:layout_gravity="left|bottom"-->
+                <!--android:layout_weight="1"-->
+
 
                 <ImageView
                     android:id="@+id/jr_provider_icon"
                     android:layout_width="@dimen/jr_provider_icon_size"
                     android:layout_height="@dimen/jr_provider_icon_size"
 
+                    android:layout_gravity="right|bottom"
+                    android:layout_marginBottom="4dip"
                     android:layout_alignParentRight="true"
                     android:layout_above="@+id/jr_user_profile_information_and_share_button_container"
-
-                    android:layout_marginBottom="4dip"
                     />
+                <!--android:layout_below="@id/jr_nested_layout_mania_sunday_sunday_sunday"-->
+
 
                 <LinearLayout
                     android:id="@+id/jr_user_profile_information_and_share_button_container"
@@ -484,10 +502,11 @@
 
                             <LinearLayout
                                 android:id="@+id/jr_shared_text_and_check_mark_horizontal_layout"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:layout_width="wrap_content"
 
                                 android:gravity="right|center_vertical"
+                                android:layout_gravity="right|center_vertical"
                                 android:layout_weight="1"
 
                                 android:visibility="gone"
@@ -539,10 +558,10 @@
 
                 </LinearLayout>
 
-            </RelativeLayout>>
+            </RelativeLayout>
 
         </FrameLayout>
 
     </LinearLayout>
 
-</TabHost>
+</com.janrain.android.engage.ui.CustomDialogTabHost>
