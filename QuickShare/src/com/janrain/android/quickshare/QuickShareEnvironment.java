@@ -34,10 +34,10 @@
 package com.janrain.android.quickshare;
 
 public class QuickShareEnvironment {
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
-* To successfully compile the Quick Share application, please uncomment the below lines, and add
-* your Janrain Engage 20-character Application ID and your web application's token URL (optional)
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  * * * * * * * * * *
+ * To successfully compile the Quick Share application, please uncomment the below lines, and add
+ * your Janrain Engage 20-character Application ID and your web application's token URL (optional)
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     private static String appId = "albgkodphhmfgehgkdkm";
     private static String tokenUrl = "";
 
