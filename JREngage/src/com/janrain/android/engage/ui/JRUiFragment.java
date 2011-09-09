@@ -283,7 +283,7 @@ public abstract class JRUiFragment extends Fragment {
         return builder.create();
     }
 
-    private boolean isEmbeddedMode() {
+    protected  boolean isEmbeddedMode() {
         return mEmbeddedMode;
     }
 

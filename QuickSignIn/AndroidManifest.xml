@@ -10,10 +10,10 @@
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="13" />
 
     <application
-        android:label="QuickSignIn"
+        android:label="Quick Sign-In"
         android:icon="@drawable/icon"
         android:debuggable="true"
-        android:theme="@android:style/Theme.Light"
+        android:theme="@style/JanrainDemoTheme"
         >
 
         <activity android:name=".MainActivity"

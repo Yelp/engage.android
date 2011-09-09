@@ -10,7 +10,7 @@
     <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="12"/>
 
     <application
-        android:label="QuickShare"
+        android:label="Quick Share"
         android:icon="@drawable/icon"
         android:theme="@style/JanrainDemoTheme"
         android:debuggable="true"

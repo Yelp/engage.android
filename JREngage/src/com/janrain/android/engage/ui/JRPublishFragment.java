@@ -59,6 +59,7 @@ import com.janrain.android.engage.types.*;
 import com.janrain.android.engage.utils.AndroidUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -89,6 +90,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private JRProvider mSelectedProvider; //the provider for the selected tab
     private JRAuthenticatedUser mAuthenticatedUser; //the user (if logged in) for the selected tab
     private JRActivityObject mActivityObject;
+    private List<JRProvider> mSocialProviders;
 
     /* UI state */
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
@@ -224,8 +226,10 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private void initializeWithProviderConfiguration() {
         /* Check for no suitable providers */
-        List<JRProvider> socialProviders = mSessionData.getSocialProviders();
-        if (socialProviders == null || socialProviders.size() == 0) {
+        mSocialProviders = mSessionData.getSocialProviders();
+        if (mSocialProviders == null) mSocialProviders = new ArrayList<JRProvider>();
+
+        if (mSocialProviders.size() == 0) {
             JREngageError err = mSessionData.getError();
             if (err == null) {
                 err = new JREngageError(
@@ -237,6 +241,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mConnectAndShareButton.setEnabled(false);
             mUserCommentView.setEnabled(false);
             getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
+            if (isEmbeddedMode()) getFragmentManager().beginTransaction().hide(this).commit();
             return;
         }
 
@@ -336,10 +341,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         TabHost tabHost = (TabHost) getView().findViewById(android.R.id.tabhost);
         tabHost.setup();
 
-        List<JRProvider> socialProviders = mSessionData.getSocialProviders();
-
         /* Make a tab for each social provider */
-        for (JRProvider provider : socialProviders) {
+        for (JRProvider provider : mSocialProviders) {
             Drawable providerIconSet = provider.getTabSpecIndicatorDrawable(getActivity());
 
             TabHost.TabSpec spec = tabHost.newTabSpec(provider.getName());
@@ -371,7 +374,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         if (mSelectedTab.equals("")) {
             JRProvider rp = mSessionData.getProviderByName(mSessionData.getReturningSocialProvider());
-            tabHost.setCurrentTab(socialProviders.indexOf(rp));
+            tabHost.setCurrentTab(mSocialProviders.indexOf(rp));
         } else {
             tabHost.setCurrentTabByTag(mSelectedTab);
         }
@@ -390,7 +393,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private void setTabSpecIndicator(TabHost.TabSpec spec, Drawable iconSet, String label) {
         boolean doBasicTabs = false;
         try {
-            //todo basic tabs? should be part of custom ui seems
+            //todo basic tabs? should be part of custom ui?
             if (AndroidUtils.getAndroidSdkInt() >= 11 && false) {
                 doBasicTabs = true;
             } else {
