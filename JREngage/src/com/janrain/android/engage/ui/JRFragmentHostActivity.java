@@ -76,40 +76,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
             return;
         }
 
-        if (!AndroidUtils.isSmallNormalOrLargeScreen()) {
-            if (AndroidUtils.getAndroidSdkInt() >= 11) {
-                /* Fiddle with the theme */
-                //switch (mFragmentId) {
-                //    case JR_LANDING:
-                //        /* fall through to provider list */
-                //    case JR_PROVIDER_LIST:
-                //        setTheme(16973945); // R.style.Theme_Holo_Light_DialogWhenLarge
-                //        break;
-                //    case JR_WEBVIEW:
-                //        /* fall through to publish */
-                //    case JR_PUBLISH:
-                //        setTheme(16973946); // R.style.Theme_Holo_Light_DialogWhenLarge_NoActionBar
-                //        break;
-                //    default: throw new IllegalFragmentIdException(mFragmentId);
-                //}
-            } else { // else less than Honeycomb and bigger than normal screen
-                //switch (mFragmentId) {
-                //    case JR_LANDING:
-                //    case JR_PROVIDER_LIST:
-                //        setTheme(android.R.style.Theme_NoTitleBar);
-                //        //this.getTheme().
-                //        break;
-                //    case JR_WEBVIEW:
-                //    case JR_PUBLISH:
-                //        setTheme(android.R.style.Theme_Light_NoTitleBar);
-                //        break;
-                //    default: throw new IllegalFragmentIdException(mFragmentId);
-                //}
-            }
-        } else {
-            // else small or normal screen -> full screen mode
-        }
-
         if (savedInstanceState == null) {
             switch (mFragmentId) {
                 case JR_PROVIDER_LIST:
@@ -160,41 +126,12 @@ public class JRFragmentHostActivity extends FragmentActivity {
             // This control flow path is not reached  because this activity handles configuration changes
             // and doesn't implement onSaveInstanceState
         }
-        autoSetSize();
     }
 
     @Override
     public void setTheme(int r) {
         Log.d(TAG, "setTheme: " + r);
         super.setTheme(r);
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        //autoSetSize();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        //autoSetSize();
-    }
-
-    private void autoSetSize() {
-        if (!AndroidUtils.isSmallNormalOrLargeScreen()) {
-            int height = (int) (1.0 / Math.sqrt(2.0) * getResources().getDisplayMetrics().heightPixels);
-            int width = (int) (1.0 / Math.sqrt(2.0) * getResources().getDisplayMetrics().widthPixels);
-
-            //View v = findViewById(android.R.id.content);
-            //ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
-            //layoutParams.
-            //v.setLayoutParams(layoutParams);
-            //v.setMinimumHeight(height);
-            //v.setMinimumWidth(width);
-            getWindow().setLayout(width, height);
-        }
     }
 
     @Override

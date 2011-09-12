@@ -40,11 +40,11 @@ public class AndroidUtils {
     }
 
     public static int getAndroidSdkInt() {
-        Field SDK_INT = null;
+        Field SDK_INT;
         try {
             SDK_INT = Build.VERSION.class.getField("SDK_INT");
 
-            return (Integer) SDK_INT.getInt(null);
+            return SDK_INT.getInt(null);
         } catch (NoSuchFieldException e) {
             // Must be Cupcake
             return 3;
@@ -81,7 +81,7 @@ public class AndroidUtils {
         }
     }
 
-    public static int scaleDipPixels(int dip) {
+    public static int scaleDipToPixels(int dip) {
         Context c = JREngage.getActivity();
         final float scale = c.getResources().getDisplayMetrics().density;
         return (int) (((float) dip) * scale);

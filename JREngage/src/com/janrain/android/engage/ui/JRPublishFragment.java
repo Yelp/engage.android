@@ -424,10 +424,10 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         ImageView icon = new ImageView(getActivity());
         icon.setImageDrawable(providerIconSet);
         icon.setPadding(
-                AndroidUtils.scaleDipPixels(10),
-                AndroidUtils.scaleDipPixels(10),
-                AndroidUtils.scaleDipPixels(10),
-                AndroidUtils.scaleDipPixels(3)
+                AndroidUtils.scaleDipToPixels(10),
+                AndroidUtils.scaleDipToPixels(10),
+                AndroidUtils.scaleDipToPixels(10),
+                AndroidUtils.scaleDipToPixels(3)
         );
         ll.addView(icon);
 
@@ -446,10 +446,10 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         label.setText(labelText);
         label.setGravity(Gravity.CENTER);
         label.setPadding(
-                AndroidUtils.scaleDipPixels(0),
-                AndroidUtils.scaleDipPixels(0),
-                AndroidUtils.scaleDipPixels(0),
-                AndroidUtils.scaleDipPixels(4)
+                AndroidUtils.scaleDipToPixels(0),
+                AndroidUtils.scaleDipToPixels(0),
+                AndroidUtils.scaleDipToPixels(0),
+                AndroidUtils.scaleDipToPixels(4)
         );
         ll.addView(label);
 
@@ -1005,7 +1005,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                                                 String provider) {
             if (Config.LOGD) Log.d(TAG, "[publishingJRActivityDidFail]");
             boolean reauthenticate = false;
-            String dialogErrorMessage = "";
+            String dialogErrorMessage;
 
             dismissProgressDialog();
 

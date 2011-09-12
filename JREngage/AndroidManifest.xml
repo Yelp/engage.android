@@ -16,22 +16,23 @@
     <!-- For Janrain Engage library -->
     <activity
         android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
+        android:configChanges="orientation|screenSize"
         android:theme="@style/jr_dialog"
-        android:configChanges="orientation"
         android:windowSoftInputMode="adjustResize|stateHidden"
         />
 
     <activity
         android:name="com.janrain.android.engage.ui.JRFragmentHostActivityFullscreen"
-        android:configChanges="orientation"
+        android:configChanges="orientation|screenSize"
         android:theme="@style/jr_fullscreen"
         android:windowSoftInputMode="adjustResize|stateHidden"
         />
 
     <activity
         android:name="com.janrain.android.engage.ui.JRFragmentHostActivityFullscreenNoTitleBar"
-        android:configChanges="orientation"
+        android:configChanges="orientation|screenSize"
         android:theme="@style/jr_fullscreen_no_title"
         android:windowSoftInputMode="adjustResize|stateHidden"
         />
+
 </manifest>
