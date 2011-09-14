@@ -119,8 +119,8 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
                         "<div class=\"main\">" +
                         "<div class=\"title\">" + story.getTitle() + "</div>" +
                         "<div class=\"date\">" + story.getDate() + "</div>" +
-                        "<div class=\"body\">" + story.getDescription() + "</div>" +
                         "<div class=\"posted_by\">Posted by: " + story.getPostedBy() + "</div>" +
+                        "<div class=\"body\">" + story.getDescription() + "</div>" +
                     "</body>" +
                 "</html>";
 

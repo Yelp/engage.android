@@ -31,10 +31,13 @@ package com.janrain.android.engage.utils;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import com.janrain.android.engage.JREngage;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * @internal

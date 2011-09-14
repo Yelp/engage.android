@@ -2,17 +2,9 @@ package com.janrain.android.engage.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.PorterDuff;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.

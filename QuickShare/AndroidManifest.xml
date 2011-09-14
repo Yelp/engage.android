@@ -40,18 +40,21 @@
             />
 
         <activity
-            android:name="com.janrain.android.engage.ui.JRFragmentHostActivityFullscreen"
+            android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"
             android:configChanges="orientation|screenSize"
             android:theme="@style/jr_fullscreen"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
+        <!--android:name="com.janrain.android.engage.ui.JRFragmentHostActivityFullscreen"-->
 
         <activity
-            android:name="com.janrain.android.engage.ui.JRFragmentHostActivityFullscreenNoTitleBar"
+            android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$FullscreenNoTitleBar"
             android:configChanges="orientation|screenSize"
             android:theme="@style/jr_fullscreen_no_title"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
+        <!--android:name="com.janrain.android.engage.ui.JRFragmentHostActivityFullscreenNoTitleBar"-->
+
 
     </application>
 

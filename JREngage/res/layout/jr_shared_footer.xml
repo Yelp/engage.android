@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--
-   - Common footer layout used by views.
-  -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/jr_tagline"
     android:layout_width="match_parent"

@@ -32,7 +32,6 @@ package com.janrain.android.engage.types;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.view.View;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.io.IOException;

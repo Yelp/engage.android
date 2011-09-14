@@ -15,8 +15,11 @@ import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.util.Config;
 import android.util.Log;
-import android.view.*;
-import com.janrain.android.engage.JREngage;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSessionData;
 

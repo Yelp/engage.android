@@ -39,6 +39,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.text.Editable;
 import android.text.Html;
 import android.util.Config;
 import android.util.Log;
@@ -52,19 +53,18 @@ import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Archiver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -92,7 +92,7 @@ public class FeedData {
     private static FeedData sInstance;
 
     private HashSet<String> mStoryLinks;
-    private ArrayList<Story> mStories;
+    final private ArrayList<Story> mStories = new ArrayList<Story>();
 
     private JREngage mEngage;
 
@@ -121,7 +121,7 @@ public class FeedData {
         return mEngage;
     }
 
-    private class JRFileResponseCache extends FileResponseCache {
+    private static class JRFileResponseCache extends FileResponseCache {
         private Context mContext;
         public JRFileResponseCache(Context c) {
             mContext = c;
@@ -134,22 +134,15 @@ public class FeedData {
                 MessageDigest digest = MessageDigest.getInstance("MD5");
                 digest.update(String.valueOf(uri).getBytes("UTF-8"));
                 byte[] output = digest.digest();
-                StringBuilder builder = new StringBuilder();
+                StringBuilder builder = new StringBuilder("jr_cache_");
                 for (byte anOutput : output) builder.append(Integer.toHexString(0xFF & anOutput));
+                builder.append(AndroidUtils.urlEncode(uri.toString()));
                 return new File(parent, builder.toString());
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
             }
-        }
-
-        @Override
-        protected boolean isStale(File file, URI uri, String requestMethod, Map<String,
-                List<String>> requestHeaders, Object cookie) {
-            boolean r =  super.isStale(file, uri, requestMethod, requestHeaders, cookie);
-            logd("isStale", ": " + r);
-            return r;
         }
     }
 
@@ -165,20 +158,20 @@ public class FeedData {
 
         mEngage = JREngage.initInstance(activity, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, mJrEngageDelegate);
 
-        try {
-            mStories = Archiver.load(ARCHIVE_STORIES_ARRAY);
-            mStoryLinks = Archiver.load(ARCHIVE_STORY_LINKS_HASH);
-        } catch (Archiver.LoadException e) {
-            mStories = new ArrayList<Story>();
-            mStoryLinks = new HashSet<String>();
-        }
-
-        logd(TAG, "[ctor] loaded " + ((Integer) mStories.size()).toString() + " stories from disk");
-
         /* If the Story class changes, then the Archiver can't load the new stories, which is fine,
-            They'll just get redownloaded/added, but we also have to clear the links hash, so that
+            They'll just get re-downloaded/added, but we also have to clear the links hash, so that
             the new stories get added. */
-
+        try {
+            ArrayList<Story> loadedStories = Archiver.load(ARCHIVE_STORIES_ARRAY);
+            mStories.clear();
+            mStories.addAll(loadedStories);
+            mStoryLinks = Archiver.load(ARCHIVE_STORY_LINKS_HASH);
+            logd(TAG, "[ctor] loaded " + ((Integer) mStories.size()).toString() + " stories from disk");
+        } catch (Archiver.LoadException e) {
+            mStories.clear();
+            mStoryLinks = new HashSet<String>();
+            logd(TAG, "[ctor] stories reset");
+        }
     }
 
     private void logd(String function, String message) {
@@ -233,7 +226,18 @@ public class FeedData {
                         Sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
                         Another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser */
                     logd("asyncLoadJanrainBlog", "parsing feed");
-                    Document d = db.parse(is);
+
+                    // Due to some weird ~half read connection problems this code
+                    // is paranoid about input streams. It reads everything into a BIS to ensure that it's
+                    // all available for db.parse
+                    BufferedInputStream bis = new BufferedInputStream(is);
+                    bis.mark(uc.getContentLength());
+                    byte[] buffer = new byte[1000];
+                    // XXX this for loop just reads all the data into bis, it has no loop body
+                    for (int r=0; r != -1; r = bis.read(buffer));
+                    bis.reset();
+
+                    Document d = db.parse(bis);
                     logd("asyncLoadJanrainBlog", "feed parsed");
 
                     Element rss = (Element) d.getElementsByTagName("rss").item(0);
@@ -279,7 +283,12 @@ public class FeedData {
                                 imageUrls.add(FEED_URL.getScheme() + "://" + FEED_URL.getHost() + s);
                                 return null;
                             }
-                        }, null).toString();
+                        }, new Html.TagHandler() {
+                            public void handleTag(boolean opening, String tag, Editable output,
+                                                  XMLReader xmlReader) {
+                                if (tag.equalsIgnoreCase("style")) output.clear();
+                            }
+                        }).toString();
 
                         /* Remove Unicode object characters */
                         plainText = plainText.replaceAll("\ufffc", "");
@@ -288,7 +297,7 @@ public class FeedData {
                         // Example: 2011-04-25PDT04:30:00-:00
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-ddzzzhh:mm:ss'-:00'");
                         SimpleDateFormat moreReadableDate =
-                                new SimpleDateFormat("EEE, MMMM d, yyyy h:mm aa");
+                                new SimpleDateFormat("EEEE, MMMM d, yyyy h:mm aa");
                         try {
                             Date parsedDate = sdf.parse(dateText);
                             dateText = moreReadableDate.format(parsedDate);
@@ -383,6 +392,7 @@ public class FeedData {
         public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
             String toastText;
             if (error.hasException()) {
+                //noinspection ThrowableResultOfMethodCallIgnored
                 toastText = error.getException().toString();
             } else {
                 toastText = error.getMessage();

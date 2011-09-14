@@ -47,9 +47,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Feed
     private Button mViewFeedSummary;
     private boolean mFeedHasLoaded;
 
-    /**
-     * Called when the activity is first created.
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if (Config.LOGD) Log.d(TAG, "[onCreate]");

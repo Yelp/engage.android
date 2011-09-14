@@ -55,6 +55,7 @@ import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -605,12 +606,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         try {
             jsonDict = JRDictionary.fromJSON(dataStr);
         } catch (Exception e) {
+            // TODO fix this to not catch type Exception, but a narrower JSON Exception type or something
             Log.e(TAG, "[finishGetConfiguration] json error: ", e);
             jsonEx = e;
         }
 
         /* If the parsed dictionary object is null or an exception has occurred, return */
-        if ((jsonDict == null) || (jsonEx != null)) {
+        if (jsonDict == null) {
             Log.e(TAG, "[finishGetConfiguration] failed.");
             return new JREngageError(
                     getContext().getString(R.string.jr_getconfig_parse_error_message),

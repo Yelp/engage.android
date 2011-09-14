@@ -64,6 +64,7 @@ public class FeedSummaryFragment extends ListFragment implements FeedData.FeedRe
 
         mStories = new ArrayList<Story>();
         getUpdatedStoriesList();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -83,6 +84,7 @@ public class FeedSummaryFragment extends ListFragment implements FeedData.FeedRe
         if (mDualPane) {
             // In dual-pane mode, the list view highlights the selected item.
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+            
             // Make sure our UI is in the correct state.
             showDetails(mCurCheckPosition);
         }

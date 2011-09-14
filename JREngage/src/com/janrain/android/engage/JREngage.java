@@ -73,10 +73,6 @@ package com.janrain.android.engage;
  * the <a href="http://rpxnow.com/docs/android_api/annotated.html">"JREngage API"</a> documentation.
  **/
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -86,7 +82,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
-
 import android.view.View;
 import android.widget.FrameLayout;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
@@ -97,6 +92,10 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.ui.JRFragmentHostActivity;
 import com.janrain.android.engage.ui.JRPublishFragment;
 import com.janrain.android.engage.ui.JRUiFragment;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @brief
@@ -485,7 +484,9 @@ public class JREngage {
      * filter to that configuration.
      *
      * @param enabledProviders
-     *  Which providers to enable for authentication, null for all providers.
+     *  A list of providers which will be enabled. This set will be intersected with the set of
+     *  providers configured on the Engage Dashboard, that intersection will be the providers that are
+     *  actually available to the end-user.
      */
     public void setEnabledAuthenticationProviders(List<String> enabledProviders) {
         mSessionData.setEnabledAuthenticationProviders(enabledProviders);
@@ -494,6 +495,9 @@ public class JREngage {
     /**
      * Convenience variant of setEnabledAuthenticationProviders(List&lt;String>)
      * @param enabledProviders
+     *  An array of providers which will be enabled. This set will be intersected with the set of
+     *  providers configured on the Engage Dashboard, that intersection will be the providers that are
+     *  actually available to the end-user.
      */
     public void setEnabledAuthenticationProviders(String[] enabledProviders) {
         mSessionData.setEnabledAuthenticationProviders(Arrays.asList(enabledProviders));
@@ -506,6 +510,9 @@ public class JREngage {
      *
      * @param enabledSharingProviders
      *  Which providers to enable for authentication, null for all providers.
+     *  A list of social sharing providers which will be enabled. This set will be intersected with the
+     *  set of providers configured on the Engage Dashboard, that intersection will be the providers that are
+     *  actually available to the end-user.
      */
     public void setEnabledSharingProviders(List<String> enabledSharingProviders) {
         mSessionData.setEnabledSharingProviders(enabledSharingProviders);
@@ -514,6 +521,9 @@ public class JREngage {
     /**
      * Convenience variant of setEnabledSharingProviders(List&lt;String>)
      * @param enabledSharingProviders
+     *  An array of social sharing providers which will be enabled. This set will be intersected with the
+     *  set of providers configured on the Engage Dashboard, that intersection will be the providers that are
+     *  actually available to the end-user.
      */
     public void setEnabledSharingProviders(String[] enabledSharingProviders) {
         mSessionData.setEnabledSharingProviders(Arrays.asList(enabledSharingProviders));
@@ -694,6 +704,7 @@ public class JREngage {
         if (transit != null) ft.setTransition(transit);
         if (transitRes != null) ft.setTransitionStyle(transitRes);
         if (customEnterAnimation != null || customExitAnimation != null) {
+            //noinspection ConstantConditions
             ft.setCustomAnimations(customEnterAnimation, customExitAnimation);
         }
         ft.replace(fragmentContainer.getId(), f, f.getClass().getSimpleName());

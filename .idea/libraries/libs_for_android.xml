@@ -5,6 +5,8 @@
       <root url="jar://$PROJECT_DIR$/QuickShare/libs/filecache.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/QuickShare/libs/filecache.jar!/" />
+    </SOURCES>
   </library>
 </component>

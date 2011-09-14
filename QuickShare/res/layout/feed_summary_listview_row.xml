@@ -4,28 +4,30 @@
     android:id="@+id/profiles_row_layout"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+
     android:padding="6dip"
     >
-    <!--android:layout_height="?android:attr/listPreferredItemHeight"-->
 
     <LinearLayout
         android:id="@+id/row_content"
-        android:orientation="vertical"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
+
+        android:orientation="vertical"
         >
 
         <TextView
             android:id="@+id/row_story_title"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+
             android:gravity="center"
+
             android:singleLine="true"
             android:textSize="@dimen/textSizeStoryTitle"
             android:textStyle="bold"
             android:textColor="@color/jr_janrain_mediumblue_100percent"
             />
-        <!--android:gravity="left|center_vertical"-->
 
 
         <RelativeLayout
@@ -40,34 +42,39 @@
                 android:id="@+id/row_story_icon"
                 android:layout_width="@dimen/listIconSize"
                 android:layout_height="@dimen/listIconSize"
-                android:scaleType="centerCrop"
+
                 android:layout_marginTop="4dip"
-                android:adjustViewBounds="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dip"
                 android:layout_alignParentTop="true"
-                android:background="#eeeeee"
+
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
                 />
+            <!--android:background="#eeeeee"-->
 
 
             <LinearLayout
                 android:id="@+id/text_and_date"
-                android:orientation="vertical"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+
                 android:layout_toRightOf="@id/row_story_icon"
                 android:gravity="center_horizontal|center_vertical"
+
+                android:orientation="vertical"
                 >
 
                 <TextView
                     android:id="@+id/row_story_text"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+
                     android:gravity="left|center_vertical"
+                    android:paddingBottom="2dip"
+
                     android:maxLines="2"
                     android:textSize="@dimen/textSizeStoryDescription"
-                    android:paddingBottom="2dip"
                     android:ellipsize="end"
                     />
 
@@ -75,9 +82,10 @@
                     android:id="@+id/row_story_date"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+
                     android:maxWidth="200dip"
                     android:gravity="left|center_vertical"
+                    
                     android:singleLine="true"
                     android:textSize="11dip"
                     android:textColor="#333333"

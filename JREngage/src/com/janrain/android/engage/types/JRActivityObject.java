@@ -40,7 +40,6 @@ import org.json.JSONStringer;
 import org.json.JSONTokener;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,8 +79,8 @@ import java.util.Map;
  * responses will also be given if the activity parameter does not meet the formatting requirements
  * described below.
  *
- * @sa For more information of Janrain Engage's activity api, see <a
- * href="https://rpxnow.com/docs#api_activity">the activity section</a> of our API Documentation.
+ * @see "For more information of Janrain Engage's activity api, see <a
+ * href="https://rpxnow.com/docs#api_activity">the activity section</a> of our API Documentation."
  *
  * @nosubgrouping
  **/
@@ -98,8 +97,7 @@ public class JRActivityObject implements Serializable {
      * A string describing what the user did, written in the third person (e.g.,
      * "wrote a restaurant review", "posted a comment", "took a quiz").
      *
-     * @par Getter:
-     *      #getAction()
+     * {@link #getAction() Getter:}
      **/
     private String mAction;
 
