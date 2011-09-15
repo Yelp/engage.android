@@ -5,7 +5,7 @@
           android:versionName="1.0">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="12" />
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="10" />
 
     <!--
         Tab appearance notes
@@ -29,7 +29,7 @@
         android:label="@string/app_name"
         android:debuggable="true"
         android:hardwareAccelerated="true"
-        android:theme="@android:style/Theme.Holo.Light"
+        android:theme="@android:style/Theme.Light"
         >
 
         <activity android:name=".MainActivity">
@@ -46,27 +46,28 @@
 
         </activity>
 
-        <!-- For the Janrain Engage library -->
+        <!-- For Janrain Engage library -->
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/jr_dialog"
-            android:configChanges="orientation"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
 
         <activity
-            android:name="com.janrain.android.engage.ui.JRFragmentHostActivityFullscreen"
-            android:configChanges="orientation"
+            android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/jr_fullscreen"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
 
         <activity
-            android:name="com.janrain.android.engage.ui.JRFragmentHostActivityFullscreenNoTitleBar"
-            android:configChanges="orientation"
+            android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$FullscreenNoTitleBar"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/jr_fullscreen_no_title"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
+
     </application>
 
 </manifest>

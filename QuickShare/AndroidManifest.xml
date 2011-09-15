@@ -45,7 +45,6 @@
             android:theme="@style/jr_fullscreen"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
-        <!--android:name="com.janrain.android.engage.ui.JRFragmentHostActivityFullscreen"-->
 
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$FullscreenNoTitleBar"
@@ -53,8 +52,6 @@
             android:theme="@style/jr_fullscreen_no_title"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
-        <!--android:name="com.janrain.android.engage.ui.JRFragmentHostActivityFullscreenNoTitleBar"-->
-
 
     </application>
 

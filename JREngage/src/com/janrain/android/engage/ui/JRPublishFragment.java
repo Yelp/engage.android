@@ -1,32 +1,34 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- Copyright (c) 2010, Janrain, Inc.
-
- All rights reserved.
-
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation and/or
-   other materials provided with the distribution.
- * Neither the name of the Janrain, Inc. nor the names of its
-   contributors may be used to endorse or promote products derived from this
-   software without specific prior written permission.
-
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  Copyright (c) 2011, Janrain, Inc.
+ *
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation and/or
+ *    other materials provided with the distribution.
+ *  * Neither the name of the Janrain, Inc. nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ *  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ */
 package com.janrain.android.engage.ui;
 
 import android.app.AlertDialog;
@@ -146,9 +148,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //ContextThemeWrapper ctw = new ContextThemeWrapper(inflater.getContext(),
-        //        R.style.jr_fullscreen_no_title);
-        //View content = View.inflate(ctw, R.layout.jr_publish, null);
         View content = inflater.inflate(R.layout.jr_publish, container, false);
 
         /* View References */
@@ -258,7 +257,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mUserCommentView.setEnabled(false);
             getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
             if (isEmbeddedMode()) getFragmentManager().beginTransaction().hide(this).commit();
-            return;
+            //return;
         }
 
         /* Configure the properties of the UI */
@@ -268,6 +267,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
                 if (mSelectedProvider == null) return;
                 if (!JRPublishFragment.this.isAdded()) return;
+                if (JRPublishFragment.this.isHidden()) return;
+                if (mSelectedProvider == null) return;
 
                 if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
                     updatePreviewTextWhenContentReplacesAction();
@@ -340,8 +341,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             if (Config.LOGD) Log.d(TAG, "media image url: " + mo.getThumbnail());
             mo.downloadThumbnail(new JRMediaObject.ThumbnailAvailableListener() {
                 public void onThumbnailAvailable(Bitmap bitmap) {
-                    if(bitmap==null) mci.setVisibility(View.INVISIBLE);
-                    else mci.setVisibility(View.VISIBLE);
+                    if (bitmap == null) {
+                        mci.setVisibility(View.INVISIBLE);
+                    } else {
+                        mci.setVisibility(View.VISIBLE);
+                    }
                     mci.setImageBitmap(bitmap);
             }});
         }
@@ -386,6 +390,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             showHideView(getView().findViewById(R.id.jr_tab_email_sms_content), false);
         }
 
+        if (tabHost.getTabWidget().getTabCount() == 0) {
+            tabHost.addTab(tabHost.newTabSpec("empty tab"));
+            tabHost.getTabWidget().setVisibility(View.GONE);
+        }
+
         tabHost.setOnTabChangedListener(this);
 
         if (mSelectedTab.equals("")) {
@@ -402,8 +411,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         /* XXX TabHost is setting our FrameLayout's only child to View.GONE when loading.
          * XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
+         * See http://stackoverflow.com/questions/5109081/why-is-my-tabhosts-framelayouts-only-child-loaded-with-visibility-view-gone
          * XXX This is a workaround: */
-        getView().findViewById(R.id.jr_tab_view_content).setVisibility(View.VISIBLE);
+        tabHost.getCurrentView().setVisibility(View.VISIBLE);
     }
 
     private void setTabSpecIndicator(TabHost.TabSpec spec, Drawable iconSet, String label) {
