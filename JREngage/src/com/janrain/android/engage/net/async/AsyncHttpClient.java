@@ -118,68 +118,82 @@ public final class AsyncHttpClient {
                 connection.setConnectTimeout(20 * 1000);
                 connection.setReadTimeout(20 * 1000);
 
-                addRequestHeaders(connection);
-
-                if (mPostData == null) {
-                    // HTTP GET OPERATION
-                    if (Config.LOGD) Log.d(TAG, "[run] HTTP GET");
-                    prepareConnectionForHttpGet(connection);
-                    connection.connect();
-                } else {
-                    // HTTP POST OPERATION
-                    if (Config.LOGD) Log.d(TAG, "[run] HTTP POST data: " + new String(mPostData));
-                    prepareConnectionForHttpPost(connection);
-                    connection.connect();
-                    doHttpPost(connection);
+                if ((mHeaders != null) && (mHeaders.size() > 0)) {
+                    for (NameValuePair nvp : mHeaders) {
+                        connection.setRequestProperty(nvp.getName(), nvp.getValue());
+                        if (Config.LOGD) Log.d(TAG, "[addRequestHeaders] added header --> " +
+                                nvp.getName() + ": " + nvp.getValue());
+                    }
                 }
 
-                //debugging to test connection failures.
-                //boolean random = (new Random()).nextBoolean();
+                connection.setRequestProperty("User-Agent", USER_AGENT);
+                connection.setRequestProperty("Accept-Encoding", ACCEPT_ENCODING);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                connection.setUseCaches(false);
 
-                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {// && random) {
-                    HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
-                    byte[] data = IOUtils.readFromStream(connection.getInputStream(), true);
+                if (mPostData == null) {
+                    // HTTP GET
+                    if (Config.LOGD) Log.d(TAG, "[run] HTTP GET");
+                    connection.setRequestMethod(HTTP_METHOD_GET);
+                } else {
+                    // HTTP POST
+                    if (Config.LOGD) Log.d(TAG, "[run] HTTP POST data: " + new String(mPostData));
+                    connection.setRequestMethod(HTTP_METHOD_POST);
+                    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                    connection.setRequestProperty("Content-Length", "" + mPostData.length);
+                    connection.setRequestProperty("Content-Language", "en-US");
+                }
 
-                    if (Config.LOGD) Log.d(TAG, "[run] " + headers.toString());
-                    if (data == null) {
-                        if (Config.LOGD) Log.d(TAG, "[run] data is null");
-                    } else {
-                        if (Config.LOGD) Log.d(TAG, "[run] data: " + new String(data));
-                    }
+                connection.connect();
 
+                if (mPostData != null) {
+                    connection.getOutputStream().write(mPostData);
+                    connection.getOutputStream().flush();
+                }
+
+                byte[] data = IOUtils.readFromStream(connection.getInputStream(), true);
+                String dataString = (data == null) ? null : new String(data);
+
+                byte[] errorBytes = IOUtils.readFromStream(connection.getErrorStream(), true);
+                String errorString = (errorBytes == null) ? null : new String(errorBytes);
+
+                byte[] messageBytes = IOUtils.readFromStream(connection.getInputStream(), true);
+                String messageString = (messageBytes == null) ? null : new String(messageBytes);
+
+                HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
+
+                switch (connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_OK:
+                    if (Config.LOGD) Log.d(TAG, "[run] HTTP_OK");
+                    if (Config.LOGD) Log.d(TAG, "[run] headers: " + headers.toString());
+                    if (Config.LOGD) Log.d(TAG, "[run] data: " + dataString);
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
-                    mHandler.post(mWrapper);
-                } else if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
+                    break;
+                case HttpURLConnection.HTTP_NOT_MODIFIED:
                     if (Config.LOGD) Log.d(TAG, "[run] HTTP_NOT_MODIFIED");
-                    HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
-
-                    mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, null));
-                    mHandler.post(mWrapper);
-                } else if (connection.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+                    mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
+                    break;
+                case HttpURLConnection.HTTP_CREATED:
                     // Response from the Engage trail creation and maybe URL shortening calls
                     if (Config.LOGD) Log.d(TAG, "[run] HTTP_CREATED");
-                    HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
-
-                    mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, null));
-                    mHandler.post(mWrapper);
-                } else {
-                    byte[] b = IOUtils.readFromStream(connection.getErrorStream());
-                    String r = null;
-                    if (b != null) r = new String(b);
-
+                    mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
+                    break;
+                default:
                     // Maybe this shouldn't be globbed together, but instead be structured
                     // to allow the error handler to make meaningful use of the web
                     // servers response (contained in String r)
-                    String message = "[run] Unexpected HTTP response:  [code: "
-                            + connection.getResponseCode() + " | message: "
-                            + connection.getResponseMessage() + " error: "
-                            + r + "]";
+                    String message = "[run] Unexpected HTTP response:  [responseCode: "
+                            + connection.getResponseCode() + " | responseMessage: "
+                            + connection.getResponseMessage() + " | errorStream: "
+                            + errorString + " | inputStream " + messageString + "]";
 
                     Log.e(TAG, message);
 
                     mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, new Exception(message)));
-                    mHandler.post(mWrapper);
                 }
+
+                mHandler.post(mWrapper);
             } catch (IOException e) {
                 Log.e(TAG, "[run] Problem executing HTTP request.", e);
                 Log.e(TAG, this.toString());
@@ -189,47 +203,6 @@ public final class AsyncHttpClient {
                 if (connection != null) connection.disconnect();
             }
 		}
-
-        private void addRequestHeaders(HttpURLConnection connection) {
-            if ((mHeaders != null) && (mHeaders.size() > 0)) {
-                for (NameValuePair nvp : mHeaders) {
-                    connection.setRequestProperty(nvp.getName(), nvp.getValue());
-                    if (Config.LOGD) Log.d(TAG, "[addRequestHeaders] added header --> " +
-                            nvp.getName() + ": " + nvp.getValue());
-                }
-            }
-        }
-
-        private void prepareConnectionForHttpGet(HttpURLConnection connection) throws IOException {
-            connection.setRequestMethod(HTTP_METHOD_GET);
-            connection.setRequestProperty("User-Agent", USER_AGENT);
-            connection.setRequestProperty("Accept-Encoding", ACCEPT_ENCODING);
-        }
-
-        private void prepareConnectionForHttpPost(HttpURLConnection connection) throws IOException {
-            connection.setRequestMethod(HTTP_METHOD_POST);
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            connection.setRequestProperty("Content-Length", "" + mPostData.length);
-            connection.setRequestProperty("Content-Language", "en-US");
-            connection.setUseCaches(false);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setRequestProperty("User-Agent", USER_AGENT);
-            connection.setRequestProperty("Accept-Encoding", ACCEPT_ENCODING);
-        }
-
-        private void doHttpPost(HttpURLConnection connection) throws IOException {
-            DataOutputStream writer = null;
-            try {
-                writer = new DataOutputStream(connection.getOutputStream());
-                writer.write(mPostData);
-                writer.flush();
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
-            }
-        }
 
         public String toString() {
             if (mPostData == null) mPostData = new byte[0];

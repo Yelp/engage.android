@@ -63,7 +63,7 @@ public final class IOUtils {
 			return  readFromStream(in, false);
 		} catch (IOException ignore) {
 			// will never happen because we're sending 'false', but need for compilation
-            throw new RuntimeException("sanity failure");
+            throw new RuntimeException("unexpected IOException");
 		}
 	}
 
@@ -98,7 +98,9 @@ public final class IOUtils {
 			} finally {
                 baos.close();
 			}
-		}
+		} else {
+            Log.e(TAG, "[readFromStream] unexpected null InputStream");
+        }
 
         return null;
 	}

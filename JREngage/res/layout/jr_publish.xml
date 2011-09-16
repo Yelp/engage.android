@@ -234,14 +234,13 @@
 
                             <TextView
                                 android:id="@+id/jr_preview_text_view"
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
 
                                 android:layout_marginTop="2dip"
                                 android:layout_marginLeft="4dip"
                                 android:layout_marginBottom="2dip"
                                 android:layout_marginRight="4dip"
-                                android:layout_weight="1"
 
                                 android:textSize="@dimen/jr_preview_text_size"
                                 android:bufferType="spannable"
@@ -260,7 +259,6 @@
                                 android:paddingLeft="3dp"
                                 android:paddingRight="3dp"
                                 android:paddingBottom="7dp"
-                                android:layout_weight="0"
 
                                 android:background="@drawable/jr_bg_provider_activity_info"
                                 >
