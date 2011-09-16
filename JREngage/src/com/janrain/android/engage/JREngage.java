@@ -755,10 +755,7 @@ public class JREngage {
         checkNullJRActivity(activity);
 
         mSessionData.setJRActivity(activity);
-        JRPublishFragment f = new JRPublishFragment();
-        //f.setEmbeddedMode(true);
-
-        return f;
+        return new JRPublishFragment();
     }
 /*@}*/
 

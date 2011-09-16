@@ -76,7 +76,6 @@ public abstract class JRUiFragment extends Fragment {
 
     private FinishReceiver mFinishReceiver;
     private HashMap<Integer, ManagedDialog> mManagedDialogs = new HashMap<Integer, ManagedDialog>();
-    private boolean mEmbeddedMode = false;
 
     protected JRSessionData mSessionData;
     protected String TAG = JRUiFragment.class.getSimpleName();
@@ -304,30 +303,24 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     private AlertDialog getAboutDialog() {
-        LayoutInflater inflater =
-                (LayoutInflater) getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.jr_about_dialog, null);
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(layout);
         builder.setPositiveButton(R.string.jr_about_button_ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
             }
         });
 
-        return builder.create();
+        AlertDialog retval = builder.create();
+        View l = retval.getWindow().getLayoutInflater().inflate(R.layout.jr_about_dialog, null);
+        retval.setView(l);
+
+        return retval;
     }
 
     protected  boolean isEmbeddedMode() {
-        //return mEmbeddedMode;
         FragmentActivity a = getActivity();
         return a != null && !(a instanceof JRFragmentHostActivity);
     }
-
-    //public void setEmbeddedMode(boolean embeddedMode) {
-    //    mEmbeddedMode = embeddedMode;
-    //}
 
     protected Dialog onCreateDialog(int id, Bundle options) {
         Dialog dialog;

@@ -15,5 +15,6 @@
 
     <style name="jr_about_dialog_text">
         <item name="android:textAppearance">?android:textAppearanceLarge</item>
+        <!--<item name="android:textColor">?android:attr/textColorPrimaryInverseDisableOnly</item>-->
     </style>
 </resources>
