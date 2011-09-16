@@ -228,14 +228,14 @@ public class FeedData {
                     // Due to some weird ~half read connection problems this code
                     // is paranoid about input streams. It reads everything into a BIS to ensure that it's
                     // all available for db.parse
-                    BufferedInputStream bis = new BufferedInputStream(is);
-                    bis.mark(uc.getContentLength());
-                    byte[] buffer = new byte[1000];
+                    //BufferedInputStream bis = new BufferedInputStream(is);
+                    //bis.mark(uc.getContentLength());
+                    //byte[] buffer = new byte[1000];
                     // XXX this for loop just reads all the data into bis, it has no loop body
-                    for (int r=0; r != -1; r = bis.read(buffer));
-                    bis.reset();
+                    //for (int r=0; r != -1; r = bis.read(buffer));
+                    //bis.reset();
 
-                    Document d = db.parse(bis);
+                    Document d = db.parse(is);
                     logd("asyncLoadJanrainBlog", "feed parsed");
 
                     Element rss = (Element) d.getElementsByTagName("rss").item(0);

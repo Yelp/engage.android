@@ -180,6 +180,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mConnectAndShareButton.setOnClickListener(mShareButtonListener);
         mJustShareButton.setOnClickListener(mShareButtonListener);
         mUserCommentView.addTextChangedListener(mUserCommentTextWatcher);
+        mEmailSmsComment.addTextChangedListener(mEmailSmsCommentTextWatcher);
 
         mSmsButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
         mEmailButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
@@ -524,9 +525,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     public void onTabChanged(String tabTag) {
         if (Config.LOGD) Log.d(TAG, "[onTabChange]: " + tabTag);
 
-        if (tabTag.equals(EMAIL_SMS_TAB_TAG)) {
-            mEmailSmsComment.setText(mUserCommentView.getText());
-        } else { /* ... else a "real" provider -- Facebook, Twitter, etc. */
+        if (!tabTag.equals(EMAIL_SMS_TAB_TAG)) {
+            /* ... a "real" provider -- Facebook, Twitter, etc. */
             mSelectedProvider = mSessionData.getProviderByName(tabTag);
 
             configureViewElementsBasedOnProvider();
@@ -596,6 +596,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         public void afterTextChanged(Editable editable) {
             mActivityObject.setUserGeneratedContent(mUserCommentView.getText().toString());
+            if (!mEmailSmsComment.getText().toString().equals(editable.toString())) {
+                mEmailSmsComment.setText(editable.toString());
+            }
 
             if (mSelectedProvider == null) return;
             if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
@@ -610,6 +613,18 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             }
 
             showActivityAsShared(false);
+        }
+    };
+
+    private TextWatcher mEmailSmsCommentTextWatcher = new TextWatcher() {
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        public void afterTextChanged(Editable s) {
+            if (!mUserCommentView.getText().toString().equals(s.toString())) {
+                mUserCommentView.setText(s.toString());
+            }
         }
     };
 
@@ -695,15 +710,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         intent.putExtra("exit_on_sent", true);
 
         return intent;
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        /* Callback from startActivityForResult for email sharing. */
-        mUserCommentView.setText(mEmailSmsComment.getText());
-
-        /* Email and SMS intents are returning 0, 0, null */
-        //Log.d(TAG, "[onActivityResult]: requestCode=" + requestCode + " resultCode=" + resultCode
-        //        + " data=" + data);
     }
 
     @Override
