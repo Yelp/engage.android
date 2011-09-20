@@ -271,6 +271,11 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         return providerList;
     }
 
+    /**
+     * Gets the configured and enabled social providers
+     *
+     * @return an ArrayList&lt;Provider>, does not return null.
+     */
     public ArrayList<JRProvider> getSocialProviders() {
         ArrayList<JRProvider> providerList = new ArrayList<JRProvider>();
 

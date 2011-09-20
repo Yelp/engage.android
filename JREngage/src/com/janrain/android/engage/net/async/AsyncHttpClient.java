@@ -36,12 +36,20 @@ import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.utils.IOUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,26 +60,12 @@ import java.util.List;
  **/
 public final class AsyncHttpClient {
     private static final String TAG = AsyncHttpClient.class.getSimpleName();
-    private static final String HTTP_METHOD_GET = "GET";
-    private static final String HTTP_METHOD_POST = "POST";
     private static final String USER_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
     private static final String ACCEPT_ENCODING = "identity";
 
     private AsyncHttpClient() {}
 
-	/*
-	 * Sends HTTP request in background, loads header and response, and returns via handler.
-	 */
 	private static class HttpSender extends Thread {
-        static {
-            // HttpURLConnection has a known bug discussed
-            // here: http://code.google.com/p/android/issues/detail?id=7786
-            // here: http://stackoverflow.com/questions/1440957/httpurlconnection-getresponsecode-returns-1-on-second-invocation/1441491#1441491
-            // and here: http://stackoverflow.com/questions/2792843/httpurlconnection-whats-the-deal-with-having-to-read-the-whole-response
-            // the following is a workaround:
-            System.setProperty("http.keepAlive", "false");
-        }
-
 		private static final String TAG = HttpSender.class.getSimpleName();
 
         private String mUrl;
@@ -101,69 +95,36 @@ public final class AsyncHttpClient {
 		public void run() {
 			if (Config.LOGD) Log.d(TAG, "[run] BEGIN, url: " + mUrl);
 
-            URL url;
-            HttpURLConnection connection = null;
-
-            //Debugging statement to simulate slow networks
-            //try { Thread.sleep(10000); } catch (InterruptedException e) {}
-
-            //float f = new Random().nextFloat();
-            //try { Thread.sleep((int) (4000 * f)); } catch (InterruptedException e) {}
-
             try {
-                url = new URL(mUrl);
+                HttpParams params = new BasicHttpParams();
+                HttpConnectionParams.setConnectionTimeout(params, 10000); // ten second timeout
+                HttpConnectionParams.setSoTimeout(params, 10000);
 
-                connection = (HttpURLConnection) url.openConnection();
-                // 20 second timeouts
-                connection.setConnectTimeout(20 * 1000);
-                connection.setReadTimeout(20 * 1000);
-
-                if ((mHeaders != null) && (mHeaders.size() > 0)) {
-                    for (NameValuePair nvp : mHeaders) {
-                        connection.setRequestProperty(nvp.getName(), nvp.getValue());
-                        if (Config.LOGD) Log.d(TAG, "[addRequestHeaders] added header --> " +
-                                nvp.getName() + ": " + nvp.getValue());
-                    }
-                }
-
-                connection.setRequestProperty("User-Agent", USER_AGENT);
-                connection.setRequestProperty("Accept-Encoding", ACCEPT_ENCODING);
-                connection.setDoInput(true);
-                connection.setDoOutput(true);
-                connection.setUseCaches(false);
-
-                if (mPostData == null) {
-                    // HTTP GET
-                    if (Config.LOGD) Log.d(TAG, "[run] HTTP GET");
-                    connection.setRequestMethod(HTTP_METHOD_GET);
-                } else {
-                    // HTTP POST
-                    if (Config.LOGD) Log.d(TAG, "[run] HTTP POST data: " + new String(mPostData));
-                    connection.setRequestMethod(HTTP_METHOD_POST);
-                    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                    connection.setRequestProperty("Content-Length", "" + mPostData.length);
-                    connection.setRequestProperty("Content-Language", "en-US");
-                }
-
-                connection.connect();
-
+                DefaultHttpClient c = new DefaultHttpClient(params);
+                HttpUriRequest request;
                 if (mPostData != null) {
-                    connection.getOutputStream().write(mPostData);
-                    connection.getOutputStream().flush();
+                    request = new HttpPost(mUrl);
+                    ((HttpPost) request).setEntity(new ByteArrayEntity(mPostData));
+                    request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+                    request.addHeader("Content-Length", "" + mPostData.length);
+                    request.addHeader("Content-Language", "en-US");
+                } else {
+                    request = new HttpGet(mUrl);
                 }
 
-                byte[] data = IOUtils.readFromStream(connection.getInputStream(), true);
-                String dataString = (data == null) ? null : new String(data);
+                request.addHeader("User-Agent", USER_AGENT);
+                request.addHeader("Accept-Encoding", ACCEPT_ENCODING);
+                if (mHeaders == null) mHeaders = new ArrayList<NameValuePair>();
+                for (NameValuePair header : mHeaders) request.addHeader(header.getName(), header.getValue());
 
-                byte[] errorBytes = IOUtils.readFromStream(connection.getErrorStream(), true);
-                String errorString = (errorBytes == null) ? null : new String(errorBytes);
+                HttpResponse response = c.execute(request);
 
-                byte[] messageBytes = IOUtils.readFromStream(connection.getInputStream(), true);
-                String messageString = (messageBytes == null) ? null : new String(messageBytes);
+                HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(response);
 
-                HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(connection);
+                byte[] data = IOUtils.readFromStream(response.getEntity().getContent(), true);
+                String dataString = new String(data);
 
-                switch (connection.getResponseCode()) {
+                switch (response.getStatusLine().getStatusCode()) {
                 case HttpURLConnection.HTTP_OK:
                     if (Config.LOGD) Log.d(TAG, "[run] HTTP_OK");
                     if (Config.LOGD) Log.d(TAG, "[run] headers: " + headers.toString());
@@ -184,9 +145,9 @@ public final class AsyncHttpClient {
                     // to allow the error handler to make meaningful use of the web
                     // servers response (contained in String r)
                     String message = "[run] Unexpected HTTP response:  [responseCode: "
-                            + connection.getResponseCode() + " | responseMessage: "
-                            + connection.getResponseMessage() + " | errorStream: "
-                            + errorString + " | inputStream " + messageString + "]";
+                            + response.getStatusLine().getStatusCode() + " | responseMessage: "
+                            + response.getStatusLine().getReasonPhrase() + " | errorStream: "
+                            + dataString;
 
                     Log.e(TAG, message);
 
@@ -199,8 +160,6 @@ public final class AsyncHttpClient {
                 Log.e(TAG, this.toString());
                 mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, e));
                 mHandler.post(mWrapper);
-            } finally {
-                if (connection != null) connection.disconnect();
             }
 		}
 

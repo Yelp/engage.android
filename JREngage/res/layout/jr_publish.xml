@@ -145,7 +145,7 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/jr_tab_view_content"
+                android:id="@+id/jr_tab_social_publish_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
 

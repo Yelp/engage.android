@@ -35,9 +35,10 @@ package com.janrain.android.engage.net.async;
 
 import android.util.Config;
 import android.util.Log;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import java.util.Date;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
 /**
  * @internal
  *
@@ -52,24 +53,33 @@ public class HttpResponseHeaders {
     // Invalid response code (initial state of object)
     public static final int RESPONSE_CODE_INVALID = -1;
 
-    public static HttpResponseHeaders fromConnection(HttpURLConnection connection)
-            throws IOException {
-
+    public static HttpResponseHeaders fromConnection(HttpResponse response) {
         if (Config.LOGD) Log.d(TAG, "[fromConnection] BEGIN");
 
         HttpResponseHeaders headers = new HttpResponseHeaders();
-
-        headers.setResponseCode(connection.getResponseCode());
-        headers.setContentEncoding(connection.getContentEncoding());
-        headers.setContentLength(connection.getContentLength());
-        headers.setContentType(connection.getContentType());
-        headers.setDate(connection.getDate());
-        headers.setLastModified(connection.getLastModified());
-        headers.setLastModifiedUtc(connection.getHeaderField(HEADER_LAST_MODIFIED));
-        headers.setETag(connection.getHeaderField(HEADER_ETAG));
-        headers.setConnection(connection);
+        headers.setResponseCode(response.getStatusLine().getStatusCode());
+        headers.setContentEncoding(getResponseHeaderFirstValue(response, "content-encoding"));
+        headers.setContentLength((int) response.getEntity().getContentLength());
+        headers.setContentType(getResponseHeaderFirstValue(response, "content-type"));
+        headers.setDate(new Date().getTime()); // XXX this is wrong but possibly harmless
+        headers.setLastModified(getResponseLastModified(response));
+        headers.setLastModifiedUtc(getResponseHeaderFirstValue(response, HEADER_LAST_MODIFIED));
+        headers.setETag(getResponseHeaderFirstValue(response, HEADER_ETAG));
+        headers.setResponse(response);
 
         return headers;
+    }
+
+    private static String getResponseHeaderFirstValue(HttpResponse response, String headerName) {
+        Header[] h = response.getHeaders(headerName);
+        if (h.length > 0) return h[0].getValue();
+        return null;
+    }
+
+    private static long getResponseLastModified(HttpResponse response) {
+        Header[] h = response.getHeaders("last-modified");
+        if (h.length > 0) return Long.parseLong(h[0].getValue());
+        return 0;
     }
 
     private int mResponseCode;
@@ -80,16 +90,15 @@ public class HttpResponseHeaders {
     private long mLastModified;
     private String mLastModifiedUtc;
     private String mETag;
+    private HttpResponse mResponse;
 
-    public void setConnection(HttpURLConnection connection) {
-        this.mConnection = connection;
+    public void setResponse(HttpResponse response) {
+        mResponse = response;
     }
 
     public String getHeaderField(String headerFieldName) {
-        return mConnection.getHeaderField(headerFieldName);
+        return getResponseHeaderFirstValue(mResponse, headerFieldName);
     }
-
-    private HttpURLConnection mConnection;
 
     public HttpResponseHeaders() {
         mResponseCode = RESPONSE_CODE_INVALID;
@@ -103,6 +112,12 @@ public class HttpResponseHeaders {
         mResponseCode = responseCode;
     }
 
+    /**
+     * XXX This is not the the encoding of the text in the body of the response but the
+     * encoding of the body itself (e.g. gzip/compress)
+     * @return
+     *  The "content-encoding" header field's value
+     */
     public String getContentEncoding() {
         return mContentEncoding;
     }

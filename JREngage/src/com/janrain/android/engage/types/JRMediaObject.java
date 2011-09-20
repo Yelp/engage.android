@@ -34,6 +34,7 @@ package com.janrain.android.engage.types;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import com.janrain.android.engage.utils.IOUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.io.IOException;
@@ -50,6 +51,15 @@ import java.net.URLConnection;
  * Base class for JRImageMediaObject, JRFlashMediaObject, and JRMp3MediaObject.
  **/
 public abstract class JRMediaObject implements Serializable {
+    static {
+        // HttpURLConnection has a known bug discussed
+        // here: http://code.google.com/p/android/issues/detail?id=7786
+        // here: http://stackoverflow.com/questions/1440957/httpurlconnection-getresponsecode-returns-1-on-second-invocation/1441491#1441491
+        // and here: http://stackoverflow.com/questions/2792843/httpurlconnection-whats-the-deal-with-having-to-read-the-whole-response
+        // the following is a workaround:
+        System.setProperty("http.keepAlive", "false");
+    }
+
     @JsonIgnore
     private transient Bitmap mThumbnailBitmap;
 
@@ -73,8 +83,8 @@ public abstract class JRMediaObject implements Serializable {
                 try {
                     URL url = new URL(getThumbnail());
                     URLConnection urlc = url.openConnection();
-                    InputStream is = urlc.getInputStream();
-                    return BitmapFactory.decodeStream(is);
+                    byte[] data = IOUtils.readFromStream(urlc.getInputStream());
+                    return BitmapFactory.decodeByteArray(data, 0, data.length);
                 } catch (MalformedURLException e) {
                     return null;
                 } catch (IOException e) {

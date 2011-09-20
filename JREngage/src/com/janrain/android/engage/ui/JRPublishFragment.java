@@ -145,6 +145,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private ColorButton mSmsButton;
     private EditText mEmailSmsComment;
     private LinearLayout mEmailSmsButtonContainer;
+    private TabHost mTabHost;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -228,9 +229,14 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
          * activity started in landscape mode. */
         onConfigurationChanged(getResources().getConfiguration());
 
-        List<JRProvider>socialProviders = mSessionData.getSocialProviders();
-        if ((socialProviders == null || socialProviders.size() == 0)
-                && !mSessionData.isGetMobileConfigDone()) {
+        mTabHost = (TabHost) getView().findViewById(android.R.id.tabhost);
+        mTabHost.setup();
+        mTabHost.addTab(mTabHost.newTabSpec("empty tab").setIndicator("")
+                .setContent(R.id.jr_tab_social_publish_content));
+        mTabHost.getTabWidget().setVisibility(View.GONE);
+
+        mSocialProviders = mSessionData.getSocialProviders();
+        if (mSocialProviders.size() == 0 && !mSessionData.isGetMobileConfigDone()) {
             /* Hide the email/SMS tab so things look nice as we load the providers */
             getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
             mWaitingForMobileConfig = true;
@@ -242,9 +248,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private void initializeWithProviderConfiguration() {
         /* Check for no suitable providers */
-        mSocialProviders = mSessionData.getSocialProviders();
-        if (mSocialProviders == null) mSocialProviders = new ArrayList<JRProvider>();
-
         if (mSocialProviders.size() == 0) {
             JREngageError err = mSessionData.getError();
             if (err == null) {
@@ -258,7 +261,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mUserCommentView.setEnabled(false);
             getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
             if (isEmbeddedMode()) getFragmentManager().beginTransaction().hide(this).commit();
-            //return;
+            return;
         }
 
         /* Configure the properties of the UI */
@@ -287,6 +290,60 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mUserCommentView.setText(mUserCommentView.getText());
     }
 
+    private void createTabs() {
+        mTabHost.clearAllTabs();
+        mTabHost.getTabWidget().setVisibility(View.VISIBLE);
+
+        /* Make a tab for each social provider */
+        for (JRProvider provider : mSocialProviders) {
+            Drawable providerIconSet = provider.getTabSpecIndicatorDrawable(getActivity());
+
+            TabHost.TabSpec spec = mTabHost.newTabSpec(provider.getName());
+            spec.setContent(R.id.jr_tab_social_publish_content);
+            String s = provider.getFriendlyName();
+
+            setTabSpecIndicator(spec, providerIconSet, s);
+
+            mTabHost.addTab(spec);
+
+            if (!mProvidersThatHaveAlreadyShared.containsKey(provider.getName())) {
+                // If it's already there then we're reinitializing with saved state
+                mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
+            }
+        }
+
+        if (mSmsActivityExists || mEmailActivityExists) {
+            /* Make a tab for email/SMS */
+            TabHost.TabSpec emailSmsSpec = mTabHost.newTabSpec(EMAIL_SMS_TAB_TAG);
+            Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
+            setTabSpecIndicator(emailSmsSpec, d, "Email/SMS");
+            emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
+            mTabHost.addTab(emailSmsSpec);
+        } else {
+            showHideView(getView().findViewById(R.id.jr_tab_email_sms_content), false);
+        }
+
+        mTabHost.setOnTabChangedListener(this);
+
+        if (mSelectedTab.equals("")) {
+            JRProvider rp = mSessionData.getProviderByName(mSessionData.getReturningSocialProvider());
+            mTabHost.setCurrentTab(mSocialProviders.indexOf(rp));
+        } else {
+            mTabHost.setCurrentTabByTag(mSelectedTab);
+        }
+
+        /* When TabHost is constructed it defaults to tab 0, so if indexOfLastUsedProvider is 0,
+         * the tab change listener won't be invoked, so we call it manually to ensure
+         * it is called.  (it's idempotent) */
+        onTabChanged(mTabHost.getCurrentTabTag());
+
+        /* XXX TabHost is setting our FrameLayout's only child to View.GONE when loading.
+         * XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
+         * See http://stackoverflow.com/questions/5109081/why-is-my-tabhosts-framelayouts-only-child-loaded-with-visibility-view-gone
+         * XXX This is a workaround: */
+        mTabHost.getCurrentView().setVisibility(View.VISIBLE);
+    }
+    
     @Override
     public void onDestroyView() {
         dismissProgressDialog();
@@ -356,65 +413,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         /* Set the media content title */
         mct.setText(mActivityObject.getTitle());
-    }
-
-    private void createTabs() {
-        TabHost tabHost = (TabHost) getView().findViewById(android.R.id.tabhost);
-        tabHost.setup();
-
-        /* Make a tab for each social provider */
-        for (JRProvider provider : mSocialProviders) {
-            Drawable providerIconSet = provider.getTabSpecIndicatorDrawable(getActivity());
-
-            TabHost.TabSpec spec = tabHost.newTabSpec(provider.getName());
-            spec.setContent(R.id.jr_tab_view_content);
-            String s = provider.getFriendlyName();
-
-            setTabSpecIndicator(spec, providerIconSet, s);
-
-            tabHost.addTab(spec);
-
-            if (!mProvidersThatHaveAlreadyShared.containsKey(provider.getName())) {
-                // If it's already there then we're reinitializing with saved state
-                mProvidersThatHaveAlreadyShared.put(provider.getName(), false);
-            }
-        }
-
-        if (mSmsActivityExists || mEmailActivityExists) {
-            /* Make a tab for email/SMS */
-            TabHost.TabSpec emailSmsSpec = tabHost.newTabSpec(EMAIL_SMS_TAB_TAG);
-            Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
-            setTabSpecIndicator(emailSmsSpec, d, "Email/SMS");
-            emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
-            tabHost.addTab(emailSmsSpec);
-        } else {
-            showHideView(getView().findViewById(R.id.jr_tab_email_sms_content), false);
-        }
-
-        if (tabHost.getTabWidget().getTabCount() == 0) {
-            tabHost.addTab(tabHost.newTabSpec("empty tab"));
-            tabHost.getTabWidget().setVisibility(View.GONE);
-        }
-
-        tabHost.setOnTabChangedListener(this);
-
-        if (mSelectedTab.equals("")) {
-            JRProvider rp = mSessionData.getProviderByName(mSessionData.getReturningSocialProvider());
-            tabHost.setCurrentTab(mSocialProviders.indexOf(rp));
-        } else {
-            tabHost.setCurrentTabByTag(mSelectedTab);
-        }
-
-        /* When TabHost is constructed it defaults to tab 0, so if indexOfLastUsedProvider is 0,
-         * the tab change listener won't be invoked, so we call it manually to ensure
-         * it is called.  (it's idempotent) */
-        onTabChanged(tabHost.getCurrentTabTag());
-
-        /* XXX TabHost is setting our FrameLayout's only child to View.GONE when loading.
-         * XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
-         * See http://stackoverflow.com/questions/5109081/why-is-my-tabhosts-framelayouts-only-child-loaded-with-visibility-view-gone
-         * XXX This is a workaround: */
-        tabHost.getCurrentView().setVisibility(View.VISIBLE);
     }
 
     private void setTabSpecIndicator(TabHost.TabSpec spec, Drawable iconSet, String label) {
@@ -778,11 +776,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         showUserAsLoggedIn(false);
         mAuthenticatedUser = null;
         mProvidersThatHaveAlreadyShared.put(mSelectedProvider.getName(), false);
-        onTabChanged(getTabHost().getCurrentTabTag());
-    }
-
-    private TabHost getTabHost() {
-        return (TabHost) getView().findViewById(android.R.id.tabhost);
+        onTabChanged(mTabHost.getCurrentTabTag());
     }
 
     /* UI property updaters */
@@ -1006,7 +1000,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 } else {
                     // refresh the UI
                     mProvidersThatHaveAlreadyShared.put(mSelectedProvider.getName(), false);
-                    onTabChanged(getTabHost().getCurrentTabTag());
+                    onTabChanged(mTabHost.getCurrentTabTag());
                     loadUserNameAndProfilePicForUserForProvider(mAuthenticatedUser, provider);
                     showUserAsLoggedIn(true);
                 }
