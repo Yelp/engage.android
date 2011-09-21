@@ -36,6 +36,7 @@ package com.janrain.android.engage.net.async;
 import android.util.Config;
 import android.util.Log;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import java.util.Date;
 
@@ -59,7 +60,8 @@ public class HttpResponseHeaders {
         HttpResponseHeaders headers = new HttpResponseHeaders();
         headers.setResponseCode(response.getStatusLine().getStatusCode());
         headers.setContentEncoding(getResponseHeaderFirstValue(response, "content-encoding"));
-        headers.setContentLength((int) response.getEntity().getContentLength());
+        HttpEntity entity = response.getEntity();
+        headers.setContentLength(entity == null ? 0 : (int) entity.getContentLength());
         headers.setContentType(getResponseHeaderFirstValue(response, "content-type"));
         headers.setDate(new Date().getTime()); // XXX this is wrong but possibly harmless
         headers.setLastModified(getResponseLastModified(response));

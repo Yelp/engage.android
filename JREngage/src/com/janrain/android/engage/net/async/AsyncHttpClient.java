@@ -36,6 +36,7 @@ import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.utils.IOUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
@@ -106,7 +107,6 @@ public final class AsyncHttpClient {
                     request = new HttpPost(mUrl);
                     ((HttpPost) request).setEntity(new ByteArrayEntity(mPostData));
                     request.addHeader("Content-Type", "application/x-www-form-urlencoded");
-                    request.addHeader("Content-Length", "" + mPostData.length);
                     request.addHeader("Content-Language", "en-US");
                 } else {
                     request = new HttpGet(mUrl);
@@ -121,7 +121,8 @@ public final class AsyncHttpClient {
 
                 HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(response);
 
-                byte[] data = IOUtils.readFromStream(response.getEntity().getContent(), true);
+                HttpEntity entity = response.getEntity();
+                byte[] data = entity == null? new byte[0] : IOUtils.readFromStream(entity.getContent(), true);
                 String dataString = new String(data);
 
                 switch (response.getStatusLine().getStatusCode()) {
@@ -165,8 +166,8 @@ public final class AsyncHttpClient {
 
         public String toString() {
             if (mPostData == null) mPostData = new byte[0];
-            return this.getClass().getSimpleName() + ": {url: " + mUrl + "\nheaders: " + mHeaders +
-                    "\npostData: " + new String(mPostData);
+            return TAG + ": {url: " + mUrl + "\nheaders: " + mHeaders + "\npostData: "
+                    + new String(mPostData);
         }
 	}
 

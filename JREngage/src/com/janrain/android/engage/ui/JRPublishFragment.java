@@ -77,7 +77,6 @@ import com.janrain.android.engage.utils.AndroidUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -151,6 +150,17 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View content = inflater.inflate(R.layout.jr_publish, container, false);
 
+        initViews(content);
+
+        /* Initialize the provider shared-ness state map */
+        mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
+
+        configureEmailSmsButtons();
+
+        return content;
+    }
+
+    private void initViews(View content) {
         /* View References */
         mPreviewBox = (RelativeLayout) content.findViewById(R.id.jr_preview_box);
         mPreviewBorder = (LinearLayout) content.findViewById(R.id.jr_preview_box_border);
@@ -185,13 +195,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         mSmsButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
         mEmailButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
-
-        /* Initialize the provider shared-ness state map */
-        mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
-
-        configureEmailSmsButtons();
-
-        return content;
     }
 
     @Override
@@ -222,7 +225,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             Log.e(TAG, "Couldn't reload savedInstanceState or get an activity from JRSessionData, " +
                     "creating stub activity");
         }
-        mUserCommentView.setText(mActivityObject.getUserGeneratedContent());
         loadViewPropertiesWithActivityObject();
 
         /* Call by hand the configuration change listener so that it sets up correctly if this
@@ -260,9 +262,19 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mConnectAndShareButton.setEnabled(false);
             mUserCommentView.setEnabled(false);
             getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
-            if (isEmbeddedMode()) getFragmentManager().beginTransaction().hide(this).commit();
+            //if (isEmbeddedMode()) getFragmentManager().beginTransaction().hide(this).commit();
+            Bundle options = new Bundle();
+            options.putString(KEY_DIALOG_ERROR_MESSAGE, "No configured social sharing providers.");
+            showDialog(DIALOG_FAILURE, options);
             return;
         }
+
+        createTabs();
+        initViews(mTabHost.getTabContentView());
+        loadViewPropertiesWithActivityObject();
+        onConfigurationChanged(getResources().getConfiguration());
+        mTabHost.setOnTabChangedListener(this);
+        onTabChanged(mTabHost.getCurrentTabTag());
 
         /* Configure the properties of the UI */
         mActivityObject.shortenUrls(new JRActivityObject.ShortenedUrlCallback() {
@@ -283,8 +295,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             }
         });
 
-        createTabs();
-
         /* Fire the text change listener so the character count is updated.
          * See also onCreateActivity */
         mUserCommentView.setText(mUserCommentView.getText());
@@ -293,6 +303,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private void createTabs() {
         mTabHost.clearAllTabs();
         mTabHost.getTabWidget().setVisibility(View.VISIBLE);
+        LayoutInflater li = getLayoutInflater(null);
+        li.inflate(R.layout.jr_publish_email_tab_content, mTabHost.getTabContentView());
+        li.inflate(R.layout.jr_publish_provider_tab_content, mTabHost.getTabContentView());
 
         /* Make a tab for each social provider */
         for (JRProvider provider : mSocialProviders) {
@@ -323,19 +336,24 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             showHideView(getView().findViewById(R.id.jr_tab_email_sms_content), false);
         }
 
-        mTabHost.setOnTabChangedListener(this);
+        /* XXX this works around a bug in TabHost where if you add new tabs after calling
+         * clearAllTabs() the currently selected tab won't have it's indicator switch to the selected state.
+         * (This is because when you call clearAllTabs and the current tab index is 0, it leaves the current
+         * tab index at 0, then as you insert new tabs it keeps re-selecting tab 0 and no-oping the indicator
+         * state change code :( )
+         * TEN POINTS FROM GRY^H^HGOOGLEDOR
+         */
+        if (mTabHost.getTabWidget().getTabCount() > 1) {
+            mTabHost.setCurrentTab(1);
+            mTabHost.setCurrentTab(0);
+        } // else meh
 
         if (mSelectedTab.equals("")) {
             JRProvider rp = mSessionData.getProviderByName(mSessionData.getReturningSocialProvider());
-            mTabHost.setCurrentTab(mSocialProviders.indexOf(rp));
+            if (rp != null) mTabHost.setCurrentTab(mSocialProviders.indexOf(rp));
         } else {
             mTabHost.setCurrentTabByTag(mSelectedTab);
         }
-
-        /* When TabHost is constructed it defaults to tab 0, so if indexOfLastUsedProvider is 0,
-         * the tab change listener won't be invoked, so we call it manually to ensure
-         * it is called.  (it's idempotent) */
-        onTabChanged(mTabHost.getCurrentTabTag());
 
         /* XXX TabHost is setting our FrameLayout's only child to View.GONE when loading.
          * XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
@@ -386,6 +404,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private void loadViewPropertiesWithActivityObject() {
         /* This sets up pieces of the UI before the provider configuration information
          * has been loaded */
+        mUserCommentView.setText(mActivityObject.getUserGeneratedContent());
 
         JRMediaObject mo = null;
         if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);

@@ -151,8 +151,8 @@ public class FeedData {
         JRFileResponseCache.setDefault(frc);
         ContentHandler bmch = JRFileResponseCache.capture(new BitmapContentHandler(), null);
         ContentHandler pfch = JRFileResponseCache.capture(JRFileResponseCache.sink(), null);
-        mImageLoader = new ImageLoader(ImageLoader.DEFAULT_TASK_LIMIT * 5, null, bmch, pfch,
-                ImageLoader.DEFAULT_CACHE_SIZE * 5, null);
+        mImageLoader = new ImageLoader(ImageLoader.DEFAULT_TASK_LIMIT, null, bmch, pfch,
+                ImageLoader.DEFAULT_CACHE_SIZE, null);
 
         mEngage = JREngage.initInstance(activity, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, mJrEngageDelegate);
 

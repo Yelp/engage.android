@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
 
     <Button
         android:id="@+id/btn_add_profile"
@@ -19,23 +20,18 @@
         android:layout_alignParentTop="true"
         />
 
-    <!-- List view (list) -->
     <ListView
-        android:id="@id/android:list"
+        android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/btn_add_profile"
         />
-    <!--android:paddingBottom="30dip"-->
-        
-    <!-- List view (empty state) -->
+
     <TextView
-        android:id="@id/android:empty"
+        android:id="@android:id/empty"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center_horizontal|center_vertical"
         android:text="@string/no_profiles"
         />
-    <!--android:textColor="#000000"-->
-    <!--android:layout_above="@+id/footer"-->
 </RelativeLayout>

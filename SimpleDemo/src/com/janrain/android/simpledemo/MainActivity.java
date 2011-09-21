@@ -313,10 +313,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-        mDialogErrorMessage = "Simpledemo:\nJREngage dialog failed to show.\nError: " +
+        String message = "Simpledemo:\nJREngage dialog failed to show.\nError: " +
                 ((error == null) ? "unknown" : error.getMessage());
 
-        showDialog(DIALOG_JRENGAGE_ERROR);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     public void jrAuthenticationDidSucceedForUser(JRDictionary authInfo, String provider) {

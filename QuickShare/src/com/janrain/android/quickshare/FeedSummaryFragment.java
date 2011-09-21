@@ -233,7 +233,7 @@ public class FeedSummaryFragment extends ListFragment implements FeedData.FeedRe
             Story story = getItem(position);
 
             /* This is the row that contains dummy (empty) story, really to be used as a "Refresh"
-                button that is clickable/focusable like other listview rows, and looks nicer than
+                button that is click-able/focus-able like other listview rows, and looks nicer than
                 a real button. */
             if (position == 0) {
                 v.setTag("DUMMY_ROW");
