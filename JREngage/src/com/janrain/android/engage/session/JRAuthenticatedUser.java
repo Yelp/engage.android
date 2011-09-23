@@ -35,22 +35,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.net.JRConnectionManager;
+import com.janrain.android.engage.net.JRConnectionManagerDelegate;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
 
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * @internal
@@ -125,7 +123,6 @@ public class JRAuthenticatedUser implements Serializable {
         return JREngage.getActivity();
     }
 
-    @SuppressWarnings({"unchecked"})
     public void downloadProfilePic(final ProfilePicAvailableListener callback) {
         FileInputStream fis;
         try {
@@ -140,32 +137,25 @@ public class JRAuthenticatedUser implements Serializable {
         if (cachedProfilePic != null) {
             callback.onProfilePicAvailable(cachedProfilePic);
         } else if (!TextUtils.isEmpty(getPhoto())) {
-            new AsyncTask<Void, Void, Bitmap>() {
-                @Override
-                protected Bitmap doInBackground(Void... voids) {
-                    try {
-                        URL url = new URL(getPhoto());
-                        URLConnection urlc = url.openConnection();
-                        InputStream is = urlc.getInputStream();
-                        BufferedInputStream bis = new BufferedInputStream(is);
-                        bis.mark(urlc.getContentLength());
-                        FileOutputStream fos = getContext().openFileOutput("userpic~" +
-                               getCachedProfilePicKey(), Activity.MODE_PRIVATE);
-                        int x;
-                        while ((x = bis.read()) != -1) fos.write(x);
-                        fos.close();
-                        bis.reset();
-                        return BitmapFactory.decodeStream(bis);
-                    } catch (IOException e) {
-                        Log.e(TAG, "profile pic image loader exception: " + e.toString());
-                        return null;
-                    }
-                }
-
-                protected void onPostExecute(Bitmap b) {
-                    callback.onProfilePicAvailable(b);
-                }
-            }.execute();
+            JRConnectionManager.createConnection(getPhoto(),
+                    new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
+                        @Override
+                        public void connectionDidFinishLoading(HttpResponseHeaders headers,
+                                                               byte[] payload,
+                                                               String requestUrl,
+                                                               Object tag) {
+                            try {
+                                FileOutputStream fos = getContext().openFileOutput("userpic~" +
+                                       getCachedProfilePicKey(), Activity.MODE_PRIVATE);
+                                fos.write(payload);
+                                fos.close();
+                                Bitmap bitmap = BitmapFactory.decodeByteArray(payload, 0, payload.length);
+                                callback.onProfilePicAvailable(bitmap);
+                            } catch (IOException e) {
+                                Log.e(TAG, "profile pic image loader exception: " + e.toString());
+                            }
+                        }
+                    }, null);
         }
     }
 

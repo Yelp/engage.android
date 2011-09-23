@@ -31,106 +31,56 @@
  */
 package com.janrain.android.quickshare;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRImageMediaObject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Story implements Serializable {
+public class Story implements Serializable, Comparable<Story> {
     private static final String TAG = Story.class.getSimpleName();
 
     private String mTitle;
-    private String mDate;
+    private Date mRawDate;
+    private String mFormattedDate;
     private String mPostedBy;
     private String mDescription;
     private String mPlainText;
     private String mLink;
     private ArrayList<String> mImageUrls;
 
-    private boolean mDescriptionImagesAlreadyScaled;
-
     public static Story dummyStory() {
         return new Story();
     }
 
-    private Story() {}
+    public Story() {}
 
-    public Story(String title, String date, String postedBy, String description,
+    public Story(String title, Date rawDate, String formattedDate, String postedBy, String description,
                  String plainText, String link, ArrayList<String> imageUrls) {
         mTitle = title;
-        mDate = date;
+        mRawDate= rawDate;
+        mFormattedDate = formattedDate;
         mPostedBy = postedBy;
         mDescription = description;
         mPlainText = plainText;
         mLink = link;
         mImageUrls = imageUrls;
-
-        mDescriptionImagesAlreadyScaled = false;
-        if (getThumbnailUrl() != null) {
-            FeedData.getInstance().getImageLoader().prefetch(getThumbnailUrl());
-        }
     }
 
     public String getTitle() {
         return mTitle;
     }
 
-    public String getDate() {
-        return mDate;
+    public String getFormattedDate() {
+        return mFormattedDate;
     }
 
     public String getDescription() {
-        if (!mDescriptionImagesAlreadyScaled) scaleDescriptionImages();
-
         return mDescription;
-    }
-
-    private void scaleDescriptionImages() {
-        String[] splitDescription = mDescription.split("<img ", -1);
-
-        int length = splitDescription.length;
-
-        String newDescription = splitDescription[0];
-
-        for (int i = 1; i < length; i++) {
-            Log.d(TAG, "[scaleDescriptionImages] " + ((Integer) i).toString() + ": " + splitDescription[i]);
-
-            try {
-                Pattern pattern = Pattern.compile("(.+?)style=\"(.+?)\"(.+?)/>(.+)", Pattern.CASE_INSENSITIVE
-                        | Pattern.DOTALL);
-                Matcher matcher = pattern.matcher(splitDescription[i]);
-
-                Log.d(TAG, "[scaleDescriptionImages] matcher matches?: " + (matcher.matches() ? "yes" :
-                        "no"));
-
-                for (int j = 1; j <= matcher.groupCount(); j++)
-                    Log.d(TAG, "[scaleDescriptionImages] matched group " + ((Integer) j).toString() + ": " +
-                            matcher.group(j));
-
-                newDescription += "<img " + matcher.group(1) +
-                        "style=\"" + newWidthAndHeight(matcher.group(2)) + "\"" +
-                        matcher.group(3) + "/>" + matcher.group(4);
-            } catch (IllegalStateException e) {
-                Log.d(TAG, "[scaleDescriptionImages] exception: " + e);
-                newDescription += "<img " + splitDescription[i];
-            }
-        }
-
-        Log.d(TAG, "[scaleDescriptionImages] newDescription: " + newDescription);
-
-        mDescription = newDescription;
     }
 
     private String newWidthAndHeight(String style) {
@@ -203,5 +153,96 @@ public class Story implements Serializable {
 
     public String getPostedBy() {
         return mPostedBy;
+    }
+
+    public void setTitle(String title) {
+        mTitle = title;
+    }
+
+    public void setLink(String link) {
+        mLink = link;
+    }
+
+    public void setDescription(String description) {
+        mDescription = description;
+        scaleDescriptionImages();
+    }
+
+    private void scaleDescriptionImages() {
+        String[] splitDescription = mDescription.split("<img ", -1);
+
+        int length = splitDescription.length;
+
+        String newDescription = splitDescription[0];
+
+        for (int i = 1; i < length; i++) {
+            Log.d(TAG, "[scaleDescriptionImages] " + ((Integer) i).toString() + ": " + splitDescription[i]);
+
+            try {
+                Pattern pattern = Pattern.compile("(.+?)style=\"(.+?)\"(.+?)/>(.+)", Pattern.CASE_INSENSITIVE
+                        | Pattern.DOTALL);
+                Matcher matcher = pattern.matcher(splitDescription[i]);
+
+                Log.d(TAG, "[scaleDescriptionImages] matcher matches?: " + (matcher.matches() ? "yes" :
+                        "no"));
+
+                for (int j = 1; j <= matcher.groupCount(); j++)
+                    Log.d(TAG, "[scaleDescriptionImages] matched group " + ((Integer) j).toString() + ": " +
+                            matcher.group(j));
+
+                newDescription += "<img " + matcher.group(1) +
+                        "style=\"" + newWidthAndHeight(matcher.group(2)) + "\"" +
+                        matcher.group(3) + "/>" + matcher.group(4);
+            } catch (IllegalStateException e) {
+                Log.d(TAG, "[scaleDescriptionImages] exception: " + e);
+                newDescription += "<img " + splitDescription[i];
+            }
+        }
+
+        Log.d(TAG, "[scaleDescriptionImages] newDescription: " + newDescription);
+
+        mDescription = newDescription;
+    }
+
+    public void setFormattedDate(String date) {
+        mFormattedDate = date;
+    }
+
+    public void setCreator(String creator) {
+        mPostedBy = creator;
+    }
+
+    public Story copy() {
+        return new Story(mTitle, mRawDate, mFormattedDate, mPostedBy, mDescription, mPlainText, mLink,
+                mImageUrls);
+    }
+
+    public void setPlainText(String plainText) {
+        mPlainText = plainText;
+    }
+
+    public void setImageUrls(ArrayList<String> imageUrls) {
+        mImageUrls = imageUrls;
+
+        if (getThumbnailUrl() != null) {
+            FeedData.getInstance().getImageLoader().prefetch(getThumbnailUrl());
+        }
+    }
+
+    public int compareTo(Story another) {
+        if (another == null) return 1;
+        Date anotherDate = another.getRawDate();
+        if (anotherDate == null) return 1;
+        if (mRawDate == null) return -1;
+        // sort descending, most recent first
+        return anotherDate.compareTo(mRawDate);
+    }
+
+    private Date getRawDate() {
+        return mRawDate;
+    }
+
+    public void setRawDate(Date date) {
+        mRawDate = date;
     }
 }

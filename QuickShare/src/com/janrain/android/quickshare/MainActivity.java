@@ -56,7 +56,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Feed
         mViewFeedSummary.setOnClickListener(this);
 
         if (FeedData.getInstance(this).getFeed().isEmpty()) {
-            FeedData.getInstance(this).asyncLoadJanrainBlog(this);
+            FeedData.getInstance(this).loadJanrainBlog(this);
         } else {
             mViewFeedSummary.setEnabled(true);
             mFeedHasLoaded = true;
@@ -74,7 +74,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Feed
             this.startActivity(new Intent(this, FeedSummaryActivity.class));
         } else {
             mViewFeedSummary.setText(R.string.loading_janrain_blog);
-            FeedData.getInstance(this).asyncLoadJanrainBlog(this);
+            FeedData.getInstance(this).loadJanrainBlog(this);
         }
     }
 

@@ -74,9 +74,11 @@ import com.janrain.android.engage.types.JREmailObject;
 import com.janrain.android.engage.types.JRMediaObject;
 import com.janrain.android.engage.types.JRSmsObject;
 import com.janrain.android.engage.utils.AndroidUtils;
+import com.janrain.android.engage.utils.Prefs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -110,7 +112,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private List<JRProvider> mSocialProviders;
 
     /* UI state */
-    private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared;
+    private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
     private boolean mSmsActivityExists;
     private boolean mEmailActivityExists;
     private String mSelectedTab = "";
@@ -148,14 +150,16 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (container == null) {
+            // We may have different layouts, and in one of them this
+            // fragment's containing frame may not exist.  The fragment
+            // may still be created from its saved state,
+            return null;
+        }
+
         View content = inflater.inflate(R.layout.jr_publish, container, false);
 
         initViews(content);
-
-        /* Initialize the provider shared-ness state map */
-        mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
-
-        configureEmailSmsButtons();
 
         return content;
     }
@@ -195,12 +199,38 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         mSmsButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
         mEmailButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
+
+        configureEmailSmsButtons();
+    }
+
+    private void configureEmailSmsButtons() {
+        List<ResolveInfo> resolves;
+        Intent intent;
+        intent = createSmsIntent("");
+        resolves = getActivity().getPackageManager().queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        mSmsActivityExists = resolves.size() > 0;
+
+        intent = createEmailIntent("", "");
+        resolves = getActivity().getPackageManager().queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        mEmailActivityExists = resolves.size() > 0;
+
+        showHideView(mEmailButton, mEmailActivityExists);
+        showHideView(mSmsButton, mSmsActivityExists);
     }
 
     @Override
     @SuppressWarnings("unchecked") // for de-serializing the HashMap below
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        if (getView() == null) {
+            // We may have different layouts, and in one of them this
+            // fragment's containing frame may not exist.  The fragment
+            // may still be created from its saved state,
+            return;
+        }
 
         mSessionData.addDelegate(mSessionDelegate);
         mActivityObject = mSessionData.getJRActivity();
@@ -364,6 +394,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     
     @Override
     public void onDestroyView() {
+        if (mUserCommentView != null && mUserCommentView.isEnabled()) {
+            Prefs.putString(Prefs.KEY_JR_USER_COMMENT, mUserCommentView.getText().toString());
+            Prefs.putLong(Prefs.KEY_JR_USER_COMMENT_TIME, new Date().getTime());
+        }
+
         dismissProgressDialog();
         mSessionData.removeDelegate(mSessionDelegate);
 
@@ -379,23 +414,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         super.onSaveInstanceState(outState);
     }
 
-    private void configureEmailSmsButtons() {
-        List<ResolveInfo> resolves;
-        Intent intent;
-        intent = createSmsIntent("");
-        resolves = getActivity().getPackageManager().queryIntentActivities(intent,
-                PackageManager.MATCH_DEFAULT_ONLY);
-        mSmsActivityExists = resolves.size() > 0;
-
-        intent = createEmailIntent("", "");
-        resolves = getActivity().getPackageManager().queryIntentActivities(intent,
-                PackageManager.MATCH_DEFAULT_ONLY);
-        mEmailActivityExists = resolves.size() > 0;
-
-        showHideView(mEmailButton, mEmailActivityExists);
-        showHideView(mSmsButton, mSmsActivityExists);
-    }
-
     private void showHideView(View v, boolean show) {
         if (show) v.setVisibility(View.VISIBLE);
         else v.setVisibility(View.GONE);
@@ -404,7 +422,14 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private void loadViewPropertiesWithActivityObject() {
         /* This sets up pieces of the UI before the provider configuration information
          * has been loaded */
-        mUserCommentView.setText(mActivityObject.getUserGeneratedContent());
+        String savedComment = Prefs.getString(Prefs.KEY_JR_USER_COMMENT, "");
+        long curTime = new Date().getTime();
+        long commentTime = Prefs.getLong(Prefs.KEY_JR_USER_COMMENT_TIME, 0);
+        if ((!"".equals(savedComment)) && ((curTime - commentTime) < 1000*60*60*24*7)) { /* one week */
+            mUserCommentView.setText(savedComment);
+        } else {
+            mUserCommentView.setText(mActivityObject.getUserGeneratedContent());
+        }
 
         JRMediaObject mo = null;
         if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
@@ -579,11 +604,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-
         if (mSessionData != null && mSessionDelegate != null) {
             mSessionData.removeDelegate(mSessionDelegate);
         }
+
+        super.onDestroy();
     }
 
     private View.OnClickListener mShareButtonListener = new View.OnClickListener() {
@@ -1039,6 +1064,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
             dismissProgressDialog();
             showActivityAsShared(true);
+            Prefs.remove(Prefs.KEY_JR_USER_COMMENT);
 
             //mWeAreCurrentlyPostingSomething = false;
             mWeHaveJustAuthenticated = false;

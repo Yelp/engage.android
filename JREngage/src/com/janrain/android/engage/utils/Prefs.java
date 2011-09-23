@@ -29,7 +29,7 @@
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
-package com.janrain.android.engage.prefs;
+package com.janrain.android.engage.utils;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -41,11 +41,6 @@ import com.janrain.android.engage.JREngage;
  * Utility class used for managing preferences in the Android global shared preferences.
  */
 public final class Prefs {
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
     public static final String KEY_JR_USER_INPUT = "jr_pref_user_input.";
     public static final String KEY_JR_FORCE_REAUTH = "jr_pref_force_reauth.";
     public static final String KEY_JR_HIDE_POWERED_BY = "jr_hide_powered_by";
@@ -54,11 +49,10 @@ public final class Prefs {
     public static final String KEY_JR_LAST_USED_SOCIAL_PROVIDER = "jr_last_used_social_provider";
     public static final String KEY_JR_BASE_URL = "jr_base_url";
     public static final String KEY_JR_ENGAGE_LIBRARY_VERSION = "jr_engage_library_version";
+    public static final String KEY_JR_USER_COMMENT = "jr_user_comment";
+    public static final String KEY_JR_USER_COMMENT_TIME = "jr_user_comment_time";
 
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
+    private Prefs() {}
 
     /**
      * Wrapper for getting shared preference string value by key.
@@ -67,7 +61,7 @@ public final class Prefs {
      * @param defValue The default value if not found.
      * @return The value of the preference, or defValue if not found.
      */
-    public static String getAsString(String key, String defValue) {
+    public static String getString(String key, String defValue) {
         return getSharedPreferences().getString(key, defValue);
     }
 
@@ -78,7 +72,7 @@ public final class Prefs {
      * @param defValue The default value if not found.
      * @return The value of the preference, or defValue if not found.
      */
-    public static boolean getAsBoolean(String key, boolean defValue) {
+    public static boolean getBoolean(String key, boolean defValue) {
         return getSharedPreferences().getBoolean(key, defValue);
     }
 
@@ -89,44 +83,28 @@ public final class Prefs {
      * @param defValue The default value if not found.
      * @return The value of the preference, or defValue if not found.
      */
-    public static int getAsInt(String key, int defValue) {
+    public static int getInt(String key, int defValue) {
         return getSharedPreferences().getInt(key, defValue);
     }
 
-    /**
-     * Wrapper for saving a string value to the shared preferences.
-     *
-     * @param key   Key for value to be saved.
-     * @param value The value to be saved.
-     */
     public static void putString(String key, String value) {
-        SharedPreferences.Editor ed = getEditor();
-        ed.putString(key, value);
-        ed.commit();
+        getEditor().putString(key, value).commit();
     }
 
-    /**
-     * Wrapper for saving a boolean value to the shared preferences.
-     *
-     * @param key   Key for value to be saved.
-     * @param value The value to be saved.
-     */
     public static void putBoolean(String key, boolean value) {
-        SharedPreferences.Editor ed = getEditor();
-        ed.putBoolean(key, value);
-        ed.commit();
+        getEditor().putBoolean(key, value).commit();
     }
 
-    /**
-     * Wrapper for saving an integer value to the shared preferences.
-     *
-     * @param key   Key for value to be saved.
-     * @param value The value to be saved.
-     */
     public static void putInt(String key, int value) {
-        SharedPreferences.Editor ed = getEditor();
-        ed.putInt(key, value);
-        ed.commit();
+        getEditor().putInt(key, value).commit();
+    }
+
+    public static void putLong(String key, long value) {
+        getEditor().putLong(key, value).commit();
+    }
+
+    public static long getLong(String key, int defaultValue) {
+        return getSharedPreferences().getLong(key, defaultValue);
     }
 
     private static SharedPreferences getSharedPreferences() {
@@ -137,7 +115,7 @@ public final class Prefs {
         return getSharedPreferences().edit();
     }
 
-    private Prefs() {
-        /* private constructor - utility class | no instance */
+    public static void remove(String key) {
+        getEditor().remove(key).commit();
     }
 }

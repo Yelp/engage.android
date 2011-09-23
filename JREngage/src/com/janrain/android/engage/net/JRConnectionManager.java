@@ -31,13 +31,15 @@
  */
 package com.janrain.android.engage.net;
 
+import android.os.Handler;
+import android.util.Config;
+import android.util.Log;
 import com.janrain.android.engage.net.async.AsyncHttpClient;
 import com.janrain.android.engage.net.async.AsyncHttpResponseHolder;
 import com.janrain.android.engage.net.async.AsyncHttpResponseListener;
 import org.apache.http.NameValuePair;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -46,13 +48,128 @@ import java.util.List;
  * @class JRConnectionManager
  **/
 public class JRConnectionManager implements AsyncHttpResponseListener {
+    private static final String TAG = JRConnectionManager.class.getSimpleName();
+	private static JRConnectionManager sInstance;
+
+    private JRConnectionManager() {}
+
+    public static synchronized JRConnectionManager getInstance() {
+		if (sInstance == null) sInstance = new JRConnectionManager();
+		return sInstance;
+	}
+
     /**
-     * Connection data for managed connections.
+     * Creates a managed HTTP GET connection.
+     *
+     * @param requestUrl
+     *      The URL to be executed. May not be null.
+     *
+     * @param delegate
+     *      The delegate (listener) class instance. May be null.
+     * @param tag
+     *      Optional tag for the connection, later passed to the delegate for the purpose of distinguishing
+     *      multiple connections handled by a single delegate.
      */
-	public static class ConnectionData {
-		private boolean mShouldReturnFullResponse;
-		private Object mTag;
-		private JRConnectionManagerDelegate mDelegate;
+	public static void createConnection(String requestUrl,
+                                        JRConnectionManagerDelegate delegate,
+                                        Object tag) {
+
+        createConnection(requestUrl, delegate, tag, null);
+	}
+
+    /**
+     * Creates a managed HTTP GET connection.
+     *
+     * @param requestUrl
+     *      The URL to be executed. May not be null.
+     * @param delegate
+     *      The delegate (listener) class instance. May be null. Callback methods will be invoked on the UI
+     *      thread.
+     * @param tag
+     *      Optional tag for the connection, later passed to the delegate for the purpose of distinguishing
+     *      multiple connections handled by a single delegate.
+     * @param requestHeaders
+     *      Optional list of HTTP headers to add to the request.
+     *
+     */
+    public static void createConnection(String requestUrl,
+                                        JRConnectionManagerDelegate delegate,
+                                        Object tag,
+                                        List<NameValuePair> requestHeaders) {
+        if (requestHeaders == null) requestHeaders = new ArrayList<NameValuePair>();
+
+        ConnectionData connectionData = new ConnectionData(delegate, tag);
+        connectionData.setRequestUrl(requestUrl);
+        connectionData.setRequestHeaders(requestHeaders);
+
+        new AsyncHttpClient.HttpSender(
+                connectionData,
+                new Handler(),
+                new AsyncHttpClient.HttpCallbackWrapper(getInstance(), connectionData)
+        ).start();
+        if (Config.LOGD) Log.d(TAG, "[executeHttpRequest] invoked");
+    }
+
+    /**
+     *  Creates a managed HTTP POST connection.
+     *
+     * @param requestUrl
+     *      The URL to be executed. May not be null.
+     * @param delegate
+     *      The delegate (listener) class instance. May be null. Callback methods will be invoked on the UI
+     *      thread.
+     * @param tag
+     *      Optional tag for the connection, later passed to the delegate for the purpose of distinguishing
+     *      multiple connections handled by a single delegate.
+     * @param requestHeaders
+     *      Optional list of HTTP headers to add to the request.
+     * @param postData
+     *      Optional data to post.
+     */
+    public static void createConnection(String requestUrl,
+                                        JRConnectionManagerDelegate delegate,
+                                        Object tag,
+                                        List<NameValuePair> requestHeaders,
+                                        byte[] postData) {
+        if (postData == null) postData = new byte[0];
+        if (requestHeaders == null) requestHeaders = new ArrayList<NameValuePair>();
+
+        ConnectionData connectionData = new ConnectionData(delegate, tag);
+        connectionData.setRequestUrl(requestUrl);
+        connectionData.setPostData(postData);
+        connectionData.setRequestHeaders(requestHeaders);
+
+        new AsyncHttpClient.HttpSender(
+                connectionData,
+                new Handler(),
+                new AsyncHttpClient.HttpCallbackWrapper(getInstance(), connectionData)
+        ).start();
+        if (Config.LOGD) Log.d(TAG, "[executeHttpRequest] invoked");
+    }
+
+
+	public void onResponseReceived(AsyncHttpResponseHolder response) {
+        String requestUrl = response.getUrl();
+        ConnectionData connectionData = response.getConnectionData();
+
+        JRConnectionManagerDelegate delegate = connectionData.mDelegate;
+
+        if (delegate == null) return;
+
+        if (response.hasException()) {
+            delegate.connectionDidFail(response.getException(), requestUrl, connectionData.mTag);
+        } else {
+            delegate.connectionDidFinishLoading(
+                    response.getHeaders(),
+                    response.getPayload(),
+                    requestUrl,
+                    connectionData.mTag);
+        }
+	}
+
+    public static class ConnectionData {
+        private Object mTag;
+        private JRConnectionManagerDelegate mDelegate;
         private String mRequestUrl;
         private byte[] mPostData;
 
@@ -71,178 +188,21 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
         private List<NameValuePair> mRequestHeaders;
 
         public ConnectionData(JRConnectionManagerDelegate delegate,
-				boolean shouldReturnFullResponse, Object userdata) {
-			mShouldReturnFullResponse = shouldReturnFullResponse;
-			mDelegate = delegate;
-			mTag = userdata;
-		}
-
-        public void setRequestUrl(String r) {
-            mRequestUrl = r;
+                              Object tag) {
+            mDelegate = delegate;
+            mTag = tag;
         }
 
-        public void setPostData(byte[] d) {
-            mPostData = d;
+        public void setRequestUrl(String requestUrl) {
+            mRequestUrl = requestUrl;
+        }
+
+        public void setPostData(byte[] data) {
+            mPostData = data;
         }
 
         public void setRequestHeaders(List<NameValuePair> requestHeaders) {
             mRequestHeaders = requestHeaders;
         }
     }
-
-	private static JRConnectionManager sInstance;
-
-    private JRConnectionManager() {
-    }
-
-	public static synchronized JRConnectionManager getInstance() {
-		if (sInstance == null) {
-			sInstance = new JRConnectionManager();
-		}
-		return sInstance;
-	}
-
-    /**
-     * Creates a managed HTTP GET connection.
-     *
-     * @param requestUrl
-     *      The URL to be executed. May not be null.
-     *
-     * @param delegate
-     *      The delegate (listener) class instance. May be null.
-     *
-     * @param shouldReturnFullResponse
-     *      <code>true</code> to call the "full response" connectionDidFinishLoading delegate method --
-     *      connectionDidFinishLoading(HttpResponseHeaders, byte[], String,  Object) --  which
-     *      includes the HTTP headers, or <code>false</code> to call
-     *      connectionDidFinishLoading(String, String, Object)
-     *
-     * @param userdata
-     *      The tag object associated with the connection. May be null.
-     */
-	public static void createConnection(String requestUrl,
-                                           JRConnectionManagerDelegate delegate,
-                                           boolean shouldReturnFullResponse,
-                                           Object userdata) {
-
-        createConnection(requestUrl, delegate, shouldReturnFullResponse,
-                new ArrayList<NameValuePair>(), userdata);
-	}
-
-    /**
-     * Creates a managed HTTP GET connection.
-     *
-     * @param requestUrl
-     *      The URL to be executed. May not be null.
-     *
-     * @param delegate
-     *      The delegate (listener) class instance. May be null.
-     *
-     * @param shouldReturnFullResponse
-     *      <code>true</code> to call the "full response" connectionDidFinishLoading delegate method --
-     *      connectionDidFinishLoading(HttpResponseHeaders, byte[], String,  Object) --  which
-     *      includes the HTTP headers, or <code>false</code> to call
-     *      connectionDidFinishLoading(String, String, Object)
-     *
-     * @param userdata
-     *      The tag object associated with the connection. May be null.
-     *
-     * @param requestHeaders
-     *      Any additional headers to be sent with the connection.
-     *
-     */
-    public static void createConnection(String requestUrl,
-                                           JRConnectionManagerDelegate delegate,
-                                           boolean shouldReturnFullResponse,
-                                           List<NameValuePair> requestHeaders,
-                                           Object userdata) {
-
-		// get singleton instance (lazy init)
-		JRConnectionManager instance = getInstance();
-
-        ConnectionData cd = new ConnectionData(delegate, shouldReturnFullResponse, userdata);
-        cd.setRequestUrl(requestUrl);
-        cd.setRequestHeaders(requestHeaders);
-
-		// create/store connection data
-		instance.mConnectionBuffers.add(cd);
-
-		// execute HTTP GET request
-		AsyncHttpClient.executeHttpGet(cd, instance);
-    }
-
-    /**
-     *  Creates a managed HTTP POST connection.
-     *
-     * @param requestUrl
-     *      The URL to be executed. May not be null.
-     *
-     * @param postData
-     *      The data to be sent to the server via POST. May be null.
-     *
-     * @param delegate
-     *      The delegate (listener) class instance. May be null.
-     *
-     * @param shouldReturnFullResponse
-     *      <code>true</code> to call the "full response" connectionDidFinishLoading delegate method --
-     *      connectionDidFinishLoading(HttpResponseHeaders, byte[], String,  Object) --  which
-     *      includes the HTTP headers, or <code>false</code> to call
-     *      connectionDidFinishLoading(String, String, Object)
-     *
-     * @param userdata
-     *      The tag object associated with the connection. May be null.
-     */
-    public static void createConnection(String requestUrl,
-                                           byte[] postData,
-                                           JRConnectionManagerDelegate delegate,
-                                           boolean shouldReturnFullResponse,
-                                           Object userdata) {
-        if (postData == null) postData = new byte[0];
-		JRConnectionManager instance = getInstance();
-        ConnectionData cd = new ConnectionData(delegate, shouldReturnFullResponse, userdata);
-        cd.setRequestUrl(requestUrl);
-        cd.setPostData(postData);
-
-		// create/store connection data
-		instance.mConnectionBuffers.add(cd);
-
-		// execute HTTP POST request
-		AsyncHttpClient.executeHttpPost(cd, instance);
-    }
-
-    /* Map of managed connections, where connection data is mapped to URL. */
-	//private HashMap<String, ConnectionData> mConnectionBuffers;
-    private HashSet<ConnectionData> mConnectionBuffers = new HashSet<ConnectionData>();
-
-	public void onResponseReceived(AsyncHttpResponseHolder response) {
-        String requestUrl = response.getUrl();
-        ConnectionData connectionData = response.getConnectionData();
-
-        mConnectionBuffers.remove(connectionData);
-        JRConnectionManagerDelegate delegate = connectionData.mDelegate;
-
-        if (delegate == null) return;
-
-        if (response.hasException()) {
-            delegate.connectionDidFail(response.getException(), requestUrl, connectionData.mTag);
-        } else {
-            if (connectionData.mShouldReturnFullResponse && response.hasHeaders()) {
-                // full response
-                delegate.connectionDidFinishLoading(
-                        response.getHeaders(),
-                        response.getPayload(),
-                        requestUrl,
-                        connectionData.mTag);
-            } else {
-                // non-full response
-                byte[] payload = response.getPayload();
-                if (payload == null) payload = new byte[0];
-                delegate.connectionDidFinishLoading(
-                        new String(payload),
-                        requestUrl,
-                        connectionData.mTag);
-            }
-
-        }
-	}
 }

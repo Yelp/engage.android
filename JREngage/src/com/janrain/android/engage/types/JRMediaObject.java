@@ -31,18 +31,18 @@
  */
 package com.janrain.android.engage.types;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import com.janrain.android.engage.utils.IOUtils;
+import android.text.TextUtils;
+import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.net.JRConnectionManager;
+import com.janrain.android.engage.net.JRConnectionManagerDelegate;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * @internal
@@ -51,14 +51,7 @@ import java.net.URLConnection;
  * Base class for JRImageMediaObject, JRFlashMediaObject, and JRMp3MediaObject.
  **/
 public abstract class JRMediaObject implements Serializable {
-    static {
-        // HttpURLConnection has a known bug discussed
-        // here: http://code.google.com/p/android/issues/detail?id=7786
-        // here: http://stackoverflow.com/questions/1440957/httpurlconnection-getresponsecode-returns-1-on-second-invocation/1441491#1441491
-        // and here: http://stackoverflow.com/questions/2792843/httpurlconnection-whats-the-deal-with-having-to-read-the-whole-response
-        // the following is a workaround:
-        System.setProperty("http.keepAlive", "false");
-    }
+    //private static final String TAG = JRMediaObject.class.getSimpleName();
 
     @JsonIgnore
     private transient Bitmap mThumbnailBitmap;
@@ -70,34 +63,31 @@ public abstract class JRMediaObject implements Serializable {
 
     public abstract String getType();
 
-    @SuppressWarnings("unchecked")
     public void downloadThumbnail(final ThumbnailAvailableListener tal) {
         if (mThumbnailBitmap != null) {
             tal.onThumbnailAvailable(mThumbnailBitmap);
             return;
         }
 
-        new AsyncTask<Void, Void, Bitmap>(){
-            @Override
-            protected Bitmap doInBackground(Void... v) {
-                try {
-                    URL url = new URL(getThumbnail());
-                    URLConnection urlc = url.openConnection();
-                    byte[] data = IOUtils.readFromStream(urlc.getInputStream());
-                    return BitmapFactory.decodeByteArray(data, 0, data.length);
-                } catch (MalformedURLException e) {
-                    return null;
-                } catch (IOException e) {
-                    return null;
-                }
-            }
+        if (!TextUtils.isEmpty(getThumbnail())) {
+            JRConnectionManager.createConnection(getThumbnail(),
+                    new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
+                        @Override
+                        public void connectionDidFinishLoading(HttpResponseHeaders headers,
+                                                               byte[] payload,
+                                                               String requestUrl,
+                                                               Object tag) {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(payload, 0, payload.length);
+                            mThumbnailBitmap = bitmap;
 
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                mThumbnailBitmap = bitmap;
-                tal.onThumbnailAvailable(bitmap);
-            }
-        }.execute();
+                            if (bitmap != null) tal.onThumbnailAvailable(bitmap);
+                        }
+                    }, null);
+        }
+    }
+
+    private Context getContext() {
+        return JREngage.getActivity();
     }
 
     public interface ThumbnailAvailableListener {

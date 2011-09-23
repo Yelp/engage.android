@@ -174,6 +174,8 @@ public class JREngage {
                                         String appId,
                                         String tokenUrl,
                                         JREngageDelegate delegate) {
+        Log.i(TAG, "[initInstance] git resource '" + activity.getString(R.string.jr_git_describe) +
+                "' activity '" + activity + "' appId '" + appId + "' tokenUrl '" + tokenUrl + "'");
         if (activity == null) {
             Log.e(TAG, "[initialize] context parameter cannot be null.");
             throw new IllegalArgumentException("context parameter cannot be null.");

@@ -39,25 +39,19 @@ import com.janrain.android.engage.net.async.HttpResponseHeaders;
  * @interface JRConnectionManagerDelegate
  **/
 public interface JRConnectionManagerDelegate {
-
-	void connectionDidFinishLoading(String payload, String requestUrl, Object userdata);
 	void connectionDidFinishLoading(HttpResponseHeaders headers,
                                     byte[] payload,
                                     String requestUrl,
-                                    Object userdata);
-	void connectionDidFail(Exception ex, String requestUrl, Object userdata);
+                                    Object tag);
 
-    public abstract class SimpleJRConnectionManagerDelegate
-            implements JRConnectionManagerDelegate {
+	void connectionDidFail(Exception ex, String requestUrl, Object tag);
 
-        public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
-        }
-
+    public abstract class SimpleJRConnectionManagerDelegate implements JRConnectionManagerDelegate {
         public void connectionDidFinishLoading(HttpResponseHeaders headers,
                                                byte[] payload,
                                                String requestUrl,
-                                               Object userdata) {}
-        public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {}
-    }
+                                               Object tag) {}
 
+        public void connectionDidFail(Exception ex, String requestUrl, Object tag) {}
+    }
 }

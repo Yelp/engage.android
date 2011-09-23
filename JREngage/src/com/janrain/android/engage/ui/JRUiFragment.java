@@ -120,7 +120,8 @@ public abstract class JRUiFragment extends Fragment {
 
         mSessionData = JRSessionData.getInstance();
         if (mSessionData != null) mSessionData.setUiIsShowing(true);
-        setRetainInstance(true);
+        /* Embedded mode isn't compatible with setRetainInstance */
+        if (!isEmbeddedMode()) setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
@@ -161,9 +162,13 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onResume() {
-        if (Config.LOGD) Log.d(TAG, "[onResume]");
         super.onResume();
-        showHideTaglines();
+        if (Config.LOGD) Log.d(TAG, "[onResume]");
+        if (isShowing()) showHideTaglines();
+    }
+
+    public final boolean isShowing() {
+        return getView() != null;
     }
 
     @Override
@@ -317,7 +322,7 @@ public abstract class JRUiFragment extends Fragment {
         return retval;
     }
 
-    protected  boolean isEmbeddedMode() {
+    public final boolean isEmbeddedMode() {
         FragmentActivity a = getActivity();
         return a != null && !(a instanceof JRFragmentHostActivity);
     }

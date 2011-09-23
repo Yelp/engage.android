@@ -108,7 +108,7 @@ public class FeedSummaryFragment extends ListFragment implements FeedData.FeedRe
     public void onListItemClick(ListView l, View v, int pos, long id) {
         if (pos == 0) {
             ((TextView) v.findViewById(R.id.row_story_title)).setText("Loading new articles...");
-            mFeedData.asyncLoadJanrainBlog(this);
+            mFeedData.loadJanrainBlog(this);
         } else {
             // - 1 because the 0th row is really a reload button
             showDetails(pos - 1);
@@ -262,7 +262,7 @@ public class FeedSummaryFragment extends ListFragment implements FeedData.FeedRe
 
                 title.setText(story.getTitle());
                 text.setText(story.getPlainText());
-                date.setText(story.getDate());
+                date.setText(story.getFormattedDate());
             }
 
             return v;

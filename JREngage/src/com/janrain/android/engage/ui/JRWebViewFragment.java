@@ -56,6 +56,7 @@ import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
@@ -233,7 +234,7 @@ public class JRWebViewFragment extends JRUiFragment {
         if (Config.LOGD) Log.d(TAG, "[loadMobileEndpointUrl] loading url: " + urlToLoad);
 
 
-        JRConnectionManager.createConnection(urlToLoad, mMobileEndPointConnectionDelegate, false, null);
+        JRConnectionManager.createConnection(urlToLoad, mMobileEndPointConnectionDelegate, null);
     }
 
     DownloadListener mWebViewDownloadListener = new DownloadListener() {
@@ -345,8 +346,12 @@ public class JRWebViewFragment extends JRUiFragment {
     private JRConnectionManagerDelegate mMobileEndPointConnectionDelegate =
             new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
         @Override
-        public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
-            Log.d(TAG, "[connectionDidFinishLoading] userdata: " + userdata + " | payload: " + payload);
+        public void connectionDidFinishLoading(HttpResponseHeaders headers,
+                                               byte[] payload,
+                                               String requestUrl,
+                                               Object tag) {
+            String payloadString = new String(payload);
+            Log.d(TAG, "[connectionDidFinishLoading] userdata: " + tag + " | payload: " + payloadString);
 
             //if (AndroidUtils.isSmallNormalOrLargeScreen()) {
             //    dismissProgressDialog();
@@ -354,7 +359,7 @@ public class JRWebViewFragment extends JRUiFragment {
                 hideProgressSpinner();
             //}
 
-            JRDictionary payloadDictionary = JRDictionary.fromJSON(payload);
+            JRDictionary payloadDictionary = JRDictionary.fromJSON(payloadString);
             JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
             final String result = resultDictionary.getAsString("stat");
             if ("ok".equals(result)) {
@@ -413,7 +418,7 @@ public class JRWebViewFragment extends JRUiFragment {
                 } else {
                     Log.e(TAG, "unrecognized error");
                     JREngageError err = new JREngageError(
-                            "Authentication failed: " + payload,
+                            "Authentication failed: " + payloadString,
                             JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
                             JREngageError.ErrorType.AUTHENTICATION_FAILED);
 
@@ -424,16 +429,13 @@ public class JRWebViewFragment extends JRUiFragment {
                             "An error occurred while attempting to sign in.");
                 }
             }
-            //} else if (userdata.equals("request")) {
-            //    mWebView.loadDataWithBaseURL(requestUrl, payload, null, "utf-8", null);
-            //}
         }
 
         @Override
-        public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
-            Log.i(TAG, "[connectionDidFail] userdata: " + userdata, ex);
+        public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
+            Log.i(TAG, "[connectionDidFail] userdata: " + tag, ex);
 
-            if ((userdata != null) && (userdata instanceof String)) {
+            if ((tag != null) && (tag instanceof String)) {
                 final JREngageError error = new JREngageError(
                         "Authentication failed",
                         JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
@@ -447,10 +449,6 @@ public class JRWebViewFragment extends JRUiFragment {
                 showAlertDialog(getString(R.string.jr_dialog_sign_in_failed),
                         getString(R.string.jr_dialog_network_error));
 
-                //} else if (userdata.equals("request")) {
-                //    // Back button?
-                //    mSessionData.triggerAuthenticationDidFail(error);
-                //}
             }
         }
     };

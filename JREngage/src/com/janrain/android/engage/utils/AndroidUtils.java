@@ -128,4 +128,9 @@ public class AndroidUtils {
     public static boolean isXlarge() {
         return (getScreenSize() == Configuration.SCREENLAYOUT_SIZE_XLARGE);
     }
+
+    public static boolean isLandscape() {
+        return JREngage.getActivity().getResources().getConfiguration().orientation ==
+                Configuration.ORIENTATION_LANDSCAPE;
+    }
 }

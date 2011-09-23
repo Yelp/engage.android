@@ -34,6 +34,7 @@ package com.janrain.android.engage.types;
 import android.util.Log;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.utils.AndroidUtils;
 import org.json.JSONException;
@@ -548,14 +549,13 @@ public class JRActivityObject implements Serializable {
             JRConnectionManagerDelegate jrcmd =
                     new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
                 @Override
-                public void connectionDidFinishLoading(String payload,
-                                                       String requestUrl,
-                                                       Object userdata) {
+                public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object tag) {
                     String shortUrl = getUrl();
+                    String payloadString = new String(payload);
 
                     try {
-                        Log.d(TAG, "fetchShortenedURLs connectionDidFinishLoading: " + payload);
-                        JSONObject jso = (JSONObject) (new JSONTokener(payload)).nextValue();
+                        Log.d(TAG, "fetchShortenedURLs connectionDidFinishLoading: " + payloadString);
+                        JSONObject jso = (JSONObject) (new JSONTokener(payloadString)).nextValue();
                         jso = jso.getJSONObject("urls");
                         JSONObject jsonActivityUrls = jso.getJSONObject(JRSessionData.USERDATA_ACTIVITY_KEY);
                         JSONObject jsonSmsUrls = jso.getJSONObject("sms");
@@ -590,14 +590,14 @@ public class JRActivityObject implements Serializable {
                 }
 
                 @Override
-                public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
+                public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
                     mIsShortening = false;
                     updateUI(getUrl());
                 }
             };
 
             // Invoke the network call
-            JRConnectionManager.createConnection(getUrlsUrl, jrcmd, false, null);
+            JRConnectionManager.createConnection(getUrlsUrl, jrcmd, null);
         } catch (JSONException e) {
             Log.e(TAG, "URL shortening JSON error", e);
         }

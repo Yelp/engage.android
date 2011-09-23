@@ -37,10 +37,15 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.sax.Element;
+import android.sax.EndElementListener;
+import android.sax.EndTextElementListener;
+import android.sax.RootElement;
 import android.text.Editable;
 import android.text.Html;
 import android.util.Config;
 import android.util.Log;
+import android.util.Xml;
 import android.widget.Toast;
 import com.google.android.filecache.FileResponseCache;
 import com.google.android.imageloader.BitmapContentHandler;
@@ -48,30 +53,29 @@ import com.google.android.imageloader.ImageLoader;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
+import com.janrain.android.engage.net.JRConnectionManager;
+import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Archiver;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.net.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static com.janrain.android.quickshare.QuickShareEnvironment.getAppId;
-import static com.janrain.android.quickshare.QuickShareEnvironment.getTokenUrl;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class FeedData {
     private static final String TAG = FeedData.class.getSimpleName();
@@ -80,12 +84,14 @@ public class FeedData {
     }
 
     private final Uri FEED_URL = Uri.parse("http://www.janrain.com/feed/blogs");
+    SimpleDateFormat FEED_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-ddzzzhh:mm:ss'-:00'");
+    SimpleDateFormat MORE_READABLE_DATE_FORMAT = new SimpleDateFormat("EEEE, MMMM d, yyyy h:mm aa");
 
     private static final String ARCHIVE_STORIES_ARRAY = "storiesArray";
     private static final String ARCHIVE_STORY_LINKS_HASH = "storyLinksHash";
 
-    private static String ENGAGE_APP_ID = getAppId();
-    private static String ENGAGE_TOKEN_URL = getTokenUrl();
+    private static String ENGAGE_APP_ID = QuickShareEnvironment.getAppId();
+    private static String ENGAGE_TOKEN_URL = QuickShareEnvironment.getTokenUrl();
 
     private static FeedData sInstance;
 
@@ -149,8 +155,8 @@ public class FeedData {
 
         FileResponseCache frc = new JRFileResponseCache(activity);
         JRFileResponseCache.setDefault(frc);
-        ContentHandler bmch = JRFileResponseCache.capture(new BitmapContentHandler(), null);
-        ContentHandler pfch = JRFileResponseCache.capture(JRFileResponseCache.sink(), null);
+        java.net.ContentHandler bmch = JRFileResponseCache.capture(new BitmapContentHandler(), null);
+        java.net.ContentHandler pfch = JRFileResponseCache.capture(JRFileResponseCache.sink(), null);
         mImageLoader = new ImageLoader(ImageLoader.DEFAULT_TASK_LIMIT, null, bmch, pfch,
                 ImageLoader.DEFAULT_CACHE_SIZE, null);
 
@@ -194,89 +200,66 @@ public class FeedData {
 
     FeedReaderListener mListener;
 
-    @SuppressWarnings("unchecked")
-    public void asyncLoadJanrainBlog(FeedReaderListener listener) {
+    public void loadJanrainBlog(final FeedReaderListener listener) {
         mListener = listener;
+        JRConnectionManager.createConnection(FEED_URL.toString(),
+                new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
+                    @Override
+                    public void connectionDidFinishLoading(HttpResponseHeaders headers,
+                                                           byte[] payload,
+                                                           String requestUrl,
+                                                           Object tag) {
+                        processBlogLoad(payload);
+                    }
 
+                    @Override
+                    public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
+                        listener.asyncFeedReadFailed();
+                    }
+                }, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void processBlogLoad(final byte[] payload) {
         new AsyncTask<Void, Void, Boolean>() {
-            private ArrayList<String> imageUrls;
-
             protected Boolean doInBackground(Void... v) {
-                logd("asyncLoadJanrainBlog", "loading blog");
+                logd("loadJanrainBlog", "loading blog");
 
-                try {
-                    logd("asyncLoadJanrainBlog", "opening blog stream");
-                    URL u = (new URL(FEED_URL.toString()));
-                    URLConnection uc = u.openConnection();
-                    InputStream is = uc.getInputStream();
-                    logd("asyncLoadJanrainBlog", "blog stream open");
+                final Story currentStory = new Story();
+                RootElement root = new RootElement("rss");
+                Element channel = root.getChild("channel");
+                Element item = channel.getChild("item");
+                item.setEndElementListener(new EndElementListener(){
+                    public void end() {
+                        if (mStoryLinks.contains(currentStory.getLink())) return;
 
-                    logd("asyncLoadJanrainBlog", "instantiating blog factory");
-                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                    dbf.setCoalescing(true);
-                    dbf.setValidating(false);
-                    dbf.setNamespaceAware(false);
-                    DocumentBuilder db = dbf.newDocumentBuilder();
-                    logd("asyncLoadJanrainBlog", "blog factory instantiated");
+                        if (Config.LOGD) Log.d(TAG, "[addStoryOnlyIfNew] story hasn't been added");
 
-                    /* The following parse call takes ten seconds on a fast phone.
-                        XMLPullParser is said to be a faster way to go.
-                        Sample code here: http://groups.google.com/group/android-developers/msg/ddc6a8e83963a6b5
-                        Another thread: http://stackoverflow.com/questions/4958973/3rd-party-android-xml-parser */
-                    logd("asyncLoadJanrainBlog", "parsing feed");
-
-                    // Due to some weird ~half read connection problems this code
-                    // is paranoid about input streams. It reads everything into a BIS to ensure that it's
-                    // all available for db.parse
-                    //BufferedInputStream bis = new BufferedInputStream(is);
-                    //bis.mark(uc.getContentLength());
-                    //byte[] buffer = new byte[1000];
-                    // XXX this for loop just reads all the data into bis, it has no loop body
-                    //for (int r=0; r != -1; r = bis.read(buffer));
-                    //bis.reset();
-
-                    Document d = db.parse(is);
-                    logd("asyncLoadJanrainBlog", "feed parsed");
-
-                    Element rss = (Element) d.getElementsByTagName("rss").item(0);
-                    Element channel = (Element) rss.getElementsByTagName("channel").item(0);
-
-                    NodeList items = channel.getElementsByTagName("item");
-                    int numItems = items.getLength();
-
-                    logd("asyncLoadJanrainBlog", "walking " + numItems + " stories");
-
-                    for (int i = 0; i < numItems; i++) {
-                        Element item = (Element) items.item(i);
-
-                        Element title = (Element) item.getElementsByTagName("title").item(0);
-                        Element link = (Element) item.getElementsByTagName("link").item(0);
-                        Element description = (Element) item.getElementsByTagName("description").item(0);
-                        Element date = (Element) item.getElementsByTagName("pubDate").item(0);
-                        Element postedBy = (Element) item.getElementsByTagName("dc:creator").item(0);
-
-                        String titleText = title.getFirstChild().getNodeValue();
-                        String linkText = link.getFirstChild().getNodeValue();
-                        String dateText = date.getFirstChild().getNodeValue();
-                        String postedByText = postedBy.getFirstChild().getNodeValue();
-
-                        logd("asyncLoadJanrainBlog", "adding story: " + titleText);
-
-                        /* We need to concatenate all the children of the description element (which has
-                            ~100s of TextElement children) in order to come up with the complete
-                            description text */
-                        String descriptionText = "";
-                        NodeList nl = description.getChildNodes();
-                        for (int x = 0; x < nl.getLength(); x++) {
-                            String nodeValue = nl.item(x).getNodeValue();
-                            descriptionText += nodeValue;
+                        synchronized (mStories) {
+                            mStories.add(currentStory.copy());
+                            Collections.sort(mStories);
+                            mStoryLinks.add(currentStory.getLink());
                         }
+                    }
+                });
+                item.getChild("title").setEndTextElementListener(new EndTextElementListener() {
+                    public void end(String body) {
+                        currentStory.setTitle(body);
+                    }
+                });
+                item.getChild("link").setEndTextElementListener(new EndTextElementListener(){
+                    public void end(String body) {
+                        currentStory.setLink(body);
+                    }
+                });
+                item.getChild("description").setEndTextElementListener(new EndTextElementListener(){
+                    public void end(String body) {
+                        currentStory.setDescription(body);
 
-                        imageUrls = new ArrayList<String>();
-
+                        final ArrayList<String> imageUrls = new ArrayList<String>();
                         /* The description is in HTML, so we decode it to display it as plain text,
                             and while decoding it we yoink out a link to an image if there is one. */
-                        String plainText = Html.fromHtml(descriptionText, new Html.ImageGetter() {
+                        String plainText = Html.fromHtml(body, new Html.ImageGetter() {
                             public Drawable getDrawable(String s) {
                                 imageUrls.add(FEED_URL.getScheme() + "://" + FEED_URL.getHost() + s);
                                 return null;
@@ -290,47 +273,46 @@ public class FeedData {
 
                         /* Remove Unicode object characters */
                         plainText = plainText.replaceAll("\ufffc", "");
-
+                        currentStory.setPlainText(plainText);
+                        currentStory.setImageUrls(imageUrls);
+                    }
+                });
+                item.getChild("pubDate").setEndTextElementListener(new EndTextElementListener(){
+                    public void end(String body) {
                         // Parse the blog dates, and then reformat them to be more readable.
                         // Example: 2011-04-25PDT04:30:00-:00
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-ddzzzhh:mm:ss'-:00'");
-                        SimpleDateFormat moreReadableDate =
-                                new SimpleDateFormat("EEEE, MMMM d, yyyy h:mm aa");
                         try {
-                            Date parsedDate = sdf.parse(dateText);
-                            dateText = moreReadableDate.format(parsedDate);
+                            Date parsedDate = FEED_DATE_FORMAT.parse(body);
+                            currentStory.setRawDate(parsedDate);
+                            body = MORE_READABLE_DATE_FORMAT.format(parsedDate);
                         } catch (ParseException e) {
-                            //do nothing, leaving the date as it was
+                            // do nothing to the formatted date, leaving it as it was
+                            currentStory.setRawDate(new Date());
                         }
 
-                        Story story = new Story(titleText, dateText, postedByText, descriptionText,
-                                plainText, linkText, imageUrls);
-
-                        if (!addStoryOnlyIfNew(story, i)) break;
+                        currentStory.setFormattedDate(body);
                     }
-                    logd("asyncLoadJanrainBlog", "feed walked");
+                });
+                item.getChild("dc:creator").setEndTextElementListener(new EndTextElementListener() {
+                    public void end(String body) {
+                        currentStory.setCreator(body);
+                    }
+                });
 
-                    logd("asyncLoadJanrainBlog", "saving stories");
-                    Archiver.save(ARCHIVE_STORIES_ARRAY, mStories);
-                    Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
-                    logd("asyncLoadJanrainBlog", "stories saved");
-
-                    /* If there are no exceptions, then it was a success */
-                    return true;
-                } catch (MalformedURLException e) {
-                    logd("asyncLoadJanrainBlog", "MalformedURLException", e);
-                } catch (IOException e) {
-                    logd("asyncLoadJanrainBlog", "IOException", e);
-                } catch (ParserConfigurationException e) {
-                    logd("asyncLoadJanrainBlog", "ParserConfigurationException", e);
-                } catch (SAXException e) {
-                    logd("asyncLoadJanrainBlog", "SAXException", e);
-                } catch (NullPointerException e) {
-                    logd("asyncLoadJanrainBlog", "NullPointerException", e);
+                try {
+                    Xml.parse(new ByteArrayInputStream(payload),
+                            Xml.Encoding.UTF_8,
+                            root.getContentHandler());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
 
-                /* If there were exceptions, then it was a failure. */
-                return false;
+                logd("loadJanrainBlog", "saving stories");
+                Archiver.save(ARCHIVE_STORIES_ARRAY, mStories);
+                Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
+                logd("loadJanrainBlog", "stories saved");
+
+                return true;
             }
 
             protected void onPostExecute(Boolean loadSuccess) {
@@ -344,24 +326,6 @@ public class FeedData {
                 }
             }
         }.execute();
-    }
-
-    private boolean addStoryOnlyIfNew(Story story, int index) {
-        if (mStoryLinks.contains(story.getLink()))
-            return false;
-
-        if (Config.LOGD)
-            Log.d(TAG, "[addStoryOnlyIfNew] story hasn't been added");
-
-        synchronized (mStories) {
-            if (index <= mStories.size())
-                mStories.add(index, story);
-            else
-                mStories.add(story);
-            mStoryLinks.add(story.getLink());
-        }
-
-        return true;
     }
 
     public ArrayList<Story> getFeed() {

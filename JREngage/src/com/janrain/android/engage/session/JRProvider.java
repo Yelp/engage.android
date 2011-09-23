@@ -44,7 +44,7 @@ import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
-import com.janrain.android.engage.prefs.Prefs;
+import com.janrain.android.engage.utils.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -416,8 +416,8 @@ public class JRProvider implements Serializable {
     public void loadDynamicVariables() {
         if (Config.LOGD) Log.d("JRProvider", "[prov] user input: " + Prefs.KEY_JR_USER_INPUT + mName );
 
-    	mUserInput = Prefs.getAsString(Prefs.KEY_JR_USER_INPUT + mName, "");
-    	mForceReauth = Prefs.getAsBoolean(Prefs.KEY_JR_FORCE_REAUTH + mName, false);
+    	mUserInput = Prefs.getString(Prefs.KEY_JR_USER_INPUT + mName, "");
+    	mForceReauth = Prefs.getBoolean(Prefs.KEY_JR_FORCE_REAUTH + mName, false);
     }
 
     public String toString() {

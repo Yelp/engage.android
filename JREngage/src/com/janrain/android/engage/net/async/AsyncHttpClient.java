@@ -38,18 +38,22 @@ import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.utils.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +70,7 @@ public final class AsyncHttpClient {
 
     private AsyncHttpClient() {}
 
-	private static class HttpSender extends Thread {
+	public static class HttpSender extends Thread {
 		private static final String TAG = HttpSender.class.getSimpleName();
 
         private String mUrl;
@@ -75,20 +79,11 @@ public final class AsyncHttpClient {
 		private Handler mHandler;
 		private HttpCallbackWrapper mWrapper;
 
-        public HttpSender(String url, List<NameValuePair> requestHeaders,
+        public HttpSender(JRConnectionManager.ConnectionData connectionData,
                           Handler handler, HttpCallbackWrapper wrapper) {
-            mUrl = url;
-            mHeaders = requestHeaders;
-            mPostData = null;
-            mHandler = handler;
-            mWrapper = wrapper;
-        }
-
-        public HttpSender(String url, byte[] postData,
-                          Handler handler, HttpCallbackWrapper wrapper) {
-            mUrl = url;
-            mHeaders = null;
-            mPostData = postData;
+            mUrl = connectionData.getRequestUrl();
+            mHeaders = connectionData.getRequestHeaders();
+            mPostData = connectionData.getPostData();
             mHandler = handler;
             mWrapper = wrapper;
         }
@@ -96,71 +91,83 @@ public final class AsyncHttpClient {
 		public void run() {
 			if (Config.LOGD) Log.d(TAG, "[run] BEGIN, url: " + mUrl);
 
-            try {
-                HttpParams params = new BasicHttpParams();
-                HttpConnectionParams.setConnectionTimeout(params, 10000); // ten second timeout
-                HttpConnectionParams.setSoTimeout(params, 10000);
+            int sleepTime = 1000;
 
-                DefaultHttpClient c = new DefaultHttpClient(params);
-                HttpUriRequest request;
-                if (mPostData != null) {
-                    request = new HttpPost(mUrl);
-                    ((HttpPost) request).setEntity(new ByteArrayEntity(mPostData));
-                    request.addHeader("Content-Type", "application/x-www-form-urlencoded");
-                    request.addHeader("Content-Language", "en-US");
-                } else {
-                    request = new HttpGet(mUrl);
+            while (true) {
+                try {
+                    HttpParams connectionParams = new BasicHttpParams();
+                    HttpConnectionParams.setConnectionTimeout(connectionParams, 10000); // ten second timeout
+                    HttpConnectionParams.setSoTimeout(connectionParams, 10000);
+
+                    HttpUriRequest request;
+                    if (mPostData != null) {
+                        request = new HttpPost(mUrl);
+                        ((HttpPost) request).setEntity(new ByteArrayEntity(mPostData));
+                        request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+                        request.addHeader("Content-Language", "en-US");
+                    } else {
+                        request = new HttpGet(mUrl);
+                    }
+
+                    request.addHeader("User-Agent", USER_AGENT);
+                    request.addHeader("Accept-Encoding", ACCEPT_ENCODING);
+                    if (mHeaders == null) mHeaders = new ArrayList<NameValuePair>();
+                    for (NameValuePair header : mHeaders) request.addHeader(header.getName(), header.getValue());
+
+                    HttpResponse response = new DefaultHttpClient().execute(request);
+
+                    HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response);
+
+                    HttpEntity entity = response.getEntity();
+                    byte[] data = entity == null? new byte[0] : IOUtils.readFromStream(entity.getContent(), true);
+                    String dataString = new String(data);
+
+                    switch (response.getStatusLine().getStatusCode()) {
+                    case HttpStatus.SC_OK:
+                        if (Config.LOGD) Log.d(TAG, "[run] HTTP_OK");
+                        if (Config.LOGD) Log.d(TAG, "[run] headers: " + headers.toString());
+                        if (Config.LOGD) Log.d(TAG, "[run] data: " + dataString);
+                        mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
+                        break;
+                    case HttpStatus.SC_NOT_MODIFIED:
+                        if (Config.LOGD) Log.d(TAG, "[run] HTTP_NOT_MODIFIED");
+                        mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
+                        break;
+                    case HttpStatus.SC_CREATED:
+                        // Response from the Engage trail creation and maybe URL shortening calls
+                        if (Config.LOGD) Log.d(TAG, "[run] HTTP_CREATED");
+                        mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
+                        break;
+                    default:
+                        // Maybe this shouldn't be globbed together, but instead be structured
+                        // to allow the error handler to make meaningful use of the web
+                        // servers response (contained in String r)
+                        String message = "[run] Unexpected HTTP response:  [responseCode: "
+                                + response.getStatusLine().getStatusCode() + " | reasonPhrase: "
+                                + response.getStatusLine().getReasonPhrase() + " | entity: "
+                                + dataString;
+
+                        Log.e(TAG, message);
+
+                        mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, new Exception(message)));
+                    }
+
+                    mHandler.post(mWrapper);
+                    return;
+                } catch (IOException e) {
+                    Log.e(TAG, "[run] Problem executing HTTP request.", e);
+                    Log.e(TAG, this.toString());
+                    mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, e));
+                    mHandler.post(mWrapper);
                 }
 
-                request.addHeader("User-Agent", USER_AGENT);
-                request.addHeader("Accept-Encoding", ACCEPT_ENCODING);
-                if (mHeaders == null) mHeaders = new ArrayList<NameValuePair>();
-                for (NameValuePair header : mHeaders) request.addHeader(header.getName(), header.getValue());
-
-                HttpResponse response = c.execute(request);
-
-                HttpResponseHeaders headers = HttpResponseHeaders.fromConnection(response);
-
-                HttpEntity entity = response.getEntity();
-                byte[] data = entity == null? new byte[0] : IOUtils.readFromStream(entity.getContent(), true);
-                String dataString = new String(data);
-
-                switch (response.getStatusLine().getStatusCode()) {
-                case HttpURLConnection.HTTP_OK:
-                    if (Config.LOGD) Log.d(TAG, "[run] HTTP_OK");
-                    if (Config.LOGD) Log.d(TAG, "[run] headers: " + headers.toString());
-                    if (Config.LOGD) Log.d(TAG, "[run] data: " + dataString);
-                    mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
-                    break;
-                case HttpURLConnection.HTTP_NOT_MODIFIED:
-                    if (Config.LOGD) Log.d(TAG, "[run] HTTP_NOT_MODIFIED");
-                    mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
-                    break;
-                case HttpURLConnection.HTTP_CREATED:
-                    // Response from the Engage trail creation and maybe URL shortening calls
-                    if (Config.LOGD) Log.d(TAG, "[run] HTTP_CREATED");
-                    mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
-                    break;
-                default:
-                    // Maybe this shouldn't be globbed together, but instead be structured
-                    // to allow the error handler to make meaningful use of the web
-                    // servers response (contained in String r)
-                    String message = "[run] Unexpected HTTP response:  [responseCode: "
-                            + response.getStatusLine().getStatusCode() + " | responseMessage: "
-                            + response.getStatusLine().getReasonPhrase() + " | errorStream: "
-                            + dataString;
-
-                    Log.e(TAG, message);
-
-                    mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, new Exception(message)));
+                try {
+                    if (sleepTime > 8000) return;
+                    Thread.sleep(sleepTime);
+                    sleepTime *= 2;
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
-
-                mHandler.post(mWrapper);
-            } catch (IOException e) {
-                Log.e(TAG, "[run] Problem executing HTTP request.", e);
-                Log.e(TAG, this.toString());
-                mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, e));
-                mHandler.post(mWrapper);
             }
 		}
 
@@ -174,7 +181,7 @@ public final class AsyncHttpClient {
 	/*
 	 * Sends full response (or exception) back to the listener.
 	 */
-	private static class HttpCallbackWrapper implements Runnable {
+	public static class HttpCallbackWrapper implements Runnable {
 		private static final String TAG = HttpCallbackWrapper.class.getSimpleName();
 
 		private AsyncHttpResponseListener mListener;
@@ -197,45 +204,4 @@ public final class AsyncHttpClient {
 			if (Config.LOGD) Log.d(TAG, "[setResponse] response set.");
 		}
 	}
-
-	/**
-	 * Executes the specified HTTP GET request asynchronously.  The results will be returned to
-	 * the specified listener.
-	 *
-	 * @param cd
-     *      The connection 
-	 * @param listener
-	 * 		The AsyncHttpResponseListener to return the results to.
-	 **/
-    public static void executeHttpGet(JRConnectionManager.ConnectionData cd,
-                                      AsyncHttpResponseListener listener) {
-        final String url = cd.getRequestUrl();
-        List<NameValuePair> requestHeaders = cd.getRequestHeaders();
-        if (Config.LOGD) Log.d(TAG, "[executeHttpGet] invoked");
-
-
-        (new HttpSender(url, requestHeaders, new Handler(),
-                new HttpCallbackWrapper(listener, cd))).start();
-    }
-
-    /**
-     * Executes the specified HTTP POST request asynchronously.  The results will be returned to
-     * the specified listener.
-     *
-     * @param cd
-     * 		The connection data, which must include URL and \c byte[] data.
-     * @param listener
-     * 		The AsyncHttpResponseListener to return the results to.
-     **/
-    public static void executeHttpPost(JRConnectionManager.ConnectionData cd,
-                                       AsyncHttpResponseListener listener) {
-        final String url = cd.getRequestUrl();
-        byte[] data = cd.getPostData();
-
-        if (Config.LOGD) Log.d(TAG, "[executeHttpPost] invoked");
-
-        (new HttpSender(url, data, new Handler(),
-                new HttpCallbackWrapper(listener, cd))).start();
-
-    }
 }

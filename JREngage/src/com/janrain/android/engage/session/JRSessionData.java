@@ -48,17 +48,17 @@ import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.prefs.Prefs;
+import com.janrain.android.engage.utils.Prefs;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Archiver;
 import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.StringUtils;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -166,8 +166,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         try {
             /* load the last used basic and social providers */
-            mReturningSocialProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
-            mReturningBasicProvider = Prefs.getAsString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
+            mReturningSocialProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
+            mReturningBasicProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
 
             /* load the library state from disk */
             mAuthenticatedUsersByProvider = Archiver.load(ARCHIVE_AUTH_USERS_BY_PROVIDER);
@@ -187,14 +187,14 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             if (Config.LOGD) Log.d(TAG, "social providers: [" + TextUtils.join(",", mSocialProviders) + "]");
 
             /* Load the base url */
-            mBaseUrl = Prefs.getAsString(Prefs.KEY_JR_BASE_URL, "");
+            mBaseUrl = Prefs.getString(Prefs.KEY_JR_BASE_URL, "");
 
             /* Figure out of we're suppose to hide the powered by line */
-            mHidePoweredBy = Prefs.getAsBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, false);
+            mHidePoweredBy = Prefs.getBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, false);
 
             /* If the configuration for this rp has changed, the etag will have changed, and we need
              * to update our current configuration information. */
-            mOldEtag = Prefs.getAsString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
+            mOldEtag = Prefs.getString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
         } catch (Archiver.LoadException e) {
             /* Blank slate */
             mAuthenticatedUsersByProvider = new JRDictionary();
@@ -348,13 +348,13 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         }
     }
 
-    public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
+    public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
         Log.e(TAG, "[connectionDidFail]");
 
-        if (userdata == null) {
+        if (tag == null) {
             Log.e(TAG, "[connectionDidFail] unexpected null userdata");
-        } else if (userdata instanceof String) {
-            if (userdata.equals(TAG_GET_CONFIGURATION)) {
+        } else if (tag instanceof String) {
+            if (tag.equals(TAG_GET_CONFIGURATION)) {
                 Log.e(TAG, "[connectionDidFail] for getConfiguration");
                 mError = new JREngageError(
                         getContext().getString(R.string.jr_getconfig_network_failure_message),
@@ -365,10 +365,10 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 triggerMobileConfigDidFinish();
             } else {
                 Log.e(TAG, "[connectionDidFail] unrecognized ConnectionManager tag: "
-                        + userdata + " with Exception: " + ex);
+                        + tag + " with Exception: " + ex);
             }
-        } else if (userdata instanceof JRDictionary) {
-            JRDictionary dictionary = (JRDictionary) userdata;
+        } else if (tag instanceof JRDictionary) {
+            JRDictionary dictionary = (JRDictionary) tag;
             if (dictionary.getAsString(USERDATA_ACTION_KEY).equals(USERDATA_ACTION_CALL_TOKEN_URL)) {
                 Log.e(TAG, "[connectionDidFail] call to token url failed: " + ex);
                 JREngageError error = new JREngageError(
@@ -397,25 +397,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                             dictionary.getAsString(USERDATA_PROVIDER_NAME_KEY));
                 }
             }
-        }
-	}
-
-    public void connectionDidFinishLoading(String payload, String requestUrl, Object userdata) {
-        if (Config.LOGD) Log.d(TAG, "[connectionDidFinishLoading] payload: " + payload);
-
-        if (userdata instanceof String) {
-            Log.e(TAG, "[connectionDidFinishLoading] unrecognized ConnectionManager tag: " + userdata);
-        } else if (userdata instanceof JRDictionary) {
-            JRDictionary dictionary = (JRDictionary) userdata;
-
-            if (dictionary.getAsString(USERDATA_ACTION_KEY).equals(USERDATA_ACTION_SHARE_ACTIVITY))
-                processShareActivityResponse(payload, dictionary);
-            else {
-                Log.e(TAG, "[connectionDidFinishLoading] unexpected JRDictionary: " + userdata);
-            }
-        } else if (userdata == null) {
-            /* Unrecognized response */
-            Log.e(TAG, "[connectionDidFinishLoading] unexpected null userdata");
         }
 	}
 
@@ -519,25 +500,30 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload,
-                                           String requestUrl, Object userdata) {
-        Log.i(TAG, "[connectionDidFinishLoading-full]");
+                                           String requestUrl, Object tag) {
+        String payloadString = new String(payload);
+        if (Config.LOGD) Log.d(TAG, "[connectionDidFinishLoading] payload: " + payloadString);
 
-        if (userdata instanceof JRDictionary) {
-            JRDictionary dictionary = (JRDictionary) userdata;
-            if (dictionary.containsKey(USERDATA_TOKEN_URL_KEY)) {
+        if (tag instanceof JRDictionary) {
+            JRDictionary dictionary = (JRDictionary) tag;
+            if (dictionary.getAsString(USERDATA_ACTION_KEY).equals(USERDATA_ACTION_SHARE_ACTIVITY)) {
+                processShareActivityResponse(payloadString, dictionary);
+            } else if (dictionary.containsKey(USERDATA_TOKEN_URL_KEY)) {
                 for (JRSessionDelegate delegate : getDelegatesCopy()) {
                     delegate.authenticationDidReachTokenUrl(
                             dictionary.getAsString(USERDATA_TOKEN_URL_KEY),
                             headers,
-                            new String(payload),
+                            payloadString,
                             dictionary.getAsString(USERDATA_PROVIDER_NAME_KEY));
                 }
-            } else Log.e(TAG, "unexpected userdata found in ConnectionDidFinishLoading full");
-        } else if (userdata instanceof String) {
-            String s = (String)userdata;
+            } else {
+                Log.e(TAG, "unexpected userdata found in ConnectionDidFinishLoading full");
+            }
+        } else if (tag instanceof String) {
+            String s = (String) tag;
 
             if (s.equals("getConfiguration")) {
-                if (headers.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
+                if (headers.getResponseCode() == HttpStatus.SC_NOT_MODIFIED) {
                     /* If the ETag matched, we're done. */
                     if (Config.LOGD) {
                         Log.d(TAG, "[connectionDidFinishLoading] found HTTP_NOT_MODIFIED -> matched ETag");
@@ -545,11 +531,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
                     mGetConfigDone = true;
                     return;
-                }
-
-                String payloadString = new String(payload);
-                if (Config.LOGD) {
-                    Log.d(TAG, "[connectionDidFinishLoading-full] payload string: " + payloadString);
                 }
 
                 if (payloadString.contains("\"provider_info\":{")) {
@@ -562,7 +543,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                             ErrorType.CONFIGURATION_FAILED);
                 }
             } else {
-                Log.e(TAG, "unexpected userdata found in ConnectionDidFinishLoading full");
+                Log.e(TAG, "unexpected userData found in ConnectionDidFinishLoading full");
             }
         }
 	}
@@ -599,7 +580,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         List<NameValuePair> headerList = new ArrayList<NameValuePair>();
         headerList.add(eTagHeader);
 
-        JRConnectionManager.createConnection(urlString, this, true, headerList, TAG_GET_CONFIGURATION);
+        JRConnectionManager.createConnection(urlString, this, TAG_GET_CONFIGURATION, headerList);
 
         return null;
     }
@@ -873,19 +854,20 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         JRConnectionManagerDelegate jrcmd = new SimpleJRConnectionManagerDelegate() {
             @Override
-            public void connectionDidFinishLoading(String payload,
+            public void connectionDidFinishLoading(HttpResponseHeaders headers,
+                                                   byte[] payload,
                                                    String requestUrl,
-                                                   Object userdata) {
+                                                   Object tag) {
                 if (Config.LOGD) Log.d(TAG, "[notifyEmailSmsShare]: success");
             }
 
             @Override
-            public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
+            public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
                 Log.e(TAG, "[notifyEmailSmsShare]: failure", ex);
             }
         };
 
-        JRConnectionManager.createConnection(url, body.toString().getBytes(), jrcmd, false, null);
+        JRConnectionManager.createConnection(url, jrcmd, null, null, body.toString().getBytes());
     }
 
     public void shareActivityForUser(JRAuthenticatedUser user) {
@@ -919,7 +901,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         tag.put(USERDATA_ACTION_KEY, USERDATA_ACTION_SHARE_ACTIVITY);
         tag.put(USERDATA_ACTIVITY_KEY, mActivity);
         tag.put(USERDATA_PROVIDER_NAME_KEY, mCurrentlyPublishingProvider.getName());
-        JRConnectionManager.createConnection(url, body.toString().getBytes(), this, false, tag);
+        JRConnectionManager.createConnection(url, this, tag, null, body.toString().getBytes());
 
         if (Config.LOGD) Log.d(TAG, "[shareActivityForUser] connection started for url: " + url);
     }
@@ -953,7 +935,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         tag.put(USERDATA_ACTION_KEY, USERDATA_ACTION_SHARE_ACTIVITY);
         tag.put(USERDATA_ACTIVITY_KEY, mActivity);
         tag.put(USERDATA_PROVIDER_NAME_KEY, mCurrentlyPublishingProvider.getName());
-        JRConnectionManager.createConnection(url, body.toString().getBytes(), this, false, tag);
+        JRConnectionManager.createConnection(url, this, tag, null, body.toString().getBytes());
 
         if (Config.LOGD) Log.d(TAG, "[setStatusForUser] connection started for url: " + url);
     }
@@ -972,7 +954,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         tag.put(USERDATA_TOKEN_URL_KEY, tokenUrl);
         tag.put(USERDATA_PROVIDER_NAME_KEY, providerName);
 
-        JRConnectionManager.createConnection(tokenUrl, postData, this, true, tag);
+        JRConnectionManager.createConnection(tokenUrl, this, tag, null, postData);
     }
 
     public void triggerAuthenticationDidCompleteWithPayload(JRDictionary rpx_result) {

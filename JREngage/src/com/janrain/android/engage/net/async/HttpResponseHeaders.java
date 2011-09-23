@@ -38,36 +38,64 @@ import android.util.Log;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @internal
- *
  * @class HttpResponseHeaders
  **/
 public class HttpResponseHeaders {
     private static final String TAG = HttpResponseHeaders.class.getSimpleName();
-
     public static final String HEADER_LAST_MODIFIED = "Last-Modified";
     public static final String HEADER_ETAG = "ETag";
+    public static final String HEADER_CONTENT_ENCODING = "content-encoding";
+    public static final String HEADER_CONTENT_TYPE = "content-type";
+    public static final String HEADER_CONTENT_LENGTH = "content-length";
 
     // Invalid response code (initial state of object)
     public static final int RESPONSE_CODE_INVALID = -1;
 
-    public static HttpResponseHeaders fromConnection(HttpResponse response) {
-        if (Config.LOGD) Log.d(TAG, "[fromConnection] BEGIN");
+    private int mResponseCode;
+    private String mContentEncoding;
+    private int mContentLength;
+    private String mContentType;
+    private long mLastModified;
+    private String mLastModifiedUtc;
+    private String mETag;
+    private HttpResponse mResponse;
+
+    private HttpResponseHeaders() {
+        mResponseCode = RESPONSE_CODE_INVALID;
+    }
+
+    /**
+     * @internal
+     * Constructs a new HttpResponseHeaders instance from an HttpResponse
+     * @param response
+     *   The HttpResponse from which to copy the values used to construct a new instance
+     * @return
+     *   The new instance
+     */
+    public static HttpResponseHeaders fromResponse(HttpResponse response) {
+        if (Config.LOGD) Log.d(TAG, "[fromResponse] BEGIN");
 
         HttpResponseHeaders headers = new HttpResponseHeaders();
-        headers.setResponseCode(response.getStatusLine().getStatusCode());
-        headers.setContentEncoding(getResponseHeaderFirstValue(response, "content-encoding"));
-        HttpEntity entity = response.getEntity();
-        headers.setContentLength(entity == null ? 0 : (int) entity.getContentLength());
-        headers.setContentType(getResponseHeaderFirstValue(response, "content-type"));
-        headers.setDate(new Date().getTime()); // XXX this is wrong but possibly harmless
-        headers.setLastModified(getResponseLastModified(response));
-        headers.setLastModifiedUtc(getResponseHeaderFirstValue(response, HEADER_LAST_MODIFIED));
-        headers.setETag(getResponseHeaderFirstValue(response, HEADER_ETAG));
-        headers.setResponse(response);
+
+        headers.mResponseCode = response.getStatusLine().getStatusCode();
+        headers.mContentEncoding = getResponseHeaderFirstValue(response, HEADER_CONTENT_ENCODING);
+        try {
+            headers.mContentLength = Integer.parseInt(
+                    getResponseHeaderFirstValue(response, HEADER_CONTENT_LENGTH));
+        } catch (NumberFormatException e) {
+            headers.mContentLength = -1;
+        }
+        headers.mContentType = getResponseHeaderFirstValue(response, HEADER_CONTENT_TYPE);
+        headers.mLastModified = getResponseLastModified(response);
+        headers.mLastModifiedUtc = getResponseHeaderFirstValue(response, HEADER_LAST_MODIFIED);
+        headers.mETag = getResponseHeaderFirstValue(response, HEADER_ETAG);
+        headers.mResponse = response;
 
         return headers;
     }
@@ -79,103 +107,109 @@ public class HttpResponseHeaders {
     }
 
     private static long getResponseLastModified(HttpResponse response) {
-        Header[] h = response.getHeaders("last-modified");
-        if (h.length > 0) return Long.parseLong(h[0].getValue());
+        String lastModified = getResponseHeaderFirstValue(response, "last-modified");
+        if (lastModified != null) {
+            SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+            try {
+                return format.parse(lastModified).getTime();
+            } catch (ParseException e) {
+                return 0;
+            }
+        }
         return 0;
     }
 
-    private int mResponseCode;
-    private String mContentEncoding;
-    private int mContentLength;
-    private String mContentType;
-    private long mDate;
-    private long mLastModified;
-    private String mLastModifiedUtc;
-    private String mETag;
-    private HttpResponse mResponse;
-
-    public void setResponse(HttpResponse response) {
-        mResponse = response;
-    }
-
+    /**
+     * Returns the value of a header field, given its name.
+     * @param headerFieldName
+     *  The name of the header field.
+     * @return
+     *  The value if the header field is present, or null otherwise.
+     */
     public String getHeaderField(String headerFieldName) {
         return getResponseHeaderFirstValue(mResponse, headerFieldName);
     }
 
-    public HttpResponseHeaders() {
-        mResponseCode = RESPONSE_CODE_INVALID;
-    }
-
+    /**
+     * Returns the response code found in this instance
+     * @return
+     *  The response code
+     */
     public int getResponseCode() {
         return mResponseCode;
     }
 
-    public void setResponseCode(int responseCode) {
-        mResponseCode = responseCode;
-    }
-
     /**
      * XXX This is not the the encoding of the text in the body of the response but the
-     * encoding of the body itself (e.g. gzip/compress)
+     * encoding of the body itself (e.g. gzip/compress/deflate)
      * @return
-     *  The "content-encoding" header field's value
+     *  The "content-encoding" header field's value if present, null otherwise.
      */
     public String getContentEncoding() {
         return mContentEncoding;
     }
 
-    public void setContentEncoding(String contentEncoding) {
-        mContentEncoding = contentEncoding;
-    }
-
+    /**
+     * Returns the length of the response as described by the &lt;code>content-length&lt;/code> header.
+     * @return
+     *  The value of the header field, or -1 otherwise
+     */
     public int getContentLength() {
         return mContentLength;
     }
 
-    public void setContentLength(int contentLength) {
-        mContentLength = contentLength;
-    }
-
+    /**
+     * Returns the content type of the response as described by the &lt;code>content-type&lt;/code> header.
+     * @return
+     *  The value of the header field if present, null otherwise.
+     */
     public String getContentType() {
         return mContentType;
     }
 
-    public void setContentType(String contentType) {
-        mContentType = contentType;
-    }
-
+    /**
+     * @deprecated
+     * This was the value of URLConnection#getDate, but is now broken.
+     * @return
+     *  Returns -1;
+     */
     public long getDate() {
-        return mDate;
+        return -1;
     }
 
-    public void setDate(long date) {
-        mDate = date;
-    }
-
+    /**
+     * Returns the date of the response as described by the &lt;code>last-modified&lt;/code> header.
+     * @return
+     *  The value of the header field as a time milliseconds since January 1, 1970 GMT or 0 if this
+     *  timestamp is unknown.
+     */
     public long getLastModified() {
         return mLastModified;
     }
 
-    public void setLastModified(long lastModified) {
-        mLastModified = lastModified;
-    }
-
+    /**
+     * Returns the date of the response as described by the &lt;code>last-modified&lt;/code> header.
+     * @return
+     *  The value of the header field if present, or null otherwise.
+     */
     public String getLastModifiedUtc() {
         return mLastModifiedUtc;
     }
 
-    public void setLastModifiedUtc(String lastModifiedUtc) {
-        mLastModifiedUtc = lastModifiedUtc;
-    }
-
+    /**
+     * Returns the ETag of the response as described by the &lt;code>ETag&lt;/code> header.
+     * @return
+     *  The value of the header field if present, or null otherwise.
+     */
     public String getETag() {
         return mETag;
     }
 
-    public void setETag(String eTag) {
-        mETag = eTag;
-    }
-
+    /**
+     * Produces a String representation of this object.
+     * @return
+     *  A string representation of this object suitable human inspection.
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("HttpResponseHeaders [");
@@ -183,7 +217,6 @@ public class HttpResponseHeaders {
         sb.append(" | Content Encoding: ").append(mContentEncoding);
         sb.append(" | Content Length: ").append(mContentLength);
         sb.append(" | Content Type: ").append(mContentType);
-        sb.append(" | Content Date: ").append(mDate);
         sb.append(" | Content Last Modified: ").append(mLastModified);
         sb.append(" | Content Last Modified UTC: ").append(mLastModifiedUtc);
         sb.append(" | ETag: ").append(mETag);

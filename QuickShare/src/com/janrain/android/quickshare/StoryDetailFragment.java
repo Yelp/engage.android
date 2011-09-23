@@ -31,9 +31,6 @@
  */
 package com.janrain.android.quickshare;
 
-import android.app.FragmentTransaction;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Config;
@@ -42,7 +39,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.utils.AndroidUtils;
@@ -116,7 +112,7 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
                     "<body>" +
                         "<div class=\"main\">" +
                         "<div class=\"title\">" + story.getTitle() + "</div>" +
-                        "<div class=\"date\">" + story.getDate() + "</div>" +
+                        "<div class=\"date\">" + story.getFormattedDate() + "</div>" +
                         "<div class=\"posted_by\">Posted by: " + story.getPostedBy() + "</div>" +
                         "<div class=\"body\">" + story.getDescription() + "</div>" +
                     "</body>" +
@@ -137,7 +133,7 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
         }
 
         JRActivityObject jra = mFeedData.getFeed().get(getShownIndex()).toJRActivityObject();
-        if (AndroidUtils.isXlarge()) {
+        if (AndroidUtils.isXlarge() && AndroidUtils.isLandscape()) {
             mFeedData.getJREngage().showSocialPublishingFragment(jra, getActivity(), getId(), true,
                     null, null, null, null);
         } else {
