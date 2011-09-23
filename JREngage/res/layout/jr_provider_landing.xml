@@ -29,38 +29,41 @@
             android:id="@+id/jr_landing_logo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
             android:layout_marginRight="4dp"
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="4dp"
             />
-            <!--android:src="@drawable/logo_aol_280x65"-->
 
         <EditText
             android:id="@+id/jr_landing_edit"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
+
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
             android:layout_marginRight="4dp"
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="4dp"
+
             android:singleLine="true"
             android:textColorHint="@color/jr_text_color_hint"
             />
-        <!--android:layout_width="280dp"-->
 
 
         <TextView
             android:id="@+id/jr_landing_welcome_label"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
+
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
             android:layout_marginRight="4dp"
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="4dp"
+
             android:singleLine="true"
             android:textSize="26dip"
             />
@@ -69,8 +72,6 @@
             android:id="@+id/jr_landing_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-            android:layout_centerInParent="true"
 
             android:orientation="horizontal"
             >
@@ -85,10 +86,8 @@
 
                 android:text="@string/jr_landing_switch_account_button_text"
                 android:visibility="invisible"
-                android:textStyle="bold"
                 style="?android:textAppearanceSmall"
                 />
-            <!--android:textColor="#ffffffff"-->
 
             <com.janrain.android.engage.ui.ColorButton
                 android:id="@+id/jr_landing_small_signin_button"
@@ -99,11 +98,9 @@
                 android:layout_gravity="center_vertical"
 
                 android:text="@string/jr_landing_signin_button_text"
-                android:textStyle="bold"
                 android:visibility="visible"
                 style="?android:textAppearanceLarge"
                 />
-            <!--android:textColor="#ffffffff"-->
 
         </LinearLayout>
 

@@ -7,23 +7,25 @@
 
     <Button
         android:id="@+id/btn_add_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal|center_vertical"
-        android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+
         android:text="@string/add_another_profile"
         android:textSize="18dip"
-        android:layout_alignParentTop="true"
         />
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+
         android:layout_below="@id/btn_add_profile"
         />
 
@@ -31,7 +33,10 @@
         android:id="@android:id/empty"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+
         android:gravity="center_horizontal|center_vertical"
+
         android:text="@string/no_profiles"
         />
+
 </RelativeLayout>
