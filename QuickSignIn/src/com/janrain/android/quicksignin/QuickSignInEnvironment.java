@@ -38,7 +38,7 @@ public class QuickSignInEnvironment {
  * To successfully compile the Quick Share application, please uncomment the below lines, and add
  * your Janrain Engage 20-character Application ID and your web application's token URL (optional)
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-    private static String appId = "albgkodphhmfgehgkdkm";
+    private static String appId = "fccdmobdiafiebjhbghn";
     private static String tokenUrl = "";
 
     public static String getAppId() {

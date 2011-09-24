@@ -50,6 +50,8 @@ import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
+import com.janrain.android.engage.session.JRProvider;
+import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 
@@ -66,33 +68,6 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
     private static String ENGAGE_APP_ID = getAppId();
     private static String ENGAGE_TOKEN_URL = getTokenUrl();
-
-    private static HashMap<String, Drawable> provider_list_icon_drawables =
-            new HashMap<String, Drawable>();
-
-    private final static HashMap<String, Integer> provider_list_icon_resources =
-            new HashMap<String, Integer>(){
-            {
-                    put("icon_aol", com.janrain.android.engage.R.drawable.jr_icon_aol);
-                    put("icon_blogger", com.janrain.android.engage.R.drawable.jr_icon_blogger);
-                    put("icon_facebook", com.janrain.android.engage.R.drawable.jr_icon_facebook);
-                    put("icon_flickr", com.janrain.android.engage.R.drawable.jr_icon_flickr);
-                    put("icon_google", com.janrain.android.engage.R.drawable.jr_icon_google);
-                    put("icon_hyves", com.janrain.android.engage.R.drawable.jr_icon_hyves);
-                    put("icon_linkedin", com.janrain.android.engage.R.drawable.jr_icon_linkedin);
-                    put("icon_live_id", com.janrain.android.engage.R.drawable.jr_icon_live_id);
-                    put("icon_livejournal", com.janrain.android.engage.R.drawable.jr_icon_livejournal);
-                    put("icon_myopenid", com.janrain.android.engage.R.drawable.jr_icon_myopenid);
-                    put("icon_myspace", com.janrain.android.engage.R.drawable.jr_icon_myspace);
-                    put("icon_netlog", com.janrain.android.engage.R.drawable.jr_icon_netlog);
-                    put("icon_openid", com.janrain.android.engage.R.drawable.jr_icon_openid);
-                    put("icon_paypal", com.janrain.android.engage.R.drawable.jr_icon_paypal);
-                    put("icon_twitter", com.janrain.android.engage.R.drawable.jr_icon_twitter);
-                    put("icon_verisign", com.janrain.android.engage.R.drawable.jr_icon_verisign);
-                    put("icon_wordpress", com.janrain.android.engage.R.drawable.jr_icon_wordpress);
-                    put("icon_yahoo", com.janrain.android.engage.R.drawable.jr_icon_yahoo);
-           }
-    };
 
     private static final int DIALOG_JRENGAGE_ERROR = 1;
 
@@ -189,38 +164,9 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
             mResourceId = resId;
         }
 
-        private Drawable getProviderIconDrawable(Context c, String providerName) {
-            String drawableName = "icon_" + providerName;
-            HashMap<String, Drawable> drawableMap = provider_list_icon_drawables;
-            HashMap<String, Integer> resourceMap = provider_list_icon_resources;
-
-            if (drawableMap.containsKey(drawableName)) return drawableMap.get(drawableName);
-
-            if (resourceMap.containsKey(drawableName)) {
-                Drawable r = c.getResources().getDrawable(resourceMap.get(drawableName));
-                drawableMap.put(drawableName, r);
-                return r;
-            }
-
-            try {
-                String iconFileName = "providericon~" + drawableName + ".png";
-
-                Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
-                if (icon != null) {
-                    icon.setDensity(android.util.DisplayMetrics.DENSITY_MEDIUM);
-                }
-                else {
-                    c.deleteFile(iconFileName);
-                    //downloadIcons(c);
-                    return c.getResources().getDrawable(com.janrain.android.engage.R.drawable.icon_unknown);
-                }
-
-                return new BitmapDrawable(c.getResources(), icon);
-            }
-            catch (FileNotFoundException e) {
-                //downloadIcons(c);
-                return c.getResources().getDrawable(com.janrain.android.engage.R.drawable.icon_unknown);
-            }
+        private Drawable getProviderIconDrawable(String providerName) {
+            return JRSessionData.getInstance().getProviderByName(providerName)
+                    .getProviderIcon(ProfilesActivity.this);
         }
 
         @Override
@@ -241,7 +187,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
             Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " + snapshot.getDisplayName());
 
-            icon.setImageDrawable(getProviderIconDrawable(getContext(), snapshot.getProvider()));
+            icon.setImageDrawable(getProviderIconDrawable(snapshot.getProvider()));
             name.setText(snapshot.getDisplayName());
             timestamp.setText(snapshot.getTimeStamp());
 
