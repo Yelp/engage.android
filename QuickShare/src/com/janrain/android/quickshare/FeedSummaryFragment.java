@@ -46,7 +46,7 @@ import com.janrain.android.engage.ui.JRPublishFragment;
 
 import java.util.ArrayList;
 
-public class FeedSummaryFragment extends ListFragment implements FeedData.FeedReaderListener {
+public class FeedSummaryFragment extends ListFragment {
     private static final String TAG = FeedSummaryFragment.class.getSimpleName();
 
     private ArrayList<Story> mStories;
@@ -54,6 +54,8 @@ public class FeedSummaryFragment extends ListFragment implements FeedData.FeedRe
     private FeedData mFeedData;
     private boolean mDualPane;
     private int mCurCheckPosition;
+    private String mRefreshViewText;
+    private View mRefreshView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +63,16 @@ public class FeedSummaryFragment extends ListFragment implements FeedData.FeedRe
         mFeedData = FeedData.getInstance();
 
         mStories = new ArrayList<Story>();
-        getUpdatedStoriesList();
+
+        if (savedInstanceState != null) {
+            mRefreshViewText = savedInstanceState.getString("RVT");
+        } else {
+            mRefreshViewText = getString(R.string.refresh_janrain_blog);
+        }
+
+        mFeedData.setFeedReaderListener(mFeedReaderListener);
+
+        updateStoryList();
         setHasOptionsMenu(true);
     }
 
@@ -102,17 +113,25 @@ public class FeedSummaryFragment extends ListFragment implements FeedData.FeedRe
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", mCurCheckPosition);
+        outState.putString("RVT", mRefreshViewText);
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int pos, long id) {
         if (pos == 0) {
-            ((TextView) v.findViewById(R.id.row_story_title)).setText("Loading new articles...");
-            mFeedData.loadJanrainBlog(this);
+            if (mRefreshViewText.equals("Loading new articles...")) return;
+            setRefreshViewText(v, "Loading new articles...");
+            Log.d(TAG, "loading");
+            mFeedData.loadJanrainBlog();
         } else {
             // - 1 because the 0th row is really a reload button
             showDetails(pos - 1);
         }
+    }
+
+    private void setRefreshViewText(View v, String text) {
+        mRefreshViewText = text;
+        ((TextView) v.findViewById(R.id.row_story_title)).setText(text);
     }
 
     private void showDetails(int index) {
@@ -150,28 +169,33 @@ public class FeedSummaryFragment extends ListFragment implements FeedData.FeedRe
         }
     }
 
-    public void asyncFeedReadSucceeded() {
-        if (Config.LOGD)
-            Log.d(TAG, "[asyncFeedReadSucceeded]");
+    private FeedData.FeedReaderListener mFeedReaderListener = new FeedData.FeedReaderListener() {
+        public void asyncFeedReadSucceeded() {
+            if (Config.LOGD) Log.d(TAG, "[asyncFeedReadSucceeded]");
+            if (isVisible() && mDualPane && getFragmentManager().getBackStackEntryCount() == 0) {
+                showDetails(Math.min(mCurCheckPosition, mFeedData.getFeed().size() - 1));
+            }
 
+            if (mRefreshView != null) {
+                setRefreshViewText(mRefreshView, getString(R.string.refresh_janrain_blog));
+            }
+            updateStoryList();
+            mAdapter.notifyDataSetChanged();
+        }
 
-        getUpdatedStoriesList();
-        mAdapter.notifyDataSetChanged();
-    }
+        public void asyncFeedReadFailed() {
+            if (Config.LOGD) Log.d(TAG, "[asyncFeedReadFailed]");
 
-    public void asyncFeedReadFailed() {
-        if (Config.LOGD)
-            Log.d(TAG, "[asyncFeedReadFailed]");
+            updateStoryList();
+            mAdapter.notifyDataSetChanged();
+        }
+    };
 
-        getUpdatedStoriesList();
-        mAdapter.notifyDataSetChanged();
-    }
-
-    private void getUpdatedStoriesList() {
+    private void updateStoryList() {
         mStories.clear();
         mStories.addAll(mFeedData.getFeed());
 
-        if (Config.LOGD) Log.d(TAG, "[getUpdatedStoriesList] " + mStories.size() + " stories remain");
+        if (Config.LOGD) Log.d(TAG, "[updateStoryList] " + mStories.size() + " stories remain");
 
         mStories.add(0, Story.dummyStory());
     }
@@ -183,16 +207,20 @@ public class FeedSummaryFragment extends ListFragment implements FeedData.FeedRe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (Config.LOGD)
-            Log.d(TAG, "[onOptionsItemSelected] here");
-
         switch (item.getItemId()) {
             case R.id.delete_all_stories:
                 if (Config.LOGD) Log.d(TAG, "[onOptionsItemSelected] delete all stories option selected");
 
                 mFeedData.deleteAllStories();
-                getUpdatedStoriesList();
+                updateStoryList();
                 mAdapter.notifyDataSetChanged();
+                while (getFragmentManager().getBackStackEntryCount() > 0) {
+                    getFragmentManager().popBackStackImmediate();
+                }
+                getFragmentManager().executePendingTransactions();
+                Fragment f = getFragmentManager().findFragmentById(R.id.details);
+                if (f != null && f.isAdded()) getFragmentManager().beginTransaction().remove(f).commit();
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -242,9 +270,11 @@ public class FeedSummaryFragment extends ListFragment implements FeedData.FeedRe
                 text.setVisibility(View.GONE);
                 date.setVisibility(View.GONE);
 
-                title.setText("Refresh");
+                title.setText(mRefreshViewText);
+                mRefreshView = v;
                 title.setGravity(Gravity.CENTER_HORIZONTAL);
             } else {
+                if (v == mRefreshView) mRefreshView = null;
                 if (Config.LOGD) Log.d(TAG, "[getView] for row " + position + ": " + story.getTitle());
 
                 v.setTag("STORY_ROW");

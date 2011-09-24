@@ -91,9 +91,9 @@ public class Story implements Serializable, Comparable<Story> {
         Matcher matcherWidth = patternWidth.matcher(style);
         Matcher matcherHeight = patternHeight.matcher(style);
 
-        Log.d(TAG, "[newWidthAndHeight] matchers match style (" + style + ")?: " +
-                (matcherWidth.matches() ? "width=yes and " : "width=no and ") +
-                (matcherHeight.matches() ? "height=yes" : "height=no"));
+        //Log.d(TAG, "[newWidthAndHeight] matchers match style (" + style + ")?: " +
+        //        (matcherWidth.matches() ? "width=yes and " : "width=no and ") +
+        //        (matcherHeight.matches() ? "height=yes" : "height=no"));
 
         if (!matcherWidth.matches() || !matcherHeight.matches()) return style;
 
@@ -112,11 +112,11 @@ public class Story implements Serializable, Comparable<Story> {
         Double ratio = width / 280.0;
         Integer newHeight = (new Double(height / ratio)).intValue();
 
-        Log.d(TAG, "[newWidthAndHeight] style before: " + style);
+        //Log.d(TAG, "[newWidthAndHeight] style before: " + style);
         style = style.replace("width:" + matcherWidth.group(2) + "px", "width: 280px");
         style = style.replace("height:" + matcherHeight.group(2) + "px", "height: " + newHeight.toString() +
                 "px");
-        Log.d(TAG, "[newWidthAndHeight] style after: " + style);
+        //Log.d(TAG, "[newWidthAndHeight] style after: " + style);
 
         return style;
     }
@@ -176,19 +176,19 @@ public class Story implements Serializable, Comparable<Story> {
         String newDescription = splitDescription[0];
 
         for (int i = 1; i < length; i++) {
-            Log.d(TAG, "[scaleDescriptionImages] " + ((Integer) i).toString() + ": " + splitDescription[i]);
+            //Log.d(TAG, "[scaleDescriptionImages] " + ((Integer) i).toString() + ": " + splitDescription[i]);
 
             try {
                 Pattern pattern = Pattern.compile("(.+?)style=\"(.+?)\"(.+?)/>(.+)", Pattern.CASE_INSENSITIVE
                         | Pattern.DOTALL);
                 Matcher matcher = pattern.matcher(splitDescription[i]);
 
-                Log.d(TAG, "[scaleDescriptionImages] matcher matches?: " + (matcher.matches() ? "yes" :
-                        "no"));
+                //Log.d(TAG, "[scaleDescriptionImages] matcher matches?: " + (matcher.matches() ? "yes" :
+                //        "no"));
 
-                for (int j = 1; j <= matcher.groupCount(); j++)
-                    Log.d(TAG, "[scaleDescriptionImages] matched group " + ((Integer) j).toString() + ": " +
-                            matcher.group(j));
+                //for (int j = 1; j <= matcher.groupCount(); j++)
+                //    Log.d(TAG, "[scaleDescriptionImages] matched group " + ((Integer) j).toString() + ": " +
+                //            matcher.group(j));
 
                 newDescription += "<img " + matcher.group(1) +
                         "style=\"" + newWidthAndHeight(matcher.group(2)) + "\"" +
@@ -199,7 +199,7 @@ public class Story implements Serializable, Comparable<Story> {
             }
         }
 
-        Log.d(TAG, "[scaleDescriptionImages] newDescription: " + newDescription);
+        //Log.d(TAG, "[scaleDescriptionImages] newDescription: " + newDescription);
 
         mDescription = newDescription;
     }

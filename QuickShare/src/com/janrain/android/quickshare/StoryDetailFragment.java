@@ -79,6 +79,11 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
             return null;
         }
 
+        if (getShownIndex() >= mFeedData.getFeed().size()) {
+            if (isAdded()) getFragmentManager().beginTransaction().remove(this).commit();
+            return null;
+        }
+
         if (Config.LOGD) Log.d(TAG, "[onCreateView]");
 
         View v = inflater.inflate(R.layout.story_detail_webview, container, false);
@@ -88,7 +93,7 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
 
         mWebView = (WebView) v.findViewById(R.id.story_webview);
 
-        if (Config.LOGD) Log.d(TAG, "[onCreate] url: loading the current story");
+        if (Config.LOGD) Log.d(TAG, "[onCreateView] url: loading the current story");
 
         loadCurrentStory();
 

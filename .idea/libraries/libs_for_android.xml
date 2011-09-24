@@ -7,6 +7,7 @@
     <JAVADOC />
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/QuickShare/libs/filecache.jar!/" />
+      <root url="jar://$PROJECT_DIR$/QuickShare/libs/imageloader.jar!/" />
     </SOURCES>
   </library>
 </component>

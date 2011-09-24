@@ -102,7 +102,6 @@ public class FeedData {
 
     private ImageLoader mImageLoader;
 
-
     public static FeedData getInstance(Activity activity) {
         if (sInstance != null) {
             if (Config.LOGD) Log.d(TAG, "[getInstance] returning existing instance");
@@ -123,6 +122,10 @@ public class FeedData {
 
     public JREngage getJREngage() {
         return mEngage;
+    }
+
+    public void setFeedReaderListener(FeedReaderListener feedReaderListener) {
+        mListener = feedReaderListener;
     }
 
     private static class JRFileResponseCache extends FileResponseCache {
@@ -200,8 +203,7 @@ public class FeedData {
 
     FeedReaderListener mListener;
 
-    public void loadJanrainBlog(final FeedReaderListener listener) {
-        mListener = listener;
+    public void loadJanrainBlog() {
         JRConnectionManager.createConnection(FEED_URL.toString(),
                 new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
                     @Override
@@ -214,7 +216,7 @@ public class FeedData {
 
                     @Override
                     public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
-                        listener.asyncFeedReadFailed();
+                        mListener.asyncFeedReadFailed();
                     }
                 }, null);
     }
