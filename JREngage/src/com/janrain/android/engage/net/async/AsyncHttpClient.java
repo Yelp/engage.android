@@ -95,6 +95,7 @@ public final class AsyncHttpClient {
 
             while (true) {
                 try {
+                    //try { Thread.sleep(5000); } catch (InterruptedException e) {}
                     HttpParams connectionParams = new BasicHttpParams();
                     HttpConnectionParams.setConnectionTimeout(connectionParams, 10000); // ten second timeout
                     HttpConnectionParams.setSoTimeout(connectionParams, 10000);

@@ -1133,6 +1133,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             if (mWaitingForMobileConfig) {
                 dismissDialog(DIALOG_MOBILE_CONFIG_LOADING);
                 mWaitingForMobileConfig = false;
+                mSocialProviders = mSessionData.getSocialProviders();
                 initializeWithProviderConfiguration();
             }
         }
