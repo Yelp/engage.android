@@ -470,8 +470,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                                 ErrorType.PUBLISH_INVALID_ACTIVITY);
                         break;
                     case 6:
-                        if (msg.matches(".*witter.*")) {
-                            /// XXX TODO this error isn't necessarily a Twitter duplicate
+                        if (msg.matches(".witter.*uplicate.*")) {
                             publishError = new JREngageError(
                                     msg,
                                     SocialPublishingError.DUPLICATE_TWITTER,
