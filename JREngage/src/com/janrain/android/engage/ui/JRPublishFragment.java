@@ -698,7 +698,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 body = mUserCommentView.getText().toString();
                 subject = getString(R.string.jr_default_email_share_subject);
             } else {
-                body = mUserCommentView.getText().toString() + "\n" + jrEmail.getBody();
+                body =  jrEmail.getBody() + "\n\n" + mUserCommentView.getText().toString();
                 subject = TextUtils.isEmpty(jrEmail.getSubject()) ?
                         getString(R.string.jr_default_email_share_subject)
                         : jrEmail.getSubject();

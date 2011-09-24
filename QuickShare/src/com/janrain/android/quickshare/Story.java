@@ -33,7 +33,9 @@ package com.janrain.android.quickshare;
 
 import android.util.Log;
 import com.janrain.android.engage.types.JRActivityObject;
+import com.janrain.android.engage.types.JREmailObject;
 import com.janrain.android.engage.types.JRImageMediaObject;
+import com.janrain.android.engage.types.JRSmsObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -142,11 +144,23 @@ public class Story implements Serializable, Comparable<Story> {
         JRActivityObject activityObject =
                 new JRActivityObject("shared an article from the Janrain Blog", getLink());
 
-        activityObject.setTitle(getTitle());
-        activityObject.setDescription(getPlainText());
+        activityObject.setTitle(mTitle);
+        activityObject.setDescription(mPlainText);
         if (getImageUrls().size() > 0) {
             activityObject.addMedia(new JRImageMediaObject(getImageUrls().get(0), getImageUrls().get(0)));
         }
+
+        JREmailObject jreo = new JREmailObject(mTitle,
+                "I thought you might find this blog post interesting.\n\nFind the full article here: " +
+                mLink + "\nLearn more about Janrain here: http://www.janrain.com\n\nHere's a preview:\n" +
+                mPlainText.substring(0, Math.min(300, mPlainText.length())) + " ...");
+        jreo.addUrl(mLink);
+        jreo.addUrl("http://www.janrain.com");
+        activityObject.setEmail(jreo);
+
+        JRSmsObject jrso = new JRSmsObject("Check this out: " + mLink);
+        jrso.addUrl(mLink);
+        activityObject.setSms(jrso);
 
         return activityObject;
     }
