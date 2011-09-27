@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- portrait layout -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+    <Button
+        android:id="@+id/btn_test_auth"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_width="fill_parent"
+        android:layout_height="90dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:text="@string/btn_auth_label"
+        android:textSize="18dip"
+        />
+
+    <Button
+        android:id="@+id/btn_test_pub"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_width="fill_parent"
+        android:layout_height="90dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:text="@string/btn_pub_label"
+        android:textSize="18dip"
+        />
+
+    <!-- A testing button for setAlwaysForceReauth -->
+    <!--<ToggleButton-->
+        <!--android:id="@+id/btn_always_force_reauth"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:layout_marginRight="8dp"-->
+        <!--android:layout_marginLeft="8dp"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="90dp"-->
+        <!--android:gravity="center_horizontal|center_vertical"-->
+        <!--android:layout_gravity="center_horizontal|center_vertical"-->
+        <!--android:textOn="alwaysForceReauth"-->
+        <!--android:textOff="alwaysForceReauth"-->
+        <!--android:textSize="18dip"-->
+        <!--/>-->
+
+    <Button
+        android:id="@+id/btn_test_land"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_width="fill_parent"
+        android:layout_height="90dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:text="@string/btn_land_label"
+        android:visibility="gone"
+        android:textSize="18dip"
+        />
+
+</LinearLayout>
+
