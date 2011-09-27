@@ -60,10 +60,12 @@ import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Archiver;
+import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.MessageDigest;
@@ -305,7 +307,9 @@ public class FeedData {
                     Xml.parse(new ByteArrayInputStream(payload),
                             Xml.Encoding.UTF_8,
                             root.getContentHandler());
-                } catch (Exception e) {
+                } catch (SAXException e) {
+                    return false;
+                } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
 

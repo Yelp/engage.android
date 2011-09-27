@@ -65,5 +65,6 @@
     <string name="jr_getconfig_parse_error_message">There was a problem communicating with the Janrain server
         while configuring authentication.
     </string>
+    <string name="jr_problem_sharing">There was a problem while sharing.</string>
 
 </resources>

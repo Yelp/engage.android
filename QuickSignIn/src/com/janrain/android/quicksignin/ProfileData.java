@@ -40,6 +40,8 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ProfileData {
     private static final String TAG = ProfileData.class.getSimpleName();
@@ -49,8 +51,8 @@ public class ProfileData {
     private static final String ARCHIVE_ALL_PROFILES = "allProfiles";
     private static final String ARCHIVE_LOGIN_SNAPSHOTS = "loginSnapshots";
 
-    private ArrayList<LoginSnapshot> mLoginSnapshots;
-    private HashMap<String, JRDictionary> mProfiles;
+    private List<LoginSnapshot> mLoginSnapshots;
+    private Map<String, JRDictionary> mProfiles;
     private JRDictionary mCurrentProfile;
 
     public static ProfileData getInstance() {
@@ -83,7 +85,7 @@ public class ProfileData {
         }
     }
 
-    public ArrayList<LoginSnapshot> getProfilesList() {
+    public List<LoginSnapshot> getProfilesList() {
         return mLoginSnapshots;
     }
 

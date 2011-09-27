@@ -33,8 +33,6 @@ package com.janrain.android.engage.types;
 
 
 import android.graphics.Bitmap;
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 
 /**
  * @brief Image object to be included in a post to a user's stream.
@@ -132,7 +130,7 @@ public class JRImageMediaObject extends JRMediaObject {
     }
 /*@}*/
 
-    @JsonIgnore
+    //@JsonIgnore
     public Bitmap getPreview() {
         return mPreview;
     }
@@ -147,7 +145,7 @@ public class JRImageMediaObject extends JRMediaObject {
     }
 
     @Override
-    @JsonIgnore
+    //@JsonIgnore
     public String getThumbnail() {
         return mSrc;
     }
@@ -157,4 +155,14 @@ public class JRImageMediaObject extends JRMediaObject {
         return "image";
     }
 
+    @Override
+    public JRDictionary toJRDictionary() {
+        JRDictionary retval = new JRDictionary();
+
+        retval.put("type", getType());
+        retval.put("src", getSrc());
+        retval.put("href", getHref());
+
+        return retval;
+    }
 }

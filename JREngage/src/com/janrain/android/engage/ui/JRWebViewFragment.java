@@ -40,6 +40,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
+import android.util.MalformedJsonException;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -322,6 +323,8 @@ public class JRWebViewFragment extends JRUiFragment {
 
             hideProgressSpinner();
 
+            if (errorCode == WebViewClient.ERROR_UNSUPPORTED_SCHEME) return;
+
             mIsFinishPending = true;
             getActivity().setResult(RESULT_FAIL);
             showAlertDialog("Sign-in failed", "An error occurred while attempting to sign in.");
@@ -359,7 +362,20 @@ public class JRWebViewFragment extends JRUiFragment {
                 hideProgressSpinner();
             //}
 
-            JRDictionary payloadDictionary = JRDictionary.fromJSON(payloadString);
+            JRDictionary payloadDictionary;
+            String alertTitle, alertMessage, logMessage;
+            try {
+                 payloadDictionary = JRDictionary.fromJSON(payloadString);
+            } catch (MalformedJsonException e) {
+                alertTitle = "Sign-in error";
+                alertMessage = payloadString;
+                Log.e(TAG, "[connectionDidFinishLoading] failure: " + payloadString);
+                mIsFinishPending = true;
+                getActivity().setResult(RESULT_FAIL);
+                showAlertDialog(alertTitle, alertMessage);
+                return;
+            }
+
             JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
             final String result = resultDictionary.getAsString("stat");
             if ("ok".equals(result)) {
@@ -371,7 +387,6 @@ public class JRWebViewFragment extends JRUiFragment {
                 getActivity().finish();
             } else {
                 final String error = resultDictionary.getAsString("error");
-                String alertTitle, alertMessage, logMessage;
 
                 if ("Discovery failed for the OpenID you entered".equals(error) ||
                         "Your OpenID must be a URL".equals(error)) {
@@ -452,4 +467,11 @@ public class JRWebViewFragment extends JRUiFragment {
             }
         }
     };
+
+    @Override
+    protected void onBackPressed() {
+        mSessionData.triggerAuthenticationDidRestart();
+        getActivity().setResult(JRWebViewFragment.RESULT_RESTART);
+        getActivity().finish();
+    }
 }

@@ -44,10 +44,9 @@ import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
-import com.janrain.android.engage.utils.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.utils.Prefs;
 import com.janrain.android.engage.utils.AndroidUtils;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -63,6 +62,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @internal
@@ -84,13 +84,11 @@ public class JRProvider implements Serializable {
 
     private static final String TAG = JRProvider.class.getSimpleName();
 
-    private static HashMap<String, Drawable> provider_list_icon_drawables =
-            new HashMap<String, Drawable>();
-
+    private static Map<String, Drawable> provider_list_icon_drawables = new HashMap<String, Drawable>();
 
     // Suppressed because this inner class is not expected to be serialized
     @SuppressWarnings("serial")
-	private final static HashMap<String, Integer> provider_list_icon_resources =
+	private final static Map<String, Integer> provider_list_icon_resources =
             new HashMap<String, Integer>(){
                     {
                         put("icon_bw_facebook", R.drawable.jr_icon_bw_facebook);
@@ -274,8 +272,8 @@ public class JRProvider implements Serializable {
 
     private Drawable getDrawable(Context c,
                                  String drawableName,
-                                 HashMap<String, Drawable> drawableMap,
-                                 HashMap<String, Integer> resourceMap) {
+                                 Map<String, Drawable> drawableMap,
+                                 Map<String, Integer> resourceMap) {
         if (drawableMap.containsKey(drawableName)) return drawableMap.get(drawableName);
 
         if (resourceMap.containsKey(drawableName)) {
@@ -432,7 +430,6 @@ public class JRProvider implements Serializable {
         return getContext().getResources();
     }
 
-    @JsonIgnore
     public int getProviderColor(boolean withAlpha) {
         Object arrayOfColorStrings = getSocialSharingProperties().get("color_values");
 
@@ -444,8 +441,7 @@ public class JRProvider implements Serializable {
 
         // todo see if we can write this in a compile-time--type-safe way
         @SuppressWarnings("unchecked")
-        ArrayList<Double> colorArray = new ArrayList<Double>(
-                (ArrayList<Double>) arrayOfColorStrings);
+        ArrayList<Double> colorArray = new ArrayList<Double>((ArrayList<Double>) arrayOfColorStrings);
 
         /* We need to reorder the array (which is RGBA, the color format returned by Engage) to the color format
          * used by Android (which is ARGB), by moving the last element (alpha) to the front */

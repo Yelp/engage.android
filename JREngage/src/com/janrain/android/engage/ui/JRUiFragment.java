@@ -418,4 +418,9 @@ public abstract class JRUiFragment extends Fragment {
         Log.i(TAG, "[tryToFinishActivity]");
         getActivity().finish();
     }
+
+    /**
+     * Only for operation in JRFragmentHostActivity
+     */
+    protected abstract void onBackPressed();
 }

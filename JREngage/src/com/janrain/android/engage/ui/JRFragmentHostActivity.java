@@ -165,30 +165,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed");
 
-        switch (mFragmentId) {
-            case JR_PROVIDER_LIST:
-                mSessionData.triggerAuthenticationDidCancel();
-                setResult(Activity.RESULT_CANCELED);
-                finish();
-                break;
-            case JR_LANDING:
-                mSessionData.triggerAuthenticationDidRestart();
-                setResult(JRLandingFragment.RESULT_RESTART);
-                finish();
-                break;
-            case JR_WEBVIEW:
-                mSessionData.triggerAuthenticationDidRestart();
-                setResult(JRWebViewFragment.RESULT_RESTART);
-                finish();
-                break;
-            case JR_PUBLISH:
-                mSessionData.triggerPublishingDidComplete();
-                setResult(Activity.RESULT_OK);
-                finish();
-                break;
-            default:
-                throw new IllegalStateException(new IllegalFragmentIdException(mFragmentId));
-        }
+        mUiFragment.onBackPressed();
     }
 
     public static class IllegalFragmentIdException extends RuntimeException {

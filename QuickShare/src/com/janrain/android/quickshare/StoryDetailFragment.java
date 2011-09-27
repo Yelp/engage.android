@@ -123,7 +123,8 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
                     "</body>" +
                 "</html>";
 
-        if (Config.LOGD) Log.d(TAG, "[loadCurrentStory] html: " + htmlString);
+        if (Config.LOGD) Log.d(TAG, "[loadCurrentStory] html: "
+                + htmlString.substring(0, Math.min(50, htmlString.length())));
 
         mWebView.loadDataWithBaseURL("http://www.janrain.com/blogs/", htmlString, "text/html", "UTF-8", "");
     }

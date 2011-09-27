@@ -39,9 +39,6 @@ import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -50,15 +47,15 @@ import java.io.Serializable;
  * @class JRMediaObject
  * Base class for JRImageMediaObject, JRFlashMediaObject, and JRMp3MediaObject.
  **/
-public abstract class JRMediaObject implements Serializable {
+public abstract class JRMediaObject implements Serializable, JRJsonifiable {
     //private static final String TAG = JRMediaObject.class.getSimpleName();
 
-    @JsonIgnore
+    //@JsonIgnore
     private transient Bitmap mThumbnailBitmap;
 
     public boolean hasThumbnail() { return false; }
 
-    @JsonIgnore
+    //@JsonIgnore
     public String getThumbnail() {return null; }
 
     public abstract String getType();
@@ -86,6 +83,7 @@ public abstract class JRMediaObject implements Serializable {
         }
     }
 
+    //@JsonIgnore
     private Context getContext() {
         return JREngage.getActivity();
     }
@@ -93,4 +91,6 @@ public abstract class JRMediaObject implements Serializable {
     public interface ThumbnailAvailableListener {
         public void onThumbnailAvailable(Bitmap b);
     }
+
+    public abstract JRDictionary toJRDictionary();
 }

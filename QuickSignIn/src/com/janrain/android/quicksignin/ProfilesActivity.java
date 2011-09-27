@@ -56,8 +56,10 @@ import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 
 import java.io.FileNotFoundException;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.janrain.android.quicksignin.QuickSignInEnvironment.getAppId;
 import static com.janrain.android.quicksignin.QuickSignInEnvironment.getTokenUrl;
@@ -71,7 +73,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
     private static final int DIALOG_JRENGAGE_ERROR = 1;
 
-    private ArrayList<LoginSnapshot> mProfilesList;
+    private List<LoginSnapshot> mProfilesList;
     private ProfileAdapter mAdapter;
     private ProfileData mProfileData;
 
@@ -144,8 +146,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
      */
     @Override
     protected void onListItemClick(ListView l, View v, int pos, long id) {
-        if (Config.LOGD)
-            Log.d(TAG, "[onListItemClick] at position: " + ((Integer)pos).toString());
+        if (Config.LOGD) Log.d(TAG, "[onListItemClick] at position: " + ((Integer)pos).toString());
 
         LoginSnapshot snapshot = mAdapter.getItem(pos);
         mProfileData.setCurrentProfileByIdentifier(snapshot.getIdentifier());
@@ -158,7 +159,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     private class ProfileAdapter extends ArrayAdapter<LoginSnapshot> implements View.OnClickListener {
         private int mResourceId;
 
-        public ProfileAdapter(Context context, int resId, ArrayList<LoginSnapshot> items) {
+        public ProfileAdapter(Context context, int resId, List<LoginSnapshot> items) {
             super(context, -1, items);
 
             mResourceId = resId;
@@ -176,7 +177,9 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
                 LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = li.inflate(mResourceId, null);
                 Log.i(TAG, "[getView] with null convertView");
-            } else Log.i(TAG, "[getView] with non null convertView");
+            } else {
+                Log.i(TAG, "[getView] with non null convertView");
+            }
 
             ImageView icon = (ImageView)v.findViewById(R.id.row_profile_provider_icon);
             TextView name = (TextView)v.findViewById(R.id.row_profile_preferred_username_label);
@@ -185,7 +188,8 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
             LoginSnapshot snapshot = getItem(position);
 
-            Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " + snapshot.getDisplayName());
+            Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " +
+                    snapshot.getDisplayName());
 
             icon.setImageDrawable(getProviderIconDrawable(snapshot.getProvider()));
             name.setText(snapshot.getDisplayName());
@@ -293,7 +297,10 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
+    public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
+                                                 HttpResponseHeaders response,
+                                                 String tokenUrlPayload,
+                                                 String provider) {
         Toast.makeText(this, "Authentication did reach token url", Toast.LENGTH_SHORT).show();
     }
 
@@ -312,26 +319,24 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         Toast.makeText(this, "Authentication failed to reach token url", Toast.LENGTH_SHORT).show();
     }
 
-    public void jrSocialDidNotCompletePublishing() {
-    }
+    public void jrSocialDidNotCompletePublishing() { }
 
-    public void jrSocialDidCompletePublishing() {
-    }
+    public void jrSocialDidCompletePublishing() { }
 
     public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
     }
 
-    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
+    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity,
+                                                 JREngageError error,
+                                                 String provider) {
     }
 
     public void onClick(View view) {
-
         if (mEditing) {
             mEditing = false;
             mAddProfile.setText(R.string.add_another_profile);
             mAdapter.notifyDataSetChanged();
-        }
-        else {
+        } else {
             /* To see an example of how you can force the user to always reauthenticate and skip the
              * returning user landing page, uncomment the following two lines, and comment-out the third */
             /* mEngage.setAlwaysForceReauthentication(true); */

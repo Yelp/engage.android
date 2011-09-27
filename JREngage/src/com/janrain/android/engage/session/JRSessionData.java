@@ -36,6 +36,7 @@ import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
+import android.util.MalformedJsonException;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import com.janrain.android.engage.JREngage;
@@ -63,7 +64,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JRSessionData implements JRConnectionManagerDelegate {
     private static final String TAG = JRSessionData.class.getSimpleName();
@@ -98,12 +101,12 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private String mReturningBasicProvider;
 	private String mReturningSocialProvider;
 
-	private JRDictionary mAllProviders;
-	private ArrayList<String> mBasicProviders;
+	private Map<String, JRProvider> mAllProviders;
+	private List<String> mBasicProviders;
     private List<String> mEnabledAuthenticationProviders = null;
     private List<String> mEnabledSharingProviders = null;
-	private ArrayList<String> mSocialProviders;
-	private JRDictionary mAuthenticatedUsersByProvider;
+	private List<String> mSocialProviders;
+	private Map<String, JRAuthenticatedUser> mAuthenticatedUsersByProvider;
 
 	private JRActivityObject mActivity;
 	private String mTokenUrl;
@@ -197,8 +200,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             mOldEtag = Prefs.getString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
         } catch (Archiver.LoadException e) {
             /* Blank slate */
-            mAuthenticatedUsersByProvider = new JRDictionary();
-            mAllProviders = new JRDictionary();
+            mAuthenticatedUsersByProvider = new HashMap<String, JRAuthenticatedUser>();
+            mAllProviders = new HashMap<String, JRProvider>();
             mBasicProviders = new ArrayList<String>();
             mSocialProviders = new ArrayList<String>();
             mBaseUrl = "";
@@ -264,7 +267,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 // Filter by enabled provider list if available
                 if (mEnabledAuthenticationProviders != null &&
                         !mEnabledAuthenticationProviders.contains(name)) continue;
-                providerList.add(mAllProviders.getAsProvider(name));
+                providerList.add(mAllProviders.get(name));
             }
         }
 
@@ -284,7 +287,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 // Filter by enabled provider list if available
                 if (mEnabledSharingProviders != null &&
                         !mEnabledSharingProviders.contains(name)) continue;
-                providerList.add(mAllProviders.getAsProvider(name));
+                providerList.add(mAllProviders.get(name));
             }
         }
 
@@ -372,7 +375,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             if (dictionary.getAsString(USERDATA_ACTION_KEY).equals(USERDATA_ACTION_CALL_TOKEN_URL)) {
                 Log.e(TAG, "[connectionDidFail] call to token url failed: " + ex);
                 JREngageError error = new JREngageError(
-                        "Session error",
+                        "Error: " + ex.getLocalizedMessage(),
                         JREngageError.CODE_UNKNOWN,
                         "",
                         ex);
@@ -386,7 +389,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 Log.e(TAG, "[connectionDidFail] sharing activity failed: " + ex);
                 List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
                 JREngageError error = new JREngageError(
-                        "Session error",
+                        "Error: " + ex.getLocalizedMessage(),
                         JREngageError.CODE_UNKNOWN,
                         "",
                         ex);
@@ -403,7 +406,12 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     private void processShareActivityResponse(String payload, JRDictionary userDataTag) {
         String providerName = userDataTag.getAsString(USERDATA_PROVIDER_NAME_KEY);
 
-        JRDictionary responseDict = JRDictionary.fromJSON(payload);
+        JRDictionary responseDict;
+        try {
+            responseDict = JRDictionary.fromJSON(payload);
+        } catch (MalformedJsonException e) {
+            responseDict = null;
+        }
 
         if (responseDict == null) {
             setCurrentlyPublishingProvider(null);
@@ -415,7 +423,6 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                                 ErrorType.PUBLISH_FAILED),
                                 providerName);
             }
-
         } else if (responseDict.containsKey("stat") && ("ok".equals(responseDict.get("stat")))) {
             setReturningSocialProvider(getCurrentlyPublishingProvider().getName());
             setCurrentlyPublishingProvider(null);
@@ -429,7 +436,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
             if (errorDict == null) {
                 publishError = new JREngageError(
-                        "There was a problem publishing with this activity",
+                        getContext().getString(R.string.jr_problem_sharing),
                         SocialPublishingError.FAILED,
                         ErrorType.PUBLISH_FAILED);
             } else {
@@ -485,7 +492,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                     case 1000: /* Extracting code failed; Fall through. */
                     default: // TODO Other errors (find them)
                         publishError = new JREngageError(
-                                "There was a problem publishing this activity",
+                                getContext().getString(R.string.jr_problem_sharing),
                                 SocialPublishingError.FAILED,
                                 ErrorType.PUBLISH_FAILED);
                         break;
@@ -618,7 +625,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
         /* Get the providers out of the provider_info section.  These are likely to have changed. */
         JRDictionary providerInfo = jsonDict.getAsDictionary("provider_info");
-        mAllProviders = new JRDictionary();
+        mAllProviders = new HashMap<String, JRProvider>();
 
         /* For each provider */
         for (String name : providerInfo.keySet()) {
@@ -776,7 +783,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     public void forgetAuthenticatedUserForProvider(String providerName) {
         if (Config.LOGD) Log.d(TAG, "[forgetAuthenticatedUserForProvider]");
 
-        JRProvider provider = mAllProviders.getAsProvider(providerName);
+        JRProvider provider = mAllProviders.get(providerName);
         if (provider == null) {
             Log.e(TAG, "[forgetAuthenticatedUserForProvider] provider not found: " + providerName);
         } else {
@@ -838,7 +845,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
     }
 
     public JRProvider getProviderByName(String name) {
-        return mAllProviders.getAsProvider(name);
+        return mAllProviders.get(name);
     }
 
     public void notifyEmailSmsShare(String method) {

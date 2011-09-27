@@ -258,4 +258,11 @@ public class JRLandingFragment extends JRUiFragment {
             return getString(R.string.jr_landing_default_custom_title);
         }
     }
+
+    @Override
+    protected void onBackPressed() {
+        mSessionData.triggerAuthenticationDidRestart();
+        getActivity().setResult(JRLandingFragment.RESULT_RESTART);
+        getActivity().finish();
+    }
 }

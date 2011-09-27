@@ -31,6 +31,7 @@
  */
 package com.janrain.android.engage.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -1143,4 +1144,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             if (provider.equals(mSelectedProvider.getName())) onUserSignOut();
         }
     };
+
+    @Override
+    protected void onBackPressed() {
+        mSessionData.triggerPublishingDidComplete();
+        getActivity().setResult(Activity.RESULT_OK);
+        getActivity().finish();
+    }
 }

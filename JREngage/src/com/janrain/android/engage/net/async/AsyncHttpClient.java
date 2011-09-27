@@ -36,8 +36,13 @@ import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.utils.IOUtils;
+import org.apache.http.Header;
+import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -46,16 +51,21 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HttpContext;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 /**
  * @internal
@@ -66,7 +76,8 @@ import java.util.List;
 public final class AsyncHttpClient {
     private static final String TAG = AsyncHttpClient.class.getSimpleName();
     private static final String USER_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
-    private static final String ACCEPT_ENCODING = "identity";
+    private static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
+    private static final String ENCODING_GZIP = "gzip";
 
     private AsyncHttpClient() {}
 
@@ -78,6 +89,63 @@ public final class AsyncHttpClient {
         private byte[] mPostData;
 		private Handler mHandler;
 		private HttpCallbackWrapper mWrapper;
+        private DefaultHttpClient mHttpClient;
+
+        private void setupHttpClient() {
+            HttpParams connectionParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(connectionParams, 10000); // ten second timeout
+            HttpConnectionParams.setSoTimeout(connectionParams, 10000);
+
+            // From the Google IO app:
+            mHttpClient = new DefaultHttpClient(connectionParams);
+            mHttpClient.addRequestInterceptor(new HttpRequestInterceptor() {
+                public void process(HttpRequest request, HttpContext context) {
+                    // Add header to accept gzip content
+                    if (!request.containsHeader(HEADER_ACCEPT_ENCODING)) {
+                        request.addHeader(HEADER_ACCEPT_ENCODING, ENCODING_GZIP);
+                    }
+                }
+            });
+
+            mHttpClient.addResponseInterceptor(new HttpResponseInterceptor() {
+                public void process(HttpResponse response, HttpContext context) {
+                    // Inflate any responses compressed with gzip
+                    final HttpEntity entity = response.getEntity();
+                    if (entity == null) return;
+                    final Header encoding = entity.getContentEncoding();
+                    if (encoding != null) {
+                        for (HeaderElement element : encoding.getElements()) {
+                            if (element.getName().equalsIgnoreCase(ENCODING_GZIP)) {
+                                response.setEntity(new InflatingEntity(response.getEntity()));
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * From the Google IO app:
+         * Simple {@link HttpEntityWrapper} that inflates the wrapped
+         * {@link HttpEntity} by passing it through {@link GZIPInputStream}.
+         */
+        private static class InflatingEntity extends HttpEntityWrapper {
+            public InflatingEntity(HttpEntity wrapped) {
+                super(wrapped);
+            }
+
+            @Override
+            public InputStream getContent() throws IOException {
+                return new GZIPInputStream(wrappedEntity.getContent());
+            }
+
+            @Override
+            public long getContentLength() {
+                return -1;
+            }
+        }
+
 
         public HttpSender(JRConnectionManager.ConnectionData connectionData,
                           Handler handler, HttpCallbackWrapper wrapper) {
@@ -91,14 +159,13 @@ public final class AsyncHttpClient {
 		public void run() {
 			if (Config.LOGD) Log.d(TAG, "[run] BEGIN, url: " + mUrl);
 
+            setupHttpClient();
+
             int sleepTime = 1000;
 
             while (true) {
                 try {
                     //try { Thread.sleep(5000); } catch (InterruptedException e) {}
-                    HttpParams connectionParams = new BasicHttpParams();
-                    HttpConnectionParams.setConnectionTimeout(connectionParams, 10000); // ten second timeout
-                    HttpConnectionParams.setSoTimeout(connectionParams, 10000);
 
                     HttpUriRequest request;
                     if (mPostData != null) {
@@ -111,23 +178,24 @@ public final class AsyncHttpClient {
                     }
 
                     request.addHeader("User-Agent", USER_AGENT);
-                    request.addHeader("Accept-Encoding", ACCEPT_ENCODING);
                     if (mHeaders == null) mHeaders = new ArrayList<NameValuePair>();
                     for (NameValuePair header : mHeaders) request.addHeader(header.getName(), header.getValue());
 
-                    HttpResponse response = new DefaultHttpClient().execute(request);
+                    HttpResponse response = mHttpClient.execute(request);
 
                     HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response);
 
                     HttpEntity entity = response.getEntity();
                     byte[] data = entity == null? new byte[0] : IOUtils.readFromStream(entity.getContent(), true);
                     String dataString = new String(data);
+                    if (entity != null) entity.consumeContent();
 
                     switch (response.getStatusLine().getStatusCode()) {
                     case HttpStatus.SC_OK:
                         if (Config.LOGD) Log.d(TAG, "[run] HTTP_OK");
                         if (Config.LOGD) Log.d(TAG, "[run] headers: " + headers.toString());
-                        if (Config.LOGD) Log.d(TAG, "[run] data: " + dataString);
+                        if (Config.LOGD) Log.d(TAG, "[run] data for " + mUrl + ": " +
+                                dataString.substring(0, Math.min(dataString.length(), 600)));
                         mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
                         break;
                     case HttpStatus.SC_NOT_MODIFIED:
@@ -162,13 +230,14 @@ public final class AsyncHttpClient {
                     mHandler.post(mWrapper);
                 }
 
-                try {
-                    if (sleepTime > 8000) return;
-                    Thread.sleep(sleepTime);
-                    sleepTime *= 2;
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                //try {
+                //    if (sleepTime > 8000) return;
+                //    Thread.sleep(sleepTime);
+                //    sleepTime *= 2;
+                //} catch (InterruptedException e) {
+                //    throw new RuntimeException(e);
+                //}
+                return;
             }
 		}
 

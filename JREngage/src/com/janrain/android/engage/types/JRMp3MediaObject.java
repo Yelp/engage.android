@@ -106,7 +106,7 @@ package com.janrain.android.engage.types;
      *   if src is null
      **/
     public JRMp3MediaObject(String src) {
-        if (src == null) throw new IllegalArgumentException("illegal src for JRMp3MediaObject constructor");
+        if (src == null) throw new IllegalArgumentException("illegal null src");
         mSrc = src;
     }
 /*@}*/
@@ -190,5 +190,18 @@ package com.janrain.android.engage.types;
     @Override
     public String getType() {
         return "music";
+    }
+
+    @Override
+    public JRDictionary toJRDictionary() {
+        JRDictionary retval = new JRDictionary();
+
+        retval.put("src", getSrc());
+        retval.put("type", getType());
+        if (getAlbum() != null) retval.put("album", getAlbum());
+        if (getArtist() != null) retval.put("artist", getArtist());
+        if (getTitle() != null) retval.put("title", getTitle());
+
+        return retval;
     }
 }

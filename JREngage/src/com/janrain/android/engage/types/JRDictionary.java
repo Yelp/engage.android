@@ -37,13 +37,18 @@ package com.janrain.android.engage.types;
  */
 
 import android.text.TextUtils;
+import android.util.JsonReader;
+import android.util.JsonWriter;
 import android.util.Log;
+import android.util.MalformedJsonException;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.utils.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,14 +62,10 @@ import java.util.Map;
  * iPhone dictionary work-alike class
  * @endinternal
  **/
-public final class JRDictionary extends HashMap<String,Object> {
-
+public final class JRDictionary extends HashMap<String, Object> {
 	public static final String DEFAULT_VALUE_STRING = "";
 	public static final int DEFAULT_VALUE_INT = -1;
 	public static final boolean DEFAULT_VALUE_BOOLEAN = false;
-
-	/* Required for unique object identification. */
-	private static final long serialVersionUID = 3798456277521362434L;
 
     private static final String TAG = JRDictionary.class.getSimpleName();
 
@@ -80,45 +81,6 @@ public final class JRDictionary extends HashMap<String,Object> {
         super();
     }
 
-    /**
-     * Initializing constructor.  Creates instance of JRDictionary with the specified
-     * initial size/capacity.
-     *
-     * @param capacity
-     *      Initial size/capacity of JRDictionary instance
-     **/
-    public JRDictionary(int capacity) {
-        super(capacity);
-    }
-
-    /**
-     * Copy constructor (for base type).
-     *
-     * @param map
-     *      The Map to copy
-     **/
-    public JRDictionary(Map map) {
-        if (map != null) {
-            for (Object k : map.keySet()) {
-                assert k instanceof String;
-                put((String) k, map.get(k));
-            }
-        }
-    }
-
-    /**
-     * Copy constructor.
-     *
-     * @param dictionary
-     *      Dictionary instance to clone
-     **/
-    public JRDictionary(JRDictionary dictionary) {
-        if (!JRDictionary.isEmpty(dictionary)) {
-            putAll(dictionary);
-        }
-    }
-/*@}*/
-
 /**
  * @name JSON Serialization
  * Methods that serialize/deserialize the JRDictionary to/from JSON
@@ -131,16 +93,48 @@ public final class JRDictionary extends HashMap<String,Object> {
      *      JSON representation of the specified JRDictionary object
      **/
     public String toJSON() {
-        String retval = "";
+        StringWriter stringWriter = new StringWriter();
+        JsonWriter jsonWriter = new JsonWriter(stringWriter);
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            retval = mapper.writeValueAsString(this);
+            jsonify(this, jsonWriter);
+            jsonWriter.close();
         } catch (IOException e) {
-            Log.w(TAG, "[toJSON] problem serializing JSON string: ", e);
+            throw new RuntimeException(e);
         }
 
-        return retval;
+        return stringWriter.toString();
+    }
+
+    private static void jsonify(Object object, JsonWriter jsonWriter) throws IOException {
+        if (object instanceof JRDictionary) {
+            jsonWriter.beginObject();
+            for (String key : ((JRDictionary) object).keySet()) {
+                jsonWriter.name(key);
+                jsonify(((JRDictionary) object).get(key), jsonWriter);
+            }
+            jsonWriter.endObject();
+        } else if (object instanceof Object[]) {
+            jsonWriter.beginArray();
+            for (Object o : (Object[]) object) {
+                jsonify(o, jsonWriter);
+            }
+            jsonWriter.endArray();
+        } else if (object instanceof Collection) {
+            jsonify(((Collection) object).toArray(), jsonWriter);
+        } else if (object instanceof String) {
+            jsonWriter.value((String) object);
+        } else if (object instanceof Boolean) {
+            jsonWriter.value((Boolean) object);
+        } else if (object instanceof Number) {
+            jsonWriter.value((Number) object);
+        } else if (object instanceof JRJsonifiable) {
+            jsonify(((JRJsonifiable) object).toJRDictionary(), jsonWriter);
+        } else if (object == null) {
+            jsonWriter.nullValue();
+        } else {
+            throw new RuntimeException("Unexpected jsonify value: " + object);
+        }
     }
 
     /**
@@ -151,21 +145,103 @@ public final class JRDictionary extends HashMap<String,Object> {
      *
      * @return
      *      A JRDictionary object representation of the JSON string
+     *
+     * @throws MalformedJsonException
+     *      When the JSON couldn't be parsed.
      **/
-    public static JRDictionary fromJSON(String json) {
-        JRDictionary retVal = null;
+    public static JRDictionary fromJSON(String json) throws MalformedJsonException {
+        JsonReader jsonReader = new JsonReader(new StringReader(json));
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-
-            retVal = mapper.readValue(json, JRDictionary.class);
+            return (JRDictionary) unjsonify(jsonReader);
+        } catch (MalformedJsonException e) {
+            throw e;
         } catch (IOException e) {
-            Log.w(TAG, "[fromJSON] problem deserializing JSON string: ", e);
+            throw new MalformedJsonException(e.toString());
         }
-
-        return retVal;
     }
-/*@}*/
+
+    private static Object unjsonify(JsonReader jsonReader) throws IOException {
+        switch (jsonReader.peek()) {
+            case BEGIN_ARRAY:
+                ArrayList returnArray = new ArrayList();
+                jsonReader.beginArray();
+                while (jsonReader.hasNext()) returnArray.add(unjsonify(jsonReader));
+                jsonReader.endArray();
+                return returnArray;
+            case BEGIN_OBJECT:
+                JRDictionary returnDictionary = new JRDictionary();
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    String key = jsonReader.nextName();
+                    Object value = unjsonify(jsonReader);
+                    returnDictionary.put(key, value);
+                }
+                jsonReader.endObject();
+                return returnDictionary;
+            case BOOLEAN:
+                return jsonReader.nextBoolean();
+            case NULL:
+                jsonReader.nextNull();
+                return null;
+            case NUMBER:
+                return jsonReader.nextDouble();
+            case STRING:
+                return jsonReader.nextString();
+            default:
+                throw new RuntimeException("unexpected unjsonify token");
+        }
+    }
+
+    @Deprecated
+    @Override
+    public Object put(String key, Object value) {
+        if (value instanceof JRDictionary || value instanceof String || value instanceof Number ||
+                value instanceof Collection || value == null || value instanceof Boolean) {
+            return super.put(key, value);
+        } else {
+            throw new IllegalArgumentException("Non-jsonifiable object could not be added to JRDictionary");
+            //Log.e(TAG, "Non-jsonifiable object added to JRDictionary");
+            //return super.put(key, value);
+        }
+     }
+
+    @Deprecated
+    @Override
+    public void putAll(Map<? extends String, ?> map) {
+        throw new UnsupportedOperationException();
+        //super.putAll(map);
+    }
+
+    public Object put (String key, String value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, Number value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, JRDictionary value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, Object[] value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, Boolean value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, Collection value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, JRJsonifiable value) {
+        return super.put(key, value);
+    }
+
+    /*@}*/
 
 /**
  * @name Getting Dictionary Content
@@ -318,14 +394,12 @@ public final class JRDictionary extends HashMap<String,Object> {
 			Object value = get(key);
 			if (value instanceof JRDictionary) {
 				retval = (JRDictionary)value;
-			} else if (value instanceof Map) {
-                retval = new JRDictionary((Map) value);
+			} else {
+                throw new RuntimeException("Unexpected type in JRDictionary");
             }
 		}
 
-		return ((retval == null) && shouldCreateIfNotFound)
-			? new JRDictionary()
-			: retval;
+		return ((retval == null) && shouldCreateIfNotFound) ? new JRDictionary() : retval;
 	}
 
     /**

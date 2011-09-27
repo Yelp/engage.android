@@ -265,4 +265,11 @@ public class JRProviderListFragment extends JRUiFragment {
             }
         }
     }
+
+    @Override
+    protected void onBackPressed() {
+        mSessionData.triggerAuthenticationDidCancel();
+        getActivity().setResult(Activity.RESULT_CANCELED);
+        getActivity().finish();
+    }
 }

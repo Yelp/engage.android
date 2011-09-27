@@ -186,6 +186,9 @@ public class FeedSummaryFragment extends ListFragment {
         public void asyncFeedReadFailed() {
             if (Config.LOGD) Log.d(TAG, "[asyncFeedReadFailed]");
 
+            if (mRefreshView != null) {
+                setRefreshViewText(mRefreshView, "Load failed");
+            }
             updateStoryList();
             mAdapter.notifyDataSetChanged();
         }
@@ -239,7 +242,7 @@ public class FeedSummaryFragment extends ListFragment {
         }
 
         private View getInflatedView() {
-            Log.i(TAG, "[getView] with null or dummy convertView");
+            //Log.i(TAG, "[getView] with null or dummy convertView");
             LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             return li.inflate(mResourceId, null);
         }
@@ -275,7 +278,7 @@ public class FeedSummaryFragment extends ListFragment {
                 title.setGravity(Gravity.CENTER_HORIZONTAL);
             } else {
                 if (v == mRefreshView) mRefreshView = null;
-                if (Config.LOGD) Log.d(TAG, "[getView] for row " + position + ": " + story.getTitle());
+                //if (Config.LOGD) Log.d(TAG, "[getView] for row " + position + ": " + story.getTitle());
 
                 v.setTag("STORY_ROW");
 
@@ -287,7 +290,7 @@ public class FeedSummaryFragment extends ListFragment {
                     icon.setVisibility(View.VISIBLE);
                     ImageLoader il = mFeedData.getImageLoader();
                     ImageLoader.BindResult br = il.bind(this, icon, story.getThumbnailUrl());
-                    if (Config.LOGD) Log.d(TAG, "bind result: " + br);
+                    //if (Config.LOGD) Log.d(TAG, "bind result: " + br);
                 }
 
                 title.setText(story.getTitle());

@@ -87,7 +87,7 @@ import java.util.Map;
  *
  * @nosubgrouping
  **/
-public class JRActivityObject implements Serializable {
+public class JRActivityObject implements Serializable, JRJsonifiable {
     private static final String TAG = JRActivityObject.class.getSimpleName();
 
 /**
@@ -218,7 +218,7 @@ public class JRActivityObject implements Serializable {
      * @par Getter/Setter:
      *      #getProperties(), #setProperties()
      **/
-    private Map<String, Object> mProperties = new HashMap<String, Object>();
+    private JRDictionary mProperties = new JRDictionary();
 
     /**
      * A JREmailObject to use to prefill a sharing email sent by the user
@@ -451,7 +451,7 @@ public class JRActivityObject implements Serializable {
      *      An object with attributes describing properties of the update. An attribute value can be
      *      a string or an object with two attributes, \e text and \e href.
      **/
-    public void setProperties(Map<String, Object> properties) {
+    public void setProperties(JRDictionary properties) {
         mProperties = properties;
     }
 

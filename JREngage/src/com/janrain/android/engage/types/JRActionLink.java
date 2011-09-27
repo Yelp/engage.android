@@ -60,7 +60,7 @@ import java.io.Serializable;
  *
  * @nosubgrouping
  **/
-public class JRActionLink implements Serializable {
+public class JRActionLink implements Serializable, JRJsonifiable {
 /**
  * @name Private Attributes
  * The various properties of the JRActionLink that you can access and configure through the object's
@@ -133,5 +133,15 @@ public class JRActionLink implements Serializable {
     public String getHref() {
         return mHref;
     }
-/*@}*/
+
+    public JRDictionary toJRDictionary() {
+        JRDictionary retval = new JRDictionary();
+
+        retval.put("href", getHref());
+        retval.put("text", getText());
+
+        return retval;
+    }
+
+    /*@}*/
 }
