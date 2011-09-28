@@ -1,32 +1,34 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- Copyright (c) 2010, Janrain, Inc.
-
- All rights reserved.
-
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation and/or
-   other materials provided with the distribution.
- * Neither the name of the Janrain, Inc. nor the names of its
-   contributors may be used to endorse or promote products derived from this
-   software without specific prior written permission.
-
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  Copyright (c) 2011, Janrain, Inc.
+ *
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation and/or
+ *    other materials provided with the distribution.
+ *  * Neither the name of the Janrain, Inc. nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ *  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ */
 package com.janrain.android.engage.types;
 
 /*
@@ -35,15 +37,17 @@ package com.janrain.android.engage.types;
  */
 
 import android.text.TextUtils;
-import android.util.Log;
 import com.janrain.android.engage.session.JRProvider;
-import com.janrain.android.engage.utils.Archiver;
 import com.janrain.android.engage.utils.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-
-import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+import org.json.JSONTokener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -56,21 +60,16 @@ import java.util.Map;
  * iPhone dictionary work-alike class
  * @endinternal
  **/
-public final class JRDictionary extends HashMap<String,Object> {
-
+public final class JRDictionary extends HashMap<String, Object> {
 	public static final String DEFAULT_VALUE_STRING = "";
 	public static final int DEFAULT_VALUE_INT = -1;
 	public static final boolean DEFAULT_VALUE_BOOLEAN = false;
 
-	/* Required for unique object identification. */
-	private static final long serialVersionUID = 3798456277521362434L;
-
-    /* Tag used for logging. */
     private static final String TAG = JRDictionary.class.getSimpleName();
 
 /**
- * @name Contructors
- * Contructors for JRDictionary
+ * @name Constructors
+ * Constructors for JRDictionary
  **/
 /*@{*/
     /**
@@ -79,90 +78,6 @@ public final class JRDictionary extends HashMap<String,Object> {
     public JRDictionary() {
         super();
     }
-
-    /**
-     * Initializing constructor.  Creates instance of JRDictionary with the specified
-     * initial size/capacity.
-     *
-     * @param capacity
-     *      Initial size/capacity of JRDictionary instance
-     **/
-    public JRDictionary(int capacity) {
-        super(capacity);
-    }
-
-    /**
-     * Copy constructor (for base type).
-     *
-     * @param map
-     *      The \e Map instance to clone
-     **/
-    public JRDictionary(Map map) {
-        if (map != null) {
-            for (Object k : map.keySet()) {
-                assert k instanceof String;
-                put((String) k, map.get(k));
-            }
-        }
-    }
-
-    /**
-     * Copy constructor.
-     *
-     * @param dictionary
-     *      Dictionary instance to clone
-     **/
-    public JRDictionary(JRDictionary dictionary) {
-        if (!JRDictionary.isEmpty(dictionary)) {
-            putAll(dictionary);
-        }
-    }
-/*@}*/
-
-/**
- * @name Archiving
- * Methods that manage archiving/unarchiving of JRDictionaary
- **/
-/*@{*/
-    /**
-     * Archives the specified JRDictionary object to disk.
-     *
-     * @param name
-     *      The name the JRDictionary will be saved as on disk.  This parameter cannot be \e null
-     *
-     * @param dictionary
-     *      The dictionary object to be saved
-     *
-     * @return
-     *      \c true if the save operation is successful, \c false otherwise
-     *
-     * @throws
-     * 		IllegalArgumentException if the context or name parameters are \e null
-     **/
-    public static boolean archive(String name, JRDictionary dictionary) {
-        return Archiver.save(name, dictionary);
-    }
-
-    /**
-     * Loads (unarchives) the specified JRDictionary object from the local (protected) file system.
-     *
-     * @param name
-     * 		The name of the JRDictionary to be loaded from disk.  This parameter cannot be \e null
-     *
-     * @return
-     * 		The JRDictionary if found and loaded, new (empty) JRDictionary otherwise
-     *
-     * @throws
-     * 		IllegalArgumentException if the context or name parameters are \e null
-     **/
-    public static JRDictionary unarchive(String name) {
-        Object obj = Archiver.load(name);
-        if ((obj != null) && (obj instanceof JRDictionary)) {
-            return (JRDictionary)obj;
-        }
-        return new JRDictionary();
-    }
-/*@}*/
 
 /**
  * @name JSON Serialization
@@ -176,16 +91,49 @@ public final class JRDictionary extends HashMap<String,Object> {
      *      JSON representation of the specified JRDictionary object
      **/
     public String toJSON() {
-        String retval = "";
+        JSONStringer jsonStringer = new JSONStringer();
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            retval = mapper.writeValueAsString(this);
-        } catch (IOException e) {
-            Log.w(TAG, "[toJSON] problem serializing JSON string: ", e);
+            jsonify(this, jsonStringer);
+            return jsonStringer.toString();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
+    }
 
-        return retval;
+    private static void jsonify(Object object, JSONStringer jsonStringer) throws JSONException {
+        if (object instanceof JRDictionary) {
+            jsonStringer.object();
+            for (String key : ((JRDictionary) object).keySet()) {
+                jsonStringer.key(key);
+                jsonify(((JRDictionary) object).get(key), jsonStringer);
+            }
+            jsonStringer.endObject();
+        } else if (object instanceof Object[]) {
+            jsonStringer.array();
+            for (Object o : (Object[]) object) {
+                jsonify(o, jsonStringer);
+            }
+            jsonStringer.endArray();
+        } else if (object instanceof Collection) {
+            jsonify(((Collection) object).toArray(), jsonStringer);
+        } else if (object instanceof String) {
+            jsonStringer.value(object);
+        } else if (object instanceof Boolean) {
+            jsonStringer.value(object);
+        } else if (object instanceof Integer) {
+            jsonStringer.value(object);
+        } else if (object instanceof Double) {
+            jsonStringer.value(object);
+        } else if (object instanceof Long) {
+            jsonStringer.value(object);
+        } else if (object instanceof JRJsonifiable) {
+            jsonify(((JRJsonifiable) object).toJRDictionary(), jsonStringer);
+        } else if (object == null) {
+            jsonStringer.value(JSONObject.NULL);
+        } else {
+            throw new RuntimeException("Unexpected jsonify value: " + object);
+        }
     }
 
     /**
@@ -196,25 +144,112 @@ public final class JRDictionary extends HashMap<String,Object> {
      *
      * @return
      *      A JRDictionary object representation of the JSON string
+     *
+     * @throws JSONException
+     *      When the JSON couldn't be parsed.
      **/
-    public static JRDictionary fromJSON(String json) {
-        //if (Config.LOGD) {
-        //    Log.d(TAG, "[fromJSON] json: " + json);
-        //}
+    public static JRDictionary fromJSON(String json) throws JSONException {
+        JSONTokener jsonTokener = new JSONTokener(json);
 
-        JRDictionary retval = null;
+        Object jsonObject = jsonTokener.nextValue();
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-
-            retval = mapper.readValue(json, JRDictionary.class);
-        } catch (IOException e) {
-            Log.w(TAG, "[fromJSON] problem deserializing JSON string: ", e);
+            return (JRDictionary) unjsonify(jsonObject);
+        } catch (ClassCastException e) {
+            throw new JSONException(e.toString());
         }
-
-        return retval;
     }
-/*@}*/
+
+    private static Object unjsonify(Object jsonValue) throws JSONException {
+        if (jsonValue instanceof JSONArray) {
+            ArrayList returnArray = new ArrayList();
+            for (int i=0; i < ((JSONArray) jsonValue).length(); i++) {
+                returnArray.add(unjsonify(((JSONArray) jsonValue).get(i)));
+            }
+            return returnArray;
+        } if (jsonValue instanceof JSONObject) {
+            JRDictionary returnDictionary = new JRDictionary();
+            Iterator<String> i = ((JSONObject) jsonValue).keys();
+            while (i.hasNext()) {
+                String key = i.next();
+                Object value = ((JSONObject) jsonValue).get(key);
+                returnDictionary.put(key, unjsonify(value));
+            }
+            return returnDictionary;
+        } if (jsonValue instanceof Boolean) {
+            return jsonValue;
+        } if (jsonValue == JSONObject.NULL) {
+            return null;
+        } if (jsonValue instanceof Double) {
+            return jsonValue;
+        } if (jsonValue instanceof Integer) {
+            return ((Integer) jsonValue).doubleValue();
+        } if (jsonValue instanceof Long) {
+            return ((Long) jsonValue).doubleValue();
+        } if (jsonValue instanceof String) {
+            return jsonValue;
+        } else {
+            throw new RuntimeException("unexpected unjsonify token");
+        }
+    }
+
+    @Deprecated
+    @Override
+    public Object put(String key, Object value) {
+        if (value instanceof JRDictionary || value instanceof String || value instanceof Number ||
+                value instanceof Collection || value == null || value instanceof Boolean) {
+            return super.put(key, value);
+        } else {
+            throw new IllegalArgumentException("Non-jsonifiable object could not be added to JRDictionary");
+            //Log.e(TAG, "Non-jsonifiable object added to JRDictionary");
+            //return super.put(key, value);
+        }
+     }
+
+    @Deprecated
+    @Override
+    public void putAll(Map<? extends String, ?> map) {
+        throw new UnsupportedOperationException();
+        //super.putAll(map);
+    }
+
+    public Object put (String key, String value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, Integer value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, Long value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, Double value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, JRDictionary value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, Object[] value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, Boolean value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, Collection value) {
+        return super.put(key, value);
+    }
+
+    public Object put (String key, JRJsonifiable value) {
+        return super.put(key, value);
+    }
+
+    /*@}*/
 
 /**
  * @name Getting Dictionary Content
@@ -367,14 +402,12 @@ public final class JRDictionary extends HashMap<String,Object> {
 			Object value = get(key);
 			if (value instanceof JRDictionary) {
 				retval = (JRDictionary)value;
-			} else if (value instanceof Map) {
-                retval = new JRDictionary((Map) value);
+			} else {
+                throw new RuntimeException("Unexpected type in JRDictionary");
             }
 		}
 
-		return ((retval == null) && shouldCreateIfNotFound)
-			? new JRDictionary()
-			: retval;
+		return ((retval == null) && shouldCreateIfNotFound) ? new JRDictionary() : retval;
 	}
 
     /**
@@ -446,60 +479,9 @@ public final class JRDictionary extends HashMap<String,Object> {
         return retval;
     }
 
-    /**
-     * @internal
-     * Convenience method used to retrieve a named value as a JRProviderList
-     *
-     * @param key
-     * 		The key of the value to be retrieved
-     *
-     * @return
-     * 		The JRProviderList value if key is found, \e null otherwise
-     **/
-    public JRProviderList getAsProviderList(String key) {
-        return getAsProviderList(key, false);
-    }
-
-    /**
-     * @internal
-     * Convenience method used to retrieve a named value as a JRProviderList
-     *
-     * @param key
-     * 		The key of the value to be retrieved
-     *
-     * @param shouldCreateIfNotFound
-     * 		Flag indicating whether or not a new JRProviderList object should be created if the
-     * 		specified key does not exist
-     *
-     * @return
-     * 		The JRProviderList value if key is found, empty JRProviderList or \e null otherwise (based on value
-	 *      of the \e shouldCreateIfNotFound flag)
-     **/
-
-
-    // We runtime type check the return value so we can safely ignore this unchecked
-    // assignment error.
-    @SuppressWarnings({ "unchecked" })
-	public JRProviderList getAsProviderList(String key, boolean shouldCreateIfNotFound) {
-        JRProviderList retval = null;
-        if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
-            Object value = get(key);
-            if (value instanceof JRProviderList) {
-                retval = (JRProviderList)value;
-            } else if (value instanceof ArrayList) {
-                for (Object v : (ArrayList) value) assert v instanceof JRProvider;
-            	retval = new JRProviderList((ArrayList<JRProvider>)value);
-            }
-        }
-
-        return ((retval == null) && shouldCreateIfNotFound)
-            ? new JRProviderList()
-            : retval;
-    }
-
 /**
  * @name Miscellaneous
- * Miscellanous methods
+ * Miscellaneous methods
  **/
 /*@{*/
     /**

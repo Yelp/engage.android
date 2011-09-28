@@ -1,36 +1,34 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- Copyright (c) 2011, Janrain, Inc.
-
- All rights reserved.
-
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation and/or
-   other materials provided with the distribution.
- * Neither the name of the Janrain, Inc. nor the names of its
-   contributors may be used to endorse or promote products derived from this
-   software without specific prior written permission.
-
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
- File:   ProfileData.java
- Author: Lilli Szafranski - lilli@janrain.com
- Date:   April 6, 2011
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  Copyright (c) 2011, Janrain, Inc.
+ *
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation and/or
+ *    other materials provided with the distribution.
+ *  * Neither the name of the Janrain, Inc. nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ *  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ */
 package com.janrain.android.quicksignin;
 
 import android.util.Config;
@@ -42,6 +40,8 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ProfileData {
     private static final String TAG = ProfileData.class.getSimpleName();
@@ -51,8 +51,8 @@ public class ProfileData {
     private static final String ARCHIVE_ALL_PROFILES = "allProfiles";
     private static final String ARCHIVE_LOGIN_SNAPSHOTS = "loginSnapshots";
 
-    private ArrayList<LoginSnapshot> mLoginSnapshots;
-    private HashMap<String, JRDictionary> mProfiles;
+    private List<LoginSnapshot> mLoginSnapshots;
+    private Map<String, JRDictionary> mProfiles;
     private JRDictionary mCurrentProfile;
 
     public static ProfileData getInstance() {
@@ -76,16 +76,16 @@ public class ProfileData {
             Log.d(TAG, "[ctor] creating instance.");
         }
 
-        mLoginSnapshots = (ArrayList<LoginSnapshot>)Archiver.load(ARCHIVE_LOGIN_SNAPSHOTS);
-        if (mLoginSnapshots == null)
+        try {
+            mLoginSnapshots = Archiver.load(ARCHIVE_LOGIN_SNAPSHOTS);
+            mProfiles = Archiver.load(ARCHIVE_ALL_PROFILES);
+        } catch (Archiver.LoadException e) {
             mLoginSnapshots = new ArrayList<LoginSnapshot>();
-
-        mProfiles = (HashMap<String, JRDictionary>)Archiver.load(ARCHIVE_ALL_PROFILES);
-        if (mProfiles == null)
             mProfiles = new HashMap<String, JRDictionary>();
+        }
     }
 
-    public ArrayList<LoginSnapshot> getProfilesList() {
+    public List<LoginSnapshot> getProfilesList() {
         return mLoginSnapshots;
     }
 
@@ -97,11 +97,8 @@ public class ProfileData {
         String displayName = (profile == null) ? null : profile.getAsString("displayName");
 
         if (profile != null) {
-            if (profile.containsKey("name"))
-                profile.put("name", flattenName(profile));
-
-            if (profile.containsKey("address"))
-                profile.put("address", flattenAddress(profile));
+            if (profile.containsKey("name")) profile.put("name", flattenName(profile));
+            if (profile.containsKey("address")) profile.put("address", flattenAddress(profile));
         }
         
         LoginSnapshot snapshot = new LoginSnapshot(timestamp, identifier, provider, displayName);

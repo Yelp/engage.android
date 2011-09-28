@@ -1,38 +1,37 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- Copyright (c) 2010, Janrain, Inc.
-
- All rights reserved.
-
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation and/or
-   other materials provided with the distribution.
- * Neither the name of the Janrain, Inc. nor the names of its
-   contributors may be used to endorse or promote products derived from this
-   software without specific prior written permission.
-
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  Copyright (c) 2011, Janrain, Inc.
+ *
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation and/or
+ *    other materials provided with the distribution.
+ *  * Neither the name of the Janrain, Inc. nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ *  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ */
 package com.janrain.android.engage.types;
 
-
 import android.graphics.Bitmap;
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 
 /**
  * @brief Image object to be included in a post to a user's stream.
@@ -72,13 +71,13 @@ public class JRImageMediaObject extends JRMediaObject {
      *      #getHref()
      **/
     private String mHref;
-/*@}*/
 
     /**
      * @internal
      * Contains the downloaded preview of the image for display in the publish activity dialog.
      **/
-    private Bitmap mPreview;
+    private transient Bitmap mPreview;
+/*@}*/
 
 /**
  * @name Constructors
@@ -98,7 +97,6 @@ public class JRImageMediaObject extends JRMediaObject {
      *   if src or href is null
      **/
     public JRImageMediaObject(String src, String href) {
-        // TODO: if null/empty should we throw?
         if (src == null || href == null) throw new IllegalArgumentException("illegal null src or href");
         mSrc = src;
         mHref = href;
@@ -131,7 +129,7 @@ public class JRImageMediaObject extends JRMediaObject {
     }
 /*@}*/
 
-    @JsonIgnore
+    //@JsonIgnore
     public Bitmap getPreview() {
         return mPreview;
     }
@@ -140,16 +138,30 @@ public class JRImageMediaObject extends JRMediaObject {
         mPreview = preview;
     }
 
+    @Override
     public boolean hasThumbnail() {
         return true;
     }
 
+    @Override
+    //@JsonIgnore
     public String getThumbnail() {
         return mSrc;
     }
 
+    @Override
     public String getType() {
         return "image";
     }
 
+    @Override
+    public JRDictionary toJRDictionary() {
+        JRDictionary retval = new JRDictionary();
+
+        retval.put("type", getType());
+        retval.put("src", getSrc());
+        retval.put("href", getHref());
+
+        return retval;
+    }
 }

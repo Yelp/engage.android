@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--
-   - Common footer layout used by views.
-  -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_weight="0.0"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/jr_tagline"
-    android:orientation="horizontal"
-    android:layout_width="fill_parent"
-    android:layout_height="30dip"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:layout_weight="0.0"
     android:layout_alignParentBottom="true"
-    android:background="@drawable/jr_bg_provider_footer"
+
+    android:background="@drawable/jr_bg_footer"
     >
 
     <TextView
         android:id="@+id/jr_footer_text"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
+        android:layout_gravity="right|center_vertical"
+        android:padding="5dp"
+
         android:singleLine="true"
         android:text="@string/jr_powered_by"
         android:textColor="#ffffff"
-        android:textStyle="normal"
-        android:gravity="right|center_vertical"
-        android:layout_gravity="center_vertical"
-        android:paddingRight="6dip"
+        android:textStyle="italic"
         />
 
-</LinearLayout>
+</FrameLayout>

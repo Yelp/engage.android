@@ -1,32 +1,34 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
- Copyright (c) 2010, Janrain, Inc.
- 
- All rights reserved.
- 
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
- 
- * Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer. 
- * Redistributions in binary form must reproduce the above copyright notice, 
- this list of conditions and the following disclaimer in the documentation and/or
- other materials provided with the distribution. 
- * Neither the name of the Janrain, Inc. nor the names of its
- contributors may be used to endorse or promote products derived from this
- software without specific prior written permission.
- 
- 
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
-*/
+/*
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  Copyright (c) 2011, Janrain, Inc.
+ *
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation and/or
+ *    other materials provided with the distribution.
+ *  * Neither the name of the Janrain, Inc. nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ *  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ */
 package com.janrain.android.engage.session;
 
 import android.content.Context;
@@ -36,28 +38,31 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
-import android.media.MediaRecorder;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.text.AndroidCharacter;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
-import android.view.View;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
-import com.janrain.android.engage.prefs.Prefs;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.ui.ColorButton;
-import com.janrain.android.engage.utils.Android;
+import com.janrain.android.engage.utils.Prefs;
+import com.janrain.android.engage.utils.AndroidUtils;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @internal
@@ -65,15 +70,6 @@ import java.util.*;
  * @class JRProvider
  **/
 public class JRProvider implements Serializable {
-
-    // ------------------------------------------------------------------------
-    // TYPES
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC FIELDS
-    // ------------------------------------------------------------------------
-
 //	public static final String KEY_NAME = "name";
 	public static final String KEY_FRIENDLY_NAME = "friendly_name";
 //	public static final String KEY_PLACEHOLDER_TEXT = "placeholder_text";
@@ -88,13 +84,11 @@ public class JRProvider implements Serializable {
 
     private static final String TAG = JRProvider.class.getSimpleName();
 
-    private static HashMap<String, Drawable> provider_list_icon_drawables =
-            new HashMap<String, Drawable>();
+    private static Map<String, Drawable> provider_list_icon_drawables = new HashMap<String, Drawable>();
 
-
-    // Suppressed because this class is not expected to be serialized
+    // Suppressed because this inner class is not expected to be serialized
     @SuppressWarnings("serial")
-	private final static HashMap<String, Integer> provider_list_icon_resources =
+	private final static Map<String, Integer> provider_list_icon_resources =
             new HashMap<String, Integer>(){
                     {
                         put("icon_bw_facebook", R.drawable.jr_icon_bw_facebook);
@@ -131,7 +125,7 @@ public class JRProvider implements Serializable {
     private static HashMap<String, Drawable> provider_logo_drawables =
             new HashMap<String, Drawable>();
 
-    // Suppressed because this class is not expected to be serialized
+    // Suppressed because this inner class is not expected to be serialized
     @SuppressWarnings("serial")
 	private final static HashMap<String, Integer> provider_logo_resources =
             new HashMap<String, Integer>(){
@@ -160,18 +154,6 @@ public class JRProvider implements Serializable {
                     }
             };
 
-    // ------------------------------------------------------------------------
-    // STATIC INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // STATIC METHODS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // FIELDS
-    // ------------------------------------------------------------------------
-
     private String mName;
     private String mFriendlyName;
     private String mPlaceholderText;
@@ -183,17 +165,9 @@ public class JRProvider implements Serializable {
     private JRDictionary mSocialSharingProperties;
     private JRDictionary mWebViewOptions;
 
-    private transient boolean mForceReauth;   // <- these three user parameters get preserved
-    private transient String mUserInput;      // <- across cached provider reloads
-    private transient String mWelcomeString;  // <-
+    private transient boolean mForceReauth;   // <- these two user parameters get preserved
+    private transient String mUserInput = ""; // <- across cached provider reloads
     private transient boolean mCurrentlyDownloading;
-    // ------------------------------------------------------------------------
-    // INITIALIZERS
-    // ------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------
-    // CONSTRUCTORS
-    // ------------------------------------------------------------------------
 
     // We don't need a private default constructor so long as we have another constructor as we 
     // do, found immediately below.
@@ -212,19 +186,18 @@ public class JRProvider implements Serializable {
         mSocialSharingProperties = dictionary.getAsDictionary(KEY_SOCIAL_SHARING_PROPERTIES);
         mWebViewOptions = dictionary.getAsDictionary(KEY_ANDROID_WEBVIEW_OPTIONS, true);
 
-//        if (mCookieDomains.size() == 0) {
-//            mCookieDomains.add(mName + ".com");
-//            mCookieDomains.add("www." + mName + ".com");
-//        }
+        // No default cookie domains for now
+        //if (mCookieDomains.size() == 0) {
+        //    mCookieDomains.add(mName + ".com");
+        //    mCookieDomains.add("www." + mName + ".com");
+        //}
 
         loadDynamicVariables();
 
         if (mRequiresInput) {
             String[] arr = mPlaceholderText.split(" ");
             ArrayList<String> shortList = new ArrayList<String>();
-            for (int i = (arr.length - 2); i < arr.length; i++) {
-                shortList.add(arr[i]);
-            }
+            shortList.addAll(Arrays.asList(arr).subList((arr.length - 2), arr.length));
             mShortText = TextUtils.join(" ", shortList);
         } else {
             mShortText = "";
@@ -232,13 +205,9 @@ public class JRProvider implements Serializable {
 
         /* We call this function in the constructor, simply to preemptively download the icons
          if they aren't already there. */
-        getProviderLogo(JREngage.getContext());
+        getProviderLogo(JREngage.getActivity());
     }
-
-    // ------------------------------------------------------------------------
-    // GETTERS/SETTERS
-    // ------------------------------------------------------------------------
-
+    
     public List<String> getCookieDomains () { /* (readonly) */
         return mCookieDomains;
     }
@@ -286,8 +255,6 @@ public class JRProvider implements Serializable {
     public void setForceReauth(boolean forceReauth) {
         this.mForceReauth = forceReauth;
 
-        //XXX shouldn't we clear the users cookie too?
-
         Prefs.putBoolean(Prefs.KEY_JR_FORCE_REAUTH + this.mName, this.mForceReauth);
     }
 
@@ -296,29 +263,17 @@ public class JRProvider implements Serializable {
     }
 
     public void setUserInput(String userInput) {
-        if (Config.LOGD) {
-            Log.d("JRProvider", "[prov] user input: [" + Prefs.KEY_JR_USER_INPUT + mName + "]");
-            }
+        if (Config.LOGD) Log.d(TAG, "[prov] user input: [" + Prefs.KEY_JR_USER_INPUT + mName + "]");
 
-        this.mUserInput = userInput;
+        mUserInput = userInput;
 
         Prefs.putString(Prefs.KEY_JR_USER_INPUT + this.mName, this.mUserInput);
     }
 
-    public String getWelcomeString() {
-        return mWelcomeString;
-    }
-
-    public void setWelcomeString(String welcomeString) {
-        this.mWelcomeString = welcomeString;
-
-        Prefs.putString(Prefs.KEY_JR_WELCOME_STRING + this.mName, this.mWelcomeString);
-    }
-
     private Drawable getDrawable(Context c,
                                  String drawableName,
-                                 HashMap<String, Drawable> drawableMap,
-                                 HashMap<String, Integer> resourceMap) {
+                                 Map<String, Drawable> drawableMap,
+                                 Map<String, Integer> resourceMap) {
         if (drawableMap.containsKey(drawableName)) return drawableMap.get(drawableName);
 
         if (resourceMap.containsKey(drawableName)) {
@@ -327,8 +282,8 @@ public class JRProvider implements Serializable {
             return r;
         }
 
-        if (Android.isCupcake()) {
-            // 1.5 can't handle our programmatic XHDPI resource instantiation
+        if (AndroidUtils.isCupcake()) {
+            // 1.5 can't handle programmatic XHDPI resource instantiation
             return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
         }
 
@@ -338,9 +293,9 @@ public class JRProvider implements Serializable {
 
             Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
             if (icon != null) {
-                //Our downloaded icons are all at xhdpi, but Android 2.1 doesn't have the
-                //DENSITY_XHIGH constant defined yet.  Fortunately it does the right thing
-                //if you pass in the DPI as an int
+                // Downloaded icons are all at xhdpi, but Android 2.1 doesn't have the
+                // DENSITY_XHIGH constant defined yet.  Fortunately it does the right thing
+                // if you pass in the DPI as an int
 
                 //icon.setDensity(320);
                 // TODO move reflection to util.Android
@@ -354,8 +309,7 @@ public class JRProvider implements Serializable {
                 } catch (InvocationTargetException e) {
                     Log.e(TAG, "Unexpected: " + e);
                 }
-            }
-            else {
+            } else {
                 c.deleteFile(iconFileName);
                 downloadIcons(c);
                 return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
@@ -379,25 +333,19 @@ public class JRProvider implements Serializable {
             } catch (InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             downloadIcons(c);
 
             return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
         }
     }
 
-
     public Drawable getProviderIcon(Context c) {
-        return getDrawable(c,
-                "icon_" + mName,
-                provider_list_icon_drawables,
-                provider_list_icon_resources);
+        return getDrawable(c, "icon_" + mName, provider_list_icon_drawables, provider_list_icon_resources);
     }
 
     public Drawable getProviderLogo(Context c) {
         return getDrawable(c, "logo_" + mName, provider_logo_drawables, provider_logo_resources);
-
     }
 
     public Drawable getTabSpecIndicatorDrawable(Context c) {
@@ -418,8 +366,9 @@ public class JRProvider implements Serializable {
         return sld;
     }
 
+    @SuppressWarnings({"unchecked"})
     private void downloadIcons(final Context c) {
-        Log.d(TAG, "downloadIcons: " + mName);
+        if (Config.LOGD) Log.d(TAG, "downloadIcons: " + mName);
 
         synchronized (this) {
             if (mCurrentlyDownloading) return;
@@ -433,13 +382,14 @@ public class JRProvider implements Serializable {
         };
 
         new AsyncTask<Void, Void, Void>(){
+            @Override
             public Void doInBackground(Void... s) {
                 for (String iconFileName : iconFileNames) {
                     try {
                         if (Arrays.asList(c.fileList()).contains("providericon~" + iconFileName))
                             continue;
 
-                        Log.d(TAG, "Downloading icon: " + iconFileName);
+                        if (Config.LOGD) Log.d(TAG, "Downloading icon: " + iconFileName);
                         URL url = new URL(JRSessionData.getEnvironment().getServerUrl()
                                 + "/cdn/images/mobile_icons/android/" + iconFileName);
                         InputStream is = url.openStream();
@@ -449,13 +399,12 @@ public class JRProvider implements Serializable {
                         byte buffer[] = new byte[1000];
                         int code;
                         while ((code = is.read(buffer, 0, buffer.length)) > 0) fos.write(buffer, 0, code);
-                        //while (is.available() > 0) fos.write(is.read());
 
                         fos.close();
                     } catch (MalformedURLException e) {
-                        Log.d(TAG, e.toString());
+                        if (Config.LOGD) Log.d(TAG, e.toString());
                     } catch (IOException e) {
-                        Log.d(TAG, e.toString());
+                        if (Config.LOGD) Log.d(TAG, e.toString());
                     }
                 }
                 mCurrentlyDownloading = false;
@@ -465,16 +414,62 @@ public class JRProvider implements Serializable {
     }
 
     public void loadDynamicVariables() {
-        if (Config.LOGD) {
-            Log.d("JRProvider", "[prov] user input: [" + Prefs.KEY_JR_USER_INPUT + mName + "]");
-        }
+        if (Config.LOGD) Log.d("JRProvider", "[prov] user input: " + Prefs.KEY_JR_USER_INPUT + mName );
 
-    	mUserInput = Prefs.getAsString(Prefs.KEY_JR_USER_INPUT + mName, "");
-    	mWelcomeString = Prefs.getAsString(Prefs.KEY_JR_WELCOME_STRING + mName, "");
-    	mForceReauth = Prefs.getAsBoolean(Prefs.KEY_JR_FORCE_REAUTH + mName, false);
+    	mUserInput = Prefs.getString(Prefs.KEY_JR_USER_INPUT + mName, "");
+    	mForceReauth = Prefs.getBoolean(Prefs.KEY_JR_FORCE_REAUTH + mName, false);
     }
 
     public String toString() {
         return mName;
+    }
+
+    private Context getContext() {
+        return JREngage.getActivity();
+    }
+
+    private Resources getResources() {
+        return getContext().getResources();
+    }
+
+    public int getProviderColor(boolean withAlpha) {
+        Object arrayOfColorStrings = getSocialSharingProperties().get("color_values");
+
+        if (!(arrayOfColorStrings instanceof ArrayList)) {
+            /* If there's ever an error, just return Janrain blue */
+            if (withAlpha) return getResources().getColor(R.color.jr_janrain_darkblue_light_20percent);
+            else return getResources().getColor(R.color.jr_janrain_darkblue_light_100percent);
+        }
+
+        // todo see if we can write this in a compile-time--type-safe way
+        @SuppressWarnings("unchecked")
+        ArrayList<Double> colorArray = new ArrayList<Double>((ArrayList<Double>) arrayOfColorStrings);
+
+        /* We need to reorder the array (which is RGBA, the color format returned by Engage) to the color format
+         * used by Android (which is ARGB), by moving the last element (alpha) to the front */
+        Double alphaValue = colorArray.remove(3);
+        if (withAlpha) {
+            colorArray.add(0, alphaValue);
+        } else {
+            colorArray.add(0, 1.0);
+        }
+
+        int finalColor = 0;
+        for (Object colorValue : colorArray) {
+            /* If there's ever an error, just return Janrain blue (at 20% opacity) */
+            if(!(colorValue instanceof Double)) {
+                return getResources().getColor(R.color.jr_janrain_darkblue_light_20percent);
+            }
+
+            double colorValue_Fraction = (Double)colorValue;
+
+            /* First, get an int from the double, which is the decimal percentage of 255 */
+            int colorValue_Int = (int)(colorValue_Fraction * 255.0);
+
+            finalColor *= 256;
+            finalColor += colorValue_Int;
+        }
+
+        return finalColor;
     }
 }

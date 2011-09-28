@@ -1,140 +1,74 @@
 Welcome to the Janrain Engage library for the Android platform.  This library is available
 open-source under a Berkeley license, as found in the LICENSE file.
 
-Getting Started
-You will need git and the Android SDK with at least API level 7 (Android 2.1).  You can optionally
-use IntelliJ or Eclipse with the repository-supplied IDE configuration files.
+What's new in Janrain Engage for Android 2.0:
 
-Downloading the SDK:
-git clone https://github.com/janrain/engage.android.git
+- Tablet support:
+  - Social sharing now runs either as an embedded Fragment or in a dialog
+  - Authentication runs in a dialog
+  - Support for Theme.Holo.Light, including appropriate themes for xlarge screens
+- Other new features:
+  - Filtering available social-sharing and authentication providers at run time
+  - JRConnectionManager's networking layer now supports gzip compression for faster network operations
+  - Eliminated Jackson jar dependency (~800k of redistributable overhead)
+  - Sharing UI adjusts the display of its layout based on the available size (which changes based on the
+    raised-state of the software keyboard.) The ~"Share" button is now visible above the keyboard when the
+    keyboard is raised, but other UI elements disappear to accommodate the smaller available space.
+- Bug fixes
+  - No more NPEs from JRConnectionManager
+  - User messages are now propagated to email/SMS intents the first time the button is pressed
+  - Switched from URLConnection to HttpClient to avoid platform bugs (e.g. unpredictable read failures and
+    connection failures.)
 
-Compiling the sample applications with IntelliJ:
-  Start IntelliJ, select Open Project, browse to the engage.android directory and click the Choose button.
+In addition to new features and bug fixes, compatibility with Cupcake is dropped. (Engage for Android is now
+compatible with Donut and above.)
 
-  You will need to configure IntelliJ for your installation of the Android SDK. Select the JREngage
-  Module from the project tree, right click -> "Open Module Settings" to open the Project Structure
-  dialog.
+Updating from 1.x to 2.0:
 
-  If you do not have IntelliJ configured with JDK 1.6:
-    -	Select "Project" from the leftmost Project Settings list; you will see "1.6 Invalid" in the
-      drop down
-    -	Click the New button, choose JSDK, then browse to your installation of the 1.6 JDK.
-      (On a Mac find it under System/Library/Java/JavaVirtualMachines/1.6.0jdk/Contents)
+- Update your Android target to Android 13 / Honeycomb 3.2 (still deployable to Android 4+ / Donut / 1.6)
+- Replace the activity declarations in your AndroidManifest.xml with fresh copies from
+  JREngage/AndroidManifest.xml
+- Ensure that the JREngage/libs/android-support-v4.jar is added to your IDE's project (ant builds work
+  without updating)
+- Ensure that the jackson-core-lgpl-1.6.4.jar and jackson-mapper-lgpl-1.6.4.jar libraries are removed from
+  your IDE's project.
 
-  In the Project Structure dialog:
-    -	Select "Project" from the leftmost Project Settings list
-    - Set the Project SDK to Android 2.1-update1 or similar.  (Hint: if you do not have an "Android SDK"
-      configured in IntelliJ yet, when you configure one point the file chooser to the root of the SDK
-      directory, "android-sdk-mac_x86", for example.  Do not point the file chooser to the subdirectory
-      of a specific platform.)
+Using tablet support:
+Tablet support works in two modes, either embedded as a UI Fragment or as a modal dialog.
+- To start modal dialog mode simply continue calling JREngage#showAuthenticationDialog() or
+  JREngage#showSocialPublishingDialog(...)
+- To start a Fragment in a specific container call JREngage#showSocialPublishingFragment(...)
+- Or, if you wish to manage the Fragment in your own Activity (e.g. to add it to the back stack),
+  use JREngage#createSocialPublishingFragment(...)
 
-  When you are back in your project window, navigate to the QuickSignInEnvironment.java file in the
-  QuickSignIn module (under QuickSignIn/src/com/janrain/android/quicksignin) via the Project pane, and
-  then open it. You will need to add your Engage Application's 20-character application ID to the appropriate
-  commented variable declarations here.  Repeat this process similarly for QuickShare.
+Operation in embedded mode requires use of the Android compatibility framework Fragment classes.
 
-  IntelliJs source code highlighting will show compile errors for references to R.java; this is
-  normal. You can regenerate R.java by right-clicking anywhere in the IDE's source editor and
-  selecting "Force Regenerate R.java file".
+Getting Started:
 
-  The entire project including both sample application modules should now compile and run.  Press shift+F10
-  to run. (You may need to configure an AVD)
+You will need git and the Android SDK with at least API level 13 (Android 3.2). Project files are
+maintained for IntelliJ.
 
-Compiling/Installing SimpleDemo with ant:
+First, download the SDK:
+  git clone https://github.com/janrain/engage.android.git
 
-  To compile:
-    $ cd engage.android/SimpleDemo
-    $ android update project -p .
-    $ ant compile
+Add your Engage App ID to:
+- engage.android/QuickShare/src/com/janrain/android/quickshare/QuickShareEnvironment.java
+- engage.android/QuickShare/src/com/janrain/android/quicksignin/QuickSignInEnvironment.java
+(Following the instructions in the comments.)
 
-  To install (adb must be running and an Android device must be available):
-    $ ant install
+Compile / Install with ant:
+  $ cd engage.android/QuickShare
+  $ android update project -p . -t android-13
+  $ ant compile
 
+Install with ant (adb must be running and an Android device or emulator must be available):
+  $ ant install
 
-Adding the JREngage library to an Existing IntelliJ Project:
-  -	Open your project in IntelliJ
-  -	From the project tree, right-click your module select "Open Module Settings" to open the Project
-    Structure dialog
+For more documentation (including IDE integration setup instructions) please see
+http://rpxnow.com/docs/android
 
-  In the Project Structure dialog:
+To report bugs or ask questions:
 
-    Add the JREngage module:
-      -	Select "Modules" from the leftmost Project Settings list
-      -	Add a module by clicking the "+" box just to the right of the Project Settings view
-      -	Select "New" -> "Module"
-      -	Select the "Import existing module" radio button
-      -	Click the file chooser button ("...") then browse to the JREngage.iml file found under
-        engage.android/JREngage/JREngage.iml, then click "Finish"
-
-    Setting up the JREngage module:
-      -	Make sure "Is Library Project" is selected
-
-    Setting up your application's module
-      -	In the Modules window (to the right of the Project Settings window), select your
-        application's module
-      -	Go to the Dependencies tab
-      -	To the right of the listed Dependencies, click the "Add..." button
-      -	Select "Module Dependency" from the drop down menu
-      -	Select JREngage from the modal window, click OK, then make sure the dependency scope is set
-        to "Compile"
-
-    Setting up the jackson libraries:
-      -	In the Project Settings window, select "Libraries"
-      -	Add a library by clicking the "+" box just to the right of the Project Settings view
-      -	In the Choose modules dialog, where it says "Library 'Unnamed' will be added to the selected
-        modules", click the Cancel button. (The library dependency already exists in the JREngage
-        module, the library just needs to be defined for this IntelliJ project, so we don't need to
-        add a duplicate dependency to the JREngage module)
-      -	Change the name to "jackson"
-      -	To the right of the Project Structure dialog, select "Attach Classes..."
-      -	Navigate to engage.android/JREngage/libs, and select both the jackson-core-lgpl-1.6.4.jar
-        and jackson-mapper-lgpl-1.6.4.jar files; then click OK
-
-    Adding elements to your application's Android Manifest:
-      -	From JREngage/AndroidManifest.xml, copy the following elements into your project's
-        AndroidManifest.XML: "uses-permission", "uses-sdk", and "activity" (x4)
-
-
-Interfacing With the Library:
-  The library exposes a public class, com.janrain.android.engage.JREngage, through which calling
-  applications can interact.  Interaction begins by calling the
-  JREngage.initInstance(Context context, String appId, String tokenUrl, JREngageDelegate delegate)
-  method.
-  -	The context is your application's Android Context (retrievable with
-    Activity.getApplicationContext(),
-  -	the appId is the application ID of your Janrain Engage application (from rpxnow.com),
-  -	the tokenUrl (optional) is the token URL that authentication from your application will post to,
-  -	the delegate is an interface you must implement which serves to receive responses and
-    information from the library. (See SimpleDemo's delegate implementation for a good idea where
-    to start.)
-
-  Once initialized user interaction with the JREngage library can be started by calling
-  JREngage.showAuthenticationDialog() or
-  JREngage.showSocialPublishingDialogWithActivity(JRActivity activity).
-
-  Successful authentications and publishes will invoke appropriate notifier methods in the delegate object
-  you registered via JREngage.initInstance(....).
-
-
-  Common Use Cases:
-
-    Using JREngage to authenticate a user for the use of your internet based service --
-      -	Initialize the library with a token URL hosted on your service's web server
-      -	Have the web page served at the token URL create a session with your service and put a
-        session token in the response
-      -	Implement the jrAuthenticationDidReachTokenUrl delegate method, pulling the session token
-        out of the tokenUrlPayload parameter
-      -	Invoke your web service's features with that session token
-
-    Using JREngage to enable a user to easily share news from your Android app --
-      -	Initialize the library
-      -	Instantiate and (optionally) populate the fields of a JRActivity object
-      -	Call JREngage.showSocialPublishingDialogWithActivity
-
-What's Coming:
--	Ability to customize the UI
--	Tablet support
-
-Reporting Bugs and asking questions:
-Please report bugs via the Engage for Android forum which can be found at:
 https://support.janrain.com/forums/20122381-android-library-q-a
+http://groups.google.com/group/rpx-developers
+android-dev@janrain.com

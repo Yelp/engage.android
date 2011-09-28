@@ -1,40 +1,43 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- Copyright (c) 2010, Janrain, Inc.
-
- All rights reserved.
-
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation and/or
-   other materials provided with the distribution.
- * Neither the name of the Janrain, Inc. nor the names of its
-   contributors may be used to endorse or promote products derived from this
-   software without specific prior written permission.
-
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  Copyright (c) 2011, Janrain, Inc.
+ *
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation and/or
+ *    other materials provided with the distribution.
+ *  * Neither the name of the Janrain, Inc. nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ *  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ */
 package com.janrain.android.engage.types;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * @brief Object containing content to be shared in an sms.
+ * @brief An SMS a user can send to share an activity.
  *
  * JRSmsObject is a simple container object for a pre-composed SMS to be attached to a JRActivityObject
  *
@@ -44,7 +47,7 @@ import java.util.List;
  *
  * @nosubgrouping
  **/
-public class JRSmsObject {
+public class JRSmsObject implements Serializable {
 /**
  * @name Private Attributes
  * The various properties of the JRSmsObject that you can access and configure through the object's
@@ -52,7 +55,7 @@ public class JRSmsObject {
  **/
 /*@{*/
     /**
-     * The pre-composed body of the sms.
+     * The pre-composed body of the SMS.
      *
      * @par Getter/Setter:
      *      #getBody(), #setBody()
@@ -62,7 +65,7 @@ public class JRSmsObject {
     /**
      * The list of URLs to be shortened.  Each of these URLs will be shortened to an rpx.me URL, which tracks
      * click-throughs and provides analytics.  Once shortened, the Engage for Android library will substitute
-     * the shortened version for the original long version for each URL found in the body of the sms.
+     * the shortened version for the original long version for each URL found in the body of the SMS.
      *
      * @par Getter/Setter:
      *      #getUrls(), #setUrls()
@@ -108,7 +111,7 @@ public class JRSmsObject {
      *
      * @param shortUrls
      */
-    void setShortUrls(List<String> shortUrls) {
+    /* package */ void setShortUrls(List<String> shortUrls) {
         mShortUrls = shortUrls;
 
         for (String longUrl : mUrls) {
@@ -122,27 +125,27 @@ public class JRSmsObject {
  * Getters for the JRSmsObject's private properties
  **/
     /**
-     * Getter for the sms object's #mBody property.
+     * Getter for the SMS object's #mBody property.
      *
      * @return
-     *      The body of the sms
+     *      The body of the SMS
      **/
     public String getBody() {
         return mBody;
     }
 
     /**
-     * Setter for the sms object's #mBody property.
+     * Setter for the SMS object's #mBody property.
      *
      * @param body
-     *      The body of the sms
+     *      The body of the SMS
      **/
     public void setBody(String body) {
         mBody = body;
     }
 
     /**
-     * Getter for the sms object's #mUrls property, a list of URLs to be shortened.
+     * Getter for the SMS object's #mUrls property, a list of URLs to be shortened.
      *
      * @return
      *      An immutable list of URLs to be shortened
@@ -152,20 +155,20 @@ public class JRSmsObject {
     }
 
     /**
-     * Setter for the sms object's #mUrls property, a list of URLs to be shortened.  Each of these URLs will
+     * Setter for the SMS object's #mUrls property, a list of URLs to be shortened.  Each of these URLs will
      * be shortened to an rpx.me URL, which tracks click-throughs, and provides analytics.  Once shortened,
      * the Engage for Android library will substitute the shortened version for the original long version for
-     * each URL found in the body of the sms.
+     * each URL found in the body of the SMS.
      *
      * @param urls
      *      The SMS object's list of URLs to be shortened, not more than five URLs
      **/
     public void setUrls(List<String> urls) {
         if (urls == null) urls = new ArrayList<String>();
-        if (urls.size() >= 5) throw
+        if (urls.size() > 5) throw
                 new IllegalArgumentException("JRSmsObject supports a maximum of five URLs");
 
-        mUrls = urls;
+        mUrls = new ArrayList<String>(urls);
     }
 
     /**
@@ -175,8 +178,8 @@ public class JRSmsObject {
      *      The URL to add to the list of URLs to shorten
      **/
     public void addUrl(String url) {
-        if (mUrls.size() >= 5) throw
-                new IllegalArgumentException("JRSmsObject supports a maximum of five URLs");
+        if (mUrls.size() >= 5)
+            throw new IllegalArgumentException("JRSmsObject supports a maximum of five URLs");
 
         mUrls.add(url);
     }

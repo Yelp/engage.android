@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- This version number is used to "validate" serialized objects before loading them from
-         disk. -->
-    <string name="jr_engage_version">0422f7e0901e1adsaqfd33673a9e1ac5a4df4f755c721e</string>
-
     <!-- - Server URL strings for each of the three typical environments. -->
     <string name="jr_server_url_lilli">http://lilli.janrain.com:8080</string>
     <string name="jr_server_url_nathan">http://nathan-dev.janrain.com:8080</string>
@@ -11,27 +7,33 @@
     <string name="jr_server_url_production">https://rpxnow.com</string>
 
     <!-- - Shared/common strings. -->
-    <string name="jr_powered_by">Powered by Janrain</string>
+    <!-- http://stackoverflow.com/questions/4353836/italic-textview-with-wrap-contents-seems-to-clip-the-text-at-right-edge/5666648#5666648 -->
+    <!-- The right side of the n was being clipped, hence this work around backslash kludge -->
+    <string name="jr_powered_by">Powered by Janrain \</string>
     <string name="jr_progress_loading">Loading. Please wait...</string>
+    <string name="jr_dialog_ok">OK</string>
 
     <!-- - About menu/dialog strings. -->
     <string name="jr_about_menu_item">About Janrain Engage</string>
     <string name="jr_about_title">Janrain Engage for Android Library</string>
-    <string name="jr_about_version">Version 1.2.0</string>
+    <string name="jr_about_version">Version 2.0.0</string>
     <string name="jr_about_url">www.janrain.com</string>
     <string name="jr_about_button_ok">OK</string>
 
-    <!-- - JRProvidersActivity strings. -->
-    <string name="jr_provider_list_empty">No configured providers</string>
+    <!-- - JRProviderList strings. -->
+    <string name="jr_provider_list_title">Sign in with...</string>
+    <string name="jr_provider_list_empty">No configured sign-in providers</string>
     <string name="jr_provider_unknown">Unknown provider</string>
     <string name="jr_provider_sign_in_with">Sign in with...</string>
 
-    <!-- - JRLandingActivity strings. -->
+    <!-- - JRLanding strings. -->
+    <string name="jr_landing_bad_user_input">Invalid Input</string>
+    <string name="jr_landing_bad_input_long">The input you have entered is not valid. Please try again.</string>
     <string name="jr_landing_switch_account_button_text">Switch Accounts</string>
     <string name="jr_landing_signin_button_text">Sign In</string>
     <string name="jr_landing_default_custom_title">Welcome Back!</string>
 
-    <!-- - JRPublishActivity strings. -->
+    <!-- - JRPublish strings. -->
     <string name="jr_publish_activity_title">Share</string>
     <string name="jr_provider_spinner_prompt">Select a provider</string>
     <string name="jr_calculating_remaining_characters">Calculating Remaining Characters</string>
@@ -41,4 +43,29 @@
     <string name="jr_preview">Preview</string>
     <string name="jr_choose_email_handler">Choose...</string>
     <string name="jr_default_email_share_subject">Check it out...</string>
+    <string name="jr_no_social_providers">No social sharing providers are configured.</string>
+    <string name="jr_error_twitter_no_duplicates_allowed">Could not share, Twitter does not allow duplicate status updates.</string>
+    <string name="jr_error_linkedin_too_long">Could not share, this message is too long for LinkedIn.</string>
+    <string name="jr_error_generic_sharing">There was an error while sharing.</string>
+    <string name="jr_sign_out_dialog">Would you like to sign out of</string>
+    <string name="jr_sign_out_button">Sign out</string>
+    <string name="jr_email_button_text">Email</string>
+    <string name="jr_sms_button_text">SMS</string>
+    <string name="jr_connect_share_button_text">Connect and Share</string>
+    <string name="jr_share_button_text">Share</string>
+    <string name="jr_no_configured_social_providers">No configured social sharing providers.</string>
+
+    <!-- - JRWebView strings. -->
+    <string name="jr_dialog_sign_in_failed">Sign-in failed</string>
+    <string name="jr_dialog_network_error">A network error occurred, please try again.</string>
+    <string name="jr_menu_item_refresh">Refresh</string>
+
+    <!-- JRSessionData strings -->
+    <string name="jr_getconfig_network_failure_message">There was a problem communicating with the Janrain server.
+    </string>
+    <string name="jr_getconfig_parse_error_message">There was a problem communicating with the Janrain server
+        while configuring authentication.
+    </string>
+    <string name="jr_problem_sharing">There was a problem while sharing.</string>
+
 </resources>

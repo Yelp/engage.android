@@ -1,45 +1,48 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- Copyright (c) 2010, Janrain, Inc.
-
- All rights reserved.
-
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation and/or
-   other materials provided with the distribution.
- * Neither the name of the Janrain, Inc. nor the names of its
-   contributors may be used to endorse or promote products derived from this
-   software without specific prior written permission.
-
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  Copyright (c) 2011, Janrain, Inc.
+ *
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation and/or
+ *    other materials provided with the distribution.
+ *  * Neither the name of the Janrain, Inc. nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ *  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ */
 package com.janrain.android.engage.types;
 
 import android.util.Log;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRSessionData;
+import com.janrain.android.engage.utils.AndroidUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +87,7 @@ import java.util.Map;
  *
  * @nosubgrouping
  **/
-public class JRActivityObject {
+public class JRActivityObject implements Serializable, JRJsonifiable {
     private static final String TAG = JRActivityObject.class.getSimpleName();
 
 /**
@@ -97,8 +100,7 @@ public class JRActivityObject {
      * A string describing what the user did, written in the third person (e.g.,
      * "wrote a restaurant review", "posted a comment", "took a quiz").
      *
-     * @par Getter:
-     *      #getAction()
+     * {@link #getAction() Getter:}
      **/
     private String mAction;
 
@@ -216,7 +218,7 @@ public class JRActivityObject {
      * @par Getter/Setter:
      *      #getProperties(), #setProperties()
      **/
-    private Map<String, Object> mProperties = new HashMap<String, Object>();
+    private JRDictionary mProperties = new JRDictionary();
 
     /**
      * An JREmailObject containing the subject and message body of an email, if the user wishes to
@@ -228,13 +230,16 @@ public class JRActivityObject {
     private JREmailObject mEmail;
 
     /**
-     * A JRSmsObject containing the message body of an sms, if the user wishes to
-     * share via sms.
+     * A JRSmsObject containing the message body of an SMS, if the user wishes to
+     * share via SMS.
      *
      * @par Getter/Setter:
      *      #getSms(), #setSms()
      **/
     private JRSmsObject mSms;
+
+    private transient boolean mIsShortening = false;
+    private String mShortenedUrl;
 /*@}*/
 
 /**
@@ -243,20 +248,21 @@ public class JRActivityObject {
  **/
 /*@{*/
     /**
-     * Returns a JRActivityObject initialized with the given action and url.
+     * Returns a JRActivityObject initialized with the given action and URL.
      *
      * @param action
      *   A string describing what the user did, written in the third person.  This value cannot
      *   be \e null
      *
      * @param url
-     *   The URL of the resource being mentioned in the activity update
+     *   The URL of the resource being mentioned in the activity update. May be null
      *
      * @throws IllegalArgumentException
      *   if action is \e null
      **/
     public JRActivityObject(String action, String url) {
-        if (action == null) throw new IllegalArgumentException("illegal null action or null href");
+        if (action == null) throw new IllegalArgumentException("illegal null action");
+        if (url == null) url = "";
 
         Log.d(TAG, "created with action: " + action + " url: " + url);
         mAction = action;
@@ -376,16 +382,27 @@ public class JRActivityObject {
     }
 
     /**
-     * Setter for the activity object's #mActionLinks property.
+     * Add to the activity object's #mActionLinks property.
      *
      * @param actionLink
      *      A single JRActionLink to be added to the array of action links, creating the array if
      *      it hasn't already been created
      **/
     public void addActionLink(JRActionLink actionLink) {
-        if (mActionLinks == null)
-            mActionLinks = new ArrayList<JRActionLink>();
+        if (mActionLinks == null) mActionLinks = new ArrayList<JRActionLink>();
         mActionLinks.add(actionLink);
+    }
+
+    /**
+     * Alias for addMedia(JRMediaObject)
+     *
+     * @param media
+     *        A single JRImageMediaObject, JRFlashMediaObject, or JRMp3MediaObject to be added to
+     *        the array of media objects, creating the array if it hasn't already been created
+     **/
+    public void addMedia(JRMediaObject media) {
+        if (mMedia == null) mMedia = new ArrayList<JRMediaObject>();
+        mMedia.add(media);
     }
 
     /**
@@ -413,13 +430,14 @@ public class JRActivityObject {
     /**
      * Setter for the activity object's #mMedia property.
      *
+     * @deprecated use #addMedia(JRMediaObject)
+     *
      * @param mediaObject
-     *        An single JRImageMediaObject, JRFlashMediaObject, or JRMp3MediaObject to be added to
+     *        A single JRImageMediaObject, JRFlashMediaObject, or JRMp3MediaObject to be added to
      *        the array of media objects, creating the array if it hasn't already been created
      **/
     public void setMedia(JRMediaObject mediaObject) {
-        if (mMedia == null)
-            mMedia = new ArrayList<JRMediaObject>();
+        if (mMedia == null) mMedia = new ArrayList<JRMediaObject>();
         mMedia.add(mediaObject);
     }
 
@@ -441,7 +459,7 @@ public class JRActivityObject {
      *      An object with attributes describing properties of the update. An attribute value can be
      *      a string or an object with two attributes, \e text and \e href.
      **/
-    public void setProperties(Map<String, Object> properties) {
+    public void setProperties(JRDictionary properties) {
         mProperties = properties;
     }
 
@@ -449,7 +467,7 @@ public class JRActivityObject {
      * Getter for the activity object's #mEmail property.
      *
      * @return
-     *      An JREmailObject containing the content that a user can send via sms to share an activity
+     *      An JREmailObject containing the content that a user can send via SMS to share an activity
      **/
     public JREmailObject getEmail() {
         return mEmail;
@@ -469,7 +487,7 @@ public class JRActivityObject {
      * Getter for the activity object's #mSms property.
      *
      * @return
-     *      An JRSmsObject containing the content that a user can send via sms to share an activity
+     *      An JRSmsObject containing the content that a user can send via SMS to share an activity
      **/
     public JRSmsObject getSms() {
         return mSms;
@@ -479,7 +497,7 @@ public class JRActivityObject {
      * Setter for the activity object's #mSms property.
      *
      * @param sms
-     *      An JRSmsObject containing the content that a user can send via sms to share an activity
+     *      An JRSmsObject containing the content that a user can send via SMS to share an activity
      **/
     public void setSms(JRSmsObject sms) {
         mSms = sms;
@@ -500,6 +518,8 @@ public class JRActivityObject {
      */
     public JRDictionary toJRDictionary() {
         JRDictionary map = new JRDictionary();
+        // XXX these work by json-ifying the action links, media, and properties automatically by
+        // their exposed getter methods.
         map.put("url", mUrl);
         map.put("action", mAction);
         map.put("user_generated_content", mUserGeneratedContent);
@@ -515,7 +535,14 @@ public class JRActivityObject {
         public void setShortenedUrl(String shortenedUrl);
     }
 
-    public void shortenUrls(final ShortenedUrlCallback callback) {
+    public synchronized void shortenUrls(final ShortenedUrlCallback callback) {
+        if (mShortenedUrl != null) {
+            callback.setShortenedUrl(mShortenedUrl);
+            return;
+        }
+        if (mIsShortening) return;
+        mIsShortening = true;
+
         final JRSessionData sessionData = JRSessionData.getInstance();
         try {
             // todo invoke when the activity object is created (or maybe when publish is called?)
@@ -526,14 +553,16 @@ public class JRActivityObject {
             // Make the JSON string
             JSONStringer jss = (new JSONStringer())
                     .object()
-                        .key("activity")
+                        .key(JRSessionData.USERDATA_ACTIVITY_KEY)
                         .array()
                             .value(getUrl())
                         .endArray()
+
                         .key("email")
                         .array();
                             for (String url : emailUrls) jss.value(url);
                         jss.endArray()
+                                
                         .key("sms")
                         .array();
                             for (String url : smsUrls) jss.value(url);
@@ -542,7 +571,7 @@ public class JRActivityObject {
 
             // Make the URL
             final String jsonEncodedUrlsMap = jss.toString();
-            String urlEncodedJson = URLEncoder.encode(jsonEncodedUrlsMap, "UTF8");
+            String urlEncodedJson = AndroidUtils.urlEncode(jsonEncodedUrlsMap);
             final String getUrlsUrl =
                     sessionData.getBaseUrl() + "/openid/get_urls?"
                     + "urls=" + urlEncodedJson
@@ -552,16 +581,16 @@ public class JRActivityObject {
             // Define the network callback
             JRConnectionManagerDelegate jrcmd =
                     new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
-                public void connectionDidFinishLoading(String payload,
-                                                       String requestUrl,
-                                                       Object userdata) {
+                @Override
+                public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object tag) {
                     String shortUrl = getUrl();
+                    String payloadString = new String(payload);
 
                     try {
-                        Log.d(TAG, "fetchShortenedURLs connectionDidFinishLoading: " + payload);
-                        JSONObject jso = (JSONObject) (new JSONTokener(payload)).nextValue();
+                        Log.d(TAG, "fetchShortenedURLs connectionDidFinishLoading: " + payloadString);
+                        JSONObject jso = (JSONObject) (new JSONTokener(payloadString)).nextValue();
                         jso = jso.getJSONObject("urls");
-                        JSONObject jsonActivityUrls = jso.getJSONObject("activity");
+                        JSONObject jsonActivityUrls = jso.getJSONObject(JRSessionData.USERDATA_ACTIVITY_KEY);
                         JSONObject jsonSmsUrls = jso.getJSONObject("sms");
                         JSONObject jsonEmailUrls = jso.getJSONObject("email");
 
@@ -584,6 +613,8 @@ public class JRActivityObject {
                         Log.e(TAG, "URL shortening JSON parse error", e);
                     }
 
+                    mIsShortening = false;
+                    mShortenedUrl = shortUrl;
                     updateUI(shortUrl);
                 }
 
@@ -591,21 +622,17 @@ public class JRActivityObject {
                     callback.setShortenedUrl(shortenedUrl);
                 }
 
-                public void connectionDidFail(Exception ex, String requestUrl, Object userdata) {
-                    updateUI(getUrl());
-                }
-
-                public void connectionWasStopped(Object userdata) {
+                @Override
+                public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
+                    mIsShortening = false;
                     updateUI(getUrl());
                 }
             };
 
             // Invoke the network call
-            JRConnectionManager.createConnection(getUrlsUrl, jrcmd, false, null);
+            JRConnectionManager.createConnection(getUrlsUrl, jrcmd, null);
         } catch (JSONException e) {
             Log.e(TAG, "URL shortening JSON error", e);
-        } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, "URL shortening error", e);
         }
     }
 }

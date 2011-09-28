@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.janrain.android.quickshare"
-      android:versionCode="010104"
-      android:versionName="1.1.4">
+      android:versionCode="010105"
+      android:versionName="2.0.0">
 
     
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-sdk android:minSdkVersion="7" />
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="13"/>
 
-    <application android:label="QuickShare" android:icon="@drawable/icon" android:debuggable="true">
-        <activity android:name="MainActivity"
-                  android:label="@string/app_name"
-                  android:theme="@android:style/Theme.Light" >
+    <application
+        android:label="Quick Share"
+        android:icon="@drawable/icon"
+        android:theme="@style/JanrainDemoTheme"
+        android:debuggable="true"
+        >
+
+        <activity android:name="MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -20,28 +24,35 @@
         </activity>
 
         <activity android:name=".FeedSummaryActivity"
-                  android:label="@string/app_name"
-                  android:theme="@android:style/Theme.Light" />
+                  android:label="Janrain Blog Posts"
+            />
 
         <activity android:name=".StoryDetailActivity"
-                  android:theme="@android:style/Theme.Light"/>
-
-        <activity android:name=".DeeperWebViewActivity"
-                  android:theme="@android:style/Theme.Light"/>
+                  android:label="Blog Post"
+            />
 
         <!-- For Janrain Engage library -->
-        <activity android:name="com.janrain.android.engage.ui.JRProvidersActivity"
-                  android:theme="@android:style/Theme.Light"
-                  android:configChanges="orientation"/>
-        <activity android:name="com.janrain.android.engage.ui.JRLandingActivity"
-                  android:theme="@android:style/Theme.Light"
-                  android:configChanges="orientation"/>
-        <activity android:name="com.janrain.android.engage.ui.JRWebViewActivity"
-                  android:theme="@android:style/Theme.Light"
-                  android:configChanges="orientation"/>
-        <activity android:name="com.janrain.android.engage.ui.JRPublishActivity"
-                  android:theme="@android:style/Theme.Light.NoTitleBar"
-                  android:configChanges="orientation"/>
+        <activity
+            android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/jr_dialog"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            />
+
+        <activity
+            android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/jr_fullscreen"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            />
+
+        <activity
+            android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$FullscreenNoTitleBar"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/jr_fullscreen_no_title"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            />
 
     </application>
+
 </manifest> 

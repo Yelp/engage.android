@@ -1,36 +1,34 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- Copyright (c) 2011, Janrain, Inc.
-
- All rights reserved.
-
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation and/or
-   other materials provided with the distribution.
- * Neither the name of the Janrain, Inc. nor the names of its
-   contributors may be used to endorse or promote products derived from this
-   software without specific prior written permission.
-
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
- File:   ProfilesActivity.java
- Author: Lilli Szafranski - lilli@janrain.com
- Date:   April 6, 2011
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  Copyright (c) 2011, Janrain, Inc.
+ *
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation and/or
+ *    other materials provided with the distribution.
+ *  * Neither the name of the Janrain, Inc. nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ *  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ */
 package com.janrain.android.quicksignin;
 
 import android.app.AlertDialog;
@@ -52,12 +50,15 @@ import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
+import com.janrain.android.engage.session.JRProvider;
+import com.janrain.android.engage.session.JRSessionData;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.janrain.android.quicksignin.QuickSignInEnvironment.getAppId;
 import static com.janrain.android.quicksignin.QuickSignInEnvironment.getTokenUrl;
@@ -69,36 +70,9 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     private static String ENGAGE_APP_ID = getAppId();
     private static String ENGAGE_TOKEN_URL = getTokenUrl();
 
-    private static HashMap<String, Drawable> provider_list_icon_drawables =
-            new HashMap<String, Drawable>();
-
-    private final static HashMap<String, Integer> provider_list_icon_resources =
-            new HashMap<String, Integer>(){
-            {
-                    put("icon_aol", com.janrain.android.engage.R.drawable.jr_icon_aol);
-                    put("icon_blogger", com.janrain.android.engage.R.drawable.jr_icon_blogger);
-                    put("icon_facebook", com.janrain.android.engage.R.drawable.jr_icon_facebook);
-                    put("icon_flickr", com.janrain.android.engage.R.drawable.jr_icon_flickr);
-                    put("icon_google", com.janrain.android.engage.R.drawable.jr_icon_google);
-                    put("icon_hyves", com.janrain.android.engage.R.drawable.jr_icon_hyves);
-                    put("icon_linkedin", com.janrain.android.engage.R.drawable.jr_icon_linkedin);
-                    put("icon_live_id", com.janrain.android.engage.R.drawable.jr_icon_live_id);
-                    put("icon_livejournal", com.janrain.android.engage.R.drawable.jr_icon_livejournal);
-                    put("icon_myopenid", com.janrain.android.engage.R.drawable.jr_icon_myopenid);
-                    put("icon_myspace", com.janrain.android.engage.R.drawable.jr_icon_myspace);
-                    put("icon_netlog", com.janrain.android.engage.R.drawable.jr_icon_netlog);
-                    put("icon_openid", com.janrain.android.engage.R.drawable.jr_icon_openid);
-                    put("icon_paypal", com.janrain.android.engage.R.drawable.jr_icon_paypal);
-                    put("icon_twitter", com.janrain.android.engage.R.drawable.jr_icon_twitter);
-                    put("icon_verisign", com.janrain.android.engage.R.drawable.jr_icon_verisign);
-                    put("icon_wordpress", com.janrain.android.engage.R.drawable.jr_icon_wordpress);
-                    put("icon_yahoo", com.janrain.android.engage.R.drawable.jr_icon_yahoo);
-           }
-    };
-
     private static final int DIALOG_JRENGAGE_ERROR = 1;
 
-    private ArrayList<LoginSnapshot> mProfilesList;
+    private List<LoginSnapshot> mProfilesList;
     private ProfileAdapter mAdapter;
     private ProfileData mProfileData;
 
@@ -171,8 +145,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
      */
     @Override
     protected void onListItemClick(ListView l, View v, int pos, long id) {
-        if (Config.LOGD)
-            Log.d(TAG, "[onListItemClick] at position: " + ((Integer)pos).toString());
+        if (Config.LOGD) Log.d(TAG, "[onListItemClick] at position: " + ((Integer)pos).toString());
 
         LoginSnapshot snapshot = mAdapter.getItem(pos);
         mProfileData.setCurrentProfileByIdentifier(snapshot.getIdentifier());
@@ -185,46 +158,15 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     private class ProfileAdapter extends ArrayAdapter<LoginSnapshot> implements View.OnClickListener {
         private int mResourceId;
 
-        public ProfileAdapter(Context context, int resId, ArrayList<LoginSnapshot> items) {
+        public ProfileAdapter(Context context, int resId, List<LoginSnapshot> items) {
             super(context, -1, items);
 
             mResourceId = resId;
         }
 
-        private Drawable getProviderIconDrawable(Context c, String providerName) {
-            String drawableName = "icon_" + providerName;
-            HashMap<String, Drawable> drawableMap = provider_list_icon_drawables;
-            HashMap<String, Integer> resourceMap = provider_list_icon_resources;
-
-            if (drawableMap.containsKey(drawableName)) return drawableMap.get(drawableName);
-
-            if (resourceMap.containsKey(drawableName)) {
-                Drawable r = c.getResources().getDrawable(resourceMap.get(drawableName));
-                drawableMap.put(drawableName, r);
-                return r;
-            }
-
-            try {
-                String iconFileName = "providericon~" + drawableName + ".png";
-
-                Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
-                if (icon != null) {
-                    com.janrain.android.engage.utils.Android.setBitmapDensity(icon,
-                            android.util.DisplayMetrics.DENSITY_MEDIUM);
-                }
-                else {
-                    c.deleteFile(iconFileName);
-                    //downloadIcons(c);
-                    return c.getResources().getDrawable(com.janrain.android.engage.R.drawable.icon_unknown);
-                }
-
-                //return new BitmapDrawable(c.getResources(), icon);
-                return com.janrain.android.engage.utils.Android.newBitmapDrawable(c, icon);
-            }
-            catch (FileNotFoundException e) {
-                //downloadIcons(c);
-                return c.getResources().getDrawable(com.janrain.android.engage.R.drawable.icon_unknown);
-            }
+        private Drawable getProviderIconDrawable(String providerName) {
+            return JRSessionData.getInstance().getProviderByName(providerName)
+                    .getProviderIcon(ProfilesActivity.this);
         }
 
         @Override
@@ -234,7 +176,9 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
                 LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = li.inflate(mResourceId, null);
                 Log.i(TAG, "[getView] with null convertView");
-            } else Log.i(TAG, "[getView] with non null convertView");
+            } else {
+                Log.i(TAG, "[getView] with non null convertView");
+            }
 
             ImageView icon = (ImageView)v.findViewById(R.id.row_profile_provider_icon);
             TextView name = (TextView)v.findViewById(R.id.row_profile_preferred_username_label);
@@ -243,9 +187,10 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
             LoginSnapshot snapshot = getItem(position);
 
-            Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " + snapshot.getDisplayName());
+            Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " +
+                    snapshot.getDisplayName());
 
-            icon.setImageDrawable(getProviderIconDrawable(getContext(), snapshot.getProvider()));
+            icon.setImageDrawable(getProviderIconDrawable(snapshot.getProvider()));
             name.setText(snapshot.getDisplayName());
             timestamp.setText(snapshot.getTimeStamp());
 
@@ -351,7 +296,10 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
+    public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
+                                                 HttpResponseHeaders response,
+                                                 String tokenUrlPayload,
+                                                 String provider) {
         Toast.makeText(this, "Authentication did reach token url", Toast.LENGTH_SHORT).show();
     }
 
@@ -370,26 +318,24 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         Toast.makeText(this, "Authentication failed to reach token url", Toast.LENGTH_SHORT).show();
     }
 
-    public void jrSocialDidNotCompletePublishing() {
-    }
+    public void jrSocialDidNotCompletePublishing() { }
 
-    public void jrSocialDidCompletePublishing() {
-    }
+    public void jrSocialDidCompletePublishing() { }
 
     public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
     }
 
-    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
+    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity,
+                                                 JREngageError error,
+                                                 String provider) {
     }
 
     public void onClick(View view) {
-
         if (mEditing) {
             mEditing = false;
             mAddProfile.setText(R.string.add_another_profile);
             mAdapter.notifyDataSetChanged();
-        }
-        else {
+        } else {
             /* To see an example of how you can force the user to always reauthenticate and skip the
              * returning user landing page, uncomment the following two lines, and comment-out the third */
             /* mEngage.setAlwaysForceReauthentication(true); */

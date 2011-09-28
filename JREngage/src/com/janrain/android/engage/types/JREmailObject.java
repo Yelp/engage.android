@@ -1,34 +1,37 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- Copyright (c) 2010, Janrain, Inc.
-
- All rights reserved.
-
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation and/or
-   other materials provided with the distribution.
- * Neither the name of the Janrain, Inc. nor the names of its
-   contributors may be used to endorse or promote products derived from this
-   software without specific prior written permission.
-
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  Copyright (c) 2011, Janrain, Inc.
+ *
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation and/or
+ *    other materials provided with the distribution.
+ *  * Neither the name of the Janrain, Inc. nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ *  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ */
 package com.janrain.android.engage.types;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +40,7 @@ import java.util.List;
  * @brief Object containing content to be shared by email.
  *
  * JREmailObject is a simple container object for a pre-composed email to be attached to a
- * JRActivityObject.
+ * {@link com.janrain.android.engage.types.JRActivityObject JRActivityObject}.
  *
  * Instantiate a new JREmailObject with a subject and a body.  Optionally, add a list of URLs
  * from the body and Engage will automatically shorten them, track click-throughs, and provide
@@ -45,7 +48,7 @@ import java.util.List;
  *
  * @nosubgrouping
  **/
-public class JREmailObject {
+public class JREmailObject implements Serializable {
 /**
  * @name Private Attributes
  * The various properties of the JREmailObject that you can access and configure through the object's
@@ -69,14 +72,13 @@ public class JREmailObject {
     private String mBody;
 
     /**
-     * The list of URLs to be shortened.  Each of these URLs will be shortened to an rpx.me URL, which tracks
-     * click-throughs and provides analytics.  Once shortened, the Engage for Android library will substitute
-     * the shortened version for the original long version for each URL found in the body of the email.
+     * The list of URLs found in the body that are to be shortened.
      *
      * @par Getter/Setter:
-     *      #getUrls(), #setUrls()
+     *      #getUrls(), #setUrls(), #addUrl()
      **/
     private List<String> mUrls;
+
 /*@}*/
 
     /**
@@ -92,7 +94,7 @@ public class JREmailObject {
 /*@{*/
     /**
      * Create an empty email object.
-     **/
+     */
     public JREmailObject() {
         this("", "");
     }
@@ -123,7 +125,7 @@ public class JREmailObject {
      *
      * @param shortUrls
      */
-    void setShortUrls(List<String> shortUrls) {
+    /* package*/ void setShortUrls(List<String> shortUrls) {
         mShortUrls = shortUrls;
 
         for (String longUrl : mUrls) {
@@ -198,10 +200,10 @@ public class JREmailObject {
      **/
     public void setUrls(List<String> urls) {
         if (urls == null) urls = new ArrayList<String>();
-        if (urls.size() >= 5) throw
-                new IllegalArgumentException("JREmailObject supports a maximum of five URLs");
+        if (urls.size() > 5)
+            throw new IllegalArgumentException("JREmailObject supports a maximum of five URLs");
 
-        mUrls = urls;
+        mUrls = new ArrayList<String>(urls);
     }
 
     /**
