@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="dir_8fda5bbd5dedd97ba6baf0f2ec722f9f" kind="dir">
+    <compoundname>/Users/nathan/temp/engage.android/JREngage/src/com/</compoundname>
+    <innerdir refid="dir_52a6a15bd395f1a4aa26e5327abd0c03">/Users/nathan/temp/engage.android/JREngage/src/com/janrain/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/"/>
+  </compounddef>
+</doxygen>

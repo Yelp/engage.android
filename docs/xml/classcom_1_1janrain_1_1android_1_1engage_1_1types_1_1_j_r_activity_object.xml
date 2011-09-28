@@ -2,6 +2,8 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
   <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object" kind="class" prot="public">
     <compoundname>com::janrain::android::engage::types::JRActivityObject</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Serializable</basecompoundref>
+    <basecompoundref refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable" prot="public" virt="non-virtual">JRJsonifiable</basecompoundref>
     <innerclass refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1_1_shortened_url_callback" prot="public">com::janrain::android::engage::types::JRActivityObject::ShortenedUrlCallback</innerclass>
       <sectiondef kind="user-defined">
       <header>Private Attributes</header>
@@ -14,11 +16,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>A string describing what the user did, written in the third person (e.g., &quot;wrote a restaurant review&quot;, &quot;posted a comment&quot;, &quot;took a quiz&quot;).</para><para><simplesect kind="par"><title>Getter:</title><para><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a86e636bbfd02a39e0d345c5b9f46fc6f" kindref="member">getAction()</ref> </para></simplesect>
-</para>        </detaileddescription>
+<para>A string describing what the user did, written in the third person (e.g., &quot;wrote a restaurant review&quot;, &quot;posted a comment&quot;, &quot;took a quiz&quot;).</para><para><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a86e636bbfd02a39e0d345c5b9f46fc6f" kindref="member">Getter:</ref> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="103" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="103" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="105" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="105" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1ab34fa6a32bb5e2724ccf38e29b8deedb" prot="private" static="no" mutable="no">
         <type>String</type>
@@ -32,7 +33,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="111" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="111" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="113" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="113" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1ae94df254bffa6663d441027d7d8275c0" prot="private" static="no" mutable="no">
         <type>String</type>
@@ -48,7 +49,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="123" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="123" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="125" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="125" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6a07e9575c466f0cfeb02907ae8d0973" prot="private" static="no" mutable="no">
         <type>String</type>
@@ -64,7 +65,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="134" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="134" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="136" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="136" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6393a44879537429fc8269dda0086f20" prot="private" static="no" mutable="no">
         <type>String</type>
@@ -79,7 +80,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="142" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="142" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="144" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="144" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a9808cd0aa65b882929ba8be9a974b496" prot="private" static="no" mutable="no">
         <type>List&lt; <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link" kindref="compound">JRActionLink</ref> &gt;</type>
@@ -107,7 +108,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="170" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="170" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="172" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="172" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a3d89cbb011a9839da0b559556acad5f3" prot="private" static="no" mutable="no">
         <type>List&lt; JRMediaObject &gt;</type>
@@ -125,14 +126,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="197" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="197" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="199" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="199" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1afd9064d65c67347bee51e205abccbb00" prot="private" static="no" mutable="no">
-        <type>Map&lt; String, Object &gt;</type>
-        <definition>Map&lt;String, Object&gt; mProperties</definition>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a1bede9988a27c100c89534a38559567a" prot="private" static="no" mutable="no">
+        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary" kindref="compound">JRDictionary</ref></type>
+        <definition>JRDictionary mProperties</definition>
         <argsstring></argsstring>
         <name>mProperties</name>
-        <initializer> new HashMap&lt;String, Object&gt;()</initializer>
+        <initializer> new <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary" kindref="compound">JRDictionary</ref>()</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -146,11 +147,11 @@
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/>}</highlight></codeline>
 </programlisting></para></simplesect>
-<simplesect kind="par"><title>Getter/Setter:</title><para><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1abbb9f5024dbb91acb1d08f22c11b7661" kindref="member">getProperties()</ref>, <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6f8bd80cdc8f93045131b5b413170294" kindref="member">setProperties()</ref> </para></simplesect>
+<simplesect kind="par"><title>Getter/Setter:</title><para><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1abbb9f5024dbb91acb1d08f22c11b7661" kindref="member">getProperties()</ref>, <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1acc0b2764a69084135df97b089df079d7" kindref="member">setProperties()</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="219" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="219" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="221" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="221" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa82a78e3b966073395f5a3e26921c839" prot="private" static="no" mutable="no">
         <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object" kindref="compound">JREmailObject</ref></type>
@@ -164,7 +165,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="228" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="228" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="230" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="230" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a3140d87ea48963c09a373cb4eb1e60a1" prot="private" static="no" mutable="no">
         <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" kindref="compound">JRSmsObject</ref></type>
@@ -174,11 +175,38 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>A <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" kindref="compound">JRSmsObject</ref> containing the message body of an sms, if the user wishes to share via sms.</para><para><simplesect kind="par"><title>Getter/Setter:</title><para><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1adf134ff82d7bea22d1a8102aad55fa80" kindref="member">getSms()</ref>, <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6d80526f97601fd760df82361b7a3402" kindref="member">setSms()</ref> </para></simplesect>
+<para>A <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" kindref="compound">JRSmsObject</ref> containing the message body of an SMS, if the user wishes to share via SMS.</para><para><simplesect kind="par"><title>Getter/Setter:</title><para><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1adf134ff82d7bea22d1a8102aad55fa80" kindref="member">getSms()</ref>, <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6d80526f97601fd760df82361b7a3402" kindref="member">setSms()</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="237" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="237" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="239" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="239" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1afd9a722e9e0f291cc111cdc947a60e0f" prot="private" static="no" mutable="no">
+        <type>transient boolean</type>
+        <definition>transient boolean mIsShortening</definition>
+        <argsstring></argsstring>
+        <name>mIsShortening</name>
+        <initializer> false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="241" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="241" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a2e367c610a4272cf8f761419530d4942" prot="private" static="no" mutable="no">
+        <type>String</type>
+        <definition>String mShortenedUrl</definition>
+        <argsstring></argsstring>
+        <name>mShortenedUrl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="242" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="242" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="user-defined">
@@ -200,7 +228,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns a <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object" kindref="compound">JRActivityObject</ref> initialized with the given action and url.</para><para><parameterlist kind="param"><parameteritem>
+<para>Returns a <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object" kindref="compound">JRActivityObject</ref> initialized with the given action and URL.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>action</parametername>
 </parameternamelist>
@@ -212,7 +240,7 @@
 <parametername>url</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The URL of the resource being mentioned in the activity update</para></parameterdescription>
+<para>The URL of the resource being mentioned in the activity update. May be null</para></parameterdescription>
 </parameteritem>
 </parameterlist>
 <parameterlist kind="exception"><parameteritem>
@@ -226,7 +254,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="258" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="258" bodyend="264"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="263" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="263" bodyend="270"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="user-defined">
@@ -244,7 +272,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="280" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="280" bodyend="282"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="286" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="286" bodyend="288"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1ad2ea28664c7db5089385e62816477d28" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>String</type>
@@ -258,7 +286,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="290" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="290" bodyend="292"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="296" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="296" bodyend="298"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a8be50b9e9701b2ebda10ec9b79245175" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>String</type>
@@ -272,7 +300,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="301" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="301" bodyend="303"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="307" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="307" bodyend="309"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1ae086330e2c43749d05930c201e2c8a6d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -297,7 +325,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="312" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="312" bodyend="314"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="318" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="318" bodyend="320"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a888f94790c968e3f0b5de17e509098aa" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>String</type>
@@ -311,7 +339,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="322" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="322" bodyend="324"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="328" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="328" bodyend="330"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a7d4a73d6a1db487dd96f658bdbc98ae9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -336,7 +364,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="332" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="332" bodyend="334"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="338" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="338" bodyend="340"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1ac7feffb7a33f63504ff1f87f19e2d2d8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>String</type>
@@ -350,7 +378,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="342" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="342" bodyend="344"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="348" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="348" bodyend="350"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a1d15d718177c4f5411ce6ab339889fd4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -375,7 +403,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="352" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="352" bodyend="354"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="358" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="358" bodyend="360"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa6c896c3414d99e74895eda895025573" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>List&lt; <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link" kindref="compound">JRActionLink</ref> &gt;</type>
@@ -389,7 +417,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="363" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="363" bodyend="365"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="369" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="369" bodyend="371"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a081d9f6608b311f1d09baccfc22d765d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -414,7 +442,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="374" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="374" bodyend="376"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="380" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="380" bodyend="382"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aeeaceaacba0d9f5a50626b0ab60ae48d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -428,7 +456,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Setter for the activity object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a9808cd0aa65b882929ba8be9a974b496" kindref="member">mActionLinks</ref> property.</para><para><parameterlist kind="param"><parameteritem>
+<para>Add to the activity object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a9808cd0aa65b882929ba8be9a974b496" kindref="member">mActionLinks</ref> property.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>actionLink</parametername>
 </parameternamelist>
@@ -439,7 +467,32 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="385" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="385" bodyend="389"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="391" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="391" bodyend="394"/>
+      </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa5c1c8a738dd14b3720615d463f9620b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void addMedia</definition>
+        <argsstring>(JRMediaObject media)</argsstring>
+        <name>addMedia</name>
+        <param>
+          <type>JRMediaObject</type>
+          <declname>media</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Alias for <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa5c1c8a738dd14b3720615d463f9620b" kindref="member">addMedia(JRMediaObject)</ref></para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>media</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A single <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object" kindref="compound">JRImageMediaObject</ref>, <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object" kindref="compound">JRFlashMediaObject</ref>, or <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object" kindref="compound">JRMp3MediaObject</ref> to be added to the array of media objects, creating the array if it hasn&apos;t already been created </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="403" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="403" bodyend="406"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a52553e9e6b54169e7479f988c09c4532" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>List&lt; JRMediaObject &gt;</type>
@@ -453,7 +506,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="398" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="398" bodyend="400"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="415" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="415" bodyend="417"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa891704e795b404d59b3b59f63103056" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -478,7 +531,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="409" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="409" bodyend="411"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="426" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="426" bodyend="428"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a09645c0a971972737f7b0463cd8c5b9b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -492,18 +545,18 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Setter for the activity object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a3d89cbb011a9839da0b559556acad5f3" kindref="member">mMedia</ref> property.</para><para><parameterlist kind="param"><parameteritem>
+<para>Setter for the activity object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a3d89cbb011a9839da0b559556acad5f3" kindref="member">mMedia</ref> property.</para><para><xrefsect id="deprecated_1_deprecated000003"><xreftitle>Deprecated</xreftitle><xrefdescription><para>use <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa5c1c8a738dd14b3720615d463f9620b" kindref="member">addMedia(JRMediaObject)</ref></para></xrefdescription></xrefsect></para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>mediaObject</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>An single <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object" kindref="compound">JRImageMediaObject</ref>, <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object" kindref="compound">JRFlashMediaObject</ref>, or <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object" kindref="compound">JRMp3MediaObject</ref> to be added to the array of media objects, creating the array if it hasn&apos;t already been created </para></parameterdescription>
+<para>A single <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object" kindref="compound">JRImageMediaObject</ref>, <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object" kindref="compound">JRFlashMediaObject</ref>, or <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object" kindref="compound">JRMp3MediaObject</ref> to be added to the array of media objects, creating the array if it hasn&apos;t already been created </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="420" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="420" bodyend="424"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="439" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="439" bodyend="442"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1abbb9f5024dbb91acb1d08f22c11b7661" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>Map&lt; String, Object &gt;</type>
@@ -513,25 +566,25 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Getter for the activity object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1afd9064d65c67347bee51e205abccbb00" kindref="member">mProperties</ref> property.</para><para><simplesect kind="return"><para>An object with attributes describing properties of the update. An attribute value can be a string or an object with two attributes, <emphasis>text</emphasis> and <emphasis>href</emphasis>. </para></simplesect>
+<para>Getter for the activity object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a1bede9988a27c100c89534a38559567a" kindref="member">mProperties</ref> property.</para><para><simplesect kind="return"><para>An object with attributes describing properties of the update. An attribute value can be a string or an object with two attributes, <emphasis>text</emphasis> and <emphasis>href</emphasis>. </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="433" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="433" bodyend="435"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="451" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="451" bodyend="453"/>
       </memberdef>
-      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6f8bd80cdc8f93045131b5b413170294" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1acc0b2764a69084135df97b089df079d7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
         <definition>void setProperties</definition>
-        <argsstring>(Map&lt; String, Object &gt; properties)</argsstring>
+        <argsstring>(JRDictionary properties)</argsstring>
         <name>setProperties</name>
         <param>
-          <type>Map&lt; String, Object &gt;</type>
+          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary" kindref="compound">JRDictionary</ref></type>
           <declname>properties</declname>
         </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Setter for the activity object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1afd9064d65c67347bee51e205abccbb00" kindref="member">mProperties</ref> property.</para><para><parameterlist kind="param"><parameteritem>
+<para>Setter for the activity object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a1bede9988a27c100c89534a38559567a" kindref="member">mProperties</ref> property.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>properties</parametername>
 </parameternamelist>
@@ -542,7 +595,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="444" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="444" bodyend="446"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="462" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="462" bodyend="464"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a4f7ef1030ad7fb742f8ee9fa3cb122d0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object" kindref="compound">JREmailObject</ref></type>
@@ -552,11 +605,11 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Getter for the activity object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa82a78e3b966073395f5a3e26921c839" kindref="member">mEmail</ref> property.</para><para><simplesect kind="return"><para>An <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object" kindref="compound">JREmailObject</ref> containing the content that a user can send via sms to share an activity </para></simplesect>
+<para>Getter for the activity object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa82a78e3b966073395f5a3e26921c839" kindref="member">mEmail</ref> property.</para><para><simplesect kind="return"><para>An <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object" kindref="compound">JREmailObject</ref> containing the content that a user can send via SMS to share an activity </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="454" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="454" bodyend="456"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="472" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="472" bodyend="474"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a0184e83c255e2eb71d7acd22d57ec017" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -581,7 +634,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="464" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="464" bodyend="466"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="482" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="482" bodyend="484"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1adf134ff82d7bea22d1a8102aad55fa80" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" kindref="compound">JRSmsObject</ref></type>
@@ -591,11 +644,11 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Getter for the activity object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a3140d87ea48963c09a373cb4eb1e60a1" kindref="member">mSms</ref> property.</para><para><simplesect kind="return"><para>An <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" kindref="compound">JRSmsObject</ref> containing the content that a user can send via sms to share an activity </para></simplesect>
+<para>Getter for the activity object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a3140d87ea48963c09a373cb4eb1e60a1" kindref="member">mSms</ref> property.</para><para><simplesect kind="return"><para>An <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" kindref="compound">JRSmsObject</ref> containing the content that a user can send via SMS to share an activity </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="474" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="474" bodyend="476"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="492" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="492" bodyend="494"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6d80526f97601fd760df82361b7a3402" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -614,13 +667,13 @@
 <parametername>sms</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>An <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" kindref="compound">JRSmsObject</ref> containing the content that a user can send via sms to share an activity </para></parameterdescription>
+<para>An <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" kindref="compound">JRSmsObject</ref> containing the content that a user can send via SMS to share an activity </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="484" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="484" bodyend="486"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="502" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="502" bodyend="504"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-static-attrib">
@@ -636,7 +689,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="88" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="88" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="91" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="91" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -645,17 +698,18 @@
         <definition>JRDictionary toJRDictionary</definition>
         <argsstring>()</argsstring>
         <name>toJRDictionary</name>
+        <reimplements refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplements>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="501" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="501" bodyend="512"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="519" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="519" bodyend="532"/>
       </memberdef>
-      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a61b3a8492c935603d5276131bcd0600d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>void</type>
-        <definition>void shortenUrls</definition>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a67e3c32af4d5ad0e7a36840244024ecc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>synchronized void</type>
+        <definition>synchronized void shortenUrls</definition>
         <argsstring>(final ShortenedUrlCallback callback)</argsstring>
         <name>shortenUrls</name>
         <param>
@@ -668,7 +722,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="518" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="518" bodyend="610"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="538" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="538" bodyend="637"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -680,29 +734,55 @@
 <listitem><para>Your Janrain Engage application has been configured with the given provider</para></listitem><listitem><para>The user has already authenticated and has given consent to publish activity</para></listitem></itemizedlist>
 </para><para>Otherwise, you will be given an error response indicating what was wrong. Detailed error responses will also be given if the activity parameter does not meet the formatting requirements described below.</para><para><simplesect kind="see"><para>For more information of Janrain Engage&apos;s activity api, see <ulink url="http://documentation.janrain.com/activity">the activity section</ulink> of our API Documentation. </para></simplesect>
 </para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="49">
+        <label>JRJsonifiable</label>
+        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
+      </node>
+      <node id="48">
+        <label>JRActivityObject</label>
+        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object"/>
+        <childnode refid="49" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
     <collaborationgraph>
-      <node id="44">
+      <node id="52">
         <label>JRSmsObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object"/>
       </node>
-      <node id="43">
+      <node id="51">
+        <label>JRJsonifiable</label>
+        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
+      </node>
+      <node id="54">
+        <label>JRDictionary</label>
+        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary"/>
+      </node>
+      <node id="50">
         <label>JRActivityObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object"/>
-        <childnode refid="44" relation="usage">
+        <childnode refid="51" relation="public-inheritance">
+        </childnode>
+        <childnode refid="52" relation="usage">
           <edgelabel>mSms</edgelabel>
         </childnode>
-        <childnode refid="45" relation="usage">
+        <childnode refid="53" relation="usage">
           <edgelabel>mEmail</edgelabel>
         </childnode>
+        <childnode refid="54" relation="usage">
+          <edgelabel>mProperties</edgelabel>
+        </childnode>
       </node>
-      <node id="45">
+      <node id="53">
         <label>JREmailObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object"/>
       </node>
     </collaborationgraph>
-    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="87" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="87" bodyend="611"/>
+    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="90" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="90" bodyend="638"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aeeaceaacba0d9f5a50626b0ab60ae48d" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>addActionLink</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa5c1c8a738dd14b3720615d463f9620b" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>addMedia</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a86e636bbfd02a39e0d345c5b9f46fc6f" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>getAction</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa6c896c3414d99e74895eda895025573" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>getActionLinks</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1ac7feffb7a33f63504ff1f87f19e2d2d8" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>getDescription</name></member>
@@ -718,8 +798,10 @@
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a9808cd0aa65b882929ba8be9a974b496" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>mActionLinks</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6393a44879537429fc8269dda0086f20" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>mDescription</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa82a78e3b966073395f5a3e26921c839" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>mEmail</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1afd9a722e9e0f291cc111cdc947a60e0f" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>mIsShortening</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a3d89cbb011a9839da0b559556acad5f3" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>mMedia</name></member>
-      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1afd9064d65c67347bee51e205abccbb00" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>mProperties</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a1bede9988a27c100c89534a38559567a" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>mProperties</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a2e367c610a4272cf8f761419530d4942" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>mShortenedUrl</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a3140d87ea48963c09a373cb4eb1e60a1" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>mSms</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6a07e9575c466f0cfeb02907ae8d0973" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>mTitle</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1ab34fa6a32bb5e2724ccf38e29b8deedb" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>mUrl</name></member>
@@ -729,11 +811,11 @@
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a0184e83c255e2eb71d7acd22d57ec017" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>setEmail</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1aa891704e795b404d59b3b59f63103056" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>setMedia</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a09645c0a971972737f7b0463cd8c5b9b" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>setMedia</name></member>
-      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6f8bd80cdc8f93045131b5b413170294" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>setProperties</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1acc0b2764a69084135df97b089df079d7" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>setProperties</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a6d80526f97601fd760df82361b7a3402" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>setSms</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a7d4a73d6a1db487dd96f658bdbc98ae9" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>setTitle</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1ae086330e2c43749d05930c201e2c8a6d" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>setUserGeneratedContent</name></member>
-      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a61b3a8492c935603d5276131bcd0600d" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>shortenUrls</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a67e3c32af4d5ad0e7a36840244024ecc" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>shortenUrls</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a844c5efdea72aa6bf76fb98b1072572a" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>TAG</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a985a1b0429a8a359a4783c7409b91e3a" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActivityObject</scope><name>toJRDictionary</name></member>
     </listofallmembers>

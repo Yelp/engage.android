@@ -6,37 +6,10 @@
     <derivedcompoundref refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data" prot="public" virt="non-virtual">JRSessionData</derivedcompoundref>
     <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1_1_simple_j_r_connection_manager_delegate" prot="public">com::janrain::android::engage::net::JRConnectionManagerDelegate::SimpleJRConnectionManagerDelegate</innerclass>
       <sectiondef kind="package-func">
-      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1a173221d2f70856e79fa6f6d112cb875a" prot="package" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1a9e94e8ae5352b3b1cb53a614d1e5febb" prot="package" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void connectionDidFinishLoading</definition>
-        <argsstring>(String payload, String requestUrl, Object userdata)</argsstring>
-        <name>connectionDidFinishLoading</name>
-        <param>
-          <type>String</type>
-          <declname>payload</declname>
-        </param>
-        <param>
-          <type>String</type>
-          <declname>requestUrl</declname>
-        </param>
-        <param>
-          <type>Object</type>
-          <declname>userdata</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManagerDelegate.java" line="41"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-func">
-      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1a29b9fa0c1b8e696b58a5a0185f493d4a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void connectionDidFinishLoading</definition>
-        <argsstring>(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object userdata)</argsstring>
+        <argsstring>(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object tag)</argsstring>
         <name>connectionDidFinishLoading</name>
         <param>
           <type>HttpResponseHeaders</type>
@@ -52,7 +25,7 @@
         </param>
         <param>
           <type>Object</type>
-          <declname>userdata</declname>
+          <declname>tag</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -60,12 +33,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManagerDelegate.java" line="45"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManagerDelegate.java" line="45"/>
       </memberdef>
-      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1affa481336180f3188c8363fbf6c7e4cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1a5f8323d73bc32bfee3989e98e5436ec2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void connectionDidFail</definition>
-        <argsstring>(Exception ex, String requestUrl, Object userdata)</argsstring>
+        <argsstring>(Exception ex, String requestUrl, Object tag)</argsstring>
         <name>connectionDidFail</name>
         <param>
           <type>Exception</type>
@@ -77,7 +52,7 @@
         </param>
         <param>
           <type>Object</type>
-          <declname>userdata</declname>
+          <declname>tag</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -85,36 +60,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManagerDelegate.java" line="46"/>
-      </memberdef>
-      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1a7cfea0f39a7786256b98d3d38835bbda" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void connectionWasStopped</definition>
-        <argsstring>(Object userdata)</argsstring>
-        <name>connectionWasStopped</name>
-        <param>
-          <type>Object</type>
-          <declname>userdata</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManagerDelegate.java" line="47"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManagerDelegate.java" line="47"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManagerDelegate.java" line="39" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManagerDelegate.java" bodystart="39" bodyend="63"/>
+    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManagerDelegate.java" line="41" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/JRConnectionManagerDelegate.java" bodystart="41" bodyend="57"/>
     <listofallmembers>
-      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1affa481336180f3188c8363fbf6c7e4cf" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManagerDelegate</scope><name>connectionDidFail</name></member>
-      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1a173221d2f70856e79fa6f6d112cb875a" prot="package" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManagerDelegate</scope><name>connectionDidFinishLoading</name></member>
-      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1a29b9fa0c1b8e696b58a5a0185f493d4a" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManagerDelegate</scope><name>connectionDidFinishLoading</name></member>
-      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1a7cfea0f39a7786256b98d3d38835bbda" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManagerDelegate</scope><name>connectionWasStopped</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1a5f8323d73bc32bfee3989e98e5436ec2" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManagerDelegate</scope><name>connectionDidFail</name></member>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1net_1_1_j_r_connection_manager_delegate_1a9e94e8ae5352b3b1cb53a614d1e5febb" prot="package" virt="non-virtual"><scope>com::janrain::android::engage::net::JRConnectionManagerDelegate</scope><name>connectionDidFinishLoading</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

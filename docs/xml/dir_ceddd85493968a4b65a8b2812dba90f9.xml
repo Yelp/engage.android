@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="dir_ceddd85493968a4b65a8b2812dba90f9" kind="dir">
+    <compoundname>/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/async/</compoundname>
+    <innerfile refid="_async_http_client_8java">AsyncHttpClient.java</innerfile>
+    <innerfile refid="_async_http_response_holder_8java">AsyncHttpResponseHolder.java</innerfile>
+    <innerfile refid="_async_http_response_listener_8java">AsyncHttpResponseListener.java</innerfile>
+    <innerfile refid="_http_response_headers_8java">HttpResponseHeaders.java</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/async/"/>
+  </compounddef>
+</doxygen>

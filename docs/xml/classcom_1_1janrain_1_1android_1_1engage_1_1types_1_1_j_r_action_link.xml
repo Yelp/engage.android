@@ -2,6 +2,8 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
   <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link" kind="class" prot="public">
     <compoundname>com::janrain::android::engage::types::JRActionLink</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Serializable</basecompoundref>
+    <basecompoundref refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable" prot="public" virt="non-virtual">JRJsonifiable</basecompoundref>
       <sectiondef kind="user-defined">
       <header>Private Attributes</header>
       <description><para>The various properties of the <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link" kindref="compound">JRActionLink</ref> that you can access and configure through the object&apos;s constructor and getters </para></description>
@@ -17,7 +19,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="75" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="75" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="76" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="76" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1a9207c3b8ef8469f1d9101379d48550ce" prot="private" static="no" mutable="no">
         <type>String</type>
@@ -31,7 +33,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="83" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="83" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="84" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="84" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="user-defined">
@@ -79,7 +81,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="104" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="104" bodyend="108"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="105" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="105" bodyend="109"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="user-defined">
@@ -97,7 +99,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="122" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="122" bodyend="124"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="123" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="123" bodyend="125"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1a8043ef8d1352a42f35dceb50021a5923" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>String</type>
@@ -111,22 +113,21 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="132" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="132" bodyend="134"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="133" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="133" bodyend="135"/>
       </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-func">
-      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1aeed0a2e99b9fe422a1a538f76960d006" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>Map&lt; String, String &gt;</type>
-        <definition>Map&lt;String, String&gt; dictionaryForObject</definition>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1a985a1b0429a8a359a4783c7409b91e3a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary" kindref="compound">JRDictionary</ref></type>
+        <definition>JRDictionary toJRDictionary</definition>
         <argsstring>()</argsstring>
-        <name>dictionaryForObject</name>
+        <name>toJRDictionary</name>
+        <reimplements refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplements>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="151" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="151" bodyend="155"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="137" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="137" bodyend="144"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -145,14 +146,38 @@
 <codeline><highlight class="normal"><sp/>]</highlight></codeline>
 </programlisting> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="62" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="62" bodyend="156"/>
+    <inheritancegraph>
+      <node id="44">
+        <label>JRActionLink</label>
+        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link"/>
+        <childnode refid="45" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>JRJsonifiable</label>
+        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="46">
+        <label>JRActionLink</label>
+        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link"/>
+        <childnode refid="47" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>JRJsonifiable</label>
+        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
+      </node>
+    </collaborationgraph>
+    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="63" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="63" bodyend="147"/>
     <listofallmembers>
-      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1aeed0a2e99b9fe422a1a538f76960d006" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActionLink</scope><name>dictionaryForObject</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1a8043ef8d1352a42f35dceb50021a5923" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActionLink</scope><name>getHref</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1afab766445043570e6a82c14851366933" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActionLink</scope><name>getText</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1aa550387930016cdfada35d59aadf892f" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActionLink</scope><name>JRActionLink</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1a9207c3b8ef8469f1d9101379d48550ce" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActionLink</scope><name>mHref</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1ad286627be2e2470bd7f917c103faecbf" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActionLink</scope><name>mText</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1a985a1b0429a8a359a4783c7409b91e3a" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActionLink</scope><name>toJRDictionary</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

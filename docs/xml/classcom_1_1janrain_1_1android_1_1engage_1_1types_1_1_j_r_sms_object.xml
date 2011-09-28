@@ -2,6 +2,7 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
   <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" kind="class" prot="public">
     <compoundname>com::janrain::android::engage::types::JRSmsObject</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Serializable</basecompoundref>
       <sectiondef kind="user-defined">
       <header>Private Attributes</header>
       <description><para>The various properties of the <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" kindref="compound">JRSmsObject</ref> that you can access and configure through the object&apos;s constructor and getters </para></description>
@@ -13,11 +14,11 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>The pre-composed body of the sms.</para><para><simplesect kind="par"><title>Getter/Setter:</title><para><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1aff2f2ca4042b71a1c005ef33d796073f" kindref="member">getBody()</ref>, <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1aafa2e1148f40b8c77b01e849324620ce" kindref="member">setBody()</ref> </para></simplesect>
+<para>The pre-composed body of the SMS.</para><para><simplesect kind="par"><title>Getter/Setter:</title><para><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1aff2f2ca4042b71a1c005ef33d796073f" kindref="member">getBody()</ref>, <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1aafa2e1148f40b8c77b01e849324620ce" kindref="member">setBody()</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="60" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="60" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="63" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="63" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a927dee6b6e7145029fe7bcc3a3bd19e0" prot="private" static="no" mutable="no">
         <type>List&lt; String &gt;</type>
@@ -27,11 +28,11 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>The list of URLs to be shortened. Each of these URLs will be shortened to an rpx.me URL, which tracks click-throughs and provides analytics. Once shortened, the Engage for Android library will substitute the shortened version for the original long version for each URL found in the body of the sms.</para><para><simplesect kind="par"><title>Getter/Setter:</title><para><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a3fe96da2a85dff14969500fa13159121" kindref="member">getUrls()</ref>, <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a744f055478816813bc41d7db2979430f" kindref="member">setUrls()</ref> </para></simplesect>
+<para>The list of URLs to be shortened. Each of these URLs will be shortened to an rpx.me URL, which tracks click-throughs and provides analytics. Once shortened, the Engage for Android library will substitute the shortened version for the original long version for each URL found in the body of the SMS.</para><para><simplesect kind="par"><title>Getter/Setter:</title><para><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a3fe96da2a85dff14969500fa13159121" kindref="member">getUrls()</ref>, <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a744f055478816813bc41d7db2979430f" kindref="member">setUrls()</ref> </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="70" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="70" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="73" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="73" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="user-defined">
@@ -48,7 +49,7 @@
 <para>Create an empty SMS object. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="87" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="87" bodyend="89"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="90" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="90" bodyend="92"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a0d0cd1dc307661667347ef34c9975db0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -73,7 +74,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="98" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="98" bodyend="103"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="101" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="101" bodyend="106"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="user-defined">
@@ -87,11 +88,11 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Getter for the sms object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1ace7af73cf1ec9b97f73ac9badb12c321" kindref="member">mBody</ref> property.</para><para><simplesect kind="return"><para>The body of the sms </para></simplesect>
+<para>Getter for the SMS object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1ace7af73cf1ec9b97f73ac9badb12c321" kindref="member">mBody</ref> property.</para><para><simplesect kind="return"><para>The body of the SMS </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="130" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="130" bodyend="132"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="133" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="133" bodyend="135"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1aafa2e1148f40b8c77b01e849324620ce" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -105,18 +106,18 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Setter for the sms object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1ace7af73cf1ec9b97f73ac9badb12c321" kindref="member">mBody</ref> property.</para><para><parameterlist kind="param"><parameteritem>
+<para>Setter for the SMS object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1ace7af73cf1ec9b97f73ac9badb12c321" kindref="member">mBody</ref> property.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>body</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The body of the sms </para></parameterdescription>
+<para>The body of the SMS </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="140" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="140" bodyend="142"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="143" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="143" bodyend="145"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a3fe96da2a85dff14969500fa13159121" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>List&lt; String &gt;</type>
@@ -126,11 +127,11 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Getter for the sms object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a927dee6b6e7145029fe7bcc3a3bd19e0" kindref="member">mUrls</ref> property, a list of URLs to be shortened.</para><para><simplesect kind="return"><para>An immutable list of URLs to be shortened </para></simplesect>
+<para>Getter for the SMS object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a927dee6b6e7145029fe7bcc3a3bd19e0" kindref="member">mUrls</ref> property, a list of URLs to be shortened.</para><para><simplesect kind="return"><para>An immutable list of URLs to be shortened </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="150" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="150" bodyend="152"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="153" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="153" bodyend="155"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a744f055478816813bc41d7db2979430f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -144,7 +145,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Setter for the sms object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a927dee6b6e7145029fe7bcc3a3bd19e0" kindref="member">mUrls</ref> property, a list of URLs to be shortened. Each of these URLs will be shortened to an rpx.me URL, which tracks click-throughs, and provides analytics. Once shortened, the Engage for Android library will substitute the shortened version for the original long version for each URL found in the body of the sms.</para><para><parameterlist kind="param"><parameteritem>
+<para>Setter for the SMS object&apos;s <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a927dee6b6e7145029fe7bcc3a3bd19e0" kindref="member">mUrls</ref> property, a list of URLs to be shortened. Each of these URLs will be shortened to an rpx.me URL, which tracks click-throughs, and provides analytics. Once shortened, the Engage for Android library will substitute the shortened version for the original long version for each URL found in the body of the SMS.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>urls</parametername>
 </parameternamelist>
@@ -155,7 +156,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="163" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="163" bodyend="169"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="166" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="166" bodyend="172"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1ab482a851576f3766af32a2988ca25f59" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -180,7 +181,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="177" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="177" bodyend="182"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="180" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="180" bodyend="185"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -195,7 +196,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="77" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="77" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="80" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="80" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="package-func">
@@ -214,14 +215,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="111" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="111" bodyend="118"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="114" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="114" bodyend="121"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
-<para>Object containing content to be shared in an sms. </para>    </briefdescription>
+<para>An SMS a user can send to share an activity. </para>    </briefdescription>
     <detaileddescription>
 <para><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" kindref="compound">JRSmsObject</ref> is a simple container object for a pre-composed SMS to be attached to a <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object" kindref="compound">JRActivityObject</ref></para><para>Instantiate a new <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" kindref="compound">JRSmsObject</ref> with a body. Optionally, add a list of URLs from the body and Engage will automatically shorten them, track click-throughs, and provide analytics on your dashboard. </para>    </detaileddescription>
-    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="47" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="47" bodyend="184"/>
+    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" line="50" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java" bodystart="50" bodyend="187"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1ab482a851576f3766af32a2988ca25f59" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRSmsObject</scope><name>addUrl</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1aff2f2ca4042b71a1c005ef33d796073f" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRSmsObject</scope><name>getBody</name></member>

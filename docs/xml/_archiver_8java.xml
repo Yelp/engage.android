@@ -3,195 +3,143 @@
   <compounddef id="_archiver_8java" kind="file">
     <compoundname>Archiver.java</compoundname>
     <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver" prot="public">com::janrain::android::engage::utils::Archiver</innerclass>
+    <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1utils_1_1_archiver_1_1_load_exception" prot="public">com::janrain::android::engage::utils::Archiver::LoadException</innerclass>
     <innernamespace refid="namespacecom_1_1janrain_1_1android_1_1engage_1_1utils">com::janrain::android::engage::utils</innernamespace>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
     <programlisting>
-<codeline lineno="1"><highlight class="comment">/*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*</highlight></codeline>
-<codeline lineno="2"><highlight class="comment"><sp/>Copyright<sp/>(c)<sp/>2010,<sp/>Janrain,<sp/>Inc.</highlight></codeline>
-<codeline lineno="3"><highlight class="comment"></highlight></codeline>
-<codeline lineno="4"><highlight class="comment"><sp/>All<sp/>rights<sp/>reserved.</highlight></codeline>
-<codeline lineno="5"><highlight class="comment"></highlight></codeline>
-<codeline lineno="6"><highlight class="comment"><sp/>Redistribution<sp/>and<sp/>use<sp/>in<sp/>source<sp/>and<sp/>binary<sp/>forms,<sp/>with<sp/>or<sp/>without<sp/>modification,</highlight></codeline>
-<codeline lineno="7"><highlight class="comment"><sp/>are<sp/>permitted<sp/>provided<sp/>that<sp/>the<sp/>following<sp/>conditions<sp/>are<sp/>met:</highlight></codeline>
-<codeline lineno="8"><highlight class="comment"></highlight></codeline>
-<codeline lineno="9"><highlight class="comment"><sp/>*<sp/>Redistributions<sp/>of<sp/>source<sp/>code<sp/>must<sp/>retain<sp/>the<sp/>above<sp/>copyright<sp/>notice,<sp/>this</highlight></codeline>
-<codeline lineno="10"><highlight class="comment"><sp/><sp/><sp/>list<sp/>of<sp/>conditions<sp/>and<sp/>the<sp/>following<sp/>disclaimer.</highlight></codeline>
-<codeline lineno="11"><highlight class="comment"><sp/>*<sp/>Redistributions<sp/>in<sp/>binary<sp/>form<sp/>must<sp/>reproduce<sp/>the<sp/>above<sp/>copyright<sp/>notice,</highlight></codeline>
-<codeline lineno="12"><highlight class="comment"><sp/><sp/><sp/>this<sp/>list<sp/>of<sp/>conditions<sp/>and<sp/>the<sp/>following<sp/>disclaimer<sp/>in<sp/>the<sp/>documentation<sp/>and/or</highlight></codeline>
-<codeline lineno="13"><highlight class="comment"><sp/><sp/><sp/>other<sp/>materials<sp/>provided<sp/>with<sp/>the<sp/>distribution.</highlight></codeline>
-<codeline lineno="14"><highlight class="comment"><sp/>*<sp/>Neither<sp/>the<sp/>name<sp/>of<sp/>the<sp/>Janrain,<sp/>Inc.<sp/>nor<sp/>the<sp/>names<sp/>of<sp/>its</highlight></codeline>
-<codeline lineno="15"><highlight class="comment"><sp/><sp/><sp/>contributors<sp/>may<sp/>be<sp/>used<sp/>to<sp/>endorse<sp/>or<sp/>promote<sp/>products<sp/>derived<sp/>from<sp/>this</highlight></codeline>
-<codeline lineno="16"><highlight class="comment"><sp/><sp/><sp/>software<sp/>without<sp/>specific<sp/>prior<sp/>written<sp/>permission.</highlight></codeline>
-<codeline lineno="17"><highlight class="comment"></highlight></codeline>
-<codeline lineno="18"><highlight class="comment"></highlight></codeline>
-<codeline lineno="19"><highlight class="comment"><sp/>THIS<sp/>SOFTWARE<sp/>IS<sp/>PROVIDED<sp/>BY<sp/>THE<sp/>COPYRIGHT<sp/>HOLDERS<sp/>AND<sp/>CONTRIBUTORS<sp/>&quot;AS<sp/>IS&quot;<sp/>AND</highlight></codeline>
-<codeline lineno="20"><highlight class="comment"><sp/>ANY<sp/>EXPRESS<sp/>OR<sp/>IMPLIED<sp/>WARRANTIES,<sp/>INCLUDING,<sp/>BUT<sp/>NOT<sp/>LIMITED<sp/>TO,<sp/>THE<sp/>IMPLIED</highlight></codeline>
-<codeline lineno="21"><highlight class="comment"><sp/>WARRANTIES<sp/>OF<sp/>MERCHANTABILITY<sp/>AND<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE<sp/>ARE</highlight></codeline>
-<codeline lineno="22"><highlight class="comment"><sp/>DISCLAIMED.<sp/>IN<sp/>NO<sp/>EVENT<sp/>SHALL<sp/>THE<sp/>COPYRIGHT<sp/>HOLDER<sp/>OR<sp/>CONTRIBUTORS<sp/>BE<sp/>LIABLE<sp/>FOR</highlight></codeline>
-<codeline lineno="23"><highlight class="comment"><sp/>ANY<sp/>DIRECT,<sp/>INDIRECT,<sp/>INCIDENTAL,<sp/>SPECIAL,<sp/>EXEMPLARY,<sp/>OR<sp/>CONSEQUENTIAL<sp/>DAMAGES</highlight></codeline>
-<codeline lineno="24"><highlight class="comment"><sp/>(INCLUDING,<sp/>BUT<sp/>NOT<sp/>LIMITED<sp/>TO,<sp/>PROCUREMENT<sp/>OF<sp/>SUBSTITUTE<sp/>GOODS<sp/>OR<sp/>SERVICES;</highlight></codeline>
-<codeline lineno="25"><highlight class="comment"><sp/>LOSS<sp/>OF<sp/>USE,<sp/>DATA,<sp/>OR<sp/>PROFITS;<sp/>OR<sp/>BUSINESS<sp/>INTERRUPTION)<sp/>HOWEVER<sp/>CAUSED<sp/>AND<sp/>ON</highlight></codeline>
-<codeline lineno="26"><highlight class="comment"><sp/>ANY<sp/>THEORY<sp/>OF<sp/>LIABILITY,<sp/>WHETHER<sp/>IN<sp/>CONTRACT,<sp/>STRICT<sp/>LIABILITY,<sp/>OR<sp/>TORT</highlight></codeline>
-<codeline lineno="27"><highlight class="comment"><sp/>(INCLUDING<sp/>NEGLIGENCE<sp/>OR<sp/>OTHERWISE)<sp/>ARISING<sp/>IN<sp/>ANY<sp/>WAY<sp/>OUT<sp/>OF<sp/>THE<sp/>USE<sp/>OF<sp/>THIS</highlight></codeline>
-<codeline lineno="28"><highlight class="comment"><sp/>SOFTWARE,<sp/>EVEN<sp/>IF<sp/>ADVISED<sp/>OF<sp/>THE<sp/>POSSIBILITY<sp/>OF<sp/>SUCH<sp/>DAMAGE.</highlight></codeline>
-<codeline lineno="29"><highlight class="comment"><sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keyword">package<sp/></highlight><highlight class="normal">com.janrain.android.engage.utils;</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>android.content.Context;</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>android.text.TextUtils;</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>android.util.Log;</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>com.janrain.android.engage.JREngage;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>java.io.FileInputStream;</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>java.io.FileNotFoundException;</highlight></codeline>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*<sp/><sp/>Copyright<sp/>(c)<sp/>2011,<sp/>Janrain,<sp/>Inc.</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*<sp/><sp/>All<sp/>rights<sp/>reserved.</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*<sp/><sp/>Redistribution<sp/>and<sp/>use<sp/>in<sp/>source<sp/>and<sp/>binary<sp/>forms,<sp/>with<sp/>or<sp/>without<sp/>modification,</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/>are<sp/>permitted<sp/>provided<sp/>that<sp/>the<sp/>following<sp/>conditions<sp/>are<sp/>met:</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/><sp/>*<sp/>Redistributions<sp/>of<sp/>source<sp/>code<sp/>must<sp/>retain<sp/>the<sp/>above<sp/>copyright<sp/>notice,<sp/>this</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/>list<sp/>of<sp/>conditions<sp/>and<sp/>the<sp/>following<sp/>disclaimer.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*<sp/><sp/>*<sp/>Redistributions<sp/>in<sp/>binary<sp/>form<sp/>must<sp/>reproduce<sp/>the<sp/>above<sp/>copyright<sp/>notice,</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/>this<sp/>list<sp/>of<sp/>conditions<sp/>and<sp/>the<sp/>following<sp/>disclaimer<sp/>in<sp/>the<sp/>documentation<sp/>and/or</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/>other<sp/>materials<sp/>provided<sp/>with<sp/>the<sp/>distribution.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/><sp/>*<sp/>Neither<sp/>the<sp/>name<sp/>of<sp/>the<sp/>Janrain,<sp/>Inc.<sp/>nor<sp/>the<sp/>names<sp/>of<sp/>its</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/>contributors<sp/>may<sp/>be<sp/>used<sp/>to<sp/>endorse<sp/>or<sp/>promote<sp/>products<sp/>derived<sp/>from<sp/>this</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*<sp/><sp/><sp/><sp/>software<sp/>without<sp/>specific<sp/>prior<sp/>written<sp/>permission.</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*<sp/><sp/>THIS<sp/>SOFTWARE<sp/>IS<sp/>PROVIDED<sp/>BY<sp/>THE<sp/>COPYRIGHT<sp/>HOLDERS<sp/>AND<sp/>CONTRIBUTORS<sp/>&quot;AS<sp/>IS&quot;<sp/>AND</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*<sp/><sp/>ANY<sp/>EXPRESS<sp/>OR<sp/>IMPLIED<sp/>WARRANTIES,<sp/>INCLUDING,<sp/>BUT<sp/>NOT<sp/>LIMITED<sp/>TO,<sp/>THE<sp/>IMPLIED</highlight></codeline>
+<codeline lineno="22"><highlight class="comment"><sp/>*<sp/><sp/>WARRANTIES<sp/>OF<sp/>MERCHANTABILITY<sp/>AND<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE<sp/>ARE</highlight></codeline>
+<codeline lineno="23"><highlight class="comment"><sp/>*<sp/><sp/>DISCLAIMED.<sp/>IN<sp/>NO<sp/>EVENT<sp/>SHALL<sp/>THE<sp/>COPYRIGHT<sp/>HOLDER<sp/>OR<sp/>CONTRIBUTORS<sp/>BE<sp/>LIABLE<sp/>FOR</highlight></codeline>
+<codeline lineno="24"><highlight class="comment"><sp/>*<sp/><sp/>ANY<sp/>DIRECT,<sp/>INDIRECT,<sp/>INCIDENTAL,<sp/>SPECIAL,<sp/>EXEMPLARY,<sp/>OR<sp/>CONSEQUENTIAL<sp/>DAMAGES</highlight></codeline>
+<codeline lineno="25"><highlight class="comment"><sp/>*<sp/><sp/>(INCLUDING,<sp/>BUT<sp/>NOT<sp/>LIMITED<sp/>TO,<sp/>PROCUREMENT<sp/>OF<sp/>SUBSTITUTE<sp/>GOODS<sp/>OR<sp/>SERVICES;</highlight></codeline>
+<codeline lineno="26"><highlight class="comment"><sp/>*<sp/><sp/>LOSS<sp/>OF<sp/>USE,<sp/>DATA,<sp/>OR<sp/>PROFITS;<sp/>OR<sp/>BUSINESS<sp/>INTERRUPTION)<sp/>HOWEVER<sp/>CAUSED<sp/>AND<sp/>ON</highlight></codeline>
+<codeline lineno="27"><highlight class="comment"><sp/>*<sp/><sp/>ANY<sp/>THEORY<sp/>OF<sp/>LIABILITY,<sp/>WHETHER<sp/>IN<sp/>CONTRACT,<sp/>STRICT<sp/>LIABILITY,<sp/>OR<sp/>TORT</highlight></codeline>
+<codeline lineno="28"><highlight class="comment"><sp/>*<sp/><sp/>(INCLUDING<sp/>NEGLIGENCE<sp/>OR<sp/>OTHERWISE)<sp/>ARISING<sp/>IN<sp/>ANY<sp/>WAY<sp/>OUT<sp/>OF<sp/>THE<sp/>USE<sp/>OF<sp/>THIS</highlight></codeline>
+<codeline lineno="29"><highlight class="comment"><sp/>*<sp/><sp/>SOFTWARE,<sp/>EVEN<sp/>IF<sp/>ADVISED<sp/>OF<sp/>THE<sp/>POSSIBILITY<sp/>OF<sp/>SUCH<sp/>DAMAGE.</highlight></codeline>
+<codeline lineno="30"><highlight class="comment"><sp/>*<sp/><sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*<sp/>*</highlight></codeline>
+<codeline lineno="31"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keyword">package<sp/></highlight><highlight class="normal">com.janrain.android.engage.utils;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>android.content.Context;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>android.text.TextUtils;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>com.janrain.android.engage.JREngage;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>java.io.FileInputStream;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>java.io.FileOutputStream;</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>java.io.IOException;</highlight></codeline>
-<codeline lineno="41"><highlight class="normal"></highlight></codeline>
-<codeline lineno="49"><highlight class="keyword">public</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">Archiver<sp/>{</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>STATIC<sp/>FIELDS</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="54"><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>tag<sp/>used<sp/>for<sp/>logging</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal"><sp/>String<sp/>TAG<sp/>=<sp/>Archiver.class.getSimpleName();</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>token<sp/>used<sp/>to<sp/>separate<sp/>parts<sp/>of<sp/>dictionary<sp/>file<sp/>name</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal"><sp/>String<sp/>DICTIONARY_FILE_SEPARATOR<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;~&quot;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>prefix<sp/>+<sp/>dictionary<sp/>name</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal"><sp/>String<sp/>DICTIONARY_BASE_FORMAT<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;dict&quot;</highlight><highlight class="normal"><sp/>+<sp/>DICTIONARY_FILE_SEPARATOR<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;%s&quot;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"></highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>STATIC<sp/>METHODS</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"></highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>save(String<sp/>name,<sp/>Object<sp/></highlight><highlight class="keywordtype">object</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Context<sp/>context<sp/>=<sp/>JREngage.getContext();</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(context<sp/>==<sp/>null)<sp/>{</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>IllegalArgumentException(</highlight><highlight class="stringliteral">&quot;context<sp/>parameter<sp/>cannot<sp/>be<sp/>null&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(TextUtils.isEmpty(name))<sp/>{</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>IllegalArgumentException(</highlight><highlight class="stringliteral">&quot;name<sp/>parameter<sp/>cannot<sp/>be<sp/>null&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"></highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>String<sp/>fileName<sp/>=<sp/>String.format(DICTIONARY_BASE_FORMAT,<sp/>name);</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"></highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>purge<sp/>existing<sp/>file</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>context.deleteFile(fileName);</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"></highlight></codeline>
-<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>then<sp/>save<sp/>current<sp/>dictionary<sp/>contents</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>saveObject(fileName,<sp/></highlight><highlight class="keywordtype">object</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="98"><highlight class="normal"></highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>Object<sp/>load(String<sp/>name)<sp/>{</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Context<sp/>context<sp/>=<sp/>JREngage.getContext();</highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(context<sp/>==<sp/>null)<sp/>{</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>IllegalArgumentException(</highlight><highlight class="stringliteral">&quot;context<sp/>parameter<sp/>cannot<sp/>be<sp/>null&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(TextUtils.isEmpty(name))<sp/>{</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>IllegalArgumentException(</highlight><highlight class="stringliteral">&quot;name<sp/>parameter<sp/>cannot<sp/>be<sp/>null&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"></highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>String<sp/>fileName<sp/>=<sp/>String.format(DICTIONARY_BASE_FORMAT,<sp/>name);</highlight></codeline>
-<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>loadObject(fileName);</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="122"><highlight class="normal"></highlight></codeline>
-<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>String<sp/>loadString(String<sp/>name)<sp/>{</highlight></codeline>
-<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Object<sp/>obj<sp/>=<sp/>load(name);</highlight></codeline>
-<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((obj<sp/>!=<sp/>null)<sp/>&amp;&amp;<sp/>(obj<sp/>instanceof<sp/>String))<sp/>{</highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(String)obj;</highlight></codeline>
-<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>null;</highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"></highlight></codeline>
-<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>Integer<sp/>loadInteger(String<sp/>name)<sp/>{</highlight></codeline>
-<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Object<sp/>obj<sp/>=<sp/>load(name);</highlight></codeline>
-<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((obj<sp/>!=<sp/>null)<sp/>&amp;&amp;<sp/>(obj<sp/>instanceof<sp/>Integer))<sp/>{</highlight></codeline>
-<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(Integer)obj;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>java.io.ObjectInputStream;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>java.io.ObjectOutputStream;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="keyword">public</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">Archiver<sp/>{</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal"><sp/>String<sp/>TAG<sp/>=<sp/>Archiver.class.getSimpleName();</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>token<sp/>used<sp/>to<sp/>separate<sp/>parts<sp/>of<sp/>dictionary<sp/>file<sp/>name</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal"><sp/>String<sp/>DICTIONARY_FILE_SEPARATOR<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;~&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>prefix<sp/>+<sp/>dictionary<sp/>name</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal"><sp/>String<sp/>DICTIONARY_BASE_FORMAT<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;dict&quot;</highlight><highlight class="normal"><sp/>+<sp/>DICTIONARY_FILE_SEPARATOR<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;%s&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal"><sp/>Archiver()<sp/>{}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>save(String<sp/>name,<sp/>Object<sp/></highlight><highlight class="keywordtype">object</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Context<sp/>context<sp/>=<sp/>JREngage.getActivity();</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(context<sp/>==<sp/>null)<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>IllegalStateException(</highlight><highlight class="stringliteral">&quot;context<sp/>cannot<sp/>be<sp/>null&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(TextUtils.isEmpty(name))<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>IllegalArgumentException(</highlight><highlight class="stringliteral">&quot;name<sp/>parameter<sp/>cannot<sp/>be<sp/>null&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>String<sp/>fileName<sp/>=<sp/>String.format(DICTIONARY_BASE_FORMAT,<sp/>name);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>purge<sp/>existing<sp/>file</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>context.deleteFile(fileName);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FileOutputStream<sp/>fos<sp/>=<sp/>null;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ObjectOutputStream<sp/>oos<sp/>=<sp/>null;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fos<sp/>=<sp/>context.openFileOutput(fileName,<sp/>Context.MODE_PRIVATE);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>oos<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>ObjectOutputStream(fos);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>oos.writeObject(</highlight><highlight class="keywordtype">object</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>oos.close();</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(IOException<sp/>e)<sp/>{</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>RuntimeException(e);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">finally</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(oos<sp/>!=<sp/>null)<sp/>{</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>oos.close();</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(IOException<sp/>ignore)<sp/>{</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(fos<sp/>!=<sp/>null)<sp/>{</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fos.close();</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(IOException<sp/>ignore)<sp/>{</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>@SuppressWarnings(</highlight><highlight class="stringliteral">&quot;unchecked&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>public<sp/>static<sp/>&lt;T&gt;<sp/>T<sp/>load(String<sp/>name)<sp/>throws<sp/>LoadException<sp/>{</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Context<sp/>context<sp/>=<sp/>JREngage.getActivity();</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(context<sp/>==<sp/>null)<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>IllegalStateException(</highlight><highlight class="stringliteral">&quot;[loadObject]<sp/>JREngage.getContext()<sp/>is<sp/>null.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(TextUtils.isEmpty(name))<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>IllegalArgumentException(</highlight><highlight class="stringliteral">&quot;name<sp/>parameter<sp/>cannot<sp/>be<sp/>null&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>String<sp/>fileName<sp/>=<sp/>String.format(DICTIONARY_BASE_FORMAT,<sp/>name);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FileInputStream<sp/>fis<sp/>=<sp/>null;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ObjectInputStream<sp/>ois<sp/>=<sp/>null;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fis<sp/>=<sp/>context.openFileInput(fileName);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ois<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>ObjectInputStream(fis);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(T)<sp/>ois.readObject();</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(IOException<sp/>e)<sp/>{</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>LoadException(e);</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(ClassNotFoundException<sp/>e)<sp/>{</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>LoadException(e);</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">finally</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ois<sp/>!=<sp/>null)<sp/>{</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ois.close();</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(IOException<sp/>ignore)<sp/>{</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(fis<sp/>!=<sp/>null)<sp/>{</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fis.close();</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(IOException<sp/>ignore)<sp/>{</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>null;</highlight></codeline>
-<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="162"><highlight class="normal"></highlight></codeline>
-<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>Boolean<sp/>loadBoolean(String<sp/>name)<sp/>{</highlight></codeline>
-<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Object<sp/>obj<sp/>=<sp/>load(name);</highlight></codeline>
-<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((obj<sp/>!=<sp/>null)<sp/>&amp;&amp;<sp/>(obj<sp/>instanceof<sp/>Boolean))<sp/>{</highlight></codeline>
-<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(Boolean)obj;</highlight></codeline>
-<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>null;</highlight></codeline>
-<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="182"><highlight class="normal"></highlight></codeline>
-<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>loadBooleanWithDefault(String<sp/>name,<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>defaultValue)<sp/>{</highlight></codeline>
-<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Boolean<sp/>value<sp/>=<sp/>loadBoolean(name);</highlight></codeline>
-<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(value<sp/>==<sp/>null)<sp/>?<sp/>defaultValue<sp/>:<sp/>value;</highlight></codeline>
-<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="203"><highlight class="normal"></highlight></codeline>
-<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="205"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>Handles<sp/>saving<sp/>of<sp/>the<sp/>named<sp/>dictionary<sp/>to<sp/>disk.</highlight></codeline>
-<codeline lineno="206"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>saveObject(String<sp/>fileName,<sp/>Object<sp/></highlight><highlight class="keywordtype">object</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
-<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>retval<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Context<sp/>context<sp/>=<sp/>JREngage.getContext();</highlight></codeline>
-<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(context<sp/>==<sp/>null)<sp/>{</highlight></codeline>
-<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Log.e(TAG,<sp/></highlight><highlight class="stringliteral">&quot;[saveObject]<sp/>JREngage.context<sp/>is<sp/>null.&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
-<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FileOutputStream<sp/>fos<sp/>=<sp/>null;</highlight></codeline>
-<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
-<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fos<sp/>=<sp/>context.openFileOutput(fileName,<sp/>Context.MODE_PRIVATE);</highlight></codeline>
-<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>byte[]<sp/>bytes<sp/>=<sp/>IOUtils.objectToBytes(</highlight><highlight class="keywordtype">object</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fos.write(bytes);</highlight></codeline>
-<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>retval<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(FileNotFoundException<sp/>e)<sp/>{</highlight></codeline>
-<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Log.e(TAG,<sp/></highlight><highlight class="stringliteral">&quot;[saveObject]<sp/>fnfe&quot;</highlight><highlight class="normal">,<sp/>e);</highlight></codeline>
-<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(IOException<sp/>e)<sp/>{</highlight></codeline>
-<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Log.e(TAG,<sp/></highlight><highlight class="stringliteral">&quot;[saveObject]<sp/>ioe&quot;</highlight><highlight class="normal">,<sp/>e);</highlight></codeline>
-<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">finally</highlight><highlight class="normal"><sp/>{</highlight></codeline>
-<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
-<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(fos<sp/>!=<sp/>null)<sp/>{</highlight></codeline>
-<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fos.close();</highlight></codeline>
-<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(IOException<sp/>ignore)<sp/>{</highlight></codeline>
-<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>retval;</highlight></codeline>
-<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="234"><highlight class="normal"></highlight></codeline>
-<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="236"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>Loads<sp/>the<sp/>named<sp/>dictionary<sp/>from<sp/>disk.</highlight></codeline>
-<codeline lineno="237"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>Object<sp/>loadObject(String<sp/>fileName)<sp/>{</highlight></codeline>
-<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Object<sp/>value<sp/>=<sp/>null;</highlight></codeline>
-<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Context<sp/>context<sp/>=<sp/>JREngage.getContext();</highlight></codeline>
-<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(context<sp/>==<sp/>null)<sp/>{</highlight></codeline>
-<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Log.e(TAG,<sp/></highlight><highlight class="stringliteral">&quot;[loadObject]<sp/>JREngage.context<sp/>is<sp/>null.&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
-<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FileInputStream<sp/>fis<sp/>=<sp/>null;</highlight></codeline>
-<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
-<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fis<sp/>=<sp/>context.openFileInput(fileName);</highlight></codeline>
-<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>byte[]<sp/>bytes<sp/>=<sp/>IOUtils.readFromStream(fis);</highlight></codeline>
-<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>value<sp/>=<sp/>IOUtils.bytesToObject(bytes);</highlight></codeline>
-<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(FileNotFoundException<sp/>e)<sp/>{</highlight></codeline>
-<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Log.i(TAG,<sp/></highlight><highlight class="stringliteral">&quot;[loadObject]<sp/>File<sp/>not<sp/>found:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>fileName);</highlight></codeline>
-<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">finally</highlight><highlight class="normal"><sp/>{</highlight></codeline>
-<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(fis<sp/>!=<sp/>null)<sp/>{</highlight></codeline>
-<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
-<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fis.close();</highlight></codeline>
-<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(IOException<sp/>ignore)<sp/>{</highlight></codeline>
-<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>value;</highlight></codeline>
-<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="262"><highlight class="normal"></highlight></codeline>
-<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>CONSTRUCTORS</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="266"><highlight class="normal"></highlight></codeline>
-<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal"><sp/>Archiver()<sp/>{</highlight></codeline>
-<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="272"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">LoadException<sp/></highlight><highlight class="keyword">extends</highlight><highlight class="normal"><sp/>RuntimeException<sp/>{</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>LoadException(Throwable<sp/>throwable)<sp/>{</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>super(throwable);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="167"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/Archiver.java"/>
+    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/utils/Archiver.java"/>
   </compounddef>
 </doxygen>

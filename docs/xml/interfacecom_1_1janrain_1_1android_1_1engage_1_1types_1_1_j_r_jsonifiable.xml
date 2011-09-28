@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable" kind="interface" prot="public">
+    <compoundname>com::janrain::android::engage::types::JRJsonifiable</compoundname>
+    <derivedcompoundref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link" prot="public" virt="non-virtual">JRActionLink</derivedcompoundref>
+    <derivedcompoundref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object" prot="public" virt="non-virtual">JRActivityObject</derivedcompoundref>
+    <derivedcompoundref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_media_object" prot="public" virt="non-virtual">JRMediaObject</derivedcompoundref>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable_1a985a1b0429a8a359a4783c7409b91e3a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary" kindref="compound">JRDictionary</ref></type>
+        <definition>JRDictionary toJRDictionary</definition>
+        <argsstring>()</argsstring>
+        <name>toJRDictionary</name>
+        <reimplementedby refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplementedby>
+        <reimplementedby refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplementedby>
+        <reimplementedby refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplementedby>
+        <reimplementedby refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplementedby>
+        <reimplementedby refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" line="43"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Created by IntelliJ IDEA. User: nathan Date: 9/24/11 Time: 10:51 PM To change this template use File | Settings | File Templates. </para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="79">
+        <label>JRActionLink</label>
+        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link"/>
+        <childnode refid="78" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="78">
+        <label>JRJsonifiable</label>
+        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
+      </node>
+      <node id="80">
+        <label>JRActivityObject</label>
+        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object"/>
+        <childnode refid="78" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" line="42" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" bodystart="42" bodyend="44"/>
+    <listofallmembers>
+      <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable_1a985a1b0429a8a359a4783c7409b91e3a" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRJsonifiable</scope><name>toJRDictionary</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

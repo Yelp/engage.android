@@ -13,6 +13,7 @@
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
+      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -32,9 +33,11 @@
 <div class="title">JREmailObject Class Reference</div>  </div>
 </div>
 <div class="contents">
-<!-- doxytag: class="com::janrain::android::engage::types::JREmailObject" -->
+<!-- doxytag: class="com::janrain::android::engage::types::JREmailObject" --><!-- doxytag: inherits="java::io::Serializable" -->
 <p>Object containing content to be shared by email.  
  <a href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object.html#details">More...</a></p>
+
+<p>Inherits Serializable.</p>
 
 <p><a href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object-members.html">List of all members.</a></p>
 <table class="memberdecls">
@@ -65,7 +68,7 @@ Getters/Setters</h2></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Object containing content to be shared by email. </p>
-<p><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object.html" title="Object containing content to be shared by email.">JREmailObject</a> is a simple container object for a pre-composed email to be attached to a <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html" title="An activity object you create, populate, and post to the user&#39;s activity stream.">JRActivityObject</a>.</p>
+<p><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object.html" title="Object containing content to be shared by email.">JREmailObject</a> is a simple container object for a pre-composed email to be attached to a <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html">JRActivityObject</a>.</p>
 <p>Instantiate a new <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object.html" title="Object containing content to be shared by email.">JREmailObject</a> with a subject and a body. Optionally, add a list of URLs from the body and Engage will automatically shorten them, track click-throughs, and provide analytics on your dashboard. </p>
 </div><hr/><h2>Constructor</h2>
 <a class="anchor" id="a1d9a3cdeb592ba75d95b14ab6d2abbda"></a><!-- doxytag: member="com::janrain::android::engage::types::JREmailObject::JREmailObject" ref="a1d9a3cdeb592ba75d95b14ab6d2abbda" args="()" -->
@@ -312,13 +315,13 @@ Getters/Setters</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>The list of URLs to be shortened. Each of these URLs will be shortened to an rpx.me URL, which tracks click-throughs and provides analytics. Once shortened, the Engage for Android library will substitute the shortened version for the original long version for each URL found in the body of the email.</p>
-<dl class="user"><dt><b>Getter/Setter:</b></dt><dd><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object.html#a3fe96da2a85dff14969500fa13159121">getUrls()</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object.html#a744f055478816813bc41d7db2979430f">setUrls()</a> </dd></dl>
+<p>The list of URLs found in the body that are to be shortened.</p>
+<dl class="user"><dt><b>Getter/Setter:</b></dt><dd><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object.html#a3fe96da2a85dff14969500fa13159121">getUrls()</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object.html#a744f055478816813bc41d7db2979430f">setUrls()</a>, <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object.html#ab482a851576f3766af32a2988ca25f59">addUrl()</a> </dd></dl>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JREmailObject.java</li>
+<li>/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JREmailObject.java</li>
 </ul>
 </div>
 <!-- doxygen footer -->

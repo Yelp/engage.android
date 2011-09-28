@@ -8,14 +8,14 @@
     <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object" prot="public">com::janrain::android::engage::types::JREmailObject</innerclass>
     <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object" prot="public">com::janrain::android::engage::types::JRFlashMediaObject</innerclass>
     <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object" prot="public">com::janrain::android::engage::types::JRImageMediaObject</innerclass>
+    <innerclass refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable" prot="public">com::janrain::android::engage::types::JRJsonifiable</innerclass>
     <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_media_object" prot="public">com::janrain::android::engage::types::JRMediaObject</innerclass>
     <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object" prot="public">com::janrain::android::engage::types::JRMp3MediaObject</innerclass>
-    <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_provider_list" prot="public">com::janrain::android::engage::types::JRProviderList</innerclass>
     <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object" prot="public">com::janrain::android::engage::types::JRSmsObject</innerclass>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="30"/>
+    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="32"/>
   </compounddef>
 </doxygen>

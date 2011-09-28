@@ -13,6 +13,7 @@
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
+      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -41,6 +42,7 @@
 Get the JREngage Instance</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp1563bd99b5767462283658c6804d90b3"></a> Methods that initialize and return the shared <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="The JREngage class provides methods for configuring the Engage for Android library and initiating aut...">JREngage</a> instance </p>
 </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html">JREngage</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a8a7d2401f2d02773a0da78177e493f36">initInstance</a> (Activity activity, String appId, String tokenUrl, <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html">JREngageDelegate</a> delegate)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html">JREngage</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a7c79a12fbe98d3dc3567f481b164e4f4">initInstance</a> (Context context, String appId, String tokenUrl, <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html">JREngageDelegate</a> delegate)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html">JREngage</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a9ce0c212c5efaf0f55bc44a36a1ac688">getInstance</a> ()</td></tr>
 <tr><td colspan="2"><h2><a name="member-group"></a>
@@ -54,6 +56,8 @@ Manage Authenticated Users</h2></td></tr>
 Cancel the JREngage Dialogs</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrpd07ee85d05cc5dd13dd0e31682479a39"></a> Methods to cancel authentication and social publishing </p>
 </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abbb84184bff9bb3752fd2f9fd5dec510"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::finishJrActivities" ref="abbb84184bff9bb3752fd2f9fd5dec510" args="()" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><b>finishJrActivities</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a5d37932565edbaf3d879f5848a7bc889">cancelAuthentication</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a45445132f9f15aa224c19e11bec26982">cancelPublishing</a> ()</td></tr>
 <tr><td colspan="2"><h2><a name="member-group"></a>
@@ -61,12 +65,16 @@ Server-side Authentication</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp1fc6cae7bdf84f91a0bad45f5891f15e"></a> Methods to configure server-side authentication </p>
 </td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a9cae37926c51b92a0d934b65cd14829c">setTokenUrl</a> (String newTokenUrl)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#ad21acf712468c635c95ca7069b2d12e9">setEnabledAuthenticationProviders</a> (List&lt; String &gt; enabledProviders)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a330b420fe18081dfdda8d4d75038bd48">setEnabledAuthenticationProviders</a> (String[] enabledProviders)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a23f33da66c75476aacb1924fabb946f3">setEnabledSharingProviders</a> (List&lt; String &gt; enabledSharingProviders)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a4640f63bce5822a6bd4b92c3258357be">setEnabledSharingProviders</a> (String[] enabledSharingProviders)</td></tr>
 <tr><td colspan="2"><h2><a name="member-group"></a>
 Manage the JREngage Delegates</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp6972234e5fe0e6f4eb1916e12bc18297"></a> Add/remove delegates that implement the <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates or...">JREngageDelegate</a> protocol </p>
 </td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a7bbc6073780da1e97b3809d15a9394e1">addDelegate</a> (<a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html">JREngageDelegate</a> delegate)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#adf46ec2da28c76195c2aa4eb8339d519">removeDelegate</a> (<a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html">JREngageDelegate</a> delegate)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">synchronized void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#ac65be7ecc11892e4d850c4d3cf6c2547">addDelegate</a> (<a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html">JREngageDelegate</a> delegate)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">synchronized void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a0d40fb874a4b703ca00bcad051cff621">removeDelegate</a> (<a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html">JREngageDelegate</a> delegate)</td></tr>
 <tr><td colspan="2"><h2><a name="member-group"></a>
 Show the JREngage Dialogs</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp345603279e1df04f4a3678e78089b7be"></a> <a class="anchor" id="showMethods"></a></p>
@@ -75,6 +83,9 @@ Show the JREngage Dialogs</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a0de1aa16e951a1b62e2ef459b1596e83">showAuthenticationDialog</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#ad1f8c683188718a475f7bb6276b6d45b">showAuthenticationDialog</a> (boolean skipReturningUserLandingPage)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a4b029811d11b8a46483a22ecb5b87a53">showSocialPublishingDialog</a> (<a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html">JRActivityObject</a> activity)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#aab585550cfd0f8d4b3643119d1e5edae">showSocialPublishingFragment</a> (<a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html">JRActivityObject</a> activity, FragmentActivity hostActivity, int containerId, boolean addToBackStack, Integer transit, Integer transitRes, Integer customEnterAnimation, Integer customExitAnimation)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a92fe6f1acd3e5b6a4273d5b56db2ae4a">showSocialPublishingFragment</a> (<a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html">JRActivityObject</a> activity, FragmentActivity hostActivity, int containerId)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">JRPublishFragment&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a45de3c7650ada30af67a22c2dc2d2f1d">createSocialPublishingFragment</a> (<a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html">JRActivityObject</a> activity)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="The JREngage class provides methods for configuring the Engage for Android library and initiating aut...">JREngage</a> class provides methods for configuring the Engage for Android library and initiating authentication and social sharing. </p>
@@ -82,12 +93,62 @@ Show the JREngage Dialogs</h2></td></tr>
 <p>You may optionally implement server-side authentication. When configured, the Engage for Android library can post the user's authentication token to a URL on your server: the token URL. Your server can complete authentication, access more of the Engage web API, log the authentication, etc. and the server's response will be passed back through to your Android application.</p>
 <p>To use <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="The JREngage class provides methods for configuring the Engage for Android library and initiating aut...">JREngage</a>:</p>
 <ul>
-<li>Call <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a7c79a12fbe98d3dc3567f481b164e4f4">JREngage.initInstance</a></li>
+<li>Call <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a8a7d2401f2d02773a0da78177e493f36">JREngage.initInstance</a></li>
 <li>Save the returned <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="The JREngage class provides methods for configuring the Engage for Android library and initiating aut...">JREngage</a> object</li>
 <li>Invoke <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a0de1aa16e951a1b62e2ef459b1596e83">showAuthenticationDialog()</a> or <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a4b029811d11b8a46483a22ecb5b87a53">showSocialPublishingDialog(JRActivityObject activity)</a></li>
 <li>You may implement <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates or...">JREngageDelegate</a> to receive responses </li>
 </ul>
 </div><hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a8a7d2401f2d02773a0da78177e493f36"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::initInstance" ref="a8a7d2401f2d02773a0da78177e493f36" args="(Activity activity, String appId, String tokenUrl, JREngageDelegate delegate)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html">JREngage</a> initInstance </td>
+          <td>(</td>
+          <td class="paramtype">Activity&#160;</td>
+          <td class="paramname"><em>activity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">String&#160;</td>
+          <td class="paramname"><em>appId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">String&#160;</td>
+          <td class="paramname"><em>tokenUrl</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html">JREngageDelegate</a>&#160;</td>
+          <td class="paramname"><em>delegate</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Initializes and returns the singleton instance of <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="The JREngage class provides methods for configuring the Engage for Android library and initiating aut...">JREngage</a>.</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">activity</td><td>The Android Activity, used for access to system resources (e.g. global preferences). This value cannot be null</td></tr>
+    <tr><td class="paramname">appId</td><td>Your 20-character application ID. You can find this on your application's Engage Dashboard at <a href="http://rpxnow.com">http://rpxnow.com</a>. This value cannot be null</td></tr>
+    <tr><td class="paramname">tokenUrl</td><td>The url on your server where you wish to complete authentication, or null. If provided, the <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="The JREngage class provides methods for configuring the Engage for Android library and initiating aut...">JREngage</a> library will post the user's authentication token to this url where it can used for further authentication and processing. When complete, the library will pass the server's response back to the your application</td></tr>
+    <tr><td class="paramname">delegate</td><td>The delegate object that implements the <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates or...">JREngageDelegate</a> protocol</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The shared instance of the <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="The JREngage class provides methods for configuring the Engage for Android library and initiating aut...">JREngage</a> object initialized with the given appId, tokenUrl, and delegate. If the given appId is null, returns null </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a7c79a12fbe98d3dc3567f481b164e4f4"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::initInstance" ref="a7c79a12fbe98d3dc3567f481b164e4f4" args="(Context context, String appId, String tokenUrl, JREngageDelegate delegate)" -->
 <div class="memitem">
 <div class="memproto">
@@ -125,9 +186,10 @@ Show the JREngage Dialogs</h2></td></tr>
 </div>
 <div class="memdoc">
 <p>Initializes and returns the singleton instance of <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="The JREngage class provides methods for configuring the Engage for Android library and initiating aut...">JREngage</a>.</p>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd>Use <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a8a7d2401f2d02773a0da78177e493f36">initInstance(Activity, String, String, JREngageDelegate)</a> instead.</dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">context</td><td>The Android application Context, used for access to system resources (e.g. global preferences). This value cannot be null</td></tr>
+    <tr><td class="paramname">context</td><td>The Android Activity, used for access to system resources (e.g. global preferences). This value cannot be null</td></tr>
     <tr><td class="paramname">appId</td><td>Your 20-character application ID. You can find this on your application's Engage Dashboard at <a href="http://rpxnow.com">http://rpxnow.com</a>. This value cannot be null</td></tr>
     <tr><td class="paramname">tokenUrl</td><td>The url on your server where you wish to complete authentication, or null. If provided, the <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html" title="The JREngage class provides methods for configuring the Engage for Android library and initiating aut...">JREngage</a> library will post the user's authentication token to this url where it can used for further authentication and processing. When complete, the library will pass the server's response back to the your application</td></tr>
     <tr><td class="paramname">delegate</td><td>The delegate object that implements the <a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html" title="The interface implemented by an object in order to receive notifications when a user authenticates or...">JREngageDelegate</a> protocol</td></tr>
@@ -279,12 +341,108 @@ Show the JREngage Dialogs</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a7bbc6073780da1e97b3809d15a9394e1"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::addDelegate" ref="a7bbc6073780da1e97b3809d15a9394e1" args="(JREngageDelegate delegate)" -->
+<a class="anchor" id="ad21acf712468c635c95ca7069b2d12e9"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::setEnabledAuthenticationProviders" ref="ad21acf712468c635c95ca7069b2d12e9" args="(List&lt; String &gt; enabledProviders)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void addDelegate </td>
+          <td class="memname">void setEnabledAuthenticationProviders </td>
+          <td>(</td>
+          <td class="paramtype">List&lt; String &gt;&#160;</td>
+          <td class="paramname"><em>enabledProviders</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Sets the list of providers that are enabled for authentication. This does not supersede your RP's deplyoment settings for Android sign-in, as configured on rpxnow.com, it is a supplemental filter to that configuration.</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">enabledProviders</td><td>A list of providers which will be enabled. This set will be intersected with the set of providers configured on the Engage Dashboard, that intersection will be the providers that are actually available to the end-user. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a330b420fe18081dfdda8d4d75038bd48"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::setEnabledAuthenticationProviders" ref="a330b420fe18081dfdda8d4d75038bd48" args="(String[] enabledProviders)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setEnabledAuthenticationProviders </td>
+          <td>(</td>
+          <td class="paramtype">String[]&#160;</td>
+          <td class="paramname"><em>enabledProviders</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Convenience variant of setEnabledAuthenticationProviders(List&lt;String&gt;) </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">enabledProviders</td><td>An array of providers which will be enabled. This set will be intersected with the set of providers configured on the Engage Dashboard, that intersection will be the providers that are actually available to the end-user. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a23f33da66c75476aacb1924fabb946f3"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::setEnabledSharingProviders" ref="a23f33da66c75476aacb1924fabb946f3" args="(List&lt; String &gt; enabledSharingProviders)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setEnabledSharingProviders </td>
+          <td>(</td>
+          <td class="paramtype">List&lt; String &gt;&#160;</td>
+          <td class="paramname"><em>enabledSharingProviders</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Sets the list of providers that are enabled for social sharing. This does not supersede your RP's deplyoment settings for Android social sharing, as configured on rpxnow.com, it is a supplemental filter to that configuration.</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">enabledSharingProviders</td><td>Which providers to enable for authentication, null for all providers. A list of social sharing providers which will be enabled. This set will be intersected with the set of providers configured on the Engage Dashboard, that intersection will be the providers that are actually available to the end-user. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a4640f63bce5822a6bd4b92c3258357be"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::setEnabledSharingProviders" ref="a4640f63bce5822a6bd4b92c3258357be" args="(String[] enabledSharingProviders)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setEnabledSharingProviders </td>
+          <td>(</td>
+          <td class="paramtype">String[]&#160;</td>
+          <td class="paramname"><em>enabledSharingProviders</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Convenience variant of setEnabledSharingProviders(List&lt;String&gt;) </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">enabledSharingProviders</td><td>An array of social sharing providers which will be enabled. This set will be intersected with the set of providers configured on the Engage Dashboard, that intersection will be the providers that are actually available to the end-user. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ac65be7ecc11892e4d850c4d3cf6c2547"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::addDelegate" ref="ac65be7ecc11892e4d850c4d3cf6c2547" args="(JREngageDelegate delegate)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">synchronized void addDelegate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html">JREngageDelegate</a>&#160;</td>
           <td class="paramname"><em>delegate</em></td><td>)</td>
@@ -303,12 +461,12 @@ Show the JREngage Dialogs</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="adf46ec2da28c76195c2aa4eb8339d519"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::removeDelegate" ref="adf46ec2da28c76195c2aa4eb8339d519" args="(JREngageDelegate delegate)" -->
+<a class="anchor" id="a0d40fb874a4b703ca00bcad051cff621"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::removeDelegate" ref="a0d40fb874a4b703ca00bcad051cff621" args="(JREngageDelegate delegate)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void removeDelegate </td>
+          <td class="memname">synchronized void removeDelegate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html">JREngageDelegate</a>&#160;</td>
           <td class="paramname"><em>delegate</em></td><td>)</td>
@@ -393,8 +551,170 @@ Show the JREngage Dialogs</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="aab585550cfd0f8d4b3643119d1e5edae"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::showSocialPublishingFragment" ref="aab585550cfd0f8d4b3643119d1e5edae" args="(JRActivityObject activity, FragmentActivity hostActivity, int containerId, boolean addToBackStack, Integer transit, Integer transitRes, Integer customEnterAnimation, Integer customExitAnimation)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void showSocialPublishingFragment </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html">JRActivityObject</a>&#160;</td>
+          <td class="paramname"><em>activity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FragmentActivity&#160;</td>
+          <td class="paramname"><em>hostActivity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>containerId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">boolean&#160;</td>
+          <td class="paramname"><em>addToBackStack</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Integer&#160;</td>
+          <td class="paramname"><em>transit</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Integer&#160;</td>
+          <td class="paramname"><em>transitRes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Integer&#160;</td>
+          <td class="paramname"><em>customEnterAnimation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Integer&#160;</td>
+          <td class="paramname"><em>customExitAnimation</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Begin social publishing. The library will display a new Android <em>Fragment</em> enabling the user to publish a social share. The user will also be taken through the sign-in process, if necessary.</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">activity</td><td>The activity you wish to share </td></tr>
+    <tr><td class="paramname">hostActivity</td><td>The android.support.v4.app.FragmentActivity which will host the publishing fragment </td></tr>
+    <tr><td class="paramname">containerId</td><td>The resource ID of a FrameLayout to embed the publishing fragment in </td></tr>
+    <tr><td class="paramname">addToBackStack</td><td>True if the publishing fragment should be added to the back stack, false otherwise </td></tr>
+    <tr><td class="paramname">transit</td><td>Select a standard transition animation for this transaction. See FragmentTransaction.setTransition. Null for not set </td></tr>
+    <tr><td class="paramname">transitRes</td><td>Set a custom style resource that will be used for resolving transit animations. Null for not set </td></tr>
+    <tr><td class="paramname">customEnterAnimation</td><td>Set a custom enter animation. May be null if-and-only-if customExitAnimation is also null </td></tr>
+    <tr><td class="paramname">customExitAnimation</td><td>Set a custom exit animation. May be null if-and-only-if customEnterAnimation is also null</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl><dt><b>Exceptions:</b></dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">IllegalArgumentException</td><td>If the supplied activity object is null </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a92fe6f1acd3e5b6a4273d5b56db2ae4a"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::showSocialPublishingFragment" ref="a92fe6f1acd3e5b6a4273d5b56db2ae4a" args="(JRActivityObject activity, FragmentActivity hostActivity, int containerId)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void showSocialPublishingFragment </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html">JRActivityObject</a>&#160;</td>
+          <td class="paramname"><em>activity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FragmentActivity&#160;</td>
+          <td class="paramname"><em>hostActivity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>containerId</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Begin social publishing. The library will display a new Android <em>Fragment</em> enabling the user to publish a social share. The user will also be taken through the sign-in process, if necessary. This simple variant displays the Fragment, does not add it to the Fragment back stack, and uses default animations.</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">activity</td><td>The activity you wish to share </td></tr>
+    <tr><td class="paramname">hostActivity</td><td>The android.support.v4.app.FragmentActivity which will host the publishing fragment </td></tr>
+    <tr><td class="paramname">containerId</td><td>The resource ID of a FrameLayout to embed the publishing fragment in</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl><dt><b>Exceptions:</b></dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">IllegalArgumentException</td><td>If the supplied activity object is null </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a45de3c7650ada30af67a22c2dc2d2f1d"></a><!-- doxytag: member="com::janrain::android::engage::JREngage::createSocialPublishingFragment" ref="a45de3c7650ada30af67a22c2dc2d2f1d" args="(JRActivityObject activity)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">JRPublishFragment createSocialPublishingFragment </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html">JRActivityObject</a>&#160;</td>
+          <td class="paramname"><em>activity</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Create a new android.support.v4.Fragment for social publishing. Use this if you wish to manage the FragmentTransaction yourself.</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">activity</td><td>The JRActivityObject to share, may not be null</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The created Fragment, or null upon error (caused by library configuration failure)</dd></dl>
+<dl><dt><b>Exceptions:</b></dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">IllegalArgumentException</td><td>If the supplied activity object is null </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngage.java</li>
+<li>/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngage.java</li>
 </ul>
 </div>
 <!-- doxygen footer -->

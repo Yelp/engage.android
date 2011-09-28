@@ -5,51 +5,6 @@
       <sectiondef kind="user-defined">
       <header>Configuration</header>
       <description><para>Messages sent by <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> during dialog launch/configuration </para></description>
-      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1acd5e5b9fdaeeec8deca0cf60ae3f2ec7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void jrEngageDialogDidFailToShowWithError</definition>
-        <argsstring>(JREngageError error)</argsstring>
-        <name>jrEngageDialogDidFailToShowWithError</name>
-        <param>
-          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
-          <declname>error</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Notifies the delegate when the application invokes the display of a library Activity, but the Activity fails to start. May occur if the library failed to connect to the Engage server, or if the JRActivityObject was null, etc.</para><para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>error</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The error that occurred during configuration</para></parameterdescription>
-</parameteritem>
-</parameterlist>
-<simplesect kind="note"><para>This message is only sent if your application tries to show a <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> dialog, and not necessarily when the error occurred. For example, if the error occurred during the library&apos;s configuration with the Engage server, it will not be sent through this interface until the application attempts to display a library Activity. <linebreak/>
-<linebreak/>
- The raison d&apos;etre for this delayed delegate delivery is to allow for the possibility that an application may speculatively configure the library, but never actually invoke any library Activies. In that case, no error is delivered to the application. </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="72"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="user-defined">
-      <header>Authentication</header>
-      <description><para>Messages sent by <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> during authentication </para></description>
-      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a388f6ea1d314132c85a215c952fb7901" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void jrAuthenticationDidNotComplete</definition>
-        <argsstring>()</argsstring>
-        <name>jrAuthenticationDidNotComplete</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Notifies the delegate that authorization was canceled for any reason other than an error. For example: The user pressed the back button, the cancelAuthentication method was called, or configuration of the library timed out. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="87"/>
-      </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a589d849b42af1061bac4697ab9982bba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void jrAuthenticationDidSucceedForUser</definition>
@@ -71,7 +26,7 @@
 <parametername>auth_info</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>A JRDictionary of fields containing all the information that Janrain Engage knows about the user logging into your application. Includes the field <emphasis>&quot;profile&quot;</emphasis> which contains the user&apos;s profile information.</para></parameterdescription>
+<para>A JRDictionary of fields containing all the information that Janrain Engage knows about the user signing in to your application. Includes the field <emphasis>&quot;profile&quot;</emphasis> which contains the user&apos;s profile information.</para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -97,44 +52,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="125"/>
-      </memberdef>
-      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a35444c1f8c0fec9d14274e9a615cba0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void jrAuthenticationDidFailWithError</definition>
-        <argsstring>(JREngageError error, String provider)</argsstring>
-        <name>jrAuthenticationDidFailWithError</name>
-        <param>
-          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
-          <declname>error</declname>
-        </param>
-        <param>
-          <type>String</type>
-          <declname>provider</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Notifies the delegate when authentication has failed and could not be recovered by the library.</para><para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>error</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The error that occurred during authentication</para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>provider</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The name of the provider on which the user tried to authenticate. For a list of possible strings, please see the <ulink url="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">List of Providers</ulink></para></parameterdescription>
-</parameteritem>
-</parameterlist>
-<simplesect kind="note"><para>This message is not sent if authentication was canceled. To be notified of a canceled authentication, see <ref refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a388f6ea1d314132c85a215c952fb7901" kindref="member">jrAuthenticationDidNotComplete()</ref>. </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="144"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="93"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a4b00beabacace5dd67a7bc60f133dcb4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -192,84 +110,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="192"/>
-      </memberdef>
-      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a424d0bbf6dd2dbfe81a382406e5ac5ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void jrAuthenticationCallToTokenUrlDidFail</definition>
-        <argsstring>(String tokenUrl, JREngageError error, String provider)</argsstring>
-        <name>jrAuthenticationCallToTokenUrlDidFail</name>
-        <param>
-          <type>String</type>
-          <declname>tokenUrl</declname>
-        </param>
-        <param>
-          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
-          <declname>error</declname>
-        </param>
-        <param>
-          <type>String</type>
-          <declname>provider</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Notifies the delegate when the call to the token URL has failed.</para><para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>tokenUrl</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The URL on the server where the token was posted and server-side authentication was completed</para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>error</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The error that occurred during server-side authentication</para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>provider</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The name of the provider on which the user authenticated. For a list of possible strings, please see the <ulink url="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">List of Providers</ulink> </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="210"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="user-defined">
-      <header>SocialPublishing</header>
-      <description><para>Messages sent by <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> during social publishing </para></description>
-      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a5ef7762d503eb0f583d172d4a10f7869" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void jrSocialDidNotCompletePublishing</definition>
-        <argsstring>()</argsstring>
-        <name>jrSocialDidNotCompletePublishing</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Notifies the delegate if social publishing was canceled for any reason other than an error. For example, the user presses the back button, any class (e.g., the <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> delegate) calls the cancelPublishing method, or if configuration of the library times out. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="224"/>
-      </memberdef>
-      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1afc069beff80daac09cc1e06566a45320" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void jrSocialDidCompletePublishing</definition>
-        <argsstring>()</argsstring>
-        <name>jrSocialDidCompletePublishing</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Notifies the delegate after the social publishing dialog is closed (e.g., the user presses the back button) and publishing is complete. You may receive multiple <ref refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1didPublish" kindref="member">void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider)</ref> messages before the dialog is closed and publishing is complete. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="232"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="116"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1ace972ad01c27e01a5ccf27ad70a4d0d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -305,7 +146,164 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="248"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="132"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1acd5e5b9fdaeeec8deca0cf60ae3f2ec7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void jrEngageDialogDidFailToShowWithError</definition>
+        <argsstring>(JREngageError error)</argsstring>
+        <name>jrEngageDialogDidFailToShowWithError</name>
+        <param>
+          <type>JREngageError</type>
+          <declname>error</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notifies the delegate when the application invokes the display of a library Activity, but the Activity fails to start. May occur if the library failed to connect to the Engage server, or if the JRActivityObject was null, etc.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The error that occurred during configuration</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>This message is only sent if your application tries to show a <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> dialog, and not necessarily when the error occurred. For example, if the error occurred during the library&apos;s configuration with the Engage server, it will not be sent through this interface until the application attempts to display a library Activity.</para></simplesect>
+The raison d&apos;etre for this delayed delegate delivery is to allow for the possibility that an application may speculatively configure the library, but never actually invoke any library Activies. In that case, no error is delivered to the application. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="152"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="user-defined">
+      <header>Authentication</header>
+      <description><para>Messages sent by <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> during authentication </para></description>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a388f6ea1d314132c85a215c952fb7901" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void jrAuthenticationDidNotComplete</definition>
+        <argsstring>()</argsstring>
+        <name>jrAuthenticationDidNotComplete</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notifies the delegate that authorization was canceled for any reason other than an error. For example: The user pressed the back button, the cancelAuthentication method was called, or configuration of the library timed out. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="167"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a35444c1f8c0fec9d14274e9a615cba0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void jrAuthenticationDidFailWithError</definition>
+        <argsstring>(JREngageError error, String provider)</argsstring>
+        <name>jrAuthenticationDidFailWithError</name>
+        <param>
+          <type>JREngageError</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>String</type>
+          <declname>provider</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notifies the delegate when authentication has failed and could not be recovered by the library.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The error that occurred during authentication</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>provider</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the provider on which the user tried to authenticate. For a list of possible strings, please see the <ulink url="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">List of Providers</ulink></para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>This message is not sent if authentication was canceled. To be notified of a canceled authentication, see <ref refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a388f6ea1d314132c85a215c952fb7901" kindref="member">jrAuthenticationDidNotComplete()</ref>. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="186"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a424d0bbf6dd2dbfe81a382406e5ac5ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void jrAuthenticationCallToTokenUrlDidFail</definition>
+        <argsstring>(String tokenUrl, JREngageError error, String provider)</argsstring>
+        <name>jrAuthenticationCallToTokenUrlDidFail</name>
+        <param>
+          <type>String</type>
+          <declname>tokenUrl</declname>
+        </param>
+        <param>
+          <type>JREngageError</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>String</type>
+          <declname>provider</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notifies the delegate when the call to the token URL has failed.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>tokenUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The URL on the server where the token was posted and server-side authentication was completed</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The error that occurred during server-side authentication</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>provider</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the provider on which the user authenticated. For a list of possible strings, please see the <ulink url="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">List of Providers</ulink> </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="204"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="user-defined">
+      <header>SocialPublishing</header>
+      <description><para>Messages sent by <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> during social publishing </para></description>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a5ef7762d503eb0f583d172d4a10f7869" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void jrSocialDidNotCompletePublishing</definition>
+        <argsstring>()</argsstring>
+        <name>jrSocialDidNotCompletePublishing</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notifies the delegate if social publishing was canceled for any reason other than an error. For example, the user presses the back button, any class (e.g., the <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> delegate) calls the cancelPublishing method, or if configuration of the library times out. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="218"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1afc069beff80daac09cc1e06566a45320" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void jrSocialDidCompletePublishing</definition>
+        <argsstring>()</argsstring>
+        <name>jrSocialDidCompletePublishing</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notifies the delegate after the social publishing dialog is closed (e.g., the user presses the back button) and publishing is complete. You may receive multiple <ref refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1didPublish" kindref="member">void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider)</ref> messages before the dialog is closed and publishing is complete. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="226"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a6abc64d6097987fd7e7d603b1b220650" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -317,7 +315,7 @@
           <declname>activity</declname>
         </param>
         <param>
-          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
+          <type>JREngageError</type>
           <declname>error</declname>
         </param>
         <param>
@@ -352,14 +350,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="266"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="244"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>The interface implemented by an object in order to receive notifications when a user authenticates or publishes an activity to their social networks. </para>    </briefdescription>
     <detaileddescription>
 <para>The methods of this interface are invoked upon the success or failure of the Janrain Engage for Android Activities. They provide a conduit for the authenticated user&apos;s profile data, and if server-side authentication is configured, the data payload returned by your server&apos;s token URL. </para>    </detaileddescription>
-    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="47" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" bodystart="47" bodyend="268"/>
+    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="49" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" bodystart="49" bodyend="246"/>
     <listofallmembers>
       <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a424d0bbf6dd2dbfe81a382406e5ac5ad" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::JREngageDelegate</scope><name>jrAuthenticationCallToTokenUrlDidFail</name></member>
       <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a35444c1f8c0fec9d14274e9a615cba0a" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::JREngageDelegate</scope><name>jrAuthenticationDidFailWithError</name></member>

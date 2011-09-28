@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="45" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="45" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="41" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="41" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a5b437058532046ab521d6511a81b7847" prot="public" static="yes" mutable="no">
         <type>final String</type>
@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="46" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="46" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="42" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="42" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1aa68ab1ad27fd39a9d45d1838bd849b15" prot="public" static="yes" mutable="no">
         <type>final String</type>
@@ -43,7 +43,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="47" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="47" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="43" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="43" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a300bb87da77e1fe095e344c7a62568e2" prot="public" static="yes" mutable="no">
         <type>final String</type>
@@ -57,7 +57,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="48" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="48" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="44" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="44" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1aa3ee11055506ccb85af37ce26086b16d" prot="public" static="yes" mutable="no">
         <type>final String</type>
@@ -71,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="49" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="49" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="45" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="45" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a958d71a06cc65ebc2fa08c44bd1d0901" prot="public" static="yes" mutable="no">
         <type>final String</type>
@@ -85,14 +85,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="50" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="50" bodyend="-1"/>
+        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="46" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="46" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="41" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="41" bodyend="51"/>
+    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" line="37" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageError.java" bodystart="37" bodyend="47"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1aa68ab1ad27fd39a9d45d1838bd849b15" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::JREngageError::ErrorType</scope><name>AUTHENTICATION_FAILED</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1ac2837260a237df9c11feebf84d26fd3d" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::JREngageError::ErrorType</scope><name>CONFIGURATION_FAILED</name></member>
