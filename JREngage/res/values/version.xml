@@ -1,5 +1,5 @@
 <resources>
     <!-- This version number is used to "validate" serialized objects before loading them from
          disk. -->
-    <string name="jr_engage_version">0422f7e0901e1d33673a9e1ac5a4df4f755c721e</string>
+    <string name="jr_engage_version">f05853284f871a5c469cdf8e993c511137dbbe20</string>
 </resources>

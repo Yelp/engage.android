@@ -38,6 +38,7 @@ import android.util.Config;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends Activity implements View.OnClickListener, FeedData.FeedReaderListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -87,11 +88,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Feed
         mViewFeedSummary.setText(R.string.view_janrain_blog);
     }
 
-    public void asyncFeedReadFailed() {
+    public void asyncFeedReadFailed(Exception e) {
         if (Config.LOGD) Log.d(TAG, "[asyncFeedReadFailed]");
 
         mViewFeedSummary.setEnabled(true);
         mFeedHasLoaded = false;
         mViewFeedSummary.setText(R.string.reload_janrain_blog);
+        Toast.makeText(this, "Blog load failed: " + e.toString(), Toast.LENGTH_LONG).show();
     }
 }

@@ -183,7 +183,7 @@ public class FeedSummaryFragment extends ListFragment {
             mAdapter.notifyDataSetChanged();
         }
 
-        public void asyncFeedReadFailed() {
+        public void asyncFeedReadFailed(Exception e) {
             if (Config.LOGD) Log.d(TAG, "[asyncFeedReadFailed]");
 
             if (mRefreshView != null) {

@@ -45,22 +45,16 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.params.HttpClientParams;
-import org.apache.http.conn.params.ConnManagerParams;
-import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -146,7 +140,6 @@ public final class AsyncHttpClient {
             }
         }
 
-
         public HttpSender(JRConnectionManager.ConnectionData connectionData,
                           Handler handler, HttpCallbackWrapper wrapper) {
             mUrl = connectionData.getRequestUrl();
@@ -182,6 +175,10 @@ public final class AsyncHttpClient {
                     for (NameValuePair header : mHeaders) request.addHeader(header.getName(), header.getValue());
 
                     HttpResponse response = mHttpClient.execute(request);
+
+                    /* Ensures that the response interceptor has a chance to un-gzip the entity before we
+                    fetch it. */
+                    response.getStatusLine().getStatusCode();
 
                     HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response);
 

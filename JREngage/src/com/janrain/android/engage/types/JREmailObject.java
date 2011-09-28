@@ -213,6 +213,7 @@ public class JREmailObject implements Serializable {
      *      The URL to add to the list of URLs to shorten
      **/
     public void addUrl(String url) {
+        if (url == null) throw new IllegalArgumentException("illegal null paramter");
         if (mUrls.size() >= 5) throw
                 new IllegalArgumentException("JREmailObject supports a maximum of five URLs");
 

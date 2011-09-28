@@ -37,6 +37,7 @@ package com.janrain.android.engage.types;
  */
 
 import android.text.TextUtils;
+import android.util.Log;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.utils.StringUtils;
 import org.json.JSONArray;
@@ -180,6 +181,9 @@ public final class JRDictionary extends HashMap<String, Object> {
             return jsonValue;
         } if (jsonValue == JSONObject.NULL) {
             return null;
+        } if (jsonValue == null) {
+            Log.e(TAG, "unexpected null primitive non-sentinel non-JSONObject.NULL");
+            return null;
         } if (jsonValue instanceof Double) {
             return jsonValue;
         } if (jsonValue instanceof Integer) {
@@ -197,7 +201,8 @@ public final class JRDictionary extends HashMap<String, Object> {
     @Override
     public Object put(String key, Object value) {
         if (value instanceof JRDictionary || value instanceof String || value instanceof Number ||
-                value instanceof Collection || value == null || value instanceof Boolean) {
+                value instanceof Collection || value instanceof Object[] || value == null
+                || value instanceof Boolean) {
             return super.put(key, value);
         } else {
             throw new IllegalArgumentException("Non-jsonifiable object could not be added to JRDictionary");

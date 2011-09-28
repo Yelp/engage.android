@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.janrain.android.quickshare"
-      android:versionCode="010105"
+      android:versionCode="020000"
       android:versionName="2.0.0">
 
     

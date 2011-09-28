@@ -45,6 +45,7 @@ import android.text.Editable;
 import android.text.Html;
 import android.util.Config;
 import android.util.Log;
+import android.util.Pair;
 import android.util.Xml;
 import android.widget.Toast;
 import com.google.android.filecache.FileResponseCache;
@@ -61,6 +62,7 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Archiver;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import java.io.ByteArrayInputStream;
@@ -200,7 +202,7 @@ public class FeedData {
     public interface FeedReaderListener {
         void asyncFeedReadSucceeded();
 
-        void asyncFeedReadFailed();
+        void asyncFeedReadFailed(Exception e);
     }
 
     FeedReaderListener mListener;
@@ -218,15 +220,15 @@ public class FeedData {
 
                     @Override
                     public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
-                        mListener.asyncFeedReadFailed();
+                        mListener.asyncFeedReadFailed(ex);
                     }
                 }, null);
     }
 
     @SuppressWarnings("unchecked")
     private void processBlogLoad(final byte[] payload) {
-        new AsyncTask<Void, Void, Boolean>() {
-            protected Boolean doInBackground(Void... v) {
+        new AsyncTask<Void, Void, Pair<Boolean, Exception>>() {
+            protected Pair<Boolean, Exception> doInBackground(Void... v) {
                 logd("loadJanrainBlog", "loading blog");
 
                 final Story currentStory = new Story();
@@ -308,7 +310,7 @@ public class FeedData {
                             Xml.Encoding.UTF_8,
                             root.getContentHandler());
                 } catch (SAXException e) {
-                    return false;
+                    return new Pair<Boolean, Exception>(false, e);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -318,17 +320,18 @@ public class FeedData {
                 Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
                 logd("loadJanrainBlog", "stories saved");
 
-                return true;
+                return new Pair<Boolean, Exception>(true, null);
             }
 
-            protected void onPostExecute(Boolean loadSuccess) {
+            @Override
+            protected void onPostExecute(Pair<Boolean, Exception> loadSuccess) {
                 logd("onPostExecute", "blog loader onPostExecute, result: " +
-                        (loadSuccess ? "succeeded" : "failed"));
+                        (loadSuccess.first ? "succeeded" : "failed"));
 
-                if (loadSuccess) {
+                if (loadSuccess.first) {
                     mListener.asyncFeedReadSucceeded();
                 } else {
-                    mListener.asyncFeedReadFailed();
+                    mListener.asyncFeedReadFailed(loadSuccess.second);
                 }
             }
         }.execute();
