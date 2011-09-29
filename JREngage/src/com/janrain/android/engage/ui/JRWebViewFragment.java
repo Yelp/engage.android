@@ -94,6 +94,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (mSessionData == null) return null;
         View view = inflater.inflate(R.layout.jr_provider_webview, container, false);
 
         mWebView = (WebView)view.findViewById(R.id.jr_webview);

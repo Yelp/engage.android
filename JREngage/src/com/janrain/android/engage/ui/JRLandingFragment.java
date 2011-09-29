@@ -93,6 +93,7 @@ public class JRLandingFragment extends JRUiFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (mSessionData == null) return null;
         View view = inflater.inflate(R.layout.jr_provider_landing, container, false);
 
         mLogo = (ImageView)view.findViewById(R.id.jr_landing_logo);
@@ -208,6 +209,7 @@ public class JRLandingFragment extends JRUiFragment {
         mSignInButton.setOnClickListener(mButtonListener);
         mSignInButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
         if (AndroidUtils.getAndroidSdkInt() <= 10) {
+            /* Todo this should really test for Theme.Holo or it's descendants */
             mSignInButton.setTextColor(getColor(android.R.color.white));
         }
 

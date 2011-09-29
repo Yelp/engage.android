@@ -151,6 +151,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (mSessionData == null) return null;
         if (container == null) {
             // We may have different layouts, and in one of them this
             // fragment's containing frame may not exist.  The fragment

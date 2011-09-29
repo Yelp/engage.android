@@ -77,6 +77,17 @@ public class JRFragmentHostActivity extends FragmentActivity {
             return;
         }
 
+        if (savedInstanceState != null) {
+            /* This flow control path is reached when there's process death and restart */
+            finish();
+            return;
+
+            //throw new IllegalStateException("unexpected not null savedInstanceState");
+
+            // This control flow path is not reached  because this activity handles configuration changes
+            // and doesn't implement onSaveInstanceState
+        }
+
         switch (getFragmentId()) {
             case JR_PROVIDER_LIST:
                 /* check and see whether we should start the landing page */
@@ -125,13 +136,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 .add(R.id.jr_fragment_container, mUiFragment)
                 .setTransition(FragmentTransaction.TRANSIT_NONE)
                 .commit();
-
-        if (savedInstanceState != null) {
-            throw new IllegalStateException("unexpected not null savedInstanceState");
-
-            // This control flow path is not reached  because this activity handles configuration changes
-            // and doesn't implement onSaveInstanceState
-        }
     }
 
     private int getFragmentId() {
