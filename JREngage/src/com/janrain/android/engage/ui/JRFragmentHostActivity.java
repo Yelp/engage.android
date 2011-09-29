@@ -50,6 +50,7 @@ import com.janrain.android.engage.utils.AndroidUtils;
 public class JRFragmentHostActivity extends FragmentActivity {
     private static final String TAG = JRFragmentHostActivity.class.getSimpleName();
     public static final String JR_FRAGMENT_ID = "com.janrain.android.engage.JR_FRAGMENT_ID";
+    public static final String JR_AUTH_FLOW = "com.janrain.android.engage.JR_AUTH_FLOW";
     public static final int JR_PROVIDER_LIST = 4;
     public static final int JR_LANDING = 1;
     public static final int JR_WEBVIEW = 2;
@@ -60,15 +61,13 @@ public class JRFragmentHostActivity extends FragmentActivity {
     public static final String FINISH_TARGET_ALL = "JR_FINISH_ALL";
     public static final IntentFilter FINISH_INTENT_FILTER = new IntentFilter(ACTION_FINISH_FRAGMENT);
 
-    private int mFragmentId;
     private JRUiFragment mUiFragment;
     private JRSessionData mSessionData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFragmentId = getIntent().getExtras().getInt(JR_FRAGMENT_ID);
-        Log.d(TAG, "[onCreate]: " + mFragmentId);
+        Log.d(TAG, "[onCreate]: " + getFragmentId());
 
         mSessionData = JRSessionData.getInstance();
         /* For the case when this activity is relaunched after the process was killed */
@@ -78,7 +77,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
             return;
         }
 
-        switch (mFragmentId) {
+        switch (getFragmentId()) {
             case JR_PROVIDER_LIST:
                 /* check and see whether we should start the landing page */
                 String rbpName = mSessionData.getReturningBasicProvider();
@@ -96,6 +95,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
                     mSessionData.setCurrentlyAuthenticatingProvider(provider);
                     Intent i = createIntentForCurrentScreen(this, true);
                     i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JR_LANDING);
+                    i.putExtra(JR_AUTH_FLOW, true);
                     startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
                 }
 
@@ -111,11 +111,15 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 mUiFragment = new JRPublishFragment();
                 break;
             default:
-                throw new IllegalFragmentIdException(mFragmentId);
+                throw new IllegalFragmentIdException(getFragmentId());
         }
 
-
+        if (isAuthFlow()) setTheme(R.style.jr_dialog_phone_sized);
         setContentView(R.layout.jr_fragment_host_activity);
+        if (isAuthFlow()) {
+            ((CustomMeasuringFrameLayout) findViewById(R.id.jr_fragment_container)).setTargetHeightDip(480);
+            ((CustomMeasuringFrameLayout) findViewById(R.id.jr_fragment_container)).setTargetWidthDip(320);
+        }
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.jr_fragment_container, mUiFragment)
@@ -128,6 +132,15 @@ public class JRFragmentHostActivity extends FragmentActivity {
             // This control flow path is not reached  because this activity handles configuration changes
             // and doesn't implement onSaveInstanceState
         }
+    }
+
+    private int getFragmentId() {
+        return getIntent().getExtras().getInt(JR_FRAGMENT_ID);
+    }
+
+    public boolean isAuthFlow() {
+        // True if this is an auth flow, false for publish flow
+        return getIntent().getExtras().getBoolean(JR_AUTH_FLOW);
     }
 
     @Override

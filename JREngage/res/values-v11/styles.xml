@@ -5,6 +5,11 @@
         <item name="android:windowMinWidthMajor">71%</item>
     </style>
 
+    <style name="jr_dialog_phone_sized" parent="jr_dialog">
+        <item name="android:windowMinWidthMinor">320dip</item>
+        <item name="android:windowMinWidthMajor">320dip</item>
+    </style>
+
     <style name="jr_fullscreen" parent="@android:style/Theme.Holo.Light" />
 
     <!-- http://code.google.com/p/android/issues/detail?id=15862 -->

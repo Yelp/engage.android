@@ -48,6 +48,8 @@ import com.janrain.android.engage.utils.AndroidUtils;
 public class CustomMeasuringFrameLayout extends FrameLayout {
     private int mTargetHeight;
     private int mTargetWidth;
+    private Integer mTargetHeightDip;
+    private Integer mTargetWidthDip;
 
     public CustomMeasuringFrameLayout(Context context) {
         super(context);
@@ -72,6 +74,7 @@ public class CustomMeasuringFrameLayout extends FrameLayout {
     }
 
     private void setTargetHeight(Configuration c) {
+        if (mTargetHeightDip != null) return;
         mTargetHeight = (int) (AndroidUtils.scaleDipToPixels(c.screenHeightDp) * 0.71);
         mTargetWidth = (int) (AndroidUtils.scaleDipToPixels(c.screenWidthDp) * 0.71);
     }
@@ -120,5 +123,15 @@ public class CustomMeasuringFrameLayout extends FrameLayout {
         super.onConfigurationChanged(newConfig);
 
         setTargetHeight(newConfig);
+    }
+
+    public void setTargetHeightDip(Integer dip) {
+        mTargetHeightDip = dip;
+        mTargetHeight = AndroidUtils.scaleDipToPixels(dip);
+    }
+
+    public void setTargetWidthDip(Integer dip) {
+        mTargetWidthDip = dip;
+        mTargetWidth = AndroidUtils.scaleDipToPixels(dip);
     }
 }

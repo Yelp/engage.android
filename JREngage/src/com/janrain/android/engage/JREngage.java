@@ -636,6 +636,7 @@ public class JREngage {
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mActivity, true);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PROVIDER_LIST);
+        i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, true);
         mActivity.startActivity(i);
     }
 
@@ -655,6 +656,7 @@ public class JREngage {
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mActivity, false);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
+        i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, false);
         mActivity.startActivity(i);
     }
 
