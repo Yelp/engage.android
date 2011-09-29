@@ -34,7 +34,9 @@ package com.janrain.android.engage.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -261,7 +263,7 @@ public class JRWebViewFragment extends JRUiFragment {
     /**
      * Handler for webkit events, etc.
      */
-    private WebViewClient mWebviewClient = new WebViewClient(){
+    private WebViewClient mWebviewClient = new WebViewClient() {
         private final String TAG = this.getClass().getSimpleName();
 
         @Override
@@ -277,10 +279,17 @@ public class JRWebViewFragment extends JRUiFragment {
             if (isMobileEndpointUrl(url)) {
                 loadMobileEndpointUrl(url);
                 return true;
-            } else {
-                view.loadUrl(url);
             }
 
+            /* Intercept and sink mailto links because the webview auto-linkifies example email addresses
+             * in the Google and Yahoo login pages :(
+             */
+            Uri uri = Uri.parse(url);
+            if (uri.getScheme().equals("mailto")) {
+                return true;
+            }
+
+            view.loadUrl(url);
             return true;
         }
 
@@ -319,11 +328,9 @@ public class JRWebViewFragment extends JRUiFragment {
         public void onReceivedError(WebView view, int errorCode, String description, String url) {
             super.onReceivedError(view, errorCode, description, url);
             Log.e(TAG, "[onReceivedError] code: " + errorCode + " | description: " + description
-                + " | url: " + url);
+                    + " | url: " + url);
 
             hideProgressSpinner();
-
-            if (errorCode == WebViewClient.ERROR_UNSUPPORTED_SCHEME) return;
 
             mIsFinishPending = true;
             getActivity().setResult(RESULT_FAIL);
