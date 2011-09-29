@@ -140,7 +140,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private ImageView mUserProfilePic;
     private TextView mUserNameView;
     private Button mSignOutButton;
-    private ColorButton mJustShareButton;
+    private ColorButton mShareButton;
     private ColorButton mConnectAndShareButton;
     private LinearLayout mSharedTextAndCheckMarkContainer;
     private ColorButton mEmailButton;
@@ -180,7 +180,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mUserProfilePic = (ImageView) content.findViewById(R.id.jr_profile_pic);
         mUserNameView = (TextView) content.findViewById(R.id.jr_user_name);
         mSignOutButton = (Button) content.findViewById(R.id.jr_sign_out_button);
-        mJustShareButton = (ColorButton) content.findViewById(R.id.jr_just_share_button);
+        mShareButton = (ColorButton) content.findViewById(R.id.jr_just_share_button);
         mConnectAndShareButton = (ColorButton) content.findViewById(R.id.jr_connect_and_share_button);
         mSharedTextAndCheckMarkContainer = (LinearLayout) content.findViewById(
                 R.id.jr_shared_text_and_check_mark_horizontal_layout);
@@ -194,7 +194,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mSmsButton.setOnClickListener(mSmsButtonListener);
         mSignOutButton.setOnClickListener(mSignoutButtonListener);
         mConnectAndShareButton.setOnClickListener(mShareButtonListener);
-        mJustShareButton.setOnClickListener(mShareButtonListener);
+        mShareButton.setOnClickListener(mShareButtonListener);
         mUserCommentView.addTextChangedListener(mUserCommentTextWatcher);
         mEmailSmsComment.addTextChangedListener(mEmailSmsCommentTextWatcher);
 
@@ -397,7 +397,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     
     @Override
     public void onDestroyView() {
-        if (mUserCommentView != null && mUserCommentView.isEnabled()) {
+        if (mUserCommentView != null && mShareButton.isEnabled()) {
             Prefs.putString(Prefs.KEY_JR_USER_COMMENT, mUserCommentView.getText().toString());
             Prefs.putLong(Prefs.KEY_JR_USER_COMMENT_TIME, new Date().getTime());
         }
@@ -560,7 +560,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         mUserProfileInformationAndShareButtonContainer.setBackgroundColor(colorWithAlpha);
 
-        mJustShareButton.setColor(colorNoAlpha);
+        mShareButton.setColor(colorNoAlpha);
         mConnectAndShareButton.setColor(colorNoAlpha);
         mPreviewBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
 
@@ -926,7 +926,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mSharedTextAndCheckMarkContainer.setVisibility(visibleIfShared);
 
         if (mAuthenticatedUser != null) {
-            mJustShareButton.setVisibility(visibleIfNotShared);
+            mShareButton.setVisibility(visibleIfNotShared);
         } else {
             mConnectAndShareButton.setVisibility(visibleIfNotShared);
         }
@@ -938,7 +938,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         int visibleIfLoggedIn = loggedIn ? View.VISIBLE : View.INVISIBLE;
         int visibleIfNotLoggedIn = !loggedIn ? View.VISIBLE : View.INVISIBLE;
 
-        mJustShareButton.setVisibility(visibleIfLoggedIn);
+        mShareButton.setVisibility(visibleIfLoggedIn);
         mUserProfileContainer.setVisibility(visibleIfLoggedIn);
 
         mConnectAndShareButton.setVisibility(visibleIfNotLoggedIn);
