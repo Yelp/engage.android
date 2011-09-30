@@ -165,7 +165,8 @@ public class JRSessionData implements JRConnectionManagerDelegate {
         ApplicationInfo ai = AndroidUtils.getApplicationInfo();
         String appName = getContext().getPackageManager().getApplicationLabel(ai).toString();
         mUrlEncodedAppName = AndroidUtils.urlEncode(appName);
-        mLibraryVersion = getContext().getString(R.string.jr_engage_version);
+        mLibraryVersion = getContext().getString(R.string.jr_engage_version) + "_" +
+                getContext().getString(R.string.jr_git_describe);
 
         try {
             /* load the last used basic and social providers */
