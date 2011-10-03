@@ -187,7 +187,7 @@ public final class JRDictionary extends HashMap<String, Object> {
         } if (jsonValue instanceof Double) {
             return jsonValue;
         } if (jsonValue instanceof Integer) {
-            return ((Integer) jsonValue).doubleValue();
+            return jsonValue;
         } if (jsonValue instanceof Long) {
             return ((Long) jsonValue).doubleValue();
         } if (jsonValue instanceof String) {
