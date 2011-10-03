@@ -35,7 +35,7 @@ import android.util.Log;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.session.JRSessionData;
+import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.utils.AndroidUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,7 +44,6 @@ import org.json.JSONTokener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -543,7 +542,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
         if (mIsShortening) return;
         mIsShortening = true;
 
-        final JRSessionData sessionData = JRSessionData.getInstance();
+        final JRSession session = JRSession.getInstance();
         try {
             // todo invoke when the activity object is created (or maybe when publish is called?)
             List<String> emptyList = new ArrayList<String>();
@@ -553,7 +552,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
             // Make the JSON string
             JSONStringer jss = (new JSONStringer())
                     .object()
-                        .key(JRSessionData.USERDATA_ACTIVITY_KEY)
+                        .key(JRSession.USERDATA_ACTIVITY_KEY)
                         .array()
                             .value(getUrl())
                         .endArray()
@@ -573,9 +572,9 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
             final String jsonEncodedUrlsMap = jss.toString();
             String urlEncodedJson = AndroidUtils.urlEncode(jsonEncodedUrlsMap);
             final String getUrlsUrl =
-                    sessionData.getBaseUrl() + "/openid/get_urls?"
+                    session.getBaseUrl() + "/openid/get_urls?"
                     + "urls=" + urlEncodedJson
-                    + "&app_name=" + sessionData.getUrlEncodedAppName()
+                    + "&app_name=" + session.getUrlEncodedAppName()
                     + "&device=android";
 
             // Define the network callback
@@ -590,7 +589,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
                         Log.d(TAG, "fetchShortenedURLs connectionDidFinishLoading: " + payloadString);
                         JSONObject jso = (JSONObject) (new JSONTokener(payloadString)).nextValue();
                         jso = jso.getJSONObject("urls");
-                        JSONObject jsonActivityUrls = jso.getJSONObject(JRSessionData.USERDATA_ACTIVITY_KEY);
+                        JSONObject jsonActivityUrls = jso.getJSONObject(JRSession.USERDATA_ACTIVITY_KEY);
                         JSONObject jsonSmsUrls = jso.getJSONObject("sms");
                         JSONObject jsonEmailUrls = jso.getJSONObject("email");
 

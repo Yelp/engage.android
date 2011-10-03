@@ -87,7 +87,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.session.JRSessionData;
+import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
@@ -133,7 +133,7 @@ public class JREngage {
     private Activity mActivity;
 
 	/* Holds configuration and state for the JREngage library */
-	private JRSessionData mSessionData;
+	private JRSession mSession;
 
 	/* Delegates (listeners) array */
 	private ArrayList<JREngageDelegate> mDelegates = new ArrayList<JREngageDelegate>();
@@ -280,7 +280,7 @@ public class JREngage {
         mActivity = activity;
         mDelegates = new ArrayList<JREngageDelegate>();
         if (delegate != null) mDelegates.add(delegate);
-        mSessionData = JRSessionData.getInstance(appId, tokenUrl, mJrsd);
+        mSession = JRSession.getInstance(appId, tokenUrl, mJrsd);
 
         // Sign-in UI fragment is not yet embeddable
         //if (activity1 instanceof FragmentActivity) {
@@ -355,7 +355,7 @@ public class JREngage {
             engageDidFailWithError(error);
 
             if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
-                mSessionData.tryToReconfigureLibrary();
+                mSession.tryToReconfigureLibrary();
             }
         }
 
@@ -379,7 +379,7 @@ public class JREngage {
         // error event independent of the display of a dialog
         //@Override
         //public void mobileConfigDidFinish() {
-        //    JREngageError err = mSessionData.getError();
+        //    JREngageError err = mSession.getError();
         //    if (err != null) {
         //        engageDidFailWithError(err);
         //    }
@@ -402,7 +402,7 @@ public class JREngage {
      **/
     public void signoutUserForProvider(String provider) {
         if (Config.LOGD) Log.d(TAG, "[signoutUserForProvider]");
-        mSessionData.forgetAuthenticatedUserForProvider(provider);
+        mSession.forgetAuthenticatedUserForProvider(provider);
     }
 
     /**
@@ -410,7 +410,7 @@ public class JREngage {
      **/
     public void signoutUserForAllProviders() {
         if (Config.LOGD) Log.d(TAG, "[signoutUserForAllProviders]");
-        mSessionData.forgetAllAuthenticatedUsers();
+        mSession.forgetAllAuthenticatedUsers();
     }
 
     /**
@@ -423,7 +423,7 @@ public class JREngage {
      **/
     public void setAlwaysForceReauthentication(boolean force) {
         if (Config.LOGD) Log.d(TAG, "[setAlwaysForceReauthentication]");
-        mSessionData.setAlwaysForceReauth(force);
+        mSession.setAlwaysForceReauth(force);
     }
 /*@}*/
 
@@ -442,7 +442,7 @@ public class JREngage {
 
         finishJrActivities();
 
-        mSessionData.triggerAuthenticationDidCancel();
+        mSession.triggerAuthenticationDidCancel();
     }
 
     /**
@@ -454,7 +454,7 @@ public class JREngage {
 
         finishJrActivities();
 
-        mSessionData.triggerPublishingDidCancel();
+        mSession.triggerPublishingDidCancel();
     }
 
     private void finishJrActivities() {
@@ -480,7 +480,7 @@ public class JREngage {
      **/
     public void setTokenUrl(String newTokenUrl) {
         if (Config.LOGD) Log.d(TAG, "[setTokenUrl]");
-        mSessionData.setTokenUrl(newTokenUrl);
+        mSession.setTokenUrl(newTokenUrl);
     }
 
     /**
@@ -494,7 +494,7 @@ public class JREngage {
      *  actually available to the end-user.
      */
     public void setEnabledAuthenticationProviders(List<String> enabledProviders) {
-        mSessionData.setEnabledAuthenticationProviders(enabledProviders);
+        mSession.setEnabledAuthenticationProviders(enabledProviders);
     }
 
     /**
@@ -505,7 +505,7 @@ public class JREngage {
      *  actually available to the end-user.
      */
     public void setEnabledAuthenticationProviders(String[] enabledProviders) {
-        mSessionData.setEnabledAuthenticationProviders(Arrays.asList(enabledProviders));
+        mSession.setEnabledAuthenticationProviders(Arrays.asList(enabledProviders));
     }
 
     /**
@@ -520,7 +520,7 @@ public class JREngage {
      *  actually available to the end-user.
      */
     public void setEnabledSharingProviders(List<String> enabledSharingProviders) {
-        mSessionData.setEnabledSharingProviders(enabledSharingProviders);
+        mSession.setEnabledSharingProviders(enabledSharingProviders);
     }
 
     /**
@@ -531,7 +531,7 @@ public class JREngage {
      *  actually available to the end-user.
      */
     public void setEnabledSharingProviders(String[] enabledSharingProviders) {
-        mSessionData.setEnabledSharingProviders(Arrays.asList(enabledSharingProviders));
+        mSession.setEnabledSharingProviders(Arrays.asList(enabledSharingProviders));
     }
 /*@}*/
 
@@ -572,7 +572,7 @@ public class JREngage {
 
     private boolean checkSessionDataError() {
         /* If there was error configuring the library, sessionData.error will not be null. */
-        JREngageError error = mSessionData.getError();
+        JREngageError error = mSession.getError();
         if (error != null) {
             /* If there was an error, send a message to the delegates, then
               attempt to restart the configuration.  If, for example, the error was temporary
@@ -582,7 +582,7 @@ public class JREngage {
               is needed. */
             if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
                 engageDidFailWithError(error);
-                mSessionData.tryToReconfigureLibrary();
+                mSession.tryToReconfigureLibrary();
 
                 return true;
             }
@@ -632,7 +632,7 @@ public class JREngage {
 
         if (checkSessionDataError()) return;
 
-        mSessionData.setSkipLandingPage(skipReturningUserLandingPage);
+        mSession.setSkipLandingPage(skipReturningUserLandingPage);
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mActivity, true);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PROVIDER_LIST);
@@ -652,7 +652,7 @@ public class JREngage {
         /* If there was error configuring the library, sessionData.error will not be null. */
         if (checkSessionDataError()) return;
         checkNullJRActivity(activity);
-        mSessionData.setJRActivity(activity);
+        mSession.setJRActivity(activity);
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mActivity, false);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
@@ -759,7 +759,7 @@ public class JREngage {
 
         checkNullJRActivity(activity);
 
-        mSessionData.setJRActivity(activity);
+        mSession.setJRActivity(activity);
         return new JRPublishFragment();
     }
 /*@}*/

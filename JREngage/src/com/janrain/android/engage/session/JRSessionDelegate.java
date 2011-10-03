@@ -147,7 +147,7 @@ public interface JRSessionDelegate {
     void publishingDialogDidFail(JREngageError error);
 
     /**
-     * Triggered when JRSessionData has finished loading the mobile configuration
+     * Triggered when JRSession has finished loading the mobile configuration
      */
     void mobileConfigDidFinish();
 

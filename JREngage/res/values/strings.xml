@@ -60,7 +60,7 @@
     <string name="jr_dialog_network_error">A network error occurred, please try again.</string>
     <string name="jr_menu_item_refresh">Refresh</string>
 
-    <!-- JRSessionData strings -->
+    <!-- JRSession strings -->
     <string name="jr_getconfig_network_failure_message">There was a problem communicating with the Janrain server.
     </string>
     <string name="jr_getconfig_parse_error_message">There was a problem communicating with the Janrain server

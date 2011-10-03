@@ -390,7 +390,7 @@ public class JRProvider implements Serializable {
                             continue;
 
                         if (Config.LOGD) Log.d(TAG, "Downloading icon: " + iconFileName);
-                        URL url = new URL(JRSessionData.getEnvironment().getServerUrl()
+                        URL url = new URL(JRSession.getEnvironment().getServerUrl()
                                 + "/cdn/images/mobile_icons/android/" + iconFileName);
                         InputStream is = url.openStream();
                         FileOutputStream fos = c.openFileOutput("providericon~" + iconFileName,

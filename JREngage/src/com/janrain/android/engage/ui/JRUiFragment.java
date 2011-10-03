@@ -48,13 +48,12 @@ import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.util.Config;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import com.janrain.android.engage.R;
-import com.janrain.android.engage.session.JRSessionData;
+import com.janrain.android.engage.session.JRSession;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -77,7 +76,7 @@ public abstract class JRUiFragment extends Fragment {
     private FinishReceiver mFinishReceiver;
     private HashMap<Integer, ManagedDialog> mManagedDialogs = new HashMap<Integer, ManagedDialog>();
 
-    protected JRSessionData mSessionData;
+    protected JRSession mSession;
     protected String TAG = JRUiFragment.class.getSimpleName();
 
     /**
@@ -118,8 +117,8 @@ public abstract class JRUiFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (Config.LOGD) Log.d(TAG, "[onCreate]");
 
-        mSessionData = JRSessionData.getInstance();
-        if (mSessionData != null) mSessionData.setUiIsShowing(true);
+        mSession = JRSession.getInstance();
+        if (mSession != null) mSession.setUiIsShowing(true);
         /* Embedded mode isn't compatible with setRetainInstance */
         if (isDialogMode()) setRetainInstance(true);
         setHasOptionsMenu(true);
@@ -133,7 +132,7 @@ public abstract class JRUiFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (Config.LOGD) Log.d(TAG, "[onActivityCreated]");
 
-        mSessionData = JRSessionData.getInstance();
+        mSession = JRSession.getInstance();
 
         if (savedInstanceState != null) {
             mManagedDialogs = (HashMap) savedInstanceState.get(KEY_MANAGED_DIALOGS);
@@ -195,7 +194,7 @@ public abstract class JRUiFragment extends Fragment {
     @Override
     public void onDestroy() {
         if (Config.LOGD) Log.d(TAG, "[onDestroy]");
-        if (mSessionData != null) mSessionData.setUiIsShowing(false);
+        if (mSession != null) mSession.setUiIsShowing(false);
 
         super.onDestroy();
     }
@@ -214,7 +213,7 @@ public abstract class JRUiFragment extends Fragment {
         if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
         super.onInflate(activity, attrs, savedInstanceState);
 
-        if (JRSessionData.getInstance() == null) {
+        if (JRSession.getInstance() == null) {
             throw new IllegalStateException("You must call JREngage.initInstance before inflating " +
                     "JREngage fragments.");
         }
@@ -258,7 +257,7 @@ public abstract class JRUiFragment extends Fragment {
     //--
 
     protected void showHideTaglines() {
-        boolean hideTagline = mSessionData.getHidePoweredBy();
+        boolean hideTagline = mSession.getHidePoweredBy();
         int visibility = hideTagline ? View.GONE : View.VISIBLE;
 
         View tagline = getView().findViewById(R.id.jr_tagline);
@@ -274,7 +273,7 @@ public abstract class JRUiFragment extends Fragment {
 
         //menu.add("test");
 
-        if (mSessionData.getHidePoweredBy()) {
+        if (mSession.getHidePoweredBy()) {
             return;
         } else {
             inflater.inflate(R.menu.jr_about_menu, menu);

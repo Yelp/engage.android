@@ -151,7 +151,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (mSessionData == null) return null;
+        if (mSession == null) return null;
         if (container == null) {
             // We may have different layouts, and in one of them this
             // fragment's containing frame may not exist.  The fragment
@@ -234,8 +234,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             return;
         }
 
-        mSessionData.addDelegate(mSessionDelegate);
-        mActivityObject = mSessionData.getJRActivity();
+        mSession.addDelegate(mSessionDelegate);
+        mActivityObject = mSession.getJRActivity();
 
         if (savedInstanceState != null) {
             mSelectedTab = savedInstanceState.getString(KEY_SELECTED_TAB);
@@ -250,11 +250,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         if (mActivityObject == null && savedInstanceState != null) {
             mActivityObject = (JRActivityObject) savedInstanceState.getSerializable(KEY_ACTIVITY_OBJECT);
-            mSessionData.setJRActivity(mActivityObject);
+            mSession.setJRActivity(mActivityObject);
         }
         if (mActivityObject == null) {
             mActivityObject = new JRActivityObject("", null);
-            Log.e(TAG, "Couldn't reload savedInstanceState or get an activity from JRSessionData, " +
+            Log.e(TAG, "Couldn't reload savedInstanceState or get an activity from JRSession, " +
                     "creating stub activity");
         }
         loadViewPropertiesWithActivityObject();
@@ -269,8 +269,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 .setContent(R.id.jr_tab_social_publish_content));
         mTabHost.getTabWidget().setVisibility(View.GONE);
 
-        mSocialProviders = mSessionData.getSocialProviders();
-        if (mSocialProviders.size() == 0 && !mSessionData.isGetMobileConfigDone()) {
+        mSocialProviders = mSession.getSocialProviders();
+        if (mSocialProviders.size() == 0 && !mSession.isGetMobileConfigDone()) {
             /* Hide the email/SMS tab so things look nice as we load the providers */
             getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
             mWaitingForMobileConfig = true;
@@ -283,7 +283,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private void initializeWithProviderConfiguration() {
         /* Check for no suitable providers */
         if (mSocialProviders.size() == 0) {
-            JREngageError err = mSessionData.getError();
+            JREngageError err = mSession.getError();
             String errorMessage = (err == null) ? getString(R.string.jr_no_configured_social_providers) :
                     err.getMessage();
             if (err == null) {
@@ -292,7 +292,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                         JREngageError.ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
                         JREngageError.ErrorType.CONFIGURATION_INFORMATION_MISSING);
             }
-            mSessionData.triggerPublishingDialogDidFail(err);
+            mSession.triggerPublishingDialogDidFail(err);
             mConnectAndShareButton.setEnabled(false);
             mUserCommentView.setEnabled(false);
             getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
@@ -383,7 +383,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         } // else meh
 
         if (mSelectedTab.equals("")) {
-            JRProvider rp = mSessionData.getProviderByName(mSessionData.getReturningSocialProvider());
+            JRProvider rp = mSession.getProviderByName(mSession.getReturningSocialProvider());
             if (rp != null) mTabHost.setCurrentTab(mSocialProviders.indexOf(rp));
         } else {
             mTabHost.setCurrentTabByTag(mSelectedTab);
@@ -404,7 +404,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         }
 
         dismissProgressDialog();
-        mSessionData.removeDelegate(mSessionDelegate);
+        mSession.removeDelegate(mSessionDelegate);
 
         super.onDestroyView();
     }
@@ -573,7 +573,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         if (!tabTag.equals(EMAIL_SMS_TAB_TAG)) {
             /* ... a "real" provider -- Facebook, Twitter, etc. */
-            mSelectedProvider = mSessionData.getProviderByName(tabTag);
+            mSelectedProvider = mSession.getProviderByName(tabTag);
 
             configureViewElementsBasedOnProvider();
             configureLoggedInUserBasedOnProvider();
@@ -608,8 +608,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     public void onDestroy() {
-        if (mSessionData != null && mSessionDelegate != null) {
-            mSessionData.removeDelegate(mSessionDelegate);
+        if (mSession != null && mSessionDelegate != null) {
+            mSession.removeDelegate(mSessionDelegate);
         }
 
         super.onDestroy();
@@ -713,7 +713,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             try {
                 //Intent chooser = Intent.createChooser(intent, getString(R.string.jr_choose_email_handler));
                 startActivityForResult(intent, 0);
-                mSessionData.notifyEmailSmsShare("email");
+                mSession.notifyEmailSmsShare("email");
             } catch (ActivityNotFoundException exception) {
                 showDialog(DIALOG_NO_EMAIL_CLIENT);
             }
@@ -734,7 +734,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             Intent intent = createSmsIntent(body);
             try {
                 startActivityForResult(intent, 0);
-                mSessionData.notifyEmailSmsShare("sms");
+                mSession.notifyEmailSmsShare("sms");
             } catch (ActivityNotFoundException exception) {
                 showDialog(DIALOG_NO_SMS_CLIENT);
             }
@@ -817,7 +817,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private void signOutButtonHandler() {
         String provider = mSelectedProvider.getName();
-        mSessionData.forgetAuthenticatedUserForProvider(provider);
+        mSession.forgetAuthenticatedUserForProvider(provider);
     }
 
     private void onUserSignOut() {
@@ -952,7 +952,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void configureLoggedInUserBasedOnProvider() {
-        mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
+        mAuthenticatedUser = mSession.getAuthenticatedUserForProvider(mSelectedProvider);
 
         loadUserNameAndProfilePicForUserForProvider(mAuthenticatedUser, mSelectedProvider.getName());
 
@@ -967,7 +967,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
           * authentication process. */
         mWeHaveJustAuthenticated = true;
         mAuthenticatingForShare = true;
-        mSessionData.setCurrentlyAuthenticatingProvider(mSelectedProvider);
+        mSession.setCurrentlyAuthenticatingProvider(mSelectedProvider);
 
          /* If the selected provider requires input from the user, go to the user landing view. Or if
           * the user started on the user landing page, went back to the list of providers, then selected
@@ -988,9 +988,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         showProgressDialog();
 
         if (isPublishThunk()) {
-            mSessionData.setStatusForUser(mAuthenticatedUser);
+            mSession.setStatusForUser(mAuthenticatedUser);
         } else {
-            mSessionData.shareActivityForUser(mAuthenticatedUser);
+            mSession.shareActivityForUser(mAuthenticatedUser);
         }
     }
 
@@ -1041,7 +1041,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
             if (provider.equals(mSelectedProvider.getName())) {
                 JRAuthenticatedUser oldUser = mAuthenticatedUser;
-                mAuthenticatedUser = mSessionData.getAuthenticatedUserForProvider(mSelectedProvider);
+                mAuthenticatedUser = mSession.getAuthenticatedUserForProvider(mSelectedProvider);
 
                 if (oldUser != null && oldUser.getIdentifier().equals(mAuthenticatedUser.getIdentifier())) {
                     // leave the UI the same
@@ -1118,7 +1118,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
              * view controller. */
             if (reauthenticate && !mWeHaveJustAuthenticated) {
                 if (Config.LOGD) Log.d(TAG, "reauthenticating user for sharing");
-                mSessionData.forgetAuthenticatedUserForProvider(provider);
+                mSession.forgetAuthenticatedUserForProvider(provider);
                 authenticateUserForSharing();
 
                 return;
@@ -1137,7 +1137,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             if (mWaitingForMobileConfig) {
                 dismissDialog(DIALOG_MOBILE_CONFIG_LOADING);
                 mWaitingForMobileConfig = false;
-                mSocialProviders = mSessionData.getSocialProviders();
+                mSocialProviders = mSession.getSocialProviders();
                 initializeWithProviderConfiguration();
             }
         }
@@ -1150,7 +1150,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     protected void onBackPressed() {
-        mSessionData.triggerPublishingDidComplete();
+        mSession.triggerPublishingDidComplete();
         getActivity().setResult(Activity.RESULT_OK);
         getActivity().finish();
     }

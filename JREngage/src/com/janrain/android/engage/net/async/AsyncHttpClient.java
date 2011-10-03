@@ -193,16 +193,16 @@ public final class AsyncHttpClient {
                         if (Config.LOGD) Log.d(TAG, "[run] headers: " + headers.toString());
                         if (Config.LOGD) Log.d(TAG, "[run] data for " + mUrl + ": " +
                                 dataString.substring(0, Math.min(dataString.length(), 600)));
-                        mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
+                        mWrapper.setResponse(new AsyncHttpResponse(mUrl, headers, data));
                         break;
                     case HttpStatus.SC_NOT_MODIFIED:
                         if (Config.LOGD) Log.d(TAG, "[run] HTTP_NOT_MODIFIED");
-                        mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
+                        mWrapper.setResponse(new AsyncHttpResponse(mUrl, headers, data));
                         break;
                     case HttpStatus.SC_CREATED:
                         // Response from the Engage trail creation and maybe URL shortening calls
                         if (Config.LOGD) Log.d(TAG, "[run] HTTP_CREATED");
-                        mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, headers, data));
+                        mWrapper.setResponse(new AsyncHttpResponse(mUrl, headers, data));
                         break;
                     default:
                         // Maybe this shouldn't be globbed together, but instead be structured
@@ -215,7 +215,7 @@ public final class AsyncHttpClient {
 
                         Log.e(TAG, message);
 
-                        mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, new Exception(message)));
+                        mWrapper.setResponse(new AsyncHttpResponse(mUrl, new Exception(message)));
                     }
 
                     mHandler.post(mWrapper);
@@ -223,7 +223,7 @@ public final class AsyncHttpClient {
                 } catch (IOException e) {
                     Log.e(TAG, "[run] Problem executing HTTP request.", e);
                     Log.e(TAG, this.toString());
-                    mWrapper.setResponse(new AsyncHttpResponseHolder(mUrl, e));
+                    mWrapper.setResponse(new AsyncHttpResponse(mUrl, e));
                     mHandler.post(mWrapper);
                 }
 
@@ -252,7 +252,7 @@ public final class AsyncHttpClient {
 		private static final String TAG = HttpCallbackWrapper.class.getSimpleName();
 
 		private AsyncHttpResponseListener mListener;
-		private AsyncHttpResponseHolder mResponse;
+		private AsyncHttpResponse mResponse;
         private JRConnectionManager.ConnectionData mConnectionData;
 
 		public HttpCallbackWrapper(AsyncHttpResponseListener listener,
@@ -265,10 +265,28 @@ public final class AsyncHttpClient {
 			mListener.onResponseReceived(mResponse);
 		}
 
-		public void setResponse(AsyncHttpResponseHolder holder) {
+		public void setResponse(AsyncHttpResponse holder) {
 			mResponse = holder;
             mResponse.setConnectionData(mConnectionData);
 			if (Config.LOGD) Log.d(TAG, "[setResponse] response set.");
 		}
 	}
+
+    /**
+     * @internal
+     *
+     * @interface AsyncHttpResponseListener
+     * Interface used to define behavior for listening to asynchronous HTTP responses.
+     */
+    public interface AsyncHttpResponseListener {
+
+        /**
+         * Method invoked when a response from an asynchronous request is received.
+         *
+         * @param response
+         *      The response object returned from the asynchronous request.  This object will contain either the
+         *      the response headers and data or if an issue occurs, an exception detailing the issue encountered.
+         */
+        void onResponseReceived(AsyncHttpResponse response);
+    }
 }

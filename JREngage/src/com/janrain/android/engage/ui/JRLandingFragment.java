@@ -93,7 +93,7 @@ public class JRLandingFragment extends JRUiFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (mSessionData == null) return null;
+        if (mSession == null) return null;
         View view = inflater.inflate(R.layout.jr_provider_landing, container, false);
 
         mLogo = (ImageView)view.findViewById(R.id.jr_landing_logo);
@@ -108,7 +108,7 @@ public class JRLandingFragment extends JRUiFragment {
     }
 
     private void onSignInClick() {
-        if (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput()) {
+        if (mSession.getCurrentlyAuthenticatingProvider().requiresInput()) {
             //TODO validate OpenID URLs so they don't hang the WebView
             String text = mUserInput.getText().toString().trim();
             if (TextUtils.isEmpty(text)) {
@@ -120,7 +120,7 @@ public class JRLandingFragment extends JRUiFragment {
                 showDialog(DIALOG_GENERIC_ALERT, options);
                 mIsAlertShowing = true;
             } else {
-                mSessionData.getCurrentlyAuthenticatingProvider().setUserInput(text);
+                mSession.getCurrentlyAuthenticatingProvider().setUserInput(text);
                 showWebView();
             }
         } else {
@@ -131,9 +131,9 @@ public class JRLandingFragment extends JRUiFragment {
     private void onSwitchAccountsClick() {
         if (Config.LOGD) Log.d(TAG, "[onSwitchAccountsClick]");
 
-        mSessionData.getCurrentlyAuthenticatingProvider().setForceReauth(true);
-        mSessionData.setReturningBasicProvider("");
-        mSessionData.triggerAuthenticationDidRestart();
+        mSession.getCurrentlyAuthenticatingProvider().setForceReauth(true);
+        mSession.setReturningBasicProvider("");
+        mSession.triggerAuthenticationDidRestart();
         getActivity().setResult(RESULT_SWITCH_ACCOUNTS);
         getActivity().finish();
     }
@@ -213,7 +213,7 @@ public class JRLandingFragment extends JRUiFragment {
             mSignInButton.setTextColor(getColor(android.R.color.white));
         }
 
-        JRProvider currentlyAuthenticatingProvider = mSessionData.getCurrentlyAuthenticatingProvider();
+        JRProvider currentlyAuthenticatingProvider = mSession.getCurrentlyAuthenticatingProvider();
         getActivity().setTitle(getCustomTitle());
         mLogo.setImageDrawable(currentlyAuthenticatingProvider.getProviderLogo(getActivity()));
 
@@ -237,7 +237,7 @@ public class JRLandingFragment extends JRUiFragment {
             mUserInput.setVisibility(View.GONE);
 
             mWelcomeLabel.setVisibility(View.VISIBLE);
-            mWelcomeLabel.setText(mSessionData.getAuthenticatedUserForProvider(
+            mWelcomeLabel.setText(mSession.getAuthenticatedUserForProvider(
                     currentlyAuthenticatingProvider).getWelcomeMessage());
         }
     }
@@ -253,7 +253,7 @@ public class JRLandingFragment extends JRUiFragment {
     }
 
     private String getCustomTitle() {
-        JRProvider provider = mSessionData.getCurrentlyAuthenticatingProvider();
+        JRProvider provider = mSession.getCurrentlyAuthenticatingProvider();
         if (provider.requiresInput()) {
             return provider.getShortText();
         } else {
@@ -263,7 +263,7 @@ public class JRLandingFragment extends JRUiFragment {
 
     @Override
     protected void onBackPressed() {
-        mSessionData.triggerAuthenticationDidRestart();
+        mSession.triggerAuthenticationDidRestart();
         getActivity().setResult(JRLandingFragment.RESULT_RESTART);
         getActivity().finish();
     }

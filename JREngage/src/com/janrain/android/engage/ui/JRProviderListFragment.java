@@ -140,7 +140,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (mSessionData == null) return null;
+        if (mSession == null) return null;
         View listView = inflater.inflate(R.layout.jr_provider_listview, container, false);
 
         mListView = (ListView) listView.findViewById(android.R.id.list);
@@ -149,7 +149,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
         getActivity().setTitle(R.string.jr_provider_list_title);
 
-        mProviderList = mSessionData.getBasicProviders();
+        mProviderList = mSession.getBasicProviders();
         if (mProviderList == null) mProviderList = new ArrayList<JRProvider>();
 
         mAdapter = new ProviderAdapter();
@@ -186,11 +186,11 @@ public class JRProviderListFragment extends JRUiFragment {
     private ListView.OnItemClickListener itemClickListener = new ListView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             JRProvider provider = mAdapter.getItem(position);
-            mSessionData.setCurrentlyAuthenticatingProvider(provider);
+            mSession.setCurrentlyAuthenticatingProvider(provider);
 
             if (provider.requiresInput() ||
-                    (mSessionData.getAuthenticatedUserForProvider(provider) != null &&
-                    !provider.getForceReauth()) && !mSessionData.getAlwaysForceReauth()) {
+                    (mSession.getAuthenticatedUserForProvider(provider) != null &&
+                    !provider.getForceReauth()) && !mSession.getAlwaysForceReauth()) {
                 showUserLanding();
             } else {
                 showWebView();
@@ -243,7 +243,7 @@ public class JRProviderListFragment extends JRUiFragment {
     }
 
     /**
-     * Called by timer.  Used when providers are not found in JRSessionData.
+     * Called by timer.  Used when providers are not found in JRSession.
      * Continues polling until providers are found or the polling threshold is hit.
      */
     private void doSessionPoll() {
@@ -255,7 +255,7 @@ public class JRProviderListFragment extends JRUiFragment {
             getActivity().runOnUiThread(mNoProvidersFoundRunner);
             Log.w(TAG, "[doSessionPoll] providers not found, max iterations hit, timer cancelled...");
         } else {
-            ArrayList<JRProvider> providers = mSessionData.getBasicProviders();
+            ArrayList<JRProvider> providers = mSession.getBasicProviders();
             if (providers.size() > 0) {
                 mProviderList = providers;
                 getActivity().runOnUiThread(mProvidersLoadedRunner);
@@ -269,7 +269,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
     @Override
     protected void onBackPressed() {
-        mSessionData.triggerAuthenticationDidCancel();
+        mSession.triggerAuthenticationDidCancel();
         getActivity().setResult(Activity.RESULT_CANCELED);
         getActivity().finish();
     }

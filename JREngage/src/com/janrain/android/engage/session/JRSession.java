@@ -68,8 +68,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JRSessionData implements JRConnectionManagerDelegate {
-    private static final String TAG = JRSessionData.class.getSimpleName();
+public class JRSession implements JRConnectionManagerDelegate {
+    private static final String TAG = JRSession.class.getSimpleName();
 
     private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
     //private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
@@ -85,7 +85,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
             "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s&version=%s";
     private static final String TAG_GET_CONFIGURATION = "getConfiguration";
 
-    private static JRSessionData sInstance;
+    private static JRSession sInstance;
     public static final String USERDATA_ACTION_KEY = "action";
     public static final String USERDATA_ACTION_CALL_TOKEN_URL = "callTokenUrl";
     public static final String USERDATA_TOKEN_URL_KEY = "tokenUrl";
@@ -128,25 +128,25 @@ public class JRSessionData implements JRConnectionManagerDelegate {
 
     private JREngageError mError;
 
-    public static JRSessionData getInstance() {
+    public static JRSession getInstance() {
         return sInstance;
 	}
 
-	public static JRSessionData getInstance(String appId,
+	public static JRSession getInstance(String appId,
                                             String tokenUrl,
                                             JRSessionDelegate delegate) {
         if (sInstance != null) {
-            if (Config.LOGD) Log.w(TAG, "[getInstance] reinitializing existing instance");
+            if (Config.LOGD) Log.w(TAG, "[getInstance] ignoring reinitialization");
             //sInstance.initialize(appId, tokenUrl, delegate);
         } else {
             if (Config.LOGD) Log.d(TAG, "[getInstance] returning new instance.");
-            sInstance = new JRSessionData(appId, tokenUrl, delegate);
+            sInstance = new JRSession(appId, tokenUrl, delegate);
         }
 
 		return sInstance;
 	}
 
-	private JRSessionData(String appId, String tokenUrl, JRSessionDelegate delegate) {
+	private JRSession(String appId, String tokenUrl, JRSessionDelegate delegate) {
         initialize(appId, tokenUrl, delegate);
     }
 
@@ -154,7 +154,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
      * assignment warnings. */
     @SuppressWarnings("unchecked")
     private void initialize(String appId, String tokenUrl, JRSessionDelegate delegate) {
-        if (Config.LOGD) Log.d(TAG, "[ctor] initializing instance.");
+        if (Config.LOGD) Log.d(TAG, "[initialize] initializing instance.");
 
 		mDelegates = new ArrayList<JRSessionDelegate>();
 		mDelegates.add(delegate);
@@ -579,7 +579,7 @@ public class JRSessionData implements JRConnectionManagerDelegate {
                 ENVIRONMENT.getServerUrl(),
                 mAppId,
                 mUrlEncodedAppName,
-                mLibraryVersion);
+                AndroidUtils.urlEncode(mLibraryVersion));
         if (Config.LOGD) Log.d(TAG, "[startGetConfiguration] url: " + urlString);
 
         BasicNameValuePair eTagHeader = new BasicNameValuePair("If-None-Match", mOldEtag);

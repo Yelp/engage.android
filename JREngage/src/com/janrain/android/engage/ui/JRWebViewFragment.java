@@ -34,7 +34,6 @@ package com.janrain.android.engage.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -94,7 +93,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (mSessionData == null) return null;
+        if (mSession == null) return null;
         View view = inflater.inflate(R.layout.jr_provider_webview, container, false);
 
         mWebView = (WebView)view.findViewById(R.id.jr_webview);
@@ -141,12 +140,12 @@ public class JRWebViewFragment extends JRUiFragment {
         super.onActivityCreated(savedInstanceState);
 
         mIsSocialSharingSignIn = getActivity().getIntent().getExtras().getBoolean(SOCIAL_SHARING_MODE);
-        mProvider = mSessionData.getCurrentlyAuthenticatingProvider();
+        mProvider = mSession.getCurrentlyAuthenticatingProvider();
 
         String customUa = mProvider.getWebViewOptions().getAsString("user_agent");
         if (customUa != null) mWebViewSettings.setUserAgentString(customUa);
 
-        URL startUrl = mSessionData.startUrlForCurrentlyAuthenticatingProvider();
+        URL startUrl = mSession.startUrlForCurrentlyAuthenticatingProvider();
         mWebView.loadUrl(startUrl.toString());
     }
 
@@ -196,7 +195,7 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     private boolean isMobileEndpointUrl(String url) {
-        final String thatUrl = mSessionData.getBaseUrl() + "/signin/device";
+        final String thatUrl = mSession.getBaseUrl() + "/signin/device";
         return ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl)));
     }
 
@@ -341,7 +340,7 @@ public class JRWebViewFragment extends JRUiFragment {
                     "Authentication failed: " + description,
                     JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
                     JREngageError.ErrorType.AUTHENTICATION_FAILED);
-            mSessionData.triggerAuthenticationDidFail(err);
+            mSession.triggerAuthenticationDidFail(err);
         }
     };
 
@@ -389,8 +388,8 @@ public class JRWebViewFragment extends JRUiFragment {
             if ("ok".equals(result)) {
                 /* Back should be disabled at this point because the progress modal dialog is
                 being displayed. */
-                if (!mIsSocialSharingSignIn) mSessionData.saveLastUsedBasicProvider();
-                mSessionData.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
+                if (!mIsSocialSharingSignIn) mSession.saveLastUsedBasicProvider();
+                mSession.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
                 getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();
             } else {
@@ -399,8 +398,8 @@ public class JRWebViewFragment extends JRUiFragment {
                 if ("Discovery failed for the OpenID you entered".equals(error) ||
                         "Your OpenID must be a URL".equals(error)) {
                     alertTitle = "Invalid Input";
-                    if (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput()) {
-                        String shortText = mSessionData.getCurrentlyAuthenticatingProvider().getShortText();
+                    if (mSession.getCurrentlyAuthenticatingProvider().requiresInput()) {
+                        String shortText = mSession.getCurrentlyAuthenticatingProvider().getShortText();
                         alertMessage = "The " + shortText + " you entered was not valid. Please try again.";
                     } else {
                         alertMessage = "There was a problem authenticating. Please try again.";
@@ -415,9 +414,9 @@ public class JRWebViewFragment extends JRUiFragment {
                     showAlertDialog(alertTitle, alertMessage);
                 } else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
                     alertTitle = "Invalid Input";
-                    alertMessage = (mSessionData.getCurrentlyAuthenticatingProvider().requiresInput()) ?
+                    alertMessage = (mSession.getCurrentlyAuthenticatingProvider().requiresInput()) ?
                             String.format("The %s you entered was not valid. Please try again.",
-                            mSessionData.getCurrentlyAuthenticatingProvider().getShortText())
+                            mSession.getCurrentlyAuthenticatingProvider().getShortText())
                             : "There was a problem authenticating. Please try again.";
                     logMessage = "The URL you entered does not appear to be an OpenID: ";
 
@@ -434,8 +433,8 @@ public class JRWebViewFragment extends JRUiFragment {
                     showAlertDialog("OpenID Error", "The URL you entered does not appear to be an OpenID");
                 } else if ("canceled".equals(error)) {
                     //forgetAuthenticatedUserForProvider
-                    mSessionData.getCurrentlyAuthenticatingProvider().setForceReauth(true);
-                    mSessionData.triggerAuthenticationDidRestart();
+                    mSession.getCurrentlyAuthenticatingProvider().setForceReauth(true);
+                    mSession.triggerAuthenticationDidRestart();
                     getActivity().setResult(RESULT_RESTART);
                     getActivity().finish();
                 } else {
@@ -445,7 +444,7 @@ public class JRWebViewFragment extends JRUiFragment {
                             JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
                             JREngageError.ErrorType.AUTHENTICATION_FAILED);
 
-                    mSessionData.triggerAuthenticationDidFail(err);
+                    mSession.triggerAuthenticationDidFail(err);
                     getActivity().setResult(RESULT_FAIL);
                     mIsFinishPending = true;
                     showAlertDialog(getString(R.string.jr_dialog_sign_in_failed),
@@ -466,7 +465,7 @@ public class JRWebViewFragment extends JRUiFragment {
                         ex);
 
                 // Back button? race condition
-                mSessionData.triggerAuthenticationDidFail(error);
+                mSession.triggerAuthenticationDidFail(error);
                 mIsFinishPending = true;
                 getActivity().setResult(RESULT_FAIL);
                 showAlertDialog(getString(R.string.jr_dialog_sign_in_failed),
@@ -478,7 +477,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     @Override
     protected void onBackPressed() {
-        mSessionData.triggerAuthenticationDidRestart();
+        mSession.triggerAuthenticationDidRestart();
         getActivity().setResult(JRWebViewFragment.RESULT_RESTART);
         getActivity().finish();
     }

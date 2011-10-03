@@ -35,8 +35,7 @@ import android.os.Handler;
 import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.net.async.AsyncHttpClient;
-import com.janrain.android.engage.net.async.AsyncHttpResponseHolder;
-import com.janrain.android.engage.net.async.AsyncHttpResponseListener;
+import com.janrain.android.engage.net.async.AsyncHttpResponse;
 import org.apache.http.NameValuePair;
 
 import java.util.ArrayList;
@@ -47,7 +46,7 @@ import java.util.List;
  *
  * @class JRConnectionManager
  **/
-public class JRConnectionManager implements AsyncHttpResponseListener {
+public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseListener {
     private static final String TAG = JRConnectionManager.class.getSimpleName();
 	private static JRConnectionManager sInstance;
 
@@ -148,7 +147,7 @@ public class JRConnectionManager implements AsyncHttpResponseListener {
     }
 
 
-	public void onResponseReceived(AsyncHttpResponseHolder response) {
+	public void onResponseReceived(AsyncHttpResponse response) {
         String requestUrl = response.getUrl();
         ConnectionData connectionData = response.getConnectionData();
 

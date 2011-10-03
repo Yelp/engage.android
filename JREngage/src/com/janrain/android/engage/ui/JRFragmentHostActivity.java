@@ -31,7 +31,6 @@
  */
 package com.janrain.android.engage.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -44,7 +43,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
-import com.janrain.android.engage.session.JRSessionData;
+import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.utils.AndroidUtils;
 
 public class JRFragmentHostActivity extends FragmentActivity {
@@ -62,16 +61,16 @@ public class JRFragmentHostActivity extends FragmentActivity {
     public static final IntentFilter FINISH_INTENT_FILTER = new IntentFilter(ACTION_FINISH_FRAGMENT);
 
     private JRUiFragment mUiFragment;
-    private JRSessionData mSessionData;
+    private JRSession mSession;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "[onCreate]: " + getFragmentId());
 
-        mSessionData = JRSessionData.getInstance();
+        mSession = JRSession.getInstance();
         /* For the case when this activity is relaunched after the process was killed */
-        if (mSessionData == null) {
+        if (mSession == null) {
             Log.e(TAG, "bailing out after a process kill/restart");
             finish();
             return;
@@ -79,31 +78,33 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
         if (savedInstanceState != null) {
             /* This flow control path is reached when there's process death and restart */
+            Log.e(TAG, "bailing out after a process kill/restart (with non-null JRSession");
             finish();
             return;
 
-            //throw new IllegalStateException("unexpected not null savedInstanceState");
-
+            /* Bad old conclusion: */
             // This control flow path is not reached  because this activity handles configuration changes
             // and doesn't implement onSaveInstanceState
+
+            //throw new IllegalStateException("unexpected not null savedInstanceState");
         }
 
         switch (getFragmentId()) {
             case JR_PROVIDER_LIST:
                 /* check and see whether we should start the landing page */
-                String rbpName = mSessionData.getReturningBasicProvider();
-                JRProvider rbp = mSessionData.getProviderByName(rbpName);
+                String rbpName = mSession.getReturningBasicProvider();
+                JRProvider rbp = mSession.getProviderByName(rbpName);
                 if (!TextUtils.isEmpty(rbpName)
-                        && mSessionData.getAuthenticatedUserForProvider(rbp) != null
-                        && !mSessionData.getAlwaysForceReauth()
+                        && mSession.getAuthenticatedUserForProvider(rbp) != null
+                        && !mSession.getAlwaysForceReauth()
                         && !rbp.getForceReauth()) {
                     // These other conditions are in the iPhone UI Maestro
                     //&& !sessionData.socialSharing
                     //&& ![((NSArray*)[customInterface objectForKey:kJRRemoveProvidersFromAuthentication]) containsObject:sessionData.returningBasicProvider]
                     //&& [sessionData.basicProviders containsObject:sessionData.returningBasicProvider])
 
-                    JRProvider provider = mSessionData.getProviderByName(rbpName);
-                    mSessionData.setCurrentlyAuthenticatingProvider(provider);
+                    JRProvider provider = mSession.getProviderByName(rbpName);
+                    mSession.setCurrentlyAuthenticatingProvider(provider);
                     Intent i = createIntentForCurrentScreen(this, true);
                     i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JR_LANDING);
                     i.putExtra(JR_AUTH_FLOW, true);

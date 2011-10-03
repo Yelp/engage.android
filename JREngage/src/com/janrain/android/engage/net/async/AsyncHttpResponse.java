@@ -40,7 +40,7 @@ import com.janrain.android.engage.net.JRConnectionManager;
  * Wraps the possible data returned from a full asynchronous HTTP request.  This object will
  * contain either headers and data (if successful) or an Exception object (if failed).
  */
-public class AsyncHttpResponseHolder {
+public class AsyncHttpResponse {
     private String mUrl;
     private HttpResponseHeaders mHeaders;
     private byte[] mPayload;
@@ -57,7 +57,7 @@ public class AsyncHttpResponseHolder {
      * @param payload
      *      The data resulting from the HTTP operation.
      */
-    public AsyncHttpResponseHolder(String url, HttpResponseHeaders headers, byte[] payload) {
+    public AsyncHttpResponse(String url, HttpResponseHeaders headers, byte[] payload) {
         mUrl = url;
         mHeaders = headers;
         mPayload = payload;
@@ -72,7 +72,7 @@ public class AsyncHttpResponseHolder {
      * @param exception
      *      The exception that occurred during this HTTP operation.
      */
-    public AsyncHttpResponseHolder(String url, Exception exception) {
+    public AsyncHttpResponse(String url, Exception exception) {
         mUrl = url;
         mHeaders = null;
         mPayload = null;

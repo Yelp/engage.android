@@ -36,9 +36,6 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -50,14 +47,11 @@ import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.session.JRProvider;
-import com.janrain.android.engage.session.JRSessionData;
+import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.janrain.android.quicksignin.QuickSignInEnvironment.getAppId;
@@ -165,7 +159,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         }
 
         private Drawable getProviderIconDrawable(String providerName) {
-            return JRSessionData.getInstance().getProviderByName(providerName)
+            return JRSession.getInstance().getProviderByName(providerName)
                     .getProviderIcon(ProfilesActivity.this);
         }
 
