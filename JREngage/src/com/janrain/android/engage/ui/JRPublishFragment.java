@@ -398,7 +398,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     
     @Override
     public void onDestroyView() {
-        if (mUserCommentView != null && mShareButton.isEnabled()) {
+        if (mUserCommentView != null && !mProvidersThatHaveAlreadyShared.values().contains(true)) {
             Prefs.putString(Prefs.KEY_JR_USER_COMMENT, mUserCommentView.getText().toString());
             Prefs.putLong(Prefs.KEY_JR_USER_COMMENT_TIME, new Date().getTime());
         }
