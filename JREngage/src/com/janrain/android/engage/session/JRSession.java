@@ -119,7 +119,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     private String mSavedConfigurationBlock = "";
     private String mSavedEtag;
     private String mNewEtag;
-    private String mLibraryVersion;
+    private String mUrlEncodedLibraryVersion;
 
     private boolean mHidePoweredBy;
 	private boolean mAlwaysForceReauth;
@@ -164,8 +164,9 @@ public class JRSession implements JRConnectionManagerDelegate {
 
         ApplicationInfo ai = AndroidUtils.getApplicationInfo();
         String appName = getContext().getPackageManager().getApplicationLabel(ai).toString();
+        appName += ":" + getContext().getPackageName();
         mUrlEncodedAppName = AndroidUtils.urlEncode(appName);
-        mLibraryVersion = getContext().getString(R.string.jr_git_describe);
+        mUrlEncodedLibraryVersion = AndroidUtils.urlEncode(getContext().getString(R.string.jr_git_describe));
 
         try {
             /* load the last used basic and social providers */
@@ -579,7 +580,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                 ENVIRONMENT.getServerUrl(),
                 mAppId,
                 mUrlEncodedAppName,
-                AndroidUtils.urlEncode(mLibraryVersion));
+                mUrlEncodedLibraryVersion);
         if (Config.LOGD) Log.d(TAG, "[startGetConfiguration] url: " + urlString);
 
         BasicNameValuePair eTagHeader = new BasicNameValuePair("If-None-Match", mOldEtag);
@@ -661,7 +662,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         Prefs.putString(Prefs.KEY_JR_CONFIGURATION_ETAG, mNewEtag);
 
         /* 'git-tag'-like library version tag to prevent reloading stale data from disk */
-        Prefs.putString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, mLibraryVersion);
+        Prefs.putString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, mUrlEncodedLibraryVersion);
 
         mGetConfigDone = true;
         triggerMobileConfigDidFinish();
