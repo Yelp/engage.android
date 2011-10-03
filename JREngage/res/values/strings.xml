@@ -16,7 +16,7 @@
     <!-- - About menu/dialog strings. -->
     <string name="jr_about_menu_item">About Janrain Engage</string>
     <string name="jr_about_title">Janrain Engage for Android Library</string>
-    <string name="jr_about_version">Version 2.0.0</string>
+    <string name="jr_about_version">Version 2.0.1</string>
     <string name="jr_about_url">www.janrain.com</string>
     <string name="jr_about_button_ok">OK</string>
 
