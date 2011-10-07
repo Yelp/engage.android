@@ -286,7 +286,6 @@ public abstract class JRUiFragment extends Fragment {
             showDialog(DIALOG_ABOUT);
             return true;
         } else {
-            //if (item.getTitle().equals("test")) JREngage.getInstance().signoutUserForAllProviders();
             return super.onOptionsItemSelected(item);
         }
     }

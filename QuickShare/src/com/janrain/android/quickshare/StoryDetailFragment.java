@@ -96,7 +96,6 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
         if (Config.LOGD) Log.d(TAG, "[onCreateView] url: loading the current story");
 
         loadCurrentStory();
-
         return v;
     }
 
@@ -106,6 +105,7 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
         String styleCommon = getResources().getString(R.string.html_style_sheet_common);
         String style = getString(R.string.html_style_sheet);
 
+        int targetWidth = (int) getResources().getDimension(R.dimen.fragmentImageWidth);
         String htmlString =
                 "<html>" +
                     "<head>" +
@@ -119,7 +119,7 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
                         "<div class=\"title\">" + story.getTitle() + "</div>" +
                         "<div class=\"date\">" + story.getFormattedDate() + "</div>" +
                         "<div class=\"posted_by\">Posted by: " + story.getPostedBy() + "</div>" +
-                        "<div class=\"body\">" + story.getDescription() + "</div>" +
+                        "<div class=\"body\">" + story.getDescriptionWithScaledImages(targetWidth) + "</div>" +
                     "</body>" +
                 "</html>";
 

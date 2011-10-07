@@ -81,11 +81,11 @@ public class Story implements Serializable, Comparable<Story> {
         return mFormattedDate;
     }
 
-    public String getDescription() {
-        return mDescription;
+    public String getDescriptionWithScaledImages(int targetWidth) {
+        return scaleDescriptionImages(mDescription, targetWidth);
     }
 
-    private String newWidthAndHeight(String style) {
+    private String newWidthAndHeight(String style, int targetWidth) {
         Pattern patternWidth = Pattern.compile("(.*?)width:(.+?)px(.*)", Pattern.CASE_INSENSITIVE |
                 Pattern.DOTALL);
         Pattern patternHeight = Pattern.compile("(.*?)height:(.+?)px(.*)", Pattern.CASE_INSENSITIVE);
@@ -99,24 +99,23 @@ public class Story implements Serializable, Comparable<Story> {
 
         if (!matcherWidth.matches() || !matcherHeight.matches()) return style;
 
-        Integer width;
-        Integer height;
+        int width;
+        int height;
 
         try {
-            width = new Integer(matcherWidth.group(2).trim());
-            height = new Integer(matcherHeight.group(2).trim());
+            width = Integer.parseInt(matcherWidth.group(2).trim());
+            height = Integer.parseInt(matcherHeight.group(2).trim());
         } catch (NumberFormatException e) {
             return style;
         }
 
-        if (width <= 280) return style;
+        if (width <= targetWidth) return style;
 
-        Double ratio = width / 280.0;
-        Integer newHeight = (new Double(height / ratio)).intValue();
+        int newHeight = (int) (height / (width / (double) targetWidth));
 
         //Log.d(TAG, "[newWidthAndHeight] style before: " + style);
-        style = style.replace("width:" + matcherWidth.group(2) + "px", "width: 280px");
-        style = style.replace("height:" + matcherHeight.group(2) + "px", "height: " + newHeight.toString() +
+        style = style.replace("width:" + matcherWidth.group(2) + "px", "width: " + targetWidth + "px");
+        style = style.replace("height:" + matcherHeight.group(2) + "px", "height: " + newHeight +
                 "px");
         //Log.d(TAG, "[newWidthAndHeight] style after: " + style);
 
@@ -179,43 +178,42 @@ public class Story implements Serializable, Comparable<Story> {
 
     public void setDescription(String description) {
         mDescription = description;
-        scaleDescriptionImages();
     }
 
-    private void scaleDescriptionImages() {
-        String[] splitDescription = mDescription.split("<img ", -1);
+    private String scaleDescriptionImages(String html, int targetWidth) {
+        String[] splitHtml = html.split("<img ", -1);
 
-        int length = splitDescription.length;
+        int length = splitHtml.length;
 
-        String newDescription = splitDescription[0];
+        String newHtml = splitHtml[0];
 
         for (int i = 1; i < length; i++) {
-            //Log.d(TAG, "[scaleDescriptionImages] " + ((Integer) i).toString() + ": " + splitDescription[i]);
+            //Log.d(TAG, "[scaleDescriptionImages] " + i + ": " + splitHtml[i]);
 
             try {
                 Pattern pattern = Pattern.compile("(.+?)style=\"(.+?)\"(.+?)/>(.+)", Pattern.CASE_INSENSITIVE
                         | Pattern.DOTALL);
-                Matcher matcher = pattern.matcher(splitDescription[i]);
+                Matcher matcher = pattern.matcher(splitHtml[i]);
 
-                //Log.d(TAG, "[scaleDescriptionImages] matcher matches?: " + (matcher.matches() ? "yes" :
-                //        "no"));
+                //Log.d(TAG, "[scaleDescriptionImages] matcher matches?: " + matcher.matches());
+                matcher.matches();
 
-                //for (int j = 1; j <= matcher.groupCount(); j++)
-                //    Log.d(TAG, "[scaleDescriptionImages] matched group " + ((Integer) j).toString() + ": " +
-                //            matcher.group(j));
+                //for (int j = 1; j <= matcher.groupCount(); j++) {
+                //    Log.d(TAG, "[scaleDescriptionImages] matched group " + j + ": " + matcher.group(j));
+                //}
 
-                newDescription += "<img " + matcher.group(1) +
-                        "style=\"" + newWidthAndHeight(matcher.group(2)) + "\"" +
-                        matcher.group(3) + "/>" + matcher.group(4);
+                newHtml += "<img " + matcher.group(1) + "style=\"" +
+                        newWidthAndHeight(matcher.group(2), targetWidth) +
+                        "\"" + matcher.group(3) + "/>" + matcher.group(4);
             } catch (IllegalStateException e) {
-                Log.d(TAG, "[scaleDescriptionImages] exception: " + e);
-                newDescription += "<img " + splitDescription[i];
+                Log.e(TAG, "[scaleDescriptionImages] exception: " + e);
+                newHtml += "<img " + splitHtml[i];
             }
         }
 
-        //Log.d(TAG, "[scaleDescriptionImages] newDescription: " + newDescription);
+        //Log.d(TAG, "[scaleDescriptionImages] newHtml: " + newHtml);
 
-        mDescription = newDescription;
+        return newHtml;
     }
 
     public void setFormattedDate(String date) {

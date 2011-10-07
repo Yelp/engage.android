@@ -37,6 +37,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
+import android.util.DisplayMetrics;
 import com.janrain.android.engage.JREngage;
 
 import java.io.UnsupportedEncodingException;
@@ -133,4 +134,10 @@ public class AndroidUtils {
         return JREngage.getActivity().getResources().getConfiguration().orientation ==
                 Configuration.ORIENTATION_LANDSCAPE;
     }
+
+    //public static int getScreenWidth() {
+    //    DisplayMetrics metrics = new DisplayMetrics();
+    //    JREngage.getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+    //    metrics.get
+    //}
 }

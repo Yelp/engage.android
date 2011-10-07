@@ -67,5 +67,6 @@
         while configuring authentication.
     </string>
     <string name="jr_problem_sharing">There was a problem while sharing.</string>
+    <string name="jr_welcome_back_message">Welcome back</string>
 
 </resources>

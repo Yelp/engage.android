@@ -4,4 +4,5 @@
     <dimen name="textSizeStoryTitle">15sp</dimen>
     <dimen name="textSizeStoryDescription">14dip</dimen>
     <dimen name="listIconSize">40dp</dimen>
+    <dimen name="fragmentImageWidth">280dp</dimen>
 </resources>

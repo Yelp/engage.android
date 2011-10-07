@@ -788,11 +788,13 @@ public class JRSession implements JRConnectionManagerDelegate {
             Log.e(TAG, "[forgetAuthenticatedUserForProvider] provider not found: " + providerName);
         } else {
             provider.setForceReauth(true);
-            mAuthenticatedUsersByProvider.remove(provider.getName());
+        }
 
+        if (mAuthenticatedUsersByProvider.containsKey(providerName)) {
+            mAuthenticatedUsersByProvider.get(providerName).deleteCachedProfilePic();
+            mAuthenticatedUsersByProvider.remove(providerName);
             Archiver.save(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
-
-            triggerUserWasSignedOut(provider.getName());
+            triggerUserWasSignedOut(providerName);
         }
     }
 

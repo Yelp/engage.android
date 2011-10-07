@@ -38,6 +38,7 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
@@ -63,6 +64,7 @@ public class JRAuthenticatedUser implements Serializable {
     public static final String KEY_IDENTIFIER = "identifier";
     public static final String KEY_AUTH_INFO = "auth_info";
     public static final String KEY_PROFILE = "profile";
+    public static final String KEY_DISPLAY_NAME = "displayName";
 
     private String mPhoto;
     private String mPreferredUsername;
@@ -70,13 +72,7 @@ public class JRAuthenticatedUser implements Serializable {
     private String mProviderName;
     private String mIdentifier;
     private String mWelcomeMessage;
-
-    // We don't need to make the default constructor private so long as we have another constructor, which we
-    // do, found immediately below.
-    // Declaring this raises an irresolvable compiler warning that requires a suppression
-    // annotation.
-	//private JRAuthenticatedUser() {
-    //}
+    private String mDisplayName;
 
     public JRAuthenticatedUser(JRDictionary mobileEndPointResponse,
                                String providerName,
@@ -87,7 +83,11 @@ public class JRAuthenticatedUser implements Serializable {
         mPreferredUsername = mobileEndPointResponse.getAsString(KEY_PREFERRED_USERNAME);
         mIdentifier = mobileEndPointResponse.getAsDictionary(KEY_AUTH_INFO).getAsDictionary(KEY_PROFILE)
                 .getAsString(KEY_IDENTIFIER);
-        mWelcomeMessage = welcomeMessage == null ? "Welcome back " + mPreferredUsername : welcomeMessage;
+        mWelcomeMessage = welcomeMessage == null ?
+                getContext().getResources().getString(R.string.jr_welcome_back_message) + mPreferredUsername
+                : welcomeMessage;
+        mDisplayName = mobileEndPointResponse.getAsDictionary(KEY_AUTH_INFO).getAsDictionary(KEY_PROFILE)
+                .getAsString(KEY_DISPLAY_NAME);
     }
 
     public String getPhoto() { /* (readonly) */
@@ -112,6 +112,10 @@ public class JRAuthenticatedUser implements Serializable {
 
     public String getIdentifier() {
         return mIdentifier;
+    }
+    
+    public String getDisplayName() {
+        return mDisplayName;
     }
 
     public String getCachedProfilePicKey() {
@@ -157,6 +161,10 @@ public class JRAuthenticatedUser implements Serializable {
                         }
                     }, null);
         }
+    }
+
+    public void deleteCachedProfilePic() {
+        getContext().deleteFile("userpic~" + getCachedProfilePicKey());
     }
 
     public interface ProfilePicAvailableListener {

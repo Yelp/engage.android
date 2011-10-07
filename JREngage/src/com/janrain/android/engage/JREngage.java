@@ -240,12 +240,12 @@ public class JREngage {
 
 	/**
      * @internal
-     * Returns the application context used to initialize the library.
+     * Returns the Activity context used to initialize the library.
 	 *
 	 * @return
-	 * 		The Context object used to initialize this library
+	 * 		The Activity object used to initialize this library
 	 **/
-    public static Context getActivity() {
+    public static Activity getActivity() {
         return (sInstance == null) ? null : sInstance.mActivity;
     }
 

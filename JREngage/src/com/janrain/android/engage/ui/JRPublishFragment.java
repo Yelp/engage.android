@@ -907,7 +907,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             return;
         }
 
-        mUserNameView.setText(user.getPreferredUsername());
+        mUserNameView.setText(user.getDisplayName());
 
         mUserProfilePic.setImageResource(R.drawable.jr_profilepic_placeholder);
         user.downloadProfilePic(new JRAuthenticatedUser.ProfilePicAvailableListener() {
