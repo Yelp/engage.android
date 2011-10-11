@@ -303,7 +303,8 @@ public class FeedData {
                         currentStory.setFormattedDate(body);
                     }
                 });
-                item.getChild("http://purl.org/dc/elements/1.1/", "creator").setEndTextElementListener(new EndTextElementListener() {
+                item.getChild("http://purl.org/dc/elements/1.1/", "creator")
+                        .setEndTextElementListener(new EndTextElementListener() {
                     public void end(String body) {
                         currentStory.setCreator(body);
                     }

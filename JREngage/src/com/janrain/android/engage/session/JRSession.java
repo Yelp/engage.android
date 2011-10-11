@@ -244,10 +244,6 @@ public class JRSession implements JRConnectionManagerDelegate {
         mAlwaysForceReauth = force;
     }
 
-    public String getTokenUrl() {
-        return mTokenUrl;
-    }
-
     public void setTokenUrl(String tokenUrl) {
         mTokenUrl = tokenUrl;
     }
@@ -446,51 +442,56 @@ public class JRSession implements JRConnectionManagerDelegate {
                         SocialPublishingError.FAILED,
                         ErrorType.PUBLISH_FAILED);
             } else {
-                int code = (errorDict.containsKey("code"))
-                        ? errorDict.getAsInt("code") : 1000;
+                int code = (errorDict.containsKey("code")) ? errorDict.getAsInt("code") : 1000;
 
-                String msg = errorDict.getAsString("msg", "");
+                String errorMessage = errorDict.getAsString("msg", "");
 
                 switch (code) {
                     case 0: /* "Missing parameter: apiKey" */
                         publishError = new JREngageError(
-                                msg,
+                                errorMessage,
                                 SocialPublishingError.MISSING_API_KEY,
                                 ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
                         break;
                     case 4: /* "Facebook Error: Invalid OAuth 2.0 Access Token" */
-                        if (msg.matches(".*nvalid ..uth.*")) {
+                        if (errorMessage.matches(".*nvalid ..uth.*")) {
                             publishError = new JREngageError(
-                                    msg,
+                                    errorMessage,
                                     SocialPublishingError.INVALID_OAUTH_TOKEN,
                                     ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
-                        } else if (msg.matches(".*eed action request limit.*")) {
+                        } else if (errorMessage.matches(".*eed action request limit.*")) {
                             publishError = new JREngageError(
-                                    msg,
+                                    errorMessage,
                                     SocialPublishingError.FEED_ACTION_REQUEST_LIMIT,
                                     ErrorType.PUBLISH_FAILED);
+                        } else if (errorMessage.matches(".*session.*invalidated.*") ||
+                                errorMessage.matches(".*rror validating access token.*")) {
+                            publishError = new JREngageError(
+                                    errorMessage,
+                                    SocialPublishingError.INVALID_OAUTH_TOKEN,
+                                    ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
                         } else {
                             publishError = new JREngageError(
-                                    msg,
+                                    errorMessage,
                                     SocialPublishingError.FAILED,
                                     ErrorType.PUBLISH_FAILED);
                         }
                         break;
                     case 100: // TODO LinkedIn character limit error
                         publishError = new JREngageError(
-                                msg,
+                                errorMessage,
                                 SocialPublishingError.LINKEDIN_CHARACTER_EXCEEDED,
                                 ErrorType.PUBLISH_INVALID_ACTIVITY);
                         break;
                     case 6:
-                        if (msg.matches(".witter.*uplicate.*")) {
+                        if (errorMessage.matches(".witter.*uplicate.*")) {
                             publishError = new JREngageError(
-                                    msg,
+                                    errorMessage,
                                     SocialPublishingError.DUPLICATE_TWITTER,
                                     ErrorType.PUBLISH_INVALID_ACTIVITY);
                         } else {
                             publishError = new JREngageError(
-                                    msg,
+                                    errorMessage,
                                     JREngageError.SocialPublishingError.FAILED,
                                     ErrorType.PUBLISH_INVALID_ACTIVITY);
                         }
@@ -782,7 +783,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     public JRAuthenticatedUser getAuthenticatedUserForProvider(JRProvider provider) {
         if (Config.LOGD) Log.d(TAG, "[getAuthenticatedUserForProvider]");
 
-        return (JRAuthenticatedUser) mAuthenticatedUsersByProvider.get(provider.getName());
+        return mAuthenticatedUsersByProvider.get(provider.getName());
     }
 
     public void forgetAuthenticatedUserForProvider(String providerName) {
