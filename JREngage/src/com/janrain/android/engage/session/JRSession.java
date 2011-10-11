@@ -136,8 +136,13 @@ public class JRSession implements JRConnectionManagerDelegate {
                                             String tokenUrl,
                                             JRSessionDelegate delegate) {
         if (sInstance != null) {
-            if (Config.LOGD) Log.w(TAG, "[getInstance] ignoring reinitialization");
-            //sInstance.initialize(appId, tokenUrl, delegate);
+            if (sInstance.isUiShowing()) {
+                Log.e(TAG, "Cannot reinitialize JREngage while its UI is showing");
+            } else {
+                if (Config.LOGD) Log.w(TAG, "[getInstance] reinitializing, registered delegates will be " +
+                        "unregistered");
+                sInstance.initialize(appId, tokenUrl, delegate);
+            }
         } else {
             if (Config.LOGD) Log.d(TAG, "[getInstance] returning new instance.");
             sInstance = new JRSession(appId, tokenUrl, delegate);
@@ -173,11 +178,11 @@ public class JRSession implements JRConnectionManagerDelegate {
             mReturningSocialProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
             mReturningBasicProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
 
-            /* load the library state from disk */
+            /* Load the library state from disk */
             mAuthenticatedUsersByProvider = Archiver.load(ARCHIVE_AUTH_USERS_BY_PROVIDER);
             mAllProviders = Archiver.load(ARCHIVE_ALL_PROVIDERS);
 
-            /* fix up the provider objects */
+            /* Fix up the provider objects with data that isn't serialized along with them */
             for (Object provider : mAllProviders.values()) ((JRProvider)provider).loadDynamicVariables();
 
             /* Load the list of basic providers */

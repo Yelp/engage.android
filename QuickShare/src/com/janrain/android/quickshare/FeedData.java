@@ -167,7 +167,7 @@ public class FeedData {
         mImageLoader = new ImageLoader(ImageLoader.DEFAULT_TASK_LIMIT, null, bmch, pfch,
                 ImageLoader.DEFAULT_CACHE_SIZE, null);
 
-        mEngage = JREngage.initInstance(activity, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, mJrEngageDelegate);
+        initJREngage(activity);
 
         /* If the Story class changes, then the Archiver can't load the new stories, which is fine,
             They'll just get re-downloaded/added, but we also have to clear the links hash, so that
@@ -183,6 +183,10 @@ public class FeedData {
             mStoryLinks = new HashSet<String>();
             logd(TAG, "[ctor] stories reset");
         }
+    }
+
+    public void initJREngage(Activity activity) {
+        mEngage = JREngage.initInstance(activity, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, mJrEngageDelegate);
     }
 
     private void logd(String function, String message) {
