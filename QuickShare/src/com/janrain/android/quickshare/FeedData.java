@@ -303,7 +303,7 @@ public class FeedData {
                         currentStory.setFormattedDate(body);
                     }
                 });
-                item.getChild("dc:creator").setEndTextElementListener(new EndTextElementListener() {
+                item.getChild("http://purl.org/dc/elements/1.1/", "creator").setEndTextElementListener(new EndTextElementListener() {
                     public void end(String body) {
                         currentStory.setCreator(body);
                     }
@@ -329,8 +329,7 @@ public class FeedData {
 
             @Override
             protected void onPostExecute(Pair<Boolean, Exception> loadSuccess) {
-                logd("onPostExecute", "blog loader onPostExecute, result: " +
-                        (loadSuccess.first ? "succeeded" : "failed"));
+                logd("onPostExecute", "blog loader onPostExecute, successful: " + loadSuccess.first);
 
                 if (loadSuccess.first) {
                     mListener.asyncFeedReadSucceeded();
