@@ -41,6 +41,7 @@ import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSession;
@@ -126,12 +127,16 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 throw new IllegalFragmentIdException(getFragmentId());
         }
 
-        if (isAuthFlow()) setTheme(R.style.jr_dialog_phone_sized);
+        if (isAuthFlow() && AndroidUtils.isXlarge()) setTheme(R.style.jr_dialog_phone_sized);
+
         setContentView(R.layout.jr_fragment_host_activity);
-        if (isAuthFlow()) {
-            ((CustomMeasuringFrameLayout) findViewById(R.id.jr_fragment_container)).setTargetHeightDip(480);
-            ((CustomMeasuringFrameLayout) findViewById(R.id.jr_fragment_container)).setTargetWidthDip(320);
+
+        View fragmentContainer = findViewById(R.id.jr_fragment_container);
+        if (isAuthFlow() && fragmentContainer instanceof CustomMeasuringFrameLayout) {
+            ((CustomMeasuringFrameLayout) fragmentContainer).setTargetHeightDip(480);
+            ((CustomMeasuringFrameLayout) fragmentContainer).setTargetWidthDip(320);
         }
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.jr_fragment_container, mUiFragment)

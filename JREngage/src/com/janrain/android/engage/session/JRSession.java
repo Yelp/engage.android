@@ -454,7 +454,9 @@ public class JRSession implements JRConnectionManagerDelegate {
                                 ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
                         break;
                     case 4: /* "Facebook Error: Invalid OAuth 2.0 Access Token" */
-                        if (errorMessage.matches(".*nvalid ..uth.*")) {
+                        if (errorMessage.matches(".*nvalid ..uth.*") ||
+                                errorMessage.matches(".*session.*invalidated.*") ||
+                                errorMessage.matches(".*rror validating access token.*")) {
                             publishError = new JREngageError(
                                     errorMessage,
                                     SocialPublishingError.INVALID_OAUTH_TOKEN,
@@ -464,12 +466,6 @@ public class JRSession implements JRConnectionManagerDelegate {
                                     errorMessage,
                                     SocialPublishingError.FEED_ACTION_REQUEST_LIMIT,
                                     ErrorType.PUBLISH_FAILED);
-                        } else if (errorMessage.matches(".*session.*invalidated.*") ||
-                                errorMessage.matches(".*rror validating access token.*")) {
-                            publishError = new JREngageError(
-                                    errorMessage,
-                                    SocialPublishingError.INVALID_OAUTH_TOKEN,
-                                    ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
                         } else {
                             publishError = new JREngageError(
                                     errorMessage,

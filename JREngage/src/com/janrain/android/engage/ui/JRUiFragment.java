@@ -95,7 +95,7 @@ public abstract class JRUiFragment extends Fragment {
 
             if (JRUiFragment.this.getClass().toString().equals(target) ||
                     target.equals(JRFragmentHostActivity.FINISH_TARGET_ALL)) {
-                if (isDialogMode()) tryToFinishActivity();
+                if (!isEmbeddedMode()) tryToFinishActivity();
                 if (Config.LOGD) Log.d(TAG, "[onReceive] handled");
             } else if (Config.LOGD) {
                 if (Config.LOGD) Log.d(TAG, "[onReceive] ignored");
@@ -120,7 +120,7 @@ public abstract class JRUiFragment extends Fragment {
         mSession = JRSession.getInstance();
         if (mSession != null) mSession.setUiIsShowing(true);
         /* Embedded mode isn't compatible with setRetainInstance */
-        if (isDialogMode()) setRetainInstance(true);
+        if (!isEmbeddedMode()) setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
@@ -320,10 +320,6 @@ public abstract class JRUiFragment extends Fragment {
         return retval;
     }
 
-    public final boolean isDialogMode() {
-        return !isEmbeddedMode();
-    }
-
     public final boolean isEmbeddedMode() {
         FragmentActivity a = getActivity();
         return a != null && !(a instanceof JRFragmentHostActivity);
@@ -398,7 +394,7 @@ public abstract class JRUiFragment extends Fragment {
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(getActivity(), showTitle);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, fragId);
-        if (isDialogMode()) {
+        if (!isEmbeddedMode()) {
             i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW,
                     ((JRFragmentHostActivity) getActivity()).isAuthFlow());
         }
