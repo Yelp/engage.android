@@ -93,14 +93,14 @@ public class JRActionLink implements Serializable, JRJsonifiable {
      * Creates a JRActionLink initialized with the given text and href.
      *
      * @param text
-     *      The text describing the link.  This value cannot be \e null
+     *      The text describing the link.  This value cannot be null
      *
      * @param href
      *      A link a user can use to take action on an activity update on the provider.  This value
-     *      cannot be \e null
+     *      cannot be null
      *
      * @throws IllegalArgumentException
-     *      if text or href is \e null
+     *      if text or href is null
      */
     public JRActionLink(String text, String href) {
         if (text == null || href == null) throw new IllegalArgumentException("illegal null text or null href");
@@ -133,7 +133,12 @@ public class JRActionLink implements Serializable, JRJsonifiable {
     public String getHref() {
         return mHref;
     }
+/*@}*/
 
+    /**
+     * @internal
+     * @return a JRDictionary representation of this Action Link suitable for JSON-ifying
+     */
     public JRDictionary toJRDictionary() {
         JRDictionary retval = new JRDictionary();
 
@@ -142,6 +147,4 @@ public class JRActionLink implements Serializable, JRJsonifiable {
 
         return retval;
     }
-
-    /*@}*/
 }

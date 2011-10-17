@@ -2,7 +2,7 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
   <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment" kind="class" prot="public">
     <compoundname>com::janrain::android::engage::ui::JRWebViewFragment</compoundname>
-    <basecompoundref refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment" prot="public" virt="non-virtual">JRUiFragment</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">JRUiFragment</basecompoundref>
       <sectiondef kind="public-static-attrib">
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a0a37f66ccbab5cf443655654cf7f6cbf" prot="public" static="yes" mutable="no">
         <type>final int</type>
@@ -233,7 +233,7 @@
                                     long contentLength) {
 
             if (Config.LOGD) {
-                Log.d(TAG, &quot;[onDownloadStart] url: &quot; + url + &quot; | mimetype: &quot; + mimetype
+                Log.d(TAG, &quot;[onDownloadStart] URL: &quot; + url + &quot; | mimetype: &quot; + mimetype
                     + &quot; | length: &quot; + contentLength);
             }
 
@@ -474,28 +474,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <inheritancegraph>
-      <node id="126">
-        <label>JRWebViewFragment</label>
-        <childnode refid="127" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="127">
-        <label>JRUiFragment</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment"/>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
-      <node id="128">
-        <label>JRWebViewFragment</label>
-        <childnode refid="129" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="129">
-        <label>JRUiFragment</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment"/>
-      </node>
-    </collaborationgraph>
     <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="75" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="75" bodyend="484"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a961c98fd0056dc954131538319ac9002" prot="package" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRWebViewFragment</scope><name>[instance initializer]</name></member>

@@ -46,12 +46,11 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 /**
- * Created by IntelliJ IDEA.
- * User: nathan
- * Date: 6/2/11
- * Time: 4:49 PM
- * To change this template use File | Settings | File Templates.
- */
+ * @internal
+ *
+ * @class AndroidUtils
+ **/
+
 public class AndroidUtils {
     public static final String TAG = AndroidUtils.class.getSimpleName();
     private AndroidUtils() {}
@@ -72,12 +71,9 @@ public class AndroidUtils {
         return Build.VERSION.RELEASE.startsWith("1.5");
     }
 
-    public static int getAndroidSdkInt() {
-        Field SDK_INT;
+    private static int getAndroidSdkInt() {
         try {
-            SDK_INT = Build.VERSION.class.getField("SDK_INT");
-
-            return SDK_INT.getInt(null);
+            return Build.VERSION.class.getField("SDK_INT").getInt(null);
         } catch (NoSuchFieldException e) {
             // Must be Cupcake
             return 3;
@@ -103,7 +99,7 @@ public class AndroidUtils {
         }
     }
 
-    public static final int SDKINT = getAndroidSdkInt();
+    public static final int SDK_INT = getAndroidSdkInt();
 
     public static ApplicationInfo getApplicationInfo() {
         String packageName = JREngage.getActivity().getPackageName();

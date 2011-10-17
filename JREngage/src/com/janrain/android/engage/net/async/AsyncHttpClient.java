@@ -150,7 +150,7 @@ public final class AsyncHttpClient {
         }
 
 		public void run() {
-			if (Config.LOGD) Log.d(TAG, "[run] BEGIN, url: " + mUrl);
+			if (Config.LOGD) Log.d(TAG, "[run] BEGIN, URL: " + mUrl);
 
             setupHttpClient();
 

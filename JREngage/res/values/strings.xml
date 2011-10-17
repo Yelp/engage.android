@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- - Server URL strings for each of the three typical environments. -->
-    <string name="jr_server_url_lilli">http://lilli.janrain.com:8080</string>
-    <string name="jr_server_url_nathan">http://nathan-dev.janrain.com:8080</string>
-    <string name="jr_server_url_staging">https://rpxstaging.com</string>
-    <string name="jr_server_url_production">https://rpxnow.com</string>
+    <string name="jr_server_URL_lilli">http://lilli.janrain.com:8080</string>
+    <string name="jr_server_URL_nathan">http://nathan-dev.janrain.com:8080</string>
+    <string name="jr_server_URL_staging">https://rpxstaging.com</string>
+    <string name="jr_server_URL_production">https://rpxnow.com</string>
 
     <!-- - Shared/common strings. -->
     <!-- http://stackoverflow.com/questions/4353836/italic-textview-with-wrap-contents-seems-to-clip-the-text-at-right-edge/5666648#5666648 -->
@@ -17,7 +17,7 @@
     <string name="jr_about_menu_item">About Janrain Engage</string>
     <string name="jr_about_title">Janrain Engage for Android Library</string>
     <string name="jr_about_version">Version 2.0.1</string>
-    <string name="jr_about_url">www.janrain.com</string>
+    <string name="jr_about_URL">www.janrain.com</string>
     <string name="jr_about_button_ok">OK</string>
 
     <!-- - JRProviderList strings. -->
@@ -38,7 +38,7 @@
     <string name="jr_provider_spinner_prompt">Select a provider</string>
     <string name="jr_calculating_remaining_characters">Calculating Remaining Characters</string>
     <string name="jr_please_enter_text">Please enter text</string>
-    <string name="jr_shortening_url">shortening url...</string>
+    <string name="jr_shortening_url">shortening URL...</string>
     <string name="jr_shared">Shared</string>
     <string name="jr_preview">Preview</string>
     <string name="jr_choose_email_handler">Choose...</string>

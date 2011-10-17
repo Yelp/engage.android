@@ -109,7 +109,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
      * @par Getter:
      *      #getUrl()
      **/
-    private String mUrl; //url associated with the action
+    private String mUrl;
 
     /**
      * A string containing user-supplied content, such as a comment or the first paragraph of
@@ -236,10 +236,10 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
      *      #getSms(), #setSms()
      **/
     private JRSmsObject mSms;
+/*@}*/
 
     private transient boolean mIsShortening = false;
     private String mShortenedUrl;
-/*@}*/
 
 /**
  * @name Constructors
@@ -251,13 +251,13 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
      *
      * @param action
      *   A string describing what the user did, written in the third person.  This value cannot
-     *   be \e null
+     *   be null
      *
      * @param url
      *   The URL of the resource being mentioned in the activity update. May be null
      *
      * @throws IllegalArgumentException
-     *   if action is \e null
+     *   if action is null
      **/
     public JRActivityObject(String action, String url) {
         if (action == null) throw new IllegalArgumentException("illegal null action");

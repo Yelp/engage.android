@@ -41,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="@string/jr_about_url"
+        android:text="@string/jr_about_URL"
         style="@style/jr_about_dialog_text"
         />
 

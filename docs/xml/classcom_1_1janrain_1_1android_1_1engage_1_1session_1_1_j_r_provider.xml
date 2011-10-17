@@ -772,14 +772,14 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="97">
+      <node id="87">
         <label>JRProvider</label>
-        <childnode refid="98" relation="usage">
+        <childnode refid="88" relation="usage">
           <edgelabel>mWebViewOptions</edgelabel>
           <edgelabel>mSocialSharingProperties</edgelabel>
         </childnode>
       </node>
-      <node id="98">
+      <node id="88">
         <label>JRDictionary</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary"/>
       </node>

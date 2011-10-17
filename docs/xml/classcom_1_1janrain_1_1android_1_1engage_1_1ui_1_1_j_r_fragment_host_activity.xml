@@ -167,7 +167,7 @@
       </sectiondef>
       <sectiondef kind="private-attrib">
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_fragment_host_activity_1a1d5b1ab01243c93f299fb0703065918b" prot="private" static="no" mutable="no">
-        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment" kindref="compound">JRUiFragment</ref></type>
+        <type>JRUiFragment</type>
         <definition>JRUiFragment mUiFragment</definition>
         <argsstring></argsstring>
         <name>mUiFragment</name>
@@ -358,18 +358,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <collaborationgraph>
-      <node id="75">
-        <label>JRUiFragment</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment"/>
-      </node>
-      <node id="74">
-        <label>JRFragmentHostActivity</label>
-        <childnode refid="75" relation="usage">
-          <edgelabel>mUiFragment</edgelabel>
-        </childnode>
-      </node>
-    </collaborationgraph>
     <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRFragmentHostActivity.java" line="50" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRFragmentHostActivity.java" bodystart="50" bodyend="222"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_fragment_host_activity_1a56d1aa9f923f19b1121151a3ac2e7a1a" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRFragmentHostActivity</scope><name>ACTION_FINISH_FRAGMENT</name></member>

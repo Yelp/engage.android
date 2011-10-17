@@ -3,7 +3,7 @@
   <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_media_object" kind="class" prot="public">
     <compoundname>com::janrain::android::engage::types::JRMediaObject</compoundname>
     <basecompoundref prot="public" virt="non-virtual">Serializable</basecompoundref>
-    <basecompoundref refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable" prot="public" virt="non-virtual">JRJsonifiable</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">JRJsonifiable</basecompoundref>
     <derivedcompoundref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object" prot="public" virt="non-virtual">JRFlashMediaObject</derivedcompoundref>
     <derivedcompoundref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object" prot="public" virt="non-virtual">JRImageMediaObject</derivedcompoundref>
     <derivedcompoundref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object" prot="public" virt="non-virtual">JRMp3MediaObject</derivedcompoundref>
@@ -114,45 +114,28 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="87">
+      <node id="79">
         <label>JRMediaObject</label>
-        <childnode refid="88" relation="public-inheritance">
-        </childnode>
       </node>
-      <node id="88">
-        <label>JRJsonifiable</label>
-        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
-      </node>
-      <node id="90">
+      <node id="81">
         <label>JRImageMediaObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object"/>
-        <childnode refid="87" relation="public-inheritance">
+        <childnode refid="79" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="91">
+      <node id="82">
         <label>JRMp3MediaObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object"/>
-        <childnode refid="87" relation="public-inheritance">
+        <childnode refid="79" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="89">
+      <node id="80">
         <label>JRFlashMediaObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object"/>
-        <childnode refid="87" relation="public-inheritance">
+        <childnode refid="79" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
-    <collaborationgraph>
-      <node id="92">
-        <label>JRMediaObject</label>
-        <childnode refid="93" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="93">
-        <label>JRJsonifiable</label>
-        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
-      </node>
-    </collaborationgraph>
     <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRMediaObject.java" line="50" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRMediaObject.java" bodystart="50" bodyend="96"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_media_object_1a69a942495a0864024e78ba629b005b41" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRMediaObject</scope><name>downloadThumbnail</name></member>

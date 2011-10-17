@@ -72,7 +72,6 @@ public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseLis
 	public static void createConnection(String requestUrl,
                                         JRConnectionManagerDelegate delegate,
                                         Object tag) {
-
         createConnection(requestUrl, delegate, tag, null);
 	}
 

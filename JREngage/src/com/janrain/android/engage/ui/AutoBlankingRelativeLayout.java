@@ -39,12 +39,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 /**
- * Created by IntelliJ IDEA.
- * User: nathan
- * Date: 8/30/11
- * Time: 2:08 PM
- * To change this template use File | Settings | File Templates.
- */
+ * @internal
+ **/
 public class AutoBlankingRelativeLayout extends RelativeLayout {
     public AutoBlankingRelativeLayout(Context context) {
         super(context);

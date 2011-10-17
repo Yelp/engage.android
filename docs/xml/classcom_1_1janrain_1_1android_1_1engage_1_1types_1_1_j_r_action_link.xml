@@ -3,7 +3,7 @@
   <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link" kind="class" prot="public">
     <compoundname>com::janrain::android::engage::types::JRActionLink</compoundname>
     <basecompoundref prot="public" virt="non-virtual">Serializable</basecompoundref>
-    <basecompoundref refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable" prot="public" virt="non-virtual">JRJsonifiable</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">JRJsonifiable</basecompoundref>
       <sectiondef kind="user-defined">
       <header>Private Attributes</header>
       <description><para>The various properties of the <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link" kindref="compound">JRActionLink</ref> that you can access and configure through the object&apos;s constructor and getters </para></description>
@@ -60,14 +60,14 @@
 <parametername>text</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The text describing the link. This value cannot be <emphasis>null</emphasis> </para></parameterdescription>
+<para>The text describing the link. This value cannot be null</para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>href</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>A link a user can use to take action on an activity update on the provider. This value cannot be <emphasis>null</emphasis> </para></parameterdescription>
+<para>A link a user can use to take action on an activity update on the provider. This value cannot be null</para></parameterdescription>
 </parameteritem>
 </parameterlist>
 <parameterlist kind="exception"><parameteritem>
@@ -75,7 +75,7 @@
 <parametername>IllegalArgumentException</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>if text or href is <emphasis>null</emphasis> </para></parameterdescription>
+<para>if text or href is null </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
@@ -115,19 +115,20 @@
         </inbodydescription>
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="133" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="133" bodyend="135"/>
       </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1a985a1b0429a8a359a4783c7409b91e3a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary" kindref="compound">JRDictionary</ref></type>
         <definition>JRDictionary toJRDictionary</definition>
         <argsstring>()</argsstring>
         <name>toJRDictionary</name>
-        <reimplements refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplements>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="137" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="137" bodyend="144"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="142" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="142" bodyend="149"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -146,31 +147,7 @@
 <codeline><highlight class="normal"><sp/>]</highlight></codeline>
 </programlisting> </para></simplesect>
 </para>    </detaileddescription>
-    <inheritancegraph>
-      <node id="44">
-        <label>JRActionLink</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link"/>
-        <childnode refid="45" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="45">
-        <label>JRJsonifiable</label>
-        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
-      <node id="46">
-        <label>JRActionLink</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link"/>
-        <childnode refid="47" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="47">
-        <label>JRJsonifiable</label>
-        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
-      </node>
-    </collaborationgraph>
-    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="63" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="63" bodyend="147"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" line="63" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActionLink.java" bodystart="63" bodyend="150"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1a8043ef8d1352a42f35dceb50021a5923" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActionLink</scope><name>getHref</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1afab766445043570e6a82c14851366933" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRActionLink</scope><name>getText</name></member>

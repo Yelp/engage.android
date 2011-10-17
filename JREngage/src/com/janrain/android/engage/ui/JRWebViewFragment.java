@@ -118,7 +118,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
                     @SuppressWarnings("unused")
 					int getAndroidSdkInt() {
-                        return AndroidUtils.getAndroidSdkInt();
+                        return AndroidUtils.SDK_INT;
                     }
                 }, "jrengage_mobile");
 
@@ -234,7 +234,7 @@ public class JRWebViewFragment extends JRUiFragment {
         //}
 
         String urlToLoad = url + "&auth_info=true";
-        if (Config.LOGD) Log.d(TAG, "[loadMobileEndpointUrl] loading url: " + urlToLoad);
+        if (Config.LOGD) Log.d(TAG, "[loadMobileEndpointUrl] loading URL: " + urlToLoad);
 
 
         JRConnectionManager.createConnection(urlToLoad, mMobileEndPointConnectionDelegate, null);
@@ -252,7 +252,7 @@ public class JRWebViewFragment extends JRUiFragment {
                                     long contentLength) {
 
             if (Config.LOGD) {
-                Log.d(TAG, "[onDownloadStart] url: " + url + " | mimetype: " + mimetype
+                Log.d(TAG, "[onDownloadStart] URL: " + url + " | mimetype: " + mimetype
                     + " | length: " + contentLength);
             }
 
@@ -300,7 +300,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
             /* Check for mobile endpoint URL. */
             if (isMobileEndpointUrl(url)) {
-                Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint url");
+                Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint URL");
                 loadMobileEndpointUrl(url);
                 mWebView.stopLoading();
             }
@@ -310,7 +310,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            if (Config.LOGD) Log.d(TAG, "[onPageFinished] url: " + url);
+            if (Config.LOGD) Log.d(TAG, "[onPageFinished] URL: " + url);
 
             hideProgressSpinner();
 
@@ -328,7 +328,7 @@ public class JRWebViewFragment extends JRUiFragment {
         public void onReceivedError(WebView view, int errorCode, String description, String url) {
             super.onReceivedError(view, errorCode, description, url);
             Log.e(TAG, "[onReceivedError] code: " + errorCode + " | description: " + description
-                    + " | url: " + url);
+                    + " | URL: " + url);
 
             hideProgressSpinner();
 

@@ -2,7 +2,7 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
   <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_fragment" kind="class" prot="public">
     <compoundname>com::janrain::android::engage::ui::JRLandingFragment</compoundname>
-    <basecompoundref refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment" prot="public" virt="non-virtual">JRUiFragment</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">JRUiFragment</basecompoundref>
       <sectiondef kind="public-static-attrib">
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_fragment_1adebb6f969c59f595bcfe6016a0b07e1e" prot="public" static="yes" mutable="no">
         <type>final String</type>
@@ -181,7 +181,7 @@
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRLandingFragment.java" line="91" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRLandingFragment.java" bodystart="91" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_fragment_1ace9c9f6c37a663a8026e99a6d894cb96" prot="private" static="no" mutable="no">
-        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button" kindref="compound">ColorButton</ref></type>
+        <type>ColorButton</type>
         <definition>ColorButton mSignInButton</definition>
         <argsstring></argsstring>
         <name>mSignInButton</name>
@@ -410,35 +410,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <inheritancegraph>
-      <node id="83">
-        <label>JRUiFragment</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment"/>
-      </node>
-      <node id="82">
-        <label>JRLandingFragment</label>
-        <childnode refid="83" relation="public-inheritance">
-        </childnode>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
-      <node id="86">
-        <label>ColorButton</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button"/>
-      </node>
-      <node id="85">
-        <label>JRUiFragment</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment"/>
-      </node>
-      <node id="84">
-        <label>JRLandingFragment</label>
-        <childnode refid="85" relation="public-inheritance">
-        </childnode>
-        <childnode refid="86" relation="usage">
-          <edgelabel>mSignInButton</edgelabel>
-        </childnode>
-      </node>
-    </collaborationgraph>
     <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRLandingFragment.java" line="60" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRLandingFragment.java" bodystart="60" bodyend="270"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_landing_fragment_1a961c98fd0056dc954131538319ac9002" prot="package" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRLandingFragment</scope><name>[instance initializer]</name></member>

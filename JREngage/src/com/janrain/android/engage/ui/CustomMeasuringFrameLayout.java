@@ -39,11 +39,7 @@ import android.widget.FrameLayout;
 import com.janrain.android.engage.utils.AndroidUtils;
 
 /**
- * Created by IntelliJ IDEA.
- * User: nathan
- * Date: 9/2/11
- * Time: 9:22 AM
- * To change this template use File | Settings | File Templates.
+ * @internal 
  */
 public class CustomMeasuringFrameLayout extends FrameLayout {
     private int mTargetHeight;

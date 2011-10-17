@@ -13,7 +13,6 @@
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
-      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -36,15 +35,8 @@
 <!-- doxytag: class="com::janrain::android::engage::types::JRActivityObject" --><!-- doxytag: inherits="java::io::Serializable,com::janrain::android::engage::types::JRJsonifiable" -->
 <p>An activity object you create, populate, and post to the user's activity stream.  
  <a href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#details">More...</a></p>
-<div class="dynheader">
-Inheritance diagram for JRActivityObject:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.png" usemap="#JRActivityObject_map" alt=""/>
-  <map id="JRActivityObject_map" name="JRActivityObject_map">
-<area href="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable.html" alt="JRJsonifiable" shape="rect" coords="0,0,106,24"/>
-</map>
- </div></div>
+
+<p>Inherits Serializable, and JRJsonifiable.</p>
 
 <p><a href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object-members.html">List of all members.</a></p>
 <table class="memberdecls">
@@ -62,10 +54,6 @@ Private Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary.html">JRDictionary</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a1bede9988a27c100c89534a38559567a">mProperties</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object.html">JREmailObject</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#aa82a78e3b966073395f5a3e26921c839">mEmail</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object.html">JRSmsObject</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html#a3140d87ea48963c09a373cb4eb1e60a1">mSms</a></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afd9a722e9e0f291cc111cdc947a60e0f"></a><!-- doxytag: member="com::janrain::android::engage::types::JRActivityObject::mIsShortening" ref="afd9a722e9e0f291cc111cdc947a60e0f" args="" -->
-transient boolean&#160;</td><td class="memItemRight" valign="bottom"><b>mIsShortening</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e367c610a4272cf8f761419530d4942"></a><!-- doxytag: member="com::janrain::android::engage::types::JRActivityObject::mShortenedUrl" ref="a2e367c610a4272cf8f761419530d4942" args="" -->
-String&#160;</td><td class="memItemRight" valign="bottom"><b>mShortenedUrl</b></td></tr>
 <tr><td colspan="2"><h2><a name="member-group"></a>
 Constructors</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp559a25fdb98a7d1fd1c3771ac568d5e9"></a> Constructor for <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html" title="An activity object you create, populate, and post to the user&#39;s activity stream.">JRActivityObject</a> </p>
@@ -143,14 +131,14 @@ Getters/Setters</h2></td></tr>
 <p>Returns a <a class="el" href="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html" title="An activity object you create, populate, and post to the user&#39;s activity stream.">JRActivityObject</a> initialized with the given action and URL.</p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">action</td><td>A string describing what the user did, written in the third person. This value cannot be <em>null</em> </td></tr>
+    <tr><td class="paramname">action</td><td>A string describing what the user did, written in the third person. This value cannot be null</td></tr>
     <tr><td class="paramname">url</td><td>The URL of the resource being mentioned in the activity update. May be null</td></tr>
   </table>
   </dd>
 </dl>
 <dl><dt><b>Exceptions:</b></dt><dd>
   <table class="exception">
-    <tr><td class="paramname">IllegalArgumentException</td><td>if action is <em>null</em> </td></tr>
+    <tr><td class="paramname">IllegalArgumentException</td><td>if action is null </td></tr>
   </table>
   </dd>
 </dl>

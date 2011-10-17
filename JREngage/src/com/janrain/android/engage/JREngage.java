@@ -158,13 +158,13 @@ public class JREngage {
      * 		cannot be null
      *
      * @param tokenUrl
-     * 		The url on your server where you wish to complete authentication, or null.  If provided,
-     *   	the JREngage library will post the user's authentication token to this url where it can
+     * 		The URL on your server where you wish to complete authentication, or null.  If provided,
+     *   	the JREngage library will post the user's authentication token to this URL where it can
      *   	used for further authentication and processing.  When complete, the library will pass
      *   	the server's response back to the your application
 
      * @param delegate
-     * 		The delegate object that implements the JREngageDelegate protocol
+     * 		The delegate object that implements the JREngageDelegate interface
      *
      * @return
      * 		The shared instance of the JREngage object initialized with the given
@@ -208,13 +208,13 @@ public class JREngage {
      * 		cannot be null
      *
      * @param tokenUrl
-     * 		The url on your server where you wish to complete authentication, or null.  If provided,
-     *   	the JREngage library will post the user's authentication token to this url where it can
+     * 		The URL on your server where you wish to complete authentication, or null.  If provided,
+     *   	the JREngage library will post the user's authentication token to this URL where it can
      *   	used for further authentication and processing.  When complete, the library will pass
      *   	the server's response back to the your application
 
      * @param delegate
-     * 		The delegate object that implements the JREngageDelegate protocol
+     * 		The delegate object that implements the JREngageDelegate interface
      *
      * @return
      * 		The shared instance of the JREngage object initialized with the given
@@ -456,14 +456,17 @@ public class JREngage {
 
         mSession.triggerPublishingDidCancel();
     }
+/*@}*/
 
+    /**
+     * @internal
+     */
     private void finishJrActivities() {
         Intent intent = new Intent(JRFragmentHostActivity.ACTION_FINISH_FRAGMENT);
         intent.putExtra(JRFragmentHostActivity.EXTRA_FINISH_FRAGMENT_TARGET,
                 JRFragmentHostActivity.FINISH_TARGET_ALL);
         mActivity.sendBroadcast(intent);
     }
-/*@}*/
 
 /**
  * @name Server-side Authentication
@@ -483,61 +486,11 @@ public class JREngage {
         mSession.setTokenUrl(newTokenUrl);
     }
 
-    /**
-     * Sets the list of providers that are enabled for authentication.  This does not supersede your
-     * RP's deplyoment settings for Android sign-in, as configured on rpxnow.com, it is a supplemental
-     * filter to that configuration.
-     *
-     * @param enabledProviders
-     *  A list of providers which will be enabled. This set will be intersected with the set of
-     *  providers configured on the Engage Dashboard, that intersection will be the providers that are
-     *  actually available to the end-user.
-     */
-    public void setEnabledAuthenticationProviders(List<String> enabledProviders) {
-        mSession.setEnabledAuthenticationProviders(enabledProviders);
-    }
-
-    /**
-     * Convenience variant of setEnabledAuthenticationProviders(List&lt;String>)
-     * @param enabledProviders
-     *  An array of providers which will be enabled. This set will be intersected with the set of
-     *  providers configured on the Engage Dashboard, that intersection will be the providers that are
-     *  actually available to the end-user.
-     */
-    public void setEnabledAuthenticationProviders(String[] enabledProviders) {
-        mSession.setEnabledAuthenticationProviders(Arrays.asList(enabledProviders));
-    }
-
-    /**
-     * Sets the list of providers that are enabled for social sharing.  This does not supersede your
-     * RP's deplyoment settings for Android social sharing, as configured on rpxnow.com, it is a
-     * supplemental filter to that configuration.
-     *
-     * @param enabledSharingProviders
-     *  Which providers to enable for authentication, null for all providers.
-     *  A list of social sharing providers which will be enabled. This set will be intersected with the
-     *  set of providers configured on the Engage Dashboard, that intersection will be the providers that are
-     *  actually available to the end-user.
-     */
-    public void setEnabledSharingProviders(List<String> enabledSharingProviders) {
-        mSession.setEnabledSharingProviders(enabledSharingProviders);
-    }
-
-    /**
-     * Convenience variant of setEnabledSharingProviders(List&lt;String>)
-     * @param enabledSharingProviders
-     *  An array of social sharing providers which will be enabled. This set will be intersected with the
-     *  set of providers configured on the Engage Dashboard, that intersection will be the providers that are
-     *  actually available to the end-user.
-     */
-    public void setEnabledSharingProviders(String[] enabledSharingProviders) {
-        mSession.setEnabledSharingProviders(Arrays.asList(enabledSharingProviders));
-    }
 /*@}*/
 
 /**
  * @name Manage the JREngage Delegates
- * Add/remove delegates that implement the JREngageDelegate protocol
+ * Add/remove delegates that implement the JREngageDelegate interface
  **/
 /*@{*/
 
@@ -545,7 +498,7 @@ public class JREngage {
      * Add a JREngageDelegate to the library.
      *
      * @param delegate
-     *   The object that implements the JREngageDelegate protocol
+     *   The object that implements the JREngageDelegate interface
      **/
     public synchronized void addDelegate(JREngageDelegate delegate) {
 		if (Config.LOGD) Log.d(TAG, "[addDelegate]");
@@ -556,7 +509,7 @@ public class JREngage {
      * Remove a JREngageDelegate from the library.
      *
      * @param delegate
-     *   The object that implements the JREngageDelegate protocol
+     *   The object that implements the JREngageDelegate interface
      **/
 	public synchronized void removeDelegate(JREngageDelegate delegate) {
 		if (Config.LOGD) Log.d(TAG, "[removeDelegate]");
@@ -681,9 +634,6 @@ public class JREngage {
      *   Set a custom enter animation. May be null if-and-only-if customExitAnimation is also null
      * @param customExitAnimation
      *   Set a custom exit animation.  May be null if-and-only-if customEnterAnimation is also null
-     *
-     * @throws IllegalArgumentException
-     *  If the supplied activity object is null
      **/
     public void showSocialPublishingFragment(JRActivityObject activity,
                                              FragmentActivity hostActivity,
@@ -731,9 +681,6 @@ public class JREngage {
      *   The android.support.v4.app.FragmentActivity which will host the publishing fragment
      * @param containerId
      *   The resource ID of a FrameLayout to embed the publishing fragment in
-     *
-     * @throws IllegalArgumentException
-     *  If the supplied activity object is null
      **/
     public void showSocialPublishingFragment(JRActivityObject activity,
                                              FragmentActivity hostActivity,
@@ -750,9 +697,6 @@ public class JREngage {
      *
      * @return
      *  The created Fragment, or null upon error (caused by library configuration failure)
-     *  
-     * @throws IllegalArgumentException
-     *  If the supplied activity object is null
      */
     public JRPublishFragment createSocialPublishingFragment(JRActivityObject activity) {
         if (checkSessionDataError()) return null;
@@ -761,6 +705,67 @@ public class JREngage {
 
         mSession.setJRActivity(activity);
         return new JRPublishFragment();
+    }
+/*@}*/
+
+/** @anchor enableProviders **/
+/**
+ * @name Enable a Subset of Providers
+ * Methods that configure at runtime a subset of providers to use with the JREngage dialogs.  These methods
+ * can only configure a subset of the configured and enabled providers found on your Engage application's
+ * dashboard.
+ **/
+/*@{*/
+    
+    /**
+     * Sets the list of providers that are enabled for authentication.  This does not supersede your
+     * RP's deplyoment settings for Android sign-in, as configured on rpxnow.com, it is a supplemental
+     * filter to that configuration.
+     *
+     * @param enabledProviders
+     *  A list of providers which will be enabled. This set will be intersected with the set of
+     *  providers configured on the Engage Dashboard, that intersection will be the providers that are
+     *  actually available to the end-user.
+     */
+    public void setEnabledAuthenticationProviders(List<String> enabledProviders) {
+        mSession.setEnabledAuthenticationProviders(enabledProviders);
+    }
+
+    /**
+     * Convenience variant of setEnabledAuthenticationProviders(List&lt;String>)
+     * @param enabledProviders
+     *  An array of providers which will be enabled. This set will be intersected with the set of
+     *  providers configured on the Engage Dashboard, that intersection will be the providers that are
+     *  actually available to the end-user.
+     */
+    public void setEnabledAuthenticationProviders(String[] enabledProviders) {
+        mSession.setEnabledAuthenticationProviders(Arrays.asList(enabledProviders));
+    }
+
+    /**
+     * Sets the list of providers that are enabled for social sharing.  This does not supersede your
+     * RP's deplyoment settings for Android social sharing, as configured on rpxnow.com, it is a
+     * supplemental filter to that configuration.
+     *
+     * @param enabledSharingProviders
+     *  Which providers to enable for authentication, null for all providers.
+     *  A list of social sharing providers which will be enabled. This set will be intersected with the
+     *  set of providers configured on the Engage Dashboard, that intersection will be the providers that are
+     *  actually available to the end-user.
+     */
+    public void setEnabledSharingProviders(List<String> enabledSharingProviders) {
+        mSession.setEnabledSharingProviders(enabledSharingProviders);
+    }
+
+    /**
+     * Convenience variant of setEnabledSharingProviders(List&lt;String>)
+     * @param enabledSharingProviders
+     *  An array of social sharing providers which will be enabled. This set will be intersected with the
+     *  set of providers configured on the Engage Dashboard, that intersection will be the providers that are
+     *  actually available to the end-user.
+     */
+    public void setEnabledSharingProviders(String[] enabledSharingProviders) {
+        mSession.setEnabledSharingProviders(Arrays.asList(enabledSharingProviders));
     }
 /*@}*/
 

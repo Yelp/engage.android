@@ -418,7 +418,7 @@ table.memberdecls {
         //-webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
         -webkit-border-top-right-radius: 10px;
         -webkit-border-top-left-radius: 10px;
-        //background-image:url('nav_f.png');
+        //background-image:URL('nav_f.png');
         background-repeat:repeat-x;
         background-color: #dddddd; //#E2E8F2;
 
@@ -495,7 +495,7 @@ proper pixel height of your image.
 .directory h3.swap {
 	height: 61px;
 	background-repeat: no-repeat;
-	background-image: url("yourimage.gif");
+	background-image: URL("yourimage.gif");
 }
 .directory h3.swap span {
 	display: none;
@@ -584,7 +584,7 @@ table.doxtable th {
 	top: 0px;
 	left: 10px;
 	height: 36px;
-	//background-image: url('tab_b.png');
+	//background-image: URL('tab_b.png');
 	z-index: 101;
 	overflow: hidden;
 	font-size: 13px;
@@ -593,7 +593,7 @@ table.doxtable th {
 .navpath ul
 {
 	font-size: 11px;
-	//background-image:url('tab_b.png');
+	//background-image:URL('tab_b.png');
 	//background-repeat:repeat-x;
 	height:30px;
 	line-height:30px;
@@ -610,7 +610,7 @@ table.doxtable th {
 	float:left;
 	padding-left:10px;
 	padding-right: 15px;
-	//background-image:url('bc_s.png');
+	//background-image:URL('bc_s.png');
 	background-repeat:no-repeat;
 	background-position:right;
 	color:#364D7C;
@@ -645,7 +645,7 @@ div.summary a
 
 div.header
 {
-  //background-image:url('nav_h.png');
+  //background-image:URL('nav_h.png');
   background-repeat:repeat-x;
 	background-color: #EEEEEE;// #F9FAFC;
 	margin:  0px;

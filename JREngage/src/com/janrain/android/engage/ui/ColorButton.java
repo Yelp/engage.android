@@ -56,10 +56,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
- * Created by IntelliJ IDEA.
- * User: nathan
- * Date: 5/26/11
- * Time: 3:36 PM
+ * @internal
  */
 public class ColorButton extends Button {
     public static final String TAG = ColorButton.class.getSimpleName();

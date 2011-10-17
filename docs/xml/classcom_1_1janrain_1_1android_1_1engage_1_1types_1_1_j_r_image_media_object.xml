@@ -34,19 +34,6 @@
         </inbodydescription>
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRImageMediaObject.java" line="73" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRImageMediaObject.java" bodystart="73" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1aaa43036003a51a54dd2cae740b7b2fde" prot="private" static="no" mutable="no">
-        <type>transient Bitmap</type>
-        <definition>transient Bitmap mPreview</definition>
-        <argsstring></argsstring>
-        <name>mPreview</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRImageMediaObject.java" line="79" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRImageMediaObject.java" bodystart="79" bodyend="-1"/>
-      </memberdef>
       </sectiondef>
       <sectiondef kind="user-defined">
       <header>Constructors</header>
@@ -128,6 +115,21 @@
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRImageMediaObject.java" line="127" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRImageMediaObject.java" bodystart="127" bodyend="129"/>
       </memberdef>
       </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1aaa43036003a51a54dd2cae740b7b2fde" prot="private" static="no" mutable="no">
+        <type>transient Bitmap</type>
+        <definition>transient Bitmap mPreview</definition>
+        <argsstring></argsstring>
+        <name>mPreview</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRImageMediaObject.java" line="80" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRImageMediaObject.java" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1aa35d8f551eaf3515c78e7493c5f02ee7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>Bitmap</type>
@@ -203,7 +205,6 @@
         <definition>JRDictionary toJRDictionary</definition>
         <argsstring>()</argsstring>
         <name>toJRDictionary</name>
-        <reimplements refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplements>
         <briefdescription>
         </briefdescription>
         <detaileddescription>

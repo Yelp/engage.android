@@ -3,8 +3,8 @@
   <compounddef id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate" kind="interface" prot="public">
     <compoundname>com::janrain::android::engage::JREngageDelegate</compoundname>
       <sectiondef kind="user-defined">
-      <header>Configuration</header>
-      <description><para>Messages sent by <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> during dialog launch/configuration </para></description>
+      <header>Success notifications</header>
+      <description><para>Messages sent by <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> notifying success </para></description>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a589d849b42af1061bac4697ab9982bba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void jrAuthenticationDidSucceedForUser</definition>
@@ -148,6 +148,23 @@
         </inbodydescription>
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="132"/>
       </memberdef>
+      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1afc069beff80daac09cc1e06566a45320" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void jrSocialDidCompletePublishing</definition>
+        <argsstring>()</argsstring>
+        <name>jrSocialDidCompletePublishing</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Notifies the delegate after the social publishing dialog is closed (e.g., the user presses the back button) and publishing is complete. You may receive multiple <ref refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1didPublish" kindref="member">void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider)</ref> messages before the dialog is closed and publishing is complete. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="140"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="user-defined">
+      <header>Failure notifications</header>
+      <description><para>Messages sent by <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> notifying failure </para></description>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1acd5e5b9fdaeeec8deca0cf60ae3f2ec7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void jrEngageDialogDidFailToShowWithError</definition>
@@ -172,12 +189,8 @@
 The raison d&apos;etre for this delayed delegate delivery is to allow for the possibility that an application may speculatively configure the library, but never actually invoke any library Activies. In that case, no error is delivered to the application. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="152"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="167"/>
       </memberdef>
-      </sectiondef>
-      <sectiondef kind="user-defined">
-      <header>Authentication</header>
-      <description><para>Messages sent by <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> during authentication </para></description>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a388f6ea1d314132c85a215c952fb7901" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void jrAuthenticationDidNotComplete</definition>
@@ -189,7 +202,7 @@ The raison d&apos;etre for this delayed delegate delivery is to allow for the po
 <para>Notifies the delegate that authorization was canceled for any reason other than an error. For example: The user pressed the back button, the cancelAuthentication method was called, or configuration of the library timed out. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="167"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="174"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a35444c1f8c0fec9d14274e9a615cba0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -226,7 +239,7 @@ The raison d&apos;etre for this delayed delegate delivery is to allow for the po
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="186"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="193"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a424d0bbf6dd2dbfe81a382406e5ac5ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -273,12 +286,8 @@ The raison d&apos;etre for this delayed delegate delivery is to allow for the po
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="204"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="211"/>
       </memberdef>
-      </sectiondef>
-      <sectiondef kind="user-defined">
-      <header>SocialPublishing</header>
-      <description><para>Messages sent by <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage" kindref="compound">JREngage</ref> during social publishing </para></description>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a5ef7762d503eb0f583d172d4a10f7869" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void jrSocialDidNotCompletePublishing</definition>
@@ -291,19 +300,6 @@ The raison d&apos;etre for this delayed delegate delivery is to allow for the po
         <inbodydescription>
         </inbodydescription>
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="218"/>
-      </memberdef>
-      <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1afc069beff80daac09cc1e06566a45320" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void jrSocialDidCompletePublishing</definition>
-        <argsstring>()</argsstring>
-        <name>jrSocialDidCompletePublishing</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Notifies the delegate after the social publishing dialog is closed (e.g., the user presses the back button) and publishing is complete. You may receive multiple <ref refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1didPublish" kindref="member">void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider)</ref> messages before the dialog is closed and publishing is complete. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="226"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a6abc64d6097987fd7e7d603b1b220650" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -350,14 +346,14 @@ The raison d&apos;etre for this delayed delegate delivery is to allow for the po
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="244"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="236"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>The interface implemented by an object in order to receive notifications when a user authenticates or publishes an activity to their social networks. </para>    </briefdescription>
     <detaileddescription>
 <para>The methods of this interface are invoked upon the success or failure of the Janrain Engage for Android Activities. They provide a conduit for the authenticated user&apos;s profile data, and if server-side authentication is configured, the data payload returned by your server&apos;s token URL. </para>    </detaileddescription>
-    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="49" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" bodystart="49" bodyend="246"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" line="49" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java" bodystart="49" bodyend="238"/>
     <listofallmembers>
       <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a424d0bbf6dd2dbfe81a382406e5ac5ad" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::JREngageDelegate</scope><name>jrAuthenticationCallToTokenUrlDidFail</name></member>
       <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a35444c1f8c0fec9d14274e9a615cba0a" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::JREngageDelegate</scope><name>jrAuthenticationDidFailWithError</name></member>

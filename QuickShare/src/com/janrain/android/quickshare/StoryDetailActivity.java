@@ -39,13 +39,6 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import com.janrain.android.engage.utils.AndroidUtils;
 
-/**
- * Created by IntelliJ IDEA.
- * User: nathan
- * Date: 8/23/11
- * Time: 9:38 AM
- * To change this template use File | Settings | File Templates.
- */
 public class StoryDetailActivity extends FragmentActivity {
     private static final String TAG = StoryDetailActivity.class.getSimpleName();
     private boolean mWaitingForChildActivityToFinish = false;
@@ -73,7 +66,7 @@ public class StoryDetailActivity extends FragmentActivity {
         Log.d(TAG, "onResume");
         if (getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE
-                && AndroidUtils.getAndroidSdkInt() >= 11
+                && AndroidUtils.SDK_INT >= 11
                 && AndroidUtils.isXlarge()
                 && !mWaitingForChildActivityToFinish) {
             // If the screen is now in landscape mode, we can show the

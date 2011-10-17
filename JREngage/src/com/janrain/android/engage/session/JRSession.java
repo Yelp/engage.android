@@ -620,7 +620,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         /* Check to see if the base URL has changed */
         String baseUrl = jsonDict.getAsString("baseurl", "");
         if (!baseUrl.equals(mBaseUrl)) {
-            /* Save the new base url */
+            /* Save the new base URL */
             mBaseUrl = StringUtils.chomp(baseUrl, "/");
             Prefs.putString(Prefs.KEY_JR_BASE_URL, mBaseUrl);
         }
@@ -818,7 +818,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         CookieManager cm = CookieManager.getInstance();
 
         /* http://code.google.com/p/android/issues/detail?id=19294 */
-        if (AndroidUtils.SDKINT >= 11) {
+        if (AndroidUtils.SDK_INT >= 11) {
             // don't trim leading .s
         } else {
             /* Trim leading .s */

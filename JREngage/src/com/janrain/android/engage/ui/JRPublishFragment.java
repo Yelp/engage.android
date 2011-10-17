@@ -84,10 +84,10 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * @internal
+ * @class JRPublishFragment
  *
- * @class JRPublishActivity
- * Publishing UI
+ * @brief
+ * Publishing UI, embeddable in a android.support.v4.app.FragmentActivity
  */
 public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChangeListener {
     {
@@ -444,7 +444,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         /* Set the media_content_view = a thumbnail of the media */
         if (mo != null) if (mo.hasThumbnail()) {
-            if (Config.LOGD) Log.d(TAG, "media image url: " + mo.getThumbnail());
+            if (Config.LOGD) Log.d(TAG, "media image URL: " + mo.getThumbnail());
             mo.downloadThumbnail(new JRMediaObject.ThumbnailAvailableListener() {
                 public void onThumbnailAvailable(Bitmap bitmap) {
                     if (bitmap == null) {
@@ -467,7 +467,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         boolean doBasicTabs = false;
         try {
             //todo basic tabs? should be part of custom ui?
-            if (AndroidUtils.getAndroidSdkInt() >= 11 && false) {
+            if (AndroidUtils.SDK_INT >= 11 && false) {
                 doBasicTabs = true;
             } else {
                 LinearLayout ll = createTabSpecIndicator(label, iconSet);
@@ -829,7 +829,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     /* UI property updaters */
 
-    public void updateCharacterCount() {
+    private void updateCharacterCount() {
         // TODO: verify correctness of the 0 remaining characters edge case
         CharSequence characterCountText;
 
@@ -1001,7 +1001,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 mSelectedProvider.getSocialSharingProperties().getAsBoolean("uses_set_status_if_no_url");
     }
 
-    public boolean doesActivityUrlAffectCharacterCountForSelectedProvider() {
+    private boolean doesActivityUrlAffectCharacterCountForSelectedProvider() {
         boolean url_reduces_max_chars = mSelectedProvider.getSocialSharingProperties()
                 .getAsBoolean("url_reduces_max_chars");
         boolean shows_url_as_url = mSelectedProvider.getSocialSharingProperties()

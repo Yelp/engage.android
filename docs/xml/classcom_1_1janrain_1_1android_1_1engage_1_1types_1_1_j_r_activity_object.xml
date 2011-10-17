@@ -3,7 +3,7 @@
   <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object" kind="class" prot="public">
     <compoundname>com::janrain::android::engage::types::JRActivityObject</compoundname>
     <basecompoundref prot="public" virt="non-virtual">Serializable</basecompoundref>
-    <basecompoundref refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable" prot="public" virt="non-virtual">JRJsonifiable</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">JRJsonifiable</basecompoundref>
     <innerclass refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1_1_shortened_url_callback" prot="public">com::janrain::android::engage::types::JRActivityObject::ShortenedUrlCallback</innerclass>
       <sectiondef kind="user-defined">
       <header>Private Attributes</header>
@@ -181,33 +181,6 @@
         </inbodydescription>
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="238" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="238" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1afd9a722e9e0f291cc111cdc947a60e0f" prot="private" static="no" mutable="no">
-        <type>transient boolean</type>
-        <definition>transient boolean mIsShortening</definition>
-        <argsstring></argsstring>
-        <name>mIsShortening</name>
-        <initializer> false</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="240" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="240" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a2e367c610a4272cf8f761419530d4942" prot="private" static="no" mutable="no">
-        <type>String</type>
-        <definition>String mShortenedUrl</definition>
-        <argsstring></argsstring>
-        <name>mShortenedUrl</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="241" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="241" bodyend="-1"/>
-      </memberdef>
       </sectiondef>
       <sectiondef kind="user-defined">
       <header>Constructors</header>
@@ -233,7 +206,7 @@
 <parametername>action</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>A string describing what the user did, written in the third person. This value cannot be <emphasis>null</emphasis> </para></parameterdescription>
+<para>A string describing what the user did, written in the third person. This value cannot be null</para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -248,7 +221,7 @@
 <parametername>IllegalArgumentException</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>if action is <emphasis>null</emphasis> </para></parameterdescription>
+<para>if action is null </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
@@ -692,13 +665,41 @@
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="90" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="90" bodyend="-1"/>
       </memberdef>
       </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1afd9a722e9e0f291cc111cdc947a60e0f" prot="private" static="no" mutable="no">
+        <type>transient boolean</type>
+        <definition>transient boolean mIsShortening</definition>
+        <argsstring></argsstring>
+        <name>mIsShortening</name>
+        <initializer> false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="241" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="241" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a2e367c610a4272cf8f761419530d4942" prot="private" static="no" mutable="no">
+        <type>String</type>
+        <definition>String mShortenedUrl</definition>
+        <argsstring></argsstring>
+        <name>mShortenedUrl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" line="242" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRActivityObject.java" bodystart="242" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a985a1b0429a8a359a4783c7409b91e3a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary" kindref="compound">JRDictionary</ref></type>
         <definition>JRDictionary toJRDictionary</definition>
         <argsstring>()</argsstring>
         <name>toJRDictionary</name>
-        <reimplements refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplements>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -734,47 +735,29 @@
 <listitem><para>Your Janrain Engage application has been configured with the given provider</para></listitem><listitem><para>The user has already authenticated and has given consent to publish activity</para></listitem></itemizedlist>
 </para><para>Otherwise, you will be given an error response indicating what was wrong. Detailed error responses will also be given if the activity parameter does not meet the formatting requirements described below.</para><para><simplesect kind="see"><para>For more information of Janrain Engage&apos;s activity api, see <ulink url="http://documentation.janrain.com/activity">the activity section</ulink> of our API Documentation. </para></simplesect>
 </para>    </detaileddescription>
-    <inheritancegraph>
-      <node id="49">
-        <label>JRJsonifiable</label>
-        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
-      </node>
-      <node id="48">
-        <label>JRActivityObject</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object"/>
-        <childnode refid="49" relation="public-inheritance">
-        </childnode>
-      </node>
-    </inheritancegraph>
     <collaborationgraph>
-      <node id="52">
+      <node id="48">
         <label>JRSmsObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object"/>
       </node>
-      <node id="51">
-        <label>JRJsonifiable</label>
-        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
-      </node>
-      <node id="54">
+      <node id="50">
         <label>JRDictionary</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary"/>
       </node>
-      <node id="50">
+      <node id="47">
         <label>JRActivityObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object"/>
-        <childnode refid="51" relation="public-inheritance">
-        </childnode>
-        <childnode refid="52" relation="usage">
+        <childnode refid="48" relation="usage">
           <edgelabel>mSms</edgelabel>
         </childnode>
-        <childnode refid="53" relation="usage">
+        <childnode refid="49" relation="usage">
           <edgelabel>mEmail</edgelabel>
         </childnode>
-        <childnode refid="54" relation="usage">
+        <childnode refid="50" relation="usage">
           <edgelabel>mProperties</edgelabel>
         </childnode>
       </node>
-      <node id="53">
+      <node id="49">
         <label>JREmailObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object"/>
       </node>

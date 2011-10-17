@@ -17,8 +17,9 @@ What's new in Janrain Engage for Android 2.0:
     elements disappear to accommodate the smaller available space.
 - Bug fixes:
   - No more NullPointerExceptions from JRConnectionManager
-  - User messages are now propagated to email/SMS intents the first time the button is pressed
+  - User messages are now propagated to email/SMS intents the first time the button is pressed.
   - Switched from URLConnection to HttpClient to avoid intermittent network failures.
+  - Multiple use auth_info tokens are no longer required.
 
 In addition to new features and bug fixes, compatibility with Cupcake is dropped. (Engage for Android is now
 compatible with Donut and above.)

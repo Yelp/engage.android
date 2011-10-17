@@ -11,43 +11,37 @@
         <definition>JRDictionary toJRDictionary</definition>
         <argsstring>()</argsstring>
         <name>toJRDictionary</name>
-        <reimplementedby refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_mp3_media_object_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplementedby>
-        <reimplementedby refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_image_media_object_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplementedby>
-        <reimplementedby refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplementedby>
-        <reimplementedby refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplementedby>
-        <reimplementedby refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1a985a1b0429a8a359a4783c7409b91e3a">toJRDictionary</reimplementedby>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" line="43"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" line="39"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
-<para>Created by IntelliJ IDEA. User: nathan Date: 9/24/11 Time: 10:51 PM To change this template use File | Settings | File Templates. </para>    </detaileddescription>
+    </detaileddescription>
     <inheritancegraph>
-      <node id="79">
+      <node id="74">
         <label>JRActionLink</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link"/>
-        <childnode refid="78" relation="public-inheritance">
+        <childnode refid="73" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="78">
+      <node id="73">
         <label>JRJsonifiable</label>
-        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
       </node>
-      <node id="80">
+      <node id="75">
         <label>JRActivityObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object"/>
-        <childnode refid="78" relation="public-inheritance">
+        <childnode refid="73" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" line="42" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" bodystart="42" bodyend="44"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" line="38" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" bodystart="38" bodyend="40"/>
     <listofallmembers>
       <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable_1a985a1b0429a8a359a4783c7409b91e3a" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRJsonifiable</scope><name>toJRDictionary</name></member>
     </listofallmembers>

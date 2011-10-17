@@ -2,7 +2,7 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
   <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment" kind="class" prot="public">
     <compoundname>com::janrain::android::engage::ui::JRPublishFragment</compoundname>
-    <basecompoundref refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment" prot="public" virt="non-virtual">JRUiFragment</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">JRUiFragment</basecompoundref>
       <sectiondef kind="public-static-attrib">
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1a0d9b7d6574fdb166e349519995a6076d" prot="public" static="yes" mutable="no">
         <type>final String</type>
@@ -494,7 +494,7 @@
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" line="142" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" bodystart="142" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1aa96732aa6ad28d99383da68ec903f77a" prot="private" static="no" mutable="no">
-        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button" kindref="compound">ColorButton</ref></type>
+        <type>ColorButton</type>
         <definition>ColorButton mShareButton</definition>
         <argsstring></argsstring>
         <name>mShareButton</name>
@@ -507,7 +507,7 @@
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" line="143" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" bodystart="143" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1ae76efe3045442bb4d7f64925f5a04f94" prot="private" static="no" mutable="no">
-        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button" kindref="compound">ColorButton</ref></type>
+        <type>ColorButton</type>
         <definition>ColorButton mConnectAndShareButton</definition>
         <argsstring></argsstring>
         <name>mConnectAndShareButton</name>
@@ -533,7 +533,7 @@
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" line="145" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" bodystart="145" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1a181059e0498c45c12cf322af9580b462" prot="private" static="no" mutable="no">
-        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button" kindref="compound">ColorButton</ref></type>
+        <type>ColorButton</type>
         <definition>ColorButton mEmailButton</definition>
         <argsstring></argsstring>
         <name>mEmailButton</name>
@@ -546,7 +546,7 @@
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" line="146" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" bodystart="146" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1a13226903fe406f1156cac10cf8022ade" prot="private" static="no" mutable="no">
-        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button" kindref="compound">ColorButton</ref></type>
+        <type>ColorButton</type>
         <definition>ColorButton mSmsButton</definition>
         <argsstring></argsstring>
         <name>mSmsButton</name>
@@ -925,32 +925,6 @@
         </inbodydescription>
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" line="610" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" bodystart="610" bodyend="616"/>
       </memberdef>
-      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1aaf5366b734ca474e71992d65bdf4cc22" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>void</type>
-        <definition>void updateCharacterCount</definition>
-        <argsstring>()</argsstring>
-        <name>updateCharacterCount</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" line="832" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" bodystart="832" bodyend="864"/>
-      </memberdef>
-      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1a5122c0e057509f57c14be92d135beec2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>boolean</type>
-        <definition>boolean doesActivityUrlAffectCharacterCountForSelectedProvider</definition>
-        <argsstring>()</argsstring>
-        <name>doesActivityUrlAffectCharacterCountForSelectedProvider</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" line="1004" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" bodystart="1004" bodyend="1012"/>
-      </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1a826af506af082428a469a6990619da30" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
@@ -1166,6 +1140,19 @@
         </inbodydescription>
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" line="823" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" bodystart="823" bodyend="828"/>
       </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1aaf5366b734ca474e71992d65bdf4cc22" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void updateCharacterCount</definition>
+        <argsstring>()</argsstring>
+        <name>updateCharacterCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" line="832" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" bodystart="832" bodyend="864"/>
+      </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1afd19470f433689878c2cb6efcd6a5471" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
         <definition>void updatePreviewTextWhenContentReplacesAction</definition>
@@ -1312,6 +1299,19 @@
         </inbodydescription>
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" line="999" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" bodystart="999" bodyend="1002"/>
       </memberdef>
+      <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1a5122c0e057509f57c14be92d135beec2" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean doesActivityUrlAffectCharacterCountForSelectedProvider</definition>
+        <argsstring>()</argsstring>
+        <name>doesActivityUrlAffectCharacterCountForSelectedProvider</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" line="1004" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRPublishFragment.java" bodystart="1004" bodyend="1012"/>
+      </memberdef>
       </sectiondef>
       <sectiondef kind="protected-func">
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1a3d11859dcce1d9703a49b6c8ec735c2b" prot="protected" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
@@ -1375,71 +1375,39 @@
       </memberdef>
       </sectiondef>
     <briefdescription>
-    </briefdescription>
+<para>Publishing UI, embeddable in a android.support.v4.app.FragmentActivity. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <inheritancegraph>
-      <node id="104">
-        <label>JRUiFragment</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment"/>
-      </node>
-      <node id="103">
-        <label>JRPublishFragment</label>
-        <childnode refid="104" relation="public-inheritance">
-        </childnode>
-      </node>
-    </inheritancegraph>
     <collaborationgraph>
-      <node id="109">
+      <node id="94">
         <label>JRSmsObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object"/>
       </node>
-      <node id="112">
-        <label>ColorButton</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button"/>
-      </node>
-      <node id="108">
-        <label>JRJsonifiable</label>
-        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
-      </node>
-      <node id="106">
-        <label>JRUiFragment</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment"/>
-      </node>
-      <node id="105">
+      <node id="92">
         <label>JRPublishFragment</label>
-        <childnode refid="106" relation="public-inheritance">
-        </childnode>
-        <childnode refid="107" relation="usage">
+        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment"/>
+        <childnode refid="93" relation="usage">
           <edgelabel>mActivityObject</edgelabel>
         </childnode>
-        <childnode refid="112" relation="usage">
-          <edgelabel>mEmailButton</edgelabel>
-          <edgelabel>mShareButton</edgelabel>
-          <edgelabel>mSmsButton</edgelabel>
-          <edgelabel>mConnectAndShareButton</edgelabel>
-        </childnode>
       </node>
-      <node id="111">
+      <node id="96">
         <label>JRDictionary</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary"/>
       </node>
-      <node id="107">
+      <node id="93">
         <label>JRActivityObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object"/>
-        <childnode refid="108" relation="public-inheritance">
-        </childnode>
-        <childnode refid="109" relation="usage">
+        <childnode refid="94" relation="usage">
           <edgelabel>mSms</edgelabel>
         </childnode>
-        <childnode refid="110" relation="usage">
+        <childnode refid="95" relation="usage">
           <edgelabel>mEmail</edgelabel>
         </childnode>
-        <childnode refid="111" relation="usage">
+        <childnode refid="96" relation="usage">
           <edgelabel>mProperties</edgelabel>
         </childnode>
       </node>
-      <node id="110">
+      <node id="95">
         <label>JREmailObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object"/>
       </node>
@@ -1464,7 +1432,7 @@
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment_1a5b97e54f81a44912c02d6786ca76fd3c" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>DIALOG_PROGRESS</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment_1a58e814875164d9bbefd858745927e443" prot="protected" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>dismissDialog</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment_1a0540765cef7a5b4e72504dacdf4858bb" prot="protected" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>dismissProgressDialog</name></member>
-      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1a5122c0e057509f57c14be92d135beec2" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>doesActivityUrlAffectCharacterCountForSelectedProvider</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1a5122c0e057509f57c14be92d135beec2" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>doesActivityUrlAffectCharacterCountForSelectedProvider</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1a510ec468fc90b4cd5ff39efe8f53a82b" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>EMAIL_SMS_TAB_TAG</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment_1ae42361d417cdd2b6caa48d180630003a" prot="protected" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>getColor</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment_1ae7efcfde93d7ceb0206931534352c759" prot="protected" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>getProgressDialog</name></member>
@@ -1561,7 +1529,7 @@
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1a4eb8ccbae86c15926dc66f8a3379e340" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>signOutButtonHandler</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment_1ac6815b13487e4ebd97809fb2fc897510" prot="protected" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>TAG</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment_1a6e82a4f092104fff8ea7997ae00d918d" prot="protected" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>tryToFinishActivity</name></member>
-      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1aaf5366b734ca474e71992d65bdf4cc22" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>updateCharacterCount</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1aaf5366b734ca474e71992d65bdf4cc22" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>updateCharacterCount</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1ac610c69761efd46ab69793bf896ca43b" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>updatePreviewTextWhenContentDoesNotReplaceAction</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment_1afd19470f433689878c2cb6efcd6a5471" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRPublishFragment</scope><name>updatePreviewTextWhenContentReplacesAction</name></member>
     </listofallmembers>

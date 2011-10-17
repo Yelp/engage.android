@@ -49,8 +49,8 @@ import com.janrain.android.engage.types.JRDictionary;
 public interface JREngageDelegate {
 
 /**
- * @name Configuration
- * Messages sent by JREngage during dialog launch/configuration
+ * @name Success notifications
+ * Messages sent by JREngage notifying success
  **/
 /*@{*/
 
@@ -131,33 +131,40 @@ public interface JREngageDelegate {
      **/
     void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider);
 
-	/**
-	 * Notifies the delegate when the application invokes the display of a library Activity, but the
+    /**
+     * Notifies the delegate after the social publishing dialog is closed (e.g., the user presses
+     * the back button) and publishing is complete. You may receive multiple \ref didPublish
+     * "void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider)"
+     * messages before the dialog is closed and publishing is complete.
+     **/
+    void jrSocialDidCompletePublishing();
+/*@}*/
+
+
+/**
+ * @name Failure notifications
+ * Messages sent by JREngage notifying failure
+ **/
+/*@{*/
+    /**
+     * Notifies the delegate when the application invokes the display of a library Activity, but the
      * Activity fails to start. May occur if the library failed to connect to the Engage server, or
      * if the JRActivityObject was null, etc.
-	 *
-	 * @param error
-	 *   The error that occurred during configuration
-	 *
-	 * @note
-	 * This message is only sent if your application tries to show a JREngage dialog, and not
-	 * necessarily when the error occurred. For example, if the error occurred during the library's
-	 * configuration with the Engage server, it will not be sent through this interface until the
+     *
+     * @param error
+     *   The error that occurred during configuration
+     *
+     * @note
+     * This message is only sent if your application tries to show a JREngage dialog, and not
+     * necessarily when the error occurred. For example, if the error occurred during the library's
+     * configuration with the Engage server, it will not be sent through this interface until the
      * application attempts to display a library Activity.
      *
      * The raison d'etre for this delayed delegate delivery is to allow for the possibility that an
      * application may speculatively configure the library, but never actually invoke any library
      * Activies.  In that case, no error is delivered to the application.
-	 **/
+     **/
     void jrEngageDialogDidFailToShowWithError(JREngageError error);
-/*@}*/
-
-
-/**
- * @name Authentication
- * Messages sent  by JREngage during authentication
- **/
-/*@{*/
 
     /**
      * Notifies the delegate that authorization was canceled for any reason other than an error.
@@ -202,13 +209,6 @@ public interface JREngageDelegate {
      *   List of Providers</a>
      **/
     void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider);
-/*@}*/
-
-/**
- * @name SocialPublishing
- * Messages sent by JREngage during social publishing
- **/
-/*@{*/
 
     /**
      * Notifies the delegate if social publishing was canceled for any reason other than an error.
@@ -216,14 +216,6 @@ public interface JREngageDelegate {
      * the cancelPublishing method, or if configuration of the library times out.
      **/
     void jrSocialDidNotCompletePublishing();
-
-    /**
-     * Notifies the delegate after the social publishing dialog is closed (e.g., the user presses
-     * the back button) and publishing is complete. You may receive multiple \ref didPublish
-     * "void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider)"
-     * messages before the dialog is closed and publishing is complete.
-     **/
-    void jrSocialDidCompletePublishing();
 
     /**
      * Notifies the delegate when publishing an activity failed and could not be recovered by the

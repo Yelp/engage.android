@@ -59,10 +59,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * Created by IntelliJ IDEA.
- * User: nathan
- * Date: 7/11/11
- * Time: 1:51 PM
+ * @internal
  */
 public abstract class JRUiFragment extends Fragment {
     private static final String KEY_MANAGED_DIALOGS = "jr_managed_dialogs";

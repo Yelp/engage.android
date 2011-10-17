@@ -2,7 +2,7 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
   <compounddef id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_provider_list_fragment" kind="class" prot="public">
     <compoundname>com::janrain::android::engage::ui::JRProviderListFragment</compoundname>
-    <basecompoundref refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment" prot="public" virt="non-virtual">JRUiFragment</basecompoundref>
+    <basecompoundref prot="public" virt="non-virtual">JRUiFragment</basecompoundref>
     <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_provider_list_fragment_1_1_provider_adapter" prot="private">com::janrain::android::engage::ui::JRProviderListFragment::ProviderAdapter</innerclass>
       <sectiondef kind="public-static-attrib">
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_provider_list_fragment_1a28c2bbaa6eab5181356472ca207b4398" prot="public" static="yes" mutable="no">
@@ -315,28 +315,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <inheritancegraph>
-      <node id="99">
-        <label>JRProviderListFragment</label>
-        <childnode refid="100" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="100">
-        <label>JRUiFragment</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment"/>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
-      <node id="101">
-        <label>JRProviderListFragment</label>
-        <childnode refid="102" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="102">
-        <label>JRUiFragment</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment"/>
-      </node>
-    </collaborationgraph>
     <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRProviderListFragment.java" line="65" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRProviderListFragment.java" bodystart="65" bodyend="276"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_provider_list_fragment_1a961c98fd0056dc954131538319ac9002" prot="package" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRProviderListFragment</scope><name>[instance initializer]</name></member>

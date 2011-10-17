@@ -57,9 +57,6 @@ import java.util.Map;
  *
  * @nosubgrouping
  *
- * @internal
- * iPhone dictionary work-alike class
- * @endinternal
  **/
 public final class JRDictionary extends HashMap<String, Object> {
 	public static final String DEFAULT_VALUE_STRING = "";
@@ -69,24 +66,12 @@ public final class JRDictionary extends HashMap<String, Object> {
     private static final String TAG = JRDictionary.class.getSimpleName();
 
 /**
- * @name Constructors
- * Constructors for JRDictionary
- **/
-/*@{*/
-    /**
-     * Default constructor.
-     **/
-    public JRDictionary() {
-        super();
-    }
-
-/**
  * @name JSON Serialization
  * Methods that serialize/deserialize the JRDictionary to/from JSON
  **/
 /*@{*/
     /**
-     * Serializes the specified dictionary object to a JSON string.
+     * Encodes the JRDictionary into a JSON string.
      *
      * @return
      *      JSON representation of the specified JRDictionary object
@@ -101,6 +86,31 @@ public final class JRDictionary extends HashMap<String, Object> {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Decodes the JSON string into a JRDictionary instance.
+     *
+     * @param json
+     *      The JSON string to be decoded.
+     *
+     * @return
+     *      A JRDictionary object representation of the JSON string
+     *
+     * @throws JSONException
+     *      When the JSON couldn't be parsed.
+     **/
+    public static JRDictionary fromJSON(String json) throws JSONException {
+        JSONTokener jsonTokener = new JSONTokener(json);
+
+        Object jsonObject = jsonTokener.nextValue();
+
+        try {
+            return (JRDictionary) unjsonify(jsonObject);
+        } catch (ClassCastException e) {
+            throw new JSONException(e.toString());
+        }
+    }
+/*@}*/
 
     private static void jsonify(Object object, JSONStringer jsonStringer) throws JSONException {
         if (object instanceof JRDictionary) {
@@ -134,30 +144,6 @@ public final class JRDictionary extends HashMap<String, Object> {
             jsonStringer.value(JSONObject.NULL);
         } else {
             throw new RuntimeException("Unexpected jsonify value: " + object);
-        }
-    }
-
-    /**
-     * Deserializes the specified JSON string to a JRDictionary instance.
-     *
-     * @param json
-     *      The JSON string to be deserialized.
-     *
-     * @return
-     *      A JRDictionary object representation of the JSON string
-     *
-     * @throws JSONException
-     *      When the JSON couldn't be parsed.
-     **/
-    public static JRDictionary fromJSON(String json) throws JSONException {
-        JSONTokener jsonTokener = new JSONTokener(json);
-
-        Object jsonObject = jsonTokener.nextValue();
-
-        try {
-            return (JRDictionary) unjsonify(jsonObject);
-        } catch (ClassCastException e) {
-            throw new JSONException(e.toString());
         }
     }
 
@@ -253,8 +239,6 @@ public final class JRDictionary extends HashMap<String, Object> {
     public Object put (String key, JRJsonifiable value) {
         return super.put(key, value);
     }
-
-    /*@}*/
 
 /**
  * @name Getting Dictionary Content
@@ -381,7 +365,7 @@ public final class JRDictionary extends HashMap<String, Object> {
 	 * 		The key of the value to be retrieved
 	 *
 	 * @return
-	 * 		The JRDictionary value if key is found, \e null otherwise
+	 * 		The JRDictionary value if key is found, null otherwise
 	 **/
 	public JRDictionary getAsDictionary(String key) {
 		return getAsDictionary(key, false);
@@ -398,7 +382,7 @@ public final class JRDictionary extends HashMap<String, Object> {
 	 * 		specified key does not exist
 	 *
 	 * @return
-	 * 		The JRDictionary value if key is found, empty object or \e null otherwise (based on value
+	 * 		The JRDictionary value if key is found, empty object or null otherwise (based on value
 	 *      of the \e shouldCreateIfNotFound flag)
 	 **/
 	public JRDictionary getAsDictionary(String key, boolean shouldCreateIfNotFound) {
@@ -422,7 +406,7 @@ public final class JRDictionary extends HashMap<String, Object> {
      * 		The key of the value to be retrieved
      *
      * @return
-     * 		The \e ArrayList<String> value if key is found, \e null otherwise
+     * 		The \e ArrayList<String> value if key is found, null otherwise
      **/
     public ArrayList<String> getAsListOfStrings(String key) {
         return getAsListOfStrings(key, false);
@@ -439,7 +423,7 @@ public final class JRDictionary extends HashMap<String, Object> {
      * 		if the specified key does not exist
      *
      * @return
-     * 		The \e ArrayList<String> value if key is found, empty array or \e null otherwise (based on value
+     * 		The \e ArrayList<String> value if key is found, empty array or null otherwise (based on value
 	 *      of the \e shouldCreateIfNotFound flag)
      **/
 
@@ -470,7 +454,7 @@ public final class JRDictionary extends HashMap<String, Object> {
      *      The key of the value to be retrieved
      *
      * @return
-     *      The JRProvider object if found, \e null otherwise
+     *      The JRProvider object if found, null otherwise
      **/
     public JRProvider getAsProvider(String key) {
         JRProvider retval = null;
@@ -490,7 +474,7 @@ public final class JRDictionary extends HashMap<String, Object> {
  **/
 /*@{*/
     /**
-     * Utility method used to check if a dictionary object is "empty", that is, it is \e null or
+     * Utility method used to check if a dictionary object is "empty", that is, it is null or
      * contains zero items
      *
      * @param dictionary

@@ -116,14 +116,15 @@ public class JRFlashMediaObject extends JRMediaObject {
      **/
     private Integer mExpandedHeight;
 
+/*@}*/
+
     /**
      * @internal
      * Contains the downloaded preview of the image for display in the publish
      * activity dialog.
      **/
     private transient Bitmap mPreview;
-/*@}*/
-
+    
 /**
  * @name Constructors
  * Constructor for flash media object

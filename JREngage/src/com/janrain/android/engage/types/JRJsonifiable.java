@@ -33,11 +33,7 @@
 package com.janrain.android.engage.types;
 
 /**
- * Created by IntelliJ IDEA.
- * User: nathan
- * Date: 9/24/11
- * Time: 10:51 PM
- * To change this template use File | Settings | File Templates.
+ * @internal 
  */
 public interface JRJsonifiable {
     public JRDictionary toJRDictionary();

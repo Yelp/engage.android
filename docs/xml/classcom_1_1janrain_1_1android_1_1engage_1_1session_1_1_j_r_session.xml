@@ -1638,40 +1638,34 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="117">
+      <node id="100">
         <label>JRSmsObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object"/>
       </node>
-      <node id="114">
+      <node id="98">
         <label>JRSession</label>
-        <childnode refid="115" relation="usage">
+        <childnode refid="99" relation="usage">
           <edgelabel>mActivity</edgelabel>
         </childnode>
       </node>
-      <node id="116">
-        <label>JRJsonifiable</label>
-        <link refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable"/>
-      </node>
-      <node id="119">
+      <node id="102">
         <label>JRDictionary</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary"/>
       </node>
-      <node id="115">
+      <node id="99">
         <label>JRActivityObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object"/>
-        <childnode refid="116" relation="public-inheritance">
-        </childnode>
-        <childnode refid="117" relation="usage">
+        <childnode refid="100" relation="usage">
           <edgelabel>mSms</edgelabel>
         </childnode>
-        <childnode refid="118" relation="usage">
+        <childnode refid="101" relation="usage">
           <edgelabel>mEmail</edgelabel>
         </childnode>
-        <childnode refid="119" relation="usage">
+        <childnode refid="102" relation="usage">
           <edgelabel>mProperties</edgelabel>
         </childnode>
       </node>
-      <node id="118">
+      <node id="101">
         <label>JREmailObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object"/>
       </node>
