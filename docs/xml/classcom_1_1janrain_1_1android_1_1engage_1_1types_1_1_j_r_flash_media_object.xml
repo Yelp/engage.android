@@ -18,7 +18,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="77" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="77" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="77" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="77" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a41b79808af056e6c361bf90129f2f9e9" prot="private" static="no" mutable="no">
         <type>String</type>
@@ -32,7 +32,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="85" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="85" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="85" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="85" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1ae36b625839b797b566a7231a82df6457" prot="private" static="no" mutable="no">
         <type>Integer</type>
@@ -46,7 +46,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="93" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="93" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="93" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="93" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a59a7d547fd72f4019c3b9fa46e9a593c" prot="private" static="no" mutable="no">
         <type>Integer</type>
@@ -60,7 +60,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="101" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="101" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="101" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="101" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a6ff6da0e3a536fc50e5d576260ab3801" prot="private" static="no" mutable="no">
         <type>Integer</type>
@@ -74,7 +74,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="109" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="109" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="109" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="109" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1ad2e3a8e0e5eaab7e8e9480eae81ee5b8" prot="private" static="no" mutable="no">
         <type>Integer</type>
@@ -88,7 +88,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="117" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="117" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="117" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="117" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1aaa43036003a51a54dd2cae740b7b2fde" prot="private" static="no" mutable="no">
         <type>transient Bitmap</type>
@@ -101,7 +101,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="124" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="124" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="124" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="124" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="user-defined">
@@ -149,7 +149,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="144" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="144" bodyend="148"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="144" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="144" bodyend="148"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="user-defined">
@@ -167,7 +167,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="162" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="162" bodyend="164"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="162" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="162" bodyend="164"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a328eb639ec47e6998651863dba8df1ee" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>String</type>
@@ -181,7 +181,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="172" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="172" bodyend="174"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="172" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="172" bodyend="174"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1aaea5f36f63d6c8ff03ce8f69df432cd0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>Integer</type>
@@ -195,7 +195,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="182" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="182" bodyend="184"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="182" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="182" bodyend="184"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a8b4c8bccc530aa0a9b0139e04913af32" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -220,7 +220,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="192" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="192" bodyend="194"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="192" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="192" bodyend="194"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a7929f15a32dafdfeff0f80c0f94110b3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>Integer</type>
@@ -234,7 +234,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="202" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="202" bodyend="204"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="202" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="202" bodyend="204"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a7013185ad2825ade83994b396c4fdfcd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -259,7 +259,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="212" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="212" bodyend="214"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="212" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="212" bodyend="214"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a51a1157689e6ab8924122ab926017107" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>Integer</type>
@@ -273,7 +273,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="222" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="222" bodyend="224"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="222" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="222" bodyend="224"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1ac00b039224f01f568a1633e339310329" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -298,7 +298,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="232" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="232" bodyend="234"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="232" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="232" bodyend="234"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a7627932d624e9c2a468ceb66ef96e0f4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>Integer</type>
@@ -312,7 +312,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="242" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="242" bodyend="244"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="242" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="242" bodyend="244"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a55ac98e9566ed6ee286122a3b05bf9cc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -337,7 +337,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="252" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="252" bodyend="254"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="252" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="252" bodyend="254"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -352,7 +352,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="257" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="257" bodyend="259"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="257" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="257" bodyend="259"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a25540df8a46ce2c9df1cab038150f983" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -369,7 +369,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="261" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="261" bodyend="263"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="261" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="261" bodyend="263"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1aced99e4192a47fe0592231db2e10f27c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>boolean</type>
@@ -382,7 +382,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="266" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="266" bodyend="268"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="266" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="266" bodyend="268"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1ac086e95fc7fdfe34853c5bcf18ba62a6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>String</type>
@@ -395,7 +395,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="272" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="272" bodyend="274"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="272" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="272" bodyend="274"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a68adac94351807681f1b2828b9c68734" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>String</type>
@@ -408,7 +408,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="277" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="277" bodyend="279"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="277" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="277" bodyend="279"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a985a1b0429a8a359a4783c7409b91e3a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary" kindref="compound">JRDictionary</ref></type>
@@ -422,7 +422,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="282" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="282" bodyend="294"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="282" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="282" bodyend="294"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -431,7 +431,7 @@
 <para>Create an flash media object, fill in the object&apos;s fields, and add the object to the <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object_1a3d89cbb011a9839da0b559556acad5f3" kindref="member">JRActivityObject.mMedia</ref> array in your <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object" kindref="compound">JRActivityObject</ref>. How the flash videos get presented and whether or not they are used, depend on the provider.</para><para>Each video must contain a <emphasis>swfSrc</emphasis> url, which is the URL of the Flash object to be rendered, and an <emphasis>imgSrc</emphasis>, which is the URL of an photo that should be displayed in place of the flash object until the user clicks to prompt the flash object to play. Flash object has two optional fields, <emphasis>width</emphasis> and <emphasis>height</emphasis>, which can be used to override the default choices when displaying the video in the provider&apos;s stream (e.g., Facebook&apos;s stream). It also has two optional fields, <emphasis>expanded_width</emphasis> and <emphasis>expanded_height</emphasis>, to specify the width and height of flash object will resize to, on the provider&apos;s stream, once the user clicks on it.</para><para><simplesect kind="note"><para>You can only include one <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object" kindref="compound">JRFlashMediaObject</ref> in the media array. Any others will be ignored.</para></simplesect>
 <simplesect kind="see"><para>Format and rules are identical to those described on the <ulink url="http://developers.facebook.com/docs/guides/attachments">Facebook Developer page on Attachments</ulink>. </para></simplesect>
 </para>    </detaileddescription>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="64" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="64" bodyend="295"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" line="64" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRFlashMediaObject.java" bodystart="64" bodyend="295"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_media_object_1a69a942495a0864024e78ba629b005b41" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRFlashMediaObject</scope><name>downloadThumbnail</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a7627932d624e9c2a468ceb66ef96e0f4" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRFlashMediaObject</scope><name>getExpandedHeight</name></member>

@@ -47,6 +47,6 @@
 <codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary" kindref="compound" tooltip="A dictionary that maps String keys to values of different types.">JRDictionary</ref><sp/>toJRDictionary();</highlight></codeline>
 <codeline lineno="44"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java"/>
   </compounddef>
 </doxygen>

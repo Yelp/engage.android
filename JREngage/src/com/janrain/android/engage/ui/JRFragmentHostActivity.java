@@ -149,7 +149,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
     }
 
     public boolean isAuthFlow() {
-        // True if this is an auth flow, false for publish flow
         return getIntent().getExtras().getBoolean(JR_AUTH_FLOW);
     }
 

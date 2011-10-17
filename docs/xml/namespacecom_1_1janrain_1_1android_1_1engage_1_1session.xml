@@ -4,13 +4,12 @@
     <compoundname>com::janrain::android::engage::session</compoundname>
     <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_authenticated_user" prot="public">com::janrain::android::engage::session::JRAuthenticatedUser</innerclass>
     <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_provider" prot="public">com::janrain::android::engage::session::JRProvider</innerclass>
-    <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_data" prot="public">com::janrain::android::engage::session::JRSessionData</innerclass>
+    <innerclass refid="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session" prot="public">com::janrain::android::engage::session::JRSession</innerclass>
     <innerclass refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate" prot="public">com::janrain::android::engage::session::JRSessionDelegate</innerclass>
-    <innerclass refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_user_interface_delegate" prot="public">com::janrain::android::engage::session::JRUserInterfaceDelegate</innerclass>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRAuthenticatedUser.java" line="32"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRAuthenticatedUser.java" line="32"/>
   </compounddef>
 </doxygen>

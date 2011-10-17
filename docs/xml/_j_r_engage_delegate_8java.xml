@@ -71,6 +71,6 @@
 <codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>jrSocialPublishJRActivityDidFail(<ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object" kindref="compound" tooltip="An activity object you create, populate, and post to the user&amp;#39;s activity stream.">JRActivityObject</ref><sp/>activity,<sp/>JREngageError<sp/>error,<sp/>String<sp/>provider);</highlight></codeline>
 <codeline lineno="246"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngageDelegate.java"/>
   </compounddef>
 </doxygen>

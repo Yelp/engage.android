@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRUiFragment.java" line="91" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRUiFragment.java" bodystart="91" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRUiFragment.java" line="90" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRUiFragment.java" bodystart="90" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -39,14 +39,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRUiFragment.java" line="94" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRUiFragment.java" bodystart="94" bodyend="104"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRUiFragment.java" line="93" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRUiFragment.java" bodystart="93" bodyend="103"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRUiFragment.java" line="90" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRUiFragment.java" bodystart="90" bodyend="105"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRUiFragment.java" line="89" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRUiFragment.java" bodystart="89" bodyend="104"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment_1_1_finish_receiver_1afe2ab6137f59f9ff640f1e3b74080ad7" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRUiFragment::FinishReceiver</scope><name>onReceive</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment_1_1_finish_receiver_1ac6815b13487e4ebd97809fb2fc897510" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRUiFragment::FinishReceiver</scope><name>TAG</name></member>

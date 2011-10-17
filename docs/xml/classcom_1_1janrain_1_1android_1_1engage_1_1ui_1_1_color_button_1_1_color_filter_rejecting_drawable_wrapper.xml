@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="165" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="165" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="165" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="165" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="package-func">
@@ -34,7 +34,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="166" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="166" bodyend="168"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="166" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="166" bodyend="168"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -57,7 +57,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="170" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="170" bodyend="172"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="170" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="170" bodyend="172"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -76,7 +76,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="174" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="174" bodyend="176"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="174" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="174" bodyend="176"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a8bd29819819ef7f76692e19e17eb3c2e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -93,7 +93,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="179" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="179" bodyend="181"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="179" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="179" bodyend="181"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a187b1a3105d9bc2aebd6e6b503ce1a56" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -110,7 +110,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="184" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="184" bodyend="186"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="184" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="184" bodyend="186"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a0c8618c617e65d5ab8400704bbc09ed1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -123,7 +123,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="189" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="189" bodyend="191"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="189" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="189" bodyend="191"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a4465ad295cfad6e476a6cff47779ecde" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -152,7 +152,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="194" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="194" bodyend="196"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="194" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="194" bodyend="196"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1afc2bab77937fec51b7951616cdbde2b8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -169,7 +169,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="199" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="199" bodyend="201"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="199" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="199" bodyend="201"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a2c4ccc73fa8da48959766514f12d27dd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -186,7 +186,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="204" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="204" bodyend="206"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="204" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="204" bodyend="206"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1aaacf21c197eef87d34f030f4053ea4d5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -199,7 +199,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="209" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="209" bodyend="211"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="209" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="209" bodyend="211"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ab099d887876a862f357debccfbba7b9e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -216,7 +216,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="214" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="214" bodyend="216"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="214" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="214" bodyend="216"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a5d700c4270a3e1b7118ed8d5f8e2e364" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -233,7 +233,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="219" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="219" bodyend="221"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="219" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="219" bodyend="221"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1af10524a54f278f14be831e31aa1c64ac" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -246,7 +246,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="224" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="224" bodyend="226"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="224" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="224" bodyend="226"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a0461b41e48dc08299506944ce5187ca3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -267,7 +267,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="229" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="229" bodyend="231"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="229" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="229" bodyend="231"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1aa85d1fcb44494d6bf58f3c67b27036cd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -284,7 +284,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="234" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="234" bodyend="236"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="234" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="234" bodyend="236"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ae3dd74abb39f44673cb76e48772572e7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -305,7 +305,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="239" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="239" bodyend="241"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="239" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="239" bodyend="241"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ab61e58618b4ad5ae77e66597e0c34df4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -318,7 +318,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="244" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="244" bodyend="246"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="244" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="244" bodyend="246"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ae9631672f6225904a3ac0e3a6fee4d2d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>boolean</type>
@@ -331,7 +331,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="249" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="249" bodyend="251"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="249" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="249" bodyend="251"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a96231ac279e3e004b8afbb0413f20e5a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>boolean</type>
@@ -348,7 +348,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="254" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="254" bodyend="256"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="254" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="254" bodyend="256"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1aab22c0e314b7797f960d859ba885a8ef" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int[]</type>
@@ -361,7 +361,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="259" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="259" bodyend="261"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="259" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="259" bodyend="261"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1aefe901398ac8afec1ed3fa3b611a32a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>Drawable</type>
@@ -374,7 +374,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="264" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="264" bodyend="266"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="264" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="264" bodyend="266"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a0b3a1a29d1f00a71d76267900b046b34" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>boolean</type>
@@ -395,7 +395,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="269" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="269" bodyend="271"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="269" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="269" bodyend="271"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a1991344faa8a332a36de30f16ab3fef4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>Region</type>
@@ -408,7 +408,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="274" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="274" bodyend="276"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="274" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="274" bodyend="276"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1aeba92462a1b31a326957c34fe12eef86" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -421,7 +421,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="294" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="294" bodyend="296"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="294" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="294" bodyend="296"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ae3432e55107fbe29491fcdfb04423fd5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -434,7 +434,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="299" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="299" bodyend="301"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="299" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="299" bodyend="301"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ac99a2e6f8ae510770bb984583d297633" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -447,7 +447,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="304" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="304" bodyend="306"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="304" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="304" bodyend="306"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ac64b27285edf4c4411591ef2844f802e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -460,7 +460,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="309" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="309" bodyend="311"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="309" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="309" bodyend="311"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ace6f47e769ff982240f92b3bf9dc3428" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>boolean</type>
@@ -477,7 +477,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="314" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="314" bodyend="316"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="314" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="314" bodyend="316"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a4f25cdfda3d19c5df77bf47e9ac39d77" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>ColorFilterRejectingDrawableWrapper</type>
@@ -490,7 +490,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="319" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="319" bodyend="322"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="319" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="319" bodyend="322"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1abd51a03f7e3828c3566625b25cd54e1b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -516,7 +516,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="326" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="325" bodyend="329"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="326" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="325" bodyend="329"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a8a6c5bb6565ff2e8d50fa493e6c2eb01" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>ConstantState</type>
@@ -529,14 +529,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="332" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="332" bodyend="334"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="332" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="332" bodyend="334"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="164" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="164" bodyend="335"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" line="164" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/ColorButton.java" bodystart="164" bodyend="335"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1a722caa842c64f7f62459a4d69d2a1d96" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::ColorButton::ColorFilterRejectingDrawableWrapper</scope><name>_setColorFilter</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_color_button_1_1_color_filter_rejecting_drawable_wrapper_1ab61e58618b4ad5ae77e66597e0c34df4" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::ColorButton::ColorFilterRejectingDrawableWrapper</scope><name>clearColorFilter</name></member>

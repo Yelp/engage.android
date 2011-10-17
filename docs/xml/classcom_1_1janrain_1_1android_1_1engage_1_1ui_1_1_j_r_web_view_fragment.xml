@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="75" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="75" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="76" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="76" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a28c2bbaa6eab5181356472ca207b4398" prot="public" static="yes" mutable="no">
         <type>final int</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="76" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="76" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="77" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="77" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a07dcd7e249173ccbe407cabd6fd30ec5" prot="public" static="yes" mutable="no">
         <type>final int</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="77" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="77" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="78" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="78" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a5cf480d816b1b77f69d82709f122c6e7" prot="public" static="yes" mutable="no">
         <type>final String</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="78" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="78" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="79" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="79" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -73,7 +73,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="84" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="84" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="85" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="85" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a0fe51005b66c096be4689db4cd6b46ea" prot="private" static="no" mutable="no">
         <type>boolean</type>
@@ -87,7 +87,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="85" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="85" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="86" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="86" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a5c1b0783cb6fcc63064558e1274552f4" prot="private" static="no" mutable="no">
         <type>boolean</type>
@@ -101,7 +101,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="86" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="86" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="87" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="87" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1ace16f8d3e69c798ec139f3248bb33b37" prot="private" static="no" mutable="no">
         <type>boolean</type>
@@ -115,7 +115,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="87" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="87" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="88" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="88" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1aee1825cf7d13685ab77a039f39cefd3a" prot="private" static="no" mutable="no">
         <type>boolean</type>
@@ -129,7 +129,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="88" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="88" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="89" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="89" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1aa0450c1736ae6dcd2906e6829e71f3b6" prot="private" static="no" mutable="no">
         <type>JRProvider</type>
@@ -142,7 +142,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="89" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="89" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="90" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="90" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a087f0cc74c408b67151b86889a98b4a8" prot="private" static="no" mutable="no">
         <type>WebSettings</type>
@@ -155,7 +155,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="90" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="90" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="91" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="91" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1af31b7d8fc5028e303bdb77783988bc8e" prot="private" static="no" mutable="no">
         <type>ProgressBar</type>
@@ -168,7 +168,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="91" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="91" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="92" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="92" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a244c93e5878e13aefac95531183ada96" prot="private" static="no" mutable="no">
         <type>WebViewClient</type>
@@ -181,7 +181,7 @@
 <para>Handler for webkit events, etc. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="338" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="264" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="345" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="266" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a6258c8dfe6e251de9c30b2bcb06e4a3f" prot="private" static="no" mutable="no">
         <type>WebChromeClient</type>
@@ -202,7 +202,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="347" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="340" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="354" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="347" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1aba3e15f366cf5489516128e585269d1d" prot="private" static="no" mutable="no">
         <type>JRConnectionManagerDelegate</type>
@@ -215,7 +215,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="469" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="349" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="476" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="356" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="package-attrib">
@@ -246,7 +246,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="259" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="241" bodyend="-1"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="261" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="243" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="package-func">
@@ -261,7 +261,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="80"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="81"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -288,7 +288,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="94" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="94" bodyend="134"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="95" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="95" bodyend="136"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a5e729d0c3f1baa46ff20b7879719d3b7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -305,7 +305,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="137" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="137" bodyend="148"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="139" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="139" bodyend="150"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1aa313fbad648f4a1660b2b0c05fe8f10c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -318,7 +318,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="151" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="151" bodyend="165"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="153" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="153" bodyend="167"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a5c16dff8cae5b02eb3e557a675d83b46" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -339,7 +339,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="209" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="209" bodyend="213"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="211" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="211" bodyend="215"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a37a55c533c74b60c0290ef1329d74e65" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>boolean</type>
@@ -356,7 +356,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="216" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="216" bodyend="224"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="218" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="218" bodyend="226"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -379,7 +379,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="167" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="167" bodyend="183"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="169" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="169" bodyend="185"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a1fe2d89f801b1ae11a02363c12ffb23c" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>boolean</type>
@@ -396,7 +396,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="195" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="195" bodyend="198"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="197" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="197" bodyend="200"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a9aef585bac54e5e206e4139d47169457" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -409,7 +409,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="200" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="200" bodyend="202"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="202" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="202" bodyend="204"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1ae52688891bbef191551660a780792dda" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -422,7 +422,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="204" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="204" bodyend="206"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="206" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="206" bodyend="208"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1aa9122f1a28154b62fd3bf3572c023d45" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -439,7 +439,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="226" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="226" bodyend="239"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="228" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="228" bodyend="241"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="protected-func">
@@ -454,7 +454,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="186" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="186" bodyend="193"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="188" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="188" bodyend="195"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1acb776333595cb036bf935852041cb088" prot="protected" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -467,7 +467,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="472" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="472" bodyend="476"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="479" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="479" bodyend="483"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -475,6 +475,17 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
+      <node id="126">
+        <label>JRWebViewFragment</label>
+        <childnode refid="127" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="127">
+        <label>JRUiFragment</label>
+        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
       <node id="128">
         <label>JRWebViewFragment</label>
         <childnode refid="129" relation="public-inheritance">
@@ -484,19 +495,8 @@
         <label>JRUiFragment</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment"/>
       </node>
-    </inheritancegraph>
-    <collaborationgraph>
-      <node id="130">
-        <label>JRWebViewFragment</label>
-        <childnode refid="131" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="131">
-        <label>JRUiFragment</label>
-        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment"/>
-      </node>
     </collaborationgraph>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="74" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="74" bodyend="477"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" line="75" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java" bodystart="75" bodyend="484"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a961c98fd0056dc954131538319ac9002" prot="package" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRWebViewFragment</scope><name>[instance initializer]</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment_1aa5dbf028c9971e99017cec5aea254901" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRWebViewFragment</scope><name>DIALOG_ABOUT</name></member>
@@ -517,7 +517,7 @@
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1aba3e15f366cf5489516128e585269d1d" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRWebViewFragment</scope><name>mMobileEndPointConnectionDelegate</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1af31b7d8fc5028e303bdb77783988bc8e" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRWebViewFragment</scope><name>mProgressSpinner</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1aa0450c1736ae6dcd2906e6829e71f3b6" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRWebViewFragment</scope><name>mProvider</name></member>
-      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment_1a8aadc8de7bbfeb12364b6e25fa3df1c7" prot="protected" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRWebViewFragment</scope><name>mSessionData</name></member>
+      <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_ui_fragment_1a35a40b886acd0f82cc60bdcdf7bd72fa" prot="protected" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRWebViewFragment</scope><name>mSession</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a6258c8dfe6e251de9c30b2bcb06e4a3f" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRWebViewFragment</scope><name>mWebChromeClient</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1afc4ac98688b7562f5e01beba7e9bc381" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRWebViewFragment</scope><name>mWebView</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_web_view_fragment_1a244c93e5878e13aefac95531183ada96" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::ui::JRWebViewFragment</scope><name>mWebviewClient</name></member>

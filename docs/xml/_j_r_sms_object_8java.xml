@@ -93,13 +93,14 @@
 <codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="173"><highlight class="normal"></highlight></codeline>
 <codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1ab482a851576f3766af32a2988ca25f59" kindref="member">addUrl</ref>(String<sp/>url)<sp/>{</highlight></codeline>
-<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a927dee6b6e7145029fe7bcc3a3bd19e0" kindref="member">mUrls</ref>.size()<sp/>&gt;=<sp/>5)</highlight></codeline>
-<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>IllegalArgumentException(</highlight><highlight class="stringliteral">&quot;JRSmsObject<sp/>supports<sp/>a<sp/>maximum<sp/>of<sp/>five<sp/>URLs&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="183"><highlight class="normal"></highlight></codeline>
-<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a927dee6b6e7145029fe7bcc3a3bd19e0" kindref="member">mUrls</ref>.add(url);</highlight></codeline>
-<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="187"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(url<sp/>==<sp/>null)<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>IllegalArgumentException(</highlight><highlight class="stringliteral">&quot;illegal<sp/>null<sp/>paramter&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a927dee6b6e7145029fe7bcc3a3bd19e0" kindref="member">mUrls</ref>.size()<sp/>&gt;=<sp/>5)</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>IllegalArgumentException(</highlight><highlight class="stringliteral">&quot;JRSmsObject<sp/>supports<sp/>a<sp/>maximum<sp/>of<sp/>five<sp/>URLs&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object_1a927dee6b6e7145029fe7bcc3a3bd19e0" kindref="member">mUrls</ref>.add(url);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="188"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRSmsObject.java"/>
   </compounddef>
 </doxygen>

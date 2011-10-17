@@ -22,7 +22,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" line="43"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" line="43"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -47,7 +47,7 @@
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" line="42" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" bodystart="42" bodyend="44"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" line="42" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/types/JRJsonifiable.java" bodystart="42" bodyend="44"/>
     <listofallmembers>
       <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_jsonifiable_1a985a1b0429a8a359a4783c7409b91e3a" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::types::JRJsonifiable</scope><name>toJRDictionary</name></member>
     </listofallmembers>

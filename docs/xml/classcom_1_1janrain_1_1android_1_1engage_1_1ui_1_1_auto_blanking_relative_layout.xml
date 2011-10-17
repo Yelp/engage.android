@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" line="49" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" bodystart="49" bodyend="51"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" line="49" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" bodystart="49" bodyend="51"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_auto_blanking_relative_layout_1a83bd216be09d6cf3f5ea0eff1e58d02c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" line="53" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" bodystart="53" bodyend="55"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" line="53" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" bodystart="53" bodyend="55"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_auto_blanking_relative_layout_1a958b47c667a0ce9e442cc22fc88b4cfb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -65,7 +65,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" line="57" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" bodystart="57" bodyend="59"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" line="57" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" bodystart="57" bodyend="59"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_auto_blanking_relative_layout_1a25bca9a1352e622b784056afad242b25" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -82,14 +82,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" line="79" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" bodystart="79" bodyend="96"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" line="79" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" bodystart="79" bodyend="96"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
 <para>Created by IntelliJ IDEA. User: nathan Date: 8/30/11 Time: 2:08 PM To change this template use File | Settings | File Templates. </para>    </detaileddescription>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" line="48" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" bodystart="48" bodyend="146"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" line="48" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/ui/AutoBlankingRelativeLayout.java" bodystart="48" bodyend="146"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_auto_blanking_relative_layout_1a7b636d999aa66ddbc8cd4c82b8b1cc1c" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::AutoBlankingRelativeLayout</scope><name>AutoBlankingRelativeLayout</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_auto_blanking_relative_layout_1a83bd216be09d6cf3f5ea0eff1e58d02c" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::ui::AutoBlankingRelativeLayout</scope><name>AutoBlankingRelativeLayout</name></member>

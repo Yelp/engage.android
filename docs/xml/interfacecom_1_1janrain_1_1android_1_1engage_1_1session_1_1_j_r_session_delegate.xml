@@ -18,7 +18,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="52"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="52"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -33,7 +33,7 @@
 <para>Triggered by the calling application via <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a5d37932565edbaf3d879f5848a7bc889" kindref="member">JREngage.cancelAuthentication</ref> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="57"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="57"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ad3bc0153588fbb980e281b30df799fee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -69,7 +69,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="66"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="66"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ae1b5bd7c8d7cc8571558a70b71665b0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -105,7 +105,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="76"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="76"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1aecdac2ab1a0aba57ca04963f00f1e809" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -163,7 +163,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="92"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="92"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a465923aab8bfd6dc060616eb7f1d592e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -210,7 +210,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="103"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="103"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a279e143204d06fc00dffa95df119e2f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -235,7 +235,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="110"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="110"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a5cab82831f034aeead2194e290f5dc2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -248,7 +248,7 @@
 <para>Triggered triggered by the calling application via <ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_1a45445132f9f15aa224c19e11bec26982" kindref="member">JREngage.cancelPublishing</ref> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="115"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="115"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a8d90b754df01540d43629225e14d97fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -261,7 +261,7 @@
 <para>Triggered when the publishing dialog closes </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="120"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="120"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1ad1ac8e6b2eb9fbe12c60e786ff807b2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -297,7 +297,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="129"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="129"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1aba48b8f27348a7a1c5c47239bed2aaf2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -344,7 +344,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="140"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="140"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a4bfe5c525542a0c6aac2cf4efa943763" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -369,7 +369,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="147"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="147"/>
       </memberdef>
       <memberdef kind="function" id="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a7e42ed07cce359f79748f0ba6ac53733" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -379,17 +379,17 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Triggered when JRSessionData has finished loading the mobile configuration </para>        </detaileddescription>
+<para>Triggered when JRSession has finished loading the mobile configuration </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="152"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="152"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="44" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" bodystart="44" bodyend="180"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" line="44" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSessionDelegate.java" bodystart="44" bodyend="180"/>
     <listofallmembers>
       <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1a465923aab8bfd6dc060616eb7f1d592e" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>authenticationCallToTokenUrlDidFail</name></member>
       <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_delegate_1aa4c2de831860745adf27e776a3e536a8" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::session::JRSessionDelegate</scope><name>authenticationDidCancel</name></member>

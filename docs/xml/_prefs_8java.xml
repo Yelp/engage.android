@@ -105,6 +105,6 @@
 <codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="121"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/utils/Prefs.java"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/utils/Prefs.java"/>
   </compounddef>
 </doxygen>

@@ -396,7 +396,7 @@
 <codeline lineno="390"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">continue</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="391"><highlight class="normal"></highlight></codeline>
 <codeline lineno="392"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(Config.LOGD)<sp/>Log.d(TAG,<sp/></highlight><highlight class="stringliteral">&quot;Downloading<sp/>icon:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>iconFileName);</highlight></codeline>
-<codeline lineno="393"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>URL<sp/>url<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>URL(JRSessionData.getEnvironment().getServerUrl()</highlight></codeline>
+<codeline lineno="393"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>URL<sp/>url<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>URL(JRSession.getEnvironment().getServerUrl()</highlight></codeline>
 <codeline lineno="394"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/cdn/images/mobile_icons/android/&quot;</highlight><highlight class="normal"><sp/>+<sp/>iconFileName);</highlight></codeline>
 <codeline lineno="395"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>InputStream<sp/>is<sp/>=<sp/>url.openStream();</highlight></codeline>
 <codeline lineno="396"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FileOutputStream<sp/>fos<sp/>=<sp/>c.openFileOutput(</highlight><highlight class="stringliteral">&quot;providericon~&quot;</highlight><highlight class="normal"><sp/>+<sp/>iconFileName,</highlight></codeline>
@@ -480,6 +480,6 @@
 <codeline lineno="474"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="475"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/session/JRProvider.java"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRProvider.java"/>
   </compounddef>
 </doxygen>

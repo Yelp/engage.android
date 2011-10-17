@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" line="134" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" bodystart="134" bodyend="136"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" line="128" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" bodystart="128" bodyend="130"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1_1_inflating_entity_1af310e8809fe54ec7dca0678add59ce7e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>InputStream</type>
@@ -33,7 +33,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" line="139" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" bodystart="139" bodyend="141"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" line="133" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" bodystart="133" bodyend="135"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1_1_inflating_entity_1acb31613b17e8de16c78f2620ac72fa12" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>long</type>
@@ -46,14 +46,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" line="144" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" bodystart="144" bodyend="146"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" line="138" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" bodystart="138" bodyend="140"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
 <para>From the Google IO app: Simple <ref refid="" kindref="compound">HttpEntityWrapper</ref> that inflates the wrapped <ref refid="" kindref="compound">HttpEntity</ref> by passing it through <ref refid="" kindref="compound">GZIPInputStream</ref>. </para>    </detaileddescription>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" line="133" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" bodystart="133" bodyend="147"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" line="127" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" bodystart="127" bodyend="141"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1_1_inflating_entity_1af310e8809fe54ec7dca0678add59ce7e" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::AsyncHttpClient::HttpSender::InflatingEntity</scope><name>getContent</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1_1_http_sender_1_1_inflating_entity_1acb31613b17e8de16c78f2620ac72fa12" prot="public" virt="non-virtual"><scope>com::janrain::android::engage::net::async::AsyncHttpClient::HttpSender::InflatingEntity</scope><name>getContentLength</name></member>

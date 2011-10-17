@@ -51,13 +51,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREnvironment.java" line="40" bodyfile="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREnvironment.java" bodystart="40" bodyend="56"/>
+        <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREnvironment.java" line="40" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREnvironment.java" bodystart="40" bodyend="56"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/nathan/temp/engage.android/JREngage/src/com/janrain/android/engage/JREngage.java" line="32"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/JREngage.java" line="32"/>
   </compounddef>
 </doxygen>
