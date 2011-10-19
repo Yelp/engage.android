@@ -213,7 +213,7 @@
 <parametername>url</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The URL of the resource being mentioned in the activity update. May be null</para></parameterdescription>
+<para>The URL of the resource being mentioned in the activity update. Null for no resource link.</para></parameterdescription>
 </parameteritem>
 </parameterlist>
 <parameterlist kind="exception"><parameteritem>

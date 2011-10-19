@@ -82,7 +82,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" line="70" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" bodystart="70" bodyend="292"/>
+    <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" line="70" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/net/async/AsyncHttpClient.java" bodystart="70" bodyend="293"/>
     <listofallmembers>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1ab9114ea86dbb39b4ab0c644a409a8ada" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::async::AsyncHttpClient</scope><name>AsyncHttpClient</name></member>
       <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1net_1_1async_1_1_async_http_client_1a94a33eb971478d949ae4746a84a6adc1" prot="private" virt="non-virtual"><scope>com::janrain::android::engage::net::async::AsyncHttpClient</scope><name>ENCODING_GZIP</name></member>

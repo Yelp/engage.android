@@ -86,7 +86,7 @@
       </sectiondef>
       <sectiondef kind="user-defined">
       <header>Getters</header>
-      <description><para>Getters for the JRActiionLinks&apos;s private properties </para></description>
+      <description><para>Getters for the JRActionLinks&apos;s private properties </para></description>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_action_link_1afab766445043570e6a82c14851366933" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>String</type>
         <definition>String getText</definition>

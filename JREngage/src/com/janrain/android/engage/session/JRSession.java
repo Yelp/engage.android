@@ -488,7 +488,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                         } else {
                             publishError = new JREngageError(
                                     errorMessage,
-                                    JREngageError.SocialPublishingError.FAILED,
+                                    SocialPublishingError.FAILED,
                                     ErrorType.PUBLISH_INVALID_ACTIVITY);
                         }
                         break;

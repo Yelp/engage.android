@@ -561,7 +561,7 @@
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSession.java" line="127" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSession.java" bodystart="127" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_1a2d75b269368bad9f1c5be907a366a863" prot="private" static="no" mutable="no">
-        <type>JREngageError</type>
+        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
         <definition>JREngageError mError</definition>
         <argsstring></argsstring>
         <name>mError</name>
@@ -700,7 +700,7 @@
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSession.java" line="408" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSession.java" bodystart="408" bodyend="509"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_1a055581b888adb32f574ada131818c9e7" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>JREngageError</type>
+        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
         <definition>JREngageError startGetConfiguration</definition>
         <argsstring>()</argsstring>
         <name>startGetConfiguration</name>
@@ -713,7 +713,7 @@
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSession.java" line="580" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSession.java" bodystart="580" bodyend="595"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_1ab2347023e09f6bd6bc3f54bc06e3240d" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>JREngageError</type>
+        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
         <definition>JREngageError finishGetConfiguration</definition>
         <argsstring>(String dataStr)</argsstring>
         <name>finishGetConfiguration</name>
@@ -730,7 +730,7 @@
         <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSession.java" line="597" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSession.java" bodystart="597" bodyend="673"/>
       </memberdef>
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_1a4d888d34991f2b36a6c22ed2e9d05df1" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>JREngageError</type>
+        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
         <definition>JREngageError finishGetConfiguration</definition>
         <argsstring>(String dataStr, String eTag)</argsstring>
         <name>finishGetConfiguration</name>
@@ -881,7 +881,7 @@
       </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="classcom_1_1janrain_1_1android_1_1engage_1_1session_1_1_j_r_session_1a5c629926a8842769945c98f3cc4d286d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>JREngageError</type>
+        <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
         <definition>JREngageError getError</definition>
         <argsstring>()</argsstring>
         <name>getError</name>
@@ -1412,7 +1412,7 @@
         <argsstring>(JREngageError error)</argsstring>
         <name>triggerAuthenticationDidFail</name>
         <param>
-          <type>JREngageError</type>
+          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
           <declname>error</declname>
         </param>
         <briefdescription>
@@ -1485,7 +1485,7 @@
         <argsstring>(JREngageError error, JRActivityObject activity, String providerName)</argsstring>
         <name>triggerPublishingJRActivityDidFail</name>
         <param>
-          <type>JREngageError</type>
+          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
           <declname>error</declname>
         </param>
         <param>
@@ -1510,7 +1510,7 @@
         <argsstring>(JREngageError err)</argsstring>
         <name>triggerPublishingDialogDidFail</name>
         <param>
-          <type>JREngageError</type>
+          <type><ref refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kindref="compound">JREngageError</ref></type>
           <declname>err</declname>
         </param>
         <briefdescription>
@@ -1638,36 +1638,43 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="100">
+      <node id="101">
         <label>JRSmsObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_sms_object"/>
       </node>
       <node id="98">
         <label>JRSession</label>
         <childnode refid="99" relation="usage">
+          <edgelabel>mError</edgelabel>
+        </childnode>
+        <childnode refid="100" relation="usage">
           <edgelabel>mActivity</edgelabel>
         </childnode>
       </node>
-      <node id="102">
+      <node id="103">
         <label>JRDictionary</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_dictionary"/>
       </node>
-      <node id="99">
+      <node id="100">
         <label>JRActivityObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object"/>
-        <childnode refid="100" relation="usage">
+        <childnode refid="101" relation="usage">
           <edgelabel>mSms</edgelabel>
         </childnode>
-        <childnode refid="101" relation="usage">
+        <childnode refid="102" relation="usage">
           <edgelabel>mEmail</edgelabel>
         </childnode>
-        <childnode refid="102" relation="usage">
+        <childnode refid="103" relation="usage">
           <edgelabel>mProperties</edgelabel>
         </childnode>
       </node>
-      <node id="101">
+      <node id="102">
         <label>JREmailObject</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_email_object"/>
+      </node>
+      <node id="99">
+        <label>JREngageError</label>
+        <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error"/>
       </node>
     </collaborationgraph>
     <location file="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSession.java" line="71" bodyfile="/Users/nathan/android-code/engage.android/JREngage/src/com/janrain/android/engage/session/JRSession.java" bodystart="71" bodyend="1119"/>

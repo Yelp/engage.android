@@ -760,13 +760,13 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="107">
+      <node id="108">
         <label>JRUiFragment</label>
       </node>
-      <node id="108">
+      <node id="109">
         <label>JRPublishFragment</label>
         <link refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_j_r_publish_fragment"/>
-        <childnode refid="107" relation="public-inheritance">
+        <childnode refid="108" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

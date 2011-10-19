@@ -111,7 +111,7 @@ public class JRActionLink implements Serializable, JRJsonifiable {
 
 /**
  * @name Getters
- * Getters for the JRActiionLinks's private properties
+ * Getters for the JRActionLinks's private properties
  **/
 /*@{*/
     /**

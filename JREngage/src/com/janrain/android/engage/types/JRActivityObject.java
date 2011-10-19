@@ -254,7 +254,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
      *   be null
      *
      * @param url
-     *   The URL of the resource being mentioned in the activity update. May be null
+     *   The URL of the resource being mentioned in the activity update. Null for no resource link.
      *
      * @throws IllegalArgumentException
      *   if action is null

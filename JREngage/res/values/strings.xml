@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- - Server URL strings for each of the three typical environments. -->
-    <string name="jr_server_URL_lilli">http://lilli.janrain.com:8080</string>
-    <string name="jr_server_URL_nathan">http://nathan-dev.janrain.com:8080</string>
-    <string name="jr_server_URL_staging">https://rpxstaging.com</string>
-    <string name="jr_server_URL_production">https://rpxnow.com</string>
+    <string name="jr_server_url_lilli">http://lilli.janrain.com:8080</string>
+    <string name="jr_server_url_nathan">http://nathan-dev.janrain.com:8080</string>
+    <string name="jr_server_url_staging">https://rpxstaging.com</string>
+    <string name="jr_server_url_production">https://rpxnow.com</string>
 
     <!-- - Shared/common strings. -->
     <!-- http://stackoverflow.com/questions/4353836/italic-textview-with-wrap-contents-seems-to-clip-the-text-at-right-edge/5666648#5666648 -->

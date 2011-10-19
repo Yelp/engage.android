@@ -15,7 +15,7 @@
         <name>JREnvironment</name>
         <enumvalue id="namespacecom_1_1janrain_1_1android_1_1engage_1a7d3ee258af7a2e6f2928a726ef91db2c" prot="public">
           <name>PRODUCTION</name>
-          <initializer>(R.string.jr_server_URL_production)</initializer>
+          <initializer>(R.string.jr_server_url_production)</initializer>
           <briefdescription>
           </briefdescription>
           <detaileddescription>
@@ -23,7 +23,7 @@
         </enumvalue>
         <enumvalue id="namespacecom_1_1janrain_1_1android_1_1engage_1a7d3ee258af7a2e6f2928a726ef91db2c" prot="public">
           <name>STAGING</name>
-          <initializer>(R.string.jr_server_URL_staging)</initializer>
+          <initializer>(R.string.jr_server_url_staging)</initializer>
           <briefdescription>
           </briefdescription>
           <detaileddescription>
@@ -31,7 +31,7 @@
         </enumvalue>
         <enumvalue id="namespacecom_1_1janrain_1_1android_1_1engage_1a7d3ee258af7a2e6f2928a726ef91db2c" prot="public">
           <name>LILLI</name>
-          <initializer>(R.string.jr_server_URL_lilli)</initializer>
+          <initializer>(R.string.jr_server_url_lilli)</initializer>
           <briefdescription>
           </briefdescription>
           <detaileddescription>
@@ -39,7 +39,7 @@
         </enumvalue>
         <enumvalue id="namespacecom_1_1janrain_1_1android_1_1engage_1a7d3ee258af7a2e6f2928a726ef91db2c" prot="public">
           <name>NATHAN</name>
-          <initializer>(R.string.jr_server_URL_nathan)</initializer>
+          <initializer>(R.string.jr_server_url_nathan)</initializer>
           <briefdescription>
           </briefdescription>
           <detaileddescription>

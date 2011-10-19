@@ -120,6 +120,7 @@ public final class AsyncHttpClient {
         }
 
         /**
+         * @internal 
          * From the Google IO app:
          * Simple {@link HttpEntityWrapper} that inflates the wrapped
          * {@link HttpEntity} by passing it through {@link GZIPInputStream}.

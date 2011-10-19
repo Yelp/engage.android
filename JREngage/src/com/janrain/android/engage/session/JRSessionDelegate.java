@@ -152,6 +152,7 @@ public interface JRSessionDelegate {
     void mobileConfigDidFinish();
 
     /**
+     * @internal
      * An empty implementation of JRSessionDelegate. Handy for subclassing, and overriding only
      * desirable message handlers.
      */

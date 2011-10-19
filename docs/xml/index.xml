@@ -143,6 +143,9 @@
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1ui_1_1_custom_measuring_frame_layout_1ad539240d964251febfd9aee25f05c5bc" kind="function"><name>onConfigurationChanged</name></member>
   </compound>
   <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type" kind="class"><name>com::janrain::android::engage::JREngageError::ErrorType</name>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1af4841fff47bfb96940985f95967d5f41" kind="variable"><name>NO_NETWORK_CONNECTION</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a078b2c779a2f510dcc5f8b0b0fb2b607" kind="variable"><name>MINOR</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a74562a95119dde5b8da65f071adba5b5" kind="variable"><name>MAJOR</name></member>
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1ac2837260a237df9c11feebf84d26fd3d" kind="variable"><name>CONFIGURATION_FAILED</name></member>
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1a5b437058532046ab521d6511a81b7847" kind="variable"><name>CONFIGURATION_INFORMATION_MISSING</name></member>
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1_1_error_type_1aa68ab1ad27fd39a9d45d1838bd849b15" kind="variable"><name>AUTHENTICATION_FAILED</name></member>
@@ -418,18 +421,18 @@
     <member refid="interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate_1a6abc64d6097987fd7e7d603b1b220650" kind="function"><name>jrSocialPublishJRActivityDidFail</name></member>
   </compound>
   <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error" kind="class"><name>com::janrain::android::engage::JREngageError</name>
-    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a5d0e96578d3b58cac95214fac3c245d1" kind="variable"><name>CODE_UNKNOWN</name></member>
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1adc00833722df4f26a365c53a43a04631" kind="variable"><name>mCode</name></member>
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a84262b4adb38cc036235e6f973b922fe" kind="variable"><name>mType</name></member>
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a474571c8d09a3a86c739856bf3adbc91" kind="variable"><name>mMessage</name></member>
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1aa1fdc5d484d4ef146caf59088cd63a63" kind="variable"><name>mCause</name></member>
-    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1ae4451919f716c2d2c274b0d2b2d9104e" kind="function"><name>JREngageError</name></member>
-    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a3e557172a9c2da6a96351bbd29ce1f8b" kind="function"><name>JREngageError</name></member>
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a8361b009dd85dd991e5e684d648ffabf" kind="function"><name>getCode</name></member>
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a68adac94351807681f1b2828b9c68734" kind="function"><name>getType</name></member>
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1afafd068b736520af1e24269a284980a9" kind="function"><name>getMessage</name></member>
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a251906299c0912286a8fbae1eb232dcb" kind="function"><name>getException</name></member>
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1aca91ab5b7feb80edb463577fda5d2dbb" kind="function"><name>hasException</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a5d0e96578d3b58cac95214fac3c245d1" kind="variable"><name>CODE_UNKNOWN</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1ae4451919f716c2d2c274b0d2b2d9104e" kind="function"><name>JREngageError</name></member>
+    <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_error_1a3e557172a9c2da6a96351bbd29ce1f8b" kind="function"><name>JREngageError</name></member>
   </compound>
   <compound refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object" kind="class"><name>com::janrain::android::engage::types::JRFlashMediaObject</name>
     <member refid="classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_flash_media_object_1a9b17f35d97f72efb09e749a042dfde9f" kind="variable"><name>mSwfSrc</name></member>
