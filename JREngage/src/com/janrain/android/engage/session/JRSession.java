@@ -705,7 +705,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     private boolean isUiShowing() {
-        return mUiShowingCount == 0;
+        return mUiShowingCount != 0;
     }
 
     private String getWelcomeMessageFromCookieString() {
@@ -885,18 +885,15 @@ public class JRSession implements JRConnectionManagerDelegate {
 
         setCurrentlyPublishingProvider(user.getProviderName());
 
-        StringBuilder body = new StringBuilder();
         String deviceToken = user.getDeviceToken();
 
-        String activityContent;
-        JRDictionary activityDictionary = mActivity.toJRDictionary();
-        String activityJSON = activityDictionary.toJSON();
-        activityContent = AndroidUtils.urlEncode(activityJSON);
+        String activityJson = mActivity.toJRDictionary().toJSON();
+        String urlEncodedActivityJson = AndroidUtils.urlEncode(activityJson);
 
-        body.append("activity=").append(activityContent);
+        StringBuilder body = new StringBuilder();
+        body.append("activity=").append(urlEncodedActivityJson);
 
-        /* These are [undocumented] parameters available to the mobile library for the purpose of
-         * updating the social sharing UI. */
+        /* These are undocumented parameters for the mobile library's use */
         body.append("&device_token=").append(deviceToken);
         body.append("&url_shortening=true");
         body.append("&provider=").append(user.getProviderName());
@@ -905,7 +902,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 
         String url = ENVIRONMENT.getServerUrl() + "/api/v2/activity";
 
-        if (Config.LOGD) Log.d(TAG, "[shareActivityForUser]: " + url + " data: " + body.toString());
+        if (Config.LOGD) Log.d(TAG, "[shareActivityForUser]: " + url + " data: " + body);
 
         JRDictionary tag = new JRDictionary();
         tag.put(USERDATA_ACTION_KEY, USERDATA_ACTION_SHARE_ACTIVITY);

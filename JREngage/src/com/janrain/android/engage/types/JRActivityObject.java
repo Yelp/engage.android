@@ -393,6 +393,19 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
     }
 
     /**
+     * Add to the activity object's #mActionLinks property.
+     *
+     * @param displayText
+     *      The text displayed to the user for the action link, e.g. "Download the single now", or "Sign up
+     *      to bring a dish to the potluck".
+     * @param link
+     *      The URL to the link where the user can carry out the action.
+     **/
+    public void addActionLink(String displayText, String link) {
+        addActionLink(new JRActionLink(displayText, link));
+    }
+
+    /**
      * Alias for addMedia(JRMediaObject)
      *
      * @param media
@@ -542,7 +555,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
         if (mIsShortening) return;
         mIsShortening = true;
 
-        final JRSession session = JRSession.getInstance();
+        JRSession session = JRSession.getInstance();
         try {
             // todo invoke when the activity object is created (or maybe when publish is called?)
             List<String> emptyList = new ArrayList<String>();

@@ -19,6 +19,5 @@
     </style>
 
     <style name="jr_about_dialog_text">
-        <item name="android:textAppearance">?android:textAppearanceLarge</item>
     </style>
 </resources>

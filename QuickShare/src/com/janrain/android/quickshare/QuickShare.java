@@ -33,7 +33,10 @@
 package com.janrain.android.quickshare;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -49,7 +52,6 @@ import android.util.Pair;
 import android.util.Xml;
 import android.widget.Toast;
 import com.google.android.filecache.FileResponseCache;
-import com.google.android.imageloader.BitmapContentHandler;
 import com.google.android.imageloader.ImageLoader;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
@@ -62,14 +64,18 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Archiver;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.ContentHandler;
+import java.net.ResponseCache;
 import java.net.URI;
+import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -81,15 +87,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-public class FeedData {
-    private static final String TAG = FeedData.class.getSimpleName();
-    static {
-        System.setProperty("http.keepAlive", "false");
-    }
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
-    private final Uri FEED_URL = Uri.parse("http://www.janrain.com/feed/blogs");
-    SimpleDateFormat FEED_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-ddzzzhh:mm:ss'-:00'");
-    SimpleDateFormat MORE_READABLE_DATE_FORMAT = new SimpleDateFormat("EEEE, MMMM d, yyyy h:mm aa");
+public class QuickShare extends Application {
+    private static QuickShare sInstance;
+
+    private static final String TAG = QuickShare.class.getSimpleName();
+
+    private static final Uri FEED_URL = Uri.parse("http://www.janrain.com/feed/blogs");
+    private static final SimpleDateFormat FEED_DATE_FORMAT =
+            new SimpleDateFormat("yyyy-MM-ddzzzhh:mm:ss'-:00'");
+    private static final SimpleDateFormat MORE_READABLE_DATE_FORMAT =
+            new SimpleDateFormat("EEEE, MMMM d, yyyy h:mm aa");
 
     private static final String ARCHIVE_STORIES_ARRAY = "storiesArray";
     private static final String ARCHIVE_STORY_LINKS_HASH = "storyLinksHash";
@@ -97,30 +107,45 @@ public class FeedData {
     private static String ENGAGE_APP_ID = QuickShareEnvironment.getAppId();
     private static String ENGAGE_TOKEN_URL = QuickShareEnvironment.getTokenUrl();
 
-    private static FeedData sInstance;
-
     private HashSet<String> mStoryLinks;
     final private ArrayList<Story> mStories = new ArrayList<Story>();
+    private FeedReaderListener mListener;
 
     private JREngage mEngage;
 
     private ImageLoader mImageLoader;
 
-    public static FeedData getInstance(Activity activity) {
-        if (sInstance != null) {
-            if (Config.LOGD) Log.d(TAG, "[getInstance] returning existing instance");
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        if (Config.LOGD) Log.d(TAG, "[onCreate]");
 
-            return sInstance;
+        sInstance = this;
+
+        JRFileResponseCache jrfrc = new JRFileResponseCache(this);
+        ResponseCache.setDefault(jrfrc);
+        java.net.ContentHandler bmch = JRFileResponseCache.capture(new JRBitmapContentHandler(), null);
+        java.net.ContentHandler pfch = JRFileResponseCache.capture(JRFileResponseCache.sink(), null);
+        mImageLoader = new ImageLoader(ImageLoader.DEFAULT_TASK_LIMIT, null, bmch, pfch,
+                ImageLoader.DEFAULT_CACHE_SIZE, null);
+
+        /* If the Story class changes, then the Archiver can't load the new stories, which is fine,
+            They'll just get re-downloaded/added, but we also have to clear the links hash, so that
+            the new stories get added. */
+        try {
+            ArrayList<Story> loadedStories = Archiver.load(ARCHIVE_STORIES_ARRAY, this);
+            mStories.clear();
+            mStories.addAll(loadedStories);
+            mStoryLinks = Archiver.load(ARCHIVE_STORY_LINKS_HASH, this);
+            logd(TAG, "[ctor] loaded " + mStories.size() + " stories from disk");
+        } catch (Archiver.LoadException e) {
+            mStories.clear();
+            mStoryLinks = new HashSet<String>();
+            logd(TAG, "[ctor] stories reset");
         }
-
-        sInstance = new FeedData(activity);
-
-        if (Config.LOGD) Log.d(TAG, "[getInstance] returning new instance.");
-
-        return sInstance;
     }
 
-    public static FeedData getInstance() {
+    public static QuickShare getInstance() {
         return sInstance;
     }
 
@@ -134,54 +159,32 @@ public class FeedData {
 
     private static class JRFileResponseCache extends FileResponseCache {
         private Context mContext;
+        private File mCacheDir;
+        private MessageDigest mNameDigest;
+
         public JRFileResponseCache(Context c) {
             mContext = c;
+            mCacheDir = new File(mContext.getCacheDir(), "filecache");
+            try {
+                mNameDigest = MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Override
         protected File getFile(URI uri, String s, Map<String, List<String>> stringListMap, Object o) {
             try {
-                File parent = new File(mContext.getCacheDir(), "filecache");
-                MessageDigest digest = MessageDigest.getInstance("MD5");
-                digest.update(String.valueOf(uri).getBytes("UTF-8"));
-                byte[] output = digest.digest();
+                mNameDigest.reset();
+                mNameDigest.update(uri.toString().getBytes("UTF-8"));
+                byte[] output = mNameDigest.digest();
                 StringBuilder builder = new StringBuilder("jr_cache_");
                 for (byte anOutput : output) builder.append(Integer.toHexString(0xFF & anOutput));
                 builder.append(AndroidUtils.urlEncode(uri.toString()));
-                return new File(parent, builder.toString());
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
+                return new File(mCacheDir, builder.toString());
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
             }
-        }
-    }
-
-    private FeedData(final Activity activity) {
-        if (Config.LOGD) Log.d(TAG, "[ctor] creating instance");
-
-        FileResponseCache frc = new JRFileResponseCache(activity);
-        JRFileResponseCache.setDefault(frc);
-        java.net.ContentHandler bmch = JRFileResponseCache.capture(new BitmapContentHandler(), null);
-        java.net.ContentHandler pfch = JRFileResponseCache.capture(JRFileResponseCache.sink(), null);
-        mImageLoader = new ImageLoader(ImageLoader.DEFAULT_TASK_LIMIT, null, bmch, pfch,
-                ImageLoader.DEFAULT_CACHE_SIZE, null);
-
-        initJREngage(activity);
-
-        /* If the Story class changes, then the Archiver can't load the new stories, which is fine,
-            They'll just get re-downloaded/added, but we also have to clear the links hash, so that
-            the new stories get added. */
-        try {
-            ArrayList<Story> loadedStories = Archiver.load(ARCHIVE_STORIES_ARRAY);
-            mStories.clear();
-            mStories.addAll(loadedStories);
-            mStoryLinks = Archiver.load(ARCHIVE_STORY_LINKS_HASH);
-            logd(TAG, "[ctor] loaded " + ((Integer) mStories.size()).toString() + " stories from disk");
-        } catch (Archiver.LoadException e) {
-            mStories.clear();
-            mStoryLinks = new HashSet<String>();
-            logd(TAG, "[ctor] stories reset");
         }
     }
 
@@ -193,12 +196,6 @@ public class FeedData {
         if (Config.LOGD && function != null && message != null) Log.d(TAG, "[" + function + "] " + message);
     }
 
-    private void logd(String function, String message, Exception e) {
-        if (Config.LOGD && function != null && message != null) {
-            Log.d(TAG, "[" + function + "] " + message, e);
-        }
-    }
-
     public ImageLoader getImageLoader() {
         return mImageLoader;
     }
@@ -208,8 +205,6 @@ public class FeedData {
 
         void asyncFeedReadFailed(Exception e);
     }
-
-    FeedReaderListener mListener;
 
     public void loadJanrainBlog() {
         JRConnectionManager.createConnection(FEED_URL.toString(),
@@ -277,6 +272,8 @@ public class FeedData {
                         }, new Html.TagHandler() {
                             public void handleTag(boolean opening, String tag, Editable output,
                                                   XMLReader xmlReader) {
+                                /* Remove <style> tags because the WebView we display them with doesn't
+                                   handle them. */
                                 if (tag.equalsIgnoreCase("style")) output.clear();
                             }
                         }).toString();
@@ -289,14 +286,15 @@ public class FeedData {
                 });
                 item.getChild("pubDate").setEndTextElementListener(new EndTextElementListener(){
                     public void end(String body) {
-                        // Parse the blog dates, and then reformat them to be more readable.
-                        // Example: 2011-04-25PDT04:30:00-:00
+                        /* Parse the blog dates, and then reformat them to be more readable.
+                           Example: 2011-04-25PDT04:30:00-:00 */
                         try {
                             Date parsedDate = FEED_DATE_FORMAT.parse(body);
                             currentStory.setRawDate(parsedDate);
                             body = MORE_READABLE_DATE_FORMAT.format(parsedDate);
                         } catch (ParseException e) {
-                            // do nothing to the formatted date, leaving it as it was
+                            /* If there's an error do nothing to the formatted date, leaving it as it was
+                             * and set the "raw" date to now. */
                             currentStory.setRawDate(new Date());
                         }
 
@@ -376,31 +374,101 @@ public class FeedData {
             Toast.makeText(JREngage.getActivity(), toastText, Toast.LENGTH_LONG).show();
         }
 
-        public void jrAuthenticationDidNotComplete() {
-        }
+        public void jrAuthenticationDidNotComplete() {}
 
-        public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
-        }
+        public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {}
 
-        public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-        }
+        public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {}
 
-        public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
-        }
+        public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
+                                                     HttpResponseHeaders headers,
+                                                     String tokenUrlPayload,
+                                                     String provider) {}
 
-        public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
-        }
+        public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl,
+                                                          JREngageError error,
+                                                          String provider) {}
 
-        public void jrSocialDidNotCompletePublishing() {
-        }
+        public void jrSocialDidNotCompletePublishing() {}
 
-        public void jrSocialDidCompletePublishing() {
-        }
+        public void jrSocialDidCompletePublishing() {}
 
-        public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
-        }
+        public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {}
 
-        public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
-        }
+        public void jrSocialPublishJRActivityDidFail(JRActivityObject activity,
+                                                     JREngageError error,
+                                                     String provider) {}
     };
+}
+
+class JRBitmapContentHandler extends ContentHandler {
+    @Override
+    public Bitmap getContent(URLConnection connection) throws IOException {
+        InputStream input = connection.getInputStream();
+        try {
+            input = new JRBlockingFilterInputStream(input);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            int j = connection.getContentLength();
+            options.inSampleSize = 4;
+            Bitmap bitmap = BitmapFactory.decodeStream(input, null, options);
+            if (bitmap == null) throw new IOException("Image could not be decoded");
+            return bitmap;
+        } finally {
+            input.close();
+        }
+    }
+}
+
+/* XXX This is copy/paste of a package scoped class from the Google ImageLoader library */
+class JRBlockingFilterInputStream extends FilterInputStream {
+
+    public JRBlockingFilterInputStream(InputStream input) {
+        super(input);
+    }
+
+    @Override
+    public int read(byte[] buffer, int offset, int count) throws IOException {
+        int total = 0;
+        while (total < count) {
+            int read = super.read(buffer, offset + total, count - total);
+            if (read == -1) {
+                return (total != 0) ? total : -1;
+            }
+            total += read;
+        }
+        return total;
+    }
+
+    @Override
+    public int read(byte[] buffer) throws IOException {
+        int total = 0;
+        while (total < buffer.length) {
+            int offset = total;
+            int count = buffer.length - total;
+            int read = super.read(buffer, offset, count);
+            if (read == -1) {
+                return (total != 0) ? total : -1;
+            }
+            total += read;
+        }
+        return total;
+    }
+
+    @Override
+    public long skip(long count) throws IOException {
+        long total = 0L;
+        while (total < count) {
+            long skipped = super.skip(count - total);
+            if (skipped == 0L) {
+                int b = super.read();
+                if (b < 0) {
+                    break;
+                } else {
+                    skipped += 1;
+                }
+            }
+            total += skipped;
+        }
+        return total;
+    }
 }

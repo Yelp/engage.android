@@ -32,6 +32,7 @@
 package com.janrain.android.quickshare;
 
 import android.util.Log;
+import com.janrain.android.engage.types.JRActionLink;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JREmailObject;
 import com.janrain.android.engage.types.JRImageMediaObject;
@@ -115,8 +116,7 @@ public class Story implements Serializable, Comparable<Story> {
 
         //Log.d(TAG, "[newWidthAndHeight] style before: " + style);
         style = style.replace("width:" + matcherWidth.group(2) + "px", "width: " + targetWidth + "px");
-        style = style.replace("height:" + matcherHeight.group(2) + "px", "height: " + newHeight +
-                "px");
+        style = style.replace("height:" + matcherHeight.group(2) + "px", "height: " + newHeight + "px");
         //Log.d(TAG, "[newWidthAndHeight] style after: " + style);
 
         return style;
@@ -148,6 +148,8 @@ public class Story implements Serializable, Comparable<Story> {
         if (getImageUrls().size() > 0) {
             activityObject.addMedia(new JRImageMediaObject(getImageUrls().get(0), getImageUrls().get(0)));
         }
+
+        activityObject.addActionLink(new JRActionLink("Learn more about Engage!", "http://rpxnow.com"));
 
         JREmailObject jreo = new JREmailObject(mTitle,
                 "I thought you might find this blog post interesting.\n\nFind the full article here: " +
@@ -237,7 +239,7 @@ public class Story implements Serializable, Comparable<Story> {
         mImageUrls = imageUrls;
 
         if (getThumbnailUrl() != null) {
-            FeedData.getInstance().getImageLoader().prefetch(getThumbnailUrl());
+            QuickShare.getInstance().getImageLoader().prefetch(getThumbnailUrl());
         }
     }
 

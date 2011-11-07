@@ -124,12 +124,36 @@ public final class Archiver {
      *      LoadException if there was any problem loading the object. (Including SUID mismatches, IO
      *      exceptions, de-serialization exceptions, cosmic rays, et cetera.)
      */
-    @SuppressWarnings("unchecked")
     public static <T> T load(String name) throws LoadException {
         Context context = JREngage.getActivity();
         if (context == null) throw new IllegalStateException("[loadObject] JREngage.getContext() is null.");
         if (TextUtils.isEmpty(name)) throw new IllegalArgumentException("name parameter cannot be null");
 
+        return load(name, context);
+    }
+
+    /**
+     * Loads (unarchives) the specified object from the local (protected) file system.
+     *
+     * @param name
+     * 		The name of the object to be loaded from disk.  This parameter cannot be null.
+     *
+     * @param context
+     *      The Context used to access the file system.
+     *
+     * @return
+     * 		The object if found and loaded, null otherwise.
+     *
+     * @throws
+     * 		IllegalArgumentException if the name parameter is null.
+     * @throws
+     *      IllegalStateException if JREngage.getContext() returns null.
+     * @throws
+     *      LoadException if there was any problem loading the object. (Including SUID mismatches, IO
+     *      exceptions, de-serialization exceptions, cosmic rays, et cetera.)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T load(String name, Context context) throws LoadException {
         String fileName = String.format(DICTIONARY_BASE_FORMAT, name);
 
         FileInputStream fis = null;
@@ -159,7 +183,7 @@ public final class Archiver {
         }
     }
 
-    public static class LoadException extends RuntimeException {
+    public static class LoadException extends Exception {
         public LoadException(Throwable throwable) {
             super(throwable);
         }

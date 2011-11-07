@@ -53,6 +53,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -60,9 +61,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * @internal
@@ -84,7 +87,8 @@ public class JRProvider implements Serializable {
 
     private static final String TAG = JRProvider.class.getSimpleName();
 
-    private static Map<String, Drawable> provider_list_icon_drawables = new HashMap<String, Drawable>();
+    private static Map<String, SoftReference<Drawable>> provider_list_icon_drawables =
+            Collections.synchronizedMap(new HashMap<String, SoftReference<Drawable>>());
 
     // Suppressed because this inner class is not expected to be serialized
     @SuppressWarnings("serial")
@@ -122,8 +126,8 @@ public class JRProvider implements Serializable {
                     }
             };
 
-    private static HashMap<String, Drawable> provider_logo_drawables =
-            new HashMap<String, Drawable>();
+    private static Map<String, SoftReference<Drawable>> provider_logo_drawables =
+            Collections.synchronizedMap(new HashMap<String, SoftReference<Drawable>>());
 
     // Suppressed because this inner class is not expected to be serialized
     @SuppressWarnings("serial")
@@ -272,13 +276,20 @@ public class JRProvider implements Serializable {
 
     private Drawable getDrawable(Context c,
                                  String drawableName,
-                                 Map<String, Drawable> drawableMap,
+                                 Map<String, SoftReference<Drawable>> drawableMap,
                                  Map<String, Integer> resourceMap) {
-        if (drawableMap.containsKey(drawableName)) return drawableMap.get(drawableName);
+        if (drawableMap.containsKey(drawableName)) {
+            Drawable d = drawableMap.get(drawableName).get();
+            if (d != null) {
+                return d;
+            } else {
+                drawableMap.remove(drawableName);
+            }
+        }
 
         if (resourceMap.containsKey(drawableName)) {
             Drawable r = c.getResources().getDrawable(resourceMap.get(drawableName));
-            drawableMap.put(drawableName, r);
+            drawableMap.put(drawableName, new SoftReference<Drawable>(r));
             return r;
         }
 

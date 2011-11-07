@@ -40,7 +40,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements View.OnClickListener, FeedData.FeedReaderListener {
+public class MainActivity extends Activity implements View.OnClickListener, QuickShare.FeedReaderListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private Button mViewFeedSummary;
@@ -56,11 +56,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Feed
         mViewFeedSummary = (Button) findViewById(R.id.view_feed_summary);
         mViewFeedSummary.setOnClickListener(this);
 
-        FeedData.getInstance(this).initJREngage(this);
+        QuickShare quickShare = QuickShare.getInstance();
+        quickShare.initJREngage(this);
 
-        if (FeedData.getInstance(this).getFeed().isEmpty()) {
-            FeedData.getInstance().setFeedReaderListener(this);
-            FeedData.getInstance(this).loadJanrainBlog();
+        if (quickShare.getFeed().isEmpty()) {
+            quickShare.setFeedReaderListener(this);
+            quickShare.loadJanrainBlog();
         } else {
             mViewFeedSummary.setEnabled(true);
             mFeedHasLoaded = true;
@@ -78,7 +79,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Feed
             this.startActivity(new Intent(this, FeedSummaryActivity.class));
         } else {
             mViewFeedSummary.setText(R.string.loading_janrain_blog);
-            FeedData.getInstance(this).loadJanrainBlog();
+            QuickShare.getInstance().loadJanrainBlog();
         }
     }
 

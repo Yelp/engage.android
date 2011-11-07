@@ -16,5 +16,4 @@
     <dimen name="jr_signout_button_text_size">15sp</dimen>
     <dimen name="jr_share_button_size">26dip</dimen>
     <dimen name="jr_shared_text_size">26sp</dimen>
-
 </resources>

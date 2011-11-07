@@ -31,6 +31,9 @@
   -->
 
 <resources>
-    <!-- This is embedded fragment mode -->
-    <dimen name="fragmentImageWidth">600px</dimen>
+
+    <style name="jr_about_dialog_text">
+        <item name="android:textAppearance">?android:textAppearanceLarge</item>
+    </style>
+
 </resources>

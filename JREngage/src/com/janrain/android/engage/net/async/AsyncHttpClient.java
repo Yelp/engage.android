@@ -155,87 +155,74 @@ public final class AsyncHttpClient {
 
             setupHttpClient();
 
-            int sleepTime = 1000;
+            try {
+                //try { Thread.sleep(5000); } catch (InterruptedException e) {}
 
-            while (true) {
-                try {
-                    //try { Thread.sleep(5000); } catch (InterruptedException e) {}
-
-                    HttpUriRequest request;
-                    if (mPostData != null) {
-                        request = new HttpPost(mUrl);
-                        ((HttpPost) request).setEntity(new ByteArrayEntity(mPostData));
-                        request.addHeader("Content-Type", "application/x-www-form-urlencoded");
-                        request.addHeader("Content-Language", "en-US");
-                    } else {
-                        request = new HttpGet(mUrl);
-                    }
-
-                    request.addHeader("User-Agent", USER_AGENT);
-                    if (mHeaders == null) mHeaders = new ArrayList<NameValuePair>();
-                    for (NameValuePair header : mHeaders) request.addHeader(header.getName(), header.getValue());
-
-                    HttpResponse response = mHttpClient.execute(request);
-
-                    /* Ensures that the response interceptor has a chance to un-gzip the entity before we
-                    fetch it. */
-                    response.getStatusLine().getStatusCode();
-
-                    HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response);
-
-                    HttpEntity entity = response.getEntity();
-                    byte[] data = entity == null? new byte[0] : IOUtils.readFromStream(entity.getContent(), true);
-                    String dataString = new String(data);
-                    if (entity != null) entity.consumeContent();
-
-                    switch (response.getStatusLine().getStatusCode()) {
-                    case HttpStatus.SC_OK:
-                        if (Config.LOGD) Log.d(TAG, "[run] HTTP_OK");
-                        if (Config.LOGD) Log.d(TAG, "[run] headers: " + headers.toString());
-                        if (Config.LOGD) Log.d(TAG, "[run] data for " + mUrl + ": " +
-                                dataString.substring(0, Math.min(dataString.length(), 600)));
-                        mWrapper.setResponse(new AsyncHttpResponse(mUrl, headers, data));
-                        break;
-                    case HttpStatus.SC_NOT_MODIFIED:
-                        if (Config.LOGD) Log.d(TAG, "[run] HTTP_NOT_MODIFIED");
-                        mWrapper.setResponse(new AsyncHttpResponse(mUrl, headers, data));
-                        break;
-                    case HttpStatus.SC_CREATED:
-                        // Response from the Engage trail creation and maybe URL shortening calls
-                        if (Config.LOGD) Log.d(TAG, "[run] HTTP_CREATED");
-                        mWrapper.setResponse(new AsyncHttpResponse(mUrl, headers, data));
-                        break;
-                    default:
-                        // Maybe this shouldn't be globbed together, but instead be structured
-                        // to allow the error handler to make meaningful use of the web
-                        // servers response (contained in String r)
-                        String message = "[run] Unexpected HTTP response:  [responseCode: "
-                                + response.getStatusLine().getStatusCode() + " | reasonPhrase: "
-                                + response.getStatusLine().getReasonPhrase() + " | entity: "
-                                + dataString;
-
-                        Log.e(TAG, message);
-
-                        mWrapper.setResponse(new AsyncHttpResponse(mUrl, new Exception(message)));
-                    }
-
-                    mHandler.post(mWrapper);
-                    return;
-                } catch (IOException e) {
-                    Log.e(TAG, "[run] Problem executing HTTP request.", e);
-                    Log.e(TAG, this.toString());
-                    mWrapper.setResponse(new AsyncHttpResponse(mUrl, e));
-                    mHandler.post(mWrapper);
+                HttpUriRequest request;
+                if (mPostData != null) {
+                    request = new HttpPost(mUrl);
+                    ((HttpPost) request).setEntity(new ByteArrayEntity(mPostData));
+                    request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+                    request.addHeader("Content-Language", "en-US");
+                } else {
+                    request = new HttpGet(mUrl);
                 }
 
-                //try {
-                //    if (sleepTime > 8000) return;
-                //    Thread.sleep(sleepTime);
-                //    sleepTime *= 2;
-                //} catch (InterruptedException e) {
-                //    throw new RuntimeException(e);
-                //}
+                request.addHeader("User-Agent", USER_AGENT);
+                if (mHeaders == null) mHeaders = new ArrayList<NameValuePair>();
+                for (NameValuePair header : mHeaders) request.addHeader(header.getName(), header.getValue());
+
+                HttpResponse response = mHttpClient.execute(request);
+
+                /* Ensures that the response interceptor has a chance to un-gzip the entity before we
+                fetch it. */
+                response.getStatusLine().getStatusCode();
+
+                HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response, request);
+
+                HttpEntity entity = response.getEntity();
+                byte[] data = entity == null? new byte[0] : IOUtils.readFromStream(entity.getContent(), true);
+                String dataString = new String(data);
+                if (entity != null) entity.consumeContent();
+
+                switch (response.getStatusLine().getStatusCode()) {
+                case HttpStatus.SC_OK:
+                    if (Config.LOGD) Log.d(TAG, "[run] HTTP_OK");
+                    if (Config.LOGD) Log.d(TAG, "[run] headers: " + headers.toString());
+                    if (Config.LOGD) Log.d(TAG, "[run] data for " + mUrl + ": " +
+                            dataString.substring(0, Math.min(dataString.length(), 600)));
+                    mWrapper.setResponse(new AsyncHttpResponse(mUrl, headers, data));
+                    break;
+                case HttpStatus.SC_NOT_MODIFIED:
+                    if (Config.LOGD) Log.d(TAG, "[run] HTTP_NOT_MODIFIED");
+                    mWrapper.setResponse(new AsyncHttpResponse(mUrl, headers, data));
+                    break;
+                case HttpStatus.SC_CREATED:
+                    // Response from the Engage trail creation and maybe URL shortening calls
+                    if (Config.LOGD) Log.d(TAG, "[run] HTTP_CREATED");
+                    mWrapper.setResponse(new AsyncHttpResponse(mUrl, headers, data));
+                    break;
+                default:
+                    // Maybe this shouldn't be globbed together, but instead be structured
+                    // to allow the error handler to make meaningful use of the web
+                    // servers response (contained in String r)
+                    String message = "[run] Unexpected HTTP response:  [responseCode: "
+                            + response.getStatusLine().getStatusCode() + " | reasonPhrase: "
+                            + response.getStatusLine().getReasonPhrase() + " | entity: "
+                            + dataString;
+
+                    Log.e(TAG, message);
+
+                    mWrapper.setResponse(new AsyncHttpResponse(mUrl, new Exception(message)));
+                }
+
+                mHandler.post(mWrapper);
                 return;
+            } catch (IOException e) {
+                Log.e(TAG, "[run] Problem executing HTTP request.", e);
+                Log.e(TAG, this.toString());
+                mWrapper.setResponse(new AsyncHttpResponse(mUrl, e));
+                mHandler.post(mWrapper);
             }
 		}
 
@@ -246,7 +233,8 @@ public final class AsyncHttpClient {
         }
 	}
 
-	/*
+	/**
+     * @internal
 	 * Sends full response (or exception) back to the listener.
 	 */
 	public static class HttpCallbackWrapper implements Runnable {

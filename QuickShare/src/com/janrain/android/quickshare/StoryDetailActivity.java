@@ -52,9 +52,9 @@ public class StoryDetailActivity extends FragmentActivity {
         }
 
         if (savedInstanceState == null) {
-            // During initial setup, plug in the details fragment.
-            StoryDetailFragment details = new StoryDetailFragment();
-            details.setArguments(getIntent().getExtras());
+            int index = getIntent().getExtras().getInt("index");
+            StoryDetailFragment details = StoryDetailFragment.newInstance(index);
+            setTitle(details.getShownStory().getTitle());
             getSupportFragmentManager().beginTransaction().add(android.R.id.content, details).commit();
         }
     }

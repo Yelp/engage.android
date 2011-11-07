@@ -46,8 +46,10 @@ import com.janrain.android.engage.utils.AndroidUtils;
 public class StoryDetailFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = StoryDetailFragment.class.getSimpleName();
 
-    private FeedData mFeedData;
+    private QuickShare mQuickShare;
     private WebView mWebView;
+
+    private StoryDetailFragment() {}
 
     public static StoryDetailFragment newInstance(int index) {
         StoryDetailFragment f = new StoryDetailFragment();
@@ -56,6 +58,7 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
         Bundle args = new Bundle();
         args.putInt("index", index);
         f.setArguments(args);
+        f.mQuickShare = QuickShare.getInstance();
 
         return f;
     }
@@ -63,7 +66,6 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFeedData = FeedData.getInstance();
     }
 
     @Override
@@ -79,7 +81,7 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
             return null;
         }
 
-        if (getShownIndex() >= mFeedData.getFeed().size()) {
+        if (getShownIndex() >= mQuickShare.getFeed().size()) {
             if (isAdded()) getFragmentManager().beginTransaction().remove(this).commit();
             return null;
         }
@@ -100,7 +102,7 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
     }
 
     public void loadCurrentStory() {
-        Story story = mFeedData.getFeed().get(getShownIndex());
+        Story story = getShownStory();
 
         String styleCommon = getResources().getString(R.string.html_style_sheet_common);
         String style = getString(R.string.html_style_sheet);
@@ -132,18 +134,22 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
     public int getShownIndex() {
         return getArguments().getInt("index", 0);
     }
+
+    public Story getShownStory() {
+        return mQuickShare.getFeed().get(getShownIndex());
+    }
     
     public void onClick(View view) {
         if (getActivity() instanceof StoryDetailActivity) {
             ((StoryDetailActivity) getActivity()).startWaiting();
         }
 
-        JRActivityObject jra = mFeedData.getFeed().get(getShownIndex()).toJRActivityObject();
+        JRActivityObject jra = mQuickShare.getFeed().get(getShownIndex()).toJRActivityObject();
         if (AndroidUtils.isXlarge() && AndroidUtils.isLandscape()) {
-            mFeedData.getJREngage().showSocialPublishingFragment(jra, getActivity(), getId(), true,
+            mQuickShare.getJREngage().showSocialPublishingFragment(jra, getActivity(), getId(), true,
                     null, null, null, null);
         } else {
-            mFeedData.getJREngage().showSocialPublishingDialog(jra);
+            mQuickShare.getJREngage().showSocialPublishingDialog(jra);
         }
     }
 }

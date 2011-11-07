@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.janrain.android.quickshare"
-      android:versionCode="020001"
-      android:versionName="2.0.1">
-
+    package="com.janrain.android.quickshare"
+    android:versionCode="020001"
+    android:versionName="2.0.1"
+    android:installLocation="auto"
+    >
     
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -13,22 +14,30 @@
         android:label="Quick Share"
         android:icon="@drawable/icon"
         android:theme="@style/JanrainDemoTheme"
+        android:name="com.janrain.android.quickshare.QuickShare"
         android:debuggable="true"
+        android:hardwareAccelerated="true"
         >
 
         <activity android:name="MainActivity">
+
             <intent-filter>
+
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
+
         </activity>
 
-        <activity android:name=".FeedSummaryActivity"
-                  android:label="Janrain Blog Posts"
+        <activity
+            android:name=".FeedSummaryActivity"
+            android:label="Janrain Blog Posts"
             />
 
-        <activity android:name=".StoryDetailActivity"
-                  android:label="Blog Post"
+        <activity
+            android:name=".StoryDetailActivity"
+            android:label="Blog Post"
             />
 
         <!-- For Janrain Engage library -->

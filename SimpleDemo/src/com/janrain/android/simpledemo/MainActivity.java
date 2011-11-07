@@ -32,7 +32,6 @@
 package com.janrain.android.simpledemo;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
@@ -120,6 +119,7 @@ public class MainActivity extends FragmentActivity {
             engageAppId = readAsset("app_id.txt").trim();
             engageTokenUrl = readAsset("token_url.txt").trim();
         } catch (NullPointerException e) {
+            // Only check for app ID, token URL is optional
             if (engageAppId == null) {
                 new AlertDialog.Builder(this).setTitle(
                         "You need to create assets/app_id.txt, then recompile and reinstall.")
@@ -129,11 +129,7 @@ public class MainActivity extends FragmentActivity {
         }
 
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, mJREngageDelegate);
-        //mEngage.setEnabledAuthenticationProviders(new String[] { "google" });
-        //mEngage.setEnabledSharingProviders(new String[] { "twitter" });
 
-        //mActivity = new JRActivityObject("shared an article from the Janrain Blog!",
-        //    "");
         mActivity = new JRActivityObject("shared an article from the Janrain Blog!",
             mActionLink);
 
@@ -181,6 +177,10 @@ public class MainActivity extends FragmentActivity {
                                                      HttpResponseHeaders response,
                                                      String tokenUrlPayload,
                                                      String provider) {
+            org.apache.http.Header[] headers = response.getHeaders();
+            org.apache.http.cookie.Cookie[] cookies = response.getCookies();
+            String firstCookieValue = response.getHeaderField("set-cookie");
+
             Toast.makeText(MainActivity.this, "Authentication did reach token URL: " + tokenUrlPayload,
                     Toast.LENGTH_LONG).show();
         }

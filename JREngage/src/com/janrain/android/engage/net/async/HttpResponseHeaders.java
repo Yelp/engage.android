@@ -35,26 +35,46 @@ package com.janrain.android.engage.net.async;
 
 import android.util.Config;
 import android.util.Log;
+import com.janrain.android.engage.utils.ListUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.cookie.ClientCookie;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.cookie.CookieOrigin;
+import org.apache.http.cookie.CookieSpec;
+import org.apache.http.cookie.MalformedCookieException;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.impl.cookie.BasicClientCookie2;
+import org.apache.http.impl.cookie.BestMatchSpec;
+import org.apache.http.impl.cookie.CookieSpecBase;
+import org.apache.http.impl.cookie.RFC2109Spec;
+import org.apache.http.impl.cookie.RFC2109SpecFactory;
+import org.apache.http.impl.cookie.RFC2965Spec;
+import org.apache.http.params.HttpProtocolParams;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @class HttpResponseHeaders
  **/
 public class HttpResponseHeaders {
     private static final String TAG = HttpResponseHeaders.class.getSimpleName();
+
     public static final String HEADER_LAST_MODIFIED = "Last-Modified";
     public static final String HEADER_ETAG = "ETag";
     public static final String HEADER_CONTENT_ENCODING = "content-encoding";
     public static final String HEADER_CONTENT_TYPE = "content-type";
     public static final String HEADER_CONTENT_LENGTH = "content-length";
-
-    // Invalid response code (initial state of object)
     public static final int RESPONSE_CODE_INVALID = -1;
 
     private int mResponseCode;
@@ -64,6 +84,7 @@ public class HttpResponseHeaders {
     private long mLastModified;
     private String mLastModifiedUtc;
     private String mETag;
+    private HttpUriRequest mRequest;
     private HttpResponse mResponse;
 
     private HttpResponseHeaders() {
@@ -75,10 +96,13 @@ public class HttpResponseHeaders {
      * Constructs a new HttpResponseHeaders instance from an HttpResponse
      * @param response
      *   The HttpResponse from which to copy the values used to construct a new instance
+     * @param request
+     *   The HttpRequest from which to use the host, port, path, and secureness to construct the Cookies
+     *   parsed from the response.
      * @return
      *   The new instance
      */
-    public static HttpResponseHeaders fromResponse(HttpResponse response) {
+    public static HttpResponseHeaders fromResponse(HttpResponse response, HttpUriRequest request) {
         if (Config.LOGD) Log.d(TAG, "[fromResponse] BEGIN");
 
         HttpResponseHeaders headers = new HttpResponseHeaders();
@@ -96,6 +120,7 @@ public class HttpResponseHeaders {
         headers.mLastModifiedUtc = getResponseHeaderFirstValue(response, HEADER_LAST_MODIFIED);
         headers.mETag = getResponseHeaderFirstValue(response, HEADER_ETAG);
         headers.mResponse = response;
+        headers.mRequest = request;
 
         return headers;
     }
@@ -120,14 +145,62 @@ public class HttpResponseHeaders {
     }
 
     /**
-     * Returns the value of a header field, given its name.
+     * Returns the &lt;em>first&lt;/em> header field's value, given the header field's name. Case
+     * insensitive.
      * @param headerFieldName
-     *  The name of the header field.
+     *  The name of the header field
      * @return
-     *  The value if the header field is present, or null otherwise.
+     *  The value if the header field is present, or null otherwise
      */
     public String getHeaderField(String headerFieldName) {
         return getResponseHeaderFirstValue(mResponse, headerFieldName);
+    }
+
+    /**
+     * Returns an array of Apache HttpClient Cookies found in this HttpResponseHeaders, parsed with the
+     * Apache BestMatchSpec implementation.
+     * @return
+     *  The array of cookies set
+     */
+    public Cookie[] getCookies() {
+        return getApacheCookies(new BestMatchSpec());
+    }
+
+    /**
+     * Returns an array of Apache HttpClient Header objects contained by this HttpResponseHeaders object.
+     * @return 
+     *  The contained headers
+     */
+    public Header[] getHeaders() {
+        return mResponse.getAllHeaders();
+    }
+
+    /**
+     * @internal
+     * Returns an array of Cookies set in this HttpResponseHeaders, parsed with the given CookieSpec
+     * implementation.
+     * @param spec
+     *  The CookieSpec used to parse the "set-cookie" headers
+     * @return
+     *  The array of cookies set
+     */
+    private Cookie[] getApacheCookies(CookieSpec spec) {
+        Header[] headers = mResponse.getHeaders("set-cookie");
+        List<Cookie> cookies = new ArrayList<Cookie>();
+        String host = mRequest.getURI().getHost();
+        int port = mRequest.getURI().getPort();
+        if (port == -1) port = 80;
+        String path = mRequest.getURI().getPath();
+        boolean secure = mRequest.getURI().getScheme().equalsIgnoreCase("https");
+        for (Header h : headers) {
+            try {
+                cookies.addAll(spec.parse(h, new CookieOrigin(host, port, path, secure)));
+            } catch (MalformedCookieException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return cookies.toArray(new Cookie[cookies.size()]);
     }
 
     /**
@@ -140,10 +213,11 @@ public class HttpResponseHeaders {
     }
 
     /**
-     * XXX This is not the the encoding of the text in the body of the response but the
-     * encoding of the body itself (e.g. gzip/compress/deflate)
+     * Returns the value of the Content-Encoding header.
+     * Note: that this is not the the encoding of the text in the response entity, but it is rather the
+     * encoding of the entity. (E.g. gzip/compress/deflate)
      * @return
-     *  The "content-encoding" header field's value if present, null otherwise.
+     *  The Content-Encoding header field's value if present, null otherwise.
      */
     public String getContentEncoding() {
         return mContentEncoding;

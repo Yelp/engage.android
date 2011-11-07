@@ -31,5 +31,5 @@
   -->
 
 <resources>
-    <dimen name="fragmentImageWidth">560dp</dimen>
+    <dimen name="fragmentImageWidth">560px</dimen>
 </resources>

@@ -51,7 +51,7 @@ public class FeedSummaryFragment extends ListFragment {
 
     private ArrayList<Story> mStories;
     private StoryAdapter mAdapter;
-    private FeedData mFeedData;
+    private QuickShare mFeedData;
     private boolean mDualPane;
     private int mCurCheckPosition;
     private String mRefreshViewText;
@@ -60,7 +60,7 @@ public class FeedSummaryFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFeedData = FeedData.getInstance();
+        mFeedData = QuickShare.getInstance();
 
         mStories = new ArrayList<Story>();
 
@@ -169,7 +169,7 @@ public class FeedSummaryFragment extends ListFragment {
         }
     }
 
-    private FeedData.FeedReaderListener mFeedReaderListener = new FeedData.FeedReaderListener() {
+    private QuickShare.FeedReaderListener mFeedReaderListener = new QuickShare.FeedReaderListener() {
         public void asyncFeedReadSucceeded() {
             if (Config.LOGD) Log.d(TAG, "[asyncFeedReadSucceeded]");
             if (isVisible() && mDualPane && getFragmentManager().getBackStackEntryCount() == 0) {
