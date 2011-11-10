@@ -194,8 +194,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mEmailButton.setOnClickListener(mEmailButtonListener);
         mSmsButton.setOnClickListener(mSmsButtonListener);
         mSignOutButton.setOnClickListener(mSignoutButtonListener);
-        mConnectAndShareButton.setOnClickListener(mShareButtonListener);
-        mShareButton.setOnClickListener(mShareButtonListener);
+        mConnectAndShareButton.setOnClickListener(mConnectShareButton);
+        mShareButton.setOnClickListener(mConnectShareButton);
         mUserCommentView.addTextChangedListener(mUserCommentTextWatcher);
         mEmailSmsComment.addTextChangedListener(mEmailSmsCommentTextWatcher);
 
@@ -615,7 +615,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         super.onDestroy();
     }
 
-    private View.OnClickListener mShareButtonListener = new View.OnClickListener() {
+    private View.OnClickListener mConnectShareButton = new View.OnClickListener() {
         public void onClick(View view) {
             //mWeAreCurrentlyPostingSomething = true;
 

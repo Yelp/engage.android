@@ -127,12 +127,22 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 throw new IllegalFragmentIdException(getFragmentId());
         }
 
-        if (isAuthFlow() && AndroidUtils.isXlarge()) setTheme(R.style.jr_dialog_phone_sized);
+        boolean shouldPhoneSizeDialog = false;
+        if (AndroidUtils.isXlarge() && (isAuthFlow() || isParentEmbedded())) shouldPhoneSizeDialog = true;
+
+        if (shouldPhoneSizeDialog) {
+            // Need to set a new theme in order to achieve a small dialog
+            // because the theme for this activity has minWidth{Major,Minor}=71%
+            setTheme(R.style.jr_dialog_phone_sized);
+
+            // (Also, have to set the Theme before the content view is loaded so it's applied.)
+        }
 
         setContentView(R.layout.jr_fragment_host_activity);
 
         View fragmentContainer = findViewById(R.id.jr_fragment_container);
-        if (isAuthFlow() && fragmentContainer instanceof CustomMeasuringFrameLayout) {
+        if (shouldPhoneSizeDialog && fragmentContainer instanceof CustomMeasuringFrameLayout) {
+            // Do the actual setting of the target size to achieve phone sized dialog.
             ((CustomMeasuringFrameLayout) fragmentContainer).setTargetHeightDip(480);
             ((CustomMeasuringFrameLayout) fragmentContainer).setTargetWidthDip(320);
         }
@@ -146,6 +156,14 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
     private int getFragmentId() {
         return getIntent().getExtras().getInt(JR_FRAGMENT_ID);
+    }
+
+    public boolean isParentEmbedded() {
+        return getIntent().getBooleanExtra(JRUiFragment.PARENT_FRAGMENT_EMBEDDED, false);
+    }
+
+    public boolean isPublishFlow() {
+        return !isAuthFlow();
     }
 
     public boolean isAuthFlow() {
