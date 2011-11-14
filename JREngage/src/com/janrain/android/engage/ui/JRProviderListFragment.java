@@ -200,7 +200,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (Config.LOGD) Log.d(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
+        JREngage.logd(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
         switch (requestCode) {
             case JRUiFragment.REQUEST_LANDING:
                 switch (resultCode) {
@@ -248,7 +248,7 @@ public class JRProviderListFragment extends JRUiFragment {
      */
     private void doSessionPoll() {
         ++mTimerCount;
-        if (Config.LOGD) Log.d(TAG, "[doSessionPoll] timer count: " + mTimerCount);
+        JREngage.logd(TAG, "[doSessionPoll] timer count: " + mTimerCount);
 
         if (mTimerCount > TIMER_MAX_ITERATIONS) {
             mTimer.cancel();
@@ -260,9 +260,9 @@ public class JRProviderListFragment extends JRUiFragment {
                 mProviderList = providers;
                 getActivity().runOnUiThread(mProvidersLoadedRunner);
                 mTimer.cancel();
-                Log.i(TAG, "[doSessionPoll] providers found, timer cancelled...");
+                JREngage.logd(TAG, "[doSessionPoll] providers found, timer cancelled...");
             } else {
-                Log.i(TAG, "[doSessionPoll] no providers yet, will retry soon...");
+                JREngage.logd(TAG, "[doSessionPoll] no providers yet, will retry soon...");
             }
         }
     }

@@ -144,7 +144,7 @@ public class Story implements Serializable, Comparable<Story> {
                 new JRActivityObject("shared an article from the Janrain Blog", getLink());
 
         activityObject.setTitle(mTitle);
-        activityObject.setDescription(mPlainText);
+        activityObject.setDescription(mPlainText.trim());
         if (getImageUrls().size() > 0) {
             activityObject.addMedia(new JRImageMediaObject(getImageUrls().get(0), getImageUrls().get(0)));
         }

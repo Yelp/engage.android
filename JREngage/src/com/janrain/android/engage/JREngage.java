@@ -125,6 +125,7 @@ import java.util.List;
  **/
 public class JREngage {
 	private static final String TAG = JREngage.class.getSimpleName();
+    public static boolean sLoggingEnabled = false;
 
     /* Singleton instance of this class */
 	private static JREngage sInstance;
@@ -184,7 +185,7 @@ public class JREngage {
             throw new IllegalArgumentException("appId parameter cannot be null.");
         }
 
-        Log.i(TAG, "[initInstance] git resource '" + activity.getString(R.string.jr_git_describe) +
+        logd(TAG, "[initInstance] git resource '" + activity.getString(R.string.jr_git_describe) +
                 "' activity '" + activity + "' appId '" + appId + "' tokenUrl '" + tokenUrl + "'");
 
         if (sInstance == null) sInstance = new JREngage();
@@ -292,17 +293,17 @@ public class JREngage {
 
     private JRSessionDelegate mJrsd = new JRSessionDelegate.SimpleJRSessionDelegate() {
         public void authenticationDidRestart() {
-            if (Config.LOGD) Log.d(TAG, "[authenticationDidRestart]");
+            JREngage.logd(TAG, "[authenticationDidRestart]");
         }
 
         public void authenticationDidCancel() {
-            if (Config.LOGD) Log.d(TAG, "[authenticationDidCancel]");
+            JREngage.logd(TAG, "[authenticationDidCancel]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) delegate.jrAuthenticationDidNotComplete();
         }
 
         public void authenticationDidComplete(JRDictionary profile, String provider) {
-            if (Config.LOGD) Log.d(TAG, "[authenticationDidComplete]");
+            JREngage.logd(TAG, "[authenticationDidComplete]");
 
             for (JREngageDelegate d : getDelegatesCopy()) {
                 d.jrAuthenticationDidSucceedForUser(profile, provider);
@@ -310,7 +311,7 @@ public class JREngage {
         }
 
         public void authenticationDidFail(JREngageError error, String provider) {
-            if (Config.LOGD) Log.d(TAG, "[authenticationDidFail]");
+            JREngage.logd(TAG, "[authenticationDidFail]");
             for (JREngageDelegate delegate : getDelegatesCopy()) {
                 delegate.jrAuthenticationDidFailWithError(error, provider);
             }
@@ -320,7 +321,7 @@ public class JREngage {
                                                    HttpResponseHeaders responseHeaders,
                                                    String payload,
                                                    String provider) {
-            if (Config.LOGD) Log.d(TAG, "[authenticationDidReachTokenUrl]");
+            JREngage.logd(TAG, "[authenticationDidReachTokenUrl]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
                 delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, responseHeaders, payload, provider);
@@ -330,7 +331,7 @@ public class JREngage {
         public void authenticationCallToTokenUrlDidFail(String tokenUrl,
                                                         JREngageError error,
                                                         String provider) {
-            if (Config.LOGD) Log.d(TAG, "[authenticationCallToTokenUrlDidFail]");
+            JREngage.logd(TAG, "[authenticationCallToTokenUrlDidFail]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
                 delegate.jrAuthenticationCallToTokenUrlDidFail(tokenUrl, error, provider);
@@ -338,7 +339,7 @@ public class JREngage {
         }
 
         public void publishingDidCancel() {
-            if (Config.LOGD) Log.d(TAG, "[publishingDidCancel]");
+            JREngage.logd(TAG, "[publishingDidCancel]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) {
                 delegate.jrSocialDidNotCompletePublishing();
@@ -346,7 +347,7 @@ public class JREngage {
         }
 
         public void publishingDidComplete() {
-            if (Config.LOGD) Log.d(TAG, "[publishingDidComplete]");
+            JREngage.logd(TAG, "[publishingDidComplete]");
 
             for (JREngageDelegate delegate : getDelegatesCopy()) delegate.jrSocialDidCompletePublishing();
         }
@@ -360,7 +361,7 @@ public class JREngage {
         }
 
         public void publishingJRActivityDidSucceed(JRActivityObject activity, String provider) {
-            if (Config.LOGD) Log.d(TAG, "[publishingJRActivityDidSucceed]");
+            JREngage.logd(TAG, "[publishingJRActivityDidSucceed]");
 
             for (JREngageDelegate d : getDelegatesCopy()) d.jrSocialDidPublishJRActivity(activity, provider);
         }
@@ -368,7 +369,7 @@ public class JREngage {
         public void publishingJRActivityDidFail(JRActivityObject activity,
                                                 JREngageError error,
                                                 String provider) {
-            if (Config.LOGD) Log.d(TAG, "[publishingJRActivityDidFail]");
+            JREngage.logd(TAG, "[publishingJRActivityDidFail]");
 
             for (JREngageDelegate d : getDelegatesCopy()) {
                 d.jrSocialPublishJRActivityDidFail(activity, error, provider);
@@ -401,7 +402,7 @@ public class JREngage {
      *   List of Providers</a>
      **/
     public void signoutUserForProvider(String provider) {
-        if (Config.LOGD) Log.d(TAG, "[signoutUserForProvider]");
+        JREngage.logd(TAG, "[signoutUserForProvider]");
         mSession.forgetAuthenticatedUserForProvider(provider);
     }
 
@@ -409,7 +410,7 @@ public class JREngage {
      * Remove the user's credentials for all providers from the library.
      **/
     public void signoutUserForAllProviders() {
-        if (Config.LOGD) Log.d(TAG, "[signoutUserForAllProviders]");
+        JREngage.logd(TAG, "[signoutUserForAllProviders]");
         mSession.forgetAllAuthenticatedUsers();
     }
 
@@ -422,7 +423,7 @@ public class JREngage {
      *   library should allow cached credentials to authenticate the user
      **/
     public void setAlwaysForceReauthentication(boolean force) {
-        if (Config.LOGD) Log.d(TAG, "[setAlwaysForceReauthentication]");
+        JREngage.logd(TAG, "[setAlwaysForceReauthentication]");
         mSession.setAlwaysForceReauth(force);
     }
 /*@}*/
@@ -438,7 +439,7 @@ public class JREngage {
      **/
 
     public void cancelAuthentication() {
-        if (Config.LOGD) Log.d(TAG, "[cancelAuthentication]");
+        JREngage.logd(TAG, "[cancelAuthentication]");
 
         finishJrActivities();
 
@@ -450,7 +451,7 @@ public class JREngage {
      * the calling Activity to the top of the application's activity stack.
      **/
     public void cancelPublishing() {
-        if (Config.LOGD) Log.d(TAG, "[cancelPublishing]");
+        JREngage.logd(TAG, "[cancelPublishing]");
 
         finishJrActivities();
 
@@ -482,7 +483,7 @@ public class JREngage {
      *   The new token URL you wish authentications to post the Engage \e auth_info \e token to
      **/
     public void setTokenUrl(String newTokenUrl) {
-        if (Config.LOGD) Log.d(TAG, "[setTokenUrl]");
+        JREngage.logd(TAG, "[setTokenUrl]");
         mSession.setTokenUrl(newTokenUrl);
     }
 
@@ -501,7 +502,7 @@ public class JREngage {
      *   The object that implements the JREngageDelegate interface
      **/
     public synchronized void addDelegate(JREngageDelegate delegate) {
-		if (Config.LOGD) Log.d(TAG, "[addDelegate]");
+		JREngage.logd(TAG, "[addDelegate]");
 		mDelegates.add(delegate);
 	}
 
@@ -512,7 +513,7 @@ public class JREngage {
      *   The object that implements the JREngageDelegate interface
      **/
 	public synchronized void removeDelegate(JREngageDelegate delegate) {
-		if (Config.LOGD) Log.d(TAG, "[removeDelegate]");
+		JREngage.logd(TAG, "[removeDelegate]");
 		mDelegates.remove(delegate);
 	}
 /*@}*/
@@ -562,7 +563,7 @@ public class JREngage {
      * start a new Android Activity and take the user through the sign-in process.
      **/
     public void showAuthenticationDialog() {
-        if (Config.LOGD) Log.d(TAG, "[showAuthenticationDialog]");
+        JREngage.logd(TAG, "[showAuthenticationDialog]");
 
         showAuthenticationDialog(false);
     }
@@ -581,7 +582,7 @@ public class JREngage {
      *  setAlwaysForceReauthentication().
      **/
     public void showAuthenticationDialog(boolean skipReturningUserLandingPage) {
-        if (Config.LOGD) Log.d(TAG, "[showAuthenticationDialog]: " + skipReturningUserLandingPage);
+        JREngage.logd(TAG, "[showAuthenticationDialog]: " + skipReturningUserLandingPage);
 
         if (checkSessionDataError()) return;
 
@@ -601,7 +602,7 @@ public class JREngage {
      *   The activity you wish to share
      **/
     public void showSocialPublishingDialog(JRActivityObject activity) {
-        if (Config.LOGD) Log.d(TAG, "[showSocialPublishingDialog]");
+        JREngage.logd(TAG, "[showSocialPublishingDialog]");
         /* If there was error configuring the library, sessionData.error will not be null. */
         if (checkSessionDataError()) return;
         checkNullJRActivity(activity);
@@ -643,7 +644,7 @@ public class JREngage {
                                              Integer transitRes,
                                              Integer customEnterAnimation,
                                              Integer customExitAnimation) {
-        if (Config.LOGD) Log.d(TAG, "[showSocialPublishingFragment]");
+        JREngage.logd(TAG, "[showSocialPublishingFragment]");
         if (checkSessionDataError()) return;
 
         checkNullJRActivity(activity);
@@ -771,6 +772,14 @@ public class JREngage {
 
     private synchronized List<JREngageDelegate> getDelegatesCopy() {
         return new ArrayList<JREngageDelegate>(mDelegates);
+    }
+
+    public static void logd(String tag, String msg, Throwable tr) {
+        if (sLoggingEnabled) Log.d(tag, msg, tr);
+    }
+
+    public static void logd(String tag, String msg) {
+        if (sLoggingEnabled) Log.d(tag, msg);
     }
 }
 

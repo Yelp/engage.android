@@ -37,15 +37,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import com.janrain.android.engage.JREngage;
 
 public class MainActivity extends Activity implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    /* Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        JREngage.sLoggingEnabled = true;
+
         setContentView(R.layout.splash);
 
         Button mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);

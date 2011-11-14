@@ -118,7 +118,9 @@ public class QuickShare extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (Config.LOGD) Log.d(TAG, "[onCreate]");
+        Log.d(TAG, "[onCreate]");
+
+        JREngage.sLoggingEnabled = true;
 
         sInstance = this;
 
@@ -238,7 +240,7 @@ public class QuickShare extends Application {
                     public void end() {
                         if (mStoryLinks.contains(currentStory.getLink())) return;
 
-                        if (Config.LOGD) Log.d(TAG, "[addStoryOnlyIfNew] story hasn't been added");
+                        Log.d(TAG, "[addStoryOnlyIfNew] story hasn't been added");
 
                         synchronized (mStories) {
                             mStories.add(currentStory.copy());

@@ -48,7 +48,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Quic
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if (Config.LOGD) Log.d(TAG, "[onCreate]");
+        Log.d(TAG, "[onCreate]");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
@@ -84,7 +84,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Quic
     }
 
     public void asyncFeedReadSucceeded() {
-        if (Config.LOGD) Log.d(TAG, "[asyncFeedReadSucceeded]");
+        Log.d(TAG, "[asyncFeedReadSucceeded]");
 
         mViewFeedSummary.setEnabled(true);
         mFeedHasLoaded = true;
@@ -92,7 +92,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Quic
     }
 
     public void asyncFeedReadFailed(Exception e) {
-        if (Config.LOGD) Log.d(TAG, "[asyncFeedReadFailed]");
+        Log.d(TAG, "[asyncFeedReadFailed]");
 
         mViewFeedSummary.setEnabled(true);
         mFeedHasLoaded = false;

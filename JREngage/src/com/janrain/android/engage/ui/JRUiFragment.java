@@ -52,6 +52,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSession;
 
@@ -96,9 +97,9 @@ public abstract class JRUiFragment extends Fragment {
             if (JRUiFragment.this.getClass().toString().equals(target) ||
                     target.equals(JRFragmentHostActivity.FINISH_TARGET_ALL)) {
                 if (!isEmbeddedMode()) tryToFinishActivity();
-                if (Config.LOGD) Log.d(TAG, "[onReceive] handled");
+                JREngage.logd(TAG, "[onReceive] handled");
             } else if (Config.LOGD) {
-                if (Config.LOGD) Log.d(TAG, "[onReceive] ignored");
+                JREngage.logd(TAG, "[onReceive] ignored");
             }
         }
     }
@@ -106,7 +107,7 @@ public abstract class JRUiFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
 
         if (mFinishReceiver == null) mFinishReceiver = new FinishReceiver();
         getActivity().registerReceiver(mFinishReceiver, JRFragmentHostActivity.FINISH_INTENT_FILTER);
@@ -115,7 +116,7 @@ public abstract class JRUiFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Config.LOGD) Log.d(TAG, "[onCreate]");
+        JREngage.logd(TAG, "[onCreate]");
 
         mSession = JRSession.getInstance();
         if (mSession != null) mSession.setUiIsShowing(true);
@@ -130,7 +131,7 @@ public abstract class JRUiFragment extends Fragment {
     @SuppressWarnings("unchecked")
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (Config.LOGD) Log.d(TAG, "[onActivityCreated]");
+        JREngage.logd(TAG, "[onActivityCreated]");
 
         mSession = JRSession.getInstance();
 
@@ -155,14 +156,14 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onStart() {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
         super.onStart();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (Config.LOGD) Log.d(TAG, "[onResume]");
+        JREngage.logd(TAG, "[onResume]");
         if (isShowing()) showHideTaglines();
     }
 
@@ -172,19 +173,19 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onPause() {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
         super.onPause();
     }
 
     @Override
     public void onStop() {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
         super.onStop();
     }
 
     @Override
     public void onDestroyView() {
-        if (Config.LOGD) Log.d(TAG, "[onDestroyView]");
+        JREngage.logd(TAG, "[onDestroyView]");
 
         for (ManagedDialog d : mManagedDialogs.values()) d.mDialog.dismiss();
 
@@ -193,7 +194,7 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        if (Config.LOGD) Log.d(TAG, "[onDestroy]");
+        JREngage.logd(TAG, "[onDestroy]");
         if (mSession != null) mSession.setUiIsShowing(false);
 
         super.onDestroy();
@@ -201,7 +202,7 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onDetach() {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
         if (mFinishReceiver != null) getActivity().unregisterReceiver(mFinishReceiver);
 
         super.onDetach();
@@ -210,7 +211,7 @@ public abstract class JRUiFragment extends Fragment {
     //--
     @Override
     public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
         super.onInflate(activity, attrs, savedInstanceState);
 
         if (JRSession.getInstance() == null) {
@@ -228,7 +229,7 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
 
         Bundle[] dialogOptions = new Bundle[mManagedDialogs.size()];
         int x = 0;
@@ -245,13 +246,13 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
         super.onConfigurationChanged(newConfig);
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
-        if (Config.LOGD) Log.d(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
         super.onHiddenChanged(hidden);
     }
     //--
@@ -418,7 +419,7 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     protected void tryToFinishActivity() {
-        Log.i(TAG, "[tryToFinishActivity]");
+        JREngage.logd(TAG, "[tryToFinishActivity]");
         getActivity().finish();
     }
 

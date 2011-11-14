@@ -34,6 +34,7 @@ package com.janrain.android.engage.net.async;
 import android.os.Handler;
 import android.util.Config;
 import android.util.Log;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.utils.IOUtils;
 import org.apache.http.Header;
@@ -151,7 +152,7 @@ public final class AsyncHttpClient {
         }
 
 		public void run() {
-			if (Config.LOGD) Log.d(TAG, "[run] BEGIN, URL: " + mUrl);
+			JREngage.logd(TAG, "[run] BEGIN, URL: " + mUrl);
 
             setupHttpClient();
 
@@ -187,19 +188,19 @@ public final class AsyncHttpClient {
 
                 switch (response.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
-                    if (Config.LOGD) Log.d(TAG, "[run] HTTP_OK");
-                    if (Config.LOGD) Log.d(TAG, "[run] headers: " + headers.toString());
-                    if (Config.LOGD) Log.d(TAG, "[run] data for " + mUrl + ": " +
+                    JREngage.logd(TAG, "[run] HTTP_OK");
+                    JREngage.logd(TAG, "[run] headers: " + headers.toString());
+                    JREngage.logd(TAG, "[run] data for " + mUrl + ": " +
                             dataString.substring(0, Math.min(dataString.length(), 600)));
                     mWrapper.setResponse(new AsyncHttpResponse(mUrl, headers, data));
                     break;
                 case HttpStatus.SC_NOT_MODIFIED:
-                    if (Config.LOGD) Log.d(TAG, "[run] HTTP_NOT_MODIFIED");
+                    JREngage.logd(TAG, "[run] HTTP_NOT_MODIFIED");
                     mWrapper.setResponse(new AsyncHttpResponse(mUrl, headers, data));
                     break;
                 case HttpStatus.SC_CREATED:
                     // Response from the Engage trail creation and maybe URL shortening calls
-                    if (Config.LOGD) Log.d(TAG, "[run] HTTP_CREATED");
+                    JREngage.logd(TAG, "[run] HTTP_CREATED");
                     mWrapper.setResponse(new AsyncHttpResponse(mUrl, headers, data));
                     break;
                 default:
@@ -257,7 +258,7 @@ public final class AsyncHttpClient {
 		public void setResponse(AsyncHttpResponse holder) {
 			mResponse = holder;
             mResponse.setConnectionData(mConnectionData);
-			if (Config.LOGD) Log.d(TAG, "[setResponse] response set.");
+			JREngage.logd(TAG, "[setResponse] response set.");
 		}
 	}
 

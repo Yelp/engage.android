@@ -42,6 +42,7 @@ import android.util.Config;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSession;
@@ -67,7 +68,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "[onCreate]: " + getFragmentId());
+        JREngage.logd(TAG, "[onCreate]: " + getFragmentId());
 
         mSession = JRSession.getInstance();
         /* For the case when this activity is relaunched after the process was killed */
@@ -172,7 +173,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
     @Override
     public void setTheme(int r) {
-        Log.d(TAG, "setTheme: " + r);
+        JREngage.logd(TAG, "setTheme: " + r);
         super.setTheme(r);
     }
 
@@ -183,7 +184,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (Config.LOGD) Log.d(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
+        JREngage.logd(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode <= 1<<16) mUiFragment.onActivityResult(requestCode, resultCode, data);
     }
@@ -203,7 +204,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed");
+        JREngage.logd(TAG, "onBackPressed");
 
         mUiFragment.onBackPressed();
     }

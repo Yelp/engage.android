@@ -48,6 +48,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.utils.AndroidUtils;
@@ -70,7 +71,7 @@ public class JRLandingFragment extends JRUiFragment {
 
     private View.OnClickListener mButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
-            Log.i(TAG, "[onClick] handled");
+            JREngage.logd(TAG, "[onClick] handled");
 
             if (view.equals(mSignInButton)) {
                 onSignInClick();
@@ -129,7 +130,7 @@ public class JRLandingFragment extends JRUiFragment {
     }
 
     private void onSwitchAccountsClick() {
-        if (Config.LOGD) Log.d(TAG, "[onSwitchAccountsClick]");
+        JREngage.logd(TAG, "[onSwitchAccountsClick]");
 
         mSession.getCurrentlyAuthenticatingProvider().setForceReauth(true);
         mSession.setReturningBasicProvider("");
@@ -196,7 +197,7 @@ public class JRLandingFragment extends JRUiFragment {
 
     @Override
     protected void tryToFinishActivity() {
-        if (Config.LOGD) Log.d(TAG, "[tryToFinishActivity]");
+        JREngage.logd(TAG, "[tryToFinishActivity]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
         } else {
@@ -222,7 +223,7 @@ public class JRLandingFragment extends JRUiFragment {
         }
 
         if (currentlyAuthenticatingProvider.requiresInput()) {
-            if (Config.LOGD) Log.d(TAG, "[prepareUserInterface] current provider requires input");
+            JREngage.logd(TAG, "[prepareUserInterface] current provider requires input");
             configureButtonVisibility(true); // one button UI
 
             mWelcomeLabel.setVisibility(View.GONE);
@@ -232,7 +233,7 @@ public class JRLandingFragment extends JRUiFragment {
             mUserInput.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
         } else { // doesn't require input
             configureButtonVisibility(false); // = two button UI -> Switch Accounts is showing
-            if (Config.LOGD) Log.d(TAG, "[prepareUserInterface] current provider doesn't require input");
+            JREngage.logd(TAG, "[prepareUserInterface] current provider doesn't require input");
 
             mUserInput.setVisibility(View.GONE);
 

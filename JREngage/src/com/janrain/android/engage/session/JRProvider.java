@@ -267,7 +267,7 @@ public class JRProvider implements Serializable {
     }
 
     public void setUserInput(String userInput) {
-        if (Config.LOGD) Log.d(TAG, "[prov] user input: [" + Prefs.KEY_JR_USER_INPUT + mName + "]");
+        JREngage.logd(TAG, "[prov] user input: [" + Prefs.KEY_JR_USER_INPUT + mName + "]");
 
         mUserInput = userInput;
 
@@ -379,7 +379,7 @@ public class JRProvider implements Serializable {
 
     @SuppressWarnings({"unchecked"})
     private void downloadIcons(final Context c) {
-        if (Config.LOGD) Log.d(TAG, "downloadIcons: " + mName);
+        JREngage.logd(TAG, "downloadIcons: " + mName);
 
         synchronized (this) {
             if (mCurrentlyDownloading) return;
@@ -400,7 +400,7 @@ public class JRProvider implements Serializable {
                         if (Arrays.asList(c.fileList()).contains("providericon~" + iconFileName))
                             continue;
 
-                        if (Config.LOGD) Log.d(TAG, "Downloading icon: " + iconFileName);
+                        JREngage.logd(TAG, "Downloading icon: " + iconFileName);
                         URL url = new URL(JRSession.getEnvironment().getServerUrl()
                                 + "/cdn/images/mobile_icons/android/" + iconFileName);
                         InputStream is = url.openStream();
@@ -413,9 +413,9 @@ public class JRProvider implements Serializable {
 
                         fos.close();
                     } catch (MalformedURLException e) {
-                        if (Config.LOGD) Log.d(TAG, e.toString());
+                        JREngage.logd(TAG, e.toString());
                     } catch (IOException e) {
-                        if (Config.LOGD) Log.d(TAG, e.toString());
+                        JREngage.logd(TAG, e.toString());
                     }
                 }
                 mCurrentlyDownloading = false;
@@ -425,7 +425,7 @@ public class JRProvider implements Serializable {
     }
 
     public void loadDynamicVariables() {
-        if (Config.LOGD) Log.d("JRProvider", "[prov] user input: " + Prefs.KEY_JR_USER_INPUT + mName );
+        JREngage.logd("JRProvider", "[prov] user input: " + Prefs.KEY_JR_USER_INPUT + mName );
 
     	mUserInput = Prefs.getString(Prefs.KEY_JR_USER_INPUT + mName, "");
     	mForceReauth = Prefs.getBoolean(Prefs.KEY_JR_FORCE_REAUTH + mName, false);

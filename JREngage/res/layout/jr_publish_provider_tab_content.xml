@@ -179,11 +179,6 @@
                         android:textSize="@dimen/jr_media_content_title_size"
                         />
 
-                    <!--
-                       In order to get the text to extend more than two lines, had
-                       to use the 'inputType=...' property.  Unfortunately, doing so breaks
-                       the ellipsize function.
-                      -->
                     <TextView
                         android:id="@+id/jr_media_content_description"
                         android:layout_width="wrap_content"
@@ -194,13 +189,10 @@
                         android:layout_marginLeft="5dip"
                         android:layout_below="@id/jr_media_content_title"
                         android:layout_toRightOf="@id/jr_media_content_image"
-                        android:ellipsize="end"
                         android:textStyle="normal"
                         android:maxLines="4"
                         android:textSize="@dimen/jr_media_content_description_size"
-                        android:inputType="textMultiLine"
                         />
-                        <!--android:maxHeight="150dip"-->
 
                 </RelativeLayout>
 

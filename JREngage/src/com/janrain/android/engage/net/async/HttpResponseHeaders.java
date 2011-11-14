@@ -35,6 +35,7 @@ package com.janrain.android.engage.net.async;
 
 import android.util.Config;
 import android.util.Log;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.utils.ListUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -103,7 +104,7 @@ public class HttpResponseHeaders {
      *   The new instance
      */
     public static HttpResponseHeaders fromResponse(HttpResponse response, HttpUriRequest request) {
-        if (Config.LOGD) Log.d(TAG, "[fromResponse] BEGIN");
+        JREngage.logd(TAG, "[fromResponse] BEGIN");
 
         HttpResponseHeaders headers = new HttpResponseHeaders();
 

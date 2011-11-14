@@ -53,6 +53,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -100,6 +101,7 @@ public class JRWebViewFragment extends JRUiFragment {
         mProgressSpinner = (ProgressBar)view.findViewById(R.id.jr_webview_progress);
 
         mWebViewSettings = mWebView.getSettings();
+        mWebViewSettings.setSavePassword(false);
 
         // Shim some information about the OS version into the WebView for use by hax ala Yahoo:
         mWebView.addJavascriptInterface(new Object() {
@@ -186,7 +188,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     @Override
     protected void tryToFinishActivity() {
-        if (Config.LOGD) Log.d(TAG, "[tryToFinishActivity]");
+        JREngage.logd(TAG, "[tryToFinishActivity]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
         } else {
@@ -217,7 +219,7 @@ public class JRWebViewFragment extends JRUiFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getTitle().toString().equals(getString(R.string.jr_menu_item_refresh))) {
-            if (Config.LOGD) Log.d(TAG, "refreshing WebView");
+            JREngage.logd(TAG, "refreshing WebView");
             mWebView.reload();
             return true;
         }
@@ -234,7 +236,7 @@ public class JRWebViewFragment extends JRUiFragment {
         //}
 
         String urlToLoad = url + "&auth_info=true";
-        if (Config.LOGD) Log.d(TAG, "[loadMobileEndpointUrl] loading URL: " + urlToLoad);
+        JREngage.logd(TAG, "[loadMobileEndpointUrl] loading URL: " + urlToLoad);
 
 
         JRConnectionManager.createConnection(urlToLoad, mMobileEndPointConnectionDelegate, null);
@@ -251,10 +253,8 @@ public class JRWebViewFragment extends JRUiFragment {
                                     String mimetype,
                                     long contentLength) {
 
-            if (Config.LOGD) {
-                Log.d(TAG, "[onDownloadStart] URL: " + url + " | mimetype: " + mimetype
+            JREngage.logd(TAG, "[onDownloadStart] URL: " + url + " | mimetype: " + mimetype
                     + " | length: " + contentLength);
-            }
 
             if (isMobileEndpointUrl(url)) loadMobileEndpointUrl(url);
         }
@@ -274,7 +274,7 @@ public class JRWebViewFragment extends JRUiFragment {
             // redirects involved.
             // Another bug documents that this method isn't called on a form submission via POST
             // http://code.google.com/p/android/issues/detail?id=9122
-            if (Config.LOGD) Log.d(TAG, "[shouldOverrideUrlLoading]: " + view + ", " + url);
+            JREngage.logd(TAG, "[shouldOverrideUrlLoading]: " + view + ", " + url);
 
             if (isMobileEndpointUrl(url)) {
                 loadMobileEndpointUrl(url);
@@ -296,11 +296,11 @@ public class JRWebViewFragment extends JRUiFragment {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            if (Config.LOGD) Log.d(TAG, "[onPageStarted] url: " + url);
+            JREngage.logd(TAG, "[onPageStarted] url: " + url);
 
             /* Check for mobile endpoint URL. */
             if (isMobileEndpointUrl(url)) {
-                Log.d(TAG, "[onPageStarted] looks like JR mobile endpoint URL");
+                JREngage.logd(TAG, "[onPageStarted] looks like JR mobile endpoint URL");
                 loadMobileEndpointUrl(url);
                 mWebView.stopLoading();
             }
@@ -310,7 +310,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            if (Config.LOGD) Log.d(TAG, "[onPageFinished] URL: " + url);
+            JREngage.logd(TAG, "[onPageFinished] URL: " + url);
 
             hideProgressSpinner();
 
@@ -361,7 +361,8 @@ public class JRWebViewFragment extends JRUiFragment {
                                                String requestUrl,
                                                Object tag) {
             String payloadString = new String(payload);
-            Log.d(TAG, "[connectionDidFinishLoading] userdata: " + tag + " | payload: " + payloadString);
+            JREngage.logd(TAG, "[connectionDidFinishLoading] userdata: " + tag + " | payload: " +
+                    payloadString);
 
             //if (AndroidUtils.isSmallNormalOrLargeScreen()) {
             //    dismissProgressDialog();
@@ -455,7 +456,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
         @Override
         public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
-            Log.i(TAG, "[connectionDidFail] userdata: " + tag, ex);
+            JREngage.logd(TAG, "[connectionDidFail] userdata: " + tag, ex);
 
             if ((tag != null) && (tag instanceof String)) {
                 final JREngageError error = new JREngageError(

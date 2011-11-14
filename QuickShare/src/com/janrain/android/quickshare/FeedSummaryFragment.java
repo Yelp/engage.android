@@ -171,7 +171,7 @@ public class FeedSummaryFragment extends ListFragment {
 
     private QuickShare.FeedReaderListener mFeedReaderListener = new QuickShare.FeedReaderListener() {
         public void asyncFeedReadSucceeded() {
-            if (Config.LOGD) Log.d(TAG, "[asyncFeedReadSucceeded]");
+            Log.d(TAG, "[asyncFeedReadSucceeded]");
             if (isVisible() && mDualPane && getFragmentManager().getBackStackEntryCount() == 0) {
                 showDetails(Math.min(mCurCheckPosition, mFeedData.getFeed().size() - 1));
             }
@@ -184,7 +184,7 @@ public class FeedSummaryFragment extends ListFragment {
         }
 
         public void asyncFeedReadFailed(Exception e) {
-            if (Config.LOGD) Log.d(TAG, "[asyncFeedReadFailed]");
+            Log.d(TAG, "[asyncFeedReadFailed]");
 
             if (mRefreshView != null) {
                 setRefreshViewText(mRefreshView, "Load failed");
@@ -198,7 +198,7 @@ public class FeedSummaryFragment extends ListFragment {
         mStories.clear();
         mStories.addAll(mFeedData.getFeed());
 
-        if (Config.LOGD) Log.d(TAG, "[updateStoryList] " + mStories.size() + " stories remain");
+        Log.d(TAG, "[updateStoryList] " + mStories.size() + " stories remain");
 
         mStories.add(0, Story.dummyStory());
     }
@@ -212,7 +212,7 @@ public class FeedSummaryFragment extends ListFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete_all_stories:
-                if (Config.LOGD) Log.d(TAG, "[onOptionsItemSelected] delete all stories option selected");
+                Log.d(TAG, "[onOptionsItemSelected] delete all stories option selected");
 
                 mFeedData.deleteAllStories();
                 updateStoryList();
@@ -278,7 +278,7 @@ public class FeedSummaryFragment extends ListFragment {
                 title.setGravity(Gravity.CENTER_HORIZONTAL);
             } else {
                 if (v == mRefreshView) mRefreshView = null;
-                //if (Config.LOGD) Log.d(TAG, "[getView] for row " + position + ": " + story.getTitle());
+                //Log.d(TAG, "[getView] for row " + position + ": " + story.getTitle());
 
                 v.setTag("STORY_ROW");
 
@@ -290,7 +290,7 @@ public class FeedSummaryFragment extends ListFragment {
                     icon.setVisibility(View.VISIBLE);
                     ImageLoader il = mFeedData.getImageLoader();
                     ImageLoader.BindResult br = il.bind(this, icon, story.getThumbnailUrl());
-                    //if (Config.LOGD) Log.d(TAG, "bind result: " + br);
+                    //Log.d(TAG, "bind result: " + br);
                 }
 
                 title.setText(story.getTitle());

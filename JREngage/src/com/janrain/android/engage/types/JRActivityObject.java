@@ -31,12 +31,15 @@
  */
 package com.janrain.android.engage.types;
 
+import android.text.TextUtils;
 import android.util.Log;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.utils.AndroidUtils;
+import com.janrain.android.engage.utils.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
@@ -260,14 +263,32 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
      *   if action is null
      **/
     public JRActivityObject(String action, String url) {
+        initJRActivityObject(action, url);
+    }
+
+    /**
+     * Returns a JRActivityObject initialized with the given action and URL.
+     *
+     * @param action
+     *   A string describing what the user did, written in the third person.  This value cannot
+     *   be null
+     *
+     * @throws IllegalArgumentException
+     *   if action is null
+     **/
+    public JRActivityObject(String action) {
+        initJRActivityObject(action, "");
+    }
+/*@}*/
+
+    private void initJRActivityObject(String action, String url) {
         if (action == null) throw new IllegalArgumentException("illegal null action");
         if (url == null) url = "";
 
-        Log.d(TAG, "created with action: " + action + " url: " + url);
+        JREngage.logd(TAG, "created with action: " + action + " url: " + url);
         mAction = action;
         mUrl = url;
     }
-/*@}*/
 
 /**
  * @name Getters/Setters
@@ -552,9 +573,11 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
             callback.setShortenedUrl(mShortenedUrl);
             return;
         }
-        if (mIsShortening) return;
+
+        if (mIsShortening) return; // todo there's a bug here, this code branch doesn't invoke its callback
         mIsShortening = true;
 
+        // Don't shorten empty URLs
         JRSession session = JRSession.getInstance();
         try {
             // todo invoke when the activity object is created (or maybe when publish is called?)
@@ -594,12 +617,15 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
             JRConnectionManagerDelegate jrcmd =
                     new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
                 @Override
-                public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload, String requestUrl, Object tag) {
+                public void connectionDidFinishLoading(HttpResponseHeaders headers,
+                                                       byte[] payload,
+                                                       String requestUrl,
+                                                       Object tag) {
                     String shortUrl = getUrl();
                     String payloadString = new String(payload);
 
                     try {
-                        Log.d(TAG, "fetchShortenedURLs connectionDidFinishLoading: " + payloadString);
+                        JREngage.logd(TAG, "fetchShortenedURLs connectionDidFinishLoading: " + payloadString);
                         JSONObject jso = (JSONObject) (new JSONTokener(payloadString)).nextValue();
                         jso = jso.getJSONObject("urls");
                         JSONObject jsonActivityUrls = jso.getJSONObject(JRSession.USERDATA_ACTIVITY_KEY);
@@ -627,7 +653,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
 
                     mIsShortening = false;
                     mShortenedUrl = shortUrl;
-                    updateUI(shortUrl);
+                    if (!TextUtils.isEmpty(getUrl())) updateUI(shortUrl); // Empty URLs a
                 }
 
                 void updateUI(String shortenedUrl) {
@@ -643,6 +669,13 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
 
             // Invoke the network call
             JRConnectionManager.createConnection(getUrlsUrl, jrcmd, null);
+
+            // If the activity resource URL is empty invoke the callback immediately
+            if (TextUtils.isEmpty(getUrl())) {
+                mShortenedUrl = "";
+                callback.setShortenedUrl("");
+            }
+
         } catch (JSONException e) {
             Log.e(TAG, "URL shortening JSON error", e);
         }

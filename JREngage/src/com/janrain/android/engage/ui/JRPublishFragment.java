@@ -64,6 +64,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRAuthenticatedUser;
@@ -314,11 +315,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mActivityObject.shortenUrls(new JRActivityObject.ShortenedUrlCallback() {
             public void setShortenedUrl(String shortenedUrl) {
                 mShortenedActivityURL = shortenedUrl;
+                if (!TextUtils.isEmpty(mShortenedActivityURL)) {
+                    mShortenedActivityURL = "<br/>" + mShortenedActivityURL;
+                }
 
                 if (mSelectedProvider == null) return;
                 if (!JRPublishFragment.this.isAdded()) return;
                 if (JRPublishFragment.this.isHidden()) return;
-                if (mSelectedProvider == null) return;
 
                 if (mSelectedProvider.getSocialSharingProperties().getAsBoolean("content_replaces_action")) {
                     updatePreviewTextWhenContentReplacesAction();
@@ -444,7 +447,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         /* Set the media_content_view = a thumbnail of the media */
         if (mo != null) if (mo.hasThumbnail()) {
-            if (Config.LOGD) Log.d(TAG, "media image URL: " + mo.getThumbnail());
+            JREngage.logd(TAG, "media image URL: " + mo.getThumbnail());
             mo.downloadThumbnail(new JRMediaObject.ThumbnailAvailableListener() {
                 public void onThumbnailAvailable(Bitmap bitmap) {
                     if (bitmap == null) {
@@ -569,7 +572,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     public void onTabChanged(String tabTag) {
-        if (Config.LOGD) Log.d(TAG, "[onTabChange]: " + tabTag);
+        JREngage.logd(TAG, "[onTabChange]: " + tabTag);
 
         if (!tabTag.equals(EMAIL_SMS_TAB_TAG)) {
             /* ... a "real" provider -- Facebook, Twitter, etc. */
@@ -860,7 +863,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         }
 
         mCharacterCountView.setText(characterCountText);
-        if (Config.LOGD) Log.d(TAG, "updateCharacterCount: " + characterCountText);
+        JREngage.logd(TAG, "updateCharacterCount: " + characterCountText);
     }
 
     private void updatePreviewTextWhenContentReplacesAction() {
@@ -871,17 +874,15 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             newText = mUserCommentView.getText().toString();
         }
 
-        String userNameForPreview = getUserDisplayName();
-
         String shorteningText = getString(R.string.jr_shortening_url);
 
         if (doesActivityUrlAffectCharacterCountForSelectedProvider()) { /* Twitter/MySpace -> true */
             mPreviewLabelView.setText(Html.fromHtml(
-                    "<b>" + userNameForPreview + "</b> " + newText + " <font color=\"#808080\">" +
+                    "<b>" + getUserDisplayName() + "</b> " + newText + " <font color=\"#808080\">" +
                     ((mShortenedActivityURL != null) ? mShortenedActivityURL : shorteningText) +
                     "</font>"));
         } else {
-            mPreviewLabelView.setText(Html.fromHtml("<b> " + userNameForPreview + "</b> " + newText));
+            mPreviewLabelView.setText(Html.fromHtml("<b> " + getUserDisplayName() + "</b> " + newText));
         }
     }
 
@@ -899,7 +900,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private void loadUserNameAndProfilePicForUserForProvider(
             JRAuthenticatedUser user,
             final String providerName) {
-        if (Config.LOGD) Log.d(TAG, "loadUserNameAndProfilePicForUserForProvider");
+        JREngage.logd(TAG, "loadUserNameAndProfilePicForUserForProvider");
 
         if (user == null || providerName == null) {
             mUserNameView.setText("");
@@ -919,7 +920,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void showActivityAsShared(boolean shared) {
-        if (Config.LOGD) Log.d(TAG, "[showActivityAsShared]: " + shared);
+        JREngage.logd(TAG, "[showActivityAsShared]: " + shared);
 
         int visibleIfShared = shared ? View.VISIBLE : View.GONE;
         int visibleIfNotShared = !shared ? View.VISIBLE : View.GONE;
@@ -934,7 +935,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void showUserAsLoggedIn(boolean loggedIn) {
-        if (Config.LOGD) Log.d(TAG, "[showUserAsLoggedIn]: " + loggedIn);
+        JREngage.logd(TAG, "[showUserAsLoggedIn]: " + loggedIn);
 
         int visibleIfLoggedIn = loggedIn ? View.VISIBLE : View.INVISIBLE;
         int visibleIfNotLoggedIn = !loggedIn ? View.VISIBLE : View.INVISIBLE;
@@ -984,7 +985,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void shareActivity() {
-        if (Config.LOGD) Log.d(TAG, "shareActivity mAuthenticatedUser: " + mAuthenticatedUser.toString());
+        JREngage.logd(TAG, "shareActivity mAuthenticatedUser: " + mAuthenticatedUser.toString());
         showProgressDialog();
 
         if (isPublishThunk()) {
@@ -1015,7 +1016,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private JRSessionDelegate mSessionDelegate = new JRSessionDelegate.SimpleJRSessionDelegate() {
         @Override
         public void authenticationDidRestart() {
-            if (Config.LOGD) Log.d(TAG, "[authenticationDidRestart]");
+            JREngage.logd(TAG, "[authenticationDidRestart]");
 
             //mWeAreCurrentlyPostingSomething = false;
             mWeHaveJustAuthenticated = false;
@@ -1024,7 +1025,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         @Override
         public void authenticationDidFail(JREngageError error, String provider) {
-            if (Config.LOGD) Log.d(TAG, "[authenticationDidFail]");
+            JREngage.logd(TAG, "[authenticationDidFail]");
             /* This code path is followed if the mobile endpoint URL fails to be read without error,
              * or if Engage completes with an error (like rpxstaging via Facebook) or (maybe?) if
              * a provider is down. */
@@ -1037,7 +1038,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         @Override
         public void authenticationDidComplete(JRDictionary profile, String provider) {
-            if (Config.LOGD) Log.d(TAG, "[authenticationDidComplete]");
+            JREngage.logd(TAG, "[authenticationDidComplete]");
 
             if (provider.equals(mSelectedProvider.getName())) {
                 JRAuthenticatedUser oldUser = mAuthenticatedUser;
@@ -1062,7 +1063,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         @Override
         public void publishingJRActivityDidSucceed(JRActivityObject activity, String provider) {
-            if (Config.LOGD) Log.d(TAG, "[publishingJRActivityDidSucceed]");
+            JREngage.logd(TAG, "[publishingJRActivityDidSucceed]");
 
             mProvidersThatHaveAlreadyShared.put(provider, true);
 
@@ -1078,7 +1079,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         public void publishingJRActivityDidFail(JRActivityObject activity,
                                                 JREngageError error,
                                                 String provider) {
-            if (Config.LOGD) Log.d(TAG, "[publishingJRActivityDidFail]");
+            JREngage.logd(TAG, "[publishingJRActivityDidFail]");
             boolean reauthenticate = false;
             String dialogErrorMessage;
 
@@ -1117,7 +1118,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
              * JUST try and authorize, or if sharing took longer than the time it takes to pop the
              * view controller. */
             if (reauthenticate && !mWeHaveJustAuthenticated) {
-                if (Config.LOGD) Log.d(TAG, "reauthenticating user for sharing");
+                JREngage.logd(TAG, "reauthenticating user for sharing");
                 mSession.forgetAuthenticatedUserForProvider(provider);
                 authenticateUserForSharing();
 

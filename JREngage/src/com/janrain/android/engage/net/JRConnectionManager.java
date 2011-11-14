@@ -34,6 +34,7 @@ package com.janrain.android.engage.net;
 import android.os.Handler;
 import android.util.Config;
 import android.util.Log;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.net.async.AsyncHttpClient;
 import com.janrain.android.engage.net.async.AsyncHttpResponse;
 import org.apache.http.NameValuePair;
@@ -105,7 +106,7 @@ public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseLis
                 new Handler(),
                 new AsyncHttpClient.HttpCallbackWrapper(getInstance(), connectionData)
         ).start();
-        if (Config.LOGD) Log.d(TAG, "[executeHttpRequest] invoked");
+        JREngage.logd(TAG, "[executeHttpRequest] invoked");
     }
 
     /**
@@ -142,7 +143,7 @@ public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseLis
                 new Handler(),
                 new AsyncHttpClient.HttpCallbackWrapper(getInstance(), connectionData)
         ).start();
-        if (Config.LOGD) Log.d(TAG, "[executeHttpRequest] invoked");
+        JREngage.logd(TAG, "[executeHttpRequest] invoked");
     }
 
 

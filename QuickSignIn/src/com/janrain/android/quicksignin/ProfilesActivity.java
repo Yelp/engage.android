@@ -139,7 +139,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
      */
     @Override
     protected void onListItemClick(ListView l, View v, int pos, long id) {
-        if (Config.LOGD) Log.d(TAG, "[onListItemClick] at position: " + ((Integer)pos).toString());
+        Log.d(TAG, "[onListItemClick] at position: " + ((Integer)pos).toString());
 
         LoginSnapshot snapshot = mAdapter.getItem(pos);
         mProfileData.setCurrentProfileByIdentifier(snapshot.getIdentifier());

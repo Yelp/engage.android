@@ -86,7 +86,7 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
             return null;
         }
 
-        if (Config.LOGD) Log.d(TAG, "[onCreateView]");
+        Log.d(TAG, "[onCreateView]");
 
         View v = inflater.inflate(R.layout.story_detail_webview, container, false);
 
@@ -95,7 +95,7 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
 
         mWebView = (WebView) v.findViewById(R.id.story_webview);
 
-        if (Config.LOGD) Log.d(TAG, "[onCreateView] url: loading the current story");
+        Log.d(TAG, "[onCreateView] url: loading the current story");
 
         loadCurrentStory();
         return v;
@@ -125,7 +125,7 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
                     "</body>" +
                 "</html>";
 
-        if (Config.LOGD) Log.d(TAG, "[loadCurrentStory] html: "
+        Log.d(TAG, "[loadCurrentStory] html: "
                 + htmlString.substring(0, Math.min(50, htmlString.length())));
 
         mWebView.loadDataWithBaseURL("http://www.janrain.com/blogs/", htmlString, "text/html", "UTF-8", "");
