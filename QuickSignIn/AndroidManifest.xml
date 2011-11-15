@@ -3,7 +3,6 @@
     package="com.janrain.android.quicksignin"
     android:versionCode="020001"
     android:versionName="2.0.1"
-    android:installLocation="auto"
     >
 
     <uses-permission android:name="android.permission.INTERNET" />
