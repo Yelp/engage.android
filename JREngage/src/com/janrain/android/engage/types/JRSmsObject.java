@@ -31,6 +31,8 @@
  */
 package com.janrain.android.engage.types;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -178,9 +180,10 @@ public class JRSmsObject implements Serializable {
      *      The URL to add to the list of URLs to shorten
      **/
     public void addUrl(String url) {
-        if (url == null) throw new IllegalArgumentException("illegal null paramter");
-        if (mUrls.size() >= 5)
+        if (TextUtils.isEmpty(url)) throw new IllegalArgumentException("illegal empty string parameter");
+        if (mUrls.size() >= 5) {
             throw new IllegalArgumentException("JRSmsObject supports a maximum of five URLs");
+        }
 
         mUrls.add(url);
     }

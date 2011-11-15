@@ -31,6 +31,8 @@
  */
 package com.janrain.android.engage.types;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -200,10 +202,9 @@ public class JREmailObject implements Serializable {
      **/
     public void setUrls(List<String> urls) {
         if (urls == null) urls = new ArrayList<String>();
-        if (urls.size() > 5)
-            throw new IllegalArgumentException("JREmailObject supports a maximum of five URLs");
+        mUrls = new ArrayList<String>();
 
-        mUrls = new ArrayList<String>(urls);
+        for (String url : urls) addUrl(url);
     }
 
     /**
@@ -213,9 +214,10 @@ public class JREmailObject implements Serializable {
      *      The URL to add to the list of URLs to shorten
      **/
     public void addUrl(String url) {
-        if (url == null) throw new IllegalArgumentException("illegal null paramter");
-        if (mUrls.size() >= 5) throw
-                new IllegalArgumentException("JREmailObject supports a maximum of five URLs");
+        if (TextUtils.isEmpty(url)) throw new IllegalArgumentException("illegal empty string parameter");
+        if (mUrls.size() >= 5) {
+            throw new IllegalArgumentException("JREmailObject supports a maximum of five URLs");
+        }
 
         mUrls.add(url);
     }

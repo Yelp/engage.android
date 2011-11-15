@@ -34,14 +34,19 @@ package com.janrain.android.simpledemo;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 import com.janrain.android.engage.*;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.*;
+import com.janrain.android.engage.utils.Prefs;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -49,6 +54,7 @@ public class MainActivity extends FragmentActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int DIALOG_JR_ENGAGE_ERROR = 1;
+    public static final String ACTION_LINK_KEY = "action_link";
 
     private String readAsset(String fileName) {
         try {
@@ -67,10 +73,11 @@ public class MainActivity extends FragmentActivity {
 
     private Button mBtnTestAuth;
     private Button mBtnTestPub;
+    private EditText mUrlEditText;
 
     // Activity object variables
     private String mTitleText = "title text";
-    private String mActionLink = "http://www.janrain.com/feed/blogs";
+    private String mActionLink;
     private String mDescriptionText = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam " +
             "nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad " +
             "minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea " +
@@ -104,12 +111,14 @@ public class MainActivity extends FragmentActivity {
         mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
         mBtnTestPub.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                buildActivity();
                 mEngage.showSocialPublishingDialog(mActivity);
             }
         });
         mBtnTestPub.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View v) {
                 if (findViewById(R.id.jr_publish_fragment) != null) {
+                    buildActivity();
                     mEngage.showSocialPublishingFragment(
                             mActivity,
                             MainActivity.this,
@@ -122,6 +131,17 @@ public class MainActivity extends FragmentActivity {
                 }
 
                 return true;
+            }
+        });
+        mUrlEditText = (EditText) findViewById(R.id.share_url);
+        mUrlEditText.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            public void afterTextChanged(Editable s) {
+                mActionLink = s.toString();
+                Prefs.putString(ACTION_LINK_KEY, mActionLink);
             }
         });
 
@@ -142,7 +162,10 @@ public class MainActivity extends FragmentActivity {
 
         JREngage.sLoggingEnabled = true;
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, mJREngageDelegate);
+        mUrlEditText.setText(Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs"));
+    }
 
+    private void buildActivity() {
         mActivity = new JRActivityObject("shared an article from the Janrain Blog!",
             mActionLink);
         //mActivity = new JRActivityObject("did a barrel roll!");
@@ -158,8 +181,10 @@ public class MainActivity extends FragmentActivity {
 
         JRSmsObject sms = new JRSmsObject(smsBody);
         JREmailObject email = new JREmailObject("Check out this article!", emailBody);
-        sms.addUrl(mActionLink);
-        email.addUrl(mActionLink);
+        if (!TextUtils.isEmpty(mActionLink)) {
+            sms.addUrl(mActionLink);
+            email.addUrl(mActionLink);
+        }
         mActivity.setEmail(email);
         mActivity.setSms(sms);
     }

@@ -31,6 +31,13 @@
         android:textSize="18dip"
         />
 
+    <EditText
+        android:id="@+id/share_url"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:inputType="textUri"
+        />
+
     <FrameLayout
         android:id="@id/jr_publish_fragment"
         android:layout_width="match_parent"
