@@ -59,11 +59,17 @@ import java.util.Map;
  *
  **/
 public final class JRDictionary extends HashMap<String, Object> {
+    private static final String TAG = JRDictionary.class.getSimpleName();
+
 	public static final String DEFAULT_VALUE_STRING = "";
 	public static final int DEFAULT_VALUE_INT = -1;
 	public static final boolean DEFAULT_VALUE_BOOLEAN = false;
 
-    private static final String TAG = JRDictionary.class.getSimpleName();
+    public static final String KEY_DESC_MAX_CHARS = "desc_max_chars";
+    public static final String KEY_JS_INJECTIONS = "js_injections";
+    public static final String KEY_SHOW_ZOOM_CONTROL = "show_zoom_control";
+    public static final String KEY_USER_AGENT = "user_agent";
+    public static final String KEY_USES_SET_STATUS = "uses_set_status_if_no_url";
 
 /**
  * @name JSON Serialization

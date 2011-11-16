@@ -39,7 +39,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Config;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -144,7 +143,7 @@ public class JRWebViewFragment extends JRUiFragment {
         mIsSocialSharingSignIn = getActivity().getIntent().getExtras().getBoolean(SOCIAL_SHARING_MODE);
         mProvider = mSession.getCurrentlyAuthenticatingProvider();
 
-        String customUa = mProvider.getWebViewOptions().getAsString("user_agent");
+        String customUa = mProvider.getWebViewOptions().getAsString(JRDictionary.KEY_USER_AGENT);
         if (customUa != null) mWebViewSettings.setUserAgentString(customUa);
 
         URL startUrl = mSession.startUrlForCurrentlyAuthenticatingProvider();
@@ -315,10 +314,10 @@ public class JRWebViewFragment extends JRUiFragment {
             hideProgressSpinner();
 
             List<String> jsInjects =
-                    mProvider.getWebViewOptions().getAsListOfStrings("js_injections", true);
+                    mProvider.getWebViewOptions().getAsListOfStrings(JRDictionary.KEY_JS_INJECTIONS, true);
             for (String i : jsInjects) mWebView.loadUrl("javascript:" + i);
 
-            boolean showZoomControl = mProvider.getWebViewOptions().getAsBoolean("show_zoom_control");
+            boolean showZoomControl = mProvider.getWebViewOptions().getAsBoolean(JRDictionary.KEY_SHOW_ZOOM_CONTROL);
             if (showZoomControl) mWebView.invokeZoomPicker();
 
             super.onPageFinished(view, url);

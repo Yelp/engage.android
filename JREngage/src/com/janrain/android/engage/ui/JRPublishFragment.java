@@ -50,7 +50,6 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Config;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -986,7 +985,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private void shareActivity() {
         JREngage.logd(TAG, "shareActivity mAuthenticatedUser: " + mAuthenticatedUser.toString());
-        showProgressDialog();
+        showProgressDialog(getResources().getString(R.string.jr_progress_sharing));
 
         if (isPublishThunk()) {
             mSession.setStatusForUser(mAuthenticatedUser);
@@ -999,7 +998,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private boolean isPublishThunk() {
         return mActivityObject.getUrl().equals("") &&
-                mSelectedProvider.getSocialSharingProperties().getAsBoolean("uses_set_status_if_no_url");
+                mSelectedProvider.getSocialSharingProperties().getAsBoolean(JRDictionary.KEY_USES_SET_STATUS);
     }
 
     private boolean doesActivityUrlAffectCharacterCountForSelectedProvider() {

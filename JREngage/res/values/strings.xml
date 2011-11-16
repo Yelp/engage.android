@@ -11,6 +11,7 @@
     <!-- The right side of the n was being clipped, hence this work around backslash kludge -->
     <string name="jr_powered_by">Powered by Janrain \</string>
     <string name="jr_progress_loading">Loading. Please wait...</string>
+    <string name="jr_progress_sharing">Sharing. Please wait...</string>
     <string name="jr_dialog_ok">OK</string>
 
     <!-- - About menu/dialog strings. -->

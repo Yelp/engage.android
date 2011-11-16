@@ -47,7 +47,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.util.Config;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -66,6 +65,7 @@ public abstract class JRUiFragment extends Fragment {
     private static final String KEY_MANAGED_DIALOGS = "jr_managed_dialogs";
     private static final String KEY_DIALOG_ID = "jr_dialog_id";
     private static final String KEY_MANAGED_DIALOG_OPTIONS = "jr_dialog_options";
+    private static final String KEY_DIALOG_PROGRESS_TEXT = "jr_progress_dialog_text";
 
     public static final String PARENT_FRAGMENT_EMBEDDED = "parent_fragment_embedded";
 
@@ -291,15 +291,21 @@ public abstract class JRUiFragment extends Fragment {
         }
     }
 
-    protected ProgressDialog getProgressDialog() {
+    protected ProgressDialog getProgressDialog(Bundle options) {
         ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage(getString(R.string.jr_progress_loading));
+        progressDialog.setMessage(options.getString(KEY_DIALOG_PROGRESS_TEXT));
         return progressDialog;
     }
 
+    protected void showProgressDialog(String displayText) {
+        Bundle opts = new Bundle();
+        opts.putString(KEY_DIALOG_PROGRESS_TEXT, displayText);
+        showDialog(DIALOG_PROGRESS, opts);
+    }
+
     protected void showProgressDialog() {
-        showDialog(DIALOG_PROGRESS);
+        showProgressDialog(getString(R.string.jr_progress_loading));
     }
 
     protected void dismissProgressDialog() {
@@ -333,7 +339,7 @@ public abstract class JRUiFragment extends Fragment {
                 dialog = getAboutDialog();
                 break;
             case DIALOG_PROGRESS:
-                dialog = getProgressDialog();
+                dialog = getProgressDialog(options);
                 break;
             default:
                 dialog = null;
