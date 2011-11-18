@@ -49,12 +49,11 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
     private QuickShare mQuickShare;
     private WebView mWebView;
 
-    private StoryDetailFragment() {}
+    public StoryDetailFragment() {}
 
     public static StoryDetailFragment newInstance(int index) {
         StoryDetailFragment f = new StoryDetailFragment();
 
-        // Supply index input as an argument.
         Bundle args = new Bundle();
         args.putInt("index", index);
         f.setArguments(args);
