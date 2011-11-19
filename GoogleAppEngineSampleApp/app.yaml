@@ -1,4 +1,4 @@
-application: <YOUR_GOOGLE_APP_NAME>
+application: test-token-url
 version: 1
 runtime: python
 api_version: 1
