@@ -128,8 +128,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 throw new IllegalFragmentIdException(getFragmentId());
         }
 
-        boolean shouldPhoneSizeDialog = false;
-        if (AndroidUtils.isXlarge() && (isAuthFlow() || isParentEmbedded())) shouldPhoneSizeDialog = true;
+        boolean shouldPhoneSizeDialog = AndroidUtils.isXlarge() && (isAuthFlow() || isParentEmbedded());
 
         if (shouldPhoneSizeDialog) {
             // Need to set a new theme in order to achieve a small dialog

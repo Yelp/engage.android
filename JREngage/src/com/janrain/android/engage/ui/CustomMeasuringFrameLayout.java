@@ -39,13 +39,17 @@ import android.widget.FrameLayout;
 import com.janrain.android.engage.utils.AndroidUtils;
 
 /**
- * @internal 
+ * @internal
+ *
+ * CustomMeasuringFrameLayout defaults to a size equal to ~half of the available area of the screen
+ * If targetHeightDip is set, then CMFL tries to achieve that size instead.
  */
 public class CustomMeasuringFrameLayout extends FrameLayout {
     private int mTargetHeight;
     private int mTargetWidth;
     private Integer mTargetHeightDip;
     private Integer mTargetWidthDip;
+    private Context mContext;
 
     public CustomMeasuringFrameLayout(Context context) {
         super(context);
@@ -66,13 +70,15 @@ public class CustomMeasuringFrameLayout extends FrameLayout {
     }
 
     private void init(Context c) {
+        mContext = c;
         setTargetHeight(c.getResources().getConfiguration());
     }
 
     private void setTargetHeight(Configuration c) {
         if (mTargetHeightDip != null) return;
-        mTargetHeight = (int) (AndroidUtils.scaleDipToPixels(c.screenHeightDp) * 0.71);
-        mTargetWidth = (int) (AndroidUtils.scaleDipToPixels(c.screenWidthDp) * 0.71);
+
+        mTargetHeight = (int) (mContext.getResources().getDisplayMetrics().heightPixels * 0.71);
+        mTargetWidth = (int) (mContext.getResources().getDisplayMetrics().widthPixels * 0.71);
     }
 
     @Override
