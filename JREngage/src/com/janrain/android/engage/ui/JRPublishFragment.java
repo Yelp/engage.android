@@ -223,7 +223,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     @SuppressWarnings("unchecked") // for de-serializing the HashMap below
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        if (mSession == null) return;
         if (getView() == null) {
             // We may have different layouts, and in one of them this
             // fragment's containing frame may not exist.  The fragment
@@ -397,13 +397,16 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     
     @Override
     public void onDestroyView() {
-        if (mUserCommentView != null && !mProvidersThatHaveAlreadyShared.values().contains(true)) {
-            Prefs.putString(Prefs.KEY_JR_USER_COMMENT, mUserCommentView.getText().toString());
-            Prefs.putLong(Prefs.KEY_JR_USER_COMMENT_TIME, new Date().getTime());
+        if (getView() != null) {
+            if (mUserCommentView != null && !mProvidersThatHaveAlreadyShared.values().contains(true)) {
+                Prefs.putString(Prefs.KEY_JR_USER_COMMENT, mUserCommentView.getText().toString());
+                Prefs.putLong(Prefs.KEY_JR_USER_COMMENT_TIME, new Date().getTime());
+            }
+
+            dismissProgressDialog();
         }
 
-        dismissProgressDialog();
-        mSession.removeDelegate(mSessionDelegate);
+        if (mSession != null) mSession.removeDelegate(mSessionDelegate);
 
         super.onDestroyView();
     }
@@ -883,8 +886,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void updatePreviewTextWhenContentDoesNotReplaceAction() {
-        mPreviewLabelView.setText(Html.fromHtml("<b>" + getAvatarName() + "</b> "
-                + mActivityObject.getAction()));
+        mPreviewLabelView.setText(Html.fromHtml("<b>" + getAvatarName() + "</b> " + mActivityObject.getAction()));
     }
 
     private String getAvatarName() {

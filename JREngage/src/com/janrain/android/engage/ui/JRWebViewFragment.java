@@ -137,6 +137,7 @@ public class JRWebViewFragment extends JRUiFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if (mSession == null) return;
         mIsSocialSharingSignIn = getActivity().getIntent().getExtras().getBoolean(SOCIAL_SHARING_MODE);
         mProvider = mSession.getCurrentlyAuthenticatingProvider();
 
@@ -239,7 +240,7 @@ public class JRWebViewFragment extends JRUiFragment {
         JRConnectionManager.createConnection(urlToLoad, mMobileEndPointConnectionDelegate, null);
     }
 
-    DownloadListener mWebViewDownloadListener = new DownloadListener() {
+    private DownloadListener mWebViewDownloadListener = new DownloadListener() {
         /**
          * Invoked by WebKit when there is something to be downloaded that it does not
          * typically handle (e.g. result of post, mobile endpoint url results, etc).

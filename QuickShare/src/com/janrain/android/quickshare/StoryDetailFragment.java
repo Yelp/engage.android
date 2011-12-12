@@ -43,13 +43,17 @@ import android.widget.Button;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.utils.AndroidUtils;
 
+import java.util.List;
+
 public class StoryDetailFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = StoryDetailFragment.class.getSimpleName();
 
     private QuickShare mQuickShare;
     private WebView mWebView;
 
-    public StoryDetailFragment() {}
+    public StoryDetailFragment() {
+        mQuickShare = QuickShare.getInstance();
+    }
 
     public static StoryDetailFragment newInstance(int index) {
         StoryDetailFragment f = new StoryDetailFragment();
@@ -57,7 +61,6 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
         Bundle args = new Bundle();
         args.putInt("index", index);
         f.setArguments(args);
-        f.mQuickShare = QuickShare.getInstance();
 
         return f;
     }
