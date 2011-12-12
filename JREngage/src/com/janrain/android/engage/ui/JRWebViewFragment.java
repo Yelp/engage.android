@@ -78,15 +78,12 @@ public class JRWebViewFragment extends JRUiFragment {
     public static final int RESULT_BAD_OPENID_URL = 3;
     public static final String SOCIAL_SHARING_MODE = "com.janrain.android.engage.SOCIAL_SHARING_MODE";
 
-    {
-        TAG = JRWebViewFragment.class.getSimpleName();
-    }
-
     private WebView mWebView;
     private boolean mIsSocialSharingSignIn = false;
     private boolean mIsAlertShowing = false;
     private boolean mIsFinishPending = false;
     private boolean mIsLoadingMobileEndpoint = false;
+//    private boolean mUseDesktopUa = false;
     private JRProvider mProvider;
     private WebSettings mWebViewSettings;
     private ProgressBar mProgressSpinner;
@@ -144,6 +141,7 @@ public class JRWebViewFragment extends JRUiFragment {
         mProvider = mSession.getCurrentlyAuthenticatingProvider();
 
         String customUa = mProvider.getWebViewOptions().getAsString(JRDictionary.KEY_USER_AGENT);
+//        if (mUseDesktopUa) mWebViewSettings.setUserAgentString(getString(R.string.jr_desktop_browser_ua));
         if (customUa != null) mWebViewSettings.setUserAgentString(customUa);
 
         URL startUrl = mSession.startUrlForCurrentlyAuthenticatingProvider();
@@ -481,4 +479,8 @@ public class JRWebViewFragment extends JRUiFragment {
         getActivity().setResult(JRWebViewFragment.RESULT_RESTART);
         getActivity().finish();
     }
+
+//    public void setUseDesktopUa(boolean use) {
+//        mUseDesktopUa = use;
+//    }
 }

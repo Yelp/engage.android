@@ -55,11 +55,15 @@
     <string name="jr_connect_share_button_text">Connect and Share</string>
     <string name="jr_share_button_text">Share</string>
     <string name="jr_no_configured_social_providers">No configured social sharing providers.</string>
+    <string name="jr_user_profile_default_name">You</string>
 
     <!-- - JRWebView strings. -->
     <string name="jr_dialog_sign_in_failed">Sign-in failed</string>
     <string name="jr_dialog_network_error">A network error occurred, please try again.</string>
     <string name="jr_menu_item_refresh">Refresh</string>
+    <string name="jr_desktop_browser_ua">Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/534.24 (KHTML, like Gecko)
+        Chrome/11.0.696.34 Safari/534.24
+    </string>
 
     <!-- JRSession strings -->
     <string name="jr_getconfig_network_failure_message">There was a problem communicating with the Janrain server.

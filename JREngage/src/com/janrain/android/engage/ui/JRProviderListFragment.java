@@ -65,10 +65,6 @@ import java.util.TimerTask;
 public class JRProviderListFragment extends JRUiFragment {
     public static final int RESULT_FAIL = Activity.RESULT_FIRST_USER;
 
-    {
-        TAG = JRProviderListFragment.class.getSimpleName();
-    }
-
     /**
      * @internal
      *

@@ -128,9 +128,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 throw new IllegalFragmentIdException(getFragmentId());
         }
 
-        boolean shouldPhoneSizeDialog = AndroidUtils.isXlarge() && (isAuthFlow() || isParentEmbedded());
-
-        if (shouldPhoneSizeDialog) {
+        if (shouldBePhoneSizedDialog()) {
             // Need to set a new theme in order to achieve a small dialog
             // because the theme for this activity has minWidth{Major,Minor}=71%
             setTheme(R.style.jr_dialog_phone_sized);
@@ -141,10 +139,15 @@ public class JRFragmentHostActivity extends FragmentActivity {
         setContentView(R.layout.jr_fragment_host_activity);
 
         View fragmentContainer = findViewById(R.id.jr_fragment_container);
-        if (shouldPhoneSizeDialog && fragmentContainer instanceof CustomMeasuringFrameLayout) {
-            // Do the actual setting of the target size to achieve phone sized dialog.
-            ((CustomMeasuringFrameLayout) fragmentContainer).setTargetHeightDip(480);
-            ((CustomMeasuringFrameLayout) fragmentContainer).setTargetWidthDip(320);
+        if (fragmentContainer instanceof CustomMeasuringFrameLayout) {
+            // CMFL -> dialog mode on a tablet
+            if (shouldBePhoneSizedDialog()) {
+                // Do the actual setting of the target size to achieve phone sized dialog.
+                ((CustomMeasuringFrameLayout) fragmentContainer).setTargetHeightDip(480);
+                ((CustomMeasuringFrameLayout) fragmentContainer).setTargetWidthDip(320);
+            } else {
+//                if (mUiFragment instanceof JRWebViewFragment) ((JRWebViewFragment) mUiFragment).setUseDesktopUa(true);
+            }
         }
 
         getSupportFragmentManager()
@@ -152,6 +155,11 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 .add(R.id.jr_fragment_container, mUiFragment)
                 .setTransition(FragmentTransaction.TRANSIT_NONE)
                 .commit();
+    }
+
+    protected boolean shouldBePhoneSizedDialog() {
+//        return AndroidUtils.isXlarge() && (isAuthFlow() || isParentEmbedded());
+        return AndroidUtils.isXlarge() && !(mUiFragment instanceof JRPublishFragment);
     }
 
     private int getFragmentId() {

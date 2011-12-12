@@ -48,16 +48,10 @@ import java.io.Serializable;
  * Base class for JRImageMediaObject, JRFlashMediaObject, and JRMp3MediaObject.
  **/
 public abstract class JRMediaObject implements Serializable, JRJsonifiable {
-    //private static final String TAG = JRMediaObject.class.getSimpleName();
-
-    //@JsonIgnore
     private transient Bitmap mThumbnailBitmap;
 
     public boolean hasThumbnail() { return false; }
-
-    //@JsonIgnore
     public String getThumbnail() {return null; }
-
     public abstract String getType();
 
     public void downloadThumbnail(final ThumbnailAvailableListener tal) {
@@ -81,11 +75,6 @@ public abstract class JRMediaObject implements Serializable, JRJsonifiable {
                         }
                     }, null);
         }
-    }
-
-    //@JsonIgnore
-    private Context getContext() {
-        return JREngage.getActivity();
     }
 
     public interface ThumbnailAvailableListener {

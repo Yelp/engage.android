@@ -90,15 +90,12 @@ import java.util.List;
  * Publishing UI, embeddable in a android.support.v4.app.FragmentActivity
  */
 public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChangeListener {
-    {
-        TAG = JRPublishFragment.class.getSimpleName();
-    }
-
     public static final String KEY_ACTIVITY_OBJECT = "jr_activity_object";
     public static final String KEY_PROVIDER_SHARE_MAP = "jr_provider_sharedness_map";
     public static final String KEY_DIALOG_ERROR_MESSAGE = "jr_dialog_error_message";
     public static final String KEY_DIALOG_PROVIDER_NAME = "jr_dialog_provider_name";
     public static final String KEY_SELECTED_TAB = "jr_selected_tab";
+
     private static final int DIALOG_FAILURE = 1;
     private static final int DIALOG_CONFIRM_SIGNOUT = 3;
     private static final int DIALOG_MOBILE_CONFIG_LOADING = 4;
@@ -129,7 +126,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     /* UI views */
     private LinearLayout mPreviewBorder;
-    private RelativeLayout mPreviewBox;
+    private AutoBlankingFrameLayout mPreviewBox;
     private RelativeLayout mMediaContentView;
     private TextView mCharacterCountView;
     private TextView mPreviewLabelView;
@@ -168,7 +165,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private void initViews(View content) {
         /* View References */
-        mPreviewBox = (RelativeLayout) content.findViewById(R.id.jr_preview_box);
+        mPreviewBox = (AutoBlankingFrameLayout) content.findViewById(R.id.jr_preview_box);
         mPreviewBorder = (LinearLayout) content.findViewById(R.id.jr_preview_box_border);
         mMediaContentView = (RelativeLayout) content.findViewById(R.id.jr_media_content_view);
         mCharacterCountView = (TextView) content.findViewById(R.id.jr_character_count_view);
@@ -877,23 +874,23 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         if (doesActivityUrlAffectCharacterCountForSelectedProvider()) { /* Twitter/MySpace -> true */
             mPreviewLabelView.setText(Html.fromHtml(
-                    "<b>" + getUserDisplayName() + "</b> " + newText + " <font color=\"#808080\">" +
+                    "<b>" + getAvatarName() + "</b> " + newText + " <font color=\"#808080\">" +
                     ((mShortenedActivityURL != null) ? mShortenedActivityURL : shorteningText) +
                     "</font>"));
         } else {
-            mPreviewLabelView.setText(Html.fromHtml("<b> " + getUserDisplayName() + "</b> " + newText));
+            mPreviewLabelView.setText(Html.fromHtml("<b> " + getAvatarName() + "</b> " + newText));
         }
     }
 
     private void updatePreviewTextWhenContentDoesNotReplaceAction() {
-        mPreviewLabelView.setText(Html.fromHtml("<b>" + getUserDisplayName() + "</b> "
+        mPreviewLabelView.setText(Html.fromHtml("<b>" + getAvatarName() + "</b> "
                 + mActivityObject.getAction()));
     }
 
-    private String getUserDisplayName() {
-        String userNameForPreview = "You";
-        if (mAuthenticatedUser != null) userNameForPreview = mAuthenticatedUser.getPreferredUsername();
-        return userNameForPreview;
+    private String getAvatarName() {
+        return mAuthenticatedUser != null ?
+                mAuthenticatedUser.getPreferredUsername() :
+                getString(R.string.jr_user_profile_default_name);
     }
 
     private void loadUserNameAndProfilePicForUserForProvider(
@@ -907,7 +904,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             return;
         }
 
-        mUserNameView.setText(user.getDisplayName());
+        mUserNameView.setText(getAvatarName());
 
         mUserProfilePic.setImageResource(R.drawable.jr_profilepic_placeholder);
         user.downloadProfilePic(new JRAuthenticatedUser.ProfilePicAvailableListener() {

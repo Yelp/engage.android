@@ -65,10 +65,6 @@ public class JRLandingFragment extends JRUiFragment {
     public static final int RESULT_SWITCH_ACCOUNTS = 1;
     public static final int RESULT_RESTART = 2;
 
-    {
-        TAG = JRLandingFragment.class.getSimpleName();
-    }
-
     private View.OnClickListener mButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
             JREngage.logd(TAG, "[onClick] handled");

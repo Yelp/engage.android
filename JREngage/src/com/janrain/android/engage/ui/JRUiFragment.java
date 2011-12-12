@@ -78,7 +78,8 @@ public abstract class JRUiFragment extends Fragment {
     private HashMap<Integer, ManagedDialog> mManagedDialogs = new HashMap<Integer, ManagedDialog>();
 
     protected JRSession mSession;
-    protected String TAG = JRUiFragment.class.getSimpleName();
+    protected final String TAG = getLogTag();
+    protected String getLogTag() { return this.getClass().getSimpleName(); }
 
     /**
      * @internal

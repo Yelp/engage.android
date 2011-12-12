@@ -43,6 +43,10 @@ import com.janrain.android.engage.utils.AndroidUtils;
  *
  * CustomMeasuringFrameLayout defaults to a size equal to ~half of the available area of the screen
  * If targetHeightDip is set, then CMFL tries to achieve that size instead.
+ *
+ * Two modes of operation:
+ *  - default: 1/2 available screen area by using 71% of each dimension
+ *  - set a target height/width dimension in DIP
  */
 public class CustomMeasuringFrameLayout extends FrameLayout {
     private int mTargetHeight;
@@ -71,14 +75,17 @@ public class CustomMeasuringFrameLayout extends FrameLayout {
 
     private void init(Context c) {
         mContext = c;
-        setTargetHeight(c.getResources().getConfiguration());
+        ensureTargetSize(c.getResources().getConfiguration());
     }
 
-    private void setTargetHeight(Configuration c) {
-        if (mTargetHeightDip != null) return;
+    private void ensureTargetSize(Configuration c) {
+        if (mTargetHeightDip == null) {
+            mTargetHeight = (int) (mContext.getResources().getDisplayMetrics().heightPixels * 0.71);
+        }
 
-        mTargetHeight = (int) (mContext.getResources().getDisplayMetrics().heightPixels * 0.71);
-        mTargetWidth = (int) (mContext.getResources().getDisplayMetrics().widthPixels * 0.71);
+        if (mTargetWidthDip == null) {
+            mTargetWidth = (int) (mContext.getResources().getDisplayMetrics().widthPixels * 0.71);
+        }
     }
 
     @Override
@@ -124,7 +131,7 @@ public class CustomMeasuringFrameLayout extends FrameLayout {
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        setTargetHeight(newConfig);
+        ensureTargetSize(newConfig);
     }
 
     public void setTargetHeightDip(Integer dip) {
