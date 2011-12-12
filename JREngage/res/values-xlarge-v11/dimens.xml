@@ -6,7 +6,8 @@
     <dimen name="jr_preview_text_size">15sp</dimen>
     <dimen name="jr_media_content_description_size">15sp</dimen>
     <dimen name="jr_media_content_title_size">20sp</dimen>
-    <dimen name="jr_preview_label_size">16dip</dimen>
+    <dimen name="jr_preview_label_padding">8sp</dimen>
+    <dimen name="jr_preview_label_size">16sp</dimen>
     <dimen name="jr_preview_box_border_padding_top">8dp</dimen>
     <dimen name="jr_tagline_size">15sp</dimen>
     <dimen name="jr_provider_icon_size">30dip</dimen>
