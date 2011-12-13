@@ -46,6 +46,7 @@ import android.graphics.drawable.StateListDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.Button;
+import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -158,7 +159,13 @@ public class ColorButton extends Button {
         setBackgroundDrawable(b_);
     }
 
-    private class ColorFilterRejectingDrawableWrapper extends Drawable {
+    @Override
+    public void setVisibility(int visibility) {
+//        JREngage.logd(TAG, "[ColorButton][" + getText() + "][" + visibility + "]", new Exception());
+        super.setVisibility(visibility);
+    }
+
+    private static class ColorFilterRejectingDrawableWrapper extends Drawable {
         private Drawable mDrawable;
         ColorFilterRejectingDrawableWrapper(Drawable d) {
             mDrawable = d;

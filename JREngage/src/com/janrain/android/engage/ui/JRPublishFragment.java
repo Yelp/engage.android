@@ -106,13 +106,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     /* JREngage objects we're operating with */
     private JRProvider mSelectedProvider; //the provider for the selected tab
     private JRAuthenticatedUser mAuthenticatedUser; //the user (if logged in) for the selected tab
-    private JRActivityObject mActivityObject;
+    private JRActivityObject mJrActivity;
     private List<JRProvider> mSocialProviders;
 
     /* UI state */
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
-    private boolean mSmsActivityExists;
-    private boolean mEmailActivityExists;
+    private boolean mSmsOn;
+    private boolean mEmailOn;
     private String mSelectedTab = "";
 
     /* UI properties */
@@ -143,7 +143,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private ColorButton mEmailButton;
     private ColorButton mSmsButton;
     private EditText mEmailSmsComment;
-    private LinearLayout mEmailSmsButtonContainer;
     private TabHost mTabHost;
 
     @Override
@@ -185,7 +184,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mEmailButton = (ColorButton) content.findViewById(R.id.jr_email_button);
         mSmsButton = (ColorButton) content.findViewById(R.id.jr_sms_button);
         mEmailSmsComment = (EditText) content.findViewById(R.id.jr_email_sms_edit_comment);
-        mEmailSmsButtonContainer = (LinearLayout) content.findViewById(R.id.jr_email_sms_button_container);
 
         /* View listeners */
         mEmailButton.setOnClickListener(mEmailButtonListener);
@@ -198,8 +196,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         mSmsButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
         mEmailButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
-
-        configureEmailSmsButtons();
     }
 
     private void configureEmailSmsButtons() {
@@ -208,15 +204,18 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         intent = createSmsIntent("");
         resolves = getActivity().getPackageManager().queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
-        mSmsActivityExists = resolves.size() > 0;
+        mSmsOn = resolves.size() > 0;
 
         intent = createEmailIntent("", "");
         resolves = getActivity().getPackageManager().queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
-        mEmailActivityExists = resolves.size() > 0;
+        mEmailOn = resolves.size() > 0;
 
-        showHideView(mEmailButton, mEmailActivityExists);
-        showHideView(mSmsButton, mSmsActivityExists);
+        mEmailOn = mEmailOn && mJrActivity.getEmail() != null;
+        mSmsOn = mSmsOn && mJrActivity.getSms() != null;
+
+        setViewVisible(mEmailButton, mEmailOn);
+        setViewVisible(mSmsButton, mSmsOn);
     }
 
     @Override
@@ -232,12 +231,14 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         }
 
         mSession.addDelegate(mSessionDelegate);
-        mActivityObject = mSession.getJRActivity();
+        mJrActivity = mSession.getJRActivity();
 
         if (savedInstanceState != null) {
+            // Try and retrieve the selected tab
             mSelectedTab = savedInstanceState.getString(KEY_SELECTED_TAB);
             if (mSelectedTab == null) mSelectedTab = "";
 
+            // Try and retrieve the shared-ness map
             mProvidersThatHaveAlreadyShared =
                     (HashMap<String, Boolean>) savedInstanceState.getSerializable(KEY_PROVIDER_SHARE_MAP);
             if (mProvidersThatHaveAlreadyShared == null) {
@@ -245,15 +246,17 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             }
         }
 
-        if (mActivityObject == null && savedInstanceState != null) {
-            mActivityObject = (JRActivityObject) savedInstanceState.getSerializable(KEY_ACTIVITY_OBJECT);
-            mSession.setJRActivity(mActivityObject);
+        if (mJrActivity == null) {
+            if (savedInstanceState != null) {
+                mJrActivity = (JRActivityObject) savedInstanceState.getSerializable(KEY_ACTIVITY_OBJECT);
+                mSession.setJRActivity(mJrActivity);
+            } else {
+                mJrActivity = new JRActivityObject("", null);
+                Log.e(TAG, "Couldn't reload savedInstanceState or get an activity from JRSession, " +
+                        "creating stub activity");
+            }
         }
-        if (mActivityObject == null) {
-            mActivityObject = new JRActivityObject("", null);
-            Log.e(TAG, "Couldn't reload savedInstanceState or get an activity from JRSession, " +
-                    "creating stub activity");
-        }
+
         loadViewPropertiesWithActivityObject();
 
         /* Call by hand the configuration change listener so that it sets up correctly if this
@@ -301,14 +304,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         }
 
         createTabs();
-        initViews(mTabHost.getTabContentView());
         loadViewPropertiesWithActivityObject();
         onConfigurationChanged(getResources().getConfiguration());
         mTabHost.setOnTabChangedListener(this);
         onTabChanged(mTabHost.getCurrentTabTag());
 
         /* Configure the properties of the UI */
-        mActivityObject.shortenUrls(new JRActivityObject.ShortenedUrlCallback() {
+        mJrActivity.shortenUrls(new JRActivityObject.ShortenedUrlCallback() {
             public void setShortenedUrl(String shortenedUrl) {
                 mShortenedActivityURL = shortenedUrl;
                 if (!TextUtils.isEmpty(mShortenedActivityURL)) {
@@ -334,10 +336,10 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void createTabs() {
-        mTabHost.clearAllTabs();
+        mTabHost.clearAllTabs(); // Removes the email_tab and provider_tab <include>ed from jr_publish.xml
         mTabHost.getTabWidget().setVisibility(View.VISIBLE);
         LayoutInflater li = getLayoutInflater(null);
-        li.inflate(R.layout.jr_publish_email_tab_content, mTabHost.getTabContentView());
+        li.inflate(R.layout.jr_publish_email_tab_content, mTabHost.getTabContentView()); // re-adds those tabs
         li.inflate(R.layout.jr_publish_provider_tab_content, mTabHost.getTabContentView());
 
         /* Make a tab for each social provider */
@@ -358,15 +360,17 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             }
         }
 
-        if (mSmsActivityExists || mEmailActivityExists) {
-            /* Make a tab for email/SMS */
+        initViews(mTabHost.getTabContentView());
+        configureEmailSmsButtons();
+        /* Maybe make a tab for email/SMS */
+        if (mSmsOn || mEmailOn) {
             TabHost.TabSpec emailSmsSpec = mTabHost.newTabSpec(EMAIL_SMS_TAB_TAG);
             Drawable d = getResources().getDrawable(R.drawable.jr_email_sms_tab_indicator);
             setTabSpecIndicator(emailSmsSpec, d, "Email/SMS");
             emailSmsSpec.setContent(R.id.jr_tab_email_sms_content);
             mTabHost.addTab(emailSmsSpec);
         } else {
-            showHideView(getView().findViewById(R.id.jr_tab_email_sms_content), false);
+            setViewVisible(getView().findViewById(R.id.jr_tab_email_sms_content), false);
         }
 
         /* XXX this works around a bug in TabHost where if you add new tabs after calling
@@ -413,15 +417,15 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putSerializable(KEY_ACTIVITY_OBJECT, mActivityObject);
+        outState.putSerializable(KEY_ACTIVITY_OBJECT, mJrActivity);
         outState.putSerializable(KEY_PROVIDER_SHARE_MAP, mProvidersThatHaveAlreadyShared);
         outState.putSerializable(KEY_SELECTED_TAB, mSelectedTab);
 
         super.onSaveInstanceState(outState);
     }
 
-    private void showHideView(View v, boolean show) {
-        if (show) v.setVisibility(View.VISIBLE);
+    private void setViewVisible(View v, boolean visible) {
+        if (visible) v.setVisibility(View.VISIBLE);
         else v.setVisibility(View.GONE);
     }
 
@@ -434,11 +438,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         if ((!"".equals(savedComment)) && ((curTime - commentTime) < 1000*60*60*24*7)) { /* one week */
             mUserCommentView.setText(savedComment);
         } else {
-            mUserCommentView.setText(mActivityObject.getUserGeneratedContent());
+            mUserCommentView.setText(mJrActivity.getUserGeneratedContent());
         }
 
         JRMediaObject mo = null;
-        if (mActivityObject.getMedia().size() > 0) mo = mActivityObject.getMedia().get(0);
+        if (mJrActivity.getMedia().size() > 0) mo = mJrActivity.getMedia().get(0);
 
         final ImageView mci = (ImageView) getView().findViewById(R.id.jr_media_content_image);
         final TextView  mcd = (TextView)  getView().findViewById(R.id.jr_media_content_description);
@@ -459,10 +463,10 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         }
 
         /* Set the media content description */
-        mcd.setText(mActivityObject.getDescription());
+        mcd.setText(mJrActivity.getDescription());
 
         /* Set the media content title */
-        mct.setText(mActivityObject.getTitle());
+        mct.setText(mJrActivity.getTitle());
     }
 
     private void setTabSpecIndicator(TabHost.TabSpec spec, Drawable iconSet, String label) {
@@ -546,7 +550,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mMaxCharacters = socialSharingProperties.getAsInt("max_characters");
         }
 
-        showHideView(mCharacterCountView, mMaxCharacters != -1);
+        setViewVisible(mCharacterCountView, mMaxCharacters != -1);
 
         updateCharacterCount();
 
@@ -554,7 +558,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         /* Switch on or off the media content view based on the presence of media and ability to
          * display it */
-        showHideView(mMediaContentView, mActivityObject.getMedia().size() > 0 && can_share_media);
+        setViewVisible(mMediaContentView, mJrActivity.getMedia().size() > 0 && can_share_media);
 
         /* Switch on or off the action label view based on the provider accepting an action */
 
@@ -595,15 +599,12 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 mPreviewBox.setVisibility(View.GONE);
                 mEmailSmsComment.setLines(3);
-                mEmailSmsButtonContainer.setOrientation(LinearLayout.HORIZONTAL);
             } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
                 mPreviewBox.setVisibility(View.VISIBLE);
                 mEmailSmsComment.setLines(4);
-                //mEmailSmsButtonContainer.setOrientation(LinearLayout.VERTICAL);
-                mEmailSmsButtonContainer.setOrientation(LinearLayout.HORIZONTAL);
             }
         } else {
-            showHideView(mPreviewBox, true);
+            setViewVisible(mPreviewBox, true);
             mEmailSmsComment.setLines(4);
         }
     }
@@ -638,12 +639,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     };
 
     private TextWatcher mUserCommentTextWatcher = new TextWatcher() {
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
 
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
         public void afterTextChanged(Editable editable) {
-            mActivityObject.setUserGeneratedContent(mUserCommentView.getText().toString());
+            mJrActivity.setUserGeneratedContent(mUserCommentView.getText().toString());
             if (!mEmailSmsComment.getText().toString().equals(editable.toString())) {
                 mEmailSmsComment.setText(editable.toString());
             }
@@ -697,7 +699,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private View.OnClickListener mEmailButtonListener = new View.OnClickListener() {
         public void onClick(View v) {
-            JREmailObject jrEmail = mActivityObject.getEmail();
+            JREmailObject jrEmail = mJrActivity.getEmail();
             String body, subject;
 
             if (jrEmail == null) {
@@ -724,7 +726,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private View.OnClickListener mSmsButtonListener = new View.OnClickListener() {
         public void onClick(View v) {
-            JRSmsObject jrSms = mActivityObject.getSms();
+            JRSmsObject jrSms = mJrActivity.getSms();
             String body;
 
             if (jrSms == null) {
@@ -868,7 +870,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private void updatePreviewTextWhenContentReplacesAction() {
         String newText;
         if (mUserCommentView.getText().toString().equals("")) {
-            newText = mActivityObject.getAction();
+            newText = mJrActivity.getAction();
         } else {
             newText = mUserCommentView.getText().toString();
         }
@@ -886,7 +888,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void updatePreviewTextWhenContentDoesNotReplaceAction() {
-        mPreviewLabelView.setText(Html.fromHtml("<b>" + getAvatarName() + "</b> " + mActivityObject.getAction()));
+        mPreviewLabelView.setText(Html.fromHtml("<b>" + getAvatarName() + "</b> " + mJrActivity.getAction()));
     }
 
     private String getAvatarName() {
@@ -996,7 +998,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     /* Helper functions */
 
     private boolean isPublishThunk() {
-        return mActivityObject.getUrl().equals("") &&
+        return mJrActivity.getUrl().equals("") &&
                 mSelectedProvider.getSocialSharingProperties().getAsBoolean(JRDictionary.KEY_USES_SET_STATUS);
     }
 

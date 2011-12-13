@@ -39,7 +39,6 @@ import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.utils.AndroidUtils;
-import com.janrain.android.engage.utils.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
