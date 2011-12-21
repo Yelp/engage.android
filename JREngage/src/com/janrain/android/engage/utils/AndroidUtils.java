@@ -117,6 +117,7 @@ public class AndroidUtils {
     }
 
     private static int getScreenSize() {
+
         int screenConfig = JREngage.getActivity().getResources().getConfiguration().screenLayout;
         screenConfig &= Configuration.SCREENLAYOUT_SIZE_MASK;
         return screenConfig;

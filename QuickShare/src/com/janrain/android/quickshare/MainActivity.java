@@ -56,6 +56,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Quic
         mViewFeedSummary = (Button) findViewById(R.id.view_feed_summary);
         mViewFeedSummary.setOnClickListener(this);
 
+        // Initialize the Janrain library so that it can begin to download
+        // configuration information as soon as the app launches.
         QuickShare quickShare = QuickShare.getInstance();
         quickShare.initJREngage(this);
 

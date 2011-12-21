@@ -280,7 +280,7 @@ public class JREngage {
                             JREngageDelegate delegate) {
         mActivity = activity;
         mDelegates = new ArrayList<JREngageDelegate>();
-        if (delegate != null) mDelegates.add(delegate);
+        if (delegate != null && !mDelegates.contains(delegate)) mDelegates.add(delegate);
         mSession = JRSession.getInstance(appId, tokenUrl, mJrsd);
 
         // Sign-in UI fragment is not yet embeddable

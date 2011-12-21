@@ -125,7 +125,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private boolean mAuthenticatingForShare = false;
 
     /* UI views */
-    private LinearLayout mPreviewBorder;
+    private LinearLayout mPreviewBoxBorder;
     private AutoBlankingFrameLayout mPreviewBox;
     private RelativeLayout mMediaContentView;
     private TextView mCharacterCountView;
@@ -165,7 +165,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private void initViews(View content) {
         /* View References */
         mPreviewBox = (AutoBlankingFrameLayout) content.findViewById(R.id.jr_preview_box);
-        mPreviewBorder = (LinearLayout) content.findViewById(R.id.jr_preview_box_border);
+        mPreviewBoxBorder = (LinearLayout) content.findViewById(R.id.jr_preview_box_border);
         mMediaContentView = (RelativeLayout) content.findViewById(R.id.jr_media_content_view);
         mCharacterCountView = (TextView) content.findViewById(R.id.jr_character_count_view);
         mProviderIcon = (ImageView) content.findViewById(R.id.jr_provider_icon);
@@ -569,7 +569,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         mShareButton.setColor(colorNoAlpha);
         mConnectAndShareButton.setColor(colorNoAlpha);
-        mPreviewBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
+        mPreviewBoxBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
 
         mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(getActivity()));
     }

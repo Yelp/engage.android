@@ -31,6 +31,7 @@
  */
 package com.janrain.android.quickshare;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Config;
@@ -68,6 +69,16 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This is the fragment that launches the Janrain sharing dialogue
+        // If Android restarts the app and restores the activity stack with this fragment
+        // on top then the Janrain library needs to be re-initialized.
+        QuickShare.getInstance().initJREngage(getActivity());
     }
 
     @Override

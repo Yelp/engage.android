@@ -96,28 +96,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
-            android:paddingBottom="4dip"
-
             android:background="@drawable/jr_bg_publish_preview"
             >
+            <!--android:paddingBottom="4dip"-->
+            <!--android:paddingTop="4dip"-->
 
             <LinearLayout
                 android:id="@+id/jr_preview_box_border"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:layout_marginTop="8dip"
-                android:layout_marginBottom="4dip"
-                android:layout_marginRight="4dip"
-                android:layout_marginLeft="4dip"
+                android:layout_gravity="center_horizontal"
+                android:padding="@dimen/jr_preview_border_padding"
                 android:paddingTop="@dimen/jr_preview_label_padding"
-                android:paddingBottom="3dp"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
 
                 android:orientation="vertical"
-                android:background="@drawable/jr_bg_publish_preview_border"
+                android:background="@drawable/jr_bg_publish_preview_border_inset"
                 >
+                <!--android:paddingBottom="3dp"-->
+                <!--android:paddingLeft="3dp"-->
+                <!--android:paddingRight="3dp"-->
+                <!--These became ignored when refactored blanking layout to extend FrameLayout-->
+                <!--android:layout_marginTop="8dip"-->
+                <!--android:layout_marginBottom="4dip"-->
+                <!--android:layout_marginRight="4dip"-->
+                <!--android:layout_marginLeft="4dip"-->
 
                 <TextView
                     android:id="@+id/jr_preview_text_view"
@@ -165,12 +168,12 @@
                         android:id="@+id/jr_media_content_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="0dip"
+
                         android:layout_marginRight="5dip"
-                        android:layout_marginBottom="5dip"
                         android:layout_marginLeft="5dip"
                         android:layout_alignParentTop="true"
                         android:layout_toRightOf="@id/jr_media_content_image"
+
                         android:singleLine="true"
                         android:ellipsize="end"
                         android:textStyle="bold"
@@ -182,12 +185,12 @@
                         android:id="@+id/jr_media_content_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="0dip"
+
                         android:layout_marginRight="5dip"
-                        android:layout_marginBottom="0dip"
                         android:layout_marginLeft="5dip"
                         android:layout_below="@id/jr_media_content_title"
                         android:layout_toRightOf="@id/jr_media_content_image"
+
                         android:textStyle="normal"
                         android:maxLines="4"
                         android:textSize="@dimen/jr_media_content_description_size"
@@ -197,21 +200,28 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/jr_preview_label"
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/jr_preview_label_paddingLeft"
+                >
 
-                android:layout_marginLeft="8dip"
-                android:paddingLeft="4dip"
-                android:paddingRight="6dip"
+                <TextView
+                    android:id="@+id/jr_preview_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-                android:singleLine="true"
-                android:text="@string/jr_preview"
-                android:textColor="@color/jr_preview_label"
-                android:background="@color/jr_preview_background"
-                android:textSize="@dimen/jr_preview_label_size"
-                />
+                    android:paddingLeft="5dip"
+                    android:paddingRight="5dip"
+
+                    android:singleLine="true"
+                    android:text="@string/jr_preview"
+                    android:textColor="@color/jr_preview_label"
+                    android:textSize="@dimen/jr_preview_label_size"
+                    android:background="@color/jr_preview_background"
+                    />
+
+            </FrameLayout>
 
         </com.janrain.android.engage.ui.AutoBlankingFrameLayout>
 

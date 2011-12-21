@@ -31,12 +31,12 @@
  */
 package com.janrain.android.engage.net.async;
 
-import android.os.Handler;
-import android.util.Config;
-import android.util.Log;
-import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.net.JRConnectionManager;
-import com.janrain.android.engage.utils.IOUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
+
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -56,11 +56,13 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.GZIPInputStream;
+
+import android.os.Handler;
+import android.util.Log;
+
+import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.net.JRConnectionManager;
+import com.janrain.android.engage.utils.IOUtils;
 
 /**
  * @internal
@@ -175,7 +177,7 @@ public final class AsyncHttpClient {
 
                 HttpResponse response = mHttpClient.execute(request);
 
-                /* Ensures that the response interceptor has a chance to un-gzip the entity before we
+                /* Ensures that the response intercepter has a chance to un-gzip the entity before we
                 fetch it. */
                 response.getStatusLine().getStatusCode();
 
