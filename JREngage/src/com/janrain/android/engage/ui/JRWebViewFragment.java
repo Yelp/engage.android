@@ -227,11 +227,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     private void loadMobileEndpointUrl(String url) {
         mIsLoadingMobileEndpoint = true;
-        //if (!AndroidUtils.isSmallNormalOrLargeScreen()) {
-            showProgressSpinner();
-        //} else { // full screen mode
-        //    showProgressDialog();
-        //}
+        showProgressSpinner();
 
         String urlToLoad = url + "&auth_info=true";
         JREngage.logd(TAG, "[loadMobileEndpointUrl] loading URL: " + urlToLoad);
@@ -258,9 +254,6 @@ public class JRWebViewFragment extends JRUiFragment {
         }
     };
 
-    /**
-     * Handler for webkit events, etc.
-     */
     private WebViewClient mWebviewClient = new WebViewClient() {
         private final String TAG = this.getClass().getSimpleName();
 
@@ -301,6 +294,7 @@ public class JRWebViewFragment extends JRUiFragment {
                 JREngage.logd(TAG, "[onPageStarted] looks like JR mobile endpoint URL");
                 loadMobileEndpointUrl(url);
                 mWebView.stopLoading();
+                mWebView.loadUrl("about:blank");
             }
 
             showProgressSpinner();
@@ -312,11 +306,15 @@ public class JRWebViewFragment extends JRUiFragment {
 
             hideProgressSpinner();
 
+            /* We inject some JS into the WebView. The JS is from the configuration pulled down from 
+             * Engage. This way we can remotely fix up pages which render poorly/brokenly, like Yahoo!.
+             */
             List<String> jsInjects =
                     mProvider.getWebViewOptions().getAsListOfStrings(JRDictionary.KEY_JS_INJECTIONS, true);
             for (String i : jsInjects) mWebView.loadUrl("javascript:" + i);
 
-            boolean showZoomControl = mProvider.getWebViewOptions().getAsBoolean(JRDictionary.KEY_SHOW_ZOOM_CONTROL);
+            boolean showZoomControl = 
+                    mProvider.getWebViewOptions().getAsBoolean(JRDictionary.KEY_SHOW_ZOOM_CONTROL);
             if (showZoomControl) mWebView.invokeZoomPicker();
 
             super.onPageFinished(view, url);
@@ -345,6 +343,12 @@ public class JRWebViewFragment extends JRUiFragment {
     private WebChromeClient mWebChromeClient = new WebChromeClient() {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
+            /* We hide the progress spinner if it's over half finished.
+             * This is motivated by two things:
+             *  - The page is usually loaded enough to interact with
+             *  - Hyves keeps some page resource request open or something for several minutes
+             *    (during which time the page is otherwise ~completely loaded.)
+             */
             if (newProgress > 50) {
                 hideProgressSpinner();
             }
@@ -359,22 +363,15 @@ public class JRWebViewFragment extends JRUiFragment {
                                                String requestUrl,
                                                Object tag) {
             String payloadString = new String(payload);
-            JREngage.logd(TAG, "[connectionDidFinishLoading] userdata: " + tag + " | payload: " +
-                    payloadString);
+            JREngage.logd(TAG, "[connectionDidFinishLoading] tag: " + tag + " | payload: " + payloadString);
 
-            //if (AndroidUtils.isSmallNormalOrLargeScreen()) {
-            //    dismissProgressDialog();
-            //} else {
-                hideProgressSpinner();
-            //}
+            hideProgressSpinner();
 
             JRDictionary payloadDictionary;
             String alertTitle, alertMessage, logMessage;
             try {
-                 payloadDictionary = JRDictionary.fromJSON(payloadString);
+                payloadDictionary = JRDictionary.fromJSON(payloadString);
             } catch (JSONException e) {
-                alertTitle = "Sign-in error";
-                alertMessage = payloadString;
                 Log.e(TAG, "[connectionDidFinishLoading] failure: " + payloadString);
                 mIsFinishPending = true;
                 getActivity().setResult(RESULT_FAIL);
@@ -396,29 +393,30 @@ public class JRWebViewFragment extends JRUiFragment {
 
                 if ("Discovery failed for the OpenID you entered".equals(error) ||
                         "Your OpenID must be a URL".equals(error)) {
-                    alertTitle = "Invalid Input";
-                    if (mSession.getCurrentlyAuthenticatingProvider().requiresInput()) {
-                        String shortText = mSession.getCurrentlyAuthenticatingProvider().getShortText();
-                        alertMessage = "The " + shortText + " you entered was not valid. Please try again.";
+                    alertTitle = getString(R.string.jr_webview_bad_user_input_title);
+                    if (mProvider.requiresInput()) {
+                        String s = mProvider.getUserInputDescriptor();
+                        alertMessage = getString(R.string.jr_webview_bad_user_input_message, s);
                     } else {
-                        alertMessage = "There was a problem authenticating. Please try again.";
+                        alertMessage = getString(R.string.jr_webview_generic_auth_error_message);
+                        Log.e(TAG, "[connectionDidFinishLoading]: unrecognized openid error");
                     }
-
-                    logMessage = "Discovery failed for the OpenID you entered: ";
-
-                    Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
 
                     mIsFinishPending = true;
                     getActivity().setResult(RESULT_BAD_OPENID_URL);
                     showAlertDialog(alertTitle, alertMessage);
-                } else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
-                    alertTitle = "Invalid Input";
-                    alertMessage = (mSession.getCurrentlyAuthenticatingProvider().requiresInput()) ?
-                            String.format("The %s you entered was not valid. Please try again.",
-                            mSession.getCurrentlyAuthenticatingProvider().getShortText())
-                            : "There was a problem authenticating. Please try again.";
-                    logMessage = "The URL you entered does not appear to be an OpenID: ";
+                //} else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
+                // The error text changed :/
+                } else if (error.matches(".*you entered does not appear to be an OpenID")) {
+                    alertTitle = getString(R.string.jr_webview_bad_user_input_title);
+                    if (mProvider.requiresInput()) {
+                        alertMessage = getString(R.string.jr_webview_bad_user_input_message,
+                                mProvider.getUserInputDescriptor());
+                    } else {
+                        alertMessage = getString(R.string.jr_webview_generic_auth_error_message);
+                    }
 
+                    logMessage = "The URL you entered does not appear to be an OpenID: ";
                     Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
 
                     mIsFinishPending = true;
@@ -431,13 +429,12 @@ public class JRWebViewFragment extends JRUiFragment {
                     getActivity().setResult(RESULT_BAD_OPENID_URL);
                     showAlertDialog("OpenID Error", "The URL you entered does not appear to be an OpenID");
                 } else if ("canceled".equals(error)) {
-                    //forgetAuthenticatedUserForProvider
-                    mSession.getCurrentlyAuthenticatingProvider().setForceReauth(true);
+                    mProvider.setForceReauth(true);
                     mSession.triggerAuthenticationDidRestart();
                     getActivity().setResult(RESULT_RESTART);
                     getActivity().finish();
                 } else {
-                    Log.e(TAG, "unrecognized error");
+                    Log.e(TAG, "unrecognized error: " + error);
                     JREngageError err = new JREngageError(
                             "Authentication failed: " + payloadString,
                             JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
@@ -446,8 +443,8 @@ public class JRWebViewFragment extends JRUiFragment {
                     mSession.triggerAuthenticationDidFail(err);
                     getActivity().setResult(RESULT_FAIL);
                     mIsFinishPending = true;
-                    showAlertDialog(getString(R.string.jr_dialog_sign_in_failed),
-                            "An error occurred while attempting to sign in.");
+                    showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
+                            getString(R.string.jr_webview_error_dialog_msg));
                 }
             }
         }
@@ -463,7 +460,7 @@ public class JRWebViewFragment extends JRUiFragment {
                         JREngageError.ErrorType.AUTHENTICATION_FAILED,
                         ex);
 
-                // Back button? race condition
+                // TODO Back button? race condition?
                 mSession.triggerAuthenticationDidFail(error);
                 mIsFinishPending = true;
                 getActivity().setResult(RESULT_FAIL);

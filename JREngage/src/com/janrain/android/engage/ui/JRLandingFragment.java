@@ -252,7 +252,7 @@ public class JRLandingFragment extends JRUiFragment {
     private String getCustomTitle() {
         JRProvider provider = mSession.getCurrentlyAuthenticatingProvider();
         if (provider.requiresInput()) {
-            return provider.getShortText();
+            return provider.getUserInputDescriptor();
         } else {
             return getString(R.string.jr_landing_default_custom_title);
         }

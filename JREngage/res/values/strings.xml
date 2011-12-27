@@ -58,12 +58,17 @@
     <string name="jr_user_profile_default_name">You</string>
 
     <!-- - JRWebView strings. -->
-    <string name="jr_dialog_sign_in_failed">Sign-in failed</string>
     <string name="jr_dialog_network_error">A network error occurred, please try again.</string>
     <string name="jr_menu_item_refresh">Refresh</string>
     <string name="jr_desktop_browser_ua">Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/534.24 (KHTML, like Gecko)
         Chrome/11.0.696.34 Safari/534.24
     </string>
+    <string name="jr_webview_error_dialog_msg">An error occurred while attempting to sign in.</string>
+    <string name="jr_webview_error_dialog_title">Sign-in failed</string>
+    <string name="jr_webview_bad_user_input_message">The %1$s you entered was not valid. Please try again.</string>
+    <string name="jr_webview_generic_auth_error_message">There was a problem authenticating. Please try again.
+    </string>
+    <string name="jr_webview_bad_user_input_title">Invalid Input</string>
 
     <!-- JRSession strings -->
     <string name="jr_getconfig_network_failure_message">There was a problem communicating with the Janrain server.
