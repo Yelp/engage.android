@@ -40,7 +40,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
@@ -65,7 +64,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  * @internal

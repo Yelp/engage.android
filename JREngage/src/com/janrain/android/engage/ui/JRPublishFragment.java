@@ -145,6 +145,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private EditText mEmailSmsComment;
     private TabHost mTabHost;
 
+    public JRPublishFragment() {}
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (mSession == null) return null;
@@ -980,7 +982,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
              * input".
              */
         } else { /* Otherwise, go straight to the web view. */
-            showWebView(true);
+            showWebView();
         }
     }
 
@@ -1152,7 +1154,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     @Override
     protected void onBackPressed() {
         mSession.triggerPublishingDidComplete();
-        getActivity().setResult(Activity.RESULT_OK);
-        getActivity().finish();
+        finishFragmentWithResult(Activity.RESULT_OK);
     }
 }

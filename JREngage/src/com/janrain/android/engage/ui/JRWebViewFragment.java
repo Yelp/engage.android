@@ -76,10 +76,8 @@ public class JRWebViewFragment extends JRUiFragment {
     public static final int RESULT_RESTART = 1;
     public static final int RESULT_FAIL = 2;
     public static final int RESULT_BAD_OPENID_URL = 3;
-    public static final String SOCIAL_SHARING_MODE = "com.janrain.android.engage.SOCIAL_SHARING_MODE";
 
     private WebView mWebView;
-    private boolean mIsSocialSharingSignIn = false;
     private boolean mIsAlertShowing = false;
     private boolean mIsFinishPending = false;
     private boolean mIsLoadingMobileEndpoint = false;
@@ -87,6 +85,8 @@ public class JRWebViewFragment extends JRUiFragment {
     private JRProvider mProvider;
     private WebSettings mWebViewSettings;
     private ProgressBar mProgressSpinner;
+
+    public JRWebViewFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -138,7 +138,7 @@ public class JRWebViewFragment extends JRUiFragment {
         super.onActivityCreated(savedInstanceState);
 
         if (mSession == null) return;
-        mIsSocialSharingSignIn = getActivity().getIntent().getExtras().getBoolean(SOCIAL_SHARING_MODE);
+
         mProvider = mSession.getCurrentlyAuthenticatingProvider();
 
         String customUa = mProvider.getWebViewOptions().getAsString(JRDictionary.KEY_USER_AGENT);
@@ -178,19 +178,19 @@ public class JRWebViewFragment extends JRUiFragment {
                     mIsAlertShowing = false;
                     if (mIsFinishPending) {
                         mIsFinishPending = false;
-                        getActivity().finish();
+                        tryToFinishFragment();
                     }
                 }
             }).show();
     }
 
     @Override
-    protected void tryToFinishActivity() {
-        JREngage.logd(TAG, "[tryToFinishActivity]");
+    protected void tryToFinishFragment() {
+        JREngage.logd(TAG, "[tryToFinishFragment]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
         } else {
-            getActivity().finish();
+            finishFragment();
         }
     }
 
@@ -329,8 +329,9 @@ public class JRWebViewFragment extends JRUiFragment {
             hideProgressSpinner();
 
             mIsFinishPending = true;
-            getActivity().setResult(RESULT_FAIL);
-            showAlertDialog("Sign-in failed", "An error occurred while attempting to sign in.");
+            setFragmentResult(RESULT_FAIL);
+            showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
+                    getString(R.string.jr_webview_error_dialog_msg));
 
             JREngageError err = new JREngageError(
                     "Authentication failed: " + description,
@@ -374,20 +375,21 @@ public class JRWebViewFragment extends JRUiFragment {
             } catch (JSONException e) {
                 Log.e(TAG, "[connectionDidFinishLoading] failure: " + payloadString);
                 mIsFinishPending = true;
-                getActivity().setResult(RESULT_FAIL);
-                showAlertDialog(alertTitle, alertMessage);
+                setFragmentResult(RESULT_FAIL);
+                showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
+                        getString(R.string.jr_webview_error_dialog_msg));
                 return;
             }
 
             JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
             final String result = resultDictionary.getAsString("stat");
             if ("ok".equals(result)) {
-                /* Back should be disabled at this point because the progress modal dialog is
-                being displayed. */
-                if (!mIsSocialSharingSignIn) mSession.saveLastUsedBasicProvider();
+                // TODO back button is no longer disabled because of the switch from modal dialog
+                // to progress spinner, fix the code path when the user hits the back button now.
+
+                if (!isSocialSharingFlow()) mSession.saveLastUsedBasicProvider();
                 mSession.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
-                getActivity().setResult(Activity.RESULT_OK);
-                getActivity().finish();
+                finishFragmentWithResult(Activity.RESULT_OK);
             } else {
                 final String error = resultDictionary.getAsString("error");
 
@@ -403,7 +405,7 @@ public class JRWebViewFragment extends JRUiFragment {
                     }
 
                     mIsFinishPending = true;
-                    getActivity().setResult(RESULT_BAD_OPENID_URL);
+                    setFragmentResult(RESULT_BAD_OPENID_URL);
                     showAlertDialog(alertTitle, alertMessage);
                 //} else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
                 // The error text changed :/
@@ -420,19 +422,19 @@ public class JRWebViewFragment extends JRUiFragment {
                     Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
 
                     mIsFinishPending = true;
-                    getActivity().setResult(RESULT_BAD_OPENID_URL);
+                    setFragmentResult(RESULT_BAD_OPENID_URL);
                     showAlertDialog(alertTitle, alertMessage);
                 } else if ("Please enter your OpenID".equals(error)) {
                     // Caused by entering a ~blank OpenID URL
 
                     mIsFinishPending = true;
-                    getActivity().setResult(RESULT_BAD_OPENID_URL);
+                    setFragmentResult(RESULT_BAD_OPENID_URL);
+                    // TODO resource-ify
                     showAlertDialog("OpenID Error", "The URL you entered does not appear to be an OpenID");
                 } else if ("canceled".equals(error)) {
                     mProvider.setForceReauth(true);
                     mSession.triggerAuthenticationDidRestart();
-                    getActivity().setResult(RESULT_RESTART);
-                    getActivity().finish();
+                    finishFragmentWithResult(RESULT_RESTART);
                 } else {
                     Log.e(TAG, "unrecognized error: " + error);
                     JREngageError err = new JREngageError(
@@ -441,7 +443,7 @@ public class JRWebViewFragment extends JRUiFragment {
                             JREngageError.ErrorType.AUTHENTICATION_FAILED);
 
                     mSession.triggerAuthenticationDidFail(err);
-                    getActivity().setResult(RESULT_FAIL);
+                    setFragmentResult(RESULT_FAIL);
                     mIsFinishPending = true;
                     showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
                             getString(R.string.jr_webview_error_dialog_msg));
@@ -463,8 +465,8 @@ public class JRWebViewFragment extends JRUiFragment {
                 // TODO Back button? race condition?
                 mSession.triggerAuthenticationDidFail(error);
                 mIsFinishPending = true;
-                getActivity().setResult(RESULT_FAIL);
-                showAlertDialog(getString(R.string.jr_dialog_sign_in_failed),
+                setFragmentResult(RESULT_FAIL);
+                showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
                         getString(R.string.jr_dialog_network_error));
 
             }
@@ -474,8 +476,7 @@ public class JRWebViewFragment extends JRUiFragment {
     @Override
     protected void onBackPressed() {
         mSession.triggerAuthenticationDidRestart();
-        getActivity().setResult(JRWebViewFragment.RESULT_RESTART);
-        getActivity().finish();
+        finishFragmentWithResult(RESULT_RESTART);
     }
 
 //    public void setUseDesktopUa(boolean use) {

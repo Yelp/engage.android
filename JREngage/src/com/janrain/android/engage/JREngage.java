@@ -78,11 +78,12 @@ package com.janrain.android.engage;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.util.Config;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -92,6 +93,7 @@ import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.ui.JRFragmentHostActivity;
+import com.janrain.android.engage.ui.JRProviderListFragment;
 import com.janrain.android.engage.ui.JRPublishFragment;
 import com.janrain.android.engage.ui.JRUiFragment;
 
@@ -590,7 +592,7 @@ public class JREngage {
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mActivity, true);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PROVIDER_LIST);
-        i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, true);
+        i.putExtra(JRUiFragment.SOCIAL_SHARING_MODE, false);
         mActivity.startActivity(i);
     }
 
@@ -610,7 +612,7 @@ public class JREngage {
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mActivity, false);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
-        i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, false);
+        i.putExtra(JRUiFragment.SOCIAL_SHARING_MODE, true);
         mActivity.startActivity(i);
     }
 
@@ -645,29 +647,17 @@ public class JREngage {
                                              Integer customEnterAnimation,
                                              Integer customExitAnimation) {
         JREngage.logd(TAG, "[showSocialPublishingFragment]");
-        if (checkSessionDataError()) return;
-
         checkNullJRActivity(activity);
 
-        View fragmentContainer = hostActivity.findViewById(containerId);
-        if (!(fragmentContainer instanceof FrameLayout)) {
-            throw new IllegalStateException("No FrameLayout with ID: " + containerId + ". Found: " +
-                    fragmentContainer);
-        }
-
-        FragmentManager fm = hostActivity.getSupportFragmentManager();
-
         JRUiFragment f = createSocialPublishingFragment(activity);
-        FragmentTransaction ft = fm.beginTransaction();
-        if (transit != null) ft.setTransition(transit);
-        if (transitRes != null) ft.setTransitionStyle(transitRes);
-        if (customEnterAnimation != null || customExitAnimation != null) {
-            //noinspection ConstantConditions
-            ft.setCustomAnimations(customEnterAnimation, customExitAnimation);
-        }
-        ft.replace(fragmentContainer.getId(), f, f.getClass().getSimpleName());
-        if (addToBackStack) ft.addToBackStack(JRPublishFragment.class.getSimpleName());
-        ft.commit();
+        showFragment(f,
+                hostActivity,
+                containerId,
+                addToBackStack,
+                transit,
+                transitRes,
+                customEnterAnimation,
+                customExitAnimation);
     }
 
     /**
@@ -707,7 +697,111 @@ public class JREngage {
         mSession.setJRActivity(activity);
         return new JRPublishFragment();
     }
+
+    /**
+     * Begin social sign-in.  The library will display a new Android \e Fragment enabling the user to
+     * sign in.
+     *
+     * @param hostActivity
+     *   The android.support.v4.app.FragmentActivity which will host the publishing fragment
+     * @param containerId
+     *   The resource ID of a FrameLayout to embed the publishing fragment in
+     * @param addToBackStack
+     *   True if the publishing fragment should be added to the back stack, false otherwise
+     * @param transit
+     *   Select a standard transition animation for this transaction. See FragmentTransaction#setTransition.
+     *   Null for not set
+     * @param transitRes
+     *   Set a custom style resource that will be used for resolving transit animations. Null for not set
+     * @param customEnterAnimation
+     *   Set a custom enter animation. May be null if-and-only-if customExitAnimation is also null
+     * @param customExitAnimation
+     *   Set a custom exit animation.  May be null if-and-only-if customEnterAnimation is also null
+     **/
+    public void showSocialSignInFragment(FragmentActivity hostActivity,
+                                             int containerId,
+                                             boolean addToBackStack,
+                                             Integer transit,
+                                             Integer transitRes,
+                                             Integer customEnterAnimation,
+                                             Integer customExitAnimation) {
+        JREngage.logd(TAG, "[showSocialSignInFragment]");
+
+        JRUiFragment f = createSocialSignInFragment();
+        showFragment(f,
+                hostActivity,
+                containerId,
+                addToBackStack,
+                transit,
+                transitRes,
+                customEnterAnimation,
+                customExitAnimation);
+    }
+
+    /**
+     * Begin social sign-in.  The library will display a new Android \e Fragment enabling the user to
+     * sign in.
+     * This simple variant displays the Fragment, does not add it to the Fragment back stack, and uses default
+     * animations.
+     *
+     * @param hostActivity
+     *   The android.support.v4.app.FragmentActivity which will host the publishing fragment
+     * @param containerId
+     *   The resource ID of a FrameLayout to embed the publishing fragment in
+     **/
+    public void showSocialSignInFragment(FragmentActivity hostActivity,
+                                             int containerId) {
+        showSocialSignInFragment(hostActivity, containerId, false, null, null, null, null);
+    }
+
+    /**
+     * Create a new android.support.v4.Fragment for social sign-in.  Use this if you wish to manage the
+     * FragmentTransaction yourself.
+     *
+     * @return
+     *  The created Fragment, or null upon error (caused by library configuration failure)
+     */
+    public JRProviderListFragment createSocialSignInFragment() {
+        if (checkSessionDataError()) return null;
+
+        JRProviderListFragment jplf = new JRProviderListFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(JRUiFragment.SOCIAL_SHARING_MODE, false);
+        jplf.setArguments(args);
+        return jplf;
+    }
 /*@}*/
+
+    private void showFragment(Fragment fragment,
+                              FragmentActivity hostActivity,
+                              int containerId,
+                              boolean addToBackStack,
+                              Integer transit,
+                              Integer transitRes,
+                              Integer customEnterAnimation,
+                              Integer customExitAnimation) {
+        if (checkSessionDataError()) return;
+
+        View fragmentContainer = hostActivity.findViewById(containerId);
+        if (!(fragmentContainer instanceof FrameLayout)) {
+            throw new IllegalStateException("No FrameLayout with ID: " + containerId + ". Found: " +
+                    fragmentContainer);
+        }
+
+        FragmentManager fm = hostActivity.getSupportFragmentManager();
+
+        FragmentTransaction ft = fm.beginTransaction();
+        if (transit != null) ft.setTransition(transit);
+        if (transitRes != null) ft.setTransitionStyle(transitRes);
+        if (customEnterAnimation != null || customExitAnimation != null) {
+            //noinspection ConstantConditions
+            ft.setCustomAnimations(customEnterAnimation, customExitAnimation);
+        }
+        ft.replace(fragmentContainer.getId(), fragment, fragment.getClass().getSimpleName());
+        if (addToBackStack) ft.addToBackStack(fragment.getClass().getSimpleName());
+        ft.commit();
+    }
+
 
 /** @anchor enableProviders **/
 /**

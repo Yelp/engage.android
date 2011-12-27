@@ -134,6 +134,8 @@ public class JRProviderListFragment extends JRUiFragment {
         }
     };
 
+    public JRProviderListFragment() {}
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (mSession == null) return null;
@@ -143,7 +145,9 @@ public class JRProviderListFragment extends JRUiFragment {
         mEmptyTextLabel = (TextView) listView.findViewById(R.id.jr_empty_label);
         mLoadingProgress = (ProgressBar) listView.findViewById(android.R.id.empty);
 
-        getActivity().setTitle(R.string.jr_provider_list_title);
+        if (getActivity() instanceof JRFragmentHostActivity) {
+            getActivity().setTitle(R.string.jr_provider_list_title);
+        }
 
         mProviderList = mSession.getBasicProviders();
         if (mProviderList == null) mProviderList = new ArrayList<JRProvider>();
@@ -204,22 +208,19 @@ public class JRProviderListFragment extends JRUiFragment {
                     case JRLandingFragment.RESULT_SWITCH_ACCOUNTS:
                         break;
                     case Activity.RESULT_OK:
-                        getActivity().setResult(Activity.RESULT_OK);
-                        getActivity().finish();
+                        finishFragmentWithResult(Activity.RESULT_OK);
                         break;
                     default:
-                        throw new RuntimeException("unrecognized result code");
+                        throw new RuntimeException("unrecognized result code: " + resultCode);
                 }
                 break;
             case JRUiFragment.REQUEST_WEBVIEW:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        getActivity().setResult(Activity.RESULT_OK);
-                        getActivity().finish();
+                        finishFragmentWithResult(Activity.RESULT_OK);
                         break;
                     case JRWebViewFragment.RESULT_FAIL:
-                        getActivity().setResult(RESULT_FAIL);
-                        getActivity().finish();
+                        finishFragmentWithResult(RESULT_FAIL);
                         break;
                     case JRWebViewFragment.RESULT_RESTART:
                         break;
@@ -266,7 +267,6 @@ public class JRProviderListFragment extends JRUiFragment {
     @Override
     protected void onBackPressed() {
         mSession.triggerAuthenticationDidCancel();
-        getActivity().setResult(Activity.RESULT_CANCELED);
-        getActivity().finish();
+        finishFragmentWithResult(Activity.RESULT_CANCELED);
     }
 }

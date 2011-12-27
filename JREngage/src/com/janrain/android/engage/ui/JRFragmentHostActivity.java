@@ -51,7 +51,6 @@ import com.janrain.android.engage.utils.AndroidUtils;
 public class JRFragmentHostActivity extends FragmentActivity {
     private static final String TAG = JRFragmentHostActivity.class.getSimpleName();
     public static final String JR_FRAGMENT_ID = "com.janrain.android.engage.JR_FRAGMENT_ID";
-    public static final String JR_AUTH_FLOW = "com.janrain.android.engage.JR_AUTH_FLOW";
     public static final int JR_PROVIDER_LIST = 4;
     public static final int JR_LANDING = 1;
     public static final int JR_WEBVIEW = 2;
@@ -90,7 +89,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
             //throw new IllegalStateException("unexpected not null savedInstanceState");
         }
-
+        
         switch (getFragmentId()) {
             case JR_PROVIDER_LIST:
                 /* check and see whether we should start the landing page */
@@ -108,8 +107,8 @@ public class JRFragmentHostActivity extends FragmentActivity {
                     JRProvider provider = mSession.getProviderByName(rbpName);
                     mSession.setCurrentlyAuthenticatingProvider(provider);
                     Intent i = createIntentForCurrentScreen(this, true);
+                    i.putExtra(JRUiFragment.SOCIAL_SHARING_MODE, isPublishFlow());
                     i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JR_LANDING);
-                    i.putExtra(JR_AUTH_FLOW, true);
                     startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
                 }
 
@@ -127,6 +126,10 @@ public class JRFragmentHostActivity extends FragmentActivity {
             default:
                 throw new IllegalFragmentIdException(getFragmentId());
         }
+
+        Bundle fragArgs = new Bundle();
+        fragArgs.putBoolean(JRUiFragment.SOCIAL_SHARING_MODE, isPublishFlow());
+        mUiFragment.setArguments(fragArgs);
 
         if (shouldBePhoneSizedDialog()) {
             // Need to set a new theme in order to achieve a small dialog
@@ -156,7 +159,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 .setTransition(FragmentTransaction.TRANSIT_NONE)
                 .commit();
     }
-
+    
     protected boolean shouldBePhoneSizedDialog() {
 //        return AndroidUtils.isXlarge() && (isAuthFlow() || isParentEmbedded());
         return AndroidUtils.isXlarge() && !(mUiFragment instanceof JRPublishFragment);
@@ -175,7 +178,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
     }
 
     public boolean isAuthFlow() {
-        return getIntent().getExtras().getBoolean(JR_AUTH_FLOW);
+        return !getIntent().getExtras().getBoolean(JRUiFragment.SOCIAL_SHARING_MODE);
     }
 
     @Override
