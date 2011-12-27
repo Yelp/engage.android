@@ -375,7 +375,8 @@ public class JRWebViewFragment extends JRUiFragment {
                 Log.e(TAG, "[connectionDidFinishLoading] failure: " + payloadString);
                 mIsFinishPending = true;
                 getActivity().setResult(RESULT_FAIL);
-                showAlertDialog(alertTitle, alertMessage);
+                showAlertDialog(getString(R.string.jr_webview_error_dialog_title), 
+                        getString(R.string.jr_webview_error_dialog_msg));
                 return;
             }
 
@@ -464,7 +465,7 @@ public class JRWebViewFragment extends JRUiFragment {
                 mSession.triggerAuthenticationDidFail(error);
                 mIsFinishPending = true;
                 getActivity().setResult(RESULT_FAIL);
-                showAlertDialog(getString(R.string.jr_dialog_sign_in_failed),
+                showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
                         getString(R.string.jr_dialog_network_error));
 
             }

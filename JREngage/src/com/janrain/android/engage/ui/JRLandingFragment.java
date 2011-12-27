@@ -226,7 +226,7 @@ public class JRLandingFragment extends JRUiFragment {
 
             mUserInput.setVisibility(View.VISIBLE);
             mUserInput.setText(currentlyAuthenticatingProvider.getUserInput());
-            mUserInput.setHint(currentlyAuthenticatingProvider.getPlaceholderText());
+            mUserInput.setHint(currentlyAuthenticatingProvider.getUserInputHint());
         } else { // doesn't require input
             configureButtonVisibility(false); // = two button UI -> Switch Accounts is showing
             JREngage.logd(TAG, "[prepareUserInterface] current provider doesn't require input");
