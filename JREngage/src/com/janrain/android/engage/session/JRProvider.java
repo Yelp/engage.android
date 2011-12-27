@@ -73,10 +73,7 @@ import java.util.WeakHashMap;
  * @class JRProvider
  **/
 public class JRProvider implements Serializable {
-//	public static final String KEY_NAME = "name";
 	public static final String KEY_FRIENDLY_NAME = "friendly_name";
-//	public static final String KEY_PLACEHOLDER_TEXT = "placeholder_text";
-//	public static final String KEY_SHORT_TEXT = "short_text";
 	public static final String KEY_INPUT_PROMPT = "input_prompt";
 	public static final String KEY_OPENID_IDENTIFIER = "openid_identifier";
 	public static final String KEY_URL = "url";
@@ -160,8 +157,8 @@ public class JRProvider implements Serializable {
 
     private String mName;
     private String mFriendlyName;
-    private String mPlaceholderText;
-    private String mShortText;
+    private String mInputHintText;
+    private String mUserInputDescriptor;
     private boolean mRequiresInput;
     private String mOpenIdentifier;
     private String mStartAuthenticationUrl;
@@ -173,16 +170,10 @@ public class JRProvider implements Serializable {
     private transient String mUserInput = ""; // <- across cached provider reloads
     private transient boolean mCurrentlyDownloading;
 
-    // We don't need a private default constructor so long as we have another constructor as we 
-    // do, found immediately below.
-    // Declaring this raises an irresolvable compiler warning that requires a suppression
-    // annotation.
-    //private JRProvider() {}
-
     public JRProvider(String name, JRDictionary dictionary) {
         mName = name;
         mFriendlyName = dictionary.getAsString(KEY_FRIENDLY_NAME);
-        mPlaceholderText = dictionary.getAsString(KEY_INPUT_PROMPT);
+        mInputHintText = dictionary.getAsString(KEY_INPUT_PROMPT);
         mOpenIdentifier = dictionary.getAsString(KEY_OPENID_IDENTIFIER);
         mStartAuthenticationUrl = dictionary.getAsString(KEY_URL);
         mRequiresInput = dictionary.getAsBoolean(KEY_REQUIRES_INPUT);
@@ -199,12 +190,12 @@ public class JRProvider implements Serializable {
         loadDynamicVariables();
 
         if (mRequiresInput) {
-            String[] arr = mPlaceholderText.split(" ");
+            String[] arr = mInputHintText.split(" ");
             ArrayList<String> shortList = new ArrayList<String>();
             shortList.addAll(Arrays.asList(arr).subList((arr.length - 2), arr.length));
-            mShortText = TextUtils.join(" ", shortList);
+            mUserInputDescriptor = TextUtils.join(" ", shortList);
         } else {
-            mShortText = "";
+            mUserInputDescriptor = "";
         }
 
         /* We call this function in the constructor, simply to preemptively download the icons
@@ -224,12 +215,12 @@ public class JRProvider implements Serializable {
         return mFriendlyName;
     }
 
-    public String getPlaceholderText() {  /* (readonly) */
-        return mPlaceholderText;
+    public String getUserInputHint() {  /* (readonly) */
+        return mInputHintText;
     }
 
-    public String getShortText() {  /* (readonly) */
-        return mShortText;
+    public String getUserInputDescriptor() {  /* (readonly) */
+        return mUserInputDescriptor;
     }
 
     public boolean requiresInput() {  /* (readonly) */
