@@ -47,7 +47,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../PhonegapSample/libs/phonegap-1.3.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../PhoneGapSample/libs/phonegap-1.3.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
