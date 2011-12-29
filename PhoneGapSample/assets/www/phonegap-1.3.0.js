@@ -22,21 +22,21 @@
 if (typeof PhoneGap === "undefined") {
 
 /**
- * The order of events during page load and Phonegap startup is as follows:
+ * The order of events during page load and PhoneGap startup is as follows:
  *
  * onDOMContentLoaded         Internal event that is received when the web page is loaded and parsed.
  * window.onload              Body onload event.
- * onNativeReady              Internal event that indicates the Phonegap native side is ready.
- * onPhoneGapInit             Internal event that kicks off creation of all Phonegap JavaScript objects (runs constructors).
- * onPhoneGapReady            Internal event fired when all Phonegap JavaScript objects have been created
+ * onNativeReady              Internal event that indicates the PhoneGap native side is ready.
+ * onPhoneGapInit             Internal event that kicks off creation of all PhoneGap JavaScript objects (runs constructors).
+ * onPhoneGapReady            Internal event fired when all PhoneGap JavaScript objects have been created
  * onPhoneGapInfoReady        Internal event fired when device properties are available
- * onDeviceReady              User event fired to indicate that Phonegap is ready
+ * onDeviceReady              User event fired to indicate that PhoneGap is ready
  * onResume                   User event fired to indicate a start/resume lifecycle event
  * onPause                    User event fired to indicate a pause lifecycle event
  * onDestroy                  Internal event fired when app is being destroyed (User should use window.onunload event, not this one).
  *
- * The only Phonegap events that user code should register for are:
- *      deviceready           Phonegap native code is initialized and Phonegap APIs can be called from JavaScript
+ * The only PhoneGap events that user code should register for are:
+ *      deviceready           PhoneGap native code is initialized and PhoneGap APIs can be called from JavaScript
  *      pause                 App has moved to background
  *      resume                App has returned to foreground
  *
@@ -51,8 +51,8 @@ if (typeof PhoneGap === "undefined") {
  */
 
 /**
- * This represents the Phonegap API itself, and provides a global namespace for accessing
- * information about the state of Phonegap.
+ * This represents the PhoneGap API itself, and provides a global namespace for accessing
+ * information about the state of PhoneGap.
  * @class
  */
 var PhoneGap = {
@@ -61,35 +61,35 @@ var PhoneGap = {
 };
 
 /**
- * List of resource files loaded by Phonegap.
+ * List of resource files loaded by PhoneGap.
  * This is used to ensure JS and other files are loaded only once.
  */
-Phonegap.resources = {base: true};
+PhoneGap.resources = {base: true};
 
 /**
- * Determine if resource has been loaded by Phonegap
+ * Determine if resource has been loaded by PhoneGap
  *
  * @param name
  * @return
  */
-Phonegap.hasResource = function(name) {
-    return Phonegap.resources[name];
+PhoneGap.hasResource = function(name) {
+    return PhoneGap.resources[name];
 };
 
 /**
- * Add a resource to list of loaded resources by Phonegap
+ * Add a resource to list of loaded resources by PhoneGap
  *
  * @param name
  */
-Phonegap.addResource = function(name) {
-    Phonegap.resources[name] = true;
+PhoneGap.addResource = function(name) {
+    PhoneGap.resources[name] = true;
 };
 
 /**
  * Custom pub-sub channel that can have functions subscribed to it
  * @constructor
  */
-Phonegap.Channel = function (type)
+PhoneGap.Channel = function (type)
 {
     this.type = type;
     this.handlers = {};
@@ -105,12 +105,12 @@ Phonegap.Channel = function (type)
  * and a guid that can be used to stop subscribing to the channel.
  * Returns the guid.
  */
-Phonegap.Channel.prototype.subscribe = function(f, c, g) {
+PhoneGap.Channel.prototype.subscribe = function(f, c, g) {
     // need a function to call
     if (f === null) { return; }
 
     var func = f;
-    if (typeof c === "object" && typeof f === "function") { func = Phonegap.close(c, f); }
+    if (typeof c === "object" && typeof f === "function") { func = PhoneGap.close(c, f); }
 
     g = g || func.observer_guid || f.observer_guid || this.guid++;
     func.observer_guid = g;
@@ -123,7 +123,7 @@ Phonegap.Channel.prototype.subscribe = function(f, c, g) {
  * Like subscribe but the function is only called once and then it
  * auto-unsubscribes itself.
  */
-Phonegap.Channel.prototype.subscribeOnce = function(f, c) {
+PhoneGap.Channel.prototype.subscribeOnce = function(f, c) {
     var g = null;
     var _this = this;
     var m = function() {
@@ -131,7 +131,7 @@ Phonegap.Channel.prototype.subscribeOnce = function(f, c) {
         _this.unsubscribe(g);
     };
     if (this.fired) {
-        if (typeof c === "object" && typeof f === "function") { f = Phonegap.close(c, f); }
+        if (typeof c === "object" && typeof f === "function") { f = PhoneGap.close(c, f); }
         f.apply(this, this.fireArgs);
     } else {
         g = this.subscribe(m);
@@ -142,7 +142,7 @@ Phonegap.Channel.prototype.subscribeOnce = function(f, c) {
 /**
  * Unsubscribes the function with the given guid from the channel.
  */
-Phonegap.Channel.prototype.unsubscribe = function(g) {
+PhoneGap.Channel.prototype.unsubscribe = function(g) {
     if (typeof g === "function") { g = g.observer_guid; }
     this.handlers[g] = null;
     delete this.handlers[g];
@@ -151,7 +151,7 @@ Phonegap.Channel.prototype.unsubscribe = function(g) {
 /**
  * Calls all functions subscribed to this channel.
  */
-Phonegap.Channel.prototype.fire = function(e) {
+PhoneGap.Channel.prototype.fire = function(e) {
     if (this.enabled) {
         var fail = false;
         var item, handler, rv;
@@ -175,7 +175,7 @@ Phonegap.Channel.prototype.fire = function(e) {
  * Calls the provided function only after all of the channels specified
  * have been fired.
  */
-Phonegap.Channel.join = function(h, c) {
+PhoneGap.Channel.join = function(h, c) {
     var i = c.length;
     var f = function() {
         if (!(--i)) {
@@ -199,11 +199,11 @@ Phonegap.Channel.join = function(h, c) {
 
 /**
  * Add an initialization function to a queue that ensures it will run and initialize
- * application constructors only once Phonegap has been initialized.
- * @param {Function} func The function callback you want run once Phonegap is initialized
+ * application constructors only once PhoneGap has been initialized.
+ * @param {Function} func The function callback you want run once PhoneGap is initialized
  */
-Phonegap.addConstructor = function(func) {
-    Phonegap.onPhonegapInit.subscribeOnce(function() {
+PhoneGap.addConstructor = function(func) {
+    PhoneGap.onPhoneGapInit.subscribeOnce(function() {
         try {
             func();
         } catch(e) {
@@ -226,7 +226,7 @@ if (!window.plugins) {
  * @param name          The plugin name
  * @param obj           The plugin object
  */
-Phonegap.addPlugin = function(name, obj) {
+PhoneGap.addPlugin = function(name, obj) {
     if (!window.plugins[name]) {
         window.plugins[name] = obj;
     }
@@ -239,78 +239,78 @@ Phonegap.addPlugin = function(name, obj) {
  * onDOMContentLoaded channel is fired when the DOM content
  * of the page has been parsed.
  */
-Phonegap.onDOMContentLoaded = new Phonegap.Channel('onDOMContentLoaded');
+PhoneGap.onDOMContentLoaded = new PhoneGap.Channel('onDOMContentLoaded');
 
 /**
- * onNativeReady channel is fired when the Phonegap native code
+ * onNativeReady channel is fired when the PhoneGap native code
  * has been initialized.
  */
-Phonegap.onNativeReady = new Phonegap.Channel('onNativeReady');
+PhoneGap.onNativeReady = new PhoneGap.Channel('onNativeReady');
 
 /**
- * onPhonegapInit channel is fired when the web page is fully loaded and
- * Phonegap native code has been initialized.
+ * onPhoneGapInit channel is fired when the web page is fully loaded and
+ * PhoneGap native code has been initialized.
  */
-Phonegap.onPhonegapInit = new Phonegap.Channel('onPhonegapInit');
+PhoneGap.onPhoneGapInit = new PhoneGap.Channel('onPhoneGapInit');
 
 /**
- * onPhonegapReady channel is fired when the JS Phonegap objects have been created.
+ * onPhoneGapReady channel is fired when the JS PhoneGap objects have been created.
  */
-Phonegap.onPhonegapReady = new Phonegap.Channel('onPhonegapReady');
+PhoneGap.onPhoneGapReady = new PhoneGap.Channel('onPhoneGapReady');
 
 /**
- * onPhonegapInfoReady channel is fired when the Phonegap device properties
+ * onPhoneGapInfoReady channel is fired when the PhoneGap device properties
  * has been set.
  */
-Phonegap.onPhonegapInfoReady = new Phonegap.Channel('onPhonegapInfoReady');
+PhoneGap.onPhoneGapInfoReady = new PhoneGap.Channel('onPhoneGapInfoReady');
 
 /**
- * onPhonegapConnectionReady channel is fired when the Phonegap connection properties
+ * onPhoneGapConnectionReady channel is fired when the PhoneGap connection properties
  * has been set.
  */
-Phonegap.onPhonegapConnectionReady = new Phonegap.Channel('onPhonegapConnectionReady');
+PhoneGap.onPhoneGapConnectionReady = new PhoneGap.Channel('onPhoneGapConnectionReady');
 
 /**
- * onDestroy channel is fired when the Phonegap native code
+ * onDestroy channel is fired when the PhoneGap native code
  * is destroyed.  It is used internally.
  * Window.onunload should be used by the user.
  */
-Phonegap.onDestroy = new Phonegap.Channel('onDestroy');
-Phonegap.onDestroy.subscribeOnce(function() {
-    Phonegap.shuttingDown = true;
+PhoneGap.onDestroy = new PhoneGap.Channel('onDestroy');
+PhoneGap.onDestroy.subscribeOnce(function() {
+    PhoneGap.shuttingDown = true;
 });
-Phonegap.shuttingDown = false;
+PhoneGap.shuttingDown = false;
 
 // _nativeReady is global variable that the native side can set
 // to signify that the native code is ready. It is a global since
-// it may be called before any Phonegap JS is ready.
-if (typeof _nativeReady !== 'undefined') { Phonegap.onNativeReady.fire(); }
+// it may be called before any PhoneGap JS is ready.
+if (typeof _nativeReady !== 'undefined') { PhoneGap.onNativeReady.fire(); }
 
 /**
- * onDeviceReady is fired only after all Phonegap objects are created and
+ * onDeviceReady is fired only after all PhoneGap objects are created and
  * the device properties are set.
  */
-Phonegap.onDeviceReady = new Phonegap.Channel('onDeviceReady');
+PhoneGap.onDeviceReady = new PhoneGap.Channel('onDeviceReady');
 
 
 // Array of channels that must fire before "deviceready" is fired
-Phonegap.deviceReadyChannelsArray = [ Phonegap.onPhonegapReady, Phonegap.onPhonegapInfoReady, Phonegap.onPhonegapConnectionReady];
+PhoneGap.deviceReadyChannelsArray = [ PhoneGap.onPhoneGapReady, PhoneGap.onPhoneGapInfoReady, PhoneGap.onPhoneGapConnectionReady];
 
 // Hashtable of user defined channels that must also fire before "deviceready" is fired
-Phonegap.deviceReadyChannelsMap = {};
+PhoneGap.deviceReadyChannelsMap = {};
 
 /**
  * Indicate that a feature needs to be initialized before it is ready to be used.
- * This holds up Phonegap's "deviceready" event until the feature has been initialized
- * and Phonegap.initComplete(feature) is called.
+ * This holds up PhoneGap's "deviceready" event until the feature has been initialized
+ * and PhoneGap.initComplete(feature) is called.
  *
  * @param feature {String}     The unique feature name
  */
-Phonegap.waitForInitialization = function(feature) {
+PhoneGap.waitForInitialization = function(feature) {
     if (feature) {
-        var channel = new Phonegap.Channel(feature);
-        Phonegap.deviceReadyChannelsMap[feature] = channel;
-        Phonegap.deviceReadyChannelsArray.push(channel);
+        var channel = new PhoneGap.Channel(feature);
+        PhoneGap.deviceReadyChannelsMap[feature] = channel;
+        PhoneGap.deviceReadyChannelsArray.push(channel);
     }
 };
 
@@ -319,64 +319,64 @@ Phonegap.waitForInitialization = function(feature) {
  *
  * @param feature {String}     The unique feature name
  */
-Phonegap.initializationComplete = function(feature) {
-    var channel = Phonegap.deviceReadyChannelsMap[feature];
+PhoneGap.initializationComplete = function(feature) {
+    var channel = PhoneGap.deviceReadyChannelsMap[feature];
     if (channel) {
         channel.fire();
     }
 };
 
 /**
- * Create all Phonegap objects once page has fully loaded and native side is ready.
+ * Create all PhoneGap objects once page has fully loaded and native side is ready.
  */
-Phonegap.Channel.join(function() {
+PhoneGap.Channel.join(function() {
 
     // Start listening for XHR callbacks
     setTimeout(function() {
-            if (Phonegap.UsePolling) {
-                Phonegap.JSCallbackPolling();
+            if (PhoneGap.UsePolling) {
+                PhoneGap.JSCallbackPolling();
             }
             else {
                 var polling = prompt("usePolling", "gap_callbackServer:");
-                Phonegap.UsePolling = polling;
+                PhoneGap.UsePolling = polling;
                 if (polling == "true") {
-                    Phonegap.UsePolling = true;
-                    Phonegap.JSCallbackPolling();
+                    PhoneGap.UsePolling = true;
+                    PhoneGap.JSCallbackPolling();
                 }
                 else {
-                    Phonegap.UsePolling = false;
-                    Phonegap.JSCallback();
+                    PhoneGap.UsePolling = false;
+                    PhoneGap.JSCallback();
                 }
             }
         }, 1);
 
-    // Run Phonegap constructors
-    Phonegap.onPhonegapInit.fire();
+    // Run PhoneGap constructors
+    PhoneGap.onPhoneGapInit.fire();
 
     // Fire event to notify that all objects are created
-    Phonegap.onPhonegapReady.fire();
+    PhoneGap.onPhoneGapReady.fire();
 
-    // Fire onDeviceReady event once all constructors have run and Phonegap info has been
+    // Fire onDeviceReady event once all constructors have run and PhoneGap info has been
     // received from native side, and any user defined initialization channels.
-    Phonegap.Channel.join(function() {
+    PhoneGap.Channel.join(function() {
         // Let native code know we are inited on JS side
         prompt("", "gap_init:");
 
-        Phonegap.onDeviceReady.fire();
-    }, Phonegap.deviceReadyChannelsArray);
+        PhoneGap.onDeviceReady.fire();
+    }, PhoneGap.deviceReadyChannelsArray);
 
-}, [ Phonegap.onDOMContentLoaded, Phonegap.onNativeReady ]);
+}, [ PhoneGap.onDOMContentLoaded, PhoneGap.onNativeReady ]);
 
 // Listen for DOMContentLoaded and notify our channel subscribers
 document.addEventListener('DOMContentLoaded', function() {
-    Phonegap.onDOMContentLoaded.fire();
+    PhoneGap.onDOMContentLoaded.fire();
 }, false);
 
 // Intercept calls to document.addEventListener and watch for deviceready
-Phonegap.m_document_addEventListener = document.addEventListener;
+PhoneGap.m_document_addEventListener = document.addEventListener;
 
 // Intercept calls to window.addEventListener
-Phonegap.m_window_addEventListener = window.addEventListener;
+PhoneGap.m_window_addEventListener = window.addEventListener;
 
 /**
  * Add a custom window event handler.
@@ -384,8 +384,8 @@ Phonegap.m_window_addEventListener = window.addEventListener;
  * @param {String} event            The event name that callback handles
  * @param {Function} callback       The event handler
  */
-Phonegap.addWindowEventHandler = function(event, callback) {
-    Phonegap.windowEventHandler[event] = callback;
+PhoneGap.addWindowEventHandler = function(event, callback) {
+    PhoneGap.windowEventHandler[event] = callback;
 };
 
 /**
@@ -394,8 +394,8 @@ Phonegap.addWindowEventHandler = function(event, callback) {
  * @param {String} event            The event name that callback handles
  * @param {Function} callback       The event handler
  */
-Phonegap.addDocumentEventHandler = function(event, callback) {
-    Phonegap.documentEventHandler[event] = callback;
+PhoneGap.addDocumentEventHandler = function(event, callback) {
+    PhoneGap.documentEventHandler[event] = callback;
 };
 
 /**
@@ -408,22 +408,22 @@ Phonegap.addDocumentEventHandler = function(event, callback) {
 document.addEventListener = function(evt, handler, capture) {
     var e = evt.toLowerCase();
     if (e === 'deviceready') {
-        Phonegap.onDeviceReady.subscribeOnce(handler);
+        PhoneGap.onDeviceReady.subscribeOnce(handler);
     }
     else {
         // If subscribing to Android backbutton
         if (e === 'backbutton') {
-            Phonegap.exec(null, null, "App", "overrideBackbutton", [true]);
+            PhoneGap.exec(null, null, "App", "overrideBackbutton", [true]);
         }
         
         // If subscribing to an event that is handled by a plugin
-        else if (typeof Phonegap.documentEventHandler[e] !== "undefined") {
-            if (Phonegap.documentEventHandler[e](e, handler, true)) {
+        else if (typeof PhoneGap.documentEventHandler[e] !== "undefined") {
+            if (PhoneGap.documentEventHandler[e](e, handler, true)) {
                 return; // Stop default behavior
             }
         }
         
-        Phonegap.m_document_addEventListener.call(document, evt, handler, capture);
+        PhoneGap.m_document_addEventListener.call(document, evt, handler, capture);
     }
 };
 
@@ -438,21 +438,21 @@ window.addEventListener = function(evt, handler, capture) {
     var e = evt.toLowerCase();
         
     // If subscribing to an event that is handled by a plugin
-    if (typeof Phonegap.windowEventHandler[e] !== "undefined") {
-        if (Phonegap.windowEventHandler[e](e, handler, true)) {
+    if (typeof PhoneGap.windowEventHandler[e] !== "undefined") {
+        if (PhoneGap.windowEventHandler[e](e, handler, true)) {
             return; // Stop default behavior
         }
     }
         
-    Phonegap.m_window_addEventListener.call(window, evt, handler, capture);
+    PhoneGap.m_window_addEventListener.call(window, evt, handler, capture);
 };
 
 // Intercept calls to document.removeEventListener and watch for events that
-// are generated by Phonegap native code
-Phonegap.m_document_removeEventListener = document.removeEventListener;
+// are generated by PhoneGap native code
+PhoneGap.m_document_removeEventListener = document.removeEventListener;
 
 // Intercept calls to window.removeEventListener
-Phonegap.m_window_removeEventListener = window.removeEventListener;
+PhoneGap.m_window_removeEventListener = window.removeEventListener;
 
 /**
  * Intercept removing document event listeners and handle our own
@@ -466,17 +466,17 @@ document.removeEventListener = function(evt, handler, capture) {
 
     // If unsubscribing to Android backbutton
     if (e === 'backbutton') {
-        Phonegap.exec(null, null, "App", "overrideBackbutton", [false]);
+        PhoneGap.exec(null, null, "App", "overrideBackbutton", [false]);
     }
 
     // If unsubcribing from an event that is handled by a plugin
-    if (typeof Phonegap.documentEventHandler[e] !== "undefined") {
-        if (Phonegap.documentEventHandler[e](e, handler, false)) {
+    if (typeof PhoneGap.documentEventHandler[e] !== "undefined") {
+        if (PhoneGap.documentEventHandler[e](e, handler, false)) {
             return; // Stop default behavior
         }
     }
 
-    Phonegap.m_document_removeEventListener.call(document, evt, handler, capture);
+    PhoneGap.m_document_removeEventListener.call(document, evt, handler, capture);
 };
 
 /**
@@ -490,13 +490,13 @@ window.removeEventListener = function(evt, handler, capture) {
     var e = evt.toLowerCase();
 
     // If unsubcribing from an event that is handled by a plugin
-    if (typeof Phonegap.windowEventHandler[e] !== "undefined") {
-        if (Phonegap.windowEventHandler[e](e, handler, false)) {
+    if (typeof PhoneGap.windowEventHandler[e] !== "undefined") {
+        if (PhoneGap.windowEventHandler[e](e, handler, false)) {
             return; // Stop default behavior
         }
     }
 
-    Phonegap.m_window_removeEventListener.call(window, evt, handler, capture);
+    PhoneGap.m_window_removeEventListener.call(window, evt, handler, capture);
 };
 
 /**
@@ -505,7 +505,7 @@ window.removeEventListener = function(evt, handler, capture) {
  * @param {String} type             The event type to fire
  * @param {Object} data             Data to send with event
  */
-Phonegap.fireDocumentEvent = function(type, data) {
+PhoneGap.fireDocumentEvent = function(type, data) {
     var e = document.createEvent('Events');
     e.initEvent(type);
     if (data) {
@@ -522,7 +522,7 @@ Phonegap.fireDocumentEvent = function(type, data) {
  * @param {String} type             The event type to fire
  * @param {Object} data             Data to send with event
  */
-Phonegap.fireWindowEvent = function(type, data) {
+PhoneGap.fireWindowEvent = function(type, data) {
     var e = document.createEvent('Events');
     e.initEvent(type);
     if (data) {
@@ -539,7 +539,7 @@ Phonegap.fireWindowEvent = function(type, data) {
  * @param obj
  * @return {Object}
  */
-Phonegap.clone = function(obj) {
+PhoneGap.clone = function(obj) {
     var i, retVal;
     if(!obj) { 
         return obj;
@@ -548,7 +548,7 @@ Phonegap.clone = function(obj) {
     if(obj instanceof Array){
         retVal = [];
         for(i = 0; i < obj.length; ++i){
-            retVal.push(Phonegap.clone(obj[i]));
+            retVal.push(PhoneGap.clone(obj[i]));
         }
         return retVal;
     }
@@ -568,15 +568,15 @@ Phonegap.clone = function(obj) {
     retVal = {};
     for(i in obj){
         if(!(i in retVal) || retVal[i] !== obj[i]) {
-            retVal[i] = Phonegap.clone(obj[i]);
+            retVal[i] = PhoneGap.clone(obj[i]);
         }
     }
     return retVal;
 };
 
-Phonegap.callbackId = 0;
-Phonegap.callbacks = {};
-Phonegap.callbackStatus = {
+PhoneGap.callbackId = 0;
+PhoneGap.callbacks = {};
+PhoneGap.callbackStatus = {
     NO_RESULT: 0,
     OK: 1,
     CLASS_NOT_FOUND_EXCEPTION: 2,
@@ -591,24 +591,24 @@ Phonegap.callbackStatus = {
 
 
 /**
- * Execute a Phonegap command.  It is up to the native side whether this action is synch or async.
+ * Execute a PhoneGap command.  It is up to the native side whether this action is synch or async.
  * The native side can return:
  *      Synchronous: PluginResult object as a JSON string
  *      Asynchrounous: Empty string ""
- * If async, the native side will Phonegap.callbackSuccess or Phonegap.callbackError,
+ * If async, the native side will PhoneGap.callbackSuccess or PhoneGap.callbackError,
  * depending upon the result of the action.
  *
  * @param {Function} success    The success callback
  * @param {Function} fail       The fail callback
  * @param {String} service      The name of the service to use
- * @param {String} action       Action to be run in Phonegap
+ * @param {String} action       Action to be run in PhoneGap
  * @param {Array.<String>} [args]     Zero or more arguments to pass to the method
  */
-Phonegap.exec = function(success, fail, service, action, args) {
+PhoneGap.exec = function(success, fail, service, action, args) {
     try {
-        var callbackId = service + Phonegap.callbackId++;
+        var callbackId = service + PhoneGap.callbackId++;
         if (success || fail) {
-            Phonegap.callbacks[callbackId] = {success:success, fail:fail};
+            PhoneGap.callbacks[callbackId] = {success:success, fail:fail};
         }
 
         var r = prompt(JSON.stringify(args), "gap:"+JSON.stringify([service, action, callbackId, true]));
@@ -618,7 +618,7 @@ Phonegap.exec = function(success, fail, service, action, args) {
             eval("var v="+r+";");
 
             // If status is OK, then return value back to caller
-            if (v.status === Phonegap.callbackStatus.OK) {
+            if (v.status === PhoneGap.callbackStatus.OK) {
 
                 // If there is a success callback, then call it now with
                 // returned value
@@ -631,18 +631,18 @@ Phonegap.exec = function(success, fail, service, action, args) {
 
                     // Clear callback if not expecting any more results
                     if (!v.keepCallback) {
-                        delete Phonegap.callbacks[callbackId];
+                        delete PhoneGap.callbacks[callbackId];
                     }
                 }
                 return v.message;
             }
 
             // If no result
-            else if (v.status === Phonegap.callbackStatus.NO_RESULT) {
+            else if (v.status === PhoneGap.callbackStatus.NO_RESULT) {
 
                 // Clear callback if not expecting any more results
                 if (!v.keepCallback) {
-                    delete Phonegap.callbacks[callbackId];
+                    delete PhoneGap.callbacks[callbackId];
                 }
             }
 
@@ -661,7 +661,7 @@ Phonegap.exec = function(success, fail, service, action, args) {
 
                     // Clear callback if not expecting any more results
                     if (!v.keepCallback) {
-                        delete Phonegap.callbacks[callbackId];
+                        delete PhoneGap.callbacks[callbackId];
                     }
                 }
                 return null;
@@ -678,14 +678,14 @@ Phonegap.exec = function(success, fail, service, action, args) {
  * @param callbackId
  * @param args
  */
-Phonegap.callbackSuccess = function(callbackId, args) {
-    if (Phonegap.callbacks[callbackId]) {
+PhoneGap.callbackSuccess = function(callbackId, args) {
+    if (PhoneGap.callbacks[callbackId]) {
 
         // If result is to be sent to callback
-        if (args.status === Phonegap.callbackStatus.OK) {
+        if (args.status === PhoneGap.callbackStatus.OK) {
             try {
-                if (Phonegap.callbacks[callbackId].success) {
-                    Phonegap.callbacks[callbackId].success(args.message);
+                if (PhoneGap.callbacks[callbackId].success) {
+                    PhoneGap.callbacks[callbackId].success(args.message);
                 }
             }
             catch (e) {
@@ -695,7 +695,7 @@ Phonegap.callbackSuccess = function(callbackId, args) {
 
         // Clear callback if not expecting any more results
         if (!args.keepCallback) {
-            delete Phonegap.callbacks[callbackId];
+            delete PhoneGap.callbacks[callbackId];
         }
     }
 };
@@ -706,11 +706,11 @@ Phonegap.callbackSuccess = function(callbackId, args) {
  * @param callbackId
  * @param args
  */
-Phonegap.callbackError = function(callbackId, args) {
-    if (Phonegap.callbacks[callbackId]) {
+PhoneGap.callbackError = function(callbackId, args) {
+    if (PhoneGap.callbacks[callbackId]) {
         try {
-            if (Phonegap.callbacks[callbackId].fail) {
-                Phonegap.callbacks[callbackId].fail(args.message);
+            if (PhoneGap.callbacks[callbackId].fail) {
+                PhoneGap.callbacks[callbackId].fail(args.message);
             }
         }
         catch (e) {
@@ -719,31 +719,31 @@ Phonegap.callbackError = function(callbackId, args) {
 
         // Clear callback if not expecting any more results
         if (!args.keepCallback) {
-            delete Phonegap.callbacks[callbackId];
+            delete PhoneGap.callbacks[callbackId];
         }
     }
 };
 
-Phonegap.JSCallbackPort = null;
-Phonegap.JSCallbackToken = null;
+PhoneGap.JSCallbackPort = null;
+PhoneGap.JSCallbackToken = null;
 
 /**
  * This is only for Android.
  *
- * Internal function that uses XHR to call into Phonegap Java code and retrieve
+ * Internal function that uses XHR to call into PhoneGap Java code and retrieve
  * any JavaScript code that needs to be run.  This is used for callbacks from
  * Java to JavaScript.
  */
-Phonegap.JSCallback = function() {
+PhoneGap.JSCallback = function() {
 
     // Exit if shutting down app
-    if (Phonegap.shuttingDown) {
+    if (PhoneGap.shuttingDown) {
         return;
     }
 
     // If polling flag was changed, start using polling from now on
-    if (Phonegap.UsePolling) {
-        Phonegap.JSCallbackPolling();
+    if (PhoneGap.UsePolling) {
+        PhoneGap.JSCallbackPolling();
         return;
     }
 
@@ -754,7 +754,7 @@ Phonegap.JSCallback = function() {
         if(xmlhttp.readyState === 4){
 
             // Exit if shutting down app
-            if (Phonegap.shuttingDown) {
+            if (PhoneGap.shuttingDown) {
                 return;
             }
 
@@ -773,12 +773,12 @@ Phonegap.JSCallback = function() {
                         console.log("JSCallback Error: "+e);
                     }
                 }, 1);
-                setTimeout(Phonegap.JSCallback, 1);
+                setTimeout(PhoneGap.JSCallback, 1);
             }
 
             // If callback ping (used to keep XHR request from timing out)
             else if (xmlhttp.status === 404) {
-                setTimeout(Phonegap.JSCallback, 10);
+                setTimeout(PhoneGap.JSCallback, 10);
             }
 
             // If security error
@@ -799,19 +799,19 @@ Phonegap.JSCallback = function() {
             // If error, revert to polling
             else {
                 console.log("JSCallback Error: Request failed.");
-                Phonegap.UsePolling = true;
-                Phonegap.JSCallbackPolling();
+                PhoneGap.UsePolling = true;
+                PhoneGap.JSCallbackPolling();
             }
         }
     };
 
-    if (Phonegap.JSCallbackPort === null) {
-        Phonegap.JSCallbackPort = prompt("getPort", "gap_callbackServer:");
+    if (PhoneGap.JSCallbackPort === null) {
+        PhoneGap.JSCallbackPort = prompt("getPort", "gap_callbackServer:");
     }
-    if (Phonegap.JSCallbackToken === null) {
-        Phonegap.JSCallbackToken = prompt("getToken", "gap_callbackServer:");
+    if (PhoneGap.JSCallbackToken === null) {
+        PhoneGap.JSCallbackToken = prompt("getToken", "gap_callbackServer:");
     }
-    xmlhttp.open("GET", "http://127.0.0.1:"+Phonegap.JSCallbackPort+"/"+Phonegap.JSCallbackToken , true);
+    xmlhttp.open("GET", "http://127.0.0.1:"+PhoneGap.JSCallbackPort+"/"+PhoneGap.JSCallbackToken , true);
     xmlhttp.send();
 };
 
@@ -819,30 +819,30 @@ Phonegap.JSCallback = function() {
  * The polling period to use with JSCallbackPolling.
  * This can be changed by the application.  The default is 50ms.
  */
-Phonegap.JSCallbackPollingPeriod = 50;
+PhoneGap.JSCallbackPollingPeriod = 50;
 
 /**
  * Flag that can be set by the user to force polling to be used or force XHR to be used.
  */
-Phonegap.UsePolling = false;    // T=use polling, F=use XHR
+PhoneGap.UsePolling = false;    // T=use polling, F=use XHR
 
 /**
  * This is only for Android.
  *
- * Internal function that uses polling to call into Phonegap Java code and retrieve
+ * Internal function that uses polling to call into PhoneGap Java code and retrieve
  * any JavaScript code that needs to be run.  This is used for callbacks from
  * Java to JavaScript.
  */
-Phonegap.JSCallbackPolling = function() {
+PhoneGap.JSCallbackPolling = function() {
 
     // Exit if shutting down app
-    if (Phonegap.shuttingDown) {
+    if (PhoneGap.shuttingDown) {
         return;
     }
 
     // If polling flag was changed, stop using polling from now on
-    if (!Phonegap.UsePolling) {
-        Phonegap.JSCallback();
+    if (!PhoneGap.UsePolling) {
+        PhoneGap.JSCallback();
         return;
     }
 
@@ -857,10 +857,10 @@ Phonegap.JSCallbackPolling = function() {
                 console.log("JSCallbackPolling Error: "+e);
             }
         }, 1);
-        setTimeout(Phonegap.JSCallbackPolling, 1);
+        setTimeout(PhoneGap.JSCallbackPolling, 1);
     }
     else {
-        setTimeout(Phonegap.JSCallbackPolling, Phonegap.JSCallbackPollingPeriod);
+        setTimeout(PhoneGap.JSCallbackPolling, PhoneGap.JSCallbackPollingPeriod);
     }
 };
 
@@ -869,15 +869,15 @@ Phonegap.JSCallbackPolling = function() {
  *
  * @return {String}
  */
-Phonegap.createUUID = function() {
-    return Phonegap.UUIDcreatePart(4) + '-' +
-        Phonegap.UUIDcreatePart(2) + '-' +
-        Phonegap.UUIDcreatePart(2) + '-' +
-        Phonegap.UUIDcreatePart(2) + '-' +
-        Phonegap.UUIDcreatePart(6);
+PhoneGap.createUUID = function() {
+    return PhoneGap.UUIDcreatePart(4) + '-' +
+        PhoneGap.UUIDcreatePart(2) + '-' +
+        PhoneGap.UUIDcreatePart(2) + '-' +
+        PhoneGap.UUIDcreatePart(2) + '-' +
+        PhoneGap.UUIDcreatePart(6);
 };
 
-Phonegap.UUIDcreatePart = function(length) {
+PhoneGap.UUIDcreatePart = function(length) {
     var uuidpart = "";
     var i, uuidchar;
     for (i=0; i<length; i++) {
@@ -890,7 +890,7 @@ Phonegap.UUIDcreatePart = function(length) {
     return uuidpart;
 };
 
-Phonegap.close = function(context, func, params) {
+PhoneGap.close = function(context, func, params) {
     if (typeof params === 'undefined') {
         return function() {
             return func.apply(context, arguments);
@@ -908,7 +908,7 @@ Phonegap.close = function(context, func, params) {
  * @param {String} jsfile               The url of the JavaScript file to load.
  * @param {Function} successCallback    The callback to call when the file has been loaded.
  */
-Phonegap.includeJavascript = function(jsfile, successCallback) {
+PhoneGap.includeJavascript = function(jsfile, successCallback) {
     var id = document.getElementsByTagName("head")[0];
     var el = document.createElement('script');
     el.type = 'text/javascript';
@@ -939,8 +939,8 @@ Phonegap.includeJavascript = function(jsfile, successCallback) {
  *     under the License.
  */
 
-if (!Phonegap.hasResource("device")) {
-Phonegap.addResource("device");
+if (!PhoneGap.hasResource("device")) {
+PhoneGap.addResource("device");
 
 /**
  * This represents the mobile device, and provides properties for inspecting the model, version, UUID of the
@@ -948,7 +948,7 @@ Phonegap.addResource("device");
  * @constructor
  */
 var Device = function() {
-    this.available = Phonegap.available;
+    this.available = PhoneGap.available;
     this.platform = null;
     this.version = null;
     this.name = null;
@@ -964,12 +964,12 @@ var Device = function() {
             me.name = info.name;
             me.uuid = info.uuid;
             me.phonegap = info.phonegap;
-            Phonegap.onPhonegapInfoReady.fire();
+            PhoneGap.onPhoneGapInfoReady.fire();
         },
         function(e) {
             me.available = false;
-            console.log("Error initializing Phonegap: " + e);
-            alert("Error initializing Phonegap: "+e);
+            console.log("Error initializing PhoneGap: " + e);
+            alert("Error initializing PhoneGap: "+e);
         });
 };
 
@@ -994,7 +994,7 @@ Device.prototype.getInfo = function(successCallback, errorCallback) {
     }
 
     // Get info
-    Phonegap.exec(successCallback, errorCallback, "Device", "getDeviceInfo", []);
+    PhoneGap.exec(successCallback, errorCallback, "Device", "getDeviceInfo", []);
 };
 
 /*
@@ -1030,7 +1030,7 @@ Device.prototype.exitApp = function() {
 	navigator.app.exitApp();
 };
 
-Phonegap.addConstructor(function() {
+PhoneGap.addConstructor(function() {
     if (typeof navigator.device === "undefined") {
         navigator.device = window.device = new Device();
     }
@@ -1055,8 +1055,8 @@ Phonegap.addConstructor(function() {
  *     under the License.
  */
 
-if (!Phonegap.hasResource("accelerometer")) {
-Phonegap.addResource("accelerometer");
+if (!PhoneGap.hasResource("accelerometer")) {
+PhoneGap.addResource("accelerometer");
 
 /** @constructor */
 var Acceleration = function(x, y, z) {
@@ -1107,7 +1107,7 @@ Accelerometer.prototype.getCurrentAcceleration = function(successCallback, error
     }
 
     // Get acceleration
-    Phonegap.exec(successCallback, errorCallback, "Accelerometer", "getAcceleration", []);
+    PhoneGap.exec(successCallback, errorCallback, "Accelerometer", "getAcceleration", []);
 };
 
 /**
@@ -1136,18 +1136,18 @@ Accelerometer.prototype.watchAcceleration = function(successCallback, errorCallb
     }
 
     // Make sure accelerometer timeout > frequency + 10 sec
-    Phonegap.exec(
+    PhoneGap.exec(
         function(timeout) {
             if (timeout < (frequency + 10000)) {
-                Phonegap.exec(null, null, "Accelerometer", "setTimeout", [frequency + 10000]);
+                PhoneGap.exec(null, null, "Accelerometer", "setTimeout", [frequency + 10000]);
             }
         },
         function(e) { }, "Accelerometer", "getTimeout", []);
 
     // Start watch timer
-    var id = Phonegap.createUUID();
+    var id = PhoneGap.createUUID();
     navigator.accelerometer.timers[id] = setInterval(function() {
-        Phonegap.exec(successCallback, errorCallback, "Accelerometer", "getAcceleration", []);
+        PhoneGap.exec(successCallback, errorCallback, "Accelerometer", "getAcceleration", []);
     }, (frequency ? frequency : 1));
 
     return id;
@@ -1167,7 +1167,7 @@ Accelerometer.prototype.clearWatch = function(id) {
     }
 };
 
-Phonegap.addConstructor(function() {
+PhoneGap.addConstructor(function() {
     if (typeof navigator.accelerometer === "undefined") {
         navigator.accelerometer = new Accelerometer();
     }
@@ -1192,8 +1192,8 @@ Phonegap.addConstructor(function() {
  *     under the License.
  */
 
-if (!Phonegap.hasResource("app")) {
-Phonegap.addResource("app");
+if (!PhoneGap.hasResource("app")) {
+PhoneGap.addResource("app");
 (function() {
 
 /**
@@ -1206,7 +1206,7 @@ var App = function() {};
  * Clear the resource cache.
  */
 App.prototype.clearCache = function() {
-    Phonegap.exec(null, null, "App", "clearCache", []);
+    PhoneGap.exec(null, null, "App", "clearCache", []);
 };
 
 /**
@@ -1224,14 +1224,14 @@ App.prototype.clearCache = function() {
  *      navigator.app.loadUrl("http://server/myapp/index.html", {wait:2000, loadingDialog:"Wait,Loading App", loadUrlTimeoutValue: 60000});
  */
 App.prototype.loadUrl = function(url, props) {
-    Phonegap.exec(null, null, "App", "loadUrl", [url, props]);
+    PhoneGap.exec(null, null, "App", "loadUrl", [url, props]);
 };
 
 /**
  * Cancel loadUrl that is waiting to be loaded.
  */
 App.prototype.cancelLoadUrl = function() {
-    Phonegap.exec(null, null, "App", "cancelLoadUrl", []);
+    PhoneGap.exec(null, null, "App", "cancelLoadUrl", []);
 };
 
 /**
@@ -1239,7 +1239,7 @@ App.prototype.cancelLoadUrl = function() {
  * Instead of BACK button loading the previous web page, it will exit the app.
  */
 App.prototype.clearHistory = function() {
-    Phonegap.exec(null, null, "App", "clearHistory", []);
+    PhoneGap.exec(null, null, "App", "clearHistory", []);
 };
 
 /**
@@ -1247,7 +1247,7 @@ App.prototype.clearHistory = function() {
  * This is the same as pressing the backbutton on Android device.
  */
 App.prototype.backHistory = function() {
-    Phonegap.exec(null, null, "App", "backHistory", []);
+    PhoneGap.exec(null, null, "App", "backHistory", []);
 };
 
 /**
@@ -1260,17 +1260,17 @@ App.prototype.backHistory = function() {
  * @param override		T=override, F=cancel override
  */
 App.prototype.overrideBackbutton = function(override) {
-    Phonegap.exec(null, null, "App", "overrideBackbutton", [override]);
+    PhoneGap.exec(null, null, "App", "overrideBackbutton", [override]);
 };
 
 /**
  * Exit and terminate the application.
  */
 App.prototype.exitApp = function() {
-	return Phonegap.exec(null, null, "App", "exitApp", []);
+	return PhoneGap.exec(null, null, "App", "exitApp", []);
 };
 
-Phonegap.addConstructor(function() {
+PhoneGap.addConstructor(function() {
     navigator.app = new App();
 });
 }());
@@ -1294,8 +1294,8 @@ Phonegap.addConstructor(function() {
  *     under the License.
  */
 
-if (!Phonegap.hasResource("battery")) {
-Phonegap.addResource("battery");
+if (!PhoneGap.hasResource("battery")) {
+PhoneGap.addResource("battery");
 
 /**
  * This class contains information about the current battery status.
@@ -1321,7 +1321,7 @@ Battery.prototype.eventHandler = function(eventType, handler, add) {
     if (add) {
         // If there are no current registered event listeners start the battery listener on native side.
         if (me._batteryListener.length === 0 && me._lowListener.length === 0 && me._criticalListener.length === 0) {
-            Phonegap.exec(me._status, me._error, "Battery", "start", []);
+            PhoneGap.exec(me._status, me._error, "Battery", "start", []);
         }
         
         // Register the event listener in the proper array
@@ -1360,7 +1360,7 @@ Battery.prototype.eventHandler = function(eventType, handler, add) {
         
         // If there are no more registered event listeners stop the battery listener on native side.
         if (me._batteryListener.length === 0 && me._lowListener.length === 0 && me._criticalListener.length === 0) {
-            Phonegap.exec(null, null, "Battery", "stop", []);
+            PhoneGap.exec(null, null, "Battery", "stop", []);
         }
     }
 };
@@ -1376,15 +1376,15 @@ Battery.prototype._status = function(info) {
         var level = info.level;
 		if (me._level !== level || me._isPlugged !== info.isPlugged) {
 			// Fire batterystatus event
-			Phonegap.fireWindowEvent("batterystatus", info);
+			PhoneGap.fireWindowEvent("batterystatus", info);
 
 			// Fire low battery event
 			if (level === 20 || level === 5) {
 				if (level === 20) {
-					Phonegap.fireWindowEvent("batterylow", info);
+					PhoneGap.fireWindowEvent("batterylow", info);
 				}
 				else {
-					Phonegap.fireWindowEvent("batterycritical", info);
+					PhoneGap.fireWindowEvent("batterycritical", info);
 				}
 			}
 		}
@@ -1400,12 +1400,12 @@ Battery.prototype._error = function(e) {
     console.log("Error initializing Battery: " + e);
 };
 
-Phonegap.addConstructor(function() {
+PhoneGap.addConstructor(function() {
     if (typeof navigator.battery === "undefined") {
         navigator.battery = new Battery();
-        Phonegap.addWindowEventHandler("batterystatus", navigator.battery.eventHandler);
-        Phonegap.addWindowEventHandler("batterylow", navigator.battery.eventHandler);
-        Phonegap.addWindowEventHandler("batterycritical", navigator.battery.eventHandler);
+        PhoneGap.addWindowEventHandler("batterystatus", navigator.battery.eventHandler);
+        PhoneGap.addWindowEventHandler("batterylow", navigator.battery.eventHandler);
+        PhoneGap.addWindowEventHandler("batterycritical", navigator.battery.eventHandler);
     }
 });
 }
@@ -1428,8 +1428,8 @@ Phonegap.addConstructor(function() {
  *     under the License.
  */
 
-if (!Phonegap.hasResource("camera")) {
-Phonegap.addResource("camera");
+if (!PhoneGap.hasResource("camera")) {
+PhoneGap.addResource("camera");
 
 /**
  * This class provides access to the device camera.
@@ -1568,10 +1568,10 @@ Camera.prototype.getPicture = function(successCallback, errorCallback, options) 
         }
     }
     
-    Phonegap.exec(successCallback, errorCallback, "Camera", "takePicture", [options]);
+    PhoneGap.exec(successCallback, errorCallback, "Camera", "takePicture", [options]);
 };
 
-Phonegap.addConstructor(function() {
+PhoneGap.addConstructor(function() {
     if (typeof navigator.camera === "undefined") {
         navigator.camera = new Camera();
     }
@@ -1596,8 +1596,8 @@ Phonegap.addConstructor(function() {
  *     under the License.
  */
 
-if (!Phonegap.hasResource("capture")) {
-Phonegap.addResource("capture");
+if (!PhoneGap.hasResource("capture")) {
+PhoneGap.addResource("capture");
 	
 /**
  * Represents a single file.
@@ -1623,7 +1623,7 @@ var MediaFile = function(name, fullPath, type, lastModifiedDate, size){
  * @param {Function} errorCB
  */
 MediaFile.prototype.getFormatData = function(successCallback, errorCallback){
-	Phonegap.exec(successCallback, errorCallback, "Capture", "getFormatData", [this.fullPath, this.type]);
+	PhoneGap.exec(successCallback, errorCallback, "Capture", "getFormatData", [this.fullPath, this.type]);
 };
 
 /**
@@ -1674,7 +1674,7 @@ var Capture = function(){
  * @param {CaptureAudioOptions} options
  */
 Capture.prototype.captureAudio = function(successCallback, errorCallback, options){
-	Phonegap.exec(successCallback, errorCallback, "Capture", "captureAudio", [options]);
+	PhoneGap.exec(successCallback, errorCallback, "Capture", "captureAudio", [options]);
 };
 
 /**
@@ -1685,7 +1685,7 @@ Capture.prototype.captureAudio = function(successCallback, errorCallback, option
  * @param {CaptureImageOptions} options
  */
 Capture.prototype.captureImage = function(successCallback, errorCallback, options){
-	Phonegap.exec(successCallback, errorCallback, "Capture", "captureImage", [options]);
+	PhoneGap.exec(successCallback, errorCallback, "Capture", "captureImage", [options]);
 };
 
 /**
@@ -1719,7 +1719,7 @@ Capture.prototype._castMediaFile = function(pluginResult){
  * @param {CaptureVideoOptions} options
  */
 Capture.prototype.captureVideo = function(successCallback, errorCallback, options){
-	Phonegap.exec(successCallback, errorCallback, "Capture", "captureVideo", [options]);
+	PhoneGap.exec(successCallback, errorCallback, "Capture", "captureVideo", [options]);
 };
 
 /**
@@ -1770,7 +1770,7 @@ var CaptureAudioOptions = function(){
 	this.mode = null;
 };
 
-Phonegap.addConstructor(function(){
+PhoneGap.addConstructor(function(){
 	if (typeof navigator.device.capture === "undefined") {
 		navigator.device.capture = window.device.capture = new Capture();
 	}
@@ -1795,8 +1795,8 @@ Phonegap.addConstructor(function(){
  *     under the License.
  */
 
-if (!Phonegap.hasResource("compass")) {
-Phonegap.addResource("compass");
+if (!PhoneGap.hasResource("compass")) {
+PhoneGap.addResource("compass");
 
 var CompassError = function(){
     this.code = null;
@@ -1853,7 +1853,7 @@ Compass.prototype.getCurrentHeading = function(successCallback, errorCallback, o
     }
 
     // Get heading
-    Phonegap.exec(successCallback, errorCallback, "Compass", "getHeading", []);
+    PhoneGap.exec(successCallback, errorCallback, "Compass", "getHeading", []);
 };
 
 /**
@@ -1882,19 +1882,19 @@ Compass.prototype.watchHeading= function(successCallback, errorCallback, options
     }
 
     // Make sure compass timeout > frequency + 10 sec
-    Phonegap.exec(
+    PhoneGap.exec(
         function(timeout) {
             if (timeout < (frequency + 10000)) {
-                Phonegap.exec(null, null, "Compass", "setTimeout", [frequency + 10000]);
+                PhoneGap.exec(null, null, "Compass", "setTimeout", [frequency + 10000]);
             }
         },
         function(e) { }, "Compass", "getTimeout", []);
 
     // Start watch timer to get headings
-    var id = Phonegap.createUUID();
+    var id = PhoneGap.createUUID();
     navigator.compass.timers[id] = setInterval(
         function() {
-            Phonegap.exec(successCallback, errorCallback, "Compass", "getHeading", []);
+            PhoneGap.exec(successCallback, errorCallback, "Compass", "getHeading", []);
         }, (frequency ? frequency : 1));
 
     return id;
@@ -1923,7 +1923,7 @@ Compass.prototype._castDate = function(pluginResult) {
     return pluginResult;
 };
 
-Phonegap.addConstructor(function() {
+PhoneGap.addConstructor(function() {
     if (typeof navigator.compass === "undefined") {
         navigator.compass = new Compass();
     }
@@ -1948,8 +1948,8 @@ Phonegap.addConstructor(function() {
  *     under the License.
  */
 
-if (!Phonegap.hasResource("contact")) {
-Phonegap.addResource("contact");
+if (!PhoneGap.hasResource("contact")) {
+PhoneGap.addResource("contact");
 
 /**
 * Contains information about a single contact.
@@ -2020,7 +2020,7 @@ Contact.prototype.remove = function(successCB, errorCB) {
         errorCB(errorObj);
     }
     else {
-        Phonegap.exec(successCB, errorCB, "Contacts", "remove", [this.id]);
+        PhoneGap.exec(successCB, errorCB, "Contacts", "remove", [this.id]);
     }
 };
 
@@ -2030,7 +2030,7 @@ Contact.prototype.remove = function(successCB, errorCB) {
 * @return copy of this Contact
 */
 Contact.prototype.clone = function() {
-    var clonedContact = Phonegap.clone(this);
+    var clonedContact = PhoneGap.clone(this);
     var i;
     clonedContact.id = null;
     clonedContact.rawId = null;
@@ -2084,7 +2084,7 @@ Contact.prototype.clone = function() {
 * @param errorCB error callback
 */
 Contact.prototype.save = function(successCB, errorCB) {
-    Phonegap.exec(successCB, errorCB, "Contacts", "save", [this]);
+    PhoneGap.exec(successCB, errorCB, "Contacts", "save", [this]);
 };
 
 /**
@@ -2190,7 +2190,7 @@ Contacts.prototype.find = function(fields, successCB, errorCB, options) {
             errorCB({"code": ContactError.INVALID_ARGUMENT_ERROR});
         }
     } else {
-        Phonegap.exec(successCB, errorCB, "Contacts", "search", [fields, options]);
+        PhoneGap.exec(successCB, errorCB, "Contacts", "search", [fields, options]);        
     }
 };
 
@@ -2244,7 +2244,7 @@ var ContactFindOptions = function(filter, multiple) {
 /**
  * Add the contact interface into the browser.
  */
-Phonegap.addConstructor(function() {
+PhoneGap.addConstructor(function() {
     if(typeof navigator.contacts === "undefined") {
         navigator.contacts = new Contacts();
     }
@@ -2271,8 +2271,8 @@ Phonegap.addConstructor(function() {
 
 // TODO: Needs to be commented
 
-if (!Phonegap.hasResource("crypto")) {
-Phonegap.addResource("crypto");
+if (!PhoneGap.hasResource("crypto")) {
+PhoneGap.addResource("crypto");
 
 /**
 * @constructor
@@ -2282,12 +2282,12 @@ var Crypto = function() {
 
 Crypto.prototype.encrypt = function(seed, string, callback) {
     this.encryptWin = callback;
-    Phonegap.exec(null, null, "Crypto", "encrypt", [seed, string]);
+    PhoneGap.exec(null, null, "Crypto", "encrypt", [seed, string]);
 };
 
 Crypto.prototype.decrypt = function(seed, string, callback) {
     this.decryptWin = callback;
-    Phonegap.exec(null, null, "Crypto", "decrypt", [seed, string]);
+    PhoneGap.exec(null, null, "Crypto", "decrypt", [seed, string]);
 };
 
 Crypto.prototype.gotCryptedString = function(string) {
@@ -2298,7 +2298,7 @@ Crypto.prototype.getPlainString = function(string) {
     this.decryptWin(string);
 };
 
-Phonegap.addConstructor(function() {
+PhoneGap.addConstructor(function() {
     if (typeof navigator.Crypto === "undefined") {
         navigator.Crypto = new Crypto();
     }
@@ -2323,8 +2323,8 @@ Phonegap.addConstructor(function() {
  *     under the License.
  */
 
-if (!Phonegap.hasResource("file")) {
-Phonegap.addResource("file");
+if (!PhoneGap.hasResource("file")) {
+PhoneGap.addResource("file");
 
 /**
  * This class provides some useful information about a file.
@@ -2468,7 +2468,7 @@ FileReader.prototype.readAsText = function(file, encoding) {
     var me = this;
 
     // Read file
-    Phonegap.exec(
+    PhoneGap.exec(
         // Success callback
         function(r) {
             var evt;
@@ -2547,7 +2547,7 @@ FileReader.prototype.readAsDataURL = function(file) {
     var me = this;
 
     // Read file
-    Phonegap.exec(
+    PhoneGap.exec(
         // Success callback
         function(r) {
             var evt;
@@ -2718,7 +2718,7 @@ FileWriter.prototype.write = function(text) {
     }
 
     // Write file
-    Phonegap.exec(
+    PhoneGap.exec(
         // Success callback
         function(r) {
             var evt;
@@ -2829,7 +2829,7 @@ FileWriter.prototype.truncate = function(size) {
     }
 
     // Write file
-    Phonegap.exec(
+    PhoneGap.exec(
         // Success callback
         function(r) {
             var evt;
@@ -2930,7 +2930,7 @@ var DirectoryReader = function(fullPath){
  * @param {Function} errorCallback is called with a FileError
  */
 DirectoryReader.prototype.readEntries = function(successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "readEntries", [this.fullPath]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "readEntries", [this.fullPath]);
 };
 
 /**
@@ -2960,7 +2960,7 @@ var DirectoryEntry = function() {
  * @param {Function} errorCallback is called with a FileError
  */
 DirectoryEntry.prototype.copyTo = function(parent, newName, successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "copyTo", [this.fullPath, parent, newName]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "copyTo", [this.fullPath, parent, newName]);
 };
 
 /**
@@ -2970,7 +2970,7 @@ DirectoryEntry.prototype.copyTo = function(parent, newName, successCallback, err
  * @param {Function} errorCallback is called with a FileError
  */
 DirectoryEntry.prototype.getMetadata = function(successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "getMetadata", [this.fullPath]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "getMetadata", [this.fullPath]);
 };
 
 /**
@@ -2980,7 +2980,7 @@ DirectoryEntry.prototype.getMetadata = function(successCallback, errorCallback) 
  * @param {Function} errorCallback is called with a FileError
  */
 DirectoryEntry.prototype.getParent = function(successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "getParent", [this.fullPath]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "getParent", [this.fullPath]);
 };
 
 /**
@@ -2992,7 +2992,7 @@ DirectoryEntry.prototype.getParent = function(successCallback, errorCallback) {
  * @param {Function} errorCallback is called with a FileError
  */
 DirectoryEntry.prototype.moveTo = function(parent, newName, successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "moveTo", [this.fullPath, parent, newName]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "moveTo", [this.fullPath, parent, newName]);
 };
 
 /**
@@ -3002,7 +3002,7 @@ DirectoryEntry.prototype.moveTo = function(parent, newName, successCallback, err
  * @param {Function} errorCallback is called with a FileError
  */
 DirectoryEntry.prototype.remove = function(successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "remove", [this.fullPath]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "remove", [this.fullPath]);
 };
 
 /**
@@ -3031,7 +3031,7 @@ DirectoryEntry.prototype.createReader = function(successCallback, errorCallback)
  * @param {Function} errorCallback is called with a FileError
  */
 DirectoryEntry.prototype.getDirectory = function(path, options, successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "getDirectory", [this.fullPath, path, options]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "getDirectory", [this.fullPath, path, options]);
 };
 
 /**
@@ -3043,7 +3043,7 @@ DirectoryEntry.prototype.getDirectory = function(path, options, successCallback,
  * @param {Function} errorCallback is called with a FileError
  */
 DirectoryEntry.prototype.getFile = function(path, options, successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "getFile", [this.fullPath, path, options]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "getFile", [this.fullPath, path, options]);
 };
 
 /**
@@ -3053,7 +3053,7 @@ DirectoryEntry.prototype.getFile = function(path, options, successCallback, erro
  * @param {Function} errorCallback is called with a FileError
  */
 DirectoryEntry.prototype.removeRecursively = function(successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "removeRecursively", [this.fullPath]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "removeRecursively", [this.fullPath]);
 };
 
 /**
@@ -3083,7 +3083,7 @@ var FileEntry = function() {
  * @param {Function} errorCallback is called with a FileError
  */
 FileEntry.prototype.copyTo = function(parent, newName, successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "copyTo", [this.fullPath, parent, newName]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "copyTo", [this.fullPath, parent, newName]);
 };
 
 /**
@@ -3093,7 +3093,7 @@ FileEntry.prototype.copyTo = function(parent, newName, successCallback, errorCal
  * @param {Function} errorCallback is called with a FileError
  */
 FileEntry.prototype.getMetadata = function(successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "getMetadata", [this.fullPath]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "getMetadata", [this.fullPath]);
 };
 
 /**
@@ -3103,7 +3103,7 @@ FileEntry.prototype.getMetadata = function(successCallback, errorCallback) {
  * @param {Function} errorCallback is called with a FileError
  */
 FileEntry.prototype.getParent = function(successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "getParent", [this.fullPath]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "getParent", [this.fullPath]);
 };
 
 /**
@@ -3115,7 +3115,7 @@ FileEntry.prototype.getParent = function(successCallback, errorCallback) {
  * @param {Function} errorCallback is called with a FileError
  */
 FileEntry.prototype.moveTo = function(parent, newName, successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "moveTo", [this.fullPath, parent, newName]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "moveTo", [this.fullPath, parent, newName]);
 };
 
 /**
@@ -3125,7 +3125,7 @@ FileEntry.prototype.moveTo = function(parent, newName, successCallback, errorCal
  * @param {Function} errorCallback is called with a FileError
  */
 FileEntry.prototype.remove = function(successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "remove", [this.fullPath]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "remove", [this.fullPath]);
 };
 
 /**
@@ -3169,7 +3169,7 @@ FileEntry.prototype.createWriter = function(successCallback, errorCallback) {
  * @param {Function} errorCallback is called with a FileError
  */
 FileEntry.prototype.file = function(successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "getFileMetadata", [this.fullPath]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "getFileMetadata", [this.fullPath]);
 };
 
 /** @constructor */
@@ -3198,7 +3198,7 @@ LocalFileSystem.prototype.requestFileSystem = function(type, size, successCallba
         }
     }
     else {
-        Phonegap.exec(successCallback, errorCallback, "File", "requestFileSystem", [type, size]);
+        PhoneGap.exec(successCallback, errorCallback, "File", "requestFileSystem", [type, size]);
     }
 };
 
@@ -3209,7 +3209,7 @@ LocalFileSystem.prototype.requestFileSystem = function(type, size, successCallba
  * @param {Function} errorCallback is called with a FileError
  */
 LocalFileSystem.prototype.resolveLocalFileSystemURI = function(uri, successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, "File", "resolveLocalFileSystemURI", [uri]);
+    PhoneGap.exec(successCallback, errorCallback, "File", "resolveLocalFileSystemURI", [uri]);
 };
 
 /**
@@ -3296,7 +3296,7 @@ LocalFileSystem.prototype._castDate = function(pluginResult) {
 /**
  * Add the FileSystem interface into the browser.
  */
-Phonegap.addConstructor(function() {
+PhoneGap.addConstructor(function() {
     var pgLocalFileSystem = new LocalFileSystem();
     // Needed for cast methods
     if (typeof window.localFileSystem === "undefined") {
@@ -3328,8 +3328,8 @@ Phonegap.addConstructor(function() {
  *     under the License.
  */
 
-if (!Phonegap.hasResource("filetransfer")) {
-Phonegap.addResource("filetransfer");
+if (!PhoneGap.hasResource("filetransfer")) {
+PhoneGap.addResource("filetransfer");
 
 /**
  * FileTransfer uploads a file to a remote server.
@@ -3391,7 +3391,7 @@ FileTransfer.prototype.upload = function(filePath, server, successCallback, erro
         }
     }
 
-    Phonegap.exec(successCallback, errorCallback, 'FileTransfer', 'upload', [filePath, server, fileKey, fileName, mimeType, params, debug, chunkedMode]);
+    PhoneGap.exec(successCallback, errorCallback, 'FileTransfer', 'upload', [filePath, server, fileKey, fileName, mimeType, params, debug, chunkedMode]);
 };
 
 /**
@@ -3402,7 +3402,7 @@ FileTransfer.prototype.upload = function(filePath, server, successCallback, erro
  * @param errorCallback {Function}    Callback to be invoked upon error
  */
 FileTransfer.prototype.download = function(source, target, successCallback, errorCallback) {
-    Phonegap.exec(successCallback, errorCallback, 'FileTransfer', 'download', [source, target]);
+    PhoneGap.exec(successCallback, errorCallback, 'FileTransfer', 'download', [source, target]);
 };
 
 /**
@@ -3439,8 +3439,8 @@ var FileUploadOptions = function(fileKey, fileName, mimeType, params) {
  *     under the License.
  */
 
-if (!Phonegap.hasResource("geolocation")) {
-Phonegap.addResource("geolocation");
+if (!PhoneGap.hasResource("geolocation")) {
+PhoneGap.addResource("geolocation");
 
 /**
  * This class provides access to device GPS data.
@@ -3502,7 +3502,7 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
         }
     }
     navigator._geo.listeners.global = {"success" : successCallback, "fail" : errorCallback };
-    Phonegap.exec(null, null, "Geolocation", "getCurrentLocation", [enableHighAccuracy, timeout, maximumAge]);
+    PhoneGap.exec(null, null, "Geolocation", "getCurrentLocation", [enableHighAccuracy, timeout, maximumAge]);
 };
 
 /**
@@ -3532,9 +3532,9 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
             timeout = options.timeout;
         }
     }
-    var id = Phonegap.createUUID();
+    var id = PhoneGap.createUUID();
     navigator._geo.listeners[id] = {"success" : successCallback, "fail" : errorCallback };
-    Phonegap.exec(null, null, "Geolocation", "start", [id, enableHighAccuracy, timeout, maximumAge]);
+    PhoneGap.exec(null, null, "Geolocation", "start", [id, enableHighAccuracy, timeout, maximumAge]);
     return id;
 };
 
@@ -3595,19 +3595,19 @@ Geolocation.prototype.fail = function(id, code, msg) {
  * @param {String} id       The ID of the watch returned from #watchPosition
  */
 Geolocation.prototype.clearWatch = function(id) {
-    Phonegap.exec(null, null, "Geolocation", "stop", [id]);
+    PhoneGap.exec(null, null, "Geolocation", "stop", [id]);
     delete navigator._geo.listeners[id];
 };
 
 /**
- * Force the Phonegap geolocation to be used instead of built-in.
+ * Force the PhoneGap geolocation to be used instead of built-in.
  */
-Geolocation.usingPhonegap = false;
-Geolocation.usePhonegap = function() {
-    if (Geolocation.usingPhonegap) {
+Geolocation.usingPhoneGap = false;
+Geolocation.usePhoneGap = function() {
+    if (Geolocation.usingPhoneGap) {
         return;
     }
-    Geolocation.usingPhonegap = true;
+    Geolocation.usingPhoneGap = true;
 
     // Set built-in geolocation methods to our own implementations
     // (Cannot replace entire geolocation, but can replace individual methods)
@@ -3619,13 +3619,13 @@ Geolocation.usePhonegap = function() {
     navigator.geolocation.stop = navigator._geo.stop;
 };
 
-Phonegap.addConstructor(function() {
+PhoneGap.addConstructor(function() {
     navigator._geo = new Geolocation();
 
-    // No native geolocation object for Android 1.x, so use Phonegap geolocation
+    // No native geolocation object for Android 1.x, so use PhoneGap geolocation
     if (typeof navigator.geolocation === 'undefined') {
         navigator.geolocation = navigator._geo;
-        Geolocation.usingPhonegap = true;
+        Geolocation.usingPhoneGap = true;
     }
 });
 }
@@ -3648,8 +3648,8 @@ Phonegap.addConstructor(function() {
  *     under the License.
  */
 
-if (!Phonegap.hasResource("media")) {
-Phonegap.addResource("media");
+if (!PhoneGap.hasResource("media")) {
+PhoneGap.addResource("media");
 
 /**
  * This class provides access to the device media, interfaces to both sound and video
@@ -3691,8 +3691,8 @@ var Media = function(src, successCallback, errorCallback, statusCallback, positi
         return;
     }
 
-    this.id = Phonegap.createUUID();
-    Phonegap.mediaObjects[this.id] = this;
+    this.id = PhoneGap.createUUID();
+    PhoneGap.mediaObjects[this.id] = this;
     this.src = src;
     this.successCallback = successCallback;
     this.errorCallback = errorCallback;
@@ -3736,28 +3736,28 @@ MediaError.MEDIA_ERR_NONE_SUPPORTED = 4;
  * Start or resume playing audio file.
  */
 Media.prototype.play = function() {
-    Phonegap.exec(null, null, "Media", "startPlayingAudio", [this.id, this.src]);
+    PhoneGap.exec(null, null, "Media", "startPlayingAudio", [this.id, this.src]);
 };
 
 /**
  * Stop playing audio file.
  */
 Media.prototype.stop = function() {
-    return Phonegap.exec(null, null, "Media", "stopPlayingAudio", [this.id]);
+    return PhoneGap.exec(null, null, "Media", "stopPlayingAudio", [this.id]);
 };
 
 /**
  * Seek or jump to a new time in the track..
  */
 Media.prototype.seekTo = function(milliseconds) {
-    Phonegap.exec(null, null, "Media", "seekToAudio", [this.id, milliseconds]);
+    PhoneGap.exec(null, null, "Media", "seekToAudio", [this.id, milliseconds]);
 };
 
 /**
  * Pause playing audio file.
  */
 Media.prototype.pause = function() {
-    Phonegap.exec(null, null, "Media", "pausePlayingAudio", [this.id]);
+    PhoneGap.exec(null, null, "Media", "pausePlayingAudio", [this.id]);
 };
 
 /**
@@ -3774,49 +3774,49 @@ Media.prototype.getDuration = function() {
  * Get position of audio.
  */
 Media.prototype.getCurrentPosition = function(success, fail) {
-    Phonegap.exec(success, fail, "Media", "getCurrentPositionAudio", [this.id]);
+    PhoneGap.exec(success, fail, "Media", "getCurrentPositionAudio", [this.id]);
 };
 
 /**
  * Start recording audio file.
  */
 Media.prototype.startRecord = function() {
-    Phonegap.exec(null, null, "Media", "startRecordingAudio", [this.id, this.src]);
+    PhoneGap.exec(null, null, "Media", "startRecordingAudio", [this.id, this.src]);
 };
 
 /**
  * Stop recording audio file.
  */
 Media.prototype.stopRecord = function() {
-    Phonegap.exec(null, null, "Media", "stopRecordingAudio", [this.id]);
+    PhoneGap.exec(null, null, "Media", "stopRecordingAudio", [this.id]);
 };
 
 /**
  * Release the resources.
  */
 Media.prototype.release = function() {
-    Phonegap.exec(null, null, "Media", "release", [this.id]);
+    PhoneGap.exec(null, null, "Media", "release", [this.id]);
 };
 
 /**
  * Adjust the volume.
  */
 Media.prototype.setVolume = function(volume) {
-    Phonegap.exec(null, null, "Media", "setVolume", [this.id, volume]);
+    PhoneGap.exec(null, null, "Media", "setVolume", [this.id, volume]);
 };
 
 /**
  * List of media objects.
  * PRIVATE
  */
-Phonegap.mediaObjects = {};
+PhoneGap.mediaObjects = {};
 
 /**
  * Object that receives native callbacks.
  * PRIVATE
  * @constructor
  */
-Phonegap.Media = function() {};
+PhoneGap.Media = function() {};
 
 /**
  * Get the media object.
@@ -3824,8 +3824,8 @@ Phonegap.Media = function() {};
  *
  * @param id            The media object id (string)
  */
-Phonegap.Media.getMediaObject = function(id) {
-    return Phonegap.mediaObjects[id];
+PhoneGap.Media.getMediaObject = function(id) {
+    return PhoneGap.mediaObjects[id];
 };
 
 /**
@@ -3836,8 +3836,8 @@ Phonegap.Media.getMediaObject = function(id) {
  * @param status        The status code (int)
  * @param msg           The status message (string)
  */
-Phonegap.Media.onStatus = function(id, msg, value) {
-    var media = Phonegap.mediaObjects[id];
+PhoneGap.Media.onStatus = function(id, msg, value) {
+    var media = PhoneGap.mediaObjects[id];
     // If state update
     if (msg === Media.MEDIA_STATE) {
         if (value === Media.MEDIA_STOPPED) {
@@ -3882,8 +3882,8 @@ Phonegap.Media.onStatus = function(id, msg, value) {
  */
 
 
-if (!Phonegap.hasResource("network")) {
-Phonegap.addResource("network");
+if (!PhoneGap.hasResource("network")) {
+PhoneGap.addResource("network");
 
 /**
  * This class contains information about the current network Connection.
@@ -3903,7 +3903,7 @@ var Connection = function() {
                 // set a timer if still offline at the end of timer send the offline event
                 me._timer = setTimeout(function(){
                     me.type = type;
-                    Phonegap.fireDocumentEvent('offline');
+                    PhoneGap.fireDocumentEvent('offline');
                     me._timer = null;
                     }, me.timeout);
             } else {
@@ -3913,21 +3913,21 @@ var Connection = function() {
                     me._timer = null;
                 }
                 me.type = type;
-                Phonegap.fireDocumentEvent('online');
+                PhoneGap.fireDocumentEvent('online');
             }
             
             // should only fire this once
             if (me._firstRun) {
                 me._firstRun = false;
-                Phonegap.onPhonegapConnectionReady.fire();
+                PhoneGap.onPhoneGapConnectionReady.fire();
             }            
         },
         function(e) {
-            // If we can't get the network info we should still tell Phonegap
+            // If we can't get the network info we should still tell PhoneGap
             // to fire the deviceready event.
             if (me._firstRun) {
                 me._firstRun = false;
-                Phonegap.onPhonegapConnectionReady.fire();
+                PhoneGap.onPhoneGapConnectionReady.fire();
             }            
             console.log("Error initializing Network Connection: " + e);
         });
@@ -3949,11 +3949,11 @@ Connection.NONE = "none";
  */
 Connection.prototype.getInfo = function(successCallback, errorCallback) {
     // Get info
-    Phonegap.exec(successCallback, errorCallback, "Network Status", "getConnectionInfo", []);
+    PhoneGap.exec(successCallback, errorCallback, "Network Status", "getConnectionInfo", []);
 };
 
 
-Phonegap.addConstructor(function() {
+PhoneGap.addConstructor(function() {
     if (typeof navigator.network === "undefined") {
         navigator.network = {};
     }
@@ -3981,8 +3981,8 @@ Phonegap.addConstructor(function() {
  *     under the License.
  */
 
-if (!Phonegap.hasResource("notification")) {
-Phonegap.addResource("notification");
+if (!PhoneGap.hasResource("notification")) {
+PhoneGap.addResource("notification");
 
 /**
  * This class provides access to notifications on the device.
@@ -4002,7 +4002,7 @@ var Notification = function() {
 Notification.prototype.alert = function(message, completeCallback, title, buttonLabel) {
     var _title = (title || "Alert");
     var _buttonLabel = (buttonLabel || "OK");
-    Phonegap.exec(completeCallback, null, "Notification", "alert", [message,_title,_buttonLabel]);
+    PhoneGap.exec(completeCallback, null, "Notification", "alert", [message,_title,_buttonLabel]);
 };
 
 /**
@@ -4017,21 +4017,21 @@ Notification.prototype.alert = function(message, completeCallback, title, button
 Notification.prototype.confirm = function(message, resultCallback, title, buttonLabels) {
     var _title = (title || "Confirm");
     var _buttonLabels = (buttonLabels || "OK,Cancel");
-    Phonegap.exec(resultCallback, null, "Notification", "confirm", [message,_title,_buttonLabels]);
+    PhoneGap.exec(resultCallback, null, "Notification", "confirm", [message,_title,_buttonLabels]);
 };
 
 /**
  * Start spinning the activity indicator on the statusbar
  */
 Notification.prototype.activityStart = function() {
-    Phonegap.exec(null, null, "Notification", "activityStart", ["Busy","Please wait..."]);
+    PhoneGap.exec(null, null, "Notification", "activityStart", ["Busy","Please wait..."]);
 };
 
 /**
  * Stop spinning the activity indicator on the statusbar, if it's currently spinning
  */
 Notification.prototype.activityStop = function() {
-    Phonegap.exec(null, null, "Notification", "activityStop", []);
+    PhoneGap.exec(null, null, "Notification", "activityStop", []);
 };
 
 /**
@@ -4041,7 +4041,7 @@ Notification.prototype.activityStop = function() {
  * @param {String} message      Message to display in the dialog.
  */
 Notification.prototype.progressStart = function(title, message) {
-    Phonegap.exec(null, null, "Notification", "progressStart", [title, message]);
+    PhoneGap.exec(null, null, "Notification", "progressStart", [title, message]);
 };
 
 /**
@@ -4050,14 +4050,14 @@ Notification.prototype.progressStart = function(title, message) {
  * @param {Number} value         0-100
  */
 Notification.prototype.progressValue = function(value) {
-    Phonegap.exec(null, null, "Notification", "progressValue", [value]);
+    PhoneGap.exec(null, null, "Notification", "progressValue", [value]);
 };
 
 /**
  * Close the progress dialog.
  */
 Notification.prototype.progressStop = function() {
-    Phonegap.exec(null, null, "Notification", "progressStop", []);
+    PhoneGap.exec(null, null, "Notification", "progressStop", []);
 };
 
 /**
@@ -4076,7 +4076,7 @@ Notification.prototype.blink = function(count, colour) {
  * @param {Integer} mills       The number of milliseconds to vibrate for.
  */
 Notification.prototype.vibrate = function(mills) {
-    Phonegap.exec(null, null, "Notification", "vibrate", [mills]);
+    PhoneGap.exec(null, null, "Notification", "vibrate", [mills]);
 };
 
 /**
@@ -4086,10 +4086,10 @@ Notification.prototype.vibrate = function(mills) {
  * @param {Integer} count       The number of beeps.
  */
 Notification.prototype.beep = function(count) {
-    Phonegap.exec(null, null, "Notification", "beep", [count]);
+    PhoneGap.exec(null, null, "Notification", "beep", [count]);
 };
 
-Phonegap.addConstructor(function() {
+PhoneGap.addConstructor(function() {
     if (typeof navigator.notification === "undefined") {
         navigator.notification = new Notification();
     }
@@ -4114,8 +4114,8 @@ Phonegap.addConstructor(function() {
  *     under the License.
  */
 
-if (!Phonegap.hasResource("position")) {
-Phonegap.addResource("position");
+if (!PhoneGap.hasResource("position")) {
+PhoneGap.addResource("position");
 
 /**
  * This class contains position information.
@@ -4220,8 +4220,8 @@ PositionError.TIMEOUT = 3;
  * most manufacturers ship with Android 1.5 and do not do OTA Updates, this is required
  */
 
-if (!Phonegap.hasResource("storage")) {
-Phonegap.addResource("storage");
+if (!PhoneGap.hasResource("storage")) {
+PhoneGap.addResource("storage");
 
 /**
  * SQL result set object
@@ -4350,7 +4350,7 @@ DroidDB.prototype.fail = function(reason, id) {
 var DroidDB_Query = function(tx) {
 
     // Set the id of the query
-    this.id = Phonegap.createUUID();
+    this.id = PhoneGap.createUUID();
 
     // Add this query to the queue
     droiddb.queryQueue[this.id] = this;
@@ -4378,7 +4378,7 @@ var DroidDB_Query = function(tx) {
 var DroidDB_Tx = function() {
 
     // Set the id of the transaction
-    this.id = Phonegap.createUUID();
+    this.id = PhoneGap.createUUID();
 
     // Callbacks
     this.successCallback = null;
@@ -4463,7 +4463,7 @@ DroidDB_Tx.prototype.executeSql = function(sql, params, successCallback, errorCa
     query.errorCallback = errorCallback;
 
     // Call native code
-    Phonegap.exec(null, null, "Storage", "executeSql", [sql, params, query.id]);
+    PhoneGap.exec(null, null, "Storage", "executeSql", [sql, params, query.id]);
 };
 
 var DatabaseShell = function() {
@@ -4505,7 +4505,7 @@ DatabaseShell.prototype.transaction = function(process, errorCallback, successCa
  * @return                  Database object
  */
 var DroidDB_openDatabase = function(name, version, display_name, size) {
-    Phonegap.exec(null, null, "Storage", "openDatabase", [name, version, display_name, size]);
+    PhoneGap.exec(null, null, "Storage", "openDatabase", [name, version, display_name, size]);
     var db = new DatabaseShell();
     return db;
 };
@@ -4537,7 +4537,7 @@ var CupcakeLocalStorage = function() {
               storage[result.rows.item(i)['id']] =  result.rows.item(i)['body'];
             }
             setLength(result.rows.length);
-            Phonegap.initializationComplete("cupcakeStorage");
+            PhoneGap.initializationComplete("cupcakeStorage");
           });
 
         },
@@ -4598,7 +4598,7 @@ var CupcakeLocalStorage = function() {
     }
 };
 
-Phonegap.addConstructor(function() {
+PhoneGap.addConstructor(function() {
     var setupDroidDB = function() {
         navigator.openDatabase = window.openDatabase = DroidDB_openDatabase;
         window.droiddb = new DroidDB();
@@ -4630,7 +4630,7 @@ Phonegap.addConstructor(function() {
     
     if ((typeof window.localStorage == "undefined") || (window.localStorage == null)) {
         navigator.localStorage = window.localStorage = new CupcakeLocalStorage();
-        Phonegap.waitForInitialization("cupcakeStorage");
+        PhoneGap.waitForInitialization("cupcakeStorage");
     }
 });
 }
