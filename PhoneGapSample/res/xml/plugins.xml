@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugins>
-    <plugin name="JREngagePlugin" value="com.janrain.android.engage.JREngagePhoneGapWrapper"/>
+    <plugin name="JREngagePlugin" value="com.janrain.android.engage.JREngagePhonegapPlugin"/>
     <plugin name="App" value="com.phonegap.App"/>
     <plugin name="Geolocation" value="com.phonegap.GeoBroker"/>
     <plugin name="Device" value="com.phonegap.Device"/>

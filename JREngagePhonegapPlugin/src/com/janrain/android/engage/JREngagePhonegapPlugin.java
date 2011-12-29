@@ -1,21 +1,52 @@
+/*
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  Copyright (c) 2011, Janrain, Inc.
+ *
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation and/or
+ *    other materials provided with the distribution.
+ *  * Neither the name of the Janrain, Inc. nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ *  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  Copyright (c) 2010, Janrain, Inc.
- 
+
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
- 
+
  * Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
- * Redistributions in binary form must reproduce the above copyright notice, 
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation and/or
-   other materials provided with the distribution. 
+   other materials provided with the distribution.
  * Neither the name of the Janrain, Inc. nor the names of its
    contributors may be used to endorse or promote products derived from this
    software without specific prior written permission.
- 
- 
+
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -25,17 +56,12 @@
  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  Author: lillialexis
  Date:   12/28/11
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage;
-
-
-/**
- * Example of Android PhoneGap Plugin
- */
 
 import java.io.File;
 
@@ -52,7 +78,7 @@ import com.phonegap.api.Plugin;
 import com.phonegap.api.PluginResult;
 import com.phonegap.api.PluginResult.Status;
 /**
- * PhoneGap plugin which can be involved in following manner from javascript
+ * Phonegap plugin for authenticating with Janrain Engage
  * <p>
  * result example - {"filename":"/sdcard","isdir":true,"children":[{"filename":"a.txt","isdir":false},{..}]}
  * </p>
@@ -66,72 +92,17 @@ import com.phonegap.api.PluginResult.Status;
  *     //error is error message
  * }
  *
- * DirectoryListing.list("/sdcard",
- *			  successCallback
- *			  failureCallback);
- *
- * }
  * </pre>
- * @author Rohit Ghatol
+ * @author Lilli Szafranski and Nathan Ramsey
  *
  */
-public class JREngagePhoneGapWrapper extends Plugin implements JREngageDelegate {
-
-    /** List Action */
-    public static final String ACTION="list";
-
-//    @Override
-//    public PluginResult execute(String action, JSONArray data, String callbackId) {
-//        Log.d("DirectoryListPlugin", "Plugin Called");
-//        PluginResult result = null;
-//        if (ACTION.equals(action)) {
-//            try {
-//                String fileName = data.getString(0);
-//                JSONObject fileInfo = getDirectoryListing(new File(fileName));
-//                Log.d("DirectoryListPlugin", "Returning "+ fileInfo.toString());
-//                result = new PluginResult(Status.OK, fileInfo);
-//            } catch (JSONException jsonEx) {
-//                Log.d("DirectoryListPlugin", "Got JSON Exception "+ jsonEx.getMessage());
-//                result = new PluginResult(Status.JSON_EXCEPTION);
-//            }
-//        }
-//        else {
-//            result = new PluginResult(Status.INVALID_ACTION);
-//            Log.d("DirectoryListPlugin", "Invalid action : "+action+" passed");
-//        }
-//        return result;
-//    }
-
-//    /**
-//     * Gets the Directory listing for file, in JSON format
-//     * @param file The file for which we want to do directory listing
-//     * @return JSONObject representation of directory list.
-//     *  e.g {"filename":"/sdcard","isdir":true,"children":[{"filename":"a.txt","isdir":false},{..}]}
-//     * @throws JSONException
-//     */
-//    private JSONObject getDirectoryListing(File file) throws JSONException {
-//        JSONObject fileInfo = new JSONObject();
-//        fileInfo.put("filename", file.getName());
-//        fileInfo.put("isdir", file.isDirectory());
-//        if (file.isDirectory()) {
-//            JSONArray children = new JSONArray();
-//            fileInfo.put("children", children);
-//            if (null != file.listFiles()) {
-//                for (File child : file.listFiles()) {
-//                    children.put(getDirectoryListing(child));
-//                }
-//            }
-//        }
-//        return fileInfo;
-//    }
-
+public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     private JREngage mJREngage;
-    
+
     @Override
     public PluginResult execute(final String cmd, final JSONArray args, final String callback) {
         try {
-            ctx.runOnUiThread(new Runnable()
-            {
+            ctx.runOnUiThread(new Runnable() {
                 public void run() {
                     try {
                         if(cmd.equals("toast")) {
@@ -147,7 +118,7 @@ public class JREngagePhoneGapWrapper extends Plugin implements JREngageDelegate 
                 }
             });
         } catch (Exception e) {
-            Log.d("[JREngagePhoneGapWrapper]", "error: ", e);
+            Log.d("[JREngagePhonegapWrapper]", "error: ", e);
         }
         return new PluginResult(PluginResult.Status.OK, "yo yo");
     }
@@ -167,8 +138,8 @@ public class JREngagePhoneGapWrapper extends Plugin implements JREngageDelegate 
 //        ctx.runOnUiThread(new Runnable()
 //        {
 //            public void run() {
-                Toast myToast = Toast.makeText(ctx, message, Toast.LENGTH_SHORT);
-                myToast.show();
+        Toast myToast = Toast.makeText(ctx, message, Toast.LENGTH_SHORT);
+        myToast.show();
 //            }
 //        });
 

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  ~  Copyright (c) 2011, Janrain, Inc.
+  ~
+  ~  All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without modification,
+  ~  are permitted provided that the following conditions are met:
+  ~
+  ~  * Redistributions of source code must retain the above copyright notice, this
+  ~    list of conditions and the following disclaimer.
+  ~  * Redistributions in binary form must reproduce the above copyright notice,
+  ~    this list of conditions and the following disclaimer in the documentation and/or
+  ~    other materials provided with the distribution.
+  ~  * Neither the name of the Janrain, Inc. nor the names of its
+  ~    contributors may be used to endorse or promote products derived from this
+  ~    software without specific prior written permission.
+  ~
+  ~
+  ~  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  ~  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  ~  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  ~  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+  ~  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  ~  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  ~  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+  ~  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  ~  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  ~  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  ~  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.janrain.android.engage">
+
+    <!--According to Xav Ducrochet nothing from the Library Project's manifest *except* the package
+        is respected by the Android SDK.  He recommends that the activities contained in a
+        library project be listed for reference purpose so that they can easily be copied
+        into the calling application's AndroidManifest.xml-->
+    <!--See this post: https://groups.google.com/group/android-developers/msg/9db36f18521fca7d
+        which is part of this thread:
+        https://groups.google.com/group/android-developers/browse_thread/thread/0b4a5d751346655b/9db36f18521fca7d#9db36f18521fca7d -->
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="13"/>
+
+    <!-- For Janrain Engage library -->
+    <activity
+        android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
+        android:configChanges="orientation|screenSize"
+        android:theme="@style/jr_dialog"
+        android:windowSoftInputMode="adjustResize|stateHidden"
+        />
+
+    <activity
+        android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"
+        android:configChanges="orientation|screenSize"
+        android:theme="@style/jr_fullscreen"
+        android:windowSoftInputMode="adjustResize|stateHidden"
+        />
+
+    <activity
+        android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$FullscreenNoTitleBar"
+        android:configChanges="orientation|screenSize"
+        android:theme="@style/jr_fullscreen_no_title"
+        android:windowSoftInputMode="adjustResize|stateHidden"
+        />
+
+
+</manifest>

@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import com.phonegap.*;
 
-public class PhoneGapExample extends DroidGap
+public class PhonegapExample extends DroidGap
 {
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -13,4 +13,3 @@ public class PhoneGapExample extends DroidGap
         super.loadUrl("file:///android_asset/www/index.html");
     }
 }
-
