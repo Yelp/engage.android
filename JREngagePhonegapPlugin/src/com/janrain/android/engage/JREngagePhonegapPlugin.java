@@ -98,9 +98,12 @@ import com.phonegap.api.PluginResult.Status;
  */
 public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     private JREngage mJREngage;
+    private boolean mFinishedAuthentication;
+    private PluginResult mResult;
 
     @Override
-    public PluginResult execute(final String cmd, final JSONArray args, final String callback) {
+    public synchronized PluginResult execute(final String cmd, final JSONArray args, final String callback) {
+        mFinishedAuthentication = false;
         try {
             ctx.runOnUiThread(new Runnable() {
                 public void run() {
@@ -120,7 +123,23 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
         } catch (Exception e) {
             Log.d("[JREngagePhonegapWrapper]", "error: ", e);
         }
-        return new PluginResult(PluginResult.Status.OK, "yo yo");
+
+        // TODO: Add thread protection (got into weird infinite loop)
+        while (!mFinishedAuthentication) {
+            Log.d("[JREngagePhoneGapWrapper]", "mFinishedAuthentication = false");
+            try {
+                wait();
+                //Thread.sleep(100, 0);
+            } catch (InterruptedException e) {
+                Log.d("[JREngagePhoneGapWrapper]", "error: ", e);
+//                mResult = new PluginResult(Status.ERROR, "sleep error");
+//                mFinishedAuthentication = true;
+            }
+        }
+
+        Log.d("[JREngagePhoneGapWrapper]", "mFinishedAuthentication = true");
+
+        return mResult; //new PluginResult(PluginResult.Status.OK, "yo yo");
     }
 
     private PluginResult showAuthenticationDialog() {
@@ -146,11 +165,51 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
         return new PluginResult(PluginResult.Status.OK, message);
     }
 
+    public synchronized void jrEngageDialogDidFailToShowWithError(JREngageError error) {
+        Log.d("[jrEngageDialogDidFailToShowWithError]", "ERROR");
+        mResult = new PluginResult(Status.ERROR, "sleep error");
+        mFinishedAuthentication = true;
+        notifyAll();
+    }
+
+    public synchronized void jrAuthenticationDidNotComplete() {
+        Log.d("[jrAuthenticationDidNotComplete]", "ERROR");
+        mResult = new PluginResult(Status.ERROR, "sleep error");
+        mFinishedAuthentication = true;
+        notifyAll();
+    }
+
+    public synchronized void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
+        Log.d("[jrAuthenticationDidFailWithError]", "ERROR");
+        mResult = new PluginResult(Status.ERROR, "sleep error");
+        mFinishedAuthentication = true;
+        notifyAll();
+    }
+
     public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
+        Log.d("[jrAuthenticationDidSucceedForUser]", "SUCCESS");
+        //mResult = new PluginResult(Status.OK, "authentication");
+    }
+
+    public synchronized void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
+        Log.d("[jrAuthenticationCallToTokenUrlDidFail]", "ERROR");
+        mResult = new PluginResult(Status.ERROR, "sleep error");
+        mFinishedAuthentication = true;
+        notifyAll();
+    }
+
+    public synchronized void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
+        Log.d("[jrAuthenticationDidReachTokenUrl]", "SUCCESS");
+        mResult = new PluginResult(Status.OK, "authentication");
+        mFinishedAuthentication = true;
+        notifyAll();
+    }
+
+    public void jrSocialDidNotCompletePublishing() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
+    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -159,30 +218,6 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     }
 
     public void jrSocialDidCompletePublishing() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrAuthenticationDidNotComplete() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrSocialDidNotCompletePublishing() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 }

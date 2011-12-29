@@ -57,12 +57,12 @@ function showAuthenticationDialog()
     jrEngage.showAuthentication(
         function(result)
         {
-//            alert("Success : \r\n"+result);
+            alert("Success : \r\n"+result);
         },
 
         function(error)
         {
-//            alert("Error : \r\n"+error);
+            alert("Error : \r\n"+error);
         }
     );
 }
