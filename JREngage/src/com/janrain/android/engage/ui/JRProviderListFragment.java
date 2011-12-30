@@ -31,12 +31,15 @@
  */
 package com.janrain.android.engage.ui;
 
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Config;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,13 +51,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
-
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * @internal
@@ -207,6 +207,9 @@ public class JRProviderListFragment extends JRUiFragment {
                         getActivity().setResult(Activity.RESULT_OK);
                         getActivity().finish();
                         break;
+                    case JRLandingFragment.RESULT_FAIL:
+                        getActivity().setResult(RESULT_FAIL);
+                        getActivity().finish();
                     default:
                         throw new RuntimeException("unrecognized result code");
                 }

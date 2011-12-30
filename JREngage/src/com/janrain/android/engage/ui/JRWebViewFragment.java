@@ -31,6 +31,11 @@
  */
 package com.janrain.android.engage.ui;
 
+import java.net.URL;
+import java.util.List;
+
+import org.json.JSONException;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -52,6 +57,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
@@ -61,10 +67,6 @@ import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
-import org.json.JSONException;
-
-import java.net.URL;
-import java.util.List;
 
 /**
  * @internal
@@ -73,9 +75,10 @@ import java.util.List;
  * Container for authentication web view.
  */
 public class JRWebViewFragment extends JRUiFragment {
-    public static final int RESULT_RESTART = 1;
-    public static final int RESULT_FAIL = 2;
-    public static final int RESULT_BAD_OPENID_URL = 3;
+    public static final int RESULT_RESTART = Activity.RESULT_FIRST_USER;
+    public static final int RESULT_FAIL = Activity.RESULT_FIRST_USER + 1;
+    public static final int RESULT_BAD_OPENID_URL = Activity.RESULT_FIRST_USER + 2;
+    
     public static final String SOCIAL_SHARING_MODE = "com.janrain.android.engage.SOCIAL_SHARING_MODE";
 
     private WebView mWebView;
