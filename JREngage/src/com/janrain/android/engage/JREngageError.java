@@ -141,6 +141,16 @@ public class JREngageError {
          * Reserved
          */
         public static final int SESSION_DATA_FINISH_GET_PROVIDERS_ERROR = START + 4;
+
+        /**
+         * Reserved
+         */
+        public static final int DIALOG_SHOWING_ERROR = START + 5;
+
+        /**
+         * Reserved
+         */
+        public static final int PROVIDER_NOT_CONFIGURED_ERROR = START +6;
     }
 
     /**
@@ -173,11 +183,15 @@ public class JREngageError {
          */
         public static final int FAILED = START;
 
+//        JRPublishErrorBadConnection,
+
         /**
          * Reserved
          */
         public static final int ACTIVITY_NIL = START + 1;
 
+//        JRPublishErrorMissingParameter,
+        
         /**
          * Social publishing failed because of a missing Engage API key.
          */
@@ -202,6 +216,16 @@ public class JREngageError {
          * Facebook feed action request over-limit error.
          */
         public static final int FEED_ACTION_REQUEST_LIMIT = START + 6;
+//        JRPublishErrorCharacterLimitExceeded,
+//        JRPublishErrorFacebookGeneric,
+//        JRPublishErrorInvalidFacebookSession,
+//        JRPublishErrorInvalidFacebookMedia,
+//        //JRPublishErrorInvalidFacebookActionLinks/Properties,
+//        JRPublishErrorTwitterGeneric,
+//        JRPublishErrorDuplicateTwitter,
+//        JRPublishErrorLinkedInGeneric,
+//        JRPublishErrorMyspaceGeneric,
+//        JRPublishErrorYahooGeneric,
     }
 /*@}*/
 
