@@ -42,12 +42,12 @@ function onDeviceReady()
 
         function(result)
         {
-//            alert("Success : \r\n"+result);
+//            alert("Success: \n"+result);
         },
 
         function(error)
         {
-//            alert("Error : \r\n"+error);
+//            alert("Error: \n"+error);
         }
     );
 }
@@ -57,12 +57,12 @@ function showAuthenticationDialog()
     jrEngage.showAuthentication(
         function(result)
         {
-            alert("Success : \r\n"+result);
+            alert("Success: \n"+result);
         },
 
         function(error)
         {
-            alert("Error : \r\n"+error);
+            alert("Error: \n"+error);
         }
     );
 }

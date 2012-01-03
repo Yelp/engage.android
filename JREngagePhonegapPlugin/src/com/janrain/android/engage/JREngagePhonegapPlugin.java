@@ -63,8 +63,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage;
 
-import java.io.File;
-
 
 import android.widget.Toast;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
@@ -72,7 +70,6 @@ import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import android.util.Log;
 import com.phonegap.api.Plugin;
 import com.phonegap.api.PluginResult;
@@ -97,112 +94,107 @@ import com.phonegap.api.PluginResult.Status;
  *
  */
 public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
+    private static String TAG = "[JREngagePhonegapPlugin]";
     private JREngage mJREngage;
-    private boolean mFinishedAuthentication;
+    private boolean mWaitingForLibrary;
+    private JRDictionary mStoredAuthInfo;
     private PluginResult mResult;
 
     @Override
     public synchronized PluginResult execute(final String cmd, final JSONArray args, final String callback) {
-        mFinishedAuthentication = false;
-        try {
-            ctx.runOnUiThread(new Runnable() {
-                public void run() {
-                    try {
-                        if(cmd.equals("toast")) {
-                            showToast(args.getString(0));
-                        } else if(cmd.equals("initializeJREngage")) {
-                            initializeJREngage(args.getString(0), args.getString(1));
-                        } else if (cmd.equals("showAuthenticationDialog")) {
-                            showAuthenticationDialog();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+        mWaitingForLibrary = true;
+        ctx.runOnUiThread(new Runnable() { public void run() {
+            try {
+                if (cmd.equals("toast")) {
+                    showToast(args.getString(0));
+                } else if (cmd.equals("initializeJREngage")) {
+                    initializeJREngage(args.getString(0), args.getString(1));
+                } else if (cmd.equals("showAuthenticationDialog")) {
+                    showAuthenticationDialog();
                 }
-            });
-        } catch (Exception e) {
-            Log.d("[JREngagePhonegapWrapper]", "error: ", e);
-        }
+            } catch (JSONException e) {
+                synchronized (JREngagePhonegapPlugin.this) {
+                    mResult = new PluginResult(Status.JSON_EXCEPTION, "Error parsing arguments for " +
+                            cmd);
+                    mWaitingForLibrary = false;
+                }
+            }
+        } });
 
         // TODO: Add thread protection (got into weird infinite loop)
-        while (!mFinishedAuthentication) {
-            Log.d("[JREngagePhoneGapWrapper]", "mFinishedAuthentication = false");
+        while (mWaitingForLibrary) {
+            Log.d("[JREngagePhoneGapWrapper]", "mWaitingForLibrary = false");
             try {
                 wait();
-                //Thread.sleep(100, 0);
             } catch (InterruptedException e) {
-                Log.d("[JREngagePhoneGapWrapper]", "error: ", e);
-//                mResult = new PluginResult(Status.ERROR, "sleep error");
-//                mFinishedAuthentication = true;
+                /* No exceptions are expected */
+                Log.e(TAG, "Interrupted exception: ", e);
+                return new PluginResult(Status.ERROR, "Unexpected InterruptedException: " + e);
             }
         }
 
-        Log.d("[JREngagePhoneGapWrapper]", "mFinishedAuthentication = true");
+        Log.d(TAG, "[JREngagePhoneGapWrapper] mWaitingForLibrary = false");
 
-        return mResult; //new PluginResult(PluginResult.Status.OK, "yo yo");
+        return mResult;
     }
 
-    private PluginResult showAuthenticationDialog() {
-        mJREngage.showAuthenticationDialog();
-        return new PluginResult(PluginResult.Status.OK, "yo yo");
+    private synchronized void postResult(PluginResult result) {
+        mResult = result;
+        mWaitingForLibrary = false;
+        notifyAll();
     }
 
-    private PluginResult initializeJREngage(String appId, String tokenUrl) {
-        JREngage.sLoggingEnabled = true;
-        mJREngage = JREngage.initInstance(ctx, appId, tokenUrl, this);
-        return new PluginResult(PluginResult.Status.OK, "yo");
-    }
-
-    private PluginResult showToast(final String message) {
-//        ctx.runOnUiThread(new Runnable()
-//        {
-//            public void run() {
+    private synchronized void showToast(final String message) {
         Toast myToast = Toast.makeText(ctx, message, Toast.LENGTH_SHORT);
         myToast.show();
-//            }
-//        });
 
-        return new PluginResult(PluginResult.Status.OK, message);
+        postResult(new PluginResult(PluginResult.Status.OK, message));
+    }
+
+    private synchronized void showAuthenticationDialog() {
+        mJREngage.showAuthenticationDialog();
+        postResult(new PluginResult(Status.OK));
+    }
+
+    private synchronized void initializeJREngage(String appId, String tokenUrl) {
+        JREngage.sLoggingEnabled = true;
+        mJREngage = JREngage.initInstance(ctx, appId, tokenUrl, this);
+        postResult(new PluginResult(PluginResult.Status.OK));
     }
 
     public synchronized void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-        Log.d("[jrEngageDialogDidFailToShowWithError]", "ERROR");
-        mResult = new PluginResult(Status.ERROR, "sleep error");
-        mFinishedAuthentication = true;
-        notifyAll();
+        Log.d(TAG, "[jrEngageDialogDidFailToShowWithError] ERROR");
+        postResult(new PluginResult(Status.ERROR, "sleep error1"));
     }
 
     public synchronized void jrAuthenticationDidNotComplete() {
-        Log.d("[jrAuthenticationDidNotComplete]", "ERROR");
-        mResult = new PluginResult(Status.ERROR, "sleep error");
-        mFinishedAuthentication = true;
-        notifyAll();
+        Log.d(TAG, "[jrAuthenticationDidNotComplete] ERROR");
+        postResult(new PluginResult(Status.ERROR, "sleep error2"));
     }
 
     public synchronized void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-        Log.d("[jrAuthenticationDidFailWithError]", "ERROR");
-        mResult = new PluginResult(Status.ERROR, "sleep error");
-        mFinishedAuthentication = true;
-        notifyAll();
+        Log.d(TAG, "[jrAuthenticationDidFailWithError] ERROR");
+        postResult(new PluginResult(Status.ERROR, "sleep error3"));
     }
 
     public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
-        Log.d("[jrAuthenticationDidSucceedForUser]", "SUCCESS");
-        //mResult = new PluginResult(Status.OK, "authentication");
+        Log.d(TAG, "[jrAuthenticationDidSucceedForUser] SUCCESS");
+        mStoredAuthInfo = auth_info;
     }
 
-    public synchronized void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl, JREngageError error, String provider) {
-        Log.d("[jrAuthenticationCallToTokenUrlDidFail]", "ERROR");
-        mResult = new PluginResult(Status.ERROR, "sleep error");
-        mFinishedAuthentication = true;
-        notifyAll();
+    public synchronized void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl,
+                                                                   JREngageError error,
+                                                                   String provider) {
+        Log.d(TAG, "[jrAuthenticationCallToTokenUrlDidFail] ERROR");
+        postResult(new PluginResult(Status.ERROR, "sleep error"));
     }
 
-    public synchronized void jrAuthenticationDidReachTokenUrl(String tokenUrl, HttpResponseHeaders response, String tokenUrlPayload, String provider) {
-        Log.d("[jrAuthenticationDidReachTokenUrl]", "SUCCESS");
-        mResult = new PluginResult(Status.OK, "authentication");
-        mFinishedAuthentication = true;
-        notifyAll();
+    public synchronized void jrAuthenticationDidReachTokenUrl(String tokenUrl,
+                                                              HttpResponseHeaders response,
+                                                              String tokenUrlPayload,
+                                                              String provider) {
+        Log.d(TAG, "[jrAuthenticationDidReachTokenUrl] SUCCESS");
+        postResult(new PluginResult(Status.OK, "authentication"));
     }
 
     public void jrSocialDidNotCompletePublishing() {
