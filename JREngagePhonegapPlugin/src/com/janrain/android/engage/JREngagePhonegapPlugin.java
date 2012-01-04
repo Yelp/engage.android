@@ -113,11 +113,8 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
                     showAuthenticationDialog();
                 }
             } catch (JSONException e) {
-                synchronized (JREngagePhonegapPlugin.this) {
-                    mResult = new PluginResult(Status.JSON_EXCEPTION, "Error parsing arguments for " +
-                            cmd);
-                    mWaitingForLibrary = false;
-                }
+                postResult(new PluginResult(Status.JSON_EXCEPTION, "Error parsing arguments for " +
+                        cmd));
             }
         } });
 
