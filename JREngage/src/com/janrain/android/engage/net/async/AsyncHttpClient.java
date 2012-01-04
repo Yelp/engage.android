@@ -90,8 +90,8 @@ public final class AsyncHttpClient {
 
         private void setupHttpClient() {
             HttpParams connectionParams = new BasicHttpParams();
-            HttpConnectionParams.setConnectionTimeout(connectionParams, 10000); // ten second timeout
-            HttpConnectionParams.setSoTimeout(connectionParams, 10000);
+            HttpConnectionParams.setConnectionTimeout(connectionParams, 30000); // thirty second timeout
+            HttpConnectionParams.setSoTimeout(connectionParams, 30000);
 
             // From the Google IO app:
             mHttpClient = new DefaultHttpClient(connectionParams);
