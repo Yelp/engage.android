@@ -153,8 +153,8 @@ public class MainActivity extends FragmentActivity {
         } catch (NullPointerException e) {
             // Only check for app ID, token URL is optional
             if (engageAppId == null) {
-                new AlertDialog.Builder(this).setTitle(
-                        "You need to create assets/app_id.txt, then recompile and reinstall.")
+                new AlertDialog.Builder(this).setTitle("Configuration error")
+                        .setMessage("You need to create assets/app_id.txt, then recompile and reinstall.")
                         .create().show();
                 return;
             }
