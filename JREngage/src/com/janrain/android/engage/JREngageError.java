@@ -169,6 +169,12 @@ public class JREngageError {
          *   JREngageError exception)
          */
         public static final int AUTHENTICATION_FAILED = START;
+
+        // TODO: Add the token url error where appropriate
+        /**
+         *
+         */
+        public static final int AUTHENTICATION_TOKEN_URL_FAILED = START + 1;
     }
 
     /**
