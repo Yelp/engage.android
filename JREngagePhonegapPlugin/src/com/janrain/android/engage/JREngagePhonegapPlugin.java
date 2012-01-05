@@ -108,7 +108,7 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
             ctx.runOnUiThread(new Runnable() {
                 public void run() {
                     try {
-                        if(cmd.equals("toast")) {
+                        if(cmd.equals("print")) {
                             showToast(args.getString(0));
                         } else if(cmd.equals("initializeJREngage")) {
                             initializeJREngage(args.getString(0), args.getString(1));
