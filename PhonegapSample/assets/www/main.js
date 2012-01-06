@@ -69,14 +69,18 @@ function onDeviceReady()
 
         function(result)
         {
-           var jsonBlob = decodeURIComponent(result);
-           console.log(jsonBlob);
+//            alert("OK...");
+//           var jsonBlob = decodeURIComponent(result);
+//           console.log(jsonBlob);
+             console.log(result);
         },
 
         function(error)
         {
-           var jsonBlob = decodeURIComponent(error);
-           console.log(jsonBlob);
+//            alert("WTF");
+//           var jsonBlob = decodeURIComponent(error);
+//           console.log(jsonBlob);
+             console.log(error);
         }
     );
 }
