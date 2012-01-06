@@ -107,9 +107,33 @@ package com.janrain.android.engage.types;
      **/
     public JRMp3MediaObject(String src) {
         if (src == null) throw new IllegalArgumentException("illegal null src");
-        mSrc = src;
+        mSrc = src; // TODO: Check that these are valid urls!
     }
 /*@}*/
+
+    /**
+     * @internal
+     * Returns a JRMp3MediaObject initialized with the given dictionary.
+     *
+     * @param dictionary
+     *   A dictionary containing the properties of an activity object.
+     *
+     * @throws IllegalArgumentException
+     *   if dictionary is null or if the values for the key \c src is null
+     *
+     * NOTE: This function should not be used directly.  It is intended only for use by the
+     * JREngage library.
+     **/
+    public JRMp3MediaObject(JRDictionary dictionary) {
+        if (dictionary == null) throw new IllegalArgumentException("illegal null action");
+
+        mSrc    = dictionary.getAsString("src");
+        mTitle  = dictionary.getAsString("title");
+        mArtist = dictionary.getAsString("artist");
+        mAlbum  = dictionary.getAsString("album");
+
+        if (mSrc == null) throw new IllegalArgumentException("illegal null action");
+    }
 
 /**
  * @name Getters/Setters

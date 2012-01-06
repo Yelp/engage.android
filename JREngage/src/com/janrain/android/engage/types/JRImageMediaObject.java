@@ -33,6 +33,8 @@ package com.janrain.android.engage.types;
 
 import android.graphics.Bitmap;
 
+import java.nio.channels.OverlappingFileLockException;
+
 /**
  * @brief Image object to be included in a post to a user's stream.
  *
@@ -98,10 +100,32 @@ public class JRImageMediaObject extends JRMediaObject {
      **/
     public JRImageMediaObject(String src, String href) {
         if (src == null || href == null) throw new IllegalArgumentException("illegal null src or href");
-        mSrc = src;
+        mSrc = src; // TODO: Check that these are valid urls!
         mHref = href;
     }
 /*@}*/
+
+    /**
+     * @internal
+     * Returns a JRImageObject initialized with the given dictionary.
+     *
+     * @param dictionary
+     *   A dictionary containing the properties of an activity object.
+     *
+     * @throws IllegalArgumentException
+     *   if dictionary is null or if the values for the keys \c src or \c href are null
+     *
+     * NOTE: This function should not be used directly.  It is intended only for use by the
+     * JREngage library.
+     **/
+    public JRImageMediaObject(JRDictionary dictionary) {
+        if (dictionary == null) throw new IllegalArgumentException("illegal null action");
+
+        mSrc  = dictionary.getAsString("src");
+        mHref = dictionary.getAsString("href");
+
+        if (mSrc == null || mHref == null) throw new IllegalArgumentException("illegal null action");
+    }
 
 /**
  * @name Getters/Setters

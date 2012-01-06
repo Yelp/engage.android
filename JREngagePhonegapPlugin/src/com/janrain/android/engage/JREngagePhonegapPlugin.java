@@ -111,9 +111,13 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
                         if(cmd.equals("print")) {
                             showToast(args.getString(0));
                         } else if(cmd.equals("initializeJREngage")) {
+                            // TODO: Since this function doesn't notify our suspended thread, does it just
+                            // wait indefinitely??
                             initializeJREngage(args.getString(0), args.getString(1));
                         } else if (cmd.equals("showAuthenticationDialog")) {
                             showAuthenticationDialog();
+                        } else if (cmd.equals("showSharingDialog")) {
+                            showSharingDialog(args.getString(0));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -201,6 +205,11 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
 
     private PluginResult showAuthenticationDialog() {
         mJREngage.showAuthenticationDialog();
+        return null;
+    }
+
+    private PluginResult showSharingDialog(String activityString) {
+        // TODO: Implement me!
         return null;
     }
 
