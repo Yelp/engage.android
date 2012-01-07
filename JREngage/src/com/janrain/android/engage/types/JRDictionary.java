@@ -450,6 +450,52 @@ public final class JRDictionary extends HashMap<String, Object> {
             ? new ArrayList<String>()
             : retval;
     }
+
+    /**
+     * Convenience method used to retrieve a named value as an array of dictionaries.
+     *
+     * @param key
+     *      The key of the value to be retrieved
+     *
+     * @return
+     *      The \e ArrayList<JRDictionary> value if key is found, null otherwise
+     **/
+    public ArrayList<JRDictionary> getAsListOfDictionaries(String key) {
+        return getAsListOfDictionaries(key, false);
+    }
+
+    /**
+     * Convenience method used to retrieve a named value as an array of dictionaries.
+     *
+     * @param key
+     *      The key of the value to be retrieved
+     *
+     * @param shouldCreateIfNotFound
+     *      Flag indicating whether or not a new \e ArrayList<String> object should be created
+     *      if the specified key does not exist
+     *
+     * @return
+     *      The \e ArrayList<JRDictionary> value if key is found, empty array or null otherwise (based on
+     *      value of the \e shouldCreateIfNotFound flag)
+     **/
+
+    // We runtime type check the return value so we can safely ignore this unchecked
+    // assignment error.
+    @SuppressWarnings("unchecked")
+    public ArrayList<JRDictionary> getAsListOfDictionaries(String key, boolean shouldCreateIfNotFound) {
+        ArrayList<JRDictionary> retval = null;
+        if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
+            Object value = get(key);
+            if (value instanceof ArrayList) {
+                for (Object v : (ArrayList) value) assert v instanceof JRDictionary;
+                retval = (ArrayList<JRDictionary>)value;
+            }
+        }
+
+        return ((retval == null) && shouldCreateIfNotFound)
+                ? new ArrayList<JRDictionary>()
+                : retval;
+    }
 /*@}*/
 
     /**

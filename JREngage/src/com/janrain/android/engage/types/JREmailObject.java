@@ -124,6 +124,27 @@ public class JREmailObject implements Serializable {
 
     /**
      * @internal
+     * Returns a JREmailObject initialized with the given dictionary.
+     *
+     * @param dictionary
+     *   A dictionary containing the properties of an activity object.
+     *
+     * @throws IllegalArgumentException
+     *   if dictionary is null
+     *
+     * NOTE: This function should not be used directly.  It is intended only for use by the
+     * JREngage library.
+     **/
+    public JREmailObject(JRDictionary dictionary) {
+        if (dictionary == null) throw new IllegalArgumentException("illegal null action");
+
+        mSubject = dictionary.getAsString("subject");
+        mBody    = dictionary.getAsString("messageBody");
+        mUrls    = dictionary.getAsListOfStrings("urls");
+    }
+
+    /**
+     * @internal
      *
      * @param shortUrls
      */

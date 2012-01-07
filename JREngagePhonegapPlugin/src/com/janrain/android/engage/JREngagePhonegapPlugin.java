@@ -68,6 +68,7 @@ import android.widget.Toast;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.utils.AndroidUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import android.util.Log;
@@ -97,8 +98,8 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     private static String TAG = "[JREngagePhonegapPlugin]";
     private JREngage mJREngage;
     private boolean mWaitingForLibrary;
-    private JRDictionary mStoredAuthInfo;
     private PluginResult mResult;
+    private JRDictionary mFullAuthenticationResponse;
 
     @Override
     public synchronized PluginResult execute(final String cmd, final JSONArray args, final String callback) {
@@ -111,6 +112,8 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
                     initializeJREngage(args.getString(0), args.getString(1));
                 } else if (cmd.equals("showAuthenticationDialog")) {
                     showAuthenticationDialog();
+                } else if (cmd.equals("showSharingDialog")) {
+                    showSharingDialog(args.getString(0));
                 }
             } catch (JSONException e) {
                 postResult(new PluginResult(Status.JSON_EXCEPTION, "Error parsing arguments for " +
@@ -118,7 +121,7 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
             }
         } });
 
-        // TODO: Add thread protection (got into weird infinite loop)
+        // TODO: Maybe need to add more thread protection (got into weird infinite loop);
         while (mWaitingForLibrary) {
             Log.d("[JREngagePhoneGapWrapper]", "mWaitingForLibrary = false");
             try {
@@ -161,9 +164,40 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
 
     public synchronized void jrEngageDialogDidFailToShowWithError(JREngageError error) {
         Log.d(TAG, "[jrEngageDialogDidFailToShowWithError] ERROR");
-        postResult(new PluginResult(Status.ERROR, "sleep error1"));
+        postResult(buildFailureResult(error));
     }
 
+    private PluginResult buildSuccessResult(JRDictionary successDictionary) {
+        String message = successDictionary.toJSON();//.toString();//AndroidUtils.urlEncode(successDictionary.toString());
+        
+        Log.d("[buildSuccessResult]", message);
+        return new PluginResult(Status.OK, message);
+    }
+
+    private PluginResult buildFailureResult(JREngageError error) {
+        String message = stringFromError(error);//AndroidUtils.urlEncode(stringFromError(error));
+
+        Log.d("[buildFailureResult]", "stringFromError  : " + stringFromError(error));
+        Log.d("[buildFailureResult]", "error.toString() : " + error.toString());
+
+        return new PluginResult(Status.ERROR, message);
+    }
+
+    // TODO: What does error.toString produce?
+    private String stringFromError(JREngageError error) {
+        JRDictionary errorDictionary = new JRDictionary();
+        errorDictionary.put("code", error.getCode());
+        errorDictionary.put("message", error.getMessage());
+
+        return errorDictionary.toString();
+    }
+
+    private PluginResult showSharingDialog(String activityString) {
+        // TODO: Implement me!
+        return null;
+    }
+
+    // TODO: What do we do in this case?
     public synchronized void jrAuthenticationDidNotComplete() {
         Log.d(TAG, "[jrAuthenticationDidNotComplete] ERROR");
         postResult(new PluginResult(Status.ERROR, "sleep error2"));
@@ -171,19 +205,17 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
 
     public synchronized void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
         Log.d(TAG, "[jrAuthenticationDidFailWithError] ERROR");
-        postResult(new PluginResult(Status.ERROR, "sleep error3"));
+        postResult(buildFailureResult(error));
     }
 
     public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
         Log.d(TAG, "[jrAuthenticationDidSucceedForUser] SUCCESS");
-        mStoredAuthInfo = auth_info;
-    }
 
-    public synchronized void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl,
-                                                                   JREngageError error,
-                                                                   String provider) {
-        Log.d(TAG, "[jrAuthenticationCallToTokenUrlDidFail] ERROR");
-        postResult(new PluginResult(Status.ERROR, "sleep error"));
+        auth_info.remove("stat");
+
+        mFullAuthenticationResponse = new JRDictionary();
+        mFullAuthenticationResponse.put("auth_info", auth_info);
+        mFullAuthenticationResponse.put("provider", provider);
     }
 
     public synchronized void jrAuthenticationDidReachTokenUrl(String tokenUrl,
@@ -191,24 +223,26 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
                                                               String tokenUrlPayload,
                                                               String provider) {
         Log.d(TAG, "[jrAuthenticationDidReachTokenUrl] SUCCESS");
-        postResult(new PluginResult(Status.OK, "authentication"));
+
+
+        mFullAuthenticationResponse.put("tokenUrl", tokenUrl);
+        mFullAuthenticationResponse.put("tokenUrlPayload", tokenUrlPayload);
+        mFullAuthenticationResponse.put("stat", "ok");
+
+        postResult(buildSuccessResult(mFullAuthenticationResponse));
     }
 
-    public void jrSocialDidNotCompletePublishing() {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public synchronized void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl,
+                                                                   JREngageError error,
+                                                                   String provider) {
+        Log.d(TAG, "[jrAuthenticationCallToTokenUrlDidFail] ERROR");
+        postResult(buildFailureResult(error));
     }
 
-    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void jrSocialDidCompletePublishing() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
+    public void jrSocialDidNotCompletePublishing() { }
+    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) { }
+    public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) { }
+    public void jrSocialDidCompletePublishing() { }
 }
 
 

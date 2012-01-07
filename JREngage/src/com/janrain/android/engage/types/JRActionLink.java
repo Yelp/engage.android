@@ -107,6 +107,9 @@ public class JRActionLink implements Serializable, JRJsonifiable {
         mText = text;
         mHref = href;
     }
+
+    public JRActionLink(Object actionLink) {
+    }
 /*@}*/
 
 /**
