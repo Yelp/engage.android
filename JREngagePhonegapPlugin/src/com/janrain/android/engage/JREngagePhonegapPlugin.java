@@ -68,7 +68,6 @@ import android.widget.Toast;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.utils.AndroidUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import android.util.Log;
@@ -106,7 +105,7 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
         mWaitingForLibrary = true;
         ctx.runOnUiThread(new Runnable() { public void run() {
             try {
-                if (cmd.equals("toast")) {
+                if (cmd.equals("print")) {
                     showToast(args.getString(0));
                 } else if (cmd.equals("initializeJREngage")) {
                     initializeJREngage(args.getString(0), args.getString(1));
@@ -114,10 +113,11 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
                     showAuthenticationDialog();
                 } else if (cmd.equals("showSharingDialog")) {
                     showSharingDialog(args.getString(0));
+                } else {
+                    postResult(new PluginResult(Status.INVALID_ACTION, "Unknown action: " + cmd));
                 }
             } catch (JSONException e) {
-                postResult(new PluginResult(Status.JSON_EXCEPTION, "Error parsing arguments for " +
-                        cmd));
+                postResult(new PluginResult(Status.JSON_EXCEPTION, "Error parsing arguments for " + cmd));
             }
         } });
 
@@ -144,6 +144,41 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
         notifyAll();
     }
 
+    private PluginResult buildSuccessResult(JRDictionary successDictionary) {
+        String message = successDictionary.toJSON();
+
+        JREngage.logd("[buildSuccessResult]", message);
+        return new PluginResult(Status.OK, message);
+    }
+
+    private PluginResult buildFailureResult(JREngageError error) {
+        //AndroidUtils.urlEncode(stringFromError(error));
+
+        JREngage.logd("[buildFailureResult]", "stringFromError  : " + buildFailureString(error.getCode(),
+                error.getMessage()));
+        JREngage.logd("[buildFailureResult]", "error.toString() : " + error.toString());
+
+        return buildFailureResult(error.getCode(), error.getMessage());
+    }
+    
+    private PluginResult buildFailureResult(int code, String message) {
+        return new PluginResult(Status.ERROR, buildFailureString(code, message));
+    }
+    
+    private String buildFailureString(int code, String message) {
+        JRDictionary errorDictionary = new JRDictionary();
+        errorDictionary.put("code", code);
+        errorDictionary.put("message", message);
+
+        return errorDictionary.toJSON();
+    }
+    
+    // TODO: What does error.toString produce?
+    // toString() is not overridden in JREngageError, so it'll result in an opaque string identifier like
+    // JREngageError{414a5ef0} or something.
+//    private String stringFromError(JREngageError error) {
+//    }
+
     private synchronized void showToast(final String message) {
         Toast myToast = Toast.makeText(ctx, message, Toast.LENGTH_SHORT);
         myToast.show();
@@ -153,7 +188,6 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
 
     private synchronized void showAuthenticationDialog() {
         mJREngage.showAuthenticationDialog();
-        postResult(new PluginResult(Status.OK));
     }
 
     private synchronized void initializeJREngage(String appId, String tokenUrl) {
@@ -173,33 +207,8 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     }
 
     public synchronized void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-        Log.d(TAG, "[jrEngageDialogDidFailToShowWithError] ERROR");
+        JREngage.logd(TAG, "[jrEngageDialogDidFailToShowWithError] ERROR");
         postResult(buildFailureResult(error));
-    }
-
-    private PluginResult buildSuccessResult(JRDictionary successDictionary) {
-        String message = successDictionary.toJSON();//.toString();//AndroidUtils.urlEncode(successDictionary.toString());
-        
-        Log.d("[buildSuccessResult]", message);
-        return new PluginResult(Status.OK, message);
-    }
-
-    private PluginResult buildFailureResult(JREngageError error) {
-        String message = stringFromError(error);//AndroidUtils.urlEncode(stringFromError(error));
-
-        Log.d("[buildFailureResult]", "stringFromError  : " + stringFromError(error));
-        Log.d("[buildFailureResult]", "error.toString() : " + error.toString());
-
-        return new PluginResult(Status.ERROR, message);
-    }
-
-    // TODO: What does error.toString produce?
-    private String stringFromError(JREngageError error) {
-        JRDictionary errorDictionary = new JRDictionary();
-        errorDictionary.put("code", error.getCode());
-        errorDictionary.put("message", error.getMessage());
-
-        return errorDictionary.toString();
     }
 
     private PluginResult showSharingDialog(String activityString) {
@@ -208,18 +217,20 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     }
 
     // TODO: What do we do in this case?
+    // Happens on user backing out of authentication, so report some kind of user cancellation
     public synchronized void jrAuthenticationDidNotComplete() {
-        Log.d(TAG, "[jrAuthenticationDidNotComplete] ERROR");
-        postResult(buildFailureResult(null));
+        JREngage.logd(TAG, "[jrAuthenticationDidNotComplete] ERROR");
+        postResult(buildFailureResult(JREngageError.AuthenticationError.AUTHENTICATION_CANCELED,
+                "User canceled authentication"));
     }
 
     public synchronized void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-        Log.d(TAG, "[jrAuthenticationDidFailWithError] ERROR");
+        JREngage.logd(TAG, "[jrAuthenticationDidFailWithError] ERROR");
         postResult(buildFailureResult(error));
     }
 
     public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
-        Log.d(TAG, "[jrAuthenticationDidSucceedForUser] SUCCESS");
+        JREngage.logd(TAG, "[jrAuthenticationDidSucceedForUser] SUCCESS");
 
         auth_info.remove("stat");
 
@@ -232,8 +243,7 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
                                                               HttpResponseHeaders response,
                                                               String tokenUrlPayload,
                                                               String provider) {
-        Log.d(TAG, "[jrAuthenticationDidReachTokenUrl] SUCCESS");
-
+        JREngage.logd(TAG, "[jrAuthenticationDidReachTokenUrl] SUCCESS");
 
         mFullAuthenticationResponse.put("tokenUrl", tokenUrl);
         mFullAuthenticationResponse.put("tokenUrlPayload", tokenUrlPayload);
@@ -245,12 +255,14 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     public synchronized void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl,
                                                                    JREngageError error,
                                                                    String provider) {
-        Log.d(TAG, "[jrAuthenticationCallToTokenUrlDidFail] ERROR");
+        Log.e(TAG, "[jrAuthenticationCallToTokenUrlDidFail] ERROR");
         postResult(buildFailureResult(error));
     }
 
     public void jrSocialDidNotCompletePublishing() { }
-    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider) { }
+    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity,
+                                                 JREngageError error,
+                                                 String provider) { }
     public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) { }
     public void jrSocialDidCompletePublishing() { }
 }

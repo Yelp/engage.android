@@ -37,16 +37,16 @@ function testJREngagePlugin()
 {
     jrEngage.print
     (
-        ["HelloxWorld"],
+        ["Hello World"],
 
         function(result)
         {
-            alert("Success: "+result);
+            alert("Success: " + result);
         },
 
         function(error)
         {
-            alert("Error: "+error);
+            alert("Error: " + error);
         }
     );
 }
@@ -121,8 +121,10 @@ function updateTables(resultDictionary)
 {
     // TODO: Unhide the tables...
 
-    addValueToRowInTable(resultDictionary.provider, document.getElementById("providerTable"), "singleRow", "levelOne");
-    addValueToRowInTable(resultDictionary.tokenUrl, document.getElementById("tokenUrlTable"), "singleRow", "levelOne");
+    addValueToRowInTable(resultDictionary.provider, document.getElementById("providerTable"),
+            "singleRow", "levelOne");
+    addValueToRowInTable(resultDictionary.tokenUrl, document.getElementById("tokenUrlTable"),
+            "singleRow", "levelOne");
 
     var profile = resultDictionary.auth_info.profile;
 
@@ -194,6 +196,10 @@ function handleAuthenticationError(errorDictionary)
     } else if (code == jrEngage.JRAuthenticationFailedError) {
         authenticationError(code, message);
     } else if (code == jrEngage.JRAuthenticationTokenUrlFailedError) {
+        authenticationError(code, message);
+    } else if (code == jrEngage.JRAuthenticationCanceled) {
+        authenticationError(code, message);
+    } else {
         authenticationError(code, message);
     }
 }
