@@ -159,7 +159,17 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     private synchronized void initializeJREngage(String appId, String tokenUrl) {
         JREngage.sLoggingEnabled = true;
         mJREngage = JREngage.initInstance(ctx, appId, tokenUrl, this);
-        postResult(new PluginResult(PluginResult.Status.OK));
+//        if (mJREngage == null)  // TODO: Change error messages
+//            mResult = new PluginResult(Status.ERROR, "init error");
+//        else
+//            mResult = new PluginResult(Status.OK, "Initializing JREngage...");
+//
+//        mFinishedPluginExecution = true;
+//        notifyAll();
+//
+//        return null;
+
+        postResult(new PluginResult(Status.OK, "Initializing JREngage..."));
     }
 
     public synchronized void jrEngageDialogDidFailToShowWithError(JREngageError error) {
@@ -200,7 +210,7 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     // TODO: What do we do in this case?
     public synchronized void jrAuthenticationDidNotComplete() {
         Log.d(TAG, "[jrAuthenticationDidNotComplete] ERROR");
-        postResult(new PluginResult(Status.ERROR, "sleep error2"));
+        postResult(buildFailureResult(null));
     }
 
     public synchronized void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
