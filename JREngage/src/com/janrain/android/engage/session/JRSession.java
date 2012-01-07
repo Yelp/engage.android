@@ -376,8 +376,8 @@ public class JRSession implements JRConnectionManagerDelegate {
                 Log.e(TAG, "[connectionDidFail] call to token url failed: " + ex);
                 JREngageError error = new JREngageError(
                         "Error: " + ex.getLocalizedMessage(),
-                        JREngageError.CODE_UNKNOWN,
-                        "",
+                        JREngageError.AuthenticationError.AUTHENTICATION_TOKEN_URL_FAILED,
+                        "Failed to reach authentication token URL",
                         ex);
                 for (JRSessionDelegate delegate : getDelegatesCopy()) {
                     delegate.authenticationCallToTokenUrlDidFail(
