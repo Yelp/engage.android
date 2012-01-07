@@ -206,30 +206,22 @@ function showAuthenticationDialog()
     jrEngage.showAuthentication(
         function(result)
         {
-<<<<<<< HEAD
-            alert("Success: \n" + result);
-=======
             var jsonBlob         = decodeURIComponent(result);
             var resultDictionary = JSON.parse(jsonBlob);
 
             console.log(jsonBlob);
 
             handleAuthenticationResult(resultDictionary);
->>>>>>> 111728c82cc2e5f82ad80a4bfa42632789c7ebd5
         },
 
         function(error)
         {
-<<<<<<< HEAD
-            alert("Error: \n" + error);
-=======
             var jsonBlob        = decodeURIComponent(error);
             var errorDictionary = JSON.parse(jsonBlob);
 
             console.log(jsonBlob);
 
             handleAuthenticationError(errorDictionary);
->>>>>>> 111728c82cc2e5f82ad80a4bfa42632789c7ebd5
         }
     );
 }
