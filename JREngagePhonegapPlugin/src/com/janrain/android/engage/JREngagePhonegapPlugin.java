@@ -211,13 +211,17 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
         postResult(buildFailureResult(error));
     }
 
-    private PluginResult showSharingDialog(String activityString) {
-        // TODO: Implement me!
-        return null;
+    private synchronized void showSharingDialog(String activityString) {
+        try {
+            JRDictionary activityDictionary = JRDictionary.fromJSON(activityString);
+            JRActivityObject activity = new JRActivityObject(activityDictionary);
+            mJREngage.showSocialPublishingDialog(activity);
+        } catch (JSONException e) {
+            postResult(new PluginResult(Status.JSON_EXCEPTION));
+        }
     }
 
-    // TODO: What do we do in this case?
-    // Happens on user backing out of authentication, so report some kind of user cancellation
+    // Happens on user backing out of authentication, so report user cancellation
     public synchronized void jrAuthenticationDidNotComplete() {
         JREngage.logd(TAG, "[jrAuthenticationDidNotComplete] ERROR");
         postResult(buildFailureResult(JREngageError.AuthenticationError.AUTHENTICATION_CANCELED,

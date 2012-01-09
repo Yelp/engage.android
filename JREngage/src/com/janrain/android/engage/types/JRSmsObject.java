@@ -110,7 +110,7 @@ public class JRSmsObject implements Serializable {
 
     /**
      * @internal
-     * Returns a JRSmsObject initialized with the given dictionary.
+     * Returns a JRSmsObject initialized with the given dictionary, used for Phonegap plugin.
      *
      * @param dictionary
      *   A dictionary containing the properties of an activity object.
@@ -124,8 +124,8 @@ public class JRSmsObject implements Serializable {
     public JRSmsObject(JRDictionary dictionary) {
         if (dictionary == null) throw new IllegalArgumentException("illegal null action");
 
-        mBody = dictionary.getAsString("message");
-        mUrls = dictionary.getAsListOfStrings("urls");
+        mBody = dictionary.getAsString("message", "");
+        mUrls = dictionary.getAsListOfStrings("urls", true);
     }
 
     /**

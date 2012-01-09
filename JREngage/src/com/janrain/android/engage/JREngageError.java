@@ -200,6 +200,11 @@ public class JREngageError {
          */
         public static final int ACTIVITY_NIL = START + 1;
 
+        /**
+         * Reserved
+         */
+        public static final int ACTIVITY_NULL = ACTIVITY_NIL;
+
 //        JRPublishErrorMissingParameter,
         
         /**

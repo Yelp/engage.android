@@ -102,15 +102,26 @@ public class JRActionLink implements Serializable, JRJsonifiable {
      * @throws IllegalArgumentException
      *      if text or href is null
      */
+    // TODO are blank params legal?
     public JRActionLink(String text, String href) {
-        if (text == null || href == null) throw new IllegalArgumentException("illegal null text or null href");
+        if (text == null || href == null) {
+            throw new IllegalArgumentException("illegal null text or null href");
+        }
         mText = text;
         mHref = href;
     }
-
-    public JRActionLink(Object actionLink) {
-    }
 /*@}*/
+
+    /**
+     * @internal
+     * Constructor for Phonegap plugin
+     *
+     * @param actionLink 
+     *      A dictionary with two string fields, 'text' and 'href' 
+     */
+    public JRActionLink(JRDictionary actionLink) {
+        this(actionLink.getAsString("text", ""), actionLink.getAsString("href", ""));
+    }
 
 /**
  * @name Getters

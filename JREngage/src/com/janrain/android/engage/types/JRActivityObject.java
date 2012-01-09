@@ -280,6 +280,53 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
     }
 /*@}*/
 
+    /**
+     * @internal
+     * Returns a JRActivityObject initialized with the given dictionary.
+     *
+     * @param activity
+     *   A dictionary containing the properties of an activity object.
+     *
+     * @throws IllegalArgumentException
+     *   if dictionary is null
+     *
+     * NOTE: This function should not be used directly.  It is intended only for use by the
+     * JREngage library.
+     **/
+    public JRActivityObject(JRDictionary activity) {
+        if (activity == null) throw new IllegalArgumentException("illegal null action");
+
+        initJRActivityObject(
+                activity.getAsString("action"),
+                activity.getAsString("url", ""));
+
+        mTitle       = activity.getAsString("resourceTitle");
+        mDescription = activity.getAsString("resourceDescription");
+
+        List<JRDictionary> actionLinks = activity.getAsListOfDictionaries("actionLinks", true);
+
+        for (JRDictionary actionLink : actionLinks) mActionLinks.add(new JRActionLink(actionLink));
+
+        List<JRDictionary> medias;
+        medias = activity.getAsListOfDictionaries("media", true);
+
+        for (JRDictionary mediaObject : medias) {
+            if ((mediaObject).getAsString("type").equals("image")) {
+                mMedia.add(new JRImageMediaObject(mediaObject));
+            } else if ((mediaObject).getAsString("type").equals("flash")) {
+                mMedia.add(new JRFlashMediaObject(mediaObject));
+            } else if ((mediaObject).getAsString("type").equals("mp3")) {
+                mMedia.add(new JRMp3MediaObject(mediaObject));
+            }
+        }
+
+        mProperties = activity.getAsDictionary("properties", true);
+
+        if (activity.containsKey("email")) mEmail = new JREmailObject(activity.getAsDictionary("email"));
+        if (activity.containsKey("sms")) mSms = new JRSmsObject(activity.getAsDictionary("sms"));
+    }
+
+
     private void initJRActivityObject(String action, String url) {
         if (action == null) throw new IllegalArgumentException("illegal null action");
         if (url == null) url = "";
@@ -561,54 +608,6 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
         map.put("media", mMedia);
         map.put("properties", mProperties);
         return map;
-    }
-
-    /**
-     * @internal
-     * Returns a JRActivityObject initialized with the given dictionary.
-     *
-     * @param activityDictionary
-     *   A dictionary containing the properties of an activity object.
-     *
-     * @throws IllegalArgumentException
-     *   if dictionary is null
-     *
-     * NOTE: This function should not be used directly.  It is intended only for use by the
-     * JREngage library.
-     **/
-    public JRActivityObject(JRDictionary activityDictionary)
-    {
-        if (activityDictionary == null) throw new IllegalArgumentException("illegal null action");
-
-        initJRActivityObject(
-                activityDictionary.getAsString("action"),
-                activityDictionary.getAsString("url", ""));
-
-//      mAction      = activityDictionary.getAsString("action");
-        mUrl         = activityDictionary.getAsString("url");
-        mTitle       = activityDictionary.getAsString("resourceTitle");
-        mDescription = activityDictionary.getAsString("resourceDescription");
-
-        ArrayList<JRDictionary> arrayList = activityDictionary.getAsListOfDictionaries("actionLinks");
-
-        for (Object actionLink : (ArrayList) arrayList)
-            mActionLinks.add(new JRActionLink(actionLink));
-
-        arrayList = activityDictionary.getAsListOfDictionaries("media");
-
-        for (Object mediaObject : (ArrayList) arrayList) {
-            if (((JRDictionary)mediaObject).getAsString("type").equals("image"))
-                mMedia.add(new JRImageMediaObject((JRDictionary)mediaObject));
-            else if (((JRDictionary)mediaObject).getAsString("type").equals("flash"))
-                mMedia.add(new JRFlashMediaObject((JRDictionary)mediaObject));
-            else if (((JRDictionary)mediaObject).getAsString("type").equals("mp3"))
-                mMedia.add(new JRMp3MediaObject((JRDictionary)mediaObject));
-        }
-
-        mProperties = activityDictionary.getAsDictionary("properties");
-
-        mEmail = new JREmailObject(activityDictionary.getAsDictionary("email"));
-        mSms   = new JRSmsObject(activityDictionary.getAsDictionary("sms"));
     }
 
     public interface ShortenedUrlCallback {

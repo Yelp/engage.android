@@ -38,6 +38,7 @@
 <head>
     <title>Phonegap</title>
 
+    <!--<meta name="viewport" content="width=320; user-scalable=no; target-densitydpi=device-dpi"/>-->
     <meta name="viewport" content="width=320; user-scalable=no"/>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 
@@ -68,6 +69,29 @@
       <div class="button"><button onclick="showSharingDialog()">Share</button></div>
 
       <br />
+
+        <script type="text/javascript">
+            var c;
+            function viewportTwiddle() {
+                if (c) {
+                    document.head.appendChild(c);
+                    c = undefined;
+                    return;
+                }
+
+                var a = document.head.getElementsByTagName("meta");
+                for (var i = 0; i < a.length; i++) {
+                    var b = a [i];
+                    if (!b) continue;
+                    if (!b.name) continue;
+                    if (b.name.toLocaleLowerCase() == "viewport") {
+                        c = b;
+                        document.head.removeChild(b);
+                    }
+                }
+            }
+        </script>
+      <!--<div class="button"><button onclick="viewportTwiddle()">Viewport Twiddle</button></div>-->
 
       <div class="janrainLink"><a href="http://janrain.com">http://janrain.com</a></div>
 

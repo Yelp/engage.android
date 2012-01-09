@@ -167,12 +167,12 @@ public class JRFlashMediaObject extends JRMediaObject {
 
         mSwfSrc         = dictionary.getAsString("swfsrc");
         mImgSrc         = dictionary.getAsString("imgsrc");
-        mWidth          = dictionary.getAsInt("width");
-        mHeight         = dictionary.getAsInt("height");
-        mExpandedWidth  = dictionary.getAsInt("expandedWidth");
-        mExpandedHeight = dictionary.getAsInt("expandedHeight");
+        mWidth          = dictionary.getAsInteger("width");
+        mHeight         = dictionary.getAsInteger("height");
+        mExpandedWidth  = dictionary.getAsInteger("expandedWidth");
+        mExpandedHeight = dictionary.getAsInteger("expandedHeight");
 
-        if (mSwfSrc == null || mImgSrc == null) throw new IllegalArgumentException("illegal null action");
+        if (mSwfSrc == null || mImgSrc == null) throw new IllegalArgumentException("illegal null parameter");
     }
 
 /**

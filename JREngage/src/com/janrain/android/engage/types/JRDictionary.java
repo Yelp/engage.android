@@ -45,11 +45,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+
+import java.util.*;
 
 /**
  * @class JRDictionary
@@ -293,6 +290,19 @@ public final class JRDictionary extends HashMap<String, Object> {
 		return getAsInt(key, DEFAULT_VALUE_INT);
 	}
 
+    /**
+     * Convenience method used to retrieve a named value as an \e Integer.
+     *
+     * @param key
+     * 		The key of the value to be retrieved
+     *
+     * @return
+     * 		The \e Integer value if found, null otherwise
+     **/
+    public Integer getAsInteger(String key) {
+        return containsKey(key) ? (Integer) get(key) : null;
+    }
+
 	/**
 	 * Convenience method used to retrieve a named value as an \e int.
 	 *
@@ -460,7 +470,7 @@ public final class JRDictionary extends HashMap<String, Object> {
      * @return
      *      The \e ArrayList<JRDictionary> value if key is found, null otherwise
      **/
-    public ArrayList<JRDictionary> getAsListOfDictionaries(String key) {
+    public List<JRDictionary> getAsListOfDictionaries(String key) {
         return getAsListOfDictionaries(key, false);
     }
 
@@ -482,19 +492,19 @@ public final class JRDictionary extends HashMap<String, Object> {
     // We runtime type check the return value so we can safely ignore this unchecked
     // assignment error.
     @SuppressWarnings("unchecked")
-    public ArrayList<JRDictionary> getAsListOfDictionaries(String key, boolean shouldCreateIfNotFound) {
-        ArrayList<JRDictionary> retval = null;
+    public List<JRDictionary> getAsListOfDictionaries(String key, boolean shouldCreateIfNotFound) {
+        List<JRDictionary> retval = null;
         if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
             Object value = get(key);
-            if (value instanceof ArrayList) {
+            if (value instanceof List) {
                 for (Object v : (ArrayList) value) assert v instanceof JRDictionary;
                 retval = (ArrayList<JRDictionary>)value;
+            } else {
+
             }
         }
 
-        return ((retval == null) && shouldCreateIfNotFound)
-                ? new ArrayList<JRDictionary>()
-                : retval;
+        return ((retval == null) && shouldCreateIfNotFound) ? new ArrayList<JRDictionary>() : retval;
     }
 /*@}*/
 

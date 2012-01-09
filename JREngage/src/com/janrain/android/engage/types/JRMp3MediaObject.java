@@ -132,7 +132,7 @@ package com.janrain.android.engage.types;
         mArtist = dictionary.getAsString("artist");
         mAlbum  = dictionary.getAsString("album");
 
-        if (mSrc == null) throw new IllegalArgumentException("illegal null action");
+        if (mSrc == null) throw new IllegalArgumentException("illegal null src");
     }
 
 /**

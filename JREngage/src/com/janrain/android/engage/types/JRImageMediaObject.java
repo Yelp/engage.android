@@ -124,7 +124,7 @@ public class JRImageMediaObject extends JRMediaObject {
         mSrc  = dictionary.getAsString("src");
         mHref = dictionary.getAsString("href");
 
-        if (mSrc == null || mHref == null) throw new IllegalArgumentException("illegal null action");
+        if (mSrc == null || mHref == null) throw new IllegalArgumentException("illegal null src or href");
     }
 
 /**
