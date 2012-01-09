@@ -230,33 +230,33 @@ function showSharingDialog()
 {
     var activity =
             '{\
-                "action":"this is the action",\
-                "url":"http://janrain.com",\
-                "resourceTitle":"this is the title",\
-                "resourceDescription":"this is the description",\
+                "action":"is sharing a link",\
+                "url":"http://www.google.com/doodles/burning-man-festival",\
+                "resourceTitle":"Google\'s first Doodle",\
+                "resourceDescription":"This is Google\'s very first Doodle, the one that started them all.",\
                 "actionLinks":\
                 [\
-                    {"text":"foo","href":"http://google.com"}\
+                    {"text":"Google","href":"http://google.com"}\
                 ],\
                 "media":\
                 [\
                     {\
                         "type":"image",\
-                        "src":"https://www.google.com/intl/en_com/images/srpr/logo3w.png",\
-                        "href":"http://google.com"\
+                        "src":"http://www.google.com/logos/1998/googleburn.jpg",\
+                        "href":"http://www.google.com/doodles/burning-man-festival"\
                     }\
                 ],\
                 "email":\
                 {\
                     "subject":"subject text",\
                     "messageBody":"body text",\
-                    "_isHtml":"NO",\
-                    "_urls":["http://google.com","http://janrain.com"]\
+                    "isHtml":"NO",\
+                    "urls":["http://google.com","http://janrain.com"]\
                 },\
                 "sms":\
                 {\
                     "message":"",\
-                    "_urls":["http://google.com","http://janrain.com"]\
+                    "urls":["http://google.com","http://janrain.com"]\
                 }\
             }';
 
