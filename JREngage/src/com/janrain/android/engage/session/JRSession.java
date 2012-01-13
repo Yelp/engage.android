@@ -73,8 +73,8 @@ public class JRSession implements JRConnectionManagerDelegate {
     private static final String TAG = JRSession.class.getSimpleName();
 
     private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
-    //private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
-    //private static final JREnvironment ENVIRONMENT = JREnvironment.LILLI;
+//    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
+//    private static final JREnvironment ENVIRONMENT = JREnvironment.LILLI;
     //private static final JREnvironment ENVIRONMENT = JREnvironment.NATHAN;
 
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";

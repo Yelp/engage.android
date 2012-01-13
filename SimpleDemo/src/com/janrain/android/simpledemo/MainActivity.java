@@ -105,6 +105,7 @@ public class MainActivity extends FragmentActivity {
         mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
         mBtnTestAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+//                mEngage.setEnabledAuthenticationProviders(new String[]{"facebook"});
                 mEngage.showAuthenticationDialog();
             }
         });

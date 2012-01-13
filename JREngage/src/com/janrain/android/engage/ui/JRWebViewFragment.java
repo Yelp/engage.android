@@ -258,8 +258,6 @@ public class JRWebViewFragment extends JRUiFragment {
     };
 
     private WebViewClient mWebviewClient = new WebViewClient() {
-        private final String TAG = this.getClass().getSimpleName();
-
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             // Seems to be broken according to this:
