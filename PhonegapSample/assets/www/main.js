@@ -212,20 +212,18 @@ function showAuthenticationDialog()
     jrEngage.showAuthentication(
         function(result)
         {
-            var jsonBlob         = decodeURIComponent(result);
-            var resultDictionary = JSON.parse(jsonBlob);
+            var resultDictionary = JSON.parse(result);
 
-            console.log(jsonBlob);
+            console.log(result);
 
             handleAuthenticationResult(resultDictionary);
         },
 
         function(error)
         {
-            var jsonBlob        = decodeURIComponent(error);
-            var errorDictionary = JSON.parse(jsonBlob);
+            var errorDictionary = JSON.parse(error);
 
-            console.log(jsonBlob);
+            console.log(error);
 
             handleAuthenticationError(errorDictionary);
         }
