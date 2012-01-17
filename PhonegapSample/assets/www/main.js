@@ -37,16 +37,16 @@ function testJREngagePlugin()
 {
     jrEngage.print
     (
-        "Hello World",
+        "Hello World }]%20",
 
         function(result)
         {
-            alert("Success: " + result);
+            alert("Success: "+result);
         },
 
         function(error)
         {
-            alert("Error: " + error);
+            alert("Error: "+error);
         }
     );
 }
@@ -69,18 +69,12 @@ function onDeviceReady()
 
         function(result)
         {
-//            alert("OK...");
-//           var jsonBlob = decodeURIComponent(result);
-//           console.log(jsonBlob);
-             console.log(result);
+           console.log(result);
         },
 
         function(error)
         {
-//            alert("WTF");
-//           var jsonBlob = decodeURIComponent(error);
-//           console.log(jsonBlob);
-             console.log(error);
+           console.log(error);
         }
     );
 }
@@ -121,10 +115,8 @@ function updateTables(resultDictionary)
 {
     // TODO: Unhide the tables...
 
-    addValueToRowInTable(resultDictionary.provider, document.getElementById("providerTable"),
-            "singleRow", "levelOne");
-    addValueToRowInTable(resultDictionary.tokenUrl, document.getElementById("tokenUrlTable"),
-            "singleRow", "levelOne");
+    addValueToRowInTable(resultDictionary.provider, document.getElementById("providerTable"), "singleRow", "levelOne");
+    addValueToRowInTable(resultDictionary.tokenUrl, document.getElementById("tokenUrlTable"), "singleRow", "levelOne");
 
     var profile = resultDictionary.auth_info.profile;
 
@@ -232,37 +224,39 @@ function showAuthenticationDialog()
 
 function showSharingDialog()
 {
+//    var activity = "{\"action\":\"this is the action\",\"url\":\"http://janrain.com\",\"resourceTitle\":\"this is the title\",\"resourceDescription\":\"this is the description\"}";
+
     var activity =
-            '{\
-                "action":"is sharing a link",\
-                "url":"http://www.google.com/doodles/burning-man-festival",\
-                "resourceTitle":"Google\'s first Doodle",\
-                "resourceDescription":"This is Google\'s very first Doodle, the one that started them all.",\
-                "actionLinks":\
-                [\
-                    {"text":"Google","href":"http://google.com"}\
-                ],\
-                "media":\
-                [\
-                    {\
-                        "type":"image",\
-                        "src":"http://www.google.com/logos/1998/googleburn.jpg",\
-                        "href":"http://www.google.com/doodles/burning-man-festival"\
-                    }\
-                ],\
-                "email":\
+        '{\
+            "action":"is sharing a link",\
+            "url":"http://www.google.com/doodles/burning-man-festival",\
+            "resourceTitle":"Google\'s first Doodle",\
+            "resourceDescription":"This is Google\'s very first Doodle, the one that started them all.",\
+            "actionLinks":\
+            [\
+                {"text":"Google","href":"http://google.com"}\
+            ],\
+            "media":\
+            [\
                 {\
-                    "subject":"subject text",\
-                    "messageBody":"body text",\
-                    "isHtml":"NO",\
-                    "urls":["http://google.com","http://janrain.com"]\
-                },\
-                "sms":\
-                {\
-                    "message":"",\
-                    "urls":["http://google.com","http://janrain.com"]\
+                    "type":"image",\
+                    "src":"http://www.google.com/logos/1998/googleburn.jpg",\
+                    "href":"http://www.google.com/doodles/burning-man-festival"\
                 }\
-            }';
+            ],\
+            "email":\
+            {\
+                "subject":"subject text",\
+                "messageBody":"body text",\
+                "isHtml":"NO",\
+                "urls":["http://google.com","http://janrain.com"]\
+            },\
+            "sms":\
+            {\
+                "message":"",\
+                "urls":["http://google.com","http://janrain.com"]\
+            }\
+        }';
 
     jrEngage.showSharing(
         activity,
