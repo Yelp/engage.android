@@ -973,17 +973,19 @@ public class JRSession implements JRConnectionManagerDelegate {
                 getWelcomeMessageFromCookieString());
         mAuthenticatedUsersByProvider.put(mCurrentlyAuthenticatingProvider.getName(), user);
         Archiver.save(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
+        String authInfoToken = rpx_result.getAsString("token");
+        JRDictionary authInfoDict = rpx_result.getAsDictionary("auth_info");
+        authInfoDict.put("token", authInfoToken);
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.authenticationDidComplete(
-                    rpx_result.getAsDictionary("auth_info"),
+                    authInfoDict,
                     mCurrentlyAuthenticatingProvider.getName());
         }
 
-        String auth_info_token = rpx_result.getAsString("token");
         if (!TextUtils.isEmpty(mTokenUrl)) {
             makeCallToTokenUrl(mTokenUrl,
-                               auth_info_token,
+                               authInfoToken,
                                mCurrentlyAuthenticatingProvider.getName());
         }
 

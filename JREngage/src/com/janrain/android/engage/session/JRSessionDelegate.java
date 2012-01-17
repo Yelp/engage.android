@@ -140,7 +140,7 @@ public interface JRSessionDelegate {
     void publishingJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
 
     /**
-     * Triggered when the JRPublishActivity fails to load
+     * Triggered when the publishing UI fails to load
      * @param error
      *  The error produced by the failure of the publishing dialog to display
      */
