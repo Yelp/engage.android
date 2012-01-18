@@ -33,10 +33,10 @@ package com.janrain.android.engage.net.async;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
-
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -56,10 +56,8 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
-
 import android.os.Handler;
 import android.util.Log;
-
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.utils.IOUtils;
@@ -90,8 +88,8 @@ public final class AsyncHttpClient {
 
         private void setupHttpClient() {
             HttpParams connectionParams = new BasicHttpParams();
-            HttpConnectionParams.setConnectionTimeout(connectionParams, 10000); // ten second timeout
-            HttpConnectionParams.setSoTimeout(connectionParams, 10000);
+            HttpConnectionParams.setConnectionTimeout(connectionParams, 30000); // thirty second timeout
+            HttpConnectionParams.setSoTimeout(connectionParams, 30000);
 
             // From the Google IO app:
             mHttpClient = new DefaultHttpClient(connectionParams);
@@ -171,14 +169,18 @@ public final class AsyncHttpClient {
                     request = new HttpGet(mUrl);
                 }
 
+                InetAddress ia = InetAddress.getByName(request.getURI().getHost());
+                JREngage.logd(TAG, "Connecting to: " + ia.getHostAddress());
+
                 request.addHeader("User-Agent", USER_AGENT);
                 if (mHeaders == null) mHeaders = new ArrayList<NameValuePair>();
                 for (NameValuePair header : mHeaders) request.addHeader(header.getName(), header.getValue());
 
                 HttpResponse response = mHttpClient.execute(request);
 
-                /* Ensures that the response intercepter has a chance to un-gzip the entity before we
-                fetch it. */
+                /* Fetching the status code ensures that the response interceptor has a chance to un-gzip the
+                 * entity before we fetch it.
+                 */
                 response.getStatusLine().getStatusCode();
 
                 HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response, request);
@@ -206,7 +208,7 @@ public final class AsyncHttpClient {
                     mWrapper.setResponse(new AsyncHttpResponse(mUrl, headers, data));
                     break;
                 default:
-                    // Maybe this shouldn't be globbed together, but instead be structured
+                    // This shouldn't be globbed together, but instead be structured
                     // to allow the error handler to make meaningful use of the web
                     // servers response (contained in String r)
                     String message = "[run] Unexpected HTTP response:  [responseCode: "
@@ -222,7 +224,7 @@ public final class AsyncHttpClient {
                 mHandler.post(mWrapper);
                 return;
             } catch (IOException e) {
-                Log.e(TAG, "[run] Problem executing HTTP request.", e);
+                Log.e(TAG, "[run] Problem executing HTTP request. (" + e +")", e);
                 Log.e(TAG, this.toString());
                 mWrapper.setResponse(new AsyncHttpResponse(mUrl, e));
                 mHandler.post(mWrapper);
