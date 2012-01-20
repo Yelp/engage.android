@@ -281,24 +281,18 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
 /*@}*/
 
     /**
-     * @internal
      * Returns a JRActivityObject initialized with the given dictionary.
      *
      * @param activity
      *   A dictionary containing the properties of an activity object.
      *
      * @throws IllegalArgumentException
-     *   if dictionary is null
-     *
-     * NOTE: This function should not be used directly.  It is intended only for use by the
-     * JREngage library.
+     *   If activity is null
      **/
     public JRActivityObject(JRDictionary activity) {
         if (activity == null) throw new IllegalArgumentException("illegal null action");
 
-        initJRActivityObject(
-                activity.getAsString("action"),
-                activity.getAsString("url", ""));
+        initJRActivityObject(activity.getAsString("action"), activity.getAsString("url", ""));
 
         mTitle       = activity.getAsString("resourceTitle");
         mDescription = activity.getAsString("resourceDescription");

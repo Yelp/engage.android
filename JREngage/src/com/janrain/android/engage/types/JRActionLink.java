@@ -102,7 +102,6 @@ public class JRActionLink implements Serializable, JRJsonifiable {
      * @throws IllegalArgumentException
      *      if text or href is null
      */
-    // TODO are blank params legal?
     public JRActionLink(String text, String href) {
         if (text == null || href == null) {
             throw new IllegalArgumentException("illegal null text or null href");
