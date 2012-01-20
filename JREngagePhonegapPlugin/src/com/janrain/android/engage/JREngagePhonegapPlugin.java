@@ -221,13 +221,14 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
 
     private synchronized void showSharingDialog(String activityString) {
         try {
+            mWeAreSharing = true;
+
             JRDictionary activityDictionary = JRDictionary.fromJSON(activityString);
             JRActivityObject activity = new JRActivityObject(activityDictionary);
             mJREngage.showSocialPublishingDialog(activity);
         } catch (JSONException e) { // TODO: Formalize these errors into JSON objects that follow our convention
             postResultAndCleanUp(new PluginResult(Status.JSON_EXCEPTION));
         }
-        mWeAreSharing = true;
     }
 
     public synchronized void jrEngageDialogDidFailToShowWithError(JREngageError error) {
