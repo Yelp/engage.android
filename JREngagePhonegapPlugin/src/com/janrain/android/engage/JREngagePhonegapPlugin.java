@@ -172,18 +172,11 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     private PluginResult buildSuccessResult(JRDictionary successDictionary) {
         String message = successDictionary.toJSON();
 
-        // TODO: Nathan, why are some of our logs using Log.d and others using JREngage.logd?
         JREngage.logd("[buildSuccessResult]", message);
         return new PluginResult(Status.OK, message);
     }
 
     private PluginResult buildFailureResult(JREngageError error) {
-        //AndroidUtils.urlEncode(stringFromError(error));
-
-        //JREngage.logd("[buildFailureResult]", "stringFromError  : " + buildFailureString(error.getCode(),
-        //        error.getMessage()));
-        //JREngage.logd("[buildFailureResult]", "error.toString() : " + error.toString());
-
         return buildFailureResult(error.getCode(), error.getMessage());
     }
     
@@ -295,7 +288,7 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     public void jrSocialDidNotCompletePublishing() {
         JREngage.logd(TAG, "[jrSocialDidNotCompletePublishing] User Canceled");
         // TODO: Synchronize the errors between iOS and Android!!!
-        postResultAndCleanUp(buildFailureResult(JREngageError.SocialPublishingError.ACTIVITY_NIL,
+        postResultAndCleanUp(buildFailureResult(JREngageError.SocialPublishingError.CANCELED_ERROR,
                 "User canceled authentication"));
     }
 
