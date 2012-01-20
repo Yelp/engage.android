@@ -259,7 +259,7 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
             postResultAndCleanUp(buildFailureResult(error));
     }
 
-    public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
+    public synchronized void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
         JREngage.logd(TAG, "[jrAuthenticationDidSucceedForUser] SUCCESS");
 
         auth_info.remove("stat");
@@ -286,14 +286,14 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     }
 
 
-    public void jrSocialDidNotCompletePublishing() {
+    public synchronized void jrSocialDidNotCompletePublishing() {
         JREngage.logd(TAG, "[jrSocialDidNotCompletePublishing] User Canceled");
         // TODO: Synchronize the errors between iOS and Android!!!
         postResultAndCleanUp(buildFailureResult(JREngageError.SocialPublishingError.CANCELED_ERROR,
                 "User canceled authentication"));
     }
 
-    public void jrSocialPublishJRActivityDidFail(JRActivityObject activity,
+    public synchronized void jrSocialPublishJRActivityDidFail(JRActivityObject activity,
                                                  JREngageError error,
                                                  String provider) {
         JREngage.logd(TAG, "[jrSocialPublishJRActivityDidFail] SUCCESS");
@@ -310,7 +310,7 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
         mShareBlobs.add(shareBlob);
     }
 
-    public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
+    public synchronized void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
         JREngage.logd(TAG, "[jrSocialDidPublishJRActivity] SUCCESS");
         JRDictionary shareBlob = new JRDictionary();
 
@@ -323,7 +323,7 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
         mShareBlobs.add(shareBlob);
     }
 
-    public void jrSocialDidCompletePublishing() {
+    public synchronized void jrSocialDidCompletePublishing() {
         JREngage.logd(TAG, "[jrSocialDidCompletePublishing] SUCCESS");
         if (mFullSharingResponse == null)
             mFullSharingResponse = new JRDictionary();
