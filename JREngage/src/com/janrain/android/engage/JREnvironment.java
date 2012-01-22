@@ -40,6 +40,7 @@ package com.janrain.android.engage;
 public enum JREnvironment {
     PRODUCTION(R.string.jr_server_url_production),
     STAGING(R.string.jr_server_url_staging),
+    TESTING(R.string.jr_server_url_testing),
     LILLI(R.string.jr_server_url_lilli),
     NATHAN(R.string.jr_server_url_nathan);
 

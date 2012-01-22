@@ -220,10 +220,9 @@ public final class AsyncHttpClient {
                 }
 
                 mHandler.post(mWrapper);
-                return;
             } catch (IOException e) {
-                Log.e(TAG, "[run] Problem executing HTTP request.", e);
                 Log.e(TAG, this.toString());
+                Log.e(TAG, "[run] Problem executing HTTP request.", e);
                 mWrapper.setResponse(new AsyncHttpResponse(mUrl, e));
                 mHandler.post(mWrapper);
             }
@@ -231,8 +230,7 @@ public final class AsyncHttpClient {
 
         public String toString() {
             if (mPostData == null) mPostData = new byte[0];
-            return TAG + ": {url: " + mUrl + "\nheaders: " + mHeaders + "\npostData: "
-                    + new String(mPostData);
+            return "url: " + mUrl + "\nheaders: " + mHeaders + "\npostData: " + new String(mPostData);
         }
 	}
 

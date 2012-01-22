@@ -73,6 +73,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     private static final String TAG = JRSession.class.getSimpleName();
 
     private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
+//    private static final JREnvironment ENVIRONMENT = JREnvironment.TESTING;
     //private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
     //private static final JREnvironment ENVIRONMENT = JREnvironment.LILLI;
     //private static final JREnvironment ENVIRONMENT = JREnvironment.NATHAN;
@@ -386,14 +387,14 @@ public class JRSession implements JRConnectionManagerDelegate {
                             dictionary.getAsString(USERDATA_PROVIDER_NAME_KEY));
                 }
             } else if (dictionary.getAsString(USERDATA_ACTION_KEY).equals(USERDATA_ACTION_SHARE_ACTIVITY)) {
+                /* set status uses this same connection handler. */
                 Log.e(TAG, "[connectionDidFail] sharing activity failed: " + ex);
-                List<JRSessionDelegate> delegatesCopy = getDelegatesCopy();
                 JREngageError error = new JREngageError(
                         "Error: " + ex.getLocalizedMessage(),
-                        JREngageError.CODE_UNKNOWN,
+                        SocialPublishingError.FAILED,
                         "",
                         ex);
-                for (JRSessionDelegate delegate : delegatesCopy) {
+                for (JRSessionDelegate delegate : getDelegatesCopy()) {
                     delegate.publishingJRActivityDidFail(
                             (JRActivityObject) dictionary.get(USERDATA_ACTIVITY_KEY),
                             error,

@@ -88,13 +88,17 @@ import java.util.List;
  *
  * @brief
  * Publishing UI, embeddable in a android.support.v4.app.FragmentActivity
+ *
+ * Use JREngage.showSocialPublishingDialog, JREngage.showSocialPublishingFragment, or
+ * JREngage.createSocialPublishingFragment to display.
  */
 public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChangeListener {
-    public static final String KEY_ACTIVITY_OBJECT = "jr_activity_object";
-    public static final String KEY_PROVIDER_SHARE_MAP = "jr_provider_sharedness_map";
-    public static final String KEY_DIALOG_ERROR_MESSAGE = "jr_dialog_error_message";
-    public static final String KEY_DIALOG_PROVIDER_NAME = "jr_dialog_provider_name";
-    public static final String KEY_SELECTED_TAB = "jr_selected_tab";
+    private static final String KEY_ACTIVITY_OBJECT = "jr_activity_object";
+    private static final String KEY_PROVIDER_SHARE_MAP = "jr_provider_sharedness_map";
+    private static final String KEY_DIALOG_ERROR_MESSAGE = "jr_dialog_error_message";
+    private static final String KEY_DIALOG_TITLE = "jr_dialog_title";
+    private static final String KEY_DIALOG_PROVIDER_NAME = "jr_dialog_provider_name";
+    private static final String KEY_SELECTED_TAB = "jr_selected_tab";
 
     private static final int DIALOG_FAILURE = 1;
     private static final int DIALOG_CONFIRM_SIGNOUT = 3;
@@ -284,8 +288,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         /* Check for no suitable providers */
         if (mSocialProviders.size() == 0) {
             JREngageError err = mSession.getError();
-            String errorMessage = (err == null) ? getString(R.string.jr_no_configured_social_providers) :
-                    err.getMessage();
+            String errorMessage = (err == null) ?
+                    getString(R.string.jr_no_configured_social_providers)
+                    : err.getMessage();
             if (err == null) {
                 err = new JREngageError(
                         getString(R.string.jr_no_social_providers),
@@ -296,9 +301,10 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mConnectAndShareButton.setEnabled(false);
             mUserCommentView.setEnabled(false);
             getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
-            //if (isEmbeddedMode()) getFragmentManager().beginTransaction().hide(this).commit();
+
             Bundle options = new Bundle();
             options.putString(KEY_DIALOG_ERROR_MESSAGE, errorMessage);
+            options.putString(KEY_DIALOG_TITLE, "Sharing Error");
             showDialog(DIALOG_FAILURE, options);
             return;
         }
@@ -764,11 +770,10 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     protected Dialog onCreateDialog(int id, Bundle options) {
-        // TODO: make resources out of these strings
-
         switch (id) {
             case DIALOG_FAILURE:
                 return new AlertDialog.Builder(getActivity())
+                        .setTitle(options.getString(KEY_DIALOG_TITLE))
                         .setMessage(options.getString(KEY_DIALOG_ERROR_MESSAGE))
                         .setPositiveButton("Dismiss", null)
                         .create();
@@ -792,13 +797,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 return pd;
             case DIALOG_NO_EMAIL_CLIENT:
                 return new AlertDialog.Builder(getActivity())
-                        .setMessage("You do not have an email client configured.")
-                        .setPositiveButton("OK", null)
+                        .setMessage("Cannot send email, no email app is configured.")
+                        .setPositiveButton("Dismiss", null)
                         .create();
             case DIALOG_NO_SMS_CLIENT:
                 return new AlertDialog.Builder(getActivity())
-                        .setMessage("You do not have an sms client configured.")
-                        .setPositiveButton("OK", null)
+                        .setMessage("Cannot send SMS, no SMS app is configured.")
+                        .setPositiveButton("Dismiss", null)
                         .create();
         }
 
@@ -810,6 +815,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         switch (id) {
             case DIALOG_FAILURE:
                 ((AlertDialog) d).setMessage(options.getString(KEY_DIALOG_ERROR_MESSAGE));
+                d.setTitle(options.getString(KEY_DIALOG_TITLE));
                 return;
             case DIALOG_CONFIRM_SIGNOUT:
                 ((AlertDialog) d).setMessage("Sign out of " + mSelectedProvider.getFriendlyName() + "?");
@@ -1087,7 +1093,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
             switch (error.getCode()) {
                 case JREngageError.SocialPublishingError.FAILED:
-                    //mDialogErrorMessage = "There was an error while sharing this activity.";
                     dialogErrorMessage = error.getMessage();
                     break;
                 case JREngageError.SocialPublishingError.DUPLICATE_TWITTER:
@@ -1125,11 +1130,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 return;
             }
 
-            //mWeAreCurrentlyPostingSomething = false;
             mWeHaveJustAuthenticated = false;
 
             Bundle options = new Bundle();
             options.putString(KEY_DIALOG_ERROR_MESSAGE, dialogErrorMessage);
+            options.putString(KEY_DIALOG_TITLE, "Sharing Error");
             showDialog(DIALOG_FAILURE, options);
         }
 

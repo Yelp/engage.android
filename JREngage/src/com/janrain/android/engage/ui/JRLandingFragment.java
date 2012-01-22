@@ -38,6 +38,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -187,11 +188,15 @@ public class JRLandingFragment extends JRUiFragment {
                 case JRWebViewFragment.RESULT_FAIL:
                     getActivity().setResult(RESULT_FAIL);
                     getActivity().finish();
+                    break;
+//                    See RESULT_CANCELED in JRProviderListFragment.
+//                    case Activity.RESULT_CANCELED:
                 default:
-                    throw new RuntimeException("unrecognized result code: " + resultCode);
+                    Log.e(TAG, "Unrecognized request/result code " + requestCode + "/" + resultCode);
+
             }
         } else {
-            throw new RuntimeException("unrecognized request code: " + requestCode);
+            Log.e(TAG, "Unrecognized request/result code " + requestCode + "/" + resultCode);
         }
     }
 
@@ -265,7 +270,7 @@ public class JRLandingFragment extends JRUiFragment {
     @Override
     protected void onBackPressed() {
         mSession.triggerAuthenticationDidRestart();
-        getActivity().setResult(JRLandingFragment.RESULT_RESTART);
+        getActivity().setResult(RESULT_RESTART);
         getActivity().finish();
     }
 }

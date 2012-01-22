@@ -258,8 +258,6 @@ public class JRWebViewFragment extends JRUiFragment {
     };
 
     private WebViewClient mWebviewClient = new WebViewClient() {
-        private final String TAG = this.getClass().getSimpleName();
-
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             // Seems to be broken according to this:
@@ -276,15 +274,14 @@ public class JRWebViewFragment extends JRUiFragment {
             }
 
             /* Intercept and sink mailto links because the webview auto-linkifies example email addresses
-             * in the Google and Yahoo login pages :(
+             * in the Google and Yahoo login pages and it's too easy to fat finger them :(
              */
             Uri uri = Uri.parse(url);
             if (uri.getScheme().equals("mailto")) {
                 return true;
             }
 
-            view.loadUrl(url);
-            return true;
+            return false;
         }
 
 
@@ -457,20 +454,21 @@ public class JRWebViewFragment extends JRUiFragment {
         public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
             JREngage.logd(TAG, "[connectionDidFail] userdata: " + tag, ex);
 
-            if ((tag != null) && (tag instanceof String)) {
+            if (isShowing()) {
+                // This is designed to not run if the user pressed the back button after the MEU started
+                // loading but before it failed.
+                // The test is probably not quite right and that if the timing is bad both onBackPressed()
+                // and this method will call setResult
                 final JREngageError error = new JREngageError(
-                        "Authentication failed",
-                        JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                        JREngageError.ErrorType.AUTHENTICATION_FAILED,
-                        ex);
-
-                // TODO Back button? race condition?
+                    "Authentication failed",
+                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                    JREngageError.ErrorType.AUTHENTICATION_FAILED,
+                    ex);
                 mSession.triggerAuthenticationDidFail(error);
                 mIsFinishPending = true;
                 getActivity().setResult(RESULT_FAIL);
                 showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
                         getString(R.string.jr_dialog_network_error));
-
             }
         }
     };

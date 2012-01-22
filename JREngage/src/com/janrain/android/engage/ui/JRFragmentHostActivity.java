@@ -193,14 +193,19 @@ public class JRFragmentHostActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         JREngage.logd(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
+        /* Sometimes this activity starts an activity by proxy for its fragment, in that case we
+         * delegate the result to the fragment here.
+         */
         if (requestCode <= 1<<16) mUiFragment.onActivityResult(requestCode, resultCode, data);
+        /* However, the Fragment API munges activityForResult invocations from fragments by bitshifting
+         * the request code up two bytes. This method doesn't handle such request codes; they dispatch
+         * by the Fragment API path.
+         */
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (AndroidUtils.isCupcake()
-                && keyCode == KeyEvent.KEYCODE_BACK
-                && event.getRepeatCount() == 0) {
+        if (AndroidUtils.isCupcake() && keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             // Take care of calling this method on earlier versions of
             // the platform where it doesn't exist.
             onBackPressed();
