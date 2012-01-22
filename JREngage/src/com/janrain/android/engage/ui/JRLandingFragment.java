@@ -38,6 +38,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
@@ -60,8 +62,10 @@ public class JRLandingFragment extends JRUiFragment {
     public static final String KEY_ALERT_DIALOG_TITLE = "jr_alert_dialog_title";
     public static final String KEY_ALERT_DIALOG_MESSAGE = "jr_alert_dialog_message";
     public static final int DIALOG_GENERIC_ALERT = 1;
-    public static final int RESULT_SWITCH_ACCOUNTS = 1;
-    public static final int RESULT_RESTART = 2;
+    
+    public static final int RESULT_SWITCH_ACCOUNTS = Activity.RESULT_FIRST_USER;
+    public static final int RESULT_RESTART = Activity.RESULT_FIRST_USER + 1;
+    public static final int RESULT_FAIL = Activity.RESULT_FIRST_USER + 2;
 
     private View.OnClickListener mButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
@@ -223,11 +227,14 @@ public class JRLandingFragment extends JRUiFragment {
                     break;
                 case JRWebViewFragment.RESULT_BAD_OPENID_URL:
                     break;
+//                    See RESULT_CANCELED in JRProviderListFragment.
+//                    case Activity.RESULT_CANCELED:
                 default:
-                    throw new RuntimeException("unrecognized result code: " + resultCode);
+                    Log.e(TAG, "Unrecognized request/result code " + requestCode + "/" + resultCode);
+
             }
         } else {
-            throw new RuntimeException("unrecognized request code: " + requestCode);
+            Log.e(TAG, "Unrecognized request/result code " + requestCode + "/" + resultCode);
         }
     }
 

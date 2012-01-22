@@ -87,6 +87,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Math.log;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -268,7 +269,14 @@ public class QuickShare extends Application {
                             and while decoding it we yoink out a link to an image if there is one. */
                         String plainText = Html.fromHtml(body, new Html.ImageGetter() {
                             public Drawable getDrawable(String s) {
-                                imageUrls.add(FEED_URL.getScheme() + "://" + FEED_URL.getHost() + s);
+                                Uri t = Uri.parse(s);
+                                if (t.isRelative()) {
+                                    s = FEED_URL.getScheme() + "://" + FEED_URL.getHost() + s;
+                                }
+                                if (t.getScheme() != null && t.getScheme().equals("file")) {
+                                    Log.e(TAG, "File scheme URL " + currentStory.getTitle() + ": " + s);
+                                }
+                                imageUrls.add(s);
                                 return null;
                             }
                         }, new Html.TagHandler() {
@@ -403,6 +411,9 @@ public class QuickShare extends Application {
     };
 }
 
+/* This ContentHandler is like the stock one but scales its images because we embed some very large 
+ * images in the Janrain blog that eat all of the VM memory otherwise.
+ */
 class JRBitmapContentHandler extends ContentHandler {
     @Override
     public Bitmap getContent(URLConnection connection) throws IOException {
@@ -422,6 +433,7 @@ class JRBitmapContentHandler extends ContentHandler {
 }
 
 /* XXX This is copy/paste of a package scoped class from the Google ImageLoader library */
+/* Need it for JRBitmapContentHandler above */
 class JRBlockingFilterInputStream extends FilterInputStream {
 
     public JRBlockingFilterInputStream(InputStream input) {

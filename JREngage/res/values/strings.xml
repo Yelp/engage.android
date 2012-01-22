@@ -4,6 +4,7 @@
     <string name="jr_server_url_lilli">http://lilli.janrain.com:8080</string>
     <string name="jr_server_url_nathan">http://nathan-dev.janrain.com:8080</string>
     <string name="jr_server_url_staging">https://rpxstaging.com</string>
+    <string name="jr_server_url_testing">https://rpxtesting.com</string>
     <string name="jr_server_url_production">https://rpxnow.com</string>
 
     <!-- - Shared/common strings. -->
@@ -45,8 +46,8 @@
     <string name="jr_choose_email_handler">Choose...</string>
     <string name="jr_default_email_share_subject">Check it out...</string>
     <string name="jr_no_social_providers">No social sharing providers are configured.</string>
-    <string name="jr_error_twitter_no_duplicates_allowed">Could not share, Twitter does not allow duplicate status updates.</string>
-    <string name="jr_error_linkedin_too_long">Could not share, this message is too long for LinkedIn.</string>
+    <string name="jr_error_twitter_no_duplicates_allowed">Twitter does not allow duplicate status updates.</string>
+    <string name="jr_error_linkedin_too_long">This message is too long for LinkedIn.</string>
     <string name="jr_error_generic_sharing">There was an error while sharing.</string>
     <string name="jr_sign_out_dialog">Would you like to sign out of</string>
     <string name="jr_sign_out_button">Sign out</string>

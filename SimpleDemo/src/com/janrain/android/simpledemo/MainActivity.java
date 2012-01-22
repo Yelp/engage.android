@@ -32,6 +32,8 @@
 package com.janrain.android.simpledemo;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -169,8 +171,8 @@ public class MainActivity extends FragmentActivity {
         } catch (NullPointerException e) {
             // Only check for app ID, token URL is optional
             if (engageAppId == null) {
-                new AlertDialog.Builder(this).setTitle(
-                        "You need to create assets/app_id.txt, then recompile and reinstall.")
+                new AlertDialog.Builder(this).setTitle("Configuration error")
+                        .setMessage("You need to create assets/app_id.txt, then recompile and reinstall.")
                         .create().show();
                 return;
             }
@@ -235,34 +237,42 @@ public class MainActivity extends FragmentActivity {
             org.apache.http.Header[] headers = response.getHeaders();
             org.apache.http.cookie.Cookie[] cookies = response.getCookies();
             String firstCookieValue = response.getHeaderField("set-cookie");
-
-            Toast.makeText(MainActivity.this, "Authentication did reach token URL: " + tokenUrlPayload,
-                    Toast.LENGTH_LONG).show();
+            showResultDialog("Token URL response", tokenUrlPayload);
+        }
+        
+        private void showResultDialog(String title, String message) {
+            (new AlertDialog.Builder(MainActivity.this)).setTitle(title)
+                    .setMessage(message)
+                    .setNeutralButton("OK", null)
+                    .show();
+        }
+        
+        private void showResultDialog(String title) {
+            showResultDialog(title, null);
         }
 
         public void jrAuthenticationDidNotComplete() {
-            Toast.makeText(MainActivity.this, "Authentication did not complete", Toast.LENGTH_LONG).show();
+            showResultDialog("Authentication did not complete");
         }
 
         public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-            String message = "Authentication failed, error: " +
-                    ((error == null) ? "unknown" : error.getMessage());
+            String message = ((error == null) ? "unknown" : error.getMessage());
 
-            Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+            showResultDialog("Authentication Failed.", message);
         }
 
         public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl,
                                                           JREngageError error,
                                                           String provider) {
-            Toast.makeText(MainActivity.this, "Failed to reach token URL", Toast.LENGTH_LONG).show();
+            showResultDialog("Failed to reach token URL");
         }
 
         public void jrSocialDidNotCompletePublishing() {
-            Toast.makeText(MainActivity.this, "Sharing did not complete", Toast.LENGTH_LONG).show();
+            showResultDialog("Sharing did not complete");
         }
 
         public void jrSocialDidCompletePublishing() {
-            //Toast.makeText(this, "Sharing dialog did complete", Toast.LENGTH_LONG).show();
+            showResultDialog("Sharing did complete");
         }
 
         public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {

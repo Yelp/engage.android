@@ -31,12 +31,15 @@
  */
 package com.janrain.android.engage.ui;
 
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Config;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,13 +51,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
-
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * @internal
@@ -210,8 +210,14 @@ public class JRProviderListFragment extends JRUiFragment {
                     case Activity.RESULT_OK:
                         finishFragmentWithResult(Activity.RESULT_OK);
                         break;
+                    case JRLandingFragment.RESULT_FAIL:
+                        getActivity().setResult(RESULT_FAIL);
+                        getActivity().finish();
+//                    I've seen RESULT_CANCELED before, but I can't figure out what could cause it
+//                    Maybe pressing the back button before the Activity is fully displayed?
+//                    case Activity.RESULT_CANCELED:
                     default:
-                        throw new RuntimeException("unrecognized result code: " + resultCode);
+                        Log.e(TAG, "Unrecognized request/result code " + requestCode + "/" + resultCode);
                 }
                 break;
             case JRUiFragment.REQUEST_WEBVIEW:
@@ -220,22 +226,20 @@ public class JRProviderListFragment extends JRUiFragment {
                         finishFragmentWithResult(Activity.RESULT_OK);
                         break;
                     case JRWebViewFragment.RESULT_FAIL:
-                        finishFragmentWithResult(RESULT_FAIL);
-                        break;
+                        // Fall through
                     case JRWebViewFragment.RESULT_RESTART:
                         break;
                     case JRWebViewFragment.RESULT_BAD_OPENID_URL:
-                        // This result is not expected, but I can't test extensively enough to verify
-                        // that it cannot be returned, therefore if it is returned we log it and display
-                        // the provider selection as usual.
                         Log.e(TAG, "Unexpected RESULT_BAD_OPENID_URL from JRWebView");
                         break;
+//                    See RESULT_CANCELED case above.
+//                    case Activity.RESULT_CANCELED:
                     default:
-                        throw new RuntimeException("unrecognized result code");
+                        Log.e(TAG, "Unrecognized request/result code " + requestCode + "/" + resultCode);
                 }
                 break;
             default:
-                throw new RuntimeException("unexpected requestCode");
+                Log.e(TAG, "Unrecognized request/result code " + requestCode + "/" + resultCode);
         }
     }
 
