@@ -79,6 +79,41 @@ function onDeviceReady()
     );
 }
 
+function moveLogo(upOrDown)
+{
+    var logo = document.getElementById("logo");
+
+    if (upOrDown == "up") {
+        logo.style.marginTop = "40px";
+    } else { /* if (upOrDown == "down") */
+        logo.style.marginTop = "100px";
+    }
+}
+
+function makeSectionVisible(sectionId, visible)
+{
+    var section = document.getElementById(sectionId);
+
+    if (visible) {
+        section.style.display = "block";
+    } else {
+        section.style.display = "none";
+    }
+}
+
+function removeTheChildren(sectionId) {
+    var section = document.getElementById(sectionId);
+
+    for (var i = 0; i < 3; i++) {
+        var table   = section.children[i];
+        var numRows = table.rows.length;
+
+        for (var j = numRows - 1; j > 0; j--) {
+            table.deleteRow(j);
+        }
+    }
+}
+
 function addValueToRowInTable(value, table, baseClassAttr, indentationClassAttr)
 {
     var row      = document.createElement("tr");
@@ -111,10 +146,8 @@ function addValueToRowInTable(value, table, baseClassAttr, indentationClassAttr)
     table.appendChild(row);
 }
 
-function updateTables(resultDictionary)
+function updateAuthTables(resultDictionary)
 {
-    // TODO: Unhide the tables...
-
     addValueToRowInTable(resultDictionary.provider, document.getElementById("providerTable"), "singleRow", "levelOne");
     addValueToRowInTable(resultDictionary.tokenUrl, document.getElementById("tokenUrlTable"), "singleRow", "levelOne");
 
@@ -144,16 +177,83 @@ function updateTables(resultDictionary)
             }
         }
     }
+
+    moveLogo("up");
+    makeSectionVisible("authTables", true);
+}
+
+function updateShareTables(resultDictionary)
+{
+    var signins = resultDictionary.signIns;
+    var shares  = resultDictionary.shares;
+
+    if (signins) {
+        makeSectionVisible("signInsTable", true);
+
+        for (var i = 0; i < signins.length; i++) {
+            var provider = signins[i].provider;
+            var profile = signins[i].auth_info.profile;
+            var name;
+
+            if (profile.displayName) name = profile.displayName;
+            else if (profile.name.formatted) name = profile.name.formatted;
+            else if (profile.name.givenName) name = profile.name.givenName;
+            else name = profile.identifier;
+
+            addValueToRowInTable(provider, document.getElementById("signInsTable"), "valueRow", "levelOne");
+            addValueToRowInTable(name, document.getElementById("signInsTable"), "keyRow", "levelOne");
+        }
+    } else {
+        makeSectionVisible("signInsTable", false);
+    }
+
+    var numGoodShares = 0;
+    var numBadShares  = 0;
+
+    if (shares) {
+        for (i = 0; i < shares.length; i++) {
+            var share = shares[i];
+
+            if (share.stat == "ok") {
+                addValueToRowInTable("Activity Shared On", document.getElementById("goodSharesTable"), "valueRow", "levelOne");
+                addValueToRowInTable(share.provider, document.getElementById("goodSharesTable"), "keyRow", "levelOne");
+
+                numGoodShares++;
+            } else { /* if (share.stat == "fail") */
+                addValueToRowInTable("Activity Failed On", document.getElementById("badSharesTable"), "valueRow", "levelOne");
+                addValueToRowInTable(share.provider, document.getElementById("badSharesTable"), "keyRow", "levelOne");
+
+                addValueToRowInTable("Reason", document.getElementById("badSharesTable"), "valueRow", "levelOne");
+                addValueToRowInTable(share.message, document.getElementById("badSharesTable"), "keyRow", "levelOne");
+
+                numBadShares++;
+            }
+        }
+    }
+
+    if (numGoodShares) makeSectionVisible("goodSharesTable", true);
+    else makeSectionVisible("goodSharesTable", false);
+
+    if (numBadShares) makeSectionVisible("badSharesTable", true);
+    else makeSectionVisible("badSharesTable", false);
+
+    moveLogo("up");
+    makeSectionVisible("shareTables", true);
 }
 
 function handleAuthenticationResult(resultDictionary)
 {
-    var stat    = resultDictionary.stat;
-    var payload = resultDictionary.payload;
-
     // TODO: Check the stat to make sure it's ok
     // TODO: Do something with the payload
-    updateTables(resultDictionary);
+    // var stat    = resultDictionary.stat;
+    // var payload = resultDictionary.payload;
+
+    updateAuthTables(resultDictionary);
+}
+
+function handleSharingResult(resultDictionary)
+{
+    updateShareTables(resultDictionary);
 }
 
 function configurationError(code, message)
@@ -164,6 +264,11 @@ function configurationError(code, message)
 function authenticationError(code, message)
 {
     alert("There was a problem authenticating.\n" + message);
+}
+
+function sharingError(code, message)
+{
+    alert("There was a problem sharing.\n" + message);
 }
 
 function handleAuthenticationError(errorDictionary)
@@ -200,10 +305,48 @@ function handleAuthenticationError(errorDictionary)
     }
 }
 
+function handleSharingError(errorDictionary)
+{
+    var code    = errorDictionary.code;
+    var message = errorDictionary.message;
+
+    if (code == jrEngage.JRUrlError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRDataParsingError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRJsonError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRConfigurationInformationError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRSessionDataFinishGetProvidersError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRDialogShowingError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRProviderNotConfiguredError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRMissingAppIdError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRGenericConfigurationError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRPublishCanceledError) {
+        /* Do nothing in this case */
+    } else {
+        sharingError(code, message);
+    }
+}
+
+function cleanTheUI()
+{
+    removeTheChildren("authTables");
+    removeTheChildren("shareTables");
+    makeSectionVisible("authTables", false);
+    makeSectionVisible("shareTables", false);
+    moveLogo("down");
+}
+
 function showAuthenticationDialog()
 {
-    // TODO: Remove children elements from the tables...
-    // TODO: Hide the tables...
+    cleanTheUI();
 
     jrEngage.showAuthentication(
         function(result)
@@ -228,7 +371,7 @@ function showAuthenticationDialog()
 
 function showSharingDialog()
 {
-//    var activity = "{\"action\":\"this is the action\",\"url\":\"http://janrain.com\",\"resourceTitle\":\"this is the title\",\"resourceDescription\":\"this is the description\"}";
+    cleanTheUI();
 
     var activity =
         '{\
@@ -270,7 +413,7 @@ function showSharingDialog()
 
             console.log(result);
 
-            //handleAuthenticationResult(resultDictionary);
+            handleSharingResult(resultDictionary);
         },
 
         function(error)
@@ -279,7 +422,7 @@ function showSharingDialog()
 
             console.log(error);
 
-            //handleAuthenticationError(errorDictionary);
+            handleSharingError(errorDictionary);
         }
 
     );
