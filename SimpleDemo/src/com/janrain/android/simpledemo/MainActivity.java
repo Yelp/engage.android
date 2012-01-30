@@ -94,7 +94,6 @@ public class MainActivity extends FragmentActivity {
             "parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta " +
             "decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.";
     private String mImageUrl = "http://www.janrain.com/sites/default/themes/janrain/logo.png";
-    private String mDescriptionHtml = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,9 +102,12 @@ public class MainActivity extends FragmentActivity {
 
         setContentView(R.layout.main);
 
+        if (!initEngage()) return;
+
         mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
         mBtnTestAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+//                mEngage.setEnabledAuthenticationProviders(new String[]{"facebook"});
                 mEngage.showAuthenticationDialog();
             }
         });
@@ -146,7 +148,10 @@ public class MainActivity extends FragmentActivity {
                 Prefs.putString(ACTION_LINK_KEY, mActionLink);
             }
         });
-
+        mUrlEditText.setText(Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs"));
+    }
+    
+    private boolean initEngage() {
         String engageAppId = null;
         String engageTokenUrl = null;
         try {
@@ -158,13 +163,15 @@ public class MainActivity extends FragmentActivity {
                 new AlertDialog.Builder(this).setTitle("Configuration error")
                         .setMessage("You need to create assets/app_id.txt, then recompile and reinstall.")
                         .create().show();
-                return;
+                return false;
             }
         }
 
         JREngage.sLoggingEnabled = true;
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, mJREngageDelegate);
-        mUrlEditText.setText(Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs"));
+        if (mEngage == null) return false;
+        
+        return true;
     }
 
     private void buildActivity() {

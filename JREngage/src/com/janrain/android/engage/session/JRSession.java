@@ -74,7 +74,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 
     private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
 //    private static final JREnvironment ENVIRONMENT = JREnvironment.TESTING;
-    //private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
+//    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
     //private static final JREnvironment ENVIRONMENT = JREnvironment.LILLI;
     //private static final JREnvironment ENVIRONMENT = JREnvironment.NATHAN;
 
@@ -377,8 +377,8 @@ public class JRSession implements JRConnectionManagerDelegate {
                 Log.e(TAG, "[connectionDidFail] call to token url failed: " + ex);
                 JREngageError error = new JREngageError(
                         "Error: " + ex.getLocalizedMessage(),
-                        JREngageError.CODE_UNKNOWN,
-                        "",
+                        JREngageError.AuthenticationError.AUTHENTICATION_TOKEN_URL_FAILED,
+                        "Failed to reach authentication token URL",
                         ex);
                 for (JRSessionDelegate delegate : getDelegatesCopy()) {
                     delegate.authenticationCallToTokenUrlDidFail(

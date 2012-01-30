@@ -141,6 +141,16 @@ public class JREngageError {
          * Reserved
          */
         public static final int SESSION_DATA_FINISH_GET_PROVIDERS_ERROR = START + 4;
+
+        /**
+         * Reserved
+         */
+        public static final int DIALOG_SHOWING_ERROR = START + 5;
+
+        /**
+         * Reserved
+         */
+        public static final int PROVIDER_NOT_CONFIGURED_ERROR = START +6;
     }
 
     /**
@@ -159,6 +169,16 @@ public class JREngageError {
          *   JREngageError exception)
          */
         public static final int AUTHENTICATION_FAILED = START;
+
+        /**
+         * Authentication failed to reach the token URL
+         */
+        public static final int AUTHENTICATION_TOKEN_URL_FAILED = START + 1;
+
+        /**
+         * Reserved
+         */
+        public static final int AUTHENTICATION_CANCELED = START + 2;
     }
 
     /**
@@ -179,29 +199,90 @@ public class JREngageError {
         public static final int ACTIVITY_NIL = START + 1;
 
         /**
-         * Social publishing failed because of a missing Engage API key.
+         * Reserved
          */
-        public static final int MISSING_API_KEY = START + 2;
+        public static final int ACTIVITY_NULL = ACTIVITY_NIL;
 
         /**
-         * Engage missing API key parameter error.
+         * Reserved
          */
-        public static final int INVALID_OAUTH_TOKEN = START + 3;
+        public static final int CANCELED_ERROR = START + 2;
+
+        /**
+         * There was a bad connection while publishing.
+         */
+        public static final int BAD_CONNECTION = START + 3;
+
+        /**
+         * Social publishing failed because of a missing parameter.
+         */
+        public static final int MISSING_PARAMETER = START + 4;
+
+        /**
+         * Social publishing failed because of a missing Engage API key.
+         */
+
+        public static final int MISSING_API_KEY = START + 5;
+
+        /**
+         * Character limit exceeded.
+         */
+        public static final int CHARACTER_LIMIT_EXCEEDED = START + 6;
+
+        /**
+         * Generic Facebook error.
+         */
+        public static final int FACEBOOK_GENERIC = START + 7;
+
+        /**
+         * Invalid Facebook session.
+         */
+        public static final int INVALID_FACEBOOK_SESSION = START + 8;
+
+        /**
+         * Invalid Facebook media.
+         */
+        public static final int INVALID_FACEBOOK_MEDIA = START + 9;
+
+        /**
+         * Generic Twitter error.
+         */
+        public static final int TWITTER_GENERIC = START + 10;
 
         /**
          * Duplicate Twitter status update error.
          */
-        public static final int DUPLICATE_TWITTER = START + 4;
+        public static final int DUPLICATE_TWITTER = START + 11;
 
         /**
-         * LinkedIn character count limit exceeded.
+         * Generic LinkedIn error.
          */
-        public static final int LINKEDIN_CHARACTER_EXCEEDED = START + 5;
+        public static final int LINKED_IN_GENERIC = START + 12;
+
+        /**
+         * Generic Myspace error.
+         */
+        public static final int MYSPACE_GENERIC = START + 13;
+
+        /**
+         * Generic Yahoo error.
+         */
+        public static final int YAHOO_GENERIC = START + 14;
 
         /**
          * Facebook feed action request over-limit error.
          */
-        public static final int FEED_ACTION_REQUEST_LIMIT = START + 6;
+        public static final int FEED_ACTION_REQUEST_LIMIT = START + 15;
+
+        /**
+         * Engage missing API key parameter error.
+         */
+        public static final int INVALID_OAUTH_TOKEN = START + 16;
+
+        /**
+         * LinkedIn character count limit exceeded.
+         */
+        public static final int LINKEDIN_CHARACTER_EXCEEDED = START + 17;
     }
 /*@}*/
 

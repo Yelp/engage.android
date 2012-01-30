@@ -341,9 +341,7 @@ public class JREngage {
         public void publishingDidCancel() {
             JREngage.logd(TAG, "[publishingDidCancel]");
 
-            for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrSocialDidNotCompletePublishing();
-            }
+            for (JREngageDelegate delegate : getDelegatesCopy()) delegate.jrSocialDidNotCompletePublishing();
         }
 
         public void publishingDidComplete() {

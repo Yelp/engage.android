@@ -266,7 +266,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
     }
 
     /**
-     * Returns a JRActivityObject initialized with the given action and URL.
+     * Returns a JRActivityObject initialized with the given action.
      *
      * @param action
      *   A string describing what the user did, written in the third person.  This value cannot
@@ -279,6 +279,47 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
         initJRActivityObject(action, "");
     }
 /*@}*/
+
+    /**
+     * Returns a JRActivityObject initialized with the given dictionary.
+     *
+     * @param activity
+     *   A dictionary containing the properties of an activity object.
+     *
+     * @throws IllegalArgumentException
+     *   If activity is null
+     **/
+    public JRActivityObject(JRDictionary activity) {
+        if (activity == null) throw new IllegalArgumentException("illegal null action");
+
+        initJRActivityObject(activity.getAsString("action"), activity.getAsString("url", ""));
+
+        mTitle       = activity.getAsString("resourceTitle");
+        mDescription = activity.getAsString("resourceDescription");
+
+        List<JRDictionary> actionLinks = activity.getAsListOfDictionaries("actionLinks", true);
+
+        for (JRDictionary actionLink : actionLinks) mActionLinks.add(new JRActionLink(actionLink));
+
+        List<JRDictionary> medias;
+        medias = activity.getAsListOfDictionaries("media", true);
+
+        for (JRDictionary mediaObject : medias) {
+            if ((mediaObject).getAsString("type").equals("image")) {
+                mMedia.add(new JRImageMediaObject(mediaObject));
+            } else if ((mediaObject).getAsString("type").equals("flash")) {
+                mMedia.add(new JRFlashMediaObject(mediaObject));
+            } else if ((mediaObject).getAsString("type").equals("mp3")) {
+                mMedia.add(new JRMp3MediaObject(mediaObject));
+            }
+        }
+
+        mProperties = activity.getAsDictionary("properties", true);
+
+        if (activity.containsKey("email")) mEmail = new JREmailObject(activity.getAsDictionary("email"));
+        if (activity.containsKey("sms")) mSms = new JRSmsObject(activity.getAsDictionary("sms"));
+    }
+
 
     private void initJRActivityObject(String action, String url) {
         if (action == null) throw new IllegalArgumentException("illegal null action");

@@ -107,7 +107,27 @@ public class JRSmsObject implements Serializable {
         mUrls = new ArrayList<String>();
     }
 /*@}*/
-    
+
+    /**
+     * @internal
+     * Returns a JRSmsObject initialized with the given dictionary, used for Phonegap plugin.
+     *
+     * @param dictionary
+     *   A dictionary containing the properties of an activity object.
+     *
+     * @throws IllegalArgumentException
+     *   if dictionary is null
+     *
+     * NOTE: This function should not be used directly.  It is intended only for use by the
+     * JREngage library.
+     **/
+    public JRSmsObject(JRDictionary dictionary) {
+        if (dictionary == null) throw new IllegalArgumentException("illegal null action");
+
+        mBody = dictionary.getAsString("message", "");
+        mUrls = dictionary.getAsListOfStrings("urls", true);
+    }
+
     /**
      * @internal
      *
