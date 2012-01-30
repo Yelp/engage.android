@@ -34,6 +34,9 @@ package com.janrain.android.engage.ui;
 import java.net.URL;
 import java.util.List;
 
+import android.app.Dialog;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import org.json.JSONException;
 
 import android.app.Activity;
@@ -75,12 +78,20 @@ import com.janrain.android.engage.utils.AndroidUtils;
  * Container for authentication web view.
  */
 public class JRWebViewFragment extends JRUiFragment {
+    private static final String KEY_DIALOG_TITLE = "jr_dialog_title";
+    private static final String KEY_DIALOG_MESSAGE = "jr_dialog_message";
+    private static final String KEY_PROVIDER_NAME = "jr_saved_provider_name";
+    private static final String KEY_IS_ALERT_SHOWING = "mIsAlertShowing";
+    private static final String KEY_IS_FINISH_PENDING = "mIsFinishPending";
+    private static final String KEY_IS_LOADING_MOBILE_ENDPOINT = "mIsLoadingMobileEndpoint";
+    private static final String KEY_IS_SPINNER_ON = "jr_spinner_on";
+    private static final String JR_RETAIN = "jr_retain_frag";
+    private static final int KEY_ALERT_DIALOG = 1;
+
     public static final int RESULT_RESTART = Activity.RESULT_FIRST_USER;
     public static final int RESULT_FAIL = Activity.RESULT_FIRST_USER + 1;
     public static final int RESULT_BAD_OPENID_URL = Activity.RESULT_FIRST_USER + 2;
     
-    public static final String SOCIAL_SHARING_MODE = "com.janrain.android.engage.SOCIAL_SHARING_MODE";
-
     private WebView mWebView;
     private boolean mIsAlertShowing = false;
     private boolean mIsFinishPending = false;
@@ -89,6 +100,7 @@ public class JRWebViewFragment extends JRUiFragment {
     private JRProvider mProvider;
     private WebSettings mWebViewSettings;
     private ProgressBar mProgressSpinner;
+    private RetainFragment mRetain;
 
     public JRWebViewFragment() {}
 
@@ -134,6 +146,14 @@ public class JRWebViewFragment extends JRUiFragment {
         mWebView.setWebChromeClient(mWebChromeClient);
         mWebView.setDownloadListener(mWebViewDownloadListener);
 
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getBoolean(KEY_IS_SPINNER_ON)) {
+                showProgressSpinner();
+            } else {
+                hideProgressSpinner();
+            }
+        }
+
         return view;
     }
 
@@ -143,19 +163,38 @@ public class JRWebViewFragment extends JRUiFragment {
 
         if (mSession == null) return;
 
-        mProvider = mSession.getCurrentlyAuthenticatingProvider();
+        if (savedInstanceState != null && savedInstanceState.containsKey(KEY_PROVIDER_NAME)) {
+            mProvider = mSession.getProviderByName(savedInstanceState.getString(KEY_PROVIDER_NAME));
+            mIsAlertShowing = savedInstanceState.getBoolean(KEY_IS_ALERT_SHOWING);
+            mIsFinishPending = savedInstanceState.getBoolean(KEY_IS_FINISH_PENDING);
+            mIsLoadingMobileEndpoint = savedInstanceState.getBoolean(KEY_IS_LOADING_MOBILE_ENDPOINT);
+            configureWebViewUa();
+            mWebView.restoreState(savedInstanceState);
+        } else {
+            mProvider = mSession.getCurrentlyAuthenticatingProvider();
+            configureWebViewUa();
+            URL startUrl = mSession.startUrlForCurrentlyAuthenticatingProvider();
+            mWebView.loadUrl(startUrl.toString());
+        }
 
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        mRetain = (RetainFragment) fm.findFragmentByTag(JR_RETAIN);
+        if (mRetain == null) {
+            mRetain = new RetainFragment();
+            mRetain.setTargetFragment(this, 0);
+            fm.beginTransaction().add(mRetain, JR_RETAIN);
+        }
+    }
+    
+    private void configureWebViewUa() {
         String customUa = mProvider.getWebViewOptions().getAsString(JRDictionary.KEY_USER_AGENT);
-//        if (mUseDesktopUa) mWebViewSettings.setUserAgentString(getString(R.string.jr_desktop_browser_ua));
+        //        if (mUseDesktopUa) mWebViewSettings.setUserAgentString(getString(R.string.jr_desktop_browser_ua));
         if (customUa != null) mWebViewSettings.setUserAgentString(customUa);
-
-        URL startUrl = mSession.startUrlForCurrentlyAuthenticatingProvider();
-        mWebView.loadUrl(startUrl.toString());
     }
 
     @Override
     public void onDestroyView() {
-        // onDestroy may be called even if onCreateView never is, guard against NPEs
+        // onDestroy may be called even if onCreateView never is, guard against nulls
         if (mWebView != null) {
             mWebView.stopLoading();
 
@@ -170,22 +209,62 @@ public class JRWebViewFragment extends JRUiFragment {
         super.onDestroyView();
     }
 
+    @Override
+    protected void finishFragment() {
+        getActivity().getSupportFragmentManager().beginTransaction().remove(mRetain).commit();
+        super.finishFragment();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(KEY_PROVIDER_NAME, mProvider.getName());
+        outState.putBoolean(KEY_IS_ALERT_SHOWING, mIsAlertShowing);
+        outState.putBoolean(KEY_IS_FINISH_PENDING, mIsFinishPending);
+        outState.putBoolean(KEY_IS_LOADING_MOBILE_ENDPOINT, mIsLoadingMobileEndpoint);
+        outState.putBoolean(KEY_IS_SPINNER_ON, mProgressSpinner.getVisibility() == View.VISIBLE);
+//        outState.putString(KEY_WEBVIEW_URL, );
+        mWebView.saveState(outState);
+
+        super.onSaveInstanceState(outState);
+    }
+
     private void showAlertDialog(String title, String message) {
-        // XXX these Dialogs won't work correctly if this Fragment is embedded in an activity which
-        // destroys and recreates itself on configuration change.
+        Bundle options = new Bundle();
+        options.putString(KEY_DIALOG_TITLE, title);
+        options.putString(KEY_DIALOG_MESSAGE, message);
+        showDialog(KEY_ALERT_DIALOG, options);
         mIsAlertShowing = true;
-        new AlertDialog.Builder(getActivity())
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(getString(R.string.jr_dialog_ok), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    mIsAlertShowing = false;
-                    if (mIsFinishPending) {
-                        mIsFinishPending = false;
-                        tryToFinishFragment();
-                    }
-                }
-            }).show();
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id, Bundle options) {
+        if (id == KEY_ALERT_DIALOG) {
+            return new AlertDialog.Builder(getActivity())
+                    .setTitle(options.getString(KEY_DIALOG_TITLE))
+                    .setMessage(options.getString(KEY_DIALOG_MESSAGE))
+                    .setPositiveButton(getString(R.string.jr_dialog_ok), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            mIsAlertShowing = false;
+                            if (mIsFinishPending) {
+                                mIsFinishPending = false;
+                                tryToFinishFragment();
+                            }
+                        }
+                    }).create();
+        }
+        
+        return super.onCreateDialog(id, options);
+    }
+
+    @Override
+    protected void onPrepareDialog(int id, Dialog d, Bundle options) {
+        if (id == KEY_ALERT_DIALOG) {
+            d.setTitle(options.getString(KEY_DIALOG_TITLE));
+            ((AlertDialog) d).setMessage(options.getString(KEY_DIALOG_MESSAGE));
+            return;
+        }
+
+        super.onPrepareDialog(id, d, options);
     }
 
     @Override
@@ -237,13 +316,12 @@ public class JRWebViewFragment extends JRUiFragment {
         JREngage.logd(TAG, "[loadMobileEndpointUrl] loading URL: " + urlToLoad);
 
 
-        JRConnectionManager.createConnection(urlToLoad, mMobileEndPointConnectionDelegate, null);
+        JRConnectionManager.createConnection(urlToLoad, mRetain.mConnectionDelegate, null);
     }
 
     private DownloadListener mWebViewDownloadListener = new DownloadListener() {
         /**
-         * Invoked by WebKit when there is something to be downloaded that it does not
-         * typically handle (e.g. result of post, mobile endpoint url results, etc).
+         * Used by pre 2.3 (2.2?) instead of shouldOverrideUrlLoading because of platform bugs.
          */
         public void onDownloadStart(String url,
                                     String userAgent,
@@ -357,125 +435,6 @@ public class JRWebViewFragment extends JRUiFragment {
         }
     };
 
-    private JRConnectionManagerDelegate mMobileEndPointConnectionDelegate =
-            new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
-        @Override
-        public void connectionDidFinishLoading(HttpResponseHeaders headers,
-                                               byte[] payload,
-                                               String requestUrl,
-                                               Object tag) {
-            String payloadString = new String(payload);
-            JREngage.logd(TAG, "[connectionDidFinishLoading] tag: " + tag + " | payload: " + payloadString);
-
-            hideProgressSpinner();
-
-            JRDictionary payloadDictionary;
-            String alertTitle, alertMessage, logMessage;
-            try {
-                payloadDictionary = JRDictionary.fromJSON(payloadString);
-            } catch (JSONException e) {
-                Log.e(TAG, "[connectionDidFinishLoading] failure: " + payloadString);
-                mIsFinishPending = true;
-                setFragmentResult(RESULT_FAIL);
-                showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
-                        getString(R.string.jr_webview_error_dialog_msg));
-                return;
-            }
-
-            JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
-            final String result = resultDictionary.getAsString("stat");
-            if ("ok".equals(result)) {
-                // TODO back button is no longer disabled because of the switch from modal dialog
-                // to progress spinner, fix the code path when the user hits the back button now.
-
-                if (!isSocialSharingFlow()) mSession.saveLastUsedBasicProvider();
-                mSession.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
-                finishFragmentWithResult(Activity.RESULT_OK);
-            } else {
-                final String error = resultDictionary.getAsString("error");
-
-                if ("Discovery failed for the OpenID you entered".equals(error) ||
-                        "Your OpenID must be a URL".equals(error)) {
-                    alertTitle = getString(R.string.jr_webview_bad_user_input_title);
-                    if (mProvider.requiresInput()) {
-                        String s = mProvider.getUserInputDescriptor();
-                        alertMessage = getString(R.string.jr_webview_bad_user_input_message, s);
-                    } else {
-                        alertMessage = getString(R.string.jr_webview_generic_auth_error_message);
-                        Log.e(TAG, "[connectionDidFinishLoading]: unrecognized openid error");
-                    }
-
-                    mIsFinishPending = true;
-                    setFragmentResult(RESULT_BAD_OPENID_URL);
-                    showAlertDialog(alertTitle, alertMessage);
-                //} else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
-                // The error text changed :/
-                } else if (error.matches(".*you entered does not appear to be an OpenID")) {
-                    alertTitle = getString(R.string.jr_webview_bad_user_input_title);
-                    if (mProvider.requiresInput()) {
-                        alertMessage = getString(R.string.jr_webview_bad_user_input_message,
-                                mProvider.getUserInputDescriptor());
-                    } else {
-                        alertMessage = getString(R.string.jr_webview_generic_auth_error_message);
-                    }
-
-                    logMessage = "The URL you entered does not appear to be an OpenID: ";
-                    Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
-
-                    mIsFinishPending = true;
-                    setFragmentResult(RESULT_BAD_OPENID_URL);
-                    showAlertDialog(alertTitle, alertMessage);
-                } else if ("Please enter your OpenID".equals(error)) {
-                    // Caused by entering a ~blank OpenID URL
-
-                    mIsFinishPending = true;
-                    setFragmentResult(RESULT_BAD_OPENID_URL);
-                    // TODO resource-ify
-                    showAlertDialog("OpenID Error", "The URL you entered does not appear to be an OpenID");
-                } else if ("canceled".equals(error)) {
-                    mProvider.setForceReauth(true);
-                    mSession.triggerAuthenticationDidRestart();
-                    finishFragmentWithResult(RESULT_RESTART);
-                } else {
-                    Log.e(TAG, "unrecognized error: " + error);
-                    JREngageError err = new JREngageError(
-                            "Authentication failed: " + payloadString,
-                            JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                            JREngageError.ErrorType.AUTHENTICATION_FAILED);
-
-                    mSession.triggerAuthenticationDidFail(err);
-                    setFragmentResult(RESULT_FAIL);
-                    mIsFinishPending = true;
-                    showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
-                            getString(R.string.jr_webview_error_dialog_msg));
-                }
-            }
-        }
-
-        @Override
-        public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
-            JREngage.logd(TAG, "[connectionDidFail] userdata: " + tag, ex);
-
-            if (isShowing()) {
-                // This is designed to not run if the user pressed the back button after the MEU started
-                // loading but before it failed.
-                // The test is probably not quite right and that if the timing is bad both onBackPressed()
-                // and this method will call setResult
-                final JREngageError error = new JREngageError(
-                        "Authentication failed",
-                        JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                        JREngageError.ErrorType.AUTHENTICATION_FAILED,
-                        ex);
-
-                mSession.triggerAuthenticationDidFail(error);
-                mIsFinishPending = true;
-                setFragmentResult(RESULT_FAIL);
-                showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
-                        getString(R.string.jr_dialog_network_error));
-            }
-        }
-    };
-
     @Override
     protected void onBackPressed() {
         mSession.triggerAuthenticationDidRestart();
@@ -485,4 +444,213 @@ public class JRWebViewFragment extends JRUiFragment {
 //    public void setUseDesktopUa(boolean use) {
 //        mUseDesktopUa = use;
 //    }
+
+    JRConnectionManagerDelegate mMobileEndPointConnectionDelegate =
+            new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
+                @Override
+                public void connectionDidFinishLoading(HttpResponseHeaders headers,
+                                                       byte[] payload,
+                                                       String requestUrl,
+                                                       Object tag) {
+                    String payloadString = new String(payload);
+                    JREngage.logd(TAG, "[connectionDidFinishLoading] tag: " + tag + " | payload: " + payloadString);
+
+                    hideProgressSpinner();
+
+                    JRDictionary payloadDictionary;
+                    String alertTitle, alertMessage, logMessage;
+                    try {
+                        payloadDictionary = JRDictionary.fromJSON(payloadString);
+                    } catch (JSONException e) {
+                        Log.e(TAG, "[connectionDidFinishLoading] failure: " + payloadString);
+                        mIsFinishPending = true;
+                        setFragmentResult(RESULT_FAIL);
+                        showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
+                                getString(R.string.jr_webview_error_dialog_msg));
+                        return;
+                    }
+
+                    JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
+                    final String result = resultDictionary.getAsString("stat");
+                    if ("ok".equals(result)) {
+                        // TODO back button is no longer disabled because of the switch from modal dialog
+                        // to progress spinner, fix the code path when the user hits the back button now.
+
+                        if (!isSocialSharingFlow()) mSession.saveLastUsedBasicProvider();
+                        mSession.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
+                        finishFragmentWithResult(Activity.RESULT_OK);
+                    } else {
+                        final String error = resultDictionary.getAsString("error");
+
+                        if ("Discovery failed for the OpenID you entered".equals(error) ||
+                                "Your OpenID must be a URL".equals(error)) {
+                            alertTitle = getString(R.string.jr_webview_bad_user_input_title);
+                            if (mProvider.requiresInput()) {
+                                String s = mProvider.getUserInputDescriptor();
+                                alertMessage = getString(R.string.jr_webview_bad_user_input_message, s);
+                            } else {
+                                alertMessage = getString(R.string.jr_webview_generic_auth_error_message);
+                                Log.e(TAG, "[connectionDidFinishLoading]: unrecognized openid error");
+                            }
+
+                            mIsFinishPending = true;
+                            setFragmentResult(RESULT_BAD_OPENID_URL);
+                            showAlertDialog(alertTitle, alertMessage);
+                            //} else if ("The URL you entered does not appear to be an OpenID".equals(error)) {
+                            // The error text changed :/
+                        } else if (error.matches(".*you entered does not appear to be an OpenID")) {
+                            alertTitle = getString(R.string.jr_webview_bad_user_input_title);
+                            if (mProvider.requiresInput()) {
+                                alertMessage = getString(R.string.jr_webview_bad_user_input_message,
+                                        mProvider.getUserInputDescriptor());
+                            } else {
+                                alertMessage = getString(R.string.jr_webview_generic_auth_error_message);
+                            }
+
+                            logMessage = "The URL you entered does not appear to be an OpenID: ";
+                            Log.w(TAG, "[connectionDidFinishLoading] " + logMessage + alertMessage);
+
+                            mIsFinishPending = true;
+                            setFragmentResult(RESULT_BAD_OPENID_URL);
+                            showAlertDialog(alertTitle, alertMessage);
+                        } else if ("Please enter your OpenID".equals(error)) {
+                            // Caused by entering a ~blank OpenID URL
+
+                            mIsFinishPending = true;
+                            setFragmentResult(RESULT_BAD_OPENID_URL);
+                            // TODO resource-ify
+                            showAlertDialog("OpenID Error", "The URL you entered does not appear to be an OpenID");
+                        } else if ("canceled".equals(error)) {
+                            mProvider.setForceReauth(true);
+                            mSession.triggerAuthenticationDidRestart();
+                            finishFragmentWithResult(RESULT_RESTART);
+                        } else {
+                            Log.e(TAG, "unrecognized error: " + error);
+                            JREngageError err = new JREngageError(
+                                    "Authentication failed: " + payloadString,
+                                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
+
+                            mSession.triggerAuthenticationDidFail(err);
+                            setFragmentResult(RESULT_FAIL);
+                            mIsFinishPending = true;
+                            showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
+                                    getString(R.string.jr_webview_error_dialog_msg));
+                        }
+                    }
+                }
+
+                @Override
+                public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
+                    JREngage.logd(TAG, "[connectionDidFail] userdata: " + tag, ex);
+
+                    if (isShowing()) {
+                        // This is designed to not run if the user pressed the back button after the MEU started
+                        // loading but before it failed.
+                        // The test is probably not quite right and that if the timing is bad both onBackPressed()
+                        // and this method will call setResult
+                        final JREngageError error = new JREngageError(
+                                "Authentication failed",
+                                JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                                JREngageError.ErrorType.AUTHENTICATION_FAILED,
+                                ex);
+
+                        mSession.triggerAuthenticationDidFail(error);
+                        mIsFinishPending = true;
+                        setFragmentResult(RESULT_FAIL);
+                        showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
+                                getString(R.string.jr_dialog_network_error));
+                    }
+                }
+            };
+
+    /**
+     * This class serves to respond to the MEU connection and delegates the result to the real fragment.
+     * This is necessary because the real fragment can be destroyed and recreated if it's  in an Activity
+     * which is destroyed and recreated because it cannot setRetainInstance(true) because it may be added to
+     * the back stack.
+      */
+    private static class RetainFragment extends Fragment {
+        JRWebViewFragment mTarget;
+
+        /* The deferred connectionDidFinishLoading message */
+        HttpResponseHeaders mDeferredCdflH;
+        byte[] mDeferredCdflBa;
+        String mDeferredCdflS;
+        Object mDeferredCdflO;
+
+        /* The deferred connectionDidFail message */
+        Exception mDeferredCdfE;
+        String mDeferredCdfS;
+        Object mDeferredCdfO;
+        
+        
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            setRetainInstance(true);
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            mTarget = (JRWebViewFragment) getTargetFragment();
+
+            /* If we have a deferred callback, post it. */
+            if (mDeferredCdflH != null) {
+                mTarget.mMobileEndPointConnectionDelegate.connectionDidFinishLoading(
+                        mDeferredCdflH, mDeferredCdflBa, mDeferredCdflS, mDeferredCdflO);
+                mDeferredCdflH = null;
+                mDeferredCdflBa = null;
+                mDeferredCdflS = null;
+                mDeferredCdflO = null;
+            }
+
+            if (mDeferredCdfE != null) {
+                mTarget.mMobileEndPointConnectionDelegate.connectionDidFail(
+                        mDeferredCdfE, mDeferredCdfS, mDeferredCdfO);
+                mDeferredCdfE = null;
+                mDeferredCdfS = null;
+                mDeferredCdfO = null;
+            }
+        }
+
+        @Override
+        public void onStop() {
+            super.onStop();
+            mTarget = null;
+
+        }
+
+        /* These callbacks occur on the UI thread so I think it's safe not to lock writes to the arg vars. */
+        JRConnectionManagerDelegate mConnectionDelegate = new JRConnectionManagerDelegate() {
+            public void connectionDidFinishLoading(HttpResponseHeaders headers,
+                                                   byte[] payload,
+                                                   String requestUrl,
+                                                   Object tag) {
+                if (mTarget != null && isResumed()) {
+                    /* We can delegate the message immediately */
+                    mTarget.mMobileEndPointConnectionDelegate.connectionDidFinishLoading(headers, payload,
+                            requestUrl, tag);
+                } else {
+                    /* Save the message */
+                    mDeferredCdflH = headers;
+                    mDeferredCdflBa = payload;
+                    mDeferredCdflS = requestUrl;
+                    mDeferredCdflO = tag;
+                }
+            }
+
+            public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
+                if (mTarget != null && isResumed()) {
+                    mTarget.mMobileEndPointConnectionDelegate.connectionDidFail(ex, requestUrl, tag);
+                } else {
+                    mDeferredCdfE = ex;
+                    mDeferredCdfS = requestUrl;
+                    mDeferredCdfO = tag;
+                }
+            }
+        };
+    }
 }
