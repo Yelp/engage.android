@@ -329,7 +329,7 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
             mFullSharingResponse = new JRDictionary();
 
         if (mAuthenticationBlobs != null)
-            mFullSharingResponse.put("sign-ins", mAuthenticationBlobs);
+            mFullSharingResponse.put("signIns", mAuthenticationBlobs);
 
         if (mShareBlobs != null)
             mFullSharingResponse.put("shares", mShareBlobs);

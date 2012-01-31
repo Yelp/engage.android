@@ -206,16 +206,22 @@ public class JRSession implements JRConnectionManagerDelegate {
              * to update our current configuration information. */
             mOldEtag = Prefs.getString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
         } catch (Archiver.LoadException e) {
+            Log.e(TAG, "LoadException loading serialized configuration, initializing from empty state", e);
             /* Blank slate */
             mAuthenticatedUsersByProvider = new HashMap<String, JRAuthenticatedUser>();
+            Archiver.save(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
             mAllProviders = new HashMap<String, JRProvider>();
+            Archiver.save(ARCHIVE_ALL_PROVIDERS, mAllProviders);
             mBasicProviders = new ArrayList<String>();
+            Archiver.save(ARCHIVE_BASIC_PROVIDERS, mBasicProviders);
             mSocialProviders = new ArrayList<String>();
+            Archiver.save(ARCHIVE_SOCIAL_PROVIDERS, mSocialProviders);
             mBaseUrl = "";
             mHidePoweredBy = true;
             mReturningSocialProvider = "";
             mReturningBasicProvider = "";
             mOldEtag = "";
+            mGetConfigDone = false;
         }
 
         mError = startGetConfiguration();
