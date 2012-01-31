@@ -90,17 +90,19 @@ import java.util.List;
  * Publishing UI, embeddable in a android.support.v4.app.FragmentActivity
  */
 public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChangeListener {
-    public static final String KEY_ACTIVITY_OBJECT = "jr_activity_object";
-    public static final String KEY_PROVIDER_SHARE_MAP = "jr_provider_sharedness_map";
-    public static final String KEY_DIALOG_ERROR_MESSAGE = "jr_dialog_error_message";
-    public static final String KEY_DIALOG_PROVIDER_NAME = "jr_dialog_provider_name";
-    public static final String KEY_SELECTED_TAB = "jr_selected_tab";
+    private static final String KEY_ACTIVITY_OBJECT             = "jr_activity_object";
+    private static final String KEY_PROVIDER_SHARE_MAP          = "jr_provider_sharedness_map";
+    private static final String KEY_DIALOG_ERROR_MESSAGE        = "jr_dialog_error_message";
+    private static final String KEY_DIALOG_PROVIDER_NAME        = "jr_dialog_provider_name";
+    private static final String KEY_SELECTED_TAB                = "jr_selected_tab";
+    private static final String KEY_HAVE_ALREADY_SHARED_BOOLEAN = "jr_have_already_shared_bool";
 
-    private static final int DIALOG_FAILURE = 1;
-    private static final int DIALOG_CONFIRM_SIGNOUT = 3;
+    private static final int DIALOG_FAILURE               = 1;
+    private static final int DIALOG_CONFIRM_SIGNOUT       = 3;
     private static final int DIALOG_MOBILE_CONFIG_LOADING = 4;
-    private static final int DIALOG_NO_EMAIL_CLIENT = 5;
-    private static final int DIALOG_NO_SMS_CLIENT = 6;
+    private static final int DIALOG_NO_EMAIL_CLIENT       = 5;
+    private static final int DIALOG_NO_SMS_CLIENT         = 6;
+
     private static final String EMAIL_SMS_TAB_TAG = "email_sms";
 
     /* JREngage objects we're operating with */
@@ -121,8 +123,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     /* UI state transitioning variables */
     private boolean mWeHaveJustAuthenticated = false;
-    private boolean mWaitingForMobileConfig = false;
-    private boolean mAuthenticatingForShare = false;
+    private boolean mWaitingForMobileConfig  = false;
+    private boolean mAuthenticatingForShare  = false;
+    private boolean mWeHaveAlreadyShared     = false;
 
     /* UI views */
     private LinearLayout mPreviewBoxBorder;
@@ -144,6 +147,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private ColorButton mSmsButton;
     private EditText mEmailSmsComment;
     private TabHost mTabHost;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -244,6 +248,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             if (mProvidersThatHaveAlreadyShared == null) {
                 mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
             }
+
+            // Try and retrieve the haveAlreadyShared boolean
+            mWeHaveAlreadyShared = savedInstanceState.getBoolean(KEY_HAVE_ALREADY_SHARED_BOOLEAN);
         }
 
         if (mJrActivity == null) {
@@ -420,6 +427,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         outState.putSerializable(KEY_ACTIVITY_OBJECT, mJrActivity);
         outState.putSerializable(KEY_PROVIDER_SHARE_MAP, mProvidersThatHaveAlreadyShared);
         outState.putSerializable(KEY_SELECTED_TAB, mSelectedTab);
+        outState.putBoolean(KEY_HAVE_ALREADY_SHARED_BOOLEAN, mWeHaveAlreadyShared);
 
         super.onSaveInstanceState(outState);
     }
@@ -1066,6 +1074,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             JREngage.logd(TAG, "[publishingJRActivityDidSucceed]");
 
             mProvidersThatHaveAlreadyShared.put(provider, true);
+            mWeHaveAlreadyShared = true;
 
             dismissProgressDialog();
             showActivityAsShared(true);
@@ -1151,8 +1160,14 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     protected void onBackPressed() {
-        mSession.triggerPublishingDidComplete();
-        getActivity().setResult(Activity.RESULT_OK);
+        if (mWeHaveAlreadyShared) {
+            mSession.triggerPublishingDidComplete();
+            getActivity().setResult(Activity.RESULT_OK);
+        } else {
+            mSession.triggerPublishingDidCancel();
+            getActivity().setResult(Activity.RESULT_CANCELED);
+        }
+
         getActivity().finish();
     }
 }

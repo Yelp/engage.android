@@ -150,7 +150,17 @@ public class JREngageError {
         /**
          * Reserved
          */
-        public static final int PROVIDER_NOT_CONFIGURED_ERROR = START +6;
+        public static final int PROVIDER_NOT_CONFIGURED_ERROR = START + 6;
+
+        /**
+         * The appId argument passed to the JREngage Phonegap plugin was null.
+         */
+        public static final int MISSING_APP_ID_ERROR = START + 7;
+
+        /**
+         * There was an error configuring JREngage for the JREngage Phonegap plugin: JREngage was null.
+         */
+        public static final int GENERIC_CONFIGURATION_ERROR = START + 8;
     }
 
     /**
@@ -204,85 +214,92 @@ public class JREngageError {
         public static final int ACTIVITY_NULL = ACTIVITY_NIL;
 
         /**
+         *
+         */
+        public static final int BAD_ACTIVITY_JSON = START + 2;
+
+        /**
          * Reserved
          */
-        public static final int CANCELED_ERROR = START + 2;
+        public static final int CANCELED_ERROR = START + 3;
 
         /**
          * There was a bad connection while publishing.
          */
-        public static final int BAD_CONNECTION = START + 3;
+        public static final int BAD_CONNECTION = START + 4;
 
         /**
          * Social publishing failed because of a missing parameter.
          */
-        public static final int MISSING_PARAMETER = START + 4;
+        public static final int MISSING_PARAMETER = START + 5;
 
         /**
          * Social publishing failed because of a missing Engage API key.
          */
 
-        public static final int MISSING_API_KEY = START + 5;
+        public static final int MISSING_API_KEY = START + 6;
 
         /**
          * Character limit exceeded.
          */
-        public static final int CHARACTER_LIMIT_EXCEEDED = START + 6;
+        public static final int CHARACTER_LIMIT_EXCEEDED = START + 7;
 
         /**
          * Generic Facebook error.
          */
-        public static final int FACEBOOK_GENERIC = START + 7;
+        public static final int FACEBOOK_GENERIC = START + 8;
 
         /**
          * Invalid Facebook session.
          */
-        public static final int INVALID_FACEBOOK_SESSION = START + 8;
+        public static final int INVALID_FACEBOOK_SESSION = START + 9;
 
         /**
          * Invalid Facebook media.
          */
-        public static final int INVALID_FACEBOOK_MEDIA = START + 9;
+        public static final int INVALID_FACEBOOK_MEDIA = START + 10;
 
         /**
          * Generic Twitter error.
          */
-        public static final int TWITTER_GENERIC = START + 10;
+        public static final int TWITTER_GENERIC = START + 11;
 
         /**
          * Duplicate Twitter status update error.
          */
-        public static final int DUPLICATE_TWITTER = START + 11;
+        public static final int DUPLICATE_TWITTER = START + 12;
 
         /**
          * Generic LinkedIn error.
          */
-        public static final int LINKED_IN_GENERIC = START + 12;
+        public static final int LINKED_IN_GENERIC = START + 13;
 
         /**
          * Generic Myspace error.
          */
-        public static final int MYSPACE_GENERIC = START + 13;
+        public static final int MYSPACE_GENERIC = START + 14;
 
         /**
          * Generic Yahoo error.
          */
-        public static final int YAHOO_GENERIC = START + 14;
+        public static final int YAHOO_GENERIC = START + 15;
 
         /**
          * Facebook feed action request over-limit error.
          */
-        public static final int FEED_ACTION_REQUEST_LIMIT = START + 15;
+        public static final int FEED_ACTION_REQUEST_LIMIT = START + 16;
 
-        /**
+        /*
+         * @deprecated (TODO)
          * Engage missing API key parameter error.
          */
-        public static final int INVALID_OAUTH_TOKEN = START + 16;
+        public static final int INVALID_OAUTH_TOKEN = START + 17;
 
-        /**
+        /*
+         * @deprecated (TODO)
          * LinkedIn character count limit exceeded.
          */
-        public static final int LINKEDIN_CHARACTER_EXCEEDED = START + 17;
+        public static final int LINKEDIN_CHARACTER_EXCEEDED = START + 18;
     }
 /*@}*/
 
