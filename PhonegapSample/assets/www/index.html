@@ -56,57 +56,38 @@
     <div id="main">
       <!--<h1>Hey, it's PhoneGap!</h1>-->
 
-      <img class="logo" src="./janrain_logo.png"/>
+      <img id="logo" src="./janrain_logo.png"/>
 
-      <!--<div class="button"><button onclick="testJREngagePlugin()">Test the Plugin</button></div>-->
+      <!--<br />-->
 
-      <br />
+      <div class="button" onclick="showAuthenticationDialog()"><p>Sign In</p></div>
 
-      <div class="button"><button onclick="showAuthenticationDialog()">Sign In</button></div>
-
-      <br />
-
-      <div class="button"><button onclick="showSharingDialog()">Share</button></div>
-
-      <br />
-
-        <script type="text/javascript">
-            var c;
-            function viewportTwiddle() {
-                if (c) {
-                    document.head.appendChild(c);
-                    c = undefined;
-                    return;
-                }
-
-                var a = document.head.getElementsByTagName("meta");
-                for (var i = 0; i < a.length; i++) {
-                    var b = a [i];
-                    if (!b) continue;
-                    if (!b.name) continue;
-                    if (b.name.toLocaleLowerCase() == "viewport") {
-                        c = b;
-                        document.head.removeChild(b);
-                    }
-                }
-            }
-        </script>
-      <!--<div class="button"><button onclick="viewportTwiddle()">Viewport Twiddle</button></div>-->
+      <div class="button" onclick="showSharingDialog()"><p>Share</p></div>
 
       <div class="janrainLink"><a href="http://janrain.com">http://janrain.com</a></div>
 
       <br />
 
-      <table id="providerTable" class="phonegapTable"><tr><th>Provider</th></tr></table>
-      <table id="tokenUrlTable" class="phonegapTable"><tr><th>Token Url</th></tr></table>
-      <table id="profileTable"  class="phonegapTable"><tr><th>User Profile</th></tr></table>
+      <div id="authTables" class="authTables">
+          <table id="providerTable" class="phonegapTable"><tr><th>Provider</th></tr></table>
+          <table id="tokenUrlTable" class="phonegapTable"><tr><th>Token Url</th></tr></table>
+          <table id="profileTable"  class="phonegapTable"><tr><th>User Profile</th></tr></table>
+      </div>
+
+      <div id="shareTables" class="shareTables">
+          <table id="signInsTable"    class="phonegapTable"><tr><th>Sign-Ins</th></tr></table>
+          <table id="goodSharesTable" class="phonegapTable"><tr><th>Successful Shares</th></tr></table>
+          <table id="badSharesTable"  class="phonegapTable"><tr><th>Failed Shares</th></tr></table>
+      </div>
+
       <br/>
 
       <!--<div id="push"></div>-->
     </div>
   </div>
   <div id="footer">
-    <span class="poweredBy">Powered by Janrain</span>
+      <span class="poweredBy">Powered by Janrain</span>
   </div>
 </body>
 </html>
+
