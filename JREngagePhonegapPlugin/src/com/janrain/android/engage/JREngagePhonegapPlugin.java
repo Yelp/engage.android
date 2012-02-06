@@ -143,7 +143,7 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
             }
         }
 
-        Log.d(TAG, "[JREngagePhoneGapWrapper] mWaitingForLibrary = false");
+        Log.d(TAG, "[JREngagePhoneGapWrapper] mWaitingForLibrary = false" + mResult.getJSONString());
 
         return mResult;
     }

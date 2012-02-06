@@ -117,9 +117,11 @@ public class JRAuthenticatedUser implements Serializable {
     public String getDisplayName() {
         return mDisplayName;
     }
+    
+    public static class ProfilePicMissingException extends Exception {}
 
-    public String getCachedProfilePicKey() {
-        if (mPhoto == null) throw new UnsupportedOperationException("JRAuthenticatedUser has no photo");
+    public String getCachedProfilePicKey() throws ProfilePicMissingException {
+        if (TextUtils.isEmpty(mPhoto)) throw new ProfilePicMissingException();
         return AndroidUtils.urlEncode(mPhoto);
     }
 
@@ -131,6 +133,8 @@ public class JRAuthenticatedUser implements Serializable {
         FileInputStream fis;
         try {
             fis = getContext().openFileInput("userpic~" + getCachedProfilePicKey());
+        } catch (ProfilePicMissingException e) {
+            return;
         } catch (FileNotFoundException e) {
             fis = null;
         } catch (UnsupportedOperationException e) {
@@ -155,6 +159,8 @@ public class JRAuthenticatedUser implements Serializable {
                                 fos.close();
                                 Bitmap bitmap = BitmapFactory.decodeByteArray(payload, 0, payload.length);
                                 callback.onProfilePicAvailable(bitmap);
+                            } catch (ProfilePicMissingException e) {
+                                // Can't happen, would be caught above.
                             } catch (IOException e) {
                                 Log.e(TAG, "profile pic image loader exception: " + e.toString());
                             }
@@ -164,7 +170,9 @@ public class JRAuthenticatedUser implements Serializable {
     }
 
     public void deleteCachedProfilePic() {
-        getContext().deleteFile("userpic~" + getCachedProfilePicKey());
+        try {
+            getContext().deleteFile("userpic~" + getCachedProfilePicKey());
+        } catch (ProfilePicMissingException ignore) {}
     }
 
     public interface ProfilePicAvailableListener {
