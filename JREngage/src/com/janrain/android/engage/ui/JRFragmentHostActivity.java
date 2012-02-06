@@ -74,6 +74,10 @@ public class JRFragmentHostActivity extends FragmentActivity {
         /* For the case when this activity is relaunched after the process was killed */
         if (mSession == null) {
             Log.e(TAG, "bailing out after a process kill/restart");
+
+            // May be needed to prevent fragment recreation error
+            setContentView(R.layout.jr_fragment_host_activity);
+
             finish();
             return;
         }
@@ -81,6 +85,9 @@ public class JRFragmentHostActivity extends FragmentActivity {
         if (savedInstanceState != null) {
             /* This flow control path is reached when there's process death and restart */
             Log.e(TAG, "bailing out after a process kill/restart (with non-null JRSession");
+
+            // May be needed to prevent fragment recreation error
+            setContentView(R.layout.jr_fragment_host_activity);
             finish();
             return;
 

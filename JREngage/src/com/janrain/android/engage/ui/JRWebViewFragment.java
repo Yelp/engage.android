@@ -143,6 +143,7 @@ public class JRWebViewFragment extends JRUiFragment {
         if (mSession == null) return;
         mIsSocialSharingSignIn = getActivity().getIntent().getExtras().getBoolean(SOCIAL_SHARING_MODE);
         mProvider = mSession.getCurrentlyAuthenticatingProvider();
+        if (mProvider == null) return;
 
         String customUa = mProvider.getWebViewOptions().getAsString(JRDictionary.KEY_USER_AGENT);
 //        if (mUseDesktopUa) mWebViewSettings.setUserAgentString(getString(R.string.jr_desktop_browser_ua));
