@@ -47,6 +47,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.util.Config;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -267,6 +268,7 @@ public abstract class JRUiFragment extends Fragment {
         //menu.add("test");
 
         if (mSession == null || mSession.getHidePoweredBy()) {
+            Log.e(TAG, "Bailing out of onCreateOptionsMenu");
             return;
         } else {
             inflater.inflate(R.menu.jr_about_menu, menu);
@@ -284,7 +286,10 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     protected void showHideTaglines() {
-        if (mSession == null) return;
+        if (mSession == null) {
+            Log.e(TAG, "Bailing out of showHideTaglines");
+            return;
+        }
 
         boolean hideTagline = mSession.getHidePoweredBy();
         int visibility = hideTagline ? View.GONE : View.VISIBLE;
