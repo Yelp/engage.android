@@ -576,7 +576,7 @@ public class JREngage {
      *  behavior when \c false
      *
      * @note
-     *  If you always want to force the user to re=enter his/her credentials, pass \c true to the method
+     *  If you always want to force the user to re-enter his/her credentials, pass \c true to the method
      *  setAlwaysForceReauthentication().
      **/
     public void showAuthenticationDialog(boolean skipReturningUserLandingPage) {

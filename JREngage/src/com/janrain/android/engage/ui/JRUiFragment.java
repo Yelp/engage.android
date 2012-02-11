@@ -117,8 +117,7 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
-        JREngage.logd(TAG, "[" + new Object() {
-        }.getClass().getEnclosingMethod().getName() + "]");
+        JREngage.logd(TAG, "[" + new Object() {}.getClass().getEnclosingMethod().getName() + "]");
         super.onInflate(activity, attrs, savedInstanceState);
 
         if (JRSession.getInstance() == null) {
@@ -267,7 +266,7 @@ public abstract class JRUiFragment extends Fragment {
 
         //menu.add("test");
 
-        if (mSession.getHidePoweredBy()) {
+        if (mSession == null || mSession.getHidePoweredBy()) {
             return;
         } else {
             inflater.inflate(R.menu.jr_about_menu, menu);
@@ -285,6 +284,8 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     protected void showHideTaglines() {
+        if (mSession == null) return;
+
         boolean hideTagline = mSession.getHidePoweredBy();
         int visibility = hideTagline ? View.GONE : View.VISIBLE;
 
@@ -374,13 +375,7 @@ public abstract class JRUiFragment extends Fragment {
 
     protected void dismissDialog(int dialogId) {
         ManagedDialog d = mManagedDialogs.get(dialogId);
-        if (d != null) {
-            d.mDialog.dismiss();
-            // Set mShowing in onSaveInstanceState since this isn't a reliable place to write code that
-            // must maintain the integrity of mShowing because a Dialog may be dismissed by hand (i.e.
-            // not with dismissDialog(int)
-            //d.mShowing = false;
-        }
+        if (d != null) d.mDialog.dismiss();
     }
 
     private void startActivityForFragId(int fragId, int requestCode) {
@@ -425,7 +420,7 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     protected void showWebView() {
-        startActivityForFragId(JRFragmentHostActivity.JR_WEBVIEW, REQUEST_WEBVIEW);
+        showWebView(false);
     }
 
     protected void tryToFinishActivity() {
@@ -438,7 +433,7 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     /**
-     * Only for operation in JRFragmentHostActivity
+     * Delegated to from JRFragmentHostActivity
      */
     protected abstract void onBackPressed();
 }
