@@ -33,6 +33,7 @@ package com.janrain.android.simpledemo;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -40,7 +41,9 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -103,15 +106,34 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.main);
 
         if (!initEngage()) return;
+        
+        final JRCustomSignin customSignin = new JRCustomSignin() {
+            @Override
+            public View onCreateView(Context context,
+                                     LayoutInflater inflater,
+                                     ViewGroup container,
+                                     Bundle savedInstanceState) {
+                View v = inflater.inflate(R.layout.custom_signin_example, container, false);
+//                EditText userName = (EditText) v.findViewById(R.id.username_edit);
+//                EditText password = (EditText) v.findViewById(R.id.password_edit);
+                Button signIn = (Button) v.findViewById(R.id.custom_signin_button);
+                signIn.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+
+                    }
+                });
+
+                return v;
+            }
+        };
 
         mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
         mBtnTestAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 //                mEngage.setEnabledAuthenticationProviders(new String[]{"facebook"});
-                mEngage.showAuthenticationDialog();
+                mEngage.showAuthenticationDialog(customSignin);
             }
         });
-
         mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
         mBtnTestPub.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

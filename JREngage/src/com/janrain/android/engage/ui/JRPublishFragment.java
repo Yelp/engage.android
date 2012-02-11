@@ -405,16 +405,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             mTabHost.setCurrentTabByTag(mSelectedTab);
         }
 
-        /* XXX TabHost is setting our FrameLayout's only child to View.GONE when loading.
-         * XXX That could be a bug in the TabHost, or it could be a misuse of the TabHost system.
-         * See http://stackoverflow.com/questions/5109081/why-is-my-tabhosts-framelayouts-only-child-loaded-with-visibility-view-gone
-         * XXX This is a workaround: */
+         /* See http://stackoverflow.com/questions/5109081/why-is-my-tabhosts-framelayouts-only-child-loaded-with-visibility-view-gone */
         mTabHost.getCurrentView().setVisibility(View.VISIBLE);
     }
     
     @Override
     public void onDestroyView() {
-        if (getView() != null) {
+        if (mSession != null && getView() != null) {
             if (mUserCommentView != null && !mProvidersThatHaveAlreadyShared.values().contains(true)) {
                 Prefs.putString(Prefs.KEY_JR_USER_COMMENT, mUserCommentView.getText().toString());
                 Prefs.putLong(Prefs.KEY_JR_USER_COMMENT_TIME, new Date().getTime());
@@ -439,8 +436,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private void setViewVisible(View v, boolean visible) {
-        if (visible) v.setVisibility(View.VISIBLE);
-        else v.setVisibility(View.GONE);
+        if (visible) {
+            v.setVisibility(View.VISIBLE);
+        } else {
+            v.setVisibility(View.GONE);
+        }
     }
 
     private void loadViewPropertiesWithActivityObject() {
@@ -609,6 +609,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
+        if (mSession == null) return;
+
         if (AndroidUtils.isSmallNormalOrLargeScreen()) {
             if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 mPreviewBox.setVisibility(View.GONE);
@@ -634,8 +636,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private View.OnClickListener mConnectShareButton = new View.OnClickListener() {
         public void onClick(View view) {
-            //mWeAreCurrentlyPostingSomething = true;
-
             if (mAuthenticatedUser == null) {
                 authenticateUserForSharing();
             } else {
@@ -905,12 +905,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mPreviewLabelView.setText(Html.fromHtml("<b>" + getAvatarName() + "</b> " + mJrActivity.getAction()));
     }
 
-    private String getAvatarName() {
-        return mAuthenticatedUser != null ?
-                mAuthenticatedUser.getPreferredUsername() :
-                getString(R.string.jr_user_profile_default_name);
-    }
-
     private void loadUserNameAndProfilePicForUserForProvider(
             JRAuthenticatedUser user,
             final String providerName) {
@@ -1010,6 +1004,12 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     /* Helper functions */
+
+    private String getAvatarName() {
+        return mAuthenticatedUser != null ?
+                mAuthenticatedUser.getPreferredUsername() :
+                getString(R.string.jr_user_profile_default_name);
+    }
 
     private boolean isPublishThunk() {
         return mJrActivity.getUrl().equals("") &&

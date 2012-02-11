@@ -95,7 +95,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     public static final String USERDATA_ACTIVITY_KEY = "activity";
     public static final String USERDATA_ACTION_SHARE_ACTIVITY = "shareActivity";
 
-    private ArrayList<JRSessionDelegate> mDelegates;
+    private List<JRSessionDelegate> mDelegates;
 
 	private JRProvider mCurrentlyAuthenticatingProvider;
     private JRProvider mCurrentlyPublishingProvider;

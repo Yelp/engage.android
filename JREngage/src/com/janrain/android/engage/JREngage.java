@@ -566,6 +566,10 @@ public class JREngage {
         showAuthenticationDialog(false);
     }
 
+    public void showAuthenticationDialog(JRCustomSignin customSignin) {
+        showAuthenticationDialog();
+    }
+
     /**
      * Begins authentication.  The library will
      * start a new Android Activity and take the user through the sign-in process.

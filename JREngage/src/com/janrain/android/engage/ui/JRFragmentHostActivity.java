@@ -90,12 +90,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
             setContentView(R.layout.jr_fragment_host_activity);
             finish();
             return;
-
-            /* Bad old conclusion: */
-            // This control flow path is not reached  because this activity handles configuration changes
-            // and doesn't implement onSaveInstanceState
-
-            //throw new IllegalStateException("unexpected not null savedInstanceState");
         }
 
         switch (getFragmentId()) {
@@ -152,8 +146,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 // Do the actual setting of the target size to achieve phone sized dialog.
                 ((CustomMeasuringFrameLayout) fragmentContainer).setTargetHeightDip(480);
                 ((CustomMeasuringFrameLayout) fragmentContainer).setTargetWidthDip(320);
-            } else {
-//                if (mUiFragment instanceof JRWebViewFragment) ((JRWebViewFragment) mUiFragment).setUseDesktopUa(true);
             }
         }
 
