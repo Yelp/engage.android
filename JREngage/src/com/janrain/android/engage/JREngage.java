@@ -76,6 +76,7 @@ package com.janrain.android.engage;
  **/
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
@@ -566,8 +567,8 @@ public class JREngage {
         showAuthenticationDialog(false);
     }
 
-    public void showAuthenticationDialog(JRCustomSignin customSignin) {
-        showAuthenticationDialog();
+    public void showAuthenticationDialog(Class<? extends JRCustomSignin> customSignin) {
+        showAuthenticationDialog(false, customSignin);
     }
 
     /**
@@ -584,9 +585,17 @@ public class JREngage {
      *  setAlwaysForceReauthentication().
      **/
     public void showAuthenticationDialog(boolean skipReturningUserLandingPage) {
+        showAuthenticationDialog(skipReturningUserLandingPage, null);
+    }
+    
+    public void showAuthenticationDialog(boolean a, Object b) {}
+
+    public void showAuthenticationDialog(boolean skipReturningUserLandingPage,
+                                         Class<? extends JRCustomSignin> customSignin) {
         JREngage.logd(TAG, "[showAuthenticationDialog]: " + skipReturningUserLandingPage);
 
         if (checkSessionDataError()) return;
+
 
         mSession.setSkipLandingPage(skipReturningUserLandingPage);
 

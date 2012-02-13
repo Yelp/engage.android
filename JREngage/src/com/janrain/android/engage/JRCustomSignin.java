@@ -98,4 +98,10 @@ public abstract class JRCustomSignin {
     public void finishJrSignin() {
         //mFragment.finishWithResult(RESULT_NATIVE_SIGNIN) or something
     }
+
+    public void showProgressIndicator() {
+    }
+
+    public void dismissProgressIndicator() {
+    }
 }
