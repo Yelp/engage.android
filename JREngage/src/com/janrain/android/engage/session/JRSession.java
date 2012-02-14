@@ -539,7 +539,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             if (s.equals("getConfiguration")) {
                 if (headers.getResponseCode() == HttpStatus.SC_NOT_MODIFIED) {
                     /* If the ETag matched, we're done. */
-                    JREngage.logd(TAG, "[connectionDidFinishLoading] found HTTP_NOT_MODIFIED -> matched ETag");
+                    JREngage.logd(TAG, "[connectionDidFinishLoading] HTTP_NOT_MODIFIED -> matched ETag");
 
                     mGetConfigDone = true;
                     return;
@@ -740,7 +740,8 @@ public class JRSession implements JRConnectionManagerDelegate {
         String oid; /* open identifier */
 
         if (!TextUtils.isEmpty(mCurrentlyAuthenticatingProvider.getOpenIdentifier())) {
-            oid = String.format("openid_identifier=%s&", mCurrentlyAuthenticatingProvider.getOpenIdentifier());
+            oid = String.format("openid_identifier=%s&",
+                    mCurrentlyAuthenticatingProvider.getOpenIdentifier());
             if (mCurrentlyAuthenticatingProvider.requiresInput()) {
                 oid = oid.replaceAll("%@", mCurrentlyAuthenticatingProvider.getUserInput());
             } else {
