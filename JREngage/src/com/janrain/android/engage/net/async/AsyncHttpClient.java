@@ -29,6 +29,24 @@
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
+
+ /*
+  * The class InflatingEntity and of the method setupGoogleInflater are:
+  * Copyright 2011 Google Inc.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *      http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+
 package com.janrain.android.engage.net.async;
 
 import android.os.Handler;
@@ -98,8 +116,11 @@ public final class AsyncHttpClient {
             HttpParams connectionParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(connectionParams, 30000); // thirty seconds
             HttpConnectionParams.setSoTimeout(connectionParams, 30000);
+            setupGoogleInflater(connectionParams);
+        }
 
-            // From the Google IO app:
+        // From the Google IO app:
+        private void setupGoogleInflater(HttpParams connectionParams) {
             mHttpClient = new DefaultHttpClient(connectionParams);
             mHttpClient.addRequestInterceptor(new HttpRequestInterceptor() {
                 public void process(HttpRequest request, HttpContext context) {
@@ -156,7 +177,14 @@ public final class AsyncHttpClient {
             setupHttpClient();
 
             try {
-//                try { Thread.sleep(10000); } catch (InterruptedException ignore) {}
+//                if (!mUrl.contains("mobile_config_and_baseurl") && !mUrl.contains("appspot.com")) {
+//                    JREngage.getActivity().runOnUiThread(new Runnable() {
+//                        public void run() {
+//                            Toast.makeText(JREngage.getActivity(), "MEU load started", Toast.LENGTH_LONG).show();
+//                        }
+//                    });
+//                }
+//                try { Thread.sleep(3000); } catch (InterruptedException ignore) {}
 
                 InetAddress ia = InetAddress.getByName(mRequest.getURI().getHost());
                 JREngage.logd(TAG, "Connecting to: " + ia.getHostAddress());

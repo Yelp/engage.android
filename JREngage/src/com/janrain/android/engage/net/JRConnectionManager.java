@@ -35,6 +35,7 @@ import android.os.Handler;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.net.async.AsyncHttpClient;
 import com.janrain.android.engage.net.async.AsyncHttpResponse;
+import com.janrain.android.engage.utils.AndroidUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -132,7 +133,7 @@ public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseLis
         synchronized (sDelegateConnections) {
             Set<ConnectionData> s = sDelegateConnections.get(delegate);
             if (s == null) {
-                s = Collections.newSetFromMap(new WeakHashMap<ConnectionData, Boolean>());
+                s = new AndroidUtils.SetFromMap<ConnectionData>(new WeakHashMap<ConnectionData, Boolean>());
                 sDelegateConnections.put(delegate, s);
             }
             s.add(connectionData);
