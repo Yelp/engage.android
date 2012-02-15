@@ -32,15 +32,21 @@
 package com.janrain.android.engage.net;
 
 import android.os.Handler;
-import android.util.Config;
-import android.util.Log;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.net.async.AsyncHttpClient;
 import com.janrain.android.engage.net.async.AsyncHttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ByteArrayEntity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 /**
  * @internal
@@ -98,19 +104,61 @@ public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseLis
         if (requestHeaders == null) requestHeaders = new ArrayList<NameValuePair>();
 
         ConnectionData connectionData = new ConnectionData(delegate, tag);
-        connectionData.setRequestUrl(requestUrl);
-        connectionData.setRequestHeaders(requestHeaders);
+        connectionData.mRequestUrl = requestUrl;
+        connectionData.mRequestHeaders = requestHeaders;
 
-        new AsyncHttpClient.HttpSender(
-                connectionData,
+        trackAndStartConnection(delegate, connectionData);
+    }
+
+    private static void trackAndStartConnection(JRConnectionManagerDelegate delegate,
+                                                ConnectionData connectionData) {
+        HttpUriRequest request;
+        if (connectionData.mPostData != null) {
+            request = new HttpPost(connectionData.mRequestUrl);
+            ((HttpPost) request).setEntity(new ByteArrayEntity(connectionData.mPostData));
+            request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.addHeader("Content-Language", "en-US");
+        } else {
+            request = new HttpGet(connectionData.mRequestUrl);
+        }
+
+        connectionData.mHttpRequest = request;
+
+        new Thread(new AsyncHttpClient.HttpSender(
                 new Handler(),
                 new AsyncHttpClient.HttpCallbackWrapper(getInstance(), connectionData)
-        ).start();
+        )).start();
+
+        synchronized (sDelegateConnections) {
+            Set<ConnectionData> s = sDelegateConnections.get(delegate);
+            if (s == null) {
+                s = Collections.newSetFromMap(new WeakHashMap<ConnectionData, Boolean>());
+                sDelegateConnections.put(delegate, s);
+            }
+            s.add(connectionData);
+        }
+
         JREngage.logd(TAG, "[executeHttpRequest] invoked");
     }
 
+    // I think this map can only be operated on by the UI thread but I'm not sure :(
+    // ... so I've wrapped it in Collections.synchronizedMap
+    private static final Map<JRConnectionManagerDelegate, Set<ConnectionData>> sDelegateConnections =
+            Collections.synchronizedMap(new WeakHashMap<JRConnectionManagerDelegate, Set<ConnectionData>>());
+    
+    public static void stopConnectionsForDelegate(JRConnectionManagerDelegate delegate) {
+        synchronized (sDelegateConnections) {
+            Set<ConnectionData> s = sDelegateConnections.get(delegate);
+            if (s != null) {
+                for (ConnectionData c : s) {
+                    c.mHttpRequest.abort();
+                }
+            }
+        }
+    }
+
     /**
-     *  Creates a managed HTTP POST connection.
+     * Creates a managed HTTP POST connection.
      *
      * @param requestUrl
      *      The URL to be executed. May not be null.
@@ -134,18 +182,12 @@ public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseLis
         if (requestHeaders == null) requestHeaders = new ArrayList<NameValuePair>();
 
         ConnectionData connectionData = new ConnectionData(delegate, tag);
-        connectionData.setRequestUrl(requestUrl);
-        connectionData.setPostData(postData);
-        connectionData.setRequestHeaders(requestHeaders);
+        connectionData.mRequestUrl = requestUrl;
+        connectionData.mPostData = postData;
+        connectionData.mRequestHeaders = requestHeaders;
 
-        new AsyncHttpClient.HttpSender(
-                connectionData,
-                new Handler(),
-                new AsyncHttpClient.HttpCallbackWrapper(getInstance(), connectionData)
-        ).start();
-        JREngage.logd(TAG, "[executeHttpRequest] invoked");
+        trackAndStartConnection(delegate, connectionData);
     }
-
 
 	public void onResponseReceived(AsyncHttpResponse response) {
         String requestUrl = response.getUrl();
@@ -155,7 +197,9 @@ public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseLis
 
         if (delegate == null) return;
 
-        if (response.hasException()) {
+        if (connectionData.mHttpRequest.isAborted()) {
+            delegate.connectionDidStop(requestUrl, connectionData.mTag);
+        } else if (response.hasException()) {
             delegate.connectionDidFail(response.getException(), requestUrl, connectionData.mTag);
         } else {
             delegate.connectionDidFinishLoading(
@@ -167,10 +211,18 @@ public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseLis
 	}
 
     public static class ConnectionData {
+        private HttpUriRequest mHttpRequest;
         private Object mTag;
         private JRConnectionManagerDelegate mDelegate;
         private String mRequestUrl;
         private byte[] mPostData;
+        private List<NameValuePair> mRequestHeaders;
+
+        public ConnectionData(JRConnectionManagerDelegate delegate,
+                              Object tag) {
+            mDelegate = delegate;
+            mTag = tag;
+        }
 
         public String getRequestUrl() {
             return mRequestUrl;
@@ -184,24 +236,8 @@ public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseLis
             return mRequestHeaders;
         }
 
-        private List<NameValuePair> mRequestHeaders;
-
-        public ConnectionData(JRConnectionManagerDelegate delegate,
-                              Object tag) {
-            mDelegate = delegate;
-            mTag = tag;
-        }
-
-        public void setRequestUrl(String requestUrl) {
-            mRequestUrl = requestUrl;
-        }
-
-        public void setPostData(byte[] data) {
-            mPostData = data;
-        }
-
-        public void setRequestHeaders(List<NameValuePair> requestHeaders) {
-            mRequestHeaders = requestHeaders;
+        public HttpUriRequest getHttpRequest() {
+            return mHttpRequest;
         }
     }
 }

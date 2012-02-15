@@ -31,11 +31,6 @@
  */
 package com.janrain.android.engage.ui;
 
-import java.net.URL;
-import java.util.List;
-
-import org.json.JSONException;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -57,7 +52,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
-
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
@@ -67,6 +61,10 @@ import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
+import org.json.JSONException;
+
+import java.net.URL;
+import java.util.List;
 
 /**
  * @internal
@@ -170,6 +168,13 @@ public class JRWebViewFragment extends JRUiFragment {
         super.onDestroyView();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        JRConnectionManager.stopConnectionsForDelegate(mMobileEndPointConnectionDelegate);
+    }
+
     private void showAlertDialog(String title, String message) {
         // XXX these Dialogs won't work correctly if this Fragment is embedded in an activity which
         // destroys and recreates itself on configuration change.
@@ -194,6 +199,7 @@ public class JRWebViewFragment extends JRUiFragment {
         if (mIsAlertShowing) {
             mIsFinishPending = true;
         } else {
+            JRConnectionManager.stopConnectionsForDelegate(mMobileEndPointConnectionDelegate);
             getActivity().finish();
         }
     }
@@ -476,6 +482,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     @Override
     protected void onBackPressed() {
+        JRConnectionManager.stopConnectionsForDelegate(mMobileEndPointConnectionDelegate);
         mSession.triggerAuthenticationDidRestart();
         getActivity().setResult(JRWebViewFragment.RESULT_RESTART);
         getActivity().finish();

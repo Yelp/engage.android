@@ -31,12 +31,11 @@
  */
 package com.janrain.android.engage.net.async;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.GZIPInputStream;
+import android.os.Handler;
+import android.util.Log;
+import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.net.JRConnectionManager;
+import com.janrain.android.engage.utils.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -46,21 +45,20 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
-import android.os.Handler;
-import android.util.Log;
-import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.net.JRConnectionManager;
-import com.janrain.android.engage.utils.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 /**
  * @internal
@@ -76,7 +74,7 @@ public final class AsyncHttpClient {
 
     private AsyncHttpClient() {}
 
-	public static class HttpSender extends Thread {
+	public static class HttpSender implements Runnable {
 		private static final String TAG = HttpSender.class.getSimpleName();
 
         private String mUrl;
@@ -85,10 +83,20 @@ public final class AsyncHttpClient {
 		private Handler mHandler;
 		private HttpCallbackWrapper mWrapper;
         private DefaultHttpClient mHttpClient;
+        private HttpUriRequest mRequest;
+
+        public HttpSender(Handler handler, HttpCallbackWrapper wrapper) {
+            mUrl = wrapper.mConnectionData.getRequestUrl();
+            mHeaders = wrapper.mConnectionData.getRequestHeaders();
+            mPostData = wrapper.mConnectionData.getPostData();
+            mHandler = handler;
+            mWrapper = wrapper;
+            mRequest = wrapper.mConnectionData.getHttpRequest();
+        }
 
         private void setupHttpClient() {
             HttpParams connectionParams = new BasicHttpParams();
-            HttpConnectionParams.setConnectionTimeout(connectionParams, 30000); // thirty second timeout
+            HttpConnectionParams.setConnectionTimeout(connectionParams, 30000); // thirty seconds
             HttpConnectionParams.setSoTimeout(connectionParams, 30000);
 
             // From the Google IO app:
@@ -142,48 +150,42 @@ public final class AsyncHttpClient {
             }
         }
 
-        public HttpSender(JRConnectionManager.ConnectionData connectionData,
-                          Handler handler, HttpCallbackWrapper wrapper) {
-            mUrl = connectionData.getRequestUrl();
-            mHeaders = connectionData.getRequestHeaders();
-            mPostData = connectionData.getPostData();
-            mHandler = handler;
-            mWrapper = wrapper;
-        }
-
 		public void run() {
 			JREngage.logd(TAG, "[run] BEGIN, URL: " + mUrl);
 
             setupHttpClient();
 
             try {
-                //try { Thread.sleep(5000); } catch (InterruptedException e) {}
+//                try { Thread.sleep(10000); } catch (InterruptedException ignore) {}
 
-                HttpUriRequest request;
-                if (mPostData != null) {
-                    request = new HttpPost(mUrl);
-                    ((HttpPost) request).setEntity(new ByteArrayEntity(mPostData));
-                    request.addHeader("Content-Type", "application/x-www-form-urlencoded");
-                    request.addHeader("Content-Language", "en-US");
-                } else {
-                    request = new HttpGet(mUrl);
-                }
-
-                InetAddress ia = InetAddress.getByName(request.getURI().getHost());
+                InetAddress ia = InetAddress.getByName(mRequest.getURI().getHost());
                 JREngage.logd(TAG, "Connecting to: " + ia.getHostAddress());
 
-                request.addHeader("User-Agent", USER_AGENT);
+                mRequest.addHeader("User-Agent", USER_AGENT);
                 if (mHeaders == null) mHeaders = new ArrayList<NameValuePair>();
-                for (NameValuePair header : mHeaders) request.addHeader(header.getName(), header.getValue());
+                for (NameValuePair header : mHeaders) mRequest.addHeader(header.getName(), header.getValue());
 
-                HttpResponse response = mHttpClient.execute(request);
+                HttpResponse response;
+                try {
+                    response = mHttpClient.execute(mRequest);
+                } catch (IOException e) {
+                    // XXX Mediocre way to match exceptions from aborted requests:
+                    if (mRequest.isAborted() && e.getMessage().contains("abort")) {
+                        throw new AbortedRequestException();
+                    } else {
+                        throw e;
+                    }
+                }
 
-                /* Fetching the status code ensures that the response interceptor has a chance to un-gzip the
-                 * entity before we fetch it.
-                 */
+                if (mRequest.isAborted()) {
+                    throw new AbortedRequestException();
+                }
+
+                /* Fetching the status code allows the response interceptor to have a chance to un-gzip the
+                 * entity before we fetch it. */
                 response.getStatusLine().getStatusCode();
 
-                HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response, request);
+                HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response, mRequest);
 
                 HttpEntity entity = response.getEntity();
                 byte[] data = entity == null? new byte[0] : IOUtils.readFromStream(entity.getContent(), true);
@@ -227,6 +229,10 @@ public final class AsyncHttpClient {
                 Log.e(TAG, "[run] Problem executing HTTP request. (" + e +")", e);
                 mWrapper.setResponse(new AsyncHttpResponse(mUrl, e));
                 mHandler.post(mWrapper);
+            } catch (AbortedRequestException e) {
+                Log.e(TAG, "[run] Aborted request: " + mUrl);
+                mWrapper.setResponse(new AsyncHttpResponse(mUrl, null));
+                mHandler.post(mWrapper);
             }
 		}
 
@@ -234,6 +240,8 @@ public final class AsyncHttpClient {
             if (mPostData == null) mPostData = new byte[0];
             return "url: " + mUrl + "\nheaders: " + mHeaders + "\npostData: " + new String(mPostData);
         }
+
+        private static class AbortedRequestException extends Exception {}
 	}
 
 	/**

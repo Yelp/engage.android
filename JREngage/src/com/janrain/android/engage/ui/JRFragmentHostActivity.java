@@ -38,7 +38,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.util.Config;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;

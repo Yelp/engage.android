@@ -33,36 +33,19 @@
 
 package com.janrain.android.engage.net.async;
 
-import android.util.Config;
-import android.util.Log;
 import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.utils.ListUtils;
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.cookie.ClientCookie;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.cookie.CookieOrigin;
 import org.apache.http.cookie.CookieSpec;
 import org.apache.http.cookie.MalformedCookieException;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.cookie.BasicClientCookie;
-import org.apache.http.impl.cookie.BasicClientCookie2;
 import org.apache.http.impl.cookie.BestMatchSpec;
-import org.apache.http.impl.cookie.CookieSpecBase;
-import org.apache.http.impl.cookie.RFC2109Spec;
-import org.apache.http.impl.cookie.RFC2109SpecFactory;
-import org.apache.http.impl.cookie.RFC2965Spec;
-import org.apache.http.params.HttpProtocolParams;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**

@@ -82,7 +82,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.util.Config;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
