@@ -54,7 +54,7 @@ import java.util.WeakHashMap;
  *
  * @class JRConnectionManager
  **/
-public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseListener {
+public class JRConnectionManager {
     private static final String TAG = JRConnectionManager.class.getSimpleName();
 	private static JRConnectionManager sInstance;
 
@@ -127,7 +127,7 @@ public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseLis
 
         new Thread(new AsyncHttpClient.HttpSender(
                 new Handler(),
-                new AsyncHttpClient.HttpCallbackWrapper(getInstance(), connectionData)
+                new AsyncHttpClient.HttpCallbackWrapper(connectionData)
         )).start();
 
         synchronized (sDelegateConnections) {
@@ -152,7 +152,8 @@ public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseLis
             Set<ConnectionData> s = sDelegateConnections.get(delegate);
             if (s != null) {
                 for (ConnectionData c : s) {
-                    c.mHttpRequest.abort();
+                    c.mDelegate = null;
+//                    c.mHttpRequest.abort();
                 }
             }
         }
@@ -218,6 +219,7 @@ public class JRConnectionManager implements AsyncHttpClient.AsyncHttpResponseLis
         private String mRequestUrl;
         private byte[] mPostData;
         private List<NameValuePair> mRequestHeaders;
+        private AsyncHttpResponse mResponse;
 
         public ConnectionData(JRConnectionManagerDelegate delegate,
                               Object tag) {

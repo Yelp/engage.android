@@ -12,11 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
 
-        android:gravity="center_horizontal|center_vertical"
-        android:layout_gravity="center_horizontal|center_vertical"
-
         android:text="@string/btn_auth_label"
-        android:textSize="18dip"
         />
 
     <Button
@@ -24,11 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
 
-        android:gravity="center_horizontal|center_vertical"
-        android:layout_gravity="center_horizontal|center_vertical"
-
         android:text="@string/btn_pub_label"
-        android:textSize="18dip"
         />
 
     <EditText
@@ -36,6 +28,14 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:inputType="textUri"
+        />
+
+    <Button
+        android:id="@+id/btn_test_specific_provider"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+
+        android:text="Direct sign-in to Facebook"
         />
 
     <FrameLayout

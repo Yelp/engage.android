@@ -268,6 +268,7 @@ public class JRLandingFragment extends JRUiFragment {
 
     @Override
     protected void onBackPressed() {
+        JREngage.logd(TAG, "[onBackPressed]");
         mSession.triggerAuthenticationDidRestart();
         getActivity().setResult(RESULT_RESTART);
         getActivity().finish();

@@ -205,10 +205,11 @@ public class JRProviderListFragment extends JRUiFragment {
                     case Activity.RESULT_OK:
                         getActivity().setResult(Activity.RESULT_OK);
                         getActivity().finish();
-                        break;
+                        return;
                     case JRLandingFragment.RESULT_FAIL:
                         getActivity().setResult(RESULT_FAIL);
                         getActivity().finish();
+                        return;
 //                    I've seen RESULT_CANCELED before, but I can't figure out what could cause it
 //                    Maybe pressing the back button before the Activity is fully displayed?
 //                    case Activity.RESULT_CANCELED:
@@ -221,11 +222,11 @@ public class JRProviderListFragment extends JRUiFragment {
                     case Activity.RESULT_OK:
                         getActivity().setResult(Activity.RESULT_OK);
                         getActivity().finish();
-                        break;                        
+                        return;
                     case JRWebViewFragment.RESULT_FAIL:
                         getActivity().setResult(RESULT_FAIL);
                         getActivity().finish();
-                        break;
+                        return;
                     case JRWebViewFragment.RESULT_RESTART:
                         break;
                     case JRWebViewFragment.RESULT_BAD_OPENID_URL:
@@ -239,6 +240,16 @@ public class JRProviderListFragment extends JRUiFragment {
                 break;
             default:
                 Log.e(TAG, "Unrecognized request/result code " + requestCode + "/" + resultCode);
+        }
+
+        if (isSpecificProviderFlow()) {
+            // reach this point when we haven't returned above after setting result and finishing
+            if (requestCode == JRUiFragment.REQUEST_LANDING
+                    && resultCode == JRLandingFragment.RESULT_SWITCH_ACCOUNTS) {
+                showWebView();
+            } else {
+                cancelProviderList();
+            }
         }
     }
 
@@ -269,8 +280,13 @@ public class JRProviderListFragment extends JRUiFragment {
 
     @Override
     protected void onBackPressed() {
-        mSession.triggerAuthenticationDidCancel();
+        cancelProviderList();
+    }
+
+    private void cancelProviderList() {
+        // The ordering of these statements seems to effect
         getActivity().setResult(Activity.RESULT_CANCELED);
         getActivity().finish();
+        mSession.triggerAuthenticationDidCancel();
     }
 }

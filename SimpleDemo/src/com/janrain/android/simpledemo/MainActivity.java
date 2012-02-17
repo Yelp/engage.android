@@ -81,6 +81,7 @@ public class MainActivity extends FragmentActivity {
     private Button mBtnTestAuth;
     private Button mBtnTestPub;
     private EditText mUrlEditText;
+    private Button mBtnTestSpecificProvider;
 
     // Activity object variables
     private String mTitleText = "title text";
@@ -110,6 +111,10 @@ public class MainActivity extends FragmentActivity {
         if (!initEngage()) return;
 
         mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
+        mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
+        mUrlEditText = (EditText) findViewById(R.id.share_url);
+        mBtnTestSpecificProvider = (Button) findViewById(R.id.btn_test_specific_provider);
+
         mBtnTestAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 //                mEngage.setEnabledAuthenticationProviders(new String[]{"facebook"});
@@ -117,7 +122,6 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
         mBtnTestPub.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 buildActivity();
@@ -142,18 +146,24 @@ public class MainActivity extends FragmentActivity {
                 return true;
             }
         });
-        mUrlEditText = (EditText) findViewById(R.id.share_url);
-        mUrlEditText.addTextChangedListener(new TextWatcher() {
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+        mUrlEditText.setText(Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs"));
+        mUrlEditText.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             public void afterTextChanged(Editable s) {
                 mActionLink = s.toString();
                 Prefs.putString(ACTION_LINK_KEY, mActionLink);
             }
         });
-        mUrlEditText.setText(Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs"));
+        
+        mBtnTestSpecificProvider.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mEngage.showAuthenticationDialog(null, "facebook");
+            }
+        });
     }
     
     private boolean initEngage() {
@@ -223,7 +233,8 @@ public class MainActivity extends FragmentActivity {
             String message = "Authentication successful" + ((TextUtils.isEmpty(displayName))
                     ? "" : (" for user: " + displayName));
 
-            Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+//            Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+            showResultDialog(message);
         }
 
         public void jrAuthenticationDidReachTokenUrl(String tokenUrl,

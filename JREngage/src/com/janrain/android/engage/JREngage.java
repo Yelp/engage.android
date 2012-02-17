@@ -564,7 +564,7 @@ public class JREngage {
 
         showAuthenticationDialog(false);
     }
-
+    
     /**
      * Begins authentication.  The library will
      * start a new Android Activity and take the user through the sign-in process.
@@ -580,14 +580,37 @@ public class JREngage {
      **/
     public void showAuthenticationDialog(boolean skipReturningUserLandingPage) {
         JREngage.logd(TAG, "[showAuthenticationDialog]: " + skipReturningUserLandingPage);
+        
+        showAuthenticationDialog(skipReturningUserLandingPage, null);
+    }
 
+    /**
+     * Begins authentication.  The library will
+     * start a new Android Activity and take the user through the sign-in process.
+     *
+     * @param skipReturningUserLandingPage
+     *  Prevents the dialog from opening to the returning-user landing page when \c true.  That is, the
+     *  dialog will always open straight to the list of providers.  The dialog falls back to the default
+     *  behavior when \c false
+     *  
+     * @param provider
+     *  Specify a provider to start authentication with. No provider selection list will be shown, the user
+     *  will be brought directly to authentication with this provider. 
+     *  If null the user will be shown the provider list as usual.
+     *
+     * @note
+     *  If you always want to force the user to re-enter his/her credentials, pass \c true to the method
+     *  setAlwaysForceReauthentication().
+     **/
+    public void showAuthenticationDialog(Boolean skipReturningUserLandingPage, String provider) {
         if (checkSessionDataError()) return;
 
-        mSession.setSkipLandingPage(skipReturningUserLandingPage);
+        if (skipReturningUserLandingPage != null) mSession.setSkipLandingPage(skipReturningUserLandingPage);
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mActivity, true);
-        i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PROVIDER_LIST);
         i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, true);
+        i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PROVIDER_LIST);
+        if (provider != null) i.putExtra(JRFragmentHostActivity.JR_PROVIDER, provider);
         mActivity.startActivity(i);
     }
 

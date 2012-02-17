@@ -98,7 +98,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 	private JRProvider mCurrentlyAuthenticatingProvider;
     private JRProvider mCurrentlyPublishingProvider;
 
-    private String mReturningBasicProvider;
+    private String mReturningAuthProvider;
 	private String mReturningSocialProvider;
 
 	private Map<String, JRProvider> mAllProviders;
@@ -175,7 +175,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         try {
             /* load the last used basic and social providers */
             mReturningSocialProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
-            mReturningBasicProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
+            mReturningAuthProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
 
             /* Load the library state from disk */
             mAuthenticatedUsersByProvider = Archiver.load(ARCHIVE_AUTH_USERS_BY_PROVIDER);
@@ -217,7 +217,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             mBaseUrl = "";
             mHidePoweredBy = true;
             mReturningSocialProvider = "";
-            mReturningBasicProvider = "";
+            mReturningAuthProvider = "";
             mOldEtag = "";
             mGetConfigDone = false;
         }
@@ -299,24 +299,24 @@ public class JRSession implements JRConnectionManagerDelegate {
         return providerList;
     }
 
-    public String getReturningBasicProvider() {
+    public String getReturningAuthProvider() {
         /* This is here so that when a calling application sets mSkipLandingPage, the dialog always opens
          * to the providers list. (See JRProviderListFragment.onCreate for an explanation of the flow control
          * when there's a "returning provider.") */
         if (mSkipLandingPage)
             return null;
 
-        return mReturningBasicProvider;
+        return mReturningAuthProvider;
     }
 
-    public void setReturningBasicProvider(String returningBasicProvider) {
-        if (TextUtils.isEmpty(returningBasicProvider)) returningBasicProvider = ""; // nulls -> ""s
-        if (!getBasicProviders().contains(getProviderByName(returningBasicProvider))) {
-            returningBasicProvider = "";
+    public void setReturningBasicProvider(String returningAuthProvider) {
+        if (TextUtils.isEmpty(returningAuthProvider)) returningAuthProvider = ""; // nulls -> ""s
+        if (!getBasicProviders().contains(getProviderByName(returningAuthProvider))) {
+            returningAuthProvider = "";
         }
 
-        mReturningBasicProvider = returningBasicProvider;
-        Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, returningBasicProvider);
+        mReturningAuthProvider = returningAuthProvider;
+        Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, returningAuthProvider);
     }
 
     public String getReturningSocialProvider() {
@@ -651,7 +651,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 
         /* By redundantly calling these setters it is ensured that the returning basic and social providers,
          * if set, are members of the configured set of providers. */
-        setReturningBasicProvider(mReturningBasicProvider);
+        setReturningBasicProvider(mReturningAuthProvider);
         setReturningSocialProvider(mReturningSocialProvider);
 
         /* Done! */
@@ -1010,7 +1010,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         mCurrentlyAuthenticatingProvider.setForceReauth(true);
 
         setCurrentlyAuthenticatingProvider(null);
-        mReturningBasicProvider = null;
+        mReturningAuthProvider = null;
         mReturningSocialProvider = null;
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
@@ -1111,7 +1111,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         mEnabledAuthenticationProviders = enabledProviders;
 
         // redundantly call the setter to ensure the provider is still available
-        setReturningBasicProvider(mReturningBasicProvider);
+        setReturningBasicProvider(mReturningAuthProvider);
     }
 
     public void setEnabledSharingProviders(List<String> enabledSharingProviders) {

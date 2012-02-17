@@ -461,7 +461,7 @@ public class JRWebViewFragment extends JRUiFragment {
         public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
             JREngage.logd(TAG, "[connectionDidFail] userdata: " + tag, ex);
 
-            if (isShowing()) {
+            if (hasView()) {
                 // This is designed to not run if the user pressed the back button after the MEU started
                 // loading but before it failed.
                 // The test is probably not quite right and that if the timing is bad both onBackPressed()

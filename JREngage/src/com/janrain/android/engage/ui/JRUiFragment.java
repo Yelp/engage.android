@@ -70,7 +70,7 @@ public abstract class JRUiFragment extends Fragment {
     private static final String KEY_MANAGED_DIALOG_OPTIONS = "jr_dialog_options";
     private static final String KEY_DIALOG_PROGRESS_TEXT = "jr_progress_dialog_text";
 
-    public static final String PARENT_FRAGMENT_EMBEDDED = "parent_fragment_embedded";
+//    public static final String PARENT_FRAGMENT_EMBEDDED = "parent_fragment_embedded";
 
     public static final int REQUEST_LANDING = 1;
     public static final int REQUEST_WEBVIEW = 2;
@@ -190,7 +190,7 @@ public abstract class JRUiFragment extends Fragment {
     public void onResume() {
         super.onResume();
         JREngage.logd(TAG, "[onResume]");
-        if (isShowing()) showHideTaglines();
+        if (hasView()) showHideTaglines();
     }
 
     @Override
@@ -337,7 +337,7 @@ public abstract class JRUiFragment extends Fragment {
         return retval;
     }
 
-    public final boolean isEmbeddedMode() {
+    protected final boolean isEmbeddedMode() {
         FragmentActivity a = getActivity();
         return a != null && !(a instanceof JRFragmentHostActivity);
     }
@@ -405,7 +405,7 @@ public abstract class JRUiFragment extends Fragment {
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(getActivity(), showTitle);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, fragId);
-        i.putExtra(JRUiFragment.PARENT_FRAGMENT_EMBEDDED, isEmbeddedMode());
+//        i.putExtra(JRUiFragment.PARENT_FRAGMENT_EMBEDDED, isEmbeddedMode());
         if (!isEmbeddedMode()) {
             i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW,
                     ((JRFragmentHostActivity) getActivity()).isAuthFlow());
@@ -433,8 +433,16 @@ public abstract class JRUiFragment extends Fragment {
         getActivity().finish();
     }
 
-    public final boolean isShowing() {
+    protected boolean hasView() {
         return getView() != null;
+    }
+
+    protected boolean isSpecificProviderFlow() {
+        return getArguments().getString(JRFragmentHostActivity.JR_PROVIDER) != null;
+    }
+
+    protected String getSpecificProvider() {
+        return getArguments().getString(JRFragmentHostActivity.JR_PROVIDER);
     }
 
     /**
