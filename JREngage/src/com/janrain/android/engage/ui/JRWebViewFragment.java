@@ -152,8 +152,8 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     @Override
-    public void onDestroyView() {
-        // onDestroy may be called even if onCreateView never is, guard against NPEs
+    public void onStop() {
+        // onDestroyView may be called even if onCreateView never is, guard against NPEs
         if (mWebView != null) {
             mWebView.stopLoading();
 
@@ -164,8 +164,7 @@ public class JRWebViewFragment extends JRUiFragment {
             mWebView.setWebViewClient(null);
             mWebView.setDownloadListener(null);
         }
-
-        super.onDestroyView();
+        super.onStop();
     }
 
     @Override

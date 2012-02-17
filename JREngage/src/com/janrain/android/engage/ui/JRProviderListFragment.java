@@ -135,6 +135,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        JREngage.logd(TAG, "[onCreateView]");
         if (mSession == null) return null;
         View listView = inflater.inflate(R.layout.jr_provider_listview, container, false);
 
