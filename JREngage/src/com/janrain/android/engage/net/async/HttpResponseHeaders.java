@@ -77,18 +77,6 @@ public class HttpResponseHeaders {
 
     /**
      * @internal
-     * @param doNotConstruct
-     *   Do not call this constructor, see com.janrain.android.engage.net.async.HttpResponseHeaders for
-     *   details
-     * @throws UnsupportedOperationException
-     *   Always throws UnsupportedOperationException
-     */
-    protected HttpResponseHeaders(Object doNotConstruct) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @internal
      * Constructs a new HttpResponseHeaders instance from an HttpResponse
      * @param response
      *   The HttpResponse from which to copy the values used to construct a new instance

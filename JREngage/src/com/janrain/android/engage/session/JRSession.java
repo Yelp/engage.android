@@ -175,7 +175,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         try {
             /* load the last used basic and social providers */
             mReturningSocialProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
-            mReturningAuthProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
+            mReturningAuthProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_AUTH_PROVIDER, "");
 
             /* Load the library state from disk */
             mAuthenticatedUsersByProvider = Archiver.load(ARCHIVE_AUTH_USERS_BY_PROVIDER);
@@ -316,7 +316,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 
         mReturningAuthProvider = returningAuthProvider;
-        Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, returningAuthProvider);
+        Prefs.putString(Prefs.KEY_JR_LAST_USED_AUTH_PROVIDER, returningAuthProvider);
     }
 
     public String getReturningSocialProvider() {

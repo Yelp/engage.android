@@ -284,7 +284,6 @@ public class JRProviderListFragment extends JRUiFragment {
     }
 
     private void cancelProviderList() {
-        // The ordering of these statements seems to effect
         getActivity().setResult(Activity.RESULT_CANCELED);
         getActivity().finish();
         mSession.triggerAuthenticationDidCancel();

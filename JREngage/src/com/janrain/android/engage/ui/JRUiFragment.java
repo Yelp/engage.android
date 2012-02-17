@@ -70,8 +70,6 @@ public abstract class JRUiFragment extends Fragment {
     private static final String KEY_MANAGED_DIALOG_OPTIONS = "jr_dialog_options";
     private static final String KEY_DIALOG_PROGRESS_TEXT = "jr_progress_dialog_text";
 
-//    public static final String PARENT_FRAGMENT_EMBEDDED = "parent_fragment_embedded";
-
     public static final int REQUEST_LANDING = 1;
     public static final int REQUEST_WEBVIEW = 2;
     public static final int DIALOG_ABOUT = 1000;
@@ -405,7 +403,6 @@ public abstract class JRUiFragment extends Fragment {
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(getActivity(), showTitle);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, fragId);
-//        i.putExtra(JRUiFragment.PARENT_FRAGMENT_EMBEDDED, isEmbeddedMode());
         if (!isEmbeddedMode()) {
             i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW,
                     ((JRFragmentHostActivity) getActivity()).isAuthFlow());

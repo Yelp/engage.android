@@ -196,10 +196,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
         return getIntent().getExtras().getInt(JR_FRAGMENT_ID);
     }
 
-//    public boolean isParentEmbedded() {
-//        return getIntent().getBooleanExtra(JRUiFragment.PARENT_FRAGMENT_EMBEDDED, false);
-//    }
-
     public boolean isPublishFlow() {
         return !isAuthFlow();
     }
