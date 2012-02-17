@@ -45,8 +45,6 @@ public interface JRConnectionManagerDelegate {
                                     Object tag);
 
 	void connectionDidFail(Exception ex, String requestUrl, Object tag);
-    
-    void connectionDidStop(String requestUrl, Object tag);
 
     public abstract class SimpleJRConnectionManagerDelegate implements JRConnectionManagerDelegate {
         public void connectionDidFinishLoading(HttpResponseHeaders headers,
@@ -55,7 +53,5 @@ public interface JRConnectionManagerDelegate {
                                                Object tag) {}
 
         public void connectionDidFail(Exception ex, String requestUrl, Object tag) {}
-        
-        public void connectionDidStop(String requestUrl, Object tag) {}
     }
 }

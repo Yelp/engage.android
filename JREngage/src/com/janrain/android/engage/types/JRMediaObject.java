@@ -34,9 +34,9 @@ package com.janrain.android.engage.types;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
 
 import java.io.Serializable;
 

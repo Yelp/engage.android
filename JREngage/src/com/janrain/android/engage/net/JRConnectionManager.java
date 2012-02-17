@@ -33,8 +33,6 @@ package com.janrain.android.engage.net;
 
 import android.os.Handler;
 import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.net.async.AsyncHttpClient;
-import com.janrain.android.engage.net.async.AsyncHttpResponse;
 import com.janrain.android.engage.utils.AndroidUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
@@ -125,10 +123,7 @@ public class JRConnectionManager {
 
         connectionData.mHttpRequest = request;
 
-        new Thread(new AsyncHttpClient.HttpSender(
-                new Handler(),
-                new AsyncHttpClient.HttpCallbackWrapper(connectionData)
-        )).start();
+        new Thread(new AsyncHttpClient.HttpSender(new Handler(), connectionData)).start();
 
         synchronized (sDelegateConnections) {
             Set<ConnectionData> s = sDelegateConnections.get(delegate);
@@ -191,27 +186,6 @@ public class JRConnectionManager {
         trackAndStartConnection(delegate, connectionData);
     }
 
-	public void onResponseReceived(AsyncHttpResponse response) {
-        String requestUrl = response.getUrl();
-        ConnectionData connectionData = response.getConnectionData();
-
-        JRConnectionManagerDelegate delegate = connectionData.mDelegate;
-
-        if (delegate == null) return;
-
-        if (connectionData.mHttpRequest.isAborted()) {
-            delegate.connectionDidStop(requestUrl, connectionData.mTag);
-        } else if (response.hasException()) {
-            delegate.connectionDidFail(response.getException(), requestUrl, connectionData.mTag);
-        } else {
-            delegate.connectionDidFinishLoading(
-                    response.getHeaders(),
-                    response.getPayload(),
-                    requestUrl,
-                    connectionData.mTag);
-        }
-	}
-
     public static class ConnectionData {
         private HttpUriRequest mHttpRequest;
         private Object mTag;
@@ -219,7 +193,7 @@ public class JRConnectionManager {
         private String mRequestUrl;
         private byte[] mPostData;
         private List<NameValuePair> mRequestHeaders;
-        private AsyncHttpResponse mResponse;
+        private AsyncHttpClient.AsyncHttpResponse mResponse;
 
         public ConnectionData(JRConnectionManagerDelegate delegate,
                               Object tag) {
@@ -241,6 +215,36 @@ public class JRConnectionManager {
 
         public HttpUriRequest getHttpRequest() {
             return mHttpRequest;
+        }
+
+        public void setResponse(AsyncHttpClient.AsyncHttpResponse response) {
+            mResponse = response;
+        }
+    }
+
+    public static class HttpCallbackWrapper implements Runnable {
+        private ConnectionData mConnectionData;
+
+        public HttpCallbackWrapper(ConnectionData cd) {
+            mConnectionData = cd;
+        }
+
+        public void run() {
+            AsyncHttpClient.AsyncHttpResponse response = mConnectionData.mResponse;
+            String requestUrl = response.getUrl();
+            JRConnectionManagerDelegate delegate = mConnectionData.mDelegate;
+
+            if (delegate == null || mConnectionData.mHttpRequest.isAborted()) return;
+
+            if (response.hasException()) {
+                delegate.connectionDidFail(response.getException(), requestUrl, mConnectionData.mTag);
+            } else {
+                delegate.connectionDidFinishLoading(
+                        response.getHeaders(),
+                        response.getPayload(),
+                        requestUrl,
+                        mConnectionData.mTag);
+            }
         }
     }
 }
