@@ -243,21 +243,18 @@ public class JRProviderListFragment extends JRUiFragment {
                 Log.e(TAG, "Unrecognized request/result code " + requestCode + "/" + resultCode);
         }
 
+//        See the comment about specific provider flow in JRFragmentHostActivity#onCreate
         if (isSpecificProviderFlow()) {
             // reach this point when we haven't returned above after setting result and finishing
-            if (requestCode == JRUiFragment.REQUEST_LANDING
-                    && resultCode == JRLandingFragment.RESULT_SWITCH_ACCOUNTS) {
-                showWebView();
-            } else {
+//            if (requestCode == JRUiFragment.REQUEST_LANDING
+//                    && resultCode == JRLandingFragment.RESULT_SWITCH_ACCOUNTS) {
+//                showWebView();
+//            } else {
                 cancelProviderList();
-            }
+//            }
         }
     }
 
-    /**
-     * Called by timer.  Used when providers are not found in JRSession.
-     * Continues polling until providers are found or the polling threshold is hit.
-     */
     private void doSessionPoll() {
         ++mTimerCount;
         JREngage.logd(TAG, "[doSessionPoll] timer count: " + mTimerCount);

@@ -104,22 +104,25 @@ public class JRFragmentHostActivity extends FragmentActivity {
             case JR_PROVIDER_LIST:
                 if (isSpecificProviderFlow()) {
                     JRProvider provider = mSession.getProviderByName(getSpecificProvider());
+                    provider.setForceReauth(true);
                     mSession.setCurrentlyAuthenticatingProvider(provider);
                     Intent i;
-                    if (mSession.getAuthenticatedUserForProvider(provider) != null
-                            && !provider.getForceReauth()
-                            && !mSession.getAlwaysForceReauth()) {
-                        // If the sign-in might turbo through with cookies then show landing page
-                        i = createIntentForCurrentScreen(this, true);
-                        i.putExtras(getIntent());
-                        i.putExtra(JR_FRAGMENT_ID, JR_LANDING);
-                        startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
-                    } else {
+                    // Not going to launch the landing page as per discussion with Lilli
+                    // because it's thought that the use case for this flow always involves reauthing
+//                    if (mSession.getAuthenticatedUserForProvider(provider) != null
+//                            && !provider.getForceReauth()
+//                            && !mSession.getAlwaysForceReauth()) {
+//                        // If the sign-in might turbo through with cookies then show landing page
+//                        i = createIntentForCurrentScreen(this, true);
+//                        i.putExtras(getIntent());
+//                        i.putExtra(JR_FRAGMENT_ID, JR_LANDING);
+//                        startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
+//                    } else {
                         i = createIntentForCurrentScreen(this, false);
                         i.putExtras(getIntent());
                         i.putExtra(JR_FRAGMENT_ID, JR_WEBVIEW);
                         startActivityForResult(i, JRUiFragment.REQUEST_WEBVIEW);
-                    }
+//                    }
                 } else {
                     // non-provider-specific flow, aka regular provider list flow
                     /* check and see whether we should start the landing page */
