@@ -183,7 +183,7 @@ public class JRWebViewFragment extends JRUiFragment {
         if (mRetain == null) {
             mRetain = new RetainFragment();
             mRetain.setTargetFragment(this, 0);
-            fm.beginTransaction().add(mRetain, JR_RETAIN);
+            fm.beginTransaction().add(mRetain, JR_RETAIN).commit();
         }
     }
     
