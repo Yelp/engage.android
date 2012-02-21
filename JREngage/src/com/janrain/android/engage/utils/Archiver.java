@@ -74,6 +74,27 @@ public final class Archiver {
     public static void save(String name, Object object) {
         Context context = JREngage.getActivity();
         if (context == null) throw new IllegalStateException("context cannot be null");
+        save(name, object, context);
+    }
+
+    /**
+     * Saves (archives) the specified object to the local (protected) file system.
+     *
+     * @param name
+     * 		The name the object will be saved as on disk.  This parameter cannot be null.
+     *
+     * @param object
+     * 		The object to be saved.
+     *
+     * @param context
+     *      A context to access the filesystem from.
+     *
+     * @throws
+     * 		IllegalArgumentException if the name parameter is null.
+     * @throws
+     *      IllegalStateException if JREngage.getContext() returns null.
+     */
+    public static void save(String name, Object object, Context context) {
         if (TextUtils.isEmpty(name)) throw new IllegalArgumentException("name parameter cannot be null");
 
         String fileName = String.format(DICTIONARY_BASE_FORMAT, name);

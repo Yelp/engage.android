@@ -47,7 +47,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
@@ -269,6 +268,7 @@ public class JRLandingFragment extends JRUiFragment {
 
     @Override
     protected void onBackPressed() {
+        JREngage.logd(TAG, "[onBackPressed]");
         mSession.triggerAuthenticationDidRestart();
         finishFragmentWithResult(RESULT_RESTART);
     }

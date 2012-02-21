@@ -44,8 +44,8 @@ import android.util.Log;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.utils.Prefs;
 import com.janrain.android.engage.utils.AndroidUtils;
+import com.janrain.android.engage.utils.Prefs;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

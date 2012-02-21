@@ -149,6 +149,32 @@ public class JRFlashMediaObject extends JRMediaObject {
     }
 /*@}*/
 
+    /**
+     * @internal
+     * Returns a JRFlashMediaObject initialized with the given dictionary.
+     *
+     * @param dictionary
+     *   A dictionary containing the properties of an activity object.
+     *
+     * @throws IllegalArgumentException
+     *   if dictionary is null or if the values for the keys \c swfSrc or \c imgSrc are null
+     *
+     * NOTE: This function should not be used directly.  It is intended only for use by the
+     * JREngage library.
+     **/
+    public JRFlashMediaObject(JRDictionary dictionary) {
+        if (dictionary == null) throw new IllegalArgumentException("illegal null action");
+
+        mSwfSrc         = dictionary.getAsString("swfsrc");
+        mImgSrc         = dictionary.getAsString("imgsrc");
+        mWidth          = dictionary.getAsInteger("width");
+        mHeight         = dictionary.getAsInteger("height");
+        mExpandedWidth  = dictionary.getAsInteger("expandedWidth");
+        mExpandedHeight = dictionary.getAsInteger("expandedHeight");
+
+        if (mSwfSrc == null || mImgSrc == null) throw new IllegalArgumentException("illegal null parameter");
+    }
+
 /**
  * @name Getters/Setters
  * Getters and setters for the flash media object's private properties

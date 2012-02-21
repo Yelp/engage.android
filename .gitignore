@@ -23,6 +23,4 @@ out/*
 SimpleDemo/local.properties
 QuickSignIn/local.properties
 QuickShare/local.properties
-SimpleDemo/app_id.txt
-QuickSignIn/app_id.txt
 *.keystore

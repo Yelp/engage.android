@@ -50,7 +50,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.AttributeSet;
 import android.util.Config;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSession;
@@ -66,8 +71,7 @@ public abstract class JRUiFragment extends Fragment {
     private static final String KEY_DIALOG_ID = "jr_dialog_id";
     private static final String KEY_MANAGED_DIALOG_OPTIONS = "jr_dialog_options";
     private static final String KEY_DIALOG_PROGRESS_TEXT = "jr_progress_dialog_text";
-
-    public static final String PARENT_FRAGMENT_EMBEDDED = "parent_fragment_embedded";
+    private static final String PARENT_FRAGMENT_EMBEDDED = "jr_parent_fragment_embedded";
 
     public static final int REQUEST_LANDING = 1;
     public static final int REQUEST_WEBVIEW = 2;
@@ -81,14 +85,14 @@ public abstract class JRUiFragment extends Fragment {
 
     protected JRSession mSession;
     protected final String TAG = getSimpleClassName();
+
     protected String getSimpleClassName() { return this.getClass().getSimpleName(); }
 
     /**
      * @internal
      *
      * @class FinishReceiver
-     * Used to listen to "Finish" broadcast messages sent by JRUserInterfaceMaestro.  A facility
-     * for iPhone-like ability to close this activity from the maestro class.
+     * Used to listen to "Finish" broadcast messages sent by JREngage.cancel*
      **/
     private class FinishReceiver extends BroadcastReceiver {
         private String TAG = JRUiFragment.this.TAG + "-" + FinishReceiver.class.getSimpleName();
@@ -104,6 +108,26 @@ public abstract class JRUiFragment extends Fragment {
             } else if (Config.LOGD) {
                 JREngage.logd(TAG, "[onReceive] ignored");
             }
+        }
+    }
+
+    private static class ManagedDialog implements Serializable {
+        int mId;
+        transient Dialog mDialog;
+        transient Bundle mOptions;
+        boolean mShowing;
+    }
+
+    /* These overrides are declared in the exact order they're called */
+
+    @Override
+    public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
+        JREngage.logd(TAG, "[" + new Object() {}.getClass().getEnclosingMethod().getName() + "]");
+        super.onInflate(activity, attrs, savedInstanceState);
+
+        if (JRSession.getInstance() == null) {
+            throw new IllegalStateException("You must call JREngage.initInstance before inflating " +
+                    "JREngage fragments.");
         }
     }
 
@@ -128,7 +152,10 @@ public abstract class JRUiFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    //onCreateView
+    @Override
+    public abstract View onCreateView(LayoutInflater inflater,
+                                      ViewGroup container,
+                                      Bundle savedInstanceState);
 
     @Override
     @SuppressWarnings("unchecked")
@@ -180,7 +207,7 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onStart() {
-        JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
+        JREngage.logd(TAG, "[" + new Object() { }.getClass().getEnclosingMethod().getName() + "]");
         super.onStart();
     }
 
@@ -188,11 +215,7 @@ public abstract class JRUiFragment extends Fragment {
     public void onResume() {
         super.onResume();
         JREngage.logd(TAG, "[onResume]");
-        if (isShowing()) showHideTaglines();
-    }
-
-    public final boolean isShowing() {
-        return getView() != null;
+        if (hasView()) showHideTaglines();
     }
 
     @Override
@@ -240,25 +263,7 @@ public abstract class JRUiFragment extends Fragment {
         super.onDetach();
     }
 
-    //--
-    @Override
-    public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
-        JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
-        super.onInflate(activity, attrs, savedInstanceState);
-
-        if (JRSession.getInstance() == null) {
-            throw new IllegalStateException("You must call JREngage.initInstance before inflating " +
-                    "JREngage fragments.");
-        }
-    }
-
-    private static class ManagedDialog implements Serializable {
-        int mId;
-        transient Dialog mDialog;
-        transient Bundle mOptions;
-        boolean mShowing;
-    }
-
+    /* May be called at any time before onDestroy() */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
@@ -289,24 +294,14 @@ public abstract class JRUiFragment extends Fragment {
     }
     //--
 
-    protected void showHideTaglines() {
-        boolean hideTagline = mSession.getHidePoweredBy();
-        int visibility = hideTagline ? View.GONE : View.VISIBLE;
-
-        View tagline = getView().findViewById(R.id.jr_tagline);
-        if (tagline != null) tagline.setVisibility(visibility);
-
-        View bonusTagline = getView().findViewById(R.id.jr_email_sms_powered_by_text);
-        if (bonusTagline != null) bonusTagline.setVisibility(visibility);
-    }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
         //menu.add("test");
 
-        if (mSession.getHidePoweredBy()) {
+        if (mSession == null || mSession.getHidePoweredBy()) {
+            Log.e(TAG, "Bailing out of onCreateOptionsMenu");
             return;
         } else {
             inflater.inflate(R.menu.jr_about_menu, menu);
@@ -321,6 +316,22 @@ public abstract class JRUiFragment extends Fragment {
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    protected void showHideTaglines() {
+        if (mSession == null) {
+            Log.e(TAG, "Bailing out of showHideTaglines");
+            return;
+        }
+
+        boolean hideTagline = mSession.getHidePoweredBy();
+        int visibility = hideTagline ? View.GONE : View.VISIBLE;
+
+        View tagline = getView().findViewById(R.id.jr_tagline);
+        if (tagline != null) tagline.setVisibility(visibility);
+
+        View bonusTagline = getView().findViewById(R.id.jr_email_sms_powered_by_text);
+        if (bonusTagline != null) bonusTagline.setVisibility(visibility);
     }
 
     protected ProgressDialog getProgressDialog(Bundle options) {
@@ -359,7 +370,7 @@ public abstract class JRUiFragment extends Fragment {
         return retval;
     }
 
-    public final boolean isEmbeddedMode() {
+    protected final boolean isEmbeddedMode() {
         FragmentActivity a = getActivity();
         return a != null && !(a instanceof JRFragmentHostActivity);
     }
@@ -402,13 +413,7 @@ public abstract class JRUiFragment extends Fragment {
 
     protected void dismissDialog(int dialogId) {
         ManagedDialog d = mManagedDialogs.get(dialogId);
-        if (d != null) {
-            d.mDialog.dismiss();
-            // Set mShowing in onSaveInstanceState since this isn't a reliable place to write code that
-            // must maintain the integrity of mShowing because a Dialog may be dismissed by hand (i.e.
-            // not with dismissDialog(int)
-            //d.mShowing = false;
-        }
+        if (d != null) d.mDialog.dismiss();
     }
 
     private void startActivityForFragId(int fragId, int requestCode) {
@@ -516,8 +521,20 @@ public abstract class JRUiFragment extends Fragment {
         finishFragment();
     }
 
+    protected boolean hasView() {
+        return getView() != null;
+    }
+
+    protected boolean isSpecificProviderFlow() {
+        return getArguments().getString(JRFragmentHostActivity.JR_PROVIDER) != null;
+    }
+
+    protected String getSpecificProvider() {
+        return getArguments().getString(JRFragmentHostActivity.JR_PROVIDER);
+    }
+
     /**
-     * Only for operation in JRFragmentHostActivity
+     * Delegated to from JRFragmentHostActivity
      */
     protected abstract void onBackPressed();
 }

@@ -45,10 +45,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -293,6 +295,19 @@ public final class JRDictionary extends HashMap<String, Object> {
 		return getAsInt(key, DEFAULT_VALUE_INT);
 	}
 
+    /**
+     * Convenience method used to retrieve a named value as an \e Integer.
+     *
+     * @param key
+     * 		The key of the value to be retrieved
+     *
+     * @return
+     * 		The \e Integer value if found, null otherwise
+     **/
+    public Integer getAsInteger(String key) {
+        return containsKey(key) ? (Integer) get(key) : null;
+    }
+
 	/**
 	 * Convenience method used to retrieve a named value as an \e int.
 	 *
@@ -449,6 +464,52 @@ public final class JRDictionary extends HashMap<String, Object> {
         return ((retval == null) && shouldCreateIfNotFound)
             ? new ArrayList<String>()
             : retval;
+    }
+
+    /**
+     * Convenience method used to retrieve a named value as an array of dictionaries.
+     *
+     * @param key
+     *      The key of the value to be retrieved
+     *
+     * @return
+     *      The \e ArrayList<JRDictionary> value if key is found, null otherwise
+     **/
+    public List<JRDictionary> getAsListOfDictionaries(String key) {
+        return getAsListOfDictionaries(key, false);
+    }
+
+    /**
+     * Convenience method used to retrieve a named value as an array of dictionaries.
+     *
+     * @param key
+     *      The key of the value to be retrieved
+     *
+     * @param shouldCreateIfNotFound
+     *      Flag indicating whether or not a new \e ArrayList<String> object should be created
+     *      if the specified key does not exist
+     *
+     * @return
+     *      The \e ArrayList<JRDictionary> value if key is found, empty array or null otherwise (based on
+     *      value of the \e shouldCreateIfNotFound flag)
+     **/
+
+    // We runtime type check the return value so we can safely ignore this unchecked
+    // assignment error.
+    @SuppressWarnings("unchecked")
+    public List<JRDictionary> getAsListOfDictionaries(String key, boolean shouldCreateIfNotFound) {
+        List<JRDictionary> retval = null;
+        if ((!TextUtils.isEmpty(key)) && (containsKey(key))) {
+            Object value = get(key);
+            if (value instanceof List) {
+                for (Object v : (ArrayList) value) assert v instanceof JRDictionary;
+                retval = (ArrayList<JRDictionary>)value;
+            } else {
+
+            }
+        }
+
+        return ((retval == null) && shouldCreateIfNotFound) ? new ArrayList<JRDictionary>() : retval;
     }
 /*@}*/
 

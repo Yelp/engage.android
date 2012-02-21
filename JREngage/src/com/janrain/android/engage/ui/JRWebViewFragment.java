@@ -60,13 +60,12 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
-
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
@@ -162,6 +161,8 @@ public class JRWebViewFragment extends JRUiFragment {
         super.onActivityCreated(savedInstanceState);
 
         if (mSession == null) return;
+        mProvider = mSession.getCurrentlyAuthenticatingProvider();
+        if (mProvider == null) return;
 
         if (savedInstanceState != null && savedInstanceState.containsKey(KEY_PROVIDER_NAME)) {
             mProvider = mSession.getProviderByName(savedInstanceState.getString(KEY_PROVIDER_NAME));
@@ -193,8 +194,8 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     @Override
-    public void onDestroyView() {
-        // onDestroy may be called even if onCreateView never is, guard against nulls
+    public void onStop() {
+        // onDestroyView may be called even if onCreateView never is, guard against NPEs
         if (mWebView != null) {
             mWebView.stopLoading();
 
@@ -205,8 +206,14 @@ public class JRWebViewFragment extends JRUiFragment {
             mWebView.setWebViewClient(null);
             mWebView.setDownloadListener(null);
         }
+        super.onStop();
+    }
 
-        super.onDestroyView();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
     }
 
     @Override
@@ -273,13 +280,14 @@ public class JRWebViewFragment extends JRUiFragment {
         if (mIsAlertShowing) {
             mIsFinishPending = true;
         } else {
+            JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
             finishFragment();
         }
     }
 
     private boolean isMobileEndpointUrl(String url) {
-        final String thatUrl = mSession.getBaseUrl() + "/signin/device";
-        return ((!TextUtils.isEmpty(url)) && (url.startsWith(thatUrl)));
+        final String endpointUrl = mSession.getBaseUrl() + "/signin/device";
+        return ((!TextUtils.isEmpty(url)) && (url.startsWith(endpointUrl)));
     }
 
     private void showProgressSpinner() {
@@ -437,6 +445,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     @Override
     protected void onBackPressed() {
+        JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
         mSession.triggerAuthenticationDidRestart();
         finishFragmentWithResult(RESULT_RESTART);
     }
@@ -544,7 +553,7 @@ public class JRWebViewFragment extends JRUiFragment {
                 public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
                     JREngage.logd(TAG, "[connectionDidFail] userdata: " + tag, ex);
 
-                    if (isShowing()) {
+                    if (hasView()) {
                         // This is designed to not run if the user pressed the back button after the MEU started
                         // loading but before it failed.
                         // The test is probably not quite right and that if the timing is bad both onBackPressed()
@@ -554,7 +563,6 @@ public class JRWebViewFragment extends JRUiFragment {
                                 JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
                                 JREngageError.ErrorType.AUTHENTICATION_FAILED,
                                 ex);
-
                         mSession.triggerAuthenticationDidFail(error);
                         mIsFinishPending = true;
                         setFragmentResult(RESULT_FAIL);
@@ -571,6 +579,7 @@ public class JRWebViewFragment extends JRUiFragment {
      * the back stack.
       */
     private static class RetainFragment extends Fragment {
+        private static final String TAG  = RetainFragment.class.getSimpleName();
         JRWebViewFragment mTarget;
 
         /* The deferred connectionDidFinishLoading message */
@@ -596,61 +605,59 @@ public class JRWebViewFragment extends JRUiFragment {
         public void onResume() {
             super.onResume();
             mTarget = (JRWebViewFragment) getTargetFragment();
-
-            /* If we have a deferred callback, post it. */
-            if (mDeferredCdflH != null) {
-                mTarget.mMobileEndPointConnectionDelegate.connectionDidFinishLoading(
-                        mDeferredCdflH, mDeferredCdflBa, mDeferredCdflS, mDeferredCdflO);
-                mDeferredCdflH = null;
-                mDeferredCdflBa = null;
-                mDeferredCdflS = null;
-                mDeferredCdflO = null;
-            }
-
-            if (mDeferredCdfE != null) {
-                mTarget.mMobileEndPointConnectionDelegate.connectionDidFail(
-                        mDeferredCdfE, mDeferredCdfS, mDeferredCdfO);
-                mDeferredCdfE = null;
-                mDeferredCdfS = null;
-                mDeferredCdfO = null;
-            }
+            boolean a = isResumed();
+            maybeDispatchMessages();
         }
 
         @Override
         public void onStop() {
             super.onStop();
             mTarget = null;
-
         }
 
-        /* These callbacks occur on the UI thread so I think it's safe not to lock writes to the arg vars. */
         JRConnectionManagerDelegate mConnectionDelegate = new JRConnectionManagerDelegate() {
             public void connectionDidFinishLoading(HttpResponseHeaders headers,
                                                    byte[] payload,
                                                    String requestUrl,
                                                    Object tag) {
-                if (mTarget != null && isResumed()) {
-                    /* We can delegate the message immediately */
-                    mTarget.mMobileEndPointConnectionDelegate.connectionDidFinishLoading(headers, payload,
-                            requestUrl, tag);
-                } else {
-                    /* Save the message */
-                    mDeferredCdflH = headers;
-                    mDeferredCdflBa = payload;
-                    mDeferredCdflS = requestUrl;
-                    mDeferredCdflO = tag;
-                }
+                JREngage.logd(TAG, "[connectionDidFinishLoading]");
+                mDeferredCdflH = headers;
+                mDeferredCdflBa = payload;
+                mDeferredCdflS = requestUrl;
+                mDeferredCdflO = tag;
+
+                maybeDispatchMessages();
             }
 
             public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
-                if (mTarget != null && isResumed()) {
-                    mTarget.mMobileEndPointConnectionDelegate.connectionDidFail(ex, requestUrl, tag);
-                } else {
-                    mDeferredCdfE = ex;
-                    mDeferredCdfS = requestUrl;
-                    mDeferredCdfO = tag;
-                }
+                JREngage.logd(TAG, "[connectionDidFail]");
+                mDeferredCdfE = ex;
+                mDeferredCdfS = requestUrl;
+                mDeferredCdfO = tag;
+
+                maybeDispatchMessages();
             }
         };
+
+        private void maybeDispatchMessages() {
+            if (mTarget != null && isResumed()) {
+                if (mDeferredCdflH != null) {
+                    mTarget.mMobileEndPointConnectionDelegate.connectionDidFinishLoading(
+                            mDeferredCdflH, mDeferredCdflBa, mDeferredCdflS, mDeferredCdflO);
+                    mDeferredCdflH = null;
+                    mDeferredCdflBa = null;
+                    mDeferredCdflS = null;
+                    mDeferredCdflO = null;
+                }
+
+                if (mDeferredCdfE != null) {
+                    mTarget.mMobileEndPointConnectionDelegate.connectionDidFail(
+                            mDeferredCdfE, mDeferredCdfS, mDeferredCdfO);
+                    mDeferredCdfE = null;
+                    mDeferredCdfS = null;
+                    mDeferredCdfO = null;
+                }
+            }
+        }
     }
 }

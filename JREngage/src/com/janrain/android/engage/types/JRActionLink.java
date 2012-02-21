@@ -103,11 +103,24 @@ public class JRActionLink implements Serializable, JRJsonifiable {
      *      if text or href is null
      */
     public JRActionLink(String text, String href) {
-        if (text == null || href == null) throw new IllegalArgumentException("illegal null text or null href");
+        if (text == null || href == null) {
+            throw new IllegalArgumentException("illegal null text or null href");
+        }
         mText = text;
         mHref = href;
     }
 /*@}*/
+
+    /**
+     * @internal
+     * Constructor for Phonegap plugin
+     *
+     * @param actionLink 
+     *      A dictionary with two string fields, 'text' and 'href' 
+     */
+    public JRActionLink(JRDictionary actionLink) {
+        this(actionLink.getAsString("text", ""), actionLink.getAsString("href", ""));
+    }
 
 /**
  * @name Getters

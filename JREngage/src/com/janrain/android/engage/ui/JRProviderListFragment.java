@@ -31,10 +31,6 @@
  */
 package com.janrain.android.engage.ui;
 
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -51,10 +47,13 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
+
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @internal
@@ -138,6 +137,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        JREngage.logd(TAG, "[onCreateView]");
         if (mSession == null) return null;
         View listView = inflater.inflate(R.layout.jr_provider_listview, container, false);
 
@@ -209,10 +209,11 @@ public class JRProviderListFragment extends JRUiFragment {
                         break;
                     case Activity.RESULT_OK:
                         finishFragmentWithResult(Activity.RESULT_OK);
-                        break;
+                        return;
                     case JRLandingFragment.RESULT_FAIL:
                         getActivity().setResult(RESULT_FAIL);
                         getActivity().finish();
+                        return;
 //                    I've seen RESULT_CANCELED before, but I can't figure out what could cause it
 //                    Maybe pressing the back button before the Activity is fully displayed?
 //                    case Activity.RESULT_CANCELED:
@@ -224,9 +225,10 @@ public class JRProviderListFragment extends JRUiFragment {
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         finishFragmentWithResult(Activity.RESULT_OK);
-                        break;
+                        return;
                     case JRWebViewFragment.RESULT_FAIL:
-                        // Fall through
+                        finishFragmentWithResult(RESULT_FAIL);
+                        return;
                     case JRWebViewFragment.RESULT_RESTART:
                         break;
                     case JRWebViewFragment.RESULT_BAD_OPENID_URL:
@@ -241,12 +243,19 @@ public class JRProviderListFragment extends JRUiFragment {
             default:
                 Log.e(TAG, "Unrecognized request/result code " + requestCode + "/" + resultCode);
         }
+
+//        See the comment about specific provider flow in JRFragmentHostActivity#onCreate
+        if (isSpecificProviderFlow()) {
+            // reach this point when we haven't returned above after setting result and finishing
+//            if (requestCode == JRUiFragment.REQUEST_LANDING
+//                    && resultCode == JRLandingFragment.RESULT_SWITCH_ACCOUNTS) {
+//                showWebView();
+//            } else {
+                cancelProviderList();
+//            }
+        }
     }
 
-    /**
-     * Called by timer.  Used when providers are not found in JRSession.
-     * Continues polling until providers are found or the polling threshold is hit.
-     */
     private void doSessionPoll() {
         ++mTimerCount;
         JREngage.logd(TAG, "[doSessionPoll] timer count: " + mTimerCount);
@@ -270,7 +279,11 @@ public class JRProviderListFragment extends JRUiFragment {
 
     @Override
     protected void onBackPressed() {
-        mSession.triggerAuthenticationDidCancel();
+        cancelProviderList();
+    }
+
+    private void cancelProviderList() {
         finishFragmentWithResult(Activity.RESULT_CANCELED);
+        mSession.triggerAuthenticationDidCancel();
     }
 }

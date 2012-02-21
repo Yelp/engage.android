@@ -69,7 +69,7 @@ public interface JREngageDelegate {
      *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">
      *   List of Providers</a>
      *
-     * @note:
+     * @note
      *   The structure of the \e auth_info JRDictionary (represented here in JSON) will be like the
      *   following:
      * @code
@@ -86,7 +86,7 @@ public interface JREngageDelegate {
      }
      * @endcode
      *
-     * \sa For a full description of the dictionary and its fields,
+     * @sa For a full description of the dictionary and its fields,
      * please see the <a href="http://documentation.janrain.com/engage/api/auth_info">auth_info
      * response</a> section of the Janrain Engage API documentation.
      **/

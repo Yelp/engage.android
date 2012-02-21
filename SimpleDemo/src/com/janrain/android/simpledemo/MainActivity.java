@@ -32,8 +32,6 @@
 package com.janrain.android.simpledemo;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -44,9 +42,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.janrain.android.engage.*;
+import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.JREngageDelegate;
+import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.types.*;
+import com.janrain.android.engage.types.JRActionLink;
+import com.janrain.android.engage.types.JRActivityObject;
+import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.types.JREmailObject;
+import com.janrain.android.engage.types.JRImageMediaObject;
+import com.janrain.android.engage.types.JRSmsObject;
 import com.janrain.android.engage.utils.Prefs;
 
 import java.io.IOException;
@@ -76,6 +81,7 @@ public class MainActivity extends FragmentActivity {
     private Button mBtnTestAuth;
     private Button mBtnTestPub;
     private EditText mUrlEditText;
+    private Button mBtnTestSpecificProvider;
 
     // Activity object variables
     private String mTitleText = "title text";
@@ -94,7 +100,6 @@ public class MainActivity extends FragmentActivity {
             "parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta " +
             "decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.";
     private String mImageUrl = "http://www.janrain.com/sites/default/themes/janrain/logo.png";
-    private String mDescriptionHtml = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,9 +108,16 @@ public class MainActivity extends FragmentActivity {
 
         setContentView(R.layout.main);
 
+        if (!initEngage()) return;
+
         mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
+        mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
+        mUrlEditText = (EditText) findViewById(R.id.share_url);
+        mBtnTestSpecificProvider = (Button) findViewById(R.id.btn_test_specific_provider);
+
         mBtnTestAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+//                mEngage.setEnabledAuthenticationProviders(new String[]{"facebook"});
                 mEngage.showAuthenticationDialog();
             }
         });
@@ -126,7 +138,6 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
         mBtnTestPub.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 buildActivity();
@@ -151,18 +162,27 @@ public class MainActivity extends FragmentActivity {
                 return true;
             }
         });
-        mUrlEditText = (EditText) findViewById(R.id.share_url);
-        mUrlEditText.addTextChangedListener(new TextWatcher() {
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+        mUrlEditText.setText(Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs"));
+        mUrlEditText.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             public void afterTextChanged(Editable s) {
                 mActionLink = s.toString();
                 Prefs.putString(ACTION_LINK_KEY, mActionLink);
             }
         });
-
+        
+        mBtnTestSpecificProvider.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mEngage.showAuthenticationDialog(null, "facebook");
+            }
+        });
+    }
+    
+    private boolean initEngage() {
         String engageAppId = null;
         String engageTokenUrl = null;
         try {
@@ -174,13 +194,15 @@ public class MainActivity extends FragmentActivity {
                 new AlertDialog.Builder(this).setTitle("Configuration error")
                         .setMessage("You need to create assets/app_id.txt, then recompile and reinstall.")
                         .create().show();
-                return;
+                return false;
             }
         }
 
         JREngage.sLoggingEnabled = true;
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, mJREngageDelegate);
-        mUrlEditText.setText(Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs"));
+        if (mEngage == null) return false;
+        
+        return true;
     }
 
     private void buildActivity() {
@@ -227,7 +249,8 @@ public class MainActivity extends FragmentActivity {
             String message = "Authentication successful" + ((TextUtils.isEmpty(displayName))
                     ? "" : (" for user: " + displayName));
 
-            Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+//            Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+            showResultDialog(message);
         }
 
         public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
