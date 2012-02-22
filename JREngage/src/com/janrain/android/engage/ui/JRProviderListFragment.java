@@ -61,7 +61,6 @@ import java.util.TimerTask;
  * @internal
  *
  * @class JRProvidersActivity
- * Displays list of [basic] providers.
  */
 public class JRProviderListFragment extends JRUiFragment {
     public static final int RESULT_FAIL = Activity.RESULT_FIRST_USER;

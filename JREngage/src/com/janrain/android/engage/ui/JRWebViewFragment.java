@@ -394,7 +394,7 @@ public class JRWebViewFragment extends JRUiFragment {
             if ("ok".equals(result)) {
                 /* Back should be disabled at this point because the progress modal dialog is
                 being displayed. */
-                if (!mIsSocialSharingSignIn) mSession.saveLastUsedBasicProvider();
+                if (!mIsSocialSharingSignIn) mSession.saveLastUsedAuthProvider();
                 mSession.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
                 getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();

@@ -130,7 +130,7 @@ public class JRLandingFragment extends JRUiFragment {
         JREngage.logd(TAG, "[onSwitchAccountsClick]");
 
         mSession.getCurrentlyAuthenticatingProvider().setForceReauth(true);
-        mSession.setReturningBasicProvider("");
+        mSession.setReturningAuthProvider("");
         mSession.triggerAuthenticationDidRestart();
         getActivity().setResult(RESULT_SWITCH_ACCOUNTS);
         getActivity().finish();

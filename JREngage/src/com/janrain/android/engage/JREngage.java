@@ -106,7 +106,7 @@ import java.util.List;
  *
  * Prior to using the Engage for Android
  * library, you must already have an application on <a href="http://rpxnow.com">http://rpxnow.com</a>.
- * This is all that is required for basic authentication, although some providers require extra
+ * This is all that is required for authentication, although some providers require
  * configuration (which can be done through your application's <a href="http://rpxnow.com/relying_parties">Dashboard</a>).
  * For social publishing, you will need to configure your Engage application with the desired providers.
  *
