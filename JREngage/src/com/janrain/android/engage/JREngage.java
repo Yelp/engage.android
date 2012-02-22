@@ -474,7 +474,7 @@ public class JREngage {
     }
 
     public void showAuthenticationDialog(Class<? extends JRCustomSignin> customSignin) {
-        showAuthenticationDialog(false, customSignin);
+        showAuthenticationDialog(false, null, customSignin);
     }
 
     /**
@@ -494,15 +494,6 @@ public class JREngage {
         showAuthenticationDialog(skipReturningUserLandingPage, null);
     }
     
-    public void showAuthenticationDialog(boolean a, Object b) {}
-
-    public void showAuthenticationDialog(boolean skipReturningUserLandingPage,
-                                         Class<? extends JRCustomSignin> customSignin) {
-        JREngage.logd(TAG, "[showAuthenticationDialog]: " + skipReturningUserLandingPage);
-        
-        showAuthenticationDialog(skipReturningUserLandingPage, null);
-    }
-
     /**
      * Begins authentication.  The library will
      * start a new Android Activity and take the user through the sign-in process.
@@ -517,7 +508,29 @@ public class JREngage {
      *  setAlwaysForceReauthentication().
      **/
     public void showAuthenticationDialog(String provider) {
-        showAuthenticationDialog(null, provider);
+        showAuthenticationDialog(null, provider, null);
+    }
+
+    /**
+     * Begins authentication.  The library will
+     * start a new Android Activity and take the user through the sign-in process.
+     *
+     * @param skipReturningUserLandingPage
+     *  Prevents the dialog from opening to the returning-user landing page when \c true.  That is, the
+     *  dialog will always open straight to the list of providers.  The dialog falls back to the default
+     *  behavior when \c false
+     *
+     * @param provider
+     *  Specify a provider to start authentication with. No provider selection list will be shown, the user
+     *  will be brought directly to authentication with this provider.
+     *  If null the user will be shown the provider list as usual.
+     *
+     * @note
+     *  If you always want to force the user to re-enter his/her credentials, pass \c true to the method
+     *  setAlwaysForceReauthentication().
+     **/
+    public void showAuthenticationDialog(Boolean skipReturningUserLandingPage, String provider) {
+        showAuthenticationDialog(skipReturningUserLandingPage, provider, null);
     }
 
     /**
@@ -534,11 +547,16 @@ public class JREngage {
      *  will be brought directly to authentication with this provider. 
      *  If null the user will be shown the provider list as usual.
      *
+     * @param customSignin
+     *  The custom sign-in object to display in the provider list. May be null for no custom sign-in.
+     *
      * @note
      *  If you always want to force the user to re-enter his/her credentials, pass \c true to the method
      *  setAlwaysForceReauthentication().
      **/
-    public void showAuthenticationDialog(Boolean skipReturningUserLandingPage, String provider) {
+    public void showAuthenticationDialog(Boolean skipReturningUserLandingPage, 
+                                         String provider,
+                                         Class<? extends JRCustomSignin> customSignin) {
         if (checkSessionDataError()) return;
 
         if (skipReturningUserLandingPage != null) mSession.setSkipLandingPage(skipReturningUserLandingPage);
