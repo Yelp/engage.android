@@ -31,26 +31,12 @@
  */
 package com.janrain.android.engage.session;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
-
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.JREngageError.ConfigurationError;
@@ -58,9 +44,9 @@ import com.janrain.android.engage.JREngageError.ErrorType;
 import com.janrain.android.engage.JREngageError.SocialPublishingError;
 import com.janrain.android.engage.JREnvironment;
 import com.janrain.android.engage.R;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
@@ -68,6 +54,18 @@ import com.janrain.android.engage.utils.Archiver;
 import com.janrain.android.engage.utils.ListUtils;
 import com.janrain.android.engage.utils.Prefs;
 import com.janrain.android.engage.utils.StringUtils;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class JRSession implements JRConnectionManagerDelegate {
     private static final String TAG = JRSession.class.getSimpleName();
@@ -79,8 +77,8 @@ public class JRSession implements JRConnectionManagerDelegate {
     //private static final JREnvironment ENVIRONMENT = JREnvironment.NATHAN;
 
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
-    private static final String ARCHIVE_BASIC_PROVIDERS = "basicProviders";
-    private static final String ARCHIVE_SOCIAL_PROVIDERS = "socialProviders";
+    private static final String ARCHIVE_AUTH_PROVIDERS = "authProviders";
+    private static final String ARCHIVE_SHARING_PROVIDERS = "sharingProviders";
     private static final String ARCHIVE_AUTH_USERS_BY_PROVIDER = "jrAuthenticatedUsersByProvider";
 
     private static final String UNFORMATTED_CONFIG_URL =
@@ -100,14 +98,14 @@ public class JRSession implements JRConnectionManagerDelegate {
 	private JRProvider mCurrentlyAuthenticatingProvider;
     private JRProvider mCurrentlyPublishingProvider;
 
-    private String mReturningBasicProvider;
-	private String mReturningSocialProvider;
+    private String mReturningAuthProvider;
+	private String mReturningSharingProvider;
 
 	private Map<String, JRProvider> mAllProviders;
-	private List<String> mBasicProviders;
+	private List<String> mAuthProviders;
     private List<String> mEnabledAuthenticationProviders = null;
     private List<String> mEnabledSharingProviders = null;
-	private List<String> mSocialProviders;
+	private List<String> mSharingProviders;
 	private Map<String, JRAuthenticatedUser> mAuthenticatedUsersByProvider;
 
 	private JRActivityObject mActivity;
@@ -175,9 +173,9 @@ public class JRSession implements JRConnectionManagerDelegate {
         mUrlEncodedLibraryVersion = AndroidUtils.urlEncode(getContext().getString(R.string.jr_git_describe));
 
         try {
-            /* load the last used basic and social providers */
-            mReturningSocialProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
-            mReturningBasicProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, "");
+            /* load the last used auth and social providers */
+            mReturningSharingProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
+            mReturningAuthProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_AUTH_PROVIDER, "");
 
             /* Load the library state from disk */
             mAuthenticatedUsersByProvider = Archiver.load(ARCHIVE_AUTH_USERS_BY_PROVIDER);
@@ -186,15 +184,15 @@ public class JRSession implements JRConnectionManagerDelegate {
             /* Fix up the provider objects with data that isn't serialized along with them */
             for (Object provider : mAllProviders.values()) ((JRProvider)provider).loadDynamicVariables();
 
-            /* Load the list of basic providers */
-            mBasicProviders = (ArrayList<String>)Archiver.load(ARCHIVE_BASIC_PROVIDERS);
-            for (Object v : mBasicProviders) assert v instanceof String;
-            JREngage.logd(TAG, "basic providers: [" + TextUtils.join(",", mBasicProviders) + "]");
+            /* Load the list of auth providers */
+            mAuthProviders = (ArrayList<String>)Archiver.load(ARCHIVE_AUTH_PROVIDERS);
+            for (Object v : mAuthProviders) assert v instanceof String;
+            JREngage.logd(TAG, "auth providers: [" + TextUtils.join(",", mAuthProviders) + "]");
 
             /* Load the list of social providers */
-            mSocialProviders = (ArrayList<String>)Archiver.load(ARCHIVE_SOCIAL_PROVIDERS);
-            for (Object v : mSocialProviders) assert v instanceof String;
-            JREngage.logd(TAG, "social providers: [" + TextUtils.join(",", mSocialProviders) + "]");
+            mSharingProviders = (ArrayList<String>)Archiver.load(ARCHIVE_SHARING_PROVIDERS);
+            for (Object v : mSharingProviders) assert v instanceof String;
+            JREngage.logd(TAG, "sharing providers: [" + TextUtils.join(",", mSharingProviders) + "]");
 
             /* Load the base url */
             mBaseUrl = Prefs.getString(Prefs.KEY_JR_BASE_URL, "");
@@ -212,14 +210,14 @@ public class JRSession implements JRConnectionManagerDelegate {
             Archiver.save(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
             mAllProviders = new HashMap<String, JRProvider>();
             Archiver.save(ARCHIVE_ALL_PROVIDERS, mAllProviders);
-            mBasicProviders = new ArrayList<String>();
-            Archiver.save(ARCHIVE_BASIC_PROVIDERS, mBasicProviders);
-            mSocialProviders = new ArrayList<String>();
-            Archiver.save(ARCHIVE_SOCIAL_PROVIDERS, mSocialProviders);
+            mAuthProviders = new ArrayList<String>();
+            Archiver.save(ARCHIVE_AUTH_PROVIDERS, mAuthProviders);
+            mSharingProviders = new ArrayList<String>();
+            Archiver.save(ARCHIVE_SHARING_PROVIDERS, mSharingProviders);
             mBaseUrl = "";
             mHidePoweredBy = true;
-            mReturningSocialProvider = "";
-            mReturningBasicProvider = "";
+            mReturningSharingProvider = "";
+            mReturningAuthProvider = "";
             mOldEtag = "";
             mGetConfigDone = false;
         }
@@ -241,6 +239,10 @@ public class JRSession implements JRConnectionManagerDelegate {
 
     public void setSkipLandingPage(boolean skipLandingPage) {
         mSkipLandingPage = skipLandingPage;
+    }
+
+    public boolean getSkipLandingPage() {
+        return mSkipLandingPage;
     }
 
     public boolean getAlwaysForceReauth() {
@@ -266,11 +268,11 @@ public class JRSession implements JRConnectionManagerDelegate {
         mCurrentlyAuthenticatingProvider = provider;
     }
 
-    public ArrayList<JRProvider> getBasicProviders() {
+    public ArrayList<JRProvider> getAuthProviders() {
         ArrayList<JRProvider> providerList = new ArrayList<JRProvider>();
 
-        if ((mBasicProviders != null) && (mBasicProviders.size() > 0)) {
-            for (String name : mBasicProviders) {
+        if ((mAuthProviders != null) && (mAuthProviders.size() > 0)) {
+            for (String name : mAuthProviders) {
                 // Filter by enabled provider list if available
                 if (mEnabledAuthenticationProviders != null &&
                         !mEnabledAuthenticationProviders.contains(name)) continue;
@@ -282,15 +284,15 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     /**
-     * Gets the configured and enabled social providers
+     * Gets the configured and enabled sharing providers
      *
      * @return an ArrayList&lt;Provider>, does not return null.
      */
-    public ArrayList<JRProvider> getSocialProviders() {
+    public ArrayList<JRProvider> getSharingProviders() {
         ArrayList<JRProvider> providerList = new ArrayList<JRProvider>();
 
-        if ((mSocialProviders != null) && (mSocialProviders.size() > 0)) {
-            for (String name : mSocialProviders) {
+        if ((mSharingProviders != null) && (mSharingProviders.size() > 0)) {
+            for (String name : mSharingProviders) {
                 // Filter by enabled provider list if available
                 if (mEnabledSharingProviders != null &&
                         !mEnabledSharingProviders.contains(name)) continue;
@@ -301,38 +303,38 @@ public class JRSession implements JRConnectionManagerDelegate {
         return providerList;
     }
 
-    public String getReturningBasicProvider() {
+    public String getReturningAuthProvider() {
         /* This is here so that when a calling application sets mSkipLandingPage, the dialog always opens
          * to the providers list. (See JRProviderListFragment.onCreate for an explanation of the flow control
          * when there's a "returning provider.") */
         if (mSkipLandingPage)
             return null;
 
-        return mReturningBasicProvider;
+        return mReturningAuthProvider;
     }
 
-    public void setReturningBasicProvider(String returningBasicProvider) {
-        if (TextUtils.isEmpty(returningBasicProvider)) returningBasicProvider = ""; // nulls -> ""s
-        if (!getBasicProviders().contains(getProviderByName(returningBasicProvider))) {
-            returningBasicProvider = "";
+    public void setReturningAuthProvider(String returningAuthProvider) {
+        if (TextUtils.isEmpty(returningAuthProvider)) returningAuthProvider = ""; // nulls -> ""s
+        if (!getAuthProviders().contains(getProviderByName(returningAuthProvider))) {
+            returningAuthProvider = "";
         }
 
-        mReturningBasicProvider = returningBasicProvider;
-        Prefs.putString(Prefs.KEY_JR_LAST_USED_BASIC_PROVIDER, returningBasicProvider);
+        mReturningAuthProvider = returningAuthProvider;
+        Prefs.putString(Prefs.KEY_JR_LAST_USED_AUTH_PROVIDER, returningAuthProvider);
     }
 
-    public String getReturningSocialProvider() {
-        return mReturningSocialProvider;
+    public String getReturningSharingProvider() {
+        return mReturningSharingProvider;
     }
 
-    public void setReturningSocialProvider(String returningSocialProvider) {
-        if (TextUtils.isEmpty(returningSocialProvider)) returningSocialProvider = ""; // nulls -> ""s
-        if (!getSocialProviders().contains(getProviderByName(returningSocialProvider))) {
-            returningSocialProvider = "";
+    public void setReturningSharingProvider(String returningSharingProvider) {
+        if (TextUtils.isEmpty(returningSharingProvider)) returningSharingProvider = ""; // nulls -> ""s
+        if (!getSharingProviders().contains(getProviderByName(returningSharingProvider))) {
+            returningSharingProvider = "";
         }
 
-        mReturningSocialProvider = returningSocialProvider;
-        Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, returningSocialProvider);
+        mReturningSharingProvider = returningSharingProvider;
+        Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, returningSharingProvider);
     }
 
     public String getBaseUrl() {
@@ -410,6 +412,10 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 	}
 
+    public void connectionDidStop(String requestUrl, Object tag) {
+        // Noop because connections are not stopped for this delegate
+    }
+
     private void processShareActivityResponse(String payload, JRDictionary userDataTag) {
         String providerName = userDataTag.getAsString(USERDATA_PROVIDER_NAME_KEY);
 
@@ -431,7 +437,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                                 providerName);
             }
         } else if (responseDict.containsKey("stat") && ("ok".equals(responseDict.get("stat")))) {
-            setReturningSocialProvider(getCurrentlyPublishingProvider().getName());
+            setReturningSharingProvider(getCurrentlyPublishingProvider().getName());
             setCurrentlyPublishingProvider(null);
             for (JRSessionDelegate delegate : getDelegatesCopy()) {
                 delegate.publishingJRActivityDidSucceed(mActivity, providerName);
@@ -539,7 +545,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             if (s.equals("getConfiguration")) {
                 if (headers.getResponseCode() == HttpStatus.SC_NOT_MODIFIED) {
                     /* If the ETag matched, we're done. */
-                    JREngage.logd(TAG, "[connectionDidFinishLoading] found HTTP_NOT_MODIFIED -> matched ETag");
+                    JREngage.logd(TAG, "[connectionDidFinishLoading] HTTP_NOT_MODIFIED -> matched ETag");
 
                     mGetConfigDone = true;
                     return;
@@ -642,22 +648,22 @@ public class JRSession implements JRConnectionManagerDelegate {
             mAllProviders.put(name, provider);
         }
 
-        /* Get the ordered list of basic providers */
-        mBasicProviders = jsonDict.getAsListOfStrings("enabled_providers");
-        /* Get the ordered list of social providers */
-        mSocialProviders = jsonDict.getAsListOfStrings("social_providers");
+        /* Get the ordered list of auth providers */
+        mAuthProviders = jsonDict.getAsListOfStrings("enabled_providers");
+        /* Get the ordered list of sharing providers */
+        mSharingProviders = jsonDict.getAsListOfStrings("social_providers");
 
-        /* By redundantly calling these setters it is ensured that the returning basic and social providers,
+        /* By redundantly calling these setters it is ensured that the returning auth and sharing providers,
          * if set, are members of the configured set of providers. */
-        setReturningBasicProvider(mReturningBasicProvider);
-        setReturningSocialProvider(mReturningSocialProvider);
+        setReturningAuthProvider(mReturningAuthProvider);
+        setReturningSharingProvider(mReturningSharingProvider);
 
         /* Done! */
 
         /* Save data to local store */
         Archiver.save(ARCHIVE_ALL_PROVIDERS, mAllProviders);
-        Archiver.save(ARCHIVE_BASIC_PROVIDERS, mBasicProviders);
-        Archiver.save(ARCHIVE_SOCIAL_PROVIDERS, mSocialProviders);
+        Archiver.save(ARCHIVE_AUTH_PROVIDERS, mAuthProviders);
+        Archiver.save(ARCHIVE_SHARING_PROVIDERS, mSharingProviders);
 
         /* Figure out of whether to hide the "powered by" line */
         mHidePoweredBy = jsonDict.getAsBoolean("hide_tagline", false);
@@ -684,10 +690,10 @@ public class JRSession implements JRConnectionManagerDelegate {
              * information.  Otherwise, the library may crash/behave inconsistently.  If a
              * dialog isn't showing, go ahead and update that information.  Or, in the case
              * where a dialog is showing but there isn't any data that it could be using (that
-             * is, the lists of basic and social providers are nil), go ahead and update it too.
+             * is, the lists of auth and sharing providers are null), go ahead and update it too.
              * The dialogs won't try and do anything until we're done updating the lists. */
             if (!isUiShowing() ||
-                    (ListUtils.isEmpty(mBasicProviders) && ListUtils.isEmpty(mSocialProviders))) {
+                    (ListUtils.isEmpty(mAuthProviders) && ListUtils.isEmpty(mSharingProviders))) {
                 mNewEtag = eTag;
                 return finishGetConfiguration(dataStr);
             }
@@ -725,10 +731,10 @@ public class JRSession implements JRConnectionManagerDelegate {
         return null;
     }
 
-    public void saveLastUsedBasicProvider() {
-        JREngage.logd(TAG, "[saveLastUsedBasicProvider]");
+    public void saveLastUsedAuthProvider() {
+        JREngage.logd(TAG, "[saveLastUsedAuthProvider]");
 
-        setReturningBasicProvider(mCurrentlyAuthenticatingProvider.getName());
+        setReturningAuthProvider(mCurrentlyAuthenticatingProvider.getName());
     }
 
     public URL startUrlForCurrentlyAuthenticatingProvider() {
@@ -740,7 +746,8 @@ public class JRSession implements JRConnectionManagerDelegate {
         String oid; /* open identifier */
 
         if (!TextUtils.isEmpty(mCurrentlyAuthenticatingProvider.getOpenIdentifier())) {
-            oid = String.format("openid_identifier=%s&", mCurrentlyAuthenticatingProvider.getOpenIdentifier());
+            oid = String.format("openid_identifier=%s&",
+                    mCurrentlyAuthenticatingProvider.getOpenIdentifier());
             if (mCurrentlyAuthenticatingProvider.requiresInput()) {
                 oid = oid.replaceAll("%@", mCurrentlyAuthenticatingProvider.getUserInput());
             } else {
@@ -1007,8 +1014,8 @@ public class JRSession implements JRConnectionManagerDelegate {
         mCurrentlyAuthenticatingProvider.setForceReauth(true);
 
         setCurrentlyAuthenticatingProvider(null);
-        mReturningBasicProvider = null;
-        mReturningSocialProvider = null;
+        mReturningAuthProvider = null;
+        mReturningSharingProvider = null;
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.authenticationDidFail(error, providerName);
@@ -1019,7 +1026,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         JREngage.logd(TAG, "[triggerAuthenticationDidCancel]");
 
         setCurrentlyAuthenticatingProvider(null);
-        setReturningBasicProvider(null);
+        setReturningAuthProvider(null);
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) delegate.authenticationDidCancel();
     }
@@ -1108,14 +1115,31 @@ public class JRSession implements JRConnectionManagerDelegate {
         mEnabledAuthenticationProviders = enabledProviders;
 
         // redundantly call the setter to ensure the provider is still available
-        setReturningBasicProvider(mReturningBasicProvider);
+        setReturningAuthProvider(mReturningAuthProvider);
     }
+
+    public List<String> getEnabledAuthenticationProviders() {
+        if (mEnabledAuthenticationProviders == null) {
+            return mAuthProviders;
+        } else {
+            return mEnabledAuthenticationProviders;
+        }
+    }
+
 
     public void setEnabledSharingProviders(List<String> enabledSharingProviders) {
         mEnabledSharingProviders = enabledSharingProviders;
 
         // redundantly call the setter to ensure the provider is still available
-        setReturningSocialProvider(mReturningSocialProvider);
+        setReturningSharingProvider(mReturningSharingProvider);
+    }
+    
+    public List<String> getEnabledSharingProviders() {
+        if (mEnabledSharingProviders == null) {
+            return mSharingProviders;
+        } else {
+            return mEnabledSharingProviders;
+        }
     }
 
     private Context getContext() {

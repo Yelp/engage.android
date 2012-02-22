@@ -33,8 +33,6 @@ package com.janrain.android.engage.types;
 
 import android.graphics.Bitmap;
 
-import java.nio.channels.OverlappingFileLockException;
-
 /**
  * @brief Image object to be included in a post to a user's stream.
  *

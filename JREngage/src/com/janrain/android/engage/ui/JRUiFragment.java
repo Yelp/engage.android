@@ -47,6 +47,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.util.Config;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -69,8 +70,6 @@ public abstract class JRUiFragment extends Fragment {
     private static final String KEY_MANAGED_DIALOG_OPTIONS = "jr_dialog_options";
     private static final String KEY_DIALOG_PROGRESS_TEXT = "jr_progress_dialog_text";
 
-    public static final String PARENT_FRAGMENT_EMBEDDED = "parent_fragment_embedded";
-
     public static final int REQUEST_LANDING = 1;
     public static final int REQUEST_WEBVIEW = 2;
     public static final int DIALOG_ABOUT = 1000;
@@ -79,9 +78,9 @@ public abstract class JRUiFragment extends Fragment {
     private FinishReceiver mFinishReceiver;
     private HashMap<Integer, ManagedDialog> mManagedDialogs = new HashMap<Integer, ManagedDialog>();
 
-    protected JRSession mSession;
-    protected final String TAG = getLogTag();
-    protected String getLogTag() { return this.getClass().getSimpleName(); }
+    /*package*/ JRSession mSession;
+    /*package*/ final String TAG = getLogTag();
+    /*package*/ String getLogTag() { return this.getClass().getSimpleName(); }
 
     /**
      * @internal
@@ -117,8 +116,7 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
-        JREngage.logd(TAG, "[" + new Object() {
-        }.getClass().getEnclosingMethod().getName() + "]");
+        JREngage.logd(TAG, "[" + new Object() {}.getClass().getEnclosingMethod().getName() + "]");
         super.onInflate(activity, attrs, savedInstanceState);
 
         if (JRSession.getInstance() == null) {
@@ -190,7 +188,7 @@ public abstract class JRUiFragment extends Fragment {
     public void onResume() {
         super.onResume();
         JREngage.logd(TAG, "[onResume]");
-        if (isShowing()) showHideTaglines();
+        if (hasView()) showHideTaglines();
     }
 
     @Override
@@ -267,7 +265,8 @@ public abstract class JRUiFragment extends Fragment {
 
         //menu.add("test");
 
-        if (mSession.getHidePoweredBy()) {
+        if (mSession == null || mSession.getHidePoweredBy()) {
+            Log.e(TAG, "Bailing out of onCreateOptionsMenu");
             return;
         } else {
             inflater.inflate(R.menu.jr_about_menu, menu);
@@ -284,7 +283,14 @@ public abstract class JRUiFragment extends Fragment {
         }
     }
 
-    protected void showHideTaglines() {
+    /*package*/ void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh, JRSession session) {}
+
+    /*package*/ void showHideTaglines() {
+        if (mSession == null) {
+            Log.e(TAG, "Bailing out of showHideTaglines");
+            return;
+        }
+
         boolean hideTagline = mSession.getHidePoweredBy();
         int visibility = hideTagline ? View.GONE : View.VISIBLE;
 
@@ -295,24 +301,24 @@ public abstract class JRUiFragment extends Fragment {
         if (bonusTagline != null) bonusTagline.setVisibility(visibility);
     }
 
-    protected ProgressDialog getProgressDialog(Bundle options) {
+    /*package*/ ProgressDialog getProgressDialog(Bundle options) {
         ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage(options.getString(KEY_DIALOG_PROGRESS_TEXT));
         return progressDialog;
     }
 
-    protected void showProgressDialog(String displayText) {
+    /*package*/ void showProgressDialog(String displayText) {
         Bundle opts = new Bundle();
         opts.putString(KEY_DIALOG_PROGRESS_TEXT, displayText);
         showDialog(DIALOG_PROGRESS, opts);
     }
 
-    protected void showProgressDialog() {
+    /*package*/ void showProgressDialog() {
         showProgressDialog(getString(R.string.jr_progress_loading));
     }
 
-    protected void dismissProgressDialog() {
+    /*package*/ void dismissProgressDialog() {
         dismissDialog(DIALOG_PROGRESS);
     }
 
@@ -331,12 +337,12 @@ public abstract class JRUiFragment extends Fragment {
         return retval;
     }
 
-    public final boolean isEmbeddedMode() {
+    /*package*/ final boolean isEmbeddedMode() {
         FragmentActivity a = getActivity();
         return a != null && !(a instanceof JRFragmentHostActivity);
     }
 
-    protected Dialog onCreateDialog(int id, Bundle options) {
+    /*package*/ Dialog onCreateDialog(int id, Bundle options) {
         Dialog dialog;
         switch (id) {
             case DIALOG_ABOUT:
@@ -351,13 +357,13 @@ public abstract class JRUiFragment extends Fragment {
         return dialog;
     }
 
-    protected void onPrepareDialog(int id, Dialog d, Bundle options) {}
+    /*package*/ void onPrepareDialog(int id, Dialog d, Bundle options) {}
 
-    protected void showDialog(int dialogId) {
+    /*package*/ void showDialog(int dialogId) {
         showDialog(dialogId, new Bundle());
     }
 
-    protected void showDialog(int dialogId, Bundle options) {
+    /*package*/ void showDialog(int dialogId, Bundle options) {
         ManagedDialog d = mManagedDialogs.get(dialogId);
         if (d == null) {
             d = new ManagedDialog();
@@ -372,22 +378,16 @@ public abstract class JRUiFragment extends Fragment {
         //d.mShowing = true; // See also dismissDialog comment
     }
 
-    protected void dismissDialog(int dialogId) {
+    /*package*/ void dismissDialog(int dialogId) {
         ManagedDialog d = mManagedDialogs.get(dialogId);
-        if (d != null) {
-            d.mDialog.dismiss();
-            // Set mShowing in onSaveInstanceState since this isn't a reliable place to write code that
-            // must maintain the integrity of mShowing because a Dialog may be dismissed by hand (i.e.
-            // not with dismissDialog(int)
-            //d.mShowing = false;
-        }
+        if (d != null) d.mDialog.dismiss();
     }
 
     private void startActivityForFragId(int fragId, int requestCode) {
         startActivityForFragId(fragId, requestCode, null);
     }
 
-    protected int getColor(int colorId) {
+    /*package*/ int getColor(int colorId) {
         return getResources().getColor(colorId);
     }
 
@@ -405,7 +405,6 @@ public abstract class JRUiFragment extends Fragment {
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(getActivity(), showTitle);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, fragId);
-        i.putExtra(JRUiFragment.PARENT_FRAGMENT_EMBEDDED, isEmbeddedMode());
         if (!isEmbeddedMode()) {
             i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW,
                     ((JRFragmentHostActivity) getActivity()).isAuthFlow());
@@ -414,31 +413,40 @@ public abstract class JRUiFragment extends Fragment {
         startActivityForResult(i, requestCode);
     }
 
-    protected void showUserLanding() {
+    /*package*/ void showUserLanding() {
         startActivityForFragId(JRFragmentHostActivity.JR_LANDING, REQUEST_LANDING);
     }
 
-    protected void showWebView(boolean socialSharingSignIn) {
+    /*package*/ void showWebView(boolean socialSharingSignIn) {
         Bundle opts = new Bundle();
         opts.putBoolean(JRWebViewFragment.SOCIAL_SHARING_MODE, socialSharingSignIn);
         startActivityForFragId(JRFragmentHostActivity.JR_WEBVIEW, REQUEST_WEBVIEW, opts);
     }
 
-    protected void showWebView() {
-        startActivityForFragId(JRFragmentHostActivity.JR_WEBVIEW, REQUEST_WEBVIEW);
+    /*package*/ void showWebView() {
+        showWebView(false);
     }
 
-    protected void tryToFinishActivity() {
+    /*package*/ void tryToFinishActivity() {
         JREngage.logd(TAG, "[tryToFinishActivity]");
         getActivity().finish();
     }
 
-    public final boolean isShowing() {
+    /*package*/ boolean hasView() {
         return getView() != null;
     }
 
+    /*package*/ boolean isSpecificProviderFlow() {
+        return getArguments().getString(JRFragmentHostActivity.JR_PROVIDER) != null;
+    }
+
+    /*package*/ String getSpecificProvider() {
+        return getArguments().getString(JRFragmentHostActivity.JR_PROVIDER);
+    }
+
     /**
-     * Only for operation in JRFragmentHostActivity
+     * @internal
+     * Delegated to from JRFragmentHostActivity
      */
-    protected abstract void onBackPressed();
+    /*package*/ void onBackPressed() {}
 }

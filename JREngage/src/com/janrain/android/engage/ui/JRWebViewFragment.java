@@ -31,11 +31,6 @@
  */
 package com.janrain.android.engage.ui;
 
-import java.net.URL;
-import java.util.List;
-
-import org.json.JSONException;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -57,16 +52,19 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
-
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.R;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
+import org.json.JSONException;
+
+import java.net.URL;
+import java.util.List;
 
 /**
  * @internal
@@ -143,7 +141,10 @@ public class JRWebViewFragment extends JRUiFragment {
         if (mSession == null) return;
         mIsSocialSharingSignIn = getActivity().getIntent().getExtras().getBoolean(SOCIAL_SHARING_MODE);
         mProvider = mSession.getCurrentlyAuthenticatingProvider();
-        if (mProvider == null) return;
+        if (mProvider == null) {
+            Log.e(TAG, "[onActivityCreated] null provider, bailing out");
+            return;
+        }
 
         String customUa = mProvider.getWebViewOptions().getAsString(JRDictionary.KEY_USER_AGENT);
 //        if (mUseDesktopUa) mWebViewSettings.setUserAgentString(getString(R.string.jr_desktop_browser_ua));
@@ -154,8 +155,8 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     @Override
-    public void onDestroyView() {
-        // onDestroy may be called even if onCreateView never is, guard against NPEs
+    public void onStop() {
+        // onDestroyView may be called even if onCreateView never is, guard against NPEs
         if (mWebView != null) {
             mWebView.stopLoading();
 
@@ -166,8 +167,14 @@ public class JRWebViewFragment extends JRUiFragment {
             mWebView.setWebViewClient(null);
             mWebView.setDownloadListener(null);
         }
+        super.onStop();
+    }
 
-        super.onDestroyView();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        JRConnectionManager.stopConnectionsForDelegate(mMobileEndPointConnectionDelegate);
     }
 
     private void showAlertDialog(String title, String message) {
@@ -189,11 +196,12 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     @Override
-    protected void tryToFinishActivity() {
+    /*package*/ void tryToFinishActivity() {
         JREngage.logd(TAG, "[tryToFinishActivity]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
         } else {
+            JRConnectionManager.stopConnectionsForDelegate(mMobileEndPointConnectionDelegate);
             getActivity().finish();
         }
     }
@@ -386,7 +394,7 @@ public class JRWebViewFragment extends JRUiFragment {
             if ("ok".equals(result)) {
                 /* Back should be disabled at this point because the progress modal dialog is
                 being displayed. */
-                if (!mIsSocialSharingSignIn) mSession.saveLastUsedBasicProvider();
+                if (!mIsSocialSharingSignIn) mSession.saveLastUsedAuthProvider();
                 mSession.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
                 getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();
@@ -455,7 +463,7 @@ public class JRWebViewFragment extends JRUiFragment {
         public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
             JREngage.logd(TAG, "[connectionDidFail] userdata: " + tag, ex);
 
-            if (isShowing()) {
+            if (hasView()) {
                 // This is designed to not run if the user pressed the back button after the MEU started
                 // loading but before it failed.
                 // The test is probably not quite right and that if the timing is bad both onBackPressed()
@@ -475,7 +483,8 @@ public class JRWebViewFragment extends JRUiFragment {
     };
 
     @Override
-    protected void onBackPressed() {
+    /*package*/ void onBackPressed() {
+        JRConnectionManager.stopConnectionsForDelegate(mMobileEndPointConnectionDelegate);
         mSession.triggerAuthenticationDidRestart();
         getActivity().setResult(JRWebViewFragment.RESULT_RESTART);
         getActivity().finish();

@@ -31,15 +31,12 @@
  */
 package com.janrain.android.engage.ui;
 
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,16 +48,19 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
+import com.janrain.android.engage.session.JRSession;
+
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @internal
  *
  * @class JRProvidersActivity
- * Displays list of [basic] providers.
  */
 public class JRProviderListFragment extends JRUiFragment {
     public static final int RESULT_FAIL = Activity.RESULT_FIRST_USER;
@@ -136,6 +136,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        JREngage.logd(TAG, "[onCreateView]");
         if (mSession == null) return null;
         View listView = inflater.inflate(R.layout.jr_provider_listview, container, false);
 
@@ -145,7 +146,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
         getActivity().setTitle(R.string.jr_provider_list_title);
 
-        mProviderList = mSession.getBasicProviders();
+        mProviderList = mSession.getAuthProviders();
         if (mProviderList == null) mProviderList = new ArrayList<JRProvider>();
 
         mAdapter = new ProviderAdapter();
@@ -206,10 +207,11 @@ public class JRProviderListFragment extends JRUiFragment {
                     case Activity.RESULT_OK:
                         getActivity().setResult(Activity.RESULT_OK);
                         getActivity().finish();
-                        break;
+                        return;
                     case JRLandingFragment.RESULT_FAIL:
                         getActivity().setResult(RESULT_FAIL);
                         getActivity().finish();
+                        return;
 //                    I've seen RESULT_CANCELED before, but I can't figure out what could cause it
 //                    Maybe pressing the back button before the Activity is fully displayed?
 //                    case Activity.RESULT_CANCELED:
@@ -222,11 +224,11 @@ public class JRProviderListFragment extends JRUiFragment {
                     case Activity.RESULT_OK:
                         getActivity().setResult(Activity.RESULT_OK);
                         getActivity().finish();
-                        break;                        
+                        return;
                     case JRWebViewFragment.RESULT_FAIL:
                         getActivity().setResult(RESULT_FAIL);
                         getActivity().finish();
-                        break;
+                        return;
                     case JRWebViewFragment.RESULT_RESTART:
                         break;
                     case JRWebViewFragment.RESULT_BAD_OPENID_URL:
@@ -241,12 +243,19 @@ public class JRProviderListFragment extends JRUiFragment {
             default:
                 Log.e(TAG, "Unrecognized request/result code " + requestCode + "/" + resultCode);
         }
+
+//        See the comment about specific provider flow in JRFragmentHostActivity#onCreate
+        if (isSpecificProviderFlow()) {
+            // reach this point when we haven't returned above after setting result and finishing
+//            if (requestCode == JRUiFragment.REQUEST_LANDING
+//                    && resultCode == JRLandingFragment.RESULT_SWITCH_ACCOUNTS) {
+//                showWebView();
+//            } else {
+                cancelProviderList();
+//            }
+        }
     }
 
-    /**
-     * Called by timer.  Used when providers are not found in JRSession.
-     * Continues polling until providers are found or the polling threshold is hit.
-     */
     private void doSessionPoll() {
         ++mTimerCount;
         JREngage.logd(TAG, "[doSessionPoll] timer count: " + mTimerCount);
@@ -256,7 +265,7 @@ public class JRProviderListFragment extends JRUiFragment {
             getActivity().runOnUiThread(mNoProvidersFoundRunner);
             Log.w(TAG, "[doSessionPoll] providers not found, max iterations hit, timer cancelled...");
         } else {
-            ArrayList<JRProvider> providers = mSession.getBasicProviders();
+            ArrayList<JRProvider> providers = mSession.getAuthProviders();
             if (providers.size() > 0) {
                 mProviderList = providers;
                 getActivity().runOnUiThread(mProvidersLoadedRunner);
@@ -269,9 +278,44 @@ public class JRProviderListFragment extends JRUiFragment {
     }
 
     @Override
-    protected void onBackPressed() {
-        mSession.triggerAuthenticationDidCancel();
+    /*package*/ void onBackPressed() {
+        cancelProviderList();
+    }
+
+    private void cancelProviderList() {
         getActivity().setResult(Activity.RESULT_CANCELED);
         getActivity().finish();
+        mSession.triggerAuthenticationDidCancel();
+    }
+
+    /*package*/ static boolean shouldOpenDirectToUserLandingPage(JRSession session) {
+        JRProvider returningAuthProvider = session.getProviderByName(session.getReturningAuthProvider());
+
+        return (!TextUtils.isEmpty(session.getReturningAuthProvider())
+                && !session.getSkipLandingPage()
+                && returningAuthProvider != null
+                && !session.getAlwaysForceReauth()
+                && !returningAuthProvider.getForceReauth()
+                && session.getAuthProviders().contains(returningAuthProvider)
+                && session.getEnabledAuthenticationProviders().contains(session.getReturningAuthProvider()));
+
+//        Not applicable to Android because this is only called when the provider list is already starting
+//                && !socialSharing
+//                && specificProvider != null  
+//                the provider list
+    }
+    
+    /*package*/ void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh, JRSession session) {
+        /* check and see whether we should start the landing page */
+        /* this has to be done here so the provider list skips rendering it's UI */
+        String rapName = session.getReturningAuthProvider();
+        JRProvider provider = session.getProviderByName(rapName);
+
+        if (shouldOpenDirectToUserLandingPage(session)) {
+            session.setCurrentlyAuthenticatingProvider(provider);
+            Intent i = JRFragmentHostActivity.createUserLandingIntent(jrfh);
+            i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, true);
+            jrfh.startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
+        }
     }
 }
