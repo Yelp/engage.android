@@ -137,7 +137,7 @@ public class JRLandingFragment extends JRUiFragment {
     }
 
     @Override
-    protected void onPrepareDialog(int id, Dialog d, Bundle options) {
+    /*package*/ void onPrepareDialog(int id, Dialog d, Bundle options) {
         if (id == DIALOG_GENERIC_ALERT) {
             AlertDialog d_ = (AlertDialog) d;
             d_.setTitle(options.getString(KEY_ALERT_DIALOG_TITLE));
@@ -149,7 +149,7 @@ public class JRLandingFragment extends JRUiFragment {
     }
 
     @Override
-    protected Dialog onCreateDialog(int id, Bundle options) {
+    /*package*/ Dialog onCreateDialog(int id, Bundle options) {
         if (id == DIALOG_GENERIC_ALERT) {
             return new AlertDialog.Builder(getActivity())
                 .setTitle(options.getString(KEY_ALERT_DIALOG_TITLE))
@@ -200,7 +200,7 @@ public class JRLandingFragment extends JRUiFragment {
     }
 
     @Override
-    protected void tryToFinishActivity() {
+    /*package*/ void tryToFinishActivity() {
         JREngage.logd(TAG, "[tryToFinishActivity]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
@@ -267,7 +267,7 @@ public class JRLandingFragment extends JRUiFragment {
     }
 
     @Override
-    protected void onBackPressed() {
+    /*package*/ void onBackPressed() {
         JREngage.logd(TAG, "[onBackPressed]");
         mSession.triggerAuthenticationDidRestart();
         getActivity().setResult(RESULT_RESTART);

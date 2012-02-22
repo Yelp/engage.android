@@ -241,6 +241,10 @@ public class JRSession implements JRConnectionManagerDelegate {
         mSkipLandingPage = skipLandingPage;
     }
 
+    public boolean getSkipLandingPage() {
+        return mSkipLandingPage;
+    }
+
     public boolean getAlwaysForceReauth() {
         return mAlwaysForceReauth;
     }

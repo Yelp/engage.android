@@ -542,6 +542,8 @@ public class JREngage {
                 i = JRFragmentHostActivity.createWebViewIntent(mActivity);
             }
             i.putExtra(JRFragmentHostActivity.JR_PROVIDER, provider);
+            p.setForceReauth(true);
+            mSession.setCurrentlyAuthenticatingProvider(p);
         }
 
         i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, true);

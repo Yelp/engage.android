@@ -777,7 +777,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     @Override
-    protected Dialog onCreateDialog(int id, Bundle options) {
+    /*package*/ Dialog onCreateDialog(int id, Bundle options) {
         switch (id) {
             case DIALOG_FAILURE:
                 return new AlertDialog.Builder(getActivity())
@@ -819,7 +819,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     @Override
-    protected void onPrepareDialog(int id, Dialog d, Bundle options) {
+    /*package*/ void onPrepareDialog(int id, Dialog d, Bundle options) {
         switch (id) {
             case DIALOG_FAILURE:
                 ((AlertDialog) d).setMessage(options.getString(KEY_DIALOG_ERROR_MESSAGE));
@@ -1164,7 +1164,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     };
 
     @Override
-    protected void onBackPressed() {
+    /*package*/ void onBackPressed() {
         if (mWeHaveAlreadyShared) {
             mSession.triggerPublishingDidComplete();
             getActivity().setResult(Activity.RESULT_OK);

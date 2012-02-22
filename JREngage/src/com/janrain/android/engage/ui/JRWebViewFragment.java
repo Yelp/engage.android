@@ -141,7 +141,10 @@ public class JRWebViewFragment extends JRUiFragment {
         if (mSession == null) return;
         mIsSocialSharingSignIn = getActivity().getIntent().getExtras().getBoolean(SOCIAL_SHARING_MODE);
         mProvider = mSession.getCurrentlyAuthenticatingProvider();
-        if (mProvider == null) return;
+        if (mProvider == null) {
+            Log.e(TAG, "[onActivityCreated] null provider, bailing out");
+            return;
+        }
 
         String customUa = mProvider.getWebViewOptions().getAsString(JRDictionary.KEY_USER_AGENT);
 //        if (mUseDesktopUa) mWebViewSettings.setUserAgentString(getString(R.string.jr_desktop_browser_ua));
@@ -193,7 +196,7 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     @Override
-    protected void tryToFinishActivity() {
+    /*package*/ void tryToFinishActivity() {
         JREngage.logd(TAG, "[tryToFinishActivity]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
@@ -480,7 +483,7 @@ public class JRWebViewFragment extends JRUiFragment {
     };
 
     @Override
-    protected void onBackPressed() {
+    /*package*/ void onBackPressed() {
         JRConnectionManager.stopConnectionsForDelegate(mMobileEndPointConnectionDelegate);
         mSession.triggerAuthenticationDidRestart();
         getActivity().setResult(JRWebViewFragment.RESULT_RESTART);

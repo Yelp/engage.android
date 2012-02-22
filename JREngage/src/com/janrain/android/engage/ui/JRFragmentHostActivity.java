@@ -42,7 +42,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
-import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.utils.AndroidUtils;
 
@@ -115,7 +114,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 throw new IllegalFragmentIdException(getFragmentId());
         }
         
-        mUiFragment.onFragmentHostActivityCreate(this);
+        mUiFragment.onFragmentHostActivityCreate(this, mSession);
 
         if (shouldBePhoneSizedDialog()) {
             // Need to set a new theme in order to achieve a small dialog
@@ -147,7 +146,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 .commit();
     }
 
-    protected boolean shouldBePhoneSizedDialog() {
+    /*package*/ boolean shouldBePhoneSizedDialog() {
         return AndroidUtils.isXlarge() && !(mUiFragment instanceof JRPublishFragment);
     }
 

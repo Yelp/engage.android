@@ -279,7 +279,7 @@ public class JRProviderListFragment extends JRUiFragment {
     }
 
     @Override
-    protected void onBackPressed() {
+    /*package*/ void onBackPressed() {
         cancelProviderList();
     }
 
@@ -289,10 +289,11 @@ public class JRProviderListFragment extends JRUiFragment {
         mSession.triggerAuthenticationDidCancel();
     }
 
-    /*package*/ static boolean shouldOpenToUserLandingPage(JRSession session) {
+    /*package*/ static boolean shouldOpenDirectToUserLandingPage(JRSession session) {
         JRProvider returningAuthProvider = session.getProviderByName(session.getReturningAuthProvider());
 
         return (!TextUtils.isEmpty(session.getReturningAuthProvider())
+                && !session.getSkipLandingPage()
                 && returningAuthProvider != null
                 && !session.getAlwaysForceReauth()
                 && !returningAuthProvider.getForceReauth()
@@ -305,16 +306,17 @@ public class JRProviderListFragment extends JRUiFragment {
 //                the provider list
     }
     
-    public void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh) {
+    /*package*/ void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh, JRSession session) {
         /* check and see whether we should start the landing page */
         /* this has to be done here so the provider list skips rendering it's UI */
-        String rapName = mSession.getReturningAuthProvider();
-        JRProvider provider = mSession.getProviderByName(rapName);
-        if (JRProviderListFragment.shouldOpenToUserLandingPage(mSession)) {
-            mSession.setCurrentlyAuthenticatingProvider(provider);
+        String rapName = session.getReturningAuthProvider();
+        JRProvider provider = session.getProviderByName(rapName);
+
+        if (shouldOpenDirectToUserLandingPage(session)) {
+            session.setCurrentlyAuthenticatingProvider(provider);
             Intent i = JRFragmentHostActivity.createUserLandingIntent(jrfh);
             i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, true);
-            startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
+            jrfh.startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
         }
     }
 }

@@ -78,9 +78,9 @@ public abstract class JRUiFragment extends Fragment {
     private FinishReceiver mFinishReceiver;
     private HashMap<Integer, ManagedDialog> mManagedDialogs = new HashMap<Integer, ManagedDialog>();
 
-    protected JRSession mSession;
-    protected final String TAG = getLogTag();
-    protected String getLogTag() { return this.getClass().getSimpleName(); }
+    /*package*/ JRSession mSession;
+    /*package*/ final String TAG = getLogTag();
+    /*package*/ String getLogTag() { return this.getClass().getSimpleName(); }
 
     /**
      * @internal
@@ -283,9 +283,9 @@ public abstract class JRUiFragment extends Fragment {
         }
     }
 
-    protected void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh) {}
+    /*package*/ void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh, JRSession session) {}
 
-    protected void showHideTaglines() {
+    /*package*/ void showHideTaglines() {
         if (mSession == null) {
             Log.e(TAG, "Bailing out of showHideTaglines");
             return;
@@ -301,24 +301,24 @@ public abstract class JRUiFragment extends Fragment {
         if (bonusTagline != null) bonusTagline.setVisibility(visibility);
     }
 
-    protected ProgressDialog getProgressDialog(Bundle options) {
+    /*package*/ ProgressDialog getProgressDialog(Bundle options) {
         ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage(options.getString(KEY_DIALOG_PROGRESS_TEXT));
         return progressDialog;
     }
 
-    protected void showProgressDialog(String displayText) {
+    /*package*/ void showProgressDialog(String displayText) {
         Bundle opts = new Bundle();
         opts.putString(KEY_DIALOG_PROGRESS_TEXT, displayText);
         showDialog(DIALOG_PROGRESS, opts);
     }
 
-    protected void showProgressDialog() {
+    /*package*/ void showProgressDialog() {
         showProgressDialog(getString(R.string.jr_progress_loading));
     }
 
-    protected void dismissProgressDialog() {
+    /*package*/ void dismissProgressDialog() {
         dismissDialog(DIALOG_PROGRESS);
     }
 
@@ -337,12 +337,12 @@ public abstract class JRUiFragment extends Fragment {
         return retval;
     }
 
-    protected final boolean isEmbeddedMode() {
+    /*package*/ final boolean isEmbeddedMode() {
         FragmentActivity a = getActivity();
         return a != null && !(a instanceof JRFragmentHostActivity);
     }
 
-    protected Dialog onCreateDialog(int id, Bundle options) {
+    /*package*/ Dialog onCreateDialog(int id, Bundle options) {
         Dialog dialog;
         switch (id) {
             case DIALOG_ABOUT:
@@ -357,13 +357,13 @@ public abstract class JRUiFragment extends Fragment {
         return dialog;
     }
 
-    protected void onPrepareDialog(int id, Dialog d, Bundle options) {}
+    /*package*/ void onPrepareDialog(int id, Dialog d, Bundle options) {}
 
-    protected void showDialog(int dialogId) {
+    /*package*/ void showDialog(int dialogId) {
         showDialog(dialogId, new Bundle());
     }
 
-    protected void showDialog(int dialogId, Bundle options) {
+    /*package*/ void showDialog(int dialogId, Bundle options) {
         ManagedDialog d = mManagedDialogs.get(dialogId);
         if (d == null) {
             d = new ManagedDialog();
@@ -378,7 +378,7 @@ public abstract class JRUiFragment extends Fragment {
         //d.mShowing = true; // See also dismissDialog comment
     }
 
-    protected void dismissDialog(int dialogId) {
+    /*package*/ void dismissDialog(int dialogId) {
         ManagedDialog d = mManagedDialogs.get(dialogId);
         if (d != null) d.mDialog.dismiss();
     }
@@ -387,7 +387,7 @@ public abstract class JRUiFragment extends Fragment {
         startActivityForFragId(fragId, requestCode, null);
     }
 
-    protected int getColor(int colorId) {
+    /*package*/ int getColor(int colorId) {
         return getResources().getColor(colorId);
     }
 
@@ -413,39 +413,40 @@ public abstract class JRUiFragment extends Fragment {
         startActivityForResult(i, requestCode);
     }
 
-    protected void showUserLanding() {
+    /*package*/ void showUserLanding() {
         startActivityForFragId(JRFragmentHostActivity.JR_LANDING, REQUEST_LANDING);
     }
 
-    protected void showWebView(boolean socialSharingSignIn) {
+    /*package*/ void showWebView(boolean socialSharingSignIn) {
         Bundle opts = new Bundle();
         opts.putBoolean(JRWebViewFragment.SOCIAL_SHARING_MODE, socialSharingSignIn);
         startActivityForFragId(JRFragmentHostActivity.JR_WEBVIEW, REQUEST_WEBVIEW, opts);
     }
 
-    protected void showWebView() {
+    /*package*/ void showWebView() {
         showWebView(false);
     }
 
-    protected void tryToFinishActivity() {
+    /*package*/ void tryToFinishActivity() {
         JREngage.logd(TAG, "[tryToFinishActivity]");
         getActivity().finish();
     }
 
-    protected boolean hasView() {
+    /*package*/ boolean hasView() {
         return getView() != null;
     }
 
-    protected boolean isSpecificProviderFlow() {
+    /*package*/ boolean isSpecificProviderFlow() {
         return getArguments().getString(JRFragmentHostActivity.JR_PROVIDER) != null;
     }
 
-    protected String getSpecificProvider() {
+    /*package*/ String getSpecificProvider() {
         return getArguments().getString(JRFragmentHostActivity.JR_PROVIDER);
     }
 
     /**
+     * @internal
      * Delegated to from JRFragmentHostActivity
      */
-    protected abstract void onBackPressed();
+    /*package*/ void onBackPressed() {}
 }
