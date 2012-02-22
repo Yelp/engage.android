@@ -86,6 +86,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
+import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
@@ -289,100 +290,6 @@ public class JREngage {
         //    }
         //}
 	}
-
-    private JRSessionDelegate mJrsd = new JRSessionDelegate.SimpleJRSessionDelegate() {
-        public void authenticationDidRestart() {
-            JREngage.logd(TAG, "[authenticationDidRestart]");
-        }
-
-        public void authenticationDidCancel() {
-            JREngage.logd(TAG, "[authenticationDidCancel]");
-
-            for (JREngageDelegate delegate : getDelegatesCopy()) delegate.jrAuthenticationDidNotComplete();
-        }
-
-        public void authenticationDidComplete(JRDictionary profile, String provider) {
-            JREngage.logd(TAG, "[authenticationDidComplete]");
-
-            for (JREngageDelegate d : getDelegatesCopy()) {
-                d.jrAuthenticationDidSucceedForUser(profile, provider);
-            }
-        }
-
-        public void authenticationDidFail(JREngageError error, String provider) {
-            JREngage.logd(TAG, "[authenticationDidFail]");
-            for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrAuthenticationDidFailWithError(error, provider);
-            }
-        }
-
-        public void authenticationDidReachTokenUrl(String tokenUrl,
-                                                   HttpResponseHeaders responseHeaders,
-                                                   String payload,
-                                                   String provider) {
-            JREngage.logd(TAG, "[authenticationDidReachTokenUrl]");
-
-            for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, responseHeaders, payload, provider);
-            }
-        }
-
-        public void authenticationCallToTokenUrlDidFail(String tokenUrl,
-                                                        JREngageError error,
-                                                        String provider) {
-            JREngage.logd(TAG, "[authenticationCallToTokenUrlDidFail]");
-
-            for (JREngageDelegate delegate : getDelegatesCopy()) {
-                delegate.jrAuthenticationCallToTokenUrlDidFail(tokenUrl, error, provider);
-            }
-        }
-
-        public void publishingDidCancel() {
-            JREngage.logd(TAG, "[publishingDidCancel]");
-
-            for (JREngageDelegate delegate : getDelegatesCopy()) delegate.jrSocialDidNotCompletePublishing();
-        }
-
-        public void publishingDidComplete() {
-            JREngage.logd(TAG, "[publishingDidComplete]");
-
-            for (JREngageDelegate delegate : getDelegatesCopy()) delegate.jrSocialDidCompletePublishing();
-        }
-
-        public void publishingDialogDidFail(JREngageError error) {
-            engageDidFailWithError(error);
-
-            if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
-                mSession.tryToReconfigureLibrary();
-            }
-        }
-
-        public void publishingJRActivityDidSucceed(JRActivityObject activity, String provider) {
-            JREngage.logd(TAG, "[publishingJRActivityDidSucceed]");
-
-            for (JREngageDelegate d : getDelegatesCopy()) d.jrSocialDidPublishJRActivity(activity, provider);
-        }
-
-        public void publishingJRActivityDidFail(JRActivityObject activity,
-                                                JREngageError error,
-                                                String provider) {
-            JREngage.logd(TAG, "[publishingJRActivityDidFail]");
-
-            for (JREngageDelegate d : getDelegatesCopy()) {
-                d.jrSocialPublishJRActivityDidFail(activity, error, provider);
-            }
-        }
-
-        // This doesn't work because JREngageDelegate doesn't have an appropriate method to announce an
-        // error event independent of the display of a dialog
-        //@Override
-        //public void mobileConfigDidFinish() {
-        //    JREngageError err = mSession.getError();
-        //    if (err != null) {
-        //        engageDidFailWithError(err);
-        //    }
-        //}
-    };
 
 /**
  * @name Manage Authenticated Users
@@ -624,10 +531,20 @@ public class JREngage {
 
         if (skipReturningUserLandingPage != null) mSession.setSkipLandingPage(skipReturningUserLandingPage);
 
-        Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mActivity, true);
+        Intent i;
+        JRProvider p = mSession.getProviderByName(provider);
+        if (p == null) {
+            i = JRFragmentHostActivity.createProviderListIntent(mActivity);
+        } else {
+            if (p.requiresInput()) {
+                i = JRFragmentHostActivity.createUserLandingIntent(mActivity);
+            } else {
+                i = JRFragmentHostActivity.createWebViewIntent(mActivity);
+            }
+            i.putExtra(JRFragmentHostActivity.JR_PROVIDER, provider);
+        }
+
         i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, true);
-        i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PROVIDER_LIST);
-        if (provider != null) i.putExtra(JRFragmentHostActivity.JR_PROVIDER, provider);
         mActivity.startActivity(i);
     }
 
@@ -806,6 +723,100 @@ public class JREngage {
         mSession.setEnabledSharingProviders(Arrays.asList(enabledSharingProviders));
     }
 /*@}*/
+
+    private JRSessionDelegate mJrsd = new JRSessionDelegate.SimpleJRSessionDelegate() {
+        public void authenticationDidRestart() {
+            JREngage.logd(TAG, "[authenticationDidRestart]");
+        }
+
+        public void authenticationDidCancel() {
+            JREngage.logd(TAG, "[authenticationDidCancel]");
+
+            for (JREngageDelegate delegate : getDelegatesCopy()) delegate.jrAuthenticationDidNotComplete();
+        }
+
+        public void authenticationDidComplete(JRDictionary profile, String provider) {
+            JREngage.logd(TAG, "[authenticationDidComplete]");
+
+            for (JREngageDelegate d : getDelegatesCopy()) {
+                d.jrAuthenticationDidSucceedForUser(profile, provider);
+            }
+        }
+
+        public void authenticationDidFail(JREngageError error, String provider) {
+            JREngage.logd(TAG, "[authenticationDidFail]");
+            for (JREngageDelegate delegate : getDelegatesCopy()) {
+                delegate.jrAuthenticationDidFailWithError(error, provider);
+            }
+        }
+
+        public void authenticationDidReachTokenUrl(String tokenUrl,
+                                                   HttpResponseHeaders responseHeaders,
+                                                   String payload,
+                                                   String provider) {
+            JREngage.logd(TAG, "[authenticationDidReachTokenUrl]");
+
+            for (JREngageDelegate delegate : getDelegatesCopy()) {
+                delegate.jrAuthenticationDidReachTokenUrl(tokenUrl, responseHeaders, payload, provider);
+            }
+        }
+
+        public void authenticationCallToTokenUrlDidFail(String tokenUrl,
+                                                        JREngageError error,
+                                                        String provider) {
+            JREngage.logd(TAG, "[authenticationCallToTokenUrlDidFail]");
+
+            for (JREngageDelegate delegate : getDelegatesCopy()) {
+                delegate.jrAuthenticationCallToTokenUrlDidFail(tokenUrl, error, provider);
+            }
+        }
+
+        public void publishingDidCancel() {
+            JREngage.logd(TAG, "[publishingDidCancel]");
+
+            for (JREngageDelegate delegate : getDelegatesCopy()) delegate.jrSocialDidNotCompletePublishing();
+        }
+
+        public void publishingDidComplete() {
+            JREngage.logd(TAG, "[publishingDidComplete]");
+
+            for (JREngageDelegate delegate : getDelegatesCopy()) delegate.jrSocialDidCompletePublishing();
+        }
+
+        public void publishingDialogDidFail(JREngageError error) {
+            engageDidFailWithError(error);
+
+            if (JREngageError.ErrorType.CONFIGURATION_FAILED.equals(error.getType())) {
+                mSession.tryToReconfigureLibrary();
+            }
+        }
+
+        public void publishingJRActivityDidSucceed(JRActivityObject activity, String provider) {
+            JREngage.logd(TAG, "[publishingJRActivityDidSucceed]");
+
+            for (JREngageDelegate d : getDelegatesCopy()) d.jrSocialDidPublishJRActivity(activity, provider);
+        }
+
+        public void publishingJRActivityDidFail(JRActivityObject activity,
+                                                JREngageError error,
+                                                String provider) {
+            JREngage.logd(TAG, "[publishingJRActivityDidFail]");
+
+            for (JREngageDelegate d : getDelegatesCopy()) {
+                d.jrSocialPublishJRActivityDidFail(activity, error, provider);
+            }
+        }
+
+        // This doesn't work because JREngageDelegate doesn't have an appropriate method to announce an
+        // error event independent of the display of a dialog
+        //@Override
+        //public void mobileConfigDidFinish() {
+        //    JREngageError err = mSession.getError();
+        //    if (err != null) {
+        //        engageDidFailWithError(err);
+        //    }
+        //}
+    };
 
     private synchronized List<JREngageDelegate> getDelegatesCopy() {
         return new ArrayList<JREngageDelegate>(mDelegates);

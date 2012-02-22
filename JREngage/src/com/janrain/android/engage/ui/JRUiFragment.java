@@ -283,6 +283,8 @@ public abstract class JRUiFragment extends Fragment {
         }
     }
 
+    protected void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh) {}
+
     protected void showHideTaglines() {
         if (mSession == null) {
             Log.e(TAG, "Bailing out of showHideTaglines");

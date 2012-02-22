@@ -36,6 +36,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +51,7 @@ import android.widget.Toast;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
+import com.janrain.android.engage.session.JRSession;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -145,7 +147,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
         getActivity().setTitle(R.string.jr_provider_list_title);
 
-        mProviderList = mSession.getBasicProviders();
+        mProviderList = mSession.getAuthProviders();
         if (mProviderList == null) mProviderList = new ArrayList<JRProvider>();
 
         mAdapter = new ProviderAdapter();
@@ -264,7 +266,7 @@ public class JRProviderListFragment extends JRUiFragment {
             getActivity().runOnUiThread(mNoProvidersFoundRunner);
             Log.w(TAG, "[doSessionPoll] providers not found, max iterations hit, timer cancelled...");
         } else {
-            ArrayList<JRProvider> providers = mSession.getBasicProviders();
+            ArrayList<JRProvider> providers = mSession.getAuthProviders();
             if (providers.size() > 0) {
                 mProviderList = providers;
                 getActivity().runOnUiThread(mProvidersLoadedRunner);
@@ -285,5 +287,34 @@ public class JRProviderListFragment extends JRUiFragment {
         getActivity().setResult(Activity.RESULT_CANCELED);
         getActivity().finish();
         mSession.triggerAuthenticationDidCancel();
+    }
+
+    /*package*/ static boolean shouldOpenToUserLandingPage(JRSession session) {
+        JRProvider returningAuthProvider = session.getProviderByName(session.getReturningAuthProvider());
+
+        return (!TextUtils.isEmpty(session.getReturningAuthProvider())
+                && returningAuthProvider != null
+                && !session.getAlwaysForceReauth()
+                && !returningAuthProvider.getForceReauth()
+                && session.getAuthProviders().contains(returningAuthProvider)
+                && session.getEnabledAuthenticationProviders().contains(session.getReturningAuthProvider()));
+
+//        Not applicable to Android because this is only called when the provider list is already starting
+//                && !socialSharing
+//                && specificProvider != null  
+//                the provider list
+    }
+    
+    public void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh) {
+        /* check and see whether we should start the landing page */
+        /* this has to be done here so the provider list skips rendering it's UI */
+        String rapName = mSession.getReturningAuthProvider();
+        JRProvider provider = mSession.getProviderByName(rapName);
+        if (JRProviderListFragment.shouldOpenToUserLandingPage(mSession)) {
+            mSession.setCurrentlyAuthenticatingProvider(provider);
+            Intent i = JRFragmentHostActivity.createUserLandingIntent(jrfh);
+            i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, true);
+            startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
+        }
     }
 }

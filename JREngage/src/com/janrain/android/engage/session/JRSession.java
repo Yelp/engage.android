@@ -102,7 +102,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 	private String mReturningSocialProvider;
 
 	private Map<String, JRProvider> mAllProviders;
-	private List<String> mBasicProviders;
+	private List<String> mAuthProviders;
     private List<String> mEnabledAuthenticationProviders = null;
     private List<String> mEnabledSharingProviders = null;
 	private List<String> mSocialProviders;
@@ -185,9 +185,9 @@ public class JRSession implements JRConnectionManagerDelegate {
             for (Object provider : mAllProviders.values()) ((JRProvider)provider).loadDynamicVariables();
 
             /* Load the list of basic providers */
-            mBasicProviders = (ArrayList<String>)Archiver.load(ARCHIVE_BASIC_PROVIDERS);
-            for (Object v : mBasicProviders) assert v instanceof String;
-            JREngage.logd(TAG, "basic providers: [" + TextUtils.join(",", mBasicProviders) + "]");
+            mAuthProviders = (ArrayList<String>)Archiver.load(ARCHIVE_BASIC_PROVIDERS);
+            for (Object v : mAuthProviders) assert v instanceof String;
+            JREngage.logd(TAG, "basic providers: [" + TextUtils.join(",", mAuthProviders) + "]");
 
             /* Load the list of social providers */
             mSocialProviders = (ArrayList<String>)Archiver.load(ARCHIVE_SOCIAL_PROVIDERS);
@@ -210,8 +210,8 @@ public class JRSession implements JRConnectionManagerDelegate {
             Archiver.save(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
             mAllProviders = new HashMap<String, JRProvider>();
             Archiver.save(ARCHIVE_ALL_PROVIDERS, mAllProviders);
-            mBasicProviders = new ArrayList<String>();
-            Archiver.save(ARCHIVE_BASIC_PROVIDERS, mBasicProviders);
+            mAuthProviders = new ArrayList<String>();
+            Archiver.save(ARCHIVE_BASIC_PROVIDERS, mAuthProviders);
             mSocialProviders = new ArrayList<String>();
             Archiver.save(ARCHIVE_SOCIAL_PROVIDERS, mSocialProviders);
             mBaseUrl = "";
@@ -264,11 +264,11 @@ public class JRSession implements JRConnectionManagerDelegate {
         mCurrentlyAuthenticatingProvider = provider;
     }
 
-    public ArrayList<JRProvider> getBasicProviders() {
+    public ArrayList<JRProvider> getAuthProviders() {
         ArrayList<JRProvider> providerList = new ArrayList<JRProvider>();
 
-        if ((mBasicProviders != null) && (mBasicProviders.size() > 0)) {
-            for (String name : mBasicProviders) {
+        if ((mAuthProviders != null) && (mAuthProviders.size() > 0)) {
+            for (String name : mAuthProviders) {
                 // Filter by enabled provider list if available
                 if (mEnabledAuthenticationProviders != null &&
                         !mEnabledAuthenticationProviders.contains(name)) continue;
@@ -311,7 +311,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 
     public void setReturningBasicProvider(String returningAuthProvider) {
         if (TextUtils.isEmpty(returningAuthProvider)) returningAuthProvider = ""; // nulls -> ""s
-        if (!getBasicProviders().contains(getProviderByName(returningAuthProvider))) {
+        if (!getAuthProviders().contains(getProviderByName(returningAuthProvider))) {
             returningAuthProvider = "";
         }
 
@@ -645,7 +645,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 
         /* Get the ordered list of basic providers */
-        mBasicProviders = jsonDict.getAsListOfStrings("enabled_providers");
+        mAuthProviders = jsonDict.getAsListOfStrings("enabled_providers");
         /* Get the ordered list of social providers */
         mSocialProviders = jsonDict.getAsListOfStrings("social_providers");
 
@@ -658,7 +658,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 
         /* Save data to local store */
         Archiver.save(ARCHIVE_ALL_PROVIDERS, mAllProviders);
-        Archiver.save(ARCHIVE_BASIC_PROVIDERS, mBasicProviders);
+        Archiver.save(ARCHIVE_BASIC_PROVIDERS, mAuthProviders);
         Archiver.save(ARCHIVE_SOCIAL_PROVIDERS, mSocialProviders);
 
         /* Figure out of whether to hide the "powered by" line */
@@ -689,7 +689,7 @@ public class JRSession implements JRConnectionManagerDelegate {
              * is, the lists of basic and social providers are nil), go ahead and update it too.
              * The dialogs won't try and do anything until we're done updating the lists. */
             if (!isUiShowing() ||
-                    (ListUtils.isEmpty(mBasicProviders) && ListUtils.isEmpty(mSocialProviders))) {
+                    (ListUtils.isEmpty(mAuthProviders) && ListUtils.isEmpty(mSocialProviders))) {
                 mNewEtag = eTag;
                 return finishGetConfiguration(dataStr);
             }
@@ -1114,11 +1114,24 @@ public class JRSession implements JRConnectionManagerDelegate {
         setReturningBasicProvider(mReturningAuthProvider);
     }
 
+    public List<String> getEnabledAuthenticationProviders() {
+        if (mEnabledAuthenticationProviders == null) {
+            return mAuthProviders;
+        } else {
+            return mEnabledAuthenticationProviders;
+        }
+    }
+
+
     public void setEnabledSharingProviders(List<String> enabledSharingProviders) {
         mEnabledSharingProviders = enabledSharingProviders;
 
         // redundantly call the setter to ensure the provider is still available
         setReturningSocialProvider(mReturningSocialProvider);
+    }
+    
+    public List<String> getEnabledSharingProviders() {
+        return mEnabledSharingProviders;
     }
 
     private Context getContext() {
