@@ -24,3 +24,6 @@ SimpleDemo/local.properties
 QuickSignIn/local.properties
 QuickShare/local.properties
 *.keystore
+
+# Maven
+target
