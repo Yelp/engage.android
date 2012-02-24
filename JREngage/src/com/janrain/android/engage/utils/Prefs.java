@@ -46,7 +46,7 @@ public final class Prefs {
     public static final String KEY_JR_HIDE_POWERED_BY = "jr_hide_powered_by";
     public static final String KEY_JR_CONFIGURATION_ETAG = "jr_configuration_etag";
     public static final String KEY_JR_LAST_USED_AUTH_PROVIDER = "jr_last_used_auth_provider";
-    public static final String KEY_JR_LAST_USED_SOCIAL_PROVIDER = "jr_last_used_social_provider";
+    public static final String KEY_JR_LAST_USED_SHARING_PROVIDER = "jr_last_used_social_provider";
     public static final String KEY_JR_BASE_URL = "jr_base_url";
     public static final String KEY_JR_ENGAGE_LIBRARY_VERSION = "jr_engage_library_version";
     public static final String KEY_JR_USER_COMMENT = "jr_user_comment";

@@ -49,6 +49,7 @@ import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.ui.JRFragmentHostActivity;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Archiver;
 import com.janrain.android.engage.utils.ListUtils;
@@ -173,8 +174,14 @@ public class JRSession implements JRConnectionManagerDelegate {
         mUrlEncodedLibraryVersion = AndroidUtils.urlEncode(getContext().getString(R.string.jr_git_describe));
 
         try {
+            if (!mUrlEncodedLibraryVersion.equals(Prefs.getString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, ""))) {
+                // If the library versions don't match start with fresh state in order to break out of
+                // any invalid state.
+                throw new Archiver.LoadException(null);
+            }
+            
             /* load the last used auth and social providers */
-            mReturningSharingProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, "");
+            mReturningSharingProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_SHARING_PROVIDER, "");
             mReturningAuthProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_AUTH_PROVIDER, "");
 
             /* Load the library state from disk */
@@ -200,7 +207,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             /* Figure out of we're suppose to hide the powered by line */
             mHidePoweredBy = Prefs.getBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, false);
 
-            /* If the configuration for this rp has changed, the etag will have changed, and we need
+            /* If the configuration for this RP has changed, the etag will have changed, and we need
              * to update our current configuration information. */
             mOldEtag = Prefs.getString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
         } catch (Archiver.LoadException e) {
@@ -208,22 +215,35 @@ public class JRSession implements JRConnectionManagerDelegate {
             /* Blank slate */
             mAuthenticatedUsersByProvider = new HashMap<String, JRAuthenticatedUser>();
             Archiver.save(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
+
+            // Note that these values are removed from the settings when resetting state to prevent
+            // uninitialized state from being read on startup as valid state
             mAllProviders = new HashMap<String, JRProvider>();
-            Archiver.save(ARCHIVE_ALL_PROVIDERS, mAllProviders);
+            Archiver.delete(ARCHIVE_ALL_PROVIDERS);
             mAuthProviders = new ArrayList<String>();
-            Archiver.save(ARCHIVE_AUTH_PROVIDERS, mAuthProviders);
+            Archiver.delete(ARCHIVE_AUTH_PROVIDERS);
             mSharingProviders = new ArrayList<String>();
-            Archiver.save(ARCHIVE_SHARING_PROVIDERS, mSharingProviders);
+            Archiver.delete(ARCHIVE_SHARING_PROVIDERS);
             mBaseUrl = "";
+            Prefs.remove(Prefs.KEY_JR_BASE_URL);
             mHidePoweredBy = true;
-            mReturningSharingProvider = "";
-            mReturningAuthProvider = "";
+            Prefs.remove(Prefs.KEY_JR_HIDE_POWERED_BY);
             mOldEtag = "";
+            Prefs.remove(Prefs.KEY_JR_CONFIGURATION_ETAG);
+            
+            // Note that these values are not removed from the Prefs, they can't result in invalid state
+            // (The library is accepting of values not belonging to the set of enabled providers.)
+            mReturningAuthProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_AUTH_PROVIDER, null);
+            mReturningSharingProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_SHARING_PROVIDER, null);
             mGetConfigDone = false;
         }
 
         mError = startGetConfiguration();
 	}
+
+    private String getString(int resourceId) {
+        return getContext().getString(resourceId);
+    }
 
     public JREngageError getError() {
         return mError;
@@ -334,7 +354,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 
         mReturningSharingProvider = returningSharingProvider;
-        Prefs.putString(Prefs.KEY_JR_LAST_USED_SOCIAL_PROVIDER, returningSharingProvider);
+        Prefs.putString(Prefs.KEY_JR_LAST_USED_SHARING_PROVIDER, returningSharingProvider);
     }
 
     public String getBaseUrl() {
