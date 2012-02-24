@@ -63,6 +63,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
     private JRUiFragment mUiFragment;
     private JRSession mSession;
+    public static final String JR_CUSTOM_SIGNIN_CLASS = "jr_custom_signin_class";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

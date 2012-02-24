@@ -565,6 +565,9 @@ public class JREngage {
         JRProvider p = mSession.getProviderByName(provider);
         if (p == null) {
             i = JRFragmentHostActivity.createProviderListIntent(mActivity);
+            if (customSignin != null) {
+                i.putExtra(JRFragmentHostActivity.JR_CUSTOM_SIGNIN_CLASS, customSignin.getName());
+            }
         } else {
             if (p.requiresInput()) {
                 i = JRFragmentHostActivity.createUserLandingIntent(mActivity);

@@ -48,11 +48,14 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.janrain.android.engage.JRCustomSignin;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSession;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -64,7 +67,20 @@ import java.util.TimerTask;
  */
 public class JRProviderListFragment extends JRUiFragment {
     public static final int RESULT_FAIL = Activity.RESULT_FIRST_USER;
+    public static final int RESULT_NATIVE_SIGNIN = Activity.RESULT_FIRST_USER + 1;
+    
+    private static final int TIMER_MAX_ITERATIONS = 40;
 
+    private ArrayList<JRProvider> mProviderList;
+    private ProviderAdapter mAdapter;
+    private Timer mTimer;
+    private int mTimerCount = 0;
+
+    private ListView mListView;
+    private TextView mEmptyTextLabel;
+    private ProgressBar mLoadingProgress;
+    private JRCustomSignin mCustomSignin;
+    
     /**
      * @internal
      *
@@ -103,17 +119,6 @@ public class JRProviderListFragment extends JRUiFragment {
         }
     }
 
-    private static final int TIMER_MAX_ITERATIONS = 40;
-
-    private ArrayList<JRProvider> mProviderList;
-    private ProviderAdapter mAdapter;
-    private Timer mTimer;
-    private int mTimerCount = 0;
-
-    private ListView mListView;
-    private TextView mEmptyTextLabel;
-    private ProgressBar mLoadingProgress;
-
     private Runnable mNoProvidersFoundRunner = new Runnable() {
         public void run() {
             mEmptyTextLabel.setVisibility(View.VISIBLE);
@@ -135,6 +140,39 @@ public class JRProviderListFragment extends JRUiFragment {
     };
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        String customSigninName = getArguments().getString(JRFragmentHostActivity.JR_CUSTOM_SIGNIN_CLASS);
+        
+        if (customSigninName != null) {
+            try {
+                Class classRef = Class.forName(customSigninName);
+                Constructor classConstructor = classRef.getConstructor(Context.class, 
+                        JRProviderListFragment.class);
+                mCustomSignin = (JRCustomSignin) classConstructor.newInstance(
+                        getActivity().getApplicationContext(), this);
+            } catch (ClassNotFoundException e) {
+                customSigninReflectionError(customSigninName, e);
+            } catch (ClassCastException e) {
+                customSigninReflectionError(customSigninName, e);
+            } catch (java.lang.InstantiationException e) {
+                customSigninReflectionError(customSigninName, e);
+            } catch (IllegalAccessException e) {
+                customSigninReflectionError(customSigninName, e);
+            } catch (NoSuchMethodException e) {
+                customSigninReflectionError(customSigninName, e);
+            } catch (InvocationTargetException e) {
+                customSigninReflectionError(customSigninName, e);
+            }
+        }
+    }
+
+    private void customSigninReflectionError(String customName, Exception e) {
+        Log.e(TAG, "Can't load custom signin class: " + customName + "\n" + e);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         JREngage.logd(TAG, "[onCreateView]");
         if (mSession == null) return null;
@@ -145,6 +183,11 @@ public class JRProviderListFragment extends JRUiFragment {
         mLoadingProgress = (ProgressBar) listView.findViewById(android.R.id.empty);
 
         getActivity().setTitle(R.string.jr_provider_list_title);
+
+        if (mCustomSignin != null) {
+            mCustomSignin.doOnCreateView(getActivity(), inflater, mListView, savedInstanceState);
+            mListView.addHeaderView(mCustomSignin.getView());
+        }
 
         mProviderList = mSession.getAuthProviders();
         if (mProviderList == null) mProviderList = new ArrayList<JRProvider>();
@@ -171,10 +214,29 @@ public class JRProviderListFragment extends JRUiFragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onResume() {
+        super.onResume();
+        if (mCustomSignin != null) mCustomSignin.onResume();
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mCustomSignin != null) mCustomSignin.onPause();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mCustomSignin != null) mCustomSignin.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mCustomSignin != null) mCustomSignin.onDestroy();
         if (mTimer != null) mTimer.cancel();
+
+        super.onDestroy();
     }
 
     /**
@@ -299,7 +361,8 @@ public class JRProviderListFragment extends JRUiFragment {
                 && session.getAuthProviders().contains(returningAuthProvider)
                 && session.getEnabledAuthenticationProviders().contains(session.getReturningAuthProvider()));
 
-//        Not applicable to Android because this is only called when the provider list is already starting
+//        iOS library conditions which are not applicable to Android because this is only called when the
+//        provider list is already starting
 //                && !socialSharing
 //                && specificProvider != null  
 //                the provider list
@@ -317,5 +380,18 @@ public class JRProviderListFragment extends JRUiFragment {
             i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, true);
             jrfh.startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
         }
+    }
+
+    public void finishJrSignin() {
+        getActivity().setResult(JRProviderListFragment.RESULT_NATIVE_SIGNIN);
+        getActivity().finish();
+    }
+    
+    public void showProgressDialogForCustomSignin() {
+        showProgressDialog();
+    }
+    
+    public void dismissProgressDialogForCustomSignin() {
+        dismissProgressDialog();
     }
 }

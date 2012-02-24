@@ -56,6 +56,7 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.types.JREmailObject;
 import com.janrain.android.engage.types.JRImageMediaObject;
 import com.janrain.android.engage.types.JRSmsObject;
+import com.janrain.android.engage.ui.JRProviderListFragment;
 import com.janrain.android.engage.utils.Prefs;
 
 import java.io.IOException;
@@ -171,6 +172,10 @@ public class MainActivity extends FragmentActivity {
     }
 
     public static class CustomSignin extends JRCustomSignin {
+        public CustomSignin(Context context, JRProviderListFragment fragment) {
+            super(context, fragment);
+        }
+
         @Override
         public View onCreateView(Context context,
                 LayoutInflater inflater,
@@ -182,7 +187,8 @@ public class MainActivity extends FragmentActivity {
             Button signIn = (Button) v.findViewById(R.id.custom_signin_button);
             signIn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-
+                    Toast.makeText(getActivity(), "ZOMG CUSTOM SIGNIN!", Toast.LENGTH_LONG).show();
+                    finishJrSignin();
                 }
             });
 

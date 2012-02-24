@@ -36,23 +36,30 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.janrain.android.engage.ui.JRProviderListFragment;
 
-/**
- * Created by IntelliJ IDEA.
- * User: nathan
- * Date: 2/7/12
- * Time: 3:53 PM
- * To change this template use File | Settings | File Templates.
- */
 public abstract class JRCustomSignin {
     /* package */ View mView;
-    /* package */ Fragment mFragment;
+    /* package */ JRProviderListFragment mProviderListFragment;
+    private Context mContext;
+    
+    private JRCustomSignin(){}
+    
+    public JRCustomSignin(Context context, JRProviderListFragment fragment) {
+        mContext = context;
+        mProviderListFragment = fragment;
+    }
+    
+    public View doOnCreateView(Context context,
+                               LayoutInflater inflater,
+                               ViewGroup container,
+                               Bundle savedInstanceState) {
+        mView = onCreateView(context, inflater, container, savedInstanceState);
+        return mView;
+    }
     
     /**
      * This method should have no side effects as it may be called more than once per activity.
@@ -63,20 +70,18 @@ public abstract class JRCustomSignin {
      * @return Your custom sign-in view
      */
     public View onCreateView(Context context,
-                                      LayoutInflater inflater,
-                                      ViewGroup container,
-                                      Bundle savedInstanceState) { 
+                             LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
         return null; 
     }
-    
-    public void onSaveInstanceState(Bundle outState) {}
 
     public Activity getActivity() {
-        return mFragment.getActivity();
+        return mProviderListFragment.getActivity();
     }
 
     public Resources getResources() {
-        return getActivity().getResources();
+        return mContext.getResources();
     }
 
     public String getString(int id) {
@@ -95,13 +100,19 @@ public abstract class JRCustomSignin {
 
     public void onPause() {}
 
+    public void onSaveInstanceState(Bundle outState) {}
+
+    public void onDestroy() {}
+
     public void finishJrSignin() {
-        //mFragment.finishWithResult(RESULT_NATIVE_SIGNIN) or something
+        mProviderListFragment.finishJrSignin();
     }
 
     public void showProgressIndicator() {
+        mProviderListFragment.showProgressDialogForCustomSignin();
     }
 
     public void dismissProgressIndicator() {
+        mProviderListFragment.dismissProgressDialogForCustomSignin();
     }
 }
