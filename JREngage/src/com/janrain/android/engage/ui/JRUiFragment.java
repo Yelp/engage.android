@@ -58,6 +58,8 @@ import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSession;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 /**
@@ -151,11 +153,14 @@ public abstract class JRUiFragment extends Fragment {
         if (uiCustomizationName != null) {
             try {
                 Class classRef = Class.forName(uiCustomizationName);
-                final JRUiCustomization uiCustomization = (JRUiCustomization) classRef.newInstance();
+                Constructor c = classRef.getConstructor(Context.class);
+                final JRUiCustomization uiCustomization =
+                        (JRUiCustomization) c.newInstance(getActivity().getApplicationContext());
+//                final JRUiCustomization uiCustomization = (JRUiCustomization) classRef.newInstance();
                 if (uiCustomization instanceof JRCustomUiConfiguration) {
                     mCustomUiConfiguration = (JRCustomUiConfiguration) uiCustomization;
                 } else if (uiCustomization instanceof JRCustomUiView) {
-                    mCustomUiConfiguration = new JRCustomUiConfiguration(){
+                    mCustomUiConfiguration = new JRCustomUiConfiguration(getActivity()){
                         {
                             //Type safe because the type of the instantiated instance from the
                             //class ref is run time type checked
@@ -166,6 +171,10 @@ public abstract class JRUiFragment extends Fragment {
                     Log.e(TAG, "Unexpected class from: " + uiCustomizationName);
                     //Not possible at the moment, there are only two subclasses of abstract JRUiCustomization
                 }
+
+                if (getCustomTitle() != null && getActivity() instanceof JRFragmentHostActivity) {
+                    getActivity().setTitle(getCustomTitle());
+                }
             } catch (ClassNotFoundException e) {
                 customSigninReflectionError(uiCustomizationName, e);
             } catch (ClassCastException e) {
@@ -173,6 +182,10 @@ public abstract class JRUiFragment extends Fragment {
             } catch (java.lang.InstantiationException e) {
                 customSigninReflectionError(uiCustomizationName, e);
             } catch (IllegalAccessException e) {
+                customSigninReflectionError(uiCustomizationName, e);
+            } catch (NoSuchMethodException e) {
+                customSigninReflectionError(uiCustomizationName, e);
+            } catch (InvocationTargetException e) {
                 customSigninReflectionError(uiCustomizationName, e);
             }
         }

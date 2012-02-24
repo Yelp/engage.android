@@ -174,19 +174,11 @@ public class MainActivity extends FragmentActivity {
     }
 
     public static class CustomUi extends JRCustomUiConfiguration {
-        public CustomUi() {
+        public CustomUi(Context c) {
+            super(c);
             mProviderListHeader = new CustomSignin();
-            mAuthenticationBackgroundView = new JRCustomUiView() {
-                @Override
-                public View onCreateView(Context context,
-                                         LayoutInflater inflater,
-                                         ViewGroup container,
-                                         Bundle savedInstanceState) {
-                    View v = new View(context);
-                    v.setBackgroundDrawable(getResources().getDrawable(R.drawable.custom_signin_bg));
-                    return v;
-                }
-            };
+            mAuthenticationBackgroundDrawable = c.getResources().getDrawable(R.drawable.custom_signin_bg);
+            mProviderListTitle = "Custom title";
         }
 
         @Override

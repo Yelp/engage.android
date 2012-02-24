@@ -146,8 +146,6 @@ public class JRProviderListFragment extends JRUiFragment {
         mEmptyTextLabel = (TextView) inflatedLayout.findViewById(R.id.jr_empty_label);
         mLoadingProgress = (ProgressBar) inflatedLayout.findViewById(android.R.id.empty);
 
-        getActivity().setTitle(R.string.jr_provider_list_title);
-
         JRCustomUiConfiguration customUiConfiguration = getCustomUiConfiguration();
         if (customUiConfiguration != null) {
             if (customUiConfiguration.mProviderListHeader != null) {
@@ -167,12 +165,14 @@ public class JRProviderListFragment extends JRUiFragment {
                 mListView.setCacheColorHint(customUiConfiguration.mAuthenticationBackgroundColor);
             }
 
-            if (customUiConfiguration.mAuthenticationBackgroundView != null) {
-                FrameLayout outerContainer =
-                        (FrameLayout) inflatedLayout.findViewById(R.id.jr_provider_list_container);
-                doCustomViewCreate(customUiConfiguration.mAuthenticationBackgroundView, inflater,
-                        savedInstanceState, outerContainer);
-                outerContainer.addView(customUiConfiguration.mAuthenticationBackgroundView.getView(), 0);
+            if (customUiConfiguration.mAuthenticationBackgroundDrawable != null) {
+//                FrameLayout outerContainer =
+//                        (FrameLayout) inflatedLayout.findViewById(R.id.jr_provider_list_container);
+//                doCustomViewCreate(customUiConfiguration.mAuthenticationBackgroundDrawable, inflater,
+//                        savedInstanceState, outerContainer);
+//                outerContainer.addView(customUiConfiguration.mAuthenticationBackgroundDrawable.getView(), 0);
+                mListView.setBackgroundDrawable(customUiConfiguration.mAuthenticationBackgroundDrawable);
+                mListView.setCacheColorHint(0);
             }
         }
 

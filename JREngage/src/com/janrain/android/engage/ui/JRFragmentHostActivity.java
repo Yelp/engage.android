@@ -138,8 +138,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 .add(R.id.jr_fragment_container, mUiFragment)
                 .setTransition(FragmentTransaction.TRANSIT_NONE)
                 .commit();
-
-        if (mUiFragment.getCustomTitle() != null) setTitle(mUiFragment.getCustomTitle());
     }
 
     /*package*/ boolean shouldBePhoneSizedDialog() {

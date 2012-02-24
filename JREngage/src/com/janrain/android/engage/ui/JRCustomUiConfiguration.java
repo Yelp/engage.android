@@ -32,24 +32,20 @@
 
 package com.janrain.android.engage.ui;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.ListView;
 
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Created by IntelliJ IDEA.
- * User: nathan
- * Date: 2/24/12
- * Time: 9:53 AM
- * To change this template use File | Settings | File Templates.
- */
 public class JRCustomUiConfiguration extends JRUiCustomization {
     public Integer mAuthenticationBackgroundColor;
+    public Drawable mAuthenticationBackgroundDrawable;
+
     public Integer mSharingBackgroundColor;
-    public JRCustomUiView mAuthenticationBackgroundView;
-    public JRCustomUiView mSharingBackgroundView;
+    public Drawable mSharingBackgroundDrawable;
 
     public String mProviderListTitle;
     public String mSharingTitle;
@@ -64,6 +60,10 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
 
 //    TODO address parity of this vs existing implementation... support both or not?
 //    #define 	kJRRemoveProvidersFromAuthentication
+    
+    private JRCustomUiConfiguration() {}
+    
+    public JRCustomUiConfiguration(Context c) {}
 
     public void onProviderListViewCreate(ListView providerListView) {}
 
@@ -85,8 +85,8 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
 
     private Set<JRCustomUiView> getNonNullCustomViews() {
         Set<JRCustomUiView> customUiViews = new HashSet<JRCustomUiView>();
-        addIfNotNullAndViewCreated(customUiViews, mAuthenticationBackgroundView);
-        addIfNotNullAndViewCreated(customUiViews, mSharingBackgroundView);
+//        addIfNotNullAndViewCreated(customUiViews, mAuthenticationBackgroundDrawable);
+//        addIfNotNullAndViewCreated(customUiViews, mSharingBackgroundDrawable);
         addIfNotNullAndViewCreated(customUiViews, mProviderListFooter);
         addIfNotNullAndViewCreated(customUiViews, mProviderListHeader);
         return customUiViews;
