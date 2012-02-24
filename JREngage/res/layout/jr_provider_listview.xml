@@ -6,13 +6,21 @@
     android:layout_height="match_parent"
     >
 
-    <ListView
-        android:id="@id/android:list"
+    <FrameLayout
+        android:id="@+id/jr_provider_list_container"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_above="@+id/jr_tagline"
         android:layout_alignParentTop="true"
-        />
+        >
+
+        <ListView
+            android:id="@id/android:list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+    </FrameLayout>
 
     <ProgressBar
         android:id="@id/android:empty"
@@ -36,9 +44,9 @@
         />
 
     <include layout="@layout/jr_shared_footer"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
-            />
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        />
 
 </RelativeLayout>

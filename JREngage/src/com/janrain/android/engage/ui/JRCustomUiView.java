@@ -30,33 +30,37 @@
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  */
 
-package com.janrain.android.engage;
+package com.janrain.android.engage.ui;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.janrain.android.engage.ui.JRProviderListFragment;
 
-public abstract class JRCustomSignin {
-    /* package */ View mView;
-    /* package */ JRProviderListFragment mProviderListFragment;
+public abstract class JRCustomUiView extends JRUiCustomization {
+    private static final String TAG = JRCustomUiView.class.getSimpleName();
+    private View mView;
+    private JRUiFragment mUiFragment;
     private Context mContext;
-    
-    private JRCustomSignin(){}
-    
-    public JRCustomSignin(Context context, JRProviderListFragment fragment) {
-        mContext = context;
-        mProviderListFragment = fragment;
-    }
-    
-    public View doOnCreateView(Context context,
+
+    /*package*/ boolean mViewCreated = false;
+
+    /**
+     * @internal
+     * @hide
+     */
+    public final View doOnCreateView(JRUiFragment fragment,
+                               Context context,
                                LayoutInflater inflater,
                                ViewGroup container,
                                Bundle savedInstanceState) {
+        mContext = context;
+        mUiFragment = fragment;
+        mViewCreated = true;
         mView = onCreateView(context, inflater, container, savedInstanceState);
         return mView;
     }
@@ -76,43 +80,98 @@ public abstract class JRCustomSignin {
         return null; 
     }
 
+    /**
+     * Retrieves the Activity object this custom view is a member of
+     * @return
+     *  The Activity this custom view is a member of
+     */
     public Activity getActivity() {
-        return mProviderListFragment.getActivity();
+        return mUiFragment.getActivity();
     }
 
+    /**
+     * A utility method to retrieve a Resources reference from the Application Context
+     * @return
+     *  A resources reference from the Application Context
+     */
     public Resources getResources() {
         return mContext.getResources();
     }
 
-    public String getString(int id) {
+    /**
+     * A utility method to fetch a resource string by id
+     * @param id
+     *  The id of the string to fetch
+     * @return
+     *  The fetched string
+     */
+    public final String getString(int id) {
         return getResources().getString(id);
     }
-    
-    public String getString(int id, Object... formatArgs) {
+
+    /**
+     * A utility method to fetch a resource string by id, formatted with arguments
+     * @param id
+     *  The id of the string to fetch
+     * @param formatArgs
+     *  The arguments used to format the string with
+     * @return
+     *  The fetched and formatted string
+     */
+    public final String getString(int id, Object... formatArgs) {
         return getResources().getString(id, formatArgs);
     }
     
-    public View getView() {
+    public final View getView() {
         return mView;
     }
 
+    /**
+     * Called when the activity displaying the custom view is resuming
+     */
     public void onResume() {}
 
+    /**
+     * Called when the activity displaying the custom view is pausing
+     */
     public void onPause() {}
 
+    /**
+     * Called when the activity displaying the custom view is saving its instance state
+     * @param outState
+     *  The Bundle to write this custom views saved state to
+     */
     public void onSaveInstanceState(Bundle outState) {}
 
+    /**
+     * Called when the activity displaying the custom view is destroyed
+     */
     public void onDestroy() {}
 
-    public void finishJrSignin() {
-        mProviderListFragment.finishJrSignin();
+    /**
+     * Invoke this utility method to close the provider list
+     */
+    public final void finishJrSignin() {
+        if (mUiFragment instanceof JRProviderListFragment) {
+            ((JRProviderListFragment) mUiFragment).finishJrSignin();
+        } else {
+            Log.e(TAG, "Can't call finishJrSignin from JRCustomUiViews not displayed in JRProviderList");
+        }
     }
 
+    /**
+     * Utility method to show a progress indicator, convenient for usage during custom username/password
+     * authentication. This is not the only way to display a progress dialog, it is also possible to
+     * use getActivity to have the Activity object to use with the Android Dialog classes.
+     */
     public void showProgressIndicator() {
-        mProviderListFragment.showProgressDialogForCustomSignin();
+        mUiFragment.showProgressDialogForCustomView();
     }
 
+    /**
+     * Dismiss the progress dialog displayed by showProgressIndicator
+     */
     public void dismissProgressIndicator() {
-        mProviderListFragment.dismissProgressDialogForCustomSignin();
+        mUiFragment.dismissProgressDialogForCustomView();
     }
 }

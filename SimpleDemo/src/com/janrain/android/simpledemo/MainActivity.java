@@ -44,8 +44,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
-import com.janrain.android.engage.JRCustomSignin;
+import com.janrain.android.engage.ui.JRCustomUiConfiguration;
+import com.janrain.android.engage.ui.JRCustomUiView;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
@@ -56,7 +58,7 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.types.JREmailObject;
 import com.janrain.android.engage.types.JRImageMediaObject;
 import com.janrain.android.engage.types.JRSmsObject;
-import com.janrain.android.engage.ui.JRProviderListFragment;
+import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Prefs;
 
 import java.io.IOException;
@@ -122,7 +124,7 @@ public class MainActivity extends FragmentActivity {
         mBtnTestAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 //                mEngage.setEnabledAuthenticationProviders(new String[]{"facebook"});
-                mEngage.showAuthenticationDialog(CustomSignin.class);
+                mEngage.showAuthenticationDialog(CustomUi.class);
             }
         });
 
@@ -171,23 +173,44 @@ public class MainActivity extends FragmentActivity {
         });
     }
 
-    public static class CustomSignin extends JRCustomSignin {
-        public CustomSignin(Context context, JRProviderListFragment fragment) {
-            super(context, fragment);
+    public static class CustomUi extends JRCustomUiConfiguration {
+        public CustomUi() {
+            mProviderListHeader = new CustomSignin();
+            mAuthenticationBackgroundView = new JRCustomUiView() {
+                @Override
+                public View onCreateView(Context context,
+                                         LayoutInflater inflater,
+                                         ViewGroup container,
+                                         Bundle savedInstanceState) {
+                    View v = new View(context);
+                    v.setBackgroundDrawable(getResources().getDrawable(R.drawable.custom_signin_bg));
+                    return v;
+                }
+            };
         }
 
+        @Override
+        public void onProviderListViewCreate(ListView providerListView) {
+            super.onProviderListViewCreate(providerListView);
+
+            providerListView.setDividerHeight(AndroidUtils.scaleDipToPixels(20));
+        }
+    }
+
+    public static class CustomSignin extends JRCustomUiView {
         @Override
         public View onCreateView(Context context,
                 LayoutInflater inflater,
                 ViewGroup container,
                 Bundle savedInstanceState) {
             View v = inflater.inflate(R.layout.custom_signin_example, container, false);
-//                EditText userName = (EditText) v.findViewById(R.id.username_edit);
-//                EditText password = (EditText) v.findViewById(R.id.password_edit);
+            final EditText userName = (EditText) v.findViewById(R.id.username_edit);
+            final EditText password = (EditText) v.findViewById(R.id.password_edit);
             Button signIn = (Button) v.findViewById(R.id.custom_signin_button);
             signIn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "ZOMG CUSTOM SIGNIN!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "ZOMG CUSTOM SIGNIN!\n" + userName.getText() + "\n" + 
+                            password.getText(), Toast.LENGTH_LONG).show();
                     finishJrSignin();
                 }
             });

@@ -46,7 +46,6 @@ import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
-import android.util.Config;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -77,6 +76,7 @@ public abstract class JRUiFragment extends Fragment {
 
     private FinishReceiver mFinishReceiver;
     private HashMap<Integer, ManagedDialog> mManagedDialogs = new HashMap<Integer, ManagedDialog>();
+    private JRCustomUiConfiguration mCustomUiConfiguration;
 
     /*package*/ JRSession mSession;
     /*package*/ final String TAG = getLogTag();
@@ -99,7 +99,7 @@ public abstract class JRUiFragment extends Fragment {
                     target.equals(JRFragmentHostActivity.FINISH_TARGET_ALL)) {
                 if (!isEmbeddedMode()) tryToFinishActivity();
                 JREngage.logd(TAG, "[onReceive] handled");
-            } else if (Config.LOGD) {
+            } else {
                 JREngage.logd(TAG, "[onReceive] ignored");
             }
         }
@@ -116,7 +116,8 @@ public abstract class JRUiFragment extends Fragment {
 
     @Override
     public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
-        JREngage.logd(TAG, "[" + new Object() {}.getClass().getEnclosingMethod().getName() + "]");
+        JREngage.logd(TAG, "[" + new Object() {
+        }.getClass().getEnclosingMethod().getName() + "]");
         super.onInflate(activity, attrs, savedInstanceState);
 
         if (JRSession.getInstance() == null) {
@@ -144,6 +145,37 @@ public abstract class JRUiFragment extends Fragment {
         /* Embedded mode isn't compatible with setRetainInstance */
         if (!isEmbeddedMode()) setRetainInstance(true);
         setHasOptionsMenu(true);
+
+        String uiCustomizationName = getArguments().getString(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS);
+
+        if (uiCustomizationName != null) {
+            try {
+                Class classRef = Class.forName(uiCustomizationName);
+                final JRUiCustomization uiCustomization = (JRUiCustomization) classRef.newInstance();
+                if (uiCustomization instanceof JRCustomUiConfiguration) {
+                    mCustomUiConfiguration = (JRCustomUiConfiguration) uiCustomization;
+                } else if (uiCustomization instanceof JRCustomUiView) {
+                    mCustomUiConfiguration = new JRCustomUiConfiguration(){
+                        {
+                            //Type safe because the type of the instantiated instance from the
+                            //class ref is run time type checked
+                            mProviderListHeader = (JRCustomUiView) uiCustomization;
+                        }
+                    };
+                } else {
+                    Log.e(TAG, "Unexpected class from: " + uiCustomizationName);
+                    //Not possible at the moment, there are only two subclasses of abstract JRUiCustomization
+                }
+            } catch (ClassNotFoundException e) {
+                customSigninReflectionError(uiCustomizationName, e);
+            } catch (ClassCastException e) {
+                customSigninReflectionError(uiCustomizationName, e);
+            } catch (java.lang.InstantiationException e) {
+                customSigninReflectionError(uiCustomizationName, e);
+            } catch (IllegalAccessException e) {
+                customSigninReflectionError(uiCustomizationName, e);
+            }
+        }
     }
 
     @Override
@@ -189,10 +221,12 @@ public abstract class JRUiFragment extends Fragment {
         super.onResume();
         JREngage.logd(TAG, "[onResume]");
         if (hasView()) showHideTaglines();
+        if (mCustomUiConfiguration != null) mCustomUiConfiguration.onResume();
     }
 
     @Override
     public void onPause() {
+        if (mCustomUiConfiguration != null) mCustomUiConfiguration.onPause();
         JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
         super.onPause();
     }
@@ -216,6 +250,8 @@ public abstract class JRUiFragment extends Fragment {
     public void onDestroy() {
         JREngage.logd(TAG, "[onDestroy]");
         if (mSession != null) mSession.setUiIsShowing(false);
+
+        if (mCustomUiConfiguration != null) mCustomUiConfiguration.onDestroy();
 
         super.onDestroy();
     }
@@ -242,6 +278,8 @@ public abstract class JRUiFragment extends Fragment {
         }
         outState.putSerializable(KEY_MANAGED_DIALOGS, mManagedDialogs);
         outState.putParcelableArray(KEY_MANAGED_DIALOG_OPTIONS, dialogOptions);
+
+        if (mCustomUiConfiguration != null) mCustomUiConfiguration.onSaveInstanceState(outState);
 
         super.onSaveInstanceState(outState);
     }
@@ -449,4 +487,35 @@ public abstract class JRUiFragment extends Fragment {
      * Delegated to from JRFragmentHostActivity
      */
     /*package*/ void onBackPressed() {}
+
+    private void customSigninReflectionError(String customName, Exception e) {
+        Log.e(TAG, "Can't load custom signin class: " + customName + "\n" + e);
+    }
+
+    /*package*/ JRCustomUiConfiguration getCustomUiConfiguration() {
+        return mCustomUiConfiguration;
+    }
+
+    /*package*/ void doCustomViewCreate(JRCustomUiView view,
+                                    LayoutInflater inflater,
+                                    Bundle savedInstanceState,
+                                    ViewGroup container) {
+        view.doOnCreateView(this,
+                getActivity().getApplicationContext(),
+                inflater,
+                container,
+                savedInstanceState);
+    }
+
+    public void showProgressDialogForCustomView() {
+        showProgressDialog();
+    }
+
+    public void dismissProgressDialogForCustomView() {
+        dismissProgressDialog();
+    }
+
+    /*package*/ String getCustomTitle() {
+        return null;
+    }
 }

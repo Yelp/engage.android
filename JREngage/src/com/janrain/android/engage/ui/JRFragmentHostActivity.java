@@ -59,11 +59,12 @@ public class JRFragmentHostActivity extends FragmentActivity {
     public static final String EXTRA_FINISH_FRAGMENT_TARGET =
             "com.janrain.android.engage.EXTRA_FINISH_FRAGMENT_TARGET";
     public static final String FINISH_TARGET_ALL = "JR_FINISH_ALL";
+    public static final String JR_UI_CUSTOMIZATION_CLASS = "jr_ui_customization_class";
+
     public static final IntentFilter FINISH_INTENT_FILTER = new IntentFilter(ACTION_FINISH_FRAGMENT);
 
     private JRUiFragment mUiFragment;
     private JRSession mSession;
-    public static final String JR_CUSTOM_SIGNIN_CLASS = "jr_custom_signin_class";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -137,6 +138,8 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 .add(R.id.jr_fragment_container, mUiFragment)
                 .setTransition(FragmentTransaction.TRANSIT_NONE)
                 .commit();
+
+        if (mUiFragment.getCustomTitle() != null) setTitle(mUiFragment.getCustomTitle());
     }
 
     /*package*/ boolean shouldBePhoneSizedDialog() {

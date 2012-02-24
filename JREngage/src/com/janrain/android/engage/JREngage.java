@@ -76,7 +76,6 @@ package com.janrain.android.engage;
  **/
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
@@ -94,6 +93,7 @@ import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.ui.JRFragmentHostActivity;
 import com.janrain.android.engage.ui.JRPublishFragment;
+import com.janrain.android.engage.ui.JRUiCustomization;
 import com.janrain.android.engage.ui.JRUiFragment;
 
 import java.util.ArrayList;
@@ -472,9 +472,9 @@ public class JREngage {
 
         showAuthenticationDialog(false);
     }
-
-    public void showAuthenticationDialog(Class<? extends JRCustomSignin> customSignin) {
-        showAuthenticationDialog(false, null, customSignin);
+    
+    public void showAuthenticationDialog(Class<? extends JRUiCustomization> uiCustomization) {
+        showAuthenticationDialog(false, null, uiCustomization);
     }
 
     /**
@@ -547,7 +547,7 @@ public class JREngage {
      *  will be brought directly to authentication with this provider. 
      *  If null the user will be shown the provider list as usual.
      *
-     * @param customSignin
+     * @param uiCustomization
      *  The custom sign-in object to display in the provider list. May be null for no custom sign-in.
      *
      * @note
@@ -556,7 +556,7 @@ public class JREngage {
      **/
     public void showAuthenticationDialog(Boolean skipReturningUserLandingPage, 
                                          String provider,
-                                         Class<? extends JRCustomSignin> customSignin) {
+                                         Class<? extends JRUiCustomization> uiCustomization) {
         if (checkSessionDataError()) return;
 
         if (skipReturningUserLandingPage != null) mSession.setSkipLandingPage(skipReturningUserLandingPage);
@@ -565,8 +565,8 @@ public class JREngage {
         JRProvider p = mSession.getProviderByName(provider);
         if (p == null) {
             i = JRFragmentHostActivity.createProviderListIntent(mActivity);
-            if (customSignin != null) {
-                i.putExtra(JRFragmentHostActivity.JR_CUSTOM_SIGNIN_CLASS, customSignin.getName());
+            if (uiCustomization != null) {
+                i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS, uiCustomization.getName());
             }
         } else {
             if (p.requiresInput()) {

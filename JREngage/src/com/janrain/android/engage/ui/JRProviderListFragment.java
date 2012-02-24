@@ -43,19 +43,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.janrain.android.engage.JRCustomSignin;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSession;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -79,8 +77,7 @@ public class JRProviderListFragment extends JRUiFragment {
     private ListView mListView;
     private TextView mEmptyTextLabel;
     private ProgressBar mLoadingProgress;
-    private JRCustomSignin mCustomSignin;
-    
+
     /**
      * @internal
      *
@@ -140,53 +137,43 @@ public class JRProviderListFragment extends JRUiFragment {
     };
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        String customSigninName = getArguments().getString(JRFragmentHostActivity.JR_CUSTOM_SIGNIN_CLASS);
-        
-        if (customSigninName != null) {
-            try {
-                Class classRef = Class.forName(customSigninName);
-                Constructor classConstructor = classRef.getConstructor(Context.class, 
-                        JRProviderListFragment.class);
-                mCustomSignin = (JRCustomSignin) classConstructor.newInstance(
-                        getActivity().getApplicationContext(), this);
-            } catch (ClassNotFoundException e) {
-                customSigninReflectionError(customSigninName, e);
-            } catch (ClassCastException e) {
-                customSigninReflectionError(customSigninName, e);
-            } catch (java.lang.InstantiationException e) {
-                customSigninReflectionError(customSigninName, e);
-            } catch (IllegalAccessException e) {
-                customSigninReflectionError(customSigninName, e);
-            } catch (NoSuchMethodException e) {
-                customSigninReflectionError(customSigninName, e);
-            } catch (InvocationTargetException e) {
-                customSigninReflectionError(customSigninName, e);
-            }
-        }
-    }
-
-    private void customSigninReflectionError(String customName, Exception e) {
-        Log.e(TAG, "Can't load custom signin class: " + customName + "\n" + e);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         JREngage.logd(TAG, "[onCreateView]");
         if (mSession == null) return null;
-        View listView = inflater.inflate(R.layout.jr_provider_listview, container, false);
+        View inflatedLayout = inflater.inflate(R.layout.jr_provider_listview, container, false);
 
-        mListView = (ListView) listView.findViewById(android.R.id.list);
-        mEmptyTextLabel = (TextView) listView.findViewById(R.id.jr_empty_label);
-        mLoadingProgress = (ProgressBar) listView.findViewById(android.R.id.empty);
+        mListView = (ListView) inflatedLayout.findViewById(android.R.id.list);
+        mEmptyTextLabel = (TextView) inflatedLayout.findViewById(R.id.jr_empty_label);
+        mLoadingProgress = (ProgressBar) inflatedLayout.findViewById(android.R.id.empty);
 
         getActivity().setTitle(R.string.jr_provider_list_title);
 
-        if (mCustomSignin != null) {
-            mCustomSignin.doOnCreateView(getActivity(), inflater, mListView, savedInstanceState);
-            mListView.addHeaderView(mCustomSignin.getView());
+        JRCustomUiConfiguration customUiConfiguration = getCustomUiConfiguration();
+        if (customUiConfiguration != null) {
+            if (customUiConfiguration.mProviderListHeader != null) {
+                doCustomViewCreate(customUiConfiguration.mProviderListHeader, inflater, savedInstanceState,
+                        mListView);
+                mListView.addHeaderView(customUiConfiguration.mProviderListHeader.getView());
+            }
+
+            if (customUiConfiguration.mProviderListFooter != null) {
+                doCustomViewCreate(customUiConfiguration.mProviderListFooter, inflater, savedInstanceState,
+                        mListView);
+                mListView.addFooterView(customUiConfiguration.mProviderListFooter.getView());
+            }
+
+            if (customUiConfiguration.mAuthenticationBackgroundColor != null) {
+                mListView.setBackgroundColor(customUiConfiguration.mAuthenticationBackgroundColor);
+                mListView.setCacheColorHint(customUiConfiguration.mAuthenticationBackgroundColor);
+            }
+
+            if (customUiConfiguration.mAuthenticationBackgroundView != null) {
+                FrameLayout outerContainer =
+                        (FrameLayout) inflatedLayout.findViewById(R.id.jr_provider_list_container);
+                doCustomViewCreate(customUiConfiguration.mAuthenticationBackgroundView, inflater,
+                        savedInstanceState, outerContainer);
+                outerContainer.addView(customUiConfiguration.mAuthenticationBackgroundView.getView(), 0);
+            }
         }
 
         mProviderList = mSession.getAuthProviders();
@@ -210,30 +197,11 @@ public class JRProviderListFragment extends JRUiFragment {
             }, 0, 500);
         }
 
-        return listView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mCustomSignin != null) mCustomSignin.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mCustomSignin != null) mCustomSignin.onPause();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (mCustomSignin != null) mCustomSignin.onSaveInstanceState(outState);
+        return inflatedLayout;
     }
 
     @Override
     public void onDestroy() {
-        if (mCustomSignin != null) mCustomSignin.onDestroy();
         if (mTimer != null) mTimer.cancel();
 
         super.onDestroy();
@@ -387,11 +355,9 @@ public class JRProviderListFragment extends JRUiFragment {
         getActivity().finish();
     }
     
-    public void showProgressDialogForCustomSignin() {
-        showProgressDialog();
-    }
-    
-    public void dismissProgressDialogForCustomSignin() {
-        dismissProgressDialog();
+    public String getCustomTitle() {
+        String title = null;
+        if (getCustomUiConfiguration() != null) title = getCustomUiConfiguration().mProviderListTitle;
+        return title;
     }
 }

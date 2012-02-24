@@ -219,7 +219,6 @@ public class JRLandingFragment extends JRUiFragment {
         }
 
         JRProvider currentlyAuthenticatingProvider = mSession.getCurrentlyAuthenticatingProvider();
-        getActivity().setTitle(getCustomTitle());
         mLogo.setImageDrawable(currentlyAuthenticatingProvider.getProviderLogo(getActivity()));
 
         if (currentlyAuthenticatingProvider.getName().equals("openid")) {
@@ -257,7 +256,8 @@ public class JRLandingFragment extends JRUiFragment {
         }
     }
 
-    private String getCustomTitle() {
+    @Override
+    /*package*/ String getCustomTitle() {
         JRProvider provider = mSession.getCurrentlyAuthenticatingProvider();
         if (provider.requiresInput()) {
             return provider.getUserInputDescriptor();

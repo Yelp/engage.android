@@ -1175,4 +1175,10 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         getActivity().finish();
     }
+
+    public String getCustomTitle() {
+        String title = null;
+        if (getCustomUiConfiguration() != null) title = getCustomUiConfiguration().mSharingTitle;
+        return title;
+    }
 }
