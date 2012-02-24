@@ -203,6 +203,20 @@ public final class Archiver {
             }
         }
     }
+    
+    public static void delete(String name) {
+        Context context = JREngage.getActivity();
+        if (context == null) throw new IllegalStateException("[loadObject] JREngage.getContext() is null.");
+        if (TextUtils.isEmpty(name)) throw new IllegalArgumentException("name parameter cannot be null");
+
+        delete(context, name);
+    }
+
+    public static void delete(Context context, String name) {
+        String fileName = String.format(DICTIONARY_BASE_FORMAT, name);
+        context.deleteFile(fileName);
+
+    }
 
     public static class LoadException extends Exception {
         public LoadException(Throwable throwable) {
