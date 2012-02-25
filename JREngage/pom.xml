@@ -9,7 +9,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <qypeRepositoryUrl>http://smith.qype.com:8080/nexus/content/repositories</qypeRepositoryUrl>
+    <qypeRepositoryUrl>http://nexus.qype.com/nexus/content/repositories</qypeRepositoryUrl>
   </properties>
 
   <dependencies>
