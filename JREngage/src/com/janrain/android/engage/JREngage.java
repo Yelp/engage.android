@@ -655,78 +655,78 @@ public class JREngage {
         return new JRPublishFragment();
     }
 
-    /**
-     * Begin social sign-in.  The library will display a new Android \e Fragment enabling the user to
-     * sign in.
-     *
-     * @param hostActivity
-     *   The android.support.v4.app.FragmentActivity which will host the publishing fragment
-     * @param containerId
-     *   The resource ID of a FrameLayout to embed the publishing fragment in
-     * @param addToBackStack
-     *   True if the publishing fragment should be added to the back stack, false otherwise
-     * @param transit
-     *   Select a standard transition animation for this transaction. See FragmentTransaction#setTransition.
-     *   Null for not set
-     * @param transitRes
-     *   Set a custom style resource that will be used for resolving transit animations. Null for not set
-     * @param customEnterAnimation
-     *   Set a custom enter animation. May be null if-and-only-if customExitAnimation is also null
-     * @param customExitAnimation
-     *   Set a custom exit animation.  May be null if-and-only-if customEnterAnimation is also null
-     **/
-    public void showSocialSignInFragment(FragmentActivity hostActivity,
-                                             int containerId,
-                                             boolean addToBackStack,
-                                             Integer transit,
-                                             Integer transitRes,
-                                             Integer customEnterAnimation,
-                                             Integer customExitAnimation) {
-        JREngage.logd(TAG, "[showSocialSignInFragment]");
+//    /**
+//     * Begin social sign-in.  The library will display a new Android \e Fragment enabling the user to
+//     * sign in.
+//     *
+//     * @param hostActivity
+//     *   The android.support.v4.app.FragmentActivity which will host the publishing fragment
+//     * @param containerId
+//     *   The resource ID of a FrameLayout to embed the publishing fragment in
+//     * @param addToBackStack
+//     *   True if the publishing fragment should be added to the back stack, false otherwise
+//     * @param transit
+//     *   Select a standard transition animation for this transaction. See FragmentTransaction#setTransition.
+//     *   Null for not set
+//     * @param transitRes
+//     *   Set a custom style resource that will be used for resolving transit animations. Null for not set
+//     * @param customEnterAnimation
+//     *   Set a custom enter animation. May be null if-and-only-if customExitAnimation is also null
+//     * @param customExitAnimation
+//     *   Set a custom exit animation.  May be null if-and-only-if customEnterAnimation is also null
+//     **/
+//    public void showSocialSignInFragment(FragmentActivity hostActivity,
+//                                             int containerId,
+//                                             boolean addToBackStack,
+//                                             Integer transit,
+//                                             Integer transitRes,
+//                                             Integer customEnterAnimation,
+//                                             Integer customExitAnimation) {
+//        JREngage.logd(TAG, "[showSocialSignInFragment]");
+//
+//        JRUiFragment f = createSocialSignInFragment();
+//        showFragment(f,
+//                hostActivity,
+//                containerId,
+//                addToBackStack,
+//                transit,
+//                transitRes,
+//                customEnterAnimation,
+//                customExitAnimation);
+//    }
 
-        JRUiFragment f = createSocialSignInFragment();
-        showFragment(f,
-                hostActivity,
-                containerId,
-                addToBackStack,
-                transit,
-                transitRes,
-                customEnterAnimation,
-                customExitAnimation);
-    }
+//    /**
+//     * Begin social sign-in.  The library will display a new Android \e Fragment enabling the user to
+//     * sign in.
+//     * This simple variant displays the Fragment, does not add it to the Fragment back stack, and uses default
+//     * animations.
+//     *
+//     * @param hostActivity
+//     *   The android.support.v4.app.FragmentActivity which will host the publishing fragment
+//     * @param containerId
+//     *   The resource ID of a FrameLayout to embed the publishing fragment in
+//     **/
+//    public void showSocialSignInFragment(FragmentActivity hostActivity,
+//                                             int containerId) {
+//        showSocialSignInFragment(hostActivity, containerId, false, null, null, null, null);
+//    }
 
-    /**
-     * Begin social sign-in.  The library will display a new Android \e Fragment enabling the user to
-     * sign in.
-     * This simple variant displays the Fragment, does not add it to the Fragment back stack, and uses default
-     * animations.
-     *
-     * @param hostActivity
-     *   The android.support.v4.app.FragmentActivity which will host the publishing fragment
-     * @param containerId
-     *   The resource ID of a FrameLayout to embed the publishing fragment in
-     **/
-    public void showSocialSignInFragment(FragmentActivity hostActivity,
-                                             int containerId) {
-        showSocialSignInFragment(hostActivity, containerId, false, null, null, null, null);
-    }
-
-    /**
-     * Create a new android.support.v4.Fragment for social sign-in.  Use this if you wish to manage the
-     * FragmentTransaction yourself.
-     *
-     * @return
-     *  The created Fragment, or null upon error (caused by library configuration failure)
-     */
-    public JRProviderListFragment createSocialSignInFragment() {
-        if (checkSessionDataError()) return null;
-
-        JRProviderListFragment jplf = new JRProviderListFragment();
-        Bundle args = new Bundle();
-        args.putBoolean(JRUiFragment.SOCIAL_SHARING_MODE, false);
-        jplf.setArguments(args);
-        return jplf;
-    }
+//    /**
+//     * Create a new android.support.v4.Fragment for social sign-in.  Use this if you wish to manage the
+//     * FragmentTransaction yourself.
+//     *
+//     * @return
+//     *  The created Fragment, or null upon error (caused by library configuration failure)
+//     */
+//    public JRProviderListFragment createSocialSignInFragment() {
+//        if (checkSessionDataError()) return null;
+//
+//        JRProviderListFragment jplf = new JRProviderListFragment();
+//        Bundle args = new Bundle();
+//        args.putBoolean(JRUiFragment.SOCIAL_SHARING_MODE, false);
+//        jplf.setArguments(args);
+//        return jplf;
+//    }
 /*@}*/
 
     private void showFragment(Fragment fragment,
