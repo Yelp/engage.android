@@ -285,7 +285,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
     private void cancelProviderList() {
         finishFragmentWithResult(Activity.RESULT_CANCELED);
-        mSession.triggerAuthenticationDidCancel();
+        if (mSession != null) mSession.triggerAuthenticationDidCancel();
     }
 
     /*package*/ static boolean shouldOpenDirectToUserLandingPage(JRSession session) {
@@ -307,7 +307,8 @@ public class JRProviderListFragment extends JRUiFragment {
     
     /*package*/ void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh, JRSession session) {
         /* check and see whether we should start the landing page */
-        /* this has to be done here so the provider list skips rendering it's UI */
+        /* this is delegated to from JRFragmentHostActivity.onCreate(...) so that the provider list skips */
+        /* rendering it's UI */
         String rapName = session.getReturningAuthProvider();
         JRProvider provider = session.getProviderByName(rapName);
 

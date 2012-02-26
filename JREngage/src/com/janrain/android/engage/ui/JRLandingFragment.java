@@ -83,12 +83,11 @@ public class JRLandingFragment extends JRUiFragment {
 
     private ImageView mLogo;
     private EditText mUserInput;
-
     private TextView mWelcomeLabel;
 
     private Button mSwitchAccountButton;
     private ColorButton mSignInButton;
-    private JRProvider mCurrentlyAuthenticatingProvider;
+    private JRProvider mProvider;
 
     public JRLandingFragment() {}
 
@@ -96,7 +95,12 @@ public class JRLandingFragment extends JRUiFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mCurrentlyAuthenticatingProvider = mSession.getCurrentlyAuthenticatingProvider();
+        if (mSession == null) {
+            finishFragment();
+            return;
+        }
+
+        mProvider = mSession.getCurrentlyAuthenticatingProvider();
     }
 
     @Override
@@ -119,21 +123,21 @@ public class JRLandingFragment extends JRUiFragment {
         }
 
         if (getActivity() instanceof JRFragmentHostActivity) getActivity().setTitle(getCustomTitle());
-        mLogo.setImageDrawable(mCurrentlyAuthenticatingProvider.getProviderLogo(getActivity()));
+        mLogo.setImageDrawable(mProvider.getProviderLogo(getActivity()));
 
-        if (mCurrentlyAuthenticatingProvider.getName().equals("openid")) {
+        if (mProvider.getName().equals("openid")) {
             mUserInput.setInputType(EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_URI);
         }
 
-        if (mCurrentlyAuthenticatingProvider.requiresInput()) {
+        if (mProvider.requiresInput()) {
             JREngage.logd(TAG, "[prepareUserInterface] current provider requires input");
             configureButtonVisibility(true); // one button UI
 
             mWelcomeLabel.setVisibility(View.GONE);
 
             mUserInput.setVisibility(View.VISIBLE);
-            mUserInput.setText(mCurrentlyAuthenticatingProvider.getUserInput());
-            mUserInput.setHint(mCurrentlyAuthenticatingProvider.getUserInputHint());
+            mUserInput.setText(mProvider.getUserInput());
+            mUserInput.setHint(mProvider.getUserInputHint());
         } else { // doesn't require input
             configureButtonVisibility(false); // = two button UI -> Switch Accounts is showing
             JREngage.logd(TAG, "[prepareUserInterface] current provider doesn't require input");
@@ -142,7 +146,7 @@ public class JRLandingFragment extends JRUiFragment {
 
             mWelcomeLabel.setVisibility(View.VISIBLE);
             mWelcomeLabel.setText(mSession.getAuthenticatedUserForProvider(
-                    mCurrentlyAuthenticatingProvider).getWelcomeMessage());
+                    mProvider).getWelcomeMessage());
         }
 
         return view;
@@ -269,7 +273,19 @@ public class JRLandingFragment extends JRUiFragment {
     @Override
     /*package*/ void onBackPressed() {
         JREngage.logd(TAG, "[onBackPressed]");
+
+        if (mSession == null) {
+            finishFragmentWithResult(RESULT_RESTART);
+            return;
+        }
         mSession.triggerAuthenticationDidRestart();
         finishFragmentWithResult(RESULT_RESTART);
+    }
+
+    @Override
+        /*package*/ void setFragmentResult(int result) {
+        super.setFragmentResult(result);
+        if (mSession == null) return;
+        if (isSpecificProviderFlow()) mSession.triggerAuthenticationDidCancel();
     }
 }

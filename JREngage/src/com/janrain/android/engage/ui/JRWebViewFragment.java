@@ -84,6 +84,7 @@ public class JRWebViewFragment extends JRUiFragment {
     private static final String KEY_IS_FINISH_PENDING = "mIsFinishPending";
     private static final String KEY_IS_LOADING_MOBILE_ENDPOINT = "mIsLoadingMobileEndpoint";
     private static final String KEY_IS_SPINNER_ON = "jr_spinner_on";
+    private static final String KEY_CURRENTLY_LOADING_WEBVIEW_URL = "jr_current_webview_url";
     private static final String JR_RETAIN = "jr_retain_frag";
     private static final int KEY_ALERT_DIALOG = 1;
 
@@ -95,6 +96,7 @@ public class JRWebViewFragment extends JRUiFragment {
     private boolean mIsAlertShowing = false;
     private boolean mIsFinishPending = false;
     private boolean mIsLoadingMobileEndpoint = false;
+    private String mCurrentlyLoadingUrl;
 //    private boolean mUseDesktopUa = false;
     private JRProvider mProvider;
     private WebSettings mWebViewSettings;
@@ -141,7 +143,7 @@ public class JRWebViewFragment extends JRUiFragment {
         mWebViewSettings.setJavaScriptCanOpenWindowsAutomatically(false);
         mWebViewSettings.setSupportZoom(true);
 
-        mWebView.setWebViewClient(mWebviewClient);
+        mWebView.setWebViewClient(mWebViewClient);
         mWebView.setWebChromeClient(mWebChromeClient);
         mWebView.setDownloadListener(mWebViewDownloadListener);
 
@@ -172,8 +174,10 @@ public class JRWebViewFragment extends JRUiFragment {
             mIsAlertShowing = savedInstanceState.getBoolean(KEY_IS_ALERT_SHOWING);
             mIsFinishPending = savedInstanceState.getBoolean(KEY_IS_FINISH_PENDING);
             mIsLoadingMobileEndpoint = savedInstanceState.getBoolean(KEY_IS_LOADING_MOBILE_ENDPOINT);
+            String currentUrl = savedInstanceState.getString(KEY_CURRENTLY_LOADING_WEBVIEW_URL);
             configureWebViewUa();
             mWebView.restoreState(savedInstanceState);
+            if (currentUrl != null) mWebView.loadUrl(currentUrl);
         } else {
             mProvider = mSession.getCurrentlyAuthenticatingProvider();
             configureWebViewUa();
@@ -232,7 +236,7 @@ public class JRWebViewFragment extends JRUiFragment {
         outState.putBoolean(KEY_IS_FINISH_PENDING, mIsFinishPending);
         outState.putBoolean(KEY_IS_LOADING_MOBILE_ENDPOINT, mIsLoadingMobileEndpoint);
         outState.putBoolean(KEY_IS_SPINNER_ON, mProgressSpinner.getVisibility() == View.VISIBLE);
-//        outState.putString(KEY_WEBVIEW_URL, );
+        outState.putString(KEY_CURRENTLY_LOADING_WEBVIEW_URL, mCurrentlyLoadingUrl);
         mWebView.saveState(outState);
 
         super.onSaveInstanceState(outState);
@@ -331,15 +335,12 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     private DownloadListener mWebViewDownloadListener = new DownloadListener() {
-        /**
-         * Used by pre 2.3 (2.2?) instead of shouldOverrideUrlLoading because of platform bugs.
-         */
+        /* Used by pre 2.3 (2.2?) instead of shouldOverrideUrlLoading because of platform bugs. */
         public void onDownloadStart(String url,
                                     String userAgent,
                                     String contentDisposition,
                                     String mimetype,
                                     long contentLength) {
-
             JREngage.logd(TAG, "[onDownloadStart] URL: " + url + " | mimetype: " + mimetype
                     + " | length: " + contentLength);
 
@@ -347,7 +348,7 @@ public class JRWebViewFragment extends JRUiFragment {
         }
     };
 
-    private WebViewClient mWebviewClient = new WebViewClient() {
+    private WebViewClient mWebViewClient = new WebViewClient() {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             // Seems to be broken according to this:
@@ -385,6 +386,8 @@ public class JRWebViewFragment extends JRUiFragment {
                 loadMobileEndpointUrl(url);
                 mWebView.stopLoading();
                 mWebView.loadUrl("about:blank");
+            } else {
+                mCurrentlyLoadingUrl = url;
             }
 
             showProgressSpinner();
@@ -393,6 +396,7 @@ public class JRWebViewFragment extends JRUiFragment {
         @Override
         public void onPageFinished(WebView view, String url) {
             JREngage.logd(TAG, "[onPageFinished] URL: " + url);
+            mCurrentlyLoadingUrl = null;
 
             hideProgressSpinner();
 
@@ -544,8 +548,8 @@ public class JRWebViewFragment extends JRUiFragment {
                                     JREngageError.ErrorType.AUTHENTICATION_FAILED);
 
                             mSession.triggerAuthenticationDidFail(err);
-                            setFragmentResult(RESULT_FAIL);
                             mIsFinishPending = true;
+                            setFragmentResult(RESULT_FAIL);
                             showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
                                     getString(R.string.jr_webview_error_dialog_msg));
                         }
@@ -661,6 +665,15 @@ public class JRWebViewFragment extends JRUiFragment {
                     mDeferredCdfO = null;
                 }
             }
+        }
+    }
+
+    @Override
+    /*package*/ void setFragmentResult(int result) {
+        super.setFragmentResult(result);
+        if (mSession == null) return;
+        if (isSpecificProviderFlow() && mProvider != null && !mProvider.requiresInput()) {
+            mSession.triggerAuthenticationDidCancel();
         }
     }
 }
