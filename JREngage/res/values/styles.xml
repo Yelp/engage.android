@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="jr_dialog" parent="@android:style/Theme.Dialog" />
-    <style name="jr_fullscreen_no_title" parent="@android:style/Theme.Light.NoTitleBar" />
-    <style name="jr_fullscreen" parent="android:style/Theme.Light" />
+    <style name="jr_dialog" parent="@android:style/Theme.Dialog">
+        <item name="jr_listview_row_text">@style/jr_listview_row_text_default</item>
+    </style>
+    <style name="jr_fullscreen_no_title" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="jr_listview_row_text">@style/jr_listview_row_text_default</item>
+    </style>
+    <style name="jr_fullscreen" parent="android:style/Theme.Light">
+        <item name="jr_listview_row_text">@style/jr_listview_row_text_default</item>
+    </style>
 
     <style name="jr_about_dialog_text">
         <item name="android:textColor">@android:color/white</item>
     </style>
+    
+    <style name="jr_listview_row_text_default">
+        <item name="android:singleLine">true</item>
+        <item name="android:text">@string/jr_provider_unknown</item>
+        <item name="android:textColor">@android:color/primary_text_light</item>
+        <item name="android:textSize">20dip</item>
+        <item name="android:padding">6dip</item>
+    </style>
+
 </resources>

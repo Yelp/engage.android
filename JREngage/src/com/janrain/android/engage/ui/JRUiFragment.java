@@ -148,7 +148,8 @@ public abstract class JRUiFragment extends Fragment {
         if (!isEmbeddedMode()) setRetainInstance(true);
         setHasOptionsMenu(true);
 
-        String uiCustomizationName = getArguments().getString(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS);
+        String uiCustomizationName =
+                getArguments().getString(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS);
 
         if (uiCustomizationName != null) {
             try {
