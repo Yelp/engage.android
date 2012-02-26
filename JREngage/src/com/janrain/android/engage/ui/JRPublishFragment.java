@@ -993,7 +993,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
              * input".
              */
         } else { /* Otherwise, go straight to the web view. */
-            showWebView();
+            showWebView(true);
         }
     }
 
