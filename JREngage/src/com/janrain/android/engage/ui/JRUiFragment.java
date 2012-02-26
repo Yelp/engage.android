@@ -45,6 +45,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -70,6 +72,11 @@ public abstract class JRUiFragment extends Fragment {
     private static final String KEY_DIALOG_ID = "jr_dialog_id";
     private static final String KEY_MANAGED_DIALOG_OPTIONS = "jr_dialog_options";
     private static final String KEY_DIALOG_PROGRESS_TEXT = "jr_progress_dialog_text";
+    private static final String PARENT_FRAGMENT_EMBEDDED = "jr_parent_fragment_embedded";
+    
+    public static final String JR_FRAGMENT_FLOW_MODE = "jr_fragment_flow_mode";
+    public static final int JR_FRAGMENT_FLOW_AUTH = 0;
+    public static final int JR_FRAGMENT_FLOW_SHARING = 1;
 
     public static final int REQUEST_LANDING = 1;
     public static final int REQUEST_WEBVIEW = 2;
@@ -79,6 +86,7 @@ public abstract class JRUiFragment extends Fragment {
     private FinishReceiver mFinishReceiver;
     private HashMap<Integer, ManagedDialog> mManagedDialogs = new HashMap<Integer, ManagedDialog>();
     private JRCustomUiConfiguration mCustomUiConfiguration;
+    private Integer mFragmentResult;
 
     /*package*/ JRSession mSession;
     /*package*/ final String TAG = getLogTag();
@@ -99,7 +107,7 @@ public abstract class JRUiFragment extends Fragment {
 
             if (JRUiFragment.this.getClass().toString().equals(target) ||
                     target.equals(JRFragmentHostActivity.FINISH_TARGET_ALL)) {
-                if (!isEmbeddedMode()) tryToFinishActivity();
+                if (!isEmbeddedMode()) tryToFinishFragment();
                 JREngage.logd(TAG, "[onReceive] handled");
             } else {
                 JREngage.logd(TAG, "[onReceive] ignored");
@@ -222,6 +230,27 @@ public abstract class JRUiFragment extends Fragment {
             d.mDialog = onCreateDialog(d.mId, d.mOptions);
             if (d.mShowing) d.mDialog.show();
         }
+
+//        FragmentManager fm = getActivity().getSupportFragmentManager();
+//        fm.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+//            public void onBackStackChanged() {
+//                Log.e(TAG, "onBackStackChanged");
+//            }
+//        });
+
+//        ViewGroup vg = (ViewGroup) getView().getParent();
+//        if (vg != null && !(getActivity() instanceof JRFragmentHostActivity)) {
+//            vg.setOnKeyListener(new View.OnKeyListener() {
+//                public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+//                        Log.e(TAG, "[VGONKEYPRESSED!]");
+//                        onBackPressed();
+//                        return true;
+//                    }
+//                    return false;
+//                }
+//            });
+//        }
     }
 
     @Override
@@ -263,6 +292,14 @@ public abstract class JRUiFragment extends Fragment {
     @Override
     public void onDestroy() {
         JREngage.logd(TAG, "[onDestroy]");
+        if (mFragmentResult != null) {
+            if (getActivity() instanceof JRFragmentHostActivity) {
+                getActivity().setResult(mFragmentResult);
+            } else if (getTargetFragment() != null) {
+                getTargetFragment().onActivityResult(getTargetRequestCode(), mFragmentResult, null);
+            }
+        }
+
         if (mSession != null) mSession.setUiIsShowing(false);
 
         if (mCustomUiConfiguration != null) mCustomUiConfiguration.onDestroy();
@@ -457,31 +494,98 @@ public abstract class JRUiFragment extends Fragment {
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(getActivity(), showTitle);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, fragId);
-        if (!isEmbeddedMode()) {
-            i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW,
-                    ((JRFragmentHostActivity) getActivity()).isAuthFlow());
-        }
+        i.putExtra(JRUiFragment.PARENT_FRAGMENT_EMBEDDED, isEmbeddedMode());
+        i.putExtra(JR_FRAGMENT_FLOW_MODE, getFragmentFlowMode());
         if (opts != null) i.putExtras(opts);
         startActivityForResult(i, requestCode);
     }
+    
+    private int getFragmentFlowMode() {
+        return getArguments().getInt(JR_FRAGMENT_FLOW_MODE);
+    }
+    
+    private void showFragment(Class<? extends JRUiFragment> fragClass, int requestCode) {
+        JRUiFragment f;
+        try {
+            f = fragClass.newInstance();
+        } catch (java.lang.InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        Bundle args = new Bundle();
+        args.putInt(JR_FRAGMENT_FLOW_MODE, getFragmentFlowMode());
+        f.setArguments(args);
+        f.setTargetFragment(this, requestCode);
 
-    /*package*/ void showUserLanding() {
-        startActivityForFragId(JRFragmentHostActivity.JR_LANDING, REQUEST_LANDING);
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(((ViewGroup) getView().getParent()).getId(), f)
+                .addToBackStack(fragClass.getSimpleName())
+                .setTransition(FragmentTransaction.TRANSIT_NONE)
+                .commit();
     }
 
-    /*package*/ void showWebView(boolean socialSharingSignIn) {
-        Bundle opts = new Bundle();
-        opts.putBoolean(JRWebViewFragment.SOCIAL_SHARING_MODE, socialSharingSignIn);
-        startActivityForFragId(JRFragmentHostActivity.JR_WEBVIEW, REQUEST_WEBVIEW, opts);
+    /*package*/ void setFragmentResult(int result) {
+        mFragmentResult = result;
+    }
+
+    /*package*/ void finishFragmentWithResult(int result) {
+        setFragmentResult(result);
+        finishFragment();
+    }
+
+    /*package*/ void finishFragment() {
+        if (getActivity() instanceof JRFragmentHostActivity) {
+            if (mFragmentResult != null) getActivity().setResult(mFragmentResult);
+            getActivity().finish();
+        } else {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            int bsec = fm.getBackStackEntryCount();
+            if (bsec > 0 && fm.getBackStackEntryAt(bsec - 1).getName().equals(getLogTag())) {
+                fm.popBackStack();
+            } else if (bsec > 0) {
+                Log.e(TAG, "Error trying to finish fragment not on top of back stack");
+                fm.popBackStack(getLogTag(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            } else { // bsec == 0
+                // Root fragment, if it's finishing it's because authentication finished?
+                fm.beginTransaction()
+                        .remove(this)
+                        .setTransition(FragmentTransaction.TRANSIT_NONE)
+                        .commit();
+            }
+        }
+    }
+
+    /*package*/ void showUserLanding() {
+        if (getActivity() instanceof JRFragmentHostActivity || isSharingFlow()) {
+            startActivityForFragId(JRFragmentHostActivity.JR_LANDING, REQUEST_LANDING);
+        } else {
+            showFragment(JRLandingFragment.class, REQUEST_LANDING);
+        }
+    }
+
+    /*package*/ void showWebView(boolean forSharingFlow) {
+        if (getActivity() instanceof JRFragmentHostActivity || forSharingFlow) {
+            Bundle opts = new Bundle();
+            opts.putInt(JR_FRAGMENT_FLOW_MODE,
+                    forSharingFlow ? JR_FRAGMENT_FLOW_SHARING : JR_FRAGMENT_FLOW_AUTH);
+            startActivityForFragId(JRFragmentHostActivity.JR_WEBVIEW, REQUEST_WEBVIEW, opts);
+        } else {
+            showFragment(JRWebViewFragment.class, REQUEST_WEBVIEW);
+        }
     }
 
     /*package*/ void showWebView() {
         showWebView(false);
     }
 
-    /*package*/ void tryToFinishActivity() {
-        JREngage.logd(TAG, "[tryToFinishActivity]");
-        getActivity().finish();
+    /*package*/ boolean isSharingFlow() {
+        return getArguments().getInt(JR_FRAGMENT_FLOW_MODE) == JR_FRAGMENT_FLOW_SHARING;
+    }
+
+    /*package*/ void tryToFinishFragment() {
+        JREngage.logd(TAG, "[tryToFinishFragment]");
+        finishFragment();
     }
 
     /*package*/ boolean hasView() {

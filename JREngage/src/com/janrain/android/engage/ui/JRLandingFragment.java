@@ -83,11 +83,25 @@ public class JRLandingFragment extends JRUiFragment {
 
     private ImageView mLogo;
     private EditText mUserInput;
-
     private TextView mWelcomeLabel;
 
     private Button mSwitchAccountButton;
     private ColorButton mSignInButton;
+    private JRProvider mProvider;
+
+    public JRLandingFragment() {}
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (mSession == null) {
+            finishFragment();
+            return;
+        }
+
+        mProvider = mSession.getCurrentlyAuthenticatingProvider();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -100,7 +114,40 @@ public class JRLandingFragment extends JRUiFragment {
         mSwitchAccountButton = (Button)view.findViewById(R.id.jr_landing_switch_account_button);
         mSignInButton = (ColorButton)view.findViewById(R.id.jr_landing_small_signin_button);
 
-        prepareUserInterface();
+        mSwitchAccountButton.setOnClickListener(mButtonListener);
+        mSignInButton.setOnClickListener(mButtonListener);
+        mSignInButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
+        if (AndroidUtils.SDK_INT <= 10) {
+            /* Todo this should really test for Theme.Holo or it's descendants */
+            mSignInButton.setTextColor(getColor(android.R.color.white));
+        }
+
+        if (getActivity() instanceof JRFragmentHostActivity) getActivity().setTitle(getCustomTitle());
+        mLogo.setImageDrawable(mProvider.getProviderLogo(getActivity()));
+
+        if (mProvider.getName().equals("openid")) {
+            mUserInput.setInputType(EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_URI);
+        }
+
+        if (mProvider.requiresInput()) {
+            JREngage.logd(TAG, "[prepareUserInterface] current provider requires input");
+            configureButtonVisibility(true); // one button UI
+
+            mWelcomeLabel.setVisibility(View.GONE);
+
+            mUserInput.setVisibility(View.VISIBLE);
+            mUserInput.setText(mProvider.getUserInput());
+            mUserInput.setHint(mProvider.getUserInputHint());
+        } else { // doesn't require input
+            configureButtonVisibility(false); // = two button UI -> Switch Accounts is showing
+            JREngage.logd(TAG, "[prepareUserInterface] current provider doesn't require input");
+
+            mUserInput.setVisibility(View.GONE);
+
+            mWelcomeLabel.setVisibility(View.VISIBLE);
+            mWelcomeLabel.setText(mSession.getAuthenticatedUserForProvider(
+                    mProvider).getWelcomeMessage());
+        }
 
         return view;
     }
@@ -132,8 +179,7 @@ public class JRLandingFragment extends JRUiFragment {
         mSession.getCurrentlyAuthenticatingProvider().setForceReauth(true);
         mSession.setReturningAuthProvider("");
         mSession.triggerAuthenticationDidRestart();
-        getActivity().setResult(RESULT_SWITCH_ACCOUNTS);
-        getActivity().finish();
+        finishFragmentWithResult(RESULT_SWITCH_ACCOUNTS);
     }
 
     @Override
@@ -161,7 +207,7 @@ public class JRLandingFragment extends JRUiFragment {
                             mIsFinishPending = false;
                             /* If there is a pending Finish that we deferred because the dialog was displayed
                              * it is called here, now. */
-                            tryToFinishActivity();
+                            tryToFinishFragment();
                         }
                     }
                 }).create();
@@ -175,18 +221,14 @@ public class JRLandingFragment extends JRUiFragment {
         if (requestCode == REQUEST_WEBVIEW) {
             switch (resultCode) {
                 case Activity.RESULT_OK:
-                    getActivity().setResult(Activity.RESULT_OK);
-                    getActivity().finish();
-                    break;
-                case JRWebViewFragment.RESULT_RESTART:
-                    getActivity().setResult(RESULT_RESTART);
-                    getActivity().finish();
-                    break;
-                case JRWebViewFragment.RESULT_BAD_OPENID_URL:
+                    finishFragmentWithResult(Activity.RESULT_OK);
                     break;
                 case JRWebViewFragment.RESULT_FAIL:
-                    getActivity().setResult(RESULT_FAIL);
-                    getActivity().finish();
+                    // Fall through
+                case JRWebViewFragment.RESULT_RESTART:
+                    finishFragmentWithResult(RESULT_RESTART);
+                    break;
+                case JRWebViewFragment.RESULT_BAD_OPENID_URL:
                     break;
 //                    See RESULT_CANCELED in JRProviderListFragment.
 //                    case Activity.RESULT_CANCELED:
@@ -200,49 +242,12 @@ public class JRLandingFragment extends JRUiFragment {
     }
 
     @Override
-    /*package*/ void tryToFinishActivity() {
-        JREngage.logd(TAG, "[tryToFinishActivity]");
+    /*package*/ void tryToFinishFragment() {
+        JREngage.logd(TAG, "[tryToFinishFragment]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
         } else {
-            getActivity().finish();
-        }
-    }
-
-    private void prepareUserInterface() {
-        mSwitchAccountButton.setOnClickListener(mButtonListener);
-        mSignInButton.setOnClickListener(mButtonListener);
-        mSignInButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
-        if (AndroidUtils.SDK_INT <= 10) {
-            /* Todo this should really test for Theme.Holo or it's descendants */
-            mSignInButton.setTextColor(getColor(android.R.color.white));
-        }
-
-        JRProvider currentlyAuthenticatingProvider = mSession.getCurrentlyAuthenticatingProvider();
-        mLogo.setImageDrawable(currentlyAuthenticatingProvider.getProviderLogo(getActivity()));
-
-        if (currentlyAuthenticatingProvider.getName().equals("openid")) {
-            mUserInput.setInputType(EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_URI);
-        }
-
-        if (currentlyAuthenticatingProvider.requiresInput()) {
-            JREngage.logd(TAG, "[prepareUserInterface] current provider requires input");
-            configureButtonVisibility(true); // one button UI
-
-            mWelcomeLabel.setVisibility(View.GONE);
-
-            mUserInput.setVisibility(View.VISIBLE);
-            mUserInput.setText(currentlyAuthenticatingProvider.getUserInput());
-            mUserInput.setHint(currentlyAuthenticatingProvider.getUserInputHint());
-        } else { // doesn't require input
-            configureButtonVisibility(false); // = two button UI -> Switch Accounts is showing
-            JREngage.logd(TAG, "[prepareUserInterface] current provider doesn't require input");
-
-            mUserInput.setVisibility(View.GONE);
-
-            mWelcomeLabel.setVisibility(View.VISIBLE);
-            mWelcomeLabel.setText(mSession.getAuthenticatedUserForProvider(
-                    currentlyAuthenticatingProvider).getWelcomeMessage());
+            finishFragment();
         }
     }
 
@@ -269,8 +274,19 @@ public class JRLandingFragment extends JRUiFragment {
     @Override
     /*package*/ void onBackPressed() {
         JREngage.logd(TAG, "[onBackPressed]");
+
+        if (mSession == null) {
+            finishFragmentWithResult(RESULT_RESTART);
+            return;
+        }
         mSession.triggerAuthenticationDidRestart();
-        getActivity().setResult(RESULT_RESTART);
-        getActivity().finish();
+        finishFragmentWithResult(RESULT_RESTART);
+    }
+
+    @Override
+        /*package*/ void setFragmentResult(int result) {
+        super.setFragmentResult(result);
+        if (mSession == null) return;
+        if (isSpecificProviderFlow()) mSession.triggerAuthenticationDidCancel();
     }
 }

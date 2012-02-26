@@ -136,6 +136,8 @@ public class JRProviderListFragment extends JRUiFragment {
         }
     };
 
+    public JRProviderListFragment() {}
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         JREngage.logd(TAG, "[onCreateView]");
@@ -235,8 +237,7 @@ public class JRProviderListFragment extends JRUiFragment {
                     case JRLandingFragment.RESULT_SWITCH_ACCOUNTS:
                         break;
                     case Activity.RESULT_OK:
-                        getActivity().setResult(Activity.RESULT_OK);
-                        getActivity().finish();
+                        finishFragmentWithResult(Activity.RESULT_OK);
                         return;
                     case JRLandingFragment.RESULT_FAIL:
                         getActivity().setResult(RESULT_FAIL);
@@ -252,12 +253,10 @@ public class JRProviderListFragment extends JRUiFragment {
             case JRUiFragment.REQUEST_WEBVIEW:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        getActivity().setResult(Activity.RESULT_OK);
-                        getActivity().finish();
+                        finishFragmentWithResult(Activity.RESULT_OK);
                         return;
                     case JRWebViewFragment.RESULT_FAIL:
-                        getActivity().setResult(RESULT_FAIL);
-                        getActivity().finish();
+                        finishFragmentWithResult(RESULT_FAIL);
                         return;
                     case JRWebViewFragment.RESULT_RESTART:
                         break;
@@ -313,9 +312,8 @@ public class JRProviderListFragment extends JRUiFragment {
     }
 
     private void cancelProviderList() {
-        getActivity().setResult(Activity.RESULT_CANCELED);
-        getActivity().finish();
-        mSession.triggerAuthenticationDidCancel();
+        finishFragmentWithResult(Activity.RESULT_CANCELED);
+        if (mSession != null) mSession.triggerAuthenticationDidCancel();
     }
 
     /*package*/ static boolean shouldOpenDirectToUserLandingPage(JRSession session) {
@@ -338,14 +336,15 @@ public class JRProviderListFragment extends JRUiFragment {
     
     /*package*/ void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh, JRSession session) {
         /* check and see whether we should start the landing page */
-        /* this has to be done here so the provider list skips rendering it's UI */
+        /* this is delegated to from JRFragmentHostActivity.onCreate(...) so that the provider list skips */
+        /* rendering it's UI */
         String rapName = session.getReturningAuthProvider();
         JRProvider provider = session.getProviderByName(rapName);
 
         if (shouldOpenDirectToUserLandingPage(session)) {
             session.setCurrentlyAuthenticatingProvider(provider);
             Intent i = JRFragmentHostActivity.createUserLandingIntent(jrfh);
-            i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, true);
+            i.putExtra(JR_FRAGMENT_FLOW_MODE, JR_FRAGMENT_FLOW_AUTH);
             jrfh.startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
         }
     }

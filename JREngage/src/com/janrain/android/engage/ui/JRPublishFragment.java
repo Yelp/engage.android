@@ -152,7 +152,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private EditText mEmailSmsComment;
     private TabHost mTabHost;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (mSession == null) return null;
@@ -1167,13 +1166,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     /*package*/ void onBackPressed() {
         if (mWeHaveAlreadyShared) {
             mSession.triggerPublishingDidComplete();
-            getActivity().setResult(Activity.RESULT_OK);
+            finishFragmentWithResult(Activity.RESULT_OK);
         } else {
             mSession.triggerPublishingDidCancel();
-            getActivity().setResult(Activity.RESULT_CANCELED);
+            finishFragmentWithResult(Activity.RESULT_CANCELED);
         }
-
-        getActivity().finish();
     }
 
     public String getCustomTitle() {
