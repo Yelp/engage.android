@@ -121,22 +121,22 @@ public class MainActivity extends FragmentActivity {
                 mEngage.showAuthenticationDialog();
             }
         });
-        mBtnTestAuth.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View v) {
-                if (findViewById(R.id.jr_signin_fragment) != null) {
-                    mEngage.showSocialSignInFragment(
-                            MainActivity.this,
-                            com.janrain.android.engage.R.id.jr_publish_fragment,
-                            false,
-                            null,
-                            null,
-                            null,
-                            null);
-                }
-
-                return true;
-            }
-        });
+//        mBtnTestAuth.setOnLongClickListener(new View.OnLongClickListener() {
+//            public boolean onLongClick(View v) {
+//                if (findViewById(R.id.jr_signin_fragment) != null) {
+//                    mEngage.showSocialSignInFragment(
+//                            MainActivity.this,
+//                            com.janrain.android.engage.R.id.jr_publish_fragment,
+//                            false,
+//                            null,
+//                            null,
+//                            null,
+//                            null);
+//                }
+//
+//                return true;
+//            }
+//        });
 
         mBtnTestPub.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
