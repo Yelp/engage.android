@@ -32,19 +32,16 @@
 package com.janrain.android.engage.ui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
-import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.utils.AndroidUtils;
 
@@ -102,50 +99,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
         
         switch (getFragmentId()) {
             case JR_PROVIDER_LIST:
-                if (isSpecificProviderFlow()) {
-                    JRProvider provider = mSession.getProviderByName(getSpecificProvider());
-                    provider.setForceReauth(true);
-                    mSession.setCurrentlyAuthenticatingProvider(provider);
-                    Intent i;
-                    // Not going to launch the landing page as per discussion with Lilli
-                    // because it's thought that the use case for this flow always involves reauthing
-//                    if (mSession.getAuthenticatedUserForProvider(provider) != null
-//                            && !provider.getForceReauth()
-//                            && !mSession.getAlwaysForceReauth()) {
-//                        // If the sign-in might turbo through with cookies then show landing page
-//                        i = createIntentForCurrentScreen(this, true);
-//                        i.putExtras(getIntent());
-//                        i.putExtra(JR_FRAGMENT_ID, JR_LANDING);
-//                        startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
-//                    } else {
-                        i = createIntentForCurrentScreen(this, false);
-                        i.putExtras(getIntent());
-                        i.putExtra(JR_FRAGMENT_ID, JR_WEBVIEW);
-                        startActivityForResult(i, JRUiFragment.REQUEST_WEBVIEW);
-//                    }
-                } else {
-                    // non-provider-specific flow, aka regular provider list flow
-                    /* check and see whether we should start the landing page */
-                    String rapName = mSession.getReturningAuthProvider();
-                    JRProvider rap = mSession.getProviderByName(rapName);
-                    if (!TextUtils.isEmpty(rapName)
-                            && mSession.getAuthenticatedUserForProvider(rap) != null
-                            && !mSession.getAlwaysForceReauth()
-                            && !rap.getForceReauth()) {
-                        // These other conditions are in the iPhone UI Maestro
-                        //&& !sessionData.socialSharing
-                        //&& ![((NSArray*)[customInterface objectForKey:kJRRemoveProvidersFromAuthentication]) containsObject:sessionData.returningBasicProvider]
-                        //&& [sessionData.basicProviders containsObject:sessionData.returningBasicProvider])
-
-                        JRProvider provider = mSession.getProviderByName(rapName);
-                        mSession.setCurrentlyAuthenticatingProvider(provider);
-                        Intent i = createIntentForCurrentScreen(this, true);
-                        i.putExtra(JR_FRAGMENT_ID, JR_LANDING);
-                        i.putExtra(JRUiFragment.SOCIAL_SHARING_MODE, isPublishFlow());
-                        startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
-                    }
-                }
-
                 mUiFragment = new JRProviderListFragment();
                 break;
             case JR_LANDING:
@@ -160,6 +113,8 @@ public class JRFragmentHostActivity extends FragmentActivity {
             default:
                 throw new IllegalFragmentIdException(getFragmentId());
         }
+        
+        mUiFragment.onFragmentHostActivityCreate(this, mSession);
 
         Bundle fragArgs = new Bundle();
         fragArgs.putBoolean(JRUiFragment.SOCIAL_SHARING_MODE, isPublishFlow());
@@ -194,8 +149,8 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 .setTransition(FragmentTransaction.TRANSIT_NONE)
                 .commit();
     }
-    
-    protected boolean shouldBePhoneSizedDialog() {
+
+    /*package*/ boolean shouldBePhoneSizedDialog() {
         return AndroidUtils.isXlarge() && !(mUiFragment instanceof JRPublishFragment);
     }
 
@@ -285,6 +240,24 @@ public class JRFragmentHostActivity extends FragmentActivity {
             // ignore showTitleBar, this activity dynamically enables and disables its title
             return new Intent(activity, JRFragmentHostActivity.class);
         }
+    }
+
+    public static Intent createProviderListIntent(Activity activity) {
+        Intent i = createIntentForCurrentScreen(activity, true);
+        i.putExtra(JR_FRAGMENT_ID, JR_PROVIDER_LIST);
+        return i;
+    }
+
+    public static Intent createUserLandingIntent(Activity activity) {
+        Intent i = createIntentForCurrentScreen(activity, true);
+        i.putExtra(JR_FRAGMENT_ID, JR_LANDING);
+        return i;
+    }
+
+    public static Intent createWebViewIntent(Activity activity) {
+        Intent i = createIntentForCurrentScreen(activity, false);
+        i.putExtra(JR_FRAGMENT_ID, JR_WEBVIEW);
+        return i;
     }
 
     /* ~aliases for alternative activity declarations for this activity */

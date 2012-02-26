@@ -113,7 +113,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private JRProvider mSelectedProvider; //the provider for the selected tab
     private JRAuthenticatedUser mAuthenticatedUser; //the user (if logged in) for the selected tab
     private JRActivityObject mJrActivity;
-    private List<JRProvider> mSocialProviders;
+    private List<JRProvider> mSharingProviders;
 
     /* UI state */
     private HashMap<String, Boolean> mProvidersThatHaveAlreadyShared = new HashMap<String, Boolean>();
@@ -279,8 +279,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 .setContent(R.id.jr_tab_social_publish_content));
         mTabHost.getTabWidget().setVisibility(View.GONE);
 
-        mSocialProviders = mSession.getSocialProviders();
-        if (mSocialProviders.size() == 0 && !mSession.isGetMobileConfigDone()) {
+        mSharingProviders = mSession.getSharingProviders();
+        if (mSharingProviders.size() == 0 && !mSession.isGetMobileConfigDone()) {
             /* Hide the email/SMS tab so things look nice as we load the providers */
             getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
             mWaitingForMobileConfig = true;
@@ -292,7 +292,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private void initializeWithProviderConfiguration() {
         /* Check for no suitable providers */
-        if (mSocialProviders.size() == 0) {
+        if (mSharingProviders.size() == 0) {
             JREngageError err = mSession.getError();
             String errorMessage = (err == null) ?
                     getString(R.string.jr_no_configured_social_providers)
@@ -354,8 +354,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         li.inflate(R.layout.jr_publish_email_tab_content, mTabHost.getTabContentView()); // re-adds those tabs
         li.inflate(R.layout.jr_publish_provider_tab_content, mTabHost.getTabContentView());
 
-        /* Make a tab for each social provider */
-        for (JRProvider provider : mSocialProviders) {
+        /* Make a tab for each sharing provider */
+        for (JRProvider provider : mSharingProviders) {
             Drawable providerIconSet = provider.getTabSpecIndicatorDrawable(getActivity());
 
             TabHost.TabSpec spec = mTabHost.newTabSpec(provider.getName());
@@ -398,8 +398,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         } // else meh
 
         if (mSelectedTab.equals("")) {
-            JRProvider rp = mSession.getProviderByName(mSession.getReturningSocialProvider());
-            if (rp != null) mTabHost.setCurrentTab(mSocialProviders.indexOf(rp));
+            JRProvider rp = mSession.getProviderByName(mSession.getReturningSharingProvider());
+            if (rp != null) mTabHost.setCurrentTab(mSharingProviders.indexOf(rp));
         } else {
             mTabHost.setCurrentTabByTag(mSelectedTab);
         }
@@ -776,7 +776,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     @Override
-    protected Dialog onCreateDialog(int id, Bundle options) {
+    /*package*/ Dialog onCreateDialog(int id, Bundle options) {
         switch (id) {
             case DIALOG_FAILURE:
                 return new AlertDialog.Builder(getActivity())
@@ -818,7 +818,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     @Override
-    protected void onPrepareDialog(int id, Dialog d, Bundle options) {
+    /*package*/ void onPrepareDialog(int id, Dialog d, Bundle options) {
         switch (id) {
             case DIALOG_FAILURE:
                 ((AlertDialog) d).setMessage(options.getString(KEY_DIALOG_ERROR_MESSAGE));
@@ -1151,7 +1151,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
             if (mWaitingForMobileConfig) {
                 dismissDialog(DIALOG_MOBILE_CONFIG_LOADING);
                 mWaitingForMobileConfig = false;
-                mSocialProviders = mSession.getSocialProviders();
+                mSharingProviders = mSession.getSharingProviders();
                 initializeWithProviderConfiguration();
             }
         }
@@ -1163,7 +1163,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     };
 
     @Override
-    protected void onBackPressed() {
+    /*package*/ void onBackPressed() {
         if (mWeHaveAlreadyShared) {
             mSession.triggerPublishingDidComplete();
             finishFragmentWithResult(Activity.RESULT_OK);

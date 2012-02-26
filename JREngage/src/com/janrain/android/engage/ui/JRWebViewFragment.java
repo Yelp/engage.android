@@ -162,7 +162,10 @@ public class JRWebViewFragment extends JRUiFragment {
 
         if (mSession == null) return;
         mProvider = mSession.getCurrentlyAuthenticatingProvider();
-        if (mProvider == null) return;
+        if (mProvider == null) {
+            Log.e(TAG, "[onActivityCreated] null provider, bailing out");
+            return;
+        }
 
         if (savedInstanceState != null && savedInstanceState.containsKey(KEY_PROVIDER_NAME)) {
             mProvider = mSession.getProviderByName(savedInstanceState.getString(KEY_PROVIDER_NAME));
@@ -217,7 +220,7 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     @Override
-    protected void finishFragment() {
+    /*package*/ void finishFragment() {
         getActivity().getSupportFragmentManager().beginTransaction().remove(mRetain).commit();
         super.finishFragment();
     }
@@ -244,7 +247,7 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     @Override
-    protected Dialog onCreateDialog(int id, Bundle options) {
+    /*package*/ Dialog onCreateDialog(int id, Bundle options) {
         if (id == KEY_ALERT_DIALOG) {
             return new AlertDialog.Builder(getActivity())
                     .setTitle(options.getString(KEY_DIALOG_TITLE))
@@ -264,7 +267,7 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     @Override
-    protected void onPrepareDialog(int id, Dialog d, Bundle options) {
+    /*package*/ void onPrepareDialog(int id, Dialog d, Bundle options) {
         if (id == KEY_ALERT_DIALOG) {
             d.setTitle(options.getString(KEY_DIALOG_TITLE));
             ((AlertDialog) d).setMessage(options.getString(KEY_DIALOG_MESSAGE));
@@ -275,7 +278,7 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     @Override
-    protected void tryToFinishFragment() {
+    /*package*/ void tryToFinishFragment() {
         JREngage.logd(TAG, "[tryToFinishFragment]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
@@ -444,7 +447,7 @@ public class JRWebViewFragment extends JRUiFragment {
     };
 
     @Override
-    protected void onBackPressed() {
+    /*package*/ void onBackPressed() {
         JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
         mSession.triggerAuthenticationDidRestart();
         finishFragmentWithResult(RESULT_RESTART);
@@ -485,7 +488,7 @@ public class JRWebViewFragment extends JRUiFragment {
                         // TODO back button is no longer disabled because of the switch from modal dialog
                         // to progress spinner, fix the code path when the user hits the back button now.
 
-                        if (!isSocialSharingFlow()) mSession.saveLastUsedBasicProvider();
+                        if (!isSharingFlow()) mSession.saveLastUsedAuthProvider();
                         mSession.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
                         finishFragmentWithResult(Activity.RESULT_OK);
                     } else {
