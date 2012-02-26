@@ -314,7 +314,7 @@ public class JRProviderListFragment extends JRUiFragment {
         if (shouldOpenDirectToUserLandingPage(session)) {
             session.setCurrentlyAuthenticatingProvider(provider);
             Intent i = JRFragmentHostActivity.createUserLandingIntent(jrfh);
-            i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, true);
+            i.putExtra(JR_FRAGMENT_FLOW_MODE, JR_FRAGMENT_FLOW_AUTH);
             jrfh.startActivityForResult(i, JRUiFragment.REQUEST_LANDING);
         }
     }

@@ -549,7 +549,7 @@ public class JREngage {
             mSession.setCurrentlyAuthenticatingProvider(p);
         }
 
-        i.putExtra(JRFragmentHostActivity.JR_AUTH_FLOW, true);
+        i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_AUTH);
         mActivity.startActivity(i);
     }
 
@@ -569,7 +569,7 @@ public class JREngage {
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mActivity, false);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
-        i.putExtra(JRUiFragment.SOCIAL_SHARING_MODE, true);
+        i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
         mActivity.startActivity(i);
     }
 
@@ -607,6 +607,9 @@ public class JREngage {
         checkNullJRActivity(activity);
 
         JRUiFragment f = createSocialPublishingFragment(activity);
+        Bundle arguments = new Bundle();
+        arguments.putInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
+        f.setArguments(arguments);
         showFragment(f,
                 hostActivity,
                 containerId,
@@ -652,7 +655,13 @@ public class JREngage {
         checkNullJRActivity(activity);
 
         mSession.setJRActivity(activity);
-        return new JRPublishFragment();
+        
+        Bundle arguments = new Bundle();
+        arguments.putInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
+
+        JRPublishFragment f = new JRPublishFragment();
+        f.setArguments(arguments);
+        return f;
     }
 
 //    /**
@@ -685,6 +694,9 @@ public class JREngage {
 //        JREngage.logd(TAG, "[showSocialSignInFragment]");
 //
 //        JRUiFragment f = createSocialSignInFragment();
+//Bundle arguments = new Bundle();
+//    arguments.putInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_AUTH);
+//    f.setArguments(arguments);
 //        showFragment(f,
 //                hostActivity,
 //                containerId,
@@ -722,9 +734,11 @@ public class JREngage {
 //        if (checkSessionDataError()) return null;
 //
 //        JRProviderListFragment jplf = new JRProviderListFragment();
-//        Bundle args = new Bundle();
-//        args.putBoolean(JRUiFragment.SOCIAL_SHARING_MODE, false);
-//        jplf.setArguments(args);
+
+//        Bundle arguments = new Bundle();
+//    arguments.putInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_AUTH);
+//    jplf.setArguments(arguments);
+//        jplf.setArguments(arguments);
 //        return jplf;
 //    }
 /*@}*/

@@ -72,12 +72,15 @@ public abstract class JRUiFragment extends Fragment {
     private static final String KEY_MANAGED_DIALOG_OPTIONS = "jr_dialog_options";
     private static final String KEY_DIALOG_PROGRESS_TEXT = "jr_progress_dialog_text";
     private static final String PARENT_FRAGMENT_EMBEDDED = "jr_parent_fragment_embedded";
+    
+    public static final String JR_FRAGMENT_FLOW_MODE = "jr_fragment_flow_mode";
+    public static final int JR_FRAGMENT_FLOW_AUTH = 0;
+    public static final int JR_FRAGMENT_FLOW_SHARING = 1;
 
     public static final int REQUEST_LANDING = 1;
     public static final int REQUEST_WEBVIEW = 2;
     public static final int DIALOG_ABOUT = 1000;
     public static final int DIALOG_PROGRESS = 1001;
-    public static final String SOCIAL_SHARING_MODE = "com.janrain.android.engage.SOCIAL_SHARING_MODE";
 
     private FinishReceiver mFinishReceiver;
     private HashMap<Integer, ManagedDialog> mManagedDialogs = new HashMap<Integer, ManagedDialog>();
@@ -440,9 +443,13 @@ public abstract class JRUiFragment extends Fragment {
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(getActivity(), showTitle);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, fragId);
         i.putExtra(JRUiFragment.PARENT_FRAGMENT_EMBEDDED, isEmbeddedMode());
-        i.putExtra(SOCIAL_SHARING_MODE, isSharingFlow());
+        i.putExtra(JR_FRAGMENT_FLOW_MODE, getFragmentFlowMode());
         if (opts != null) i.putExtras(opts);
         startActivityForResult(i, requestCode);
+    }
+    
+    private int getFragmentFlowMode() {
+        return getArguments().getInt(JR_FRAGMENT_FLOW_MODE);
     }
     
     private void showFragment(Class<? extends JRUiFragment> fragClass, int requestCode) {
@@ -455,7 +462,7 @@ public abstract class JRUiFragment extends Fragment {
             throw new RuntimeException(e);
         }
         Bundle args = new Bundle();
-        args.putBoolean(SOCIAL_SHARING_MODE, isSharingFlow());
+        args.putInt(JR_FRAGMENT_FLOW_MODE, getFragmentFlowMode());
         f.setArguments(args);
         f.setTargetFragment(this, requestCode);
 
@@ -508,7 +515,8 @@ public abstract class JRUiFragment extends Fragment {
     /*package*/ void showWebView(boolean forSharingFlow) {
         if (getActivity() instanceof JRFragmentHostActivity || forSharingFlow) {
             Bundle opts = new Bundle();
-            opts.putBoolean(JRWebViewFragment.SOCIAL_SHARING_MODE, forSharingFlow);
+            opts.putInt(JR_FRAGMENT_FLOW_MODE,
+                    forSharingFlow ? JR_FRAGMENT_FLOW_SHARING : JR_FRAGMENT_FLOW_AUTH);
             startActivityForFragId(JRFragmentHostActivity.JR_WEBVIEW, REQUEST_WEBVIEW, opts);
         } else {
             showFragment(JRWebViewFragment.class, REQUEST_WEBVIEW);
@@ -520,7 +528,7 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     /*package*/ boolean isSharingFlow() {
-        return getArguments().getBoolean(SOCIAL_SHARING_MODE);
+        return getArguments().getInt(JR_FRAGMENT_FLOW_MODE) == JR_FRAGMENT_FLOW_SHARING;
     }
 
     /*package*/ void tryToFinishFragment() {

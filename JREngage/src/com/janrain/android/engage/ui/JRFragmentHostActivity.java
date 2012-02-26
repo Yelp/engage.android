@@ -49,7 +49,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
     private static final String TAG = JRFragmentHostActivity.class.getSimpleName();
 
     public static final String JR_PROVIDER = "JR_PROVIDER";
-    public static final String JR_AUTH_FLOW = "com.janrain.android.engage.JR_AUTH_FLOW";
     public static final String JR_FRAGMENT_ID = "com.janrain.android.engage.JR_FRAGMENT_ID";
     public static final int JR_PROVIDER_LIST = 4;
     public static final int JR_LANDING = 1;
@@ -117,7 +116,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
         mUiFragment.onFragmentHostActivityCreate(this, mSession);
 
         Bundle fragArgs = new Bundle();
-        fragArgs.putBoolean(JRUiFragment.SOCIAL_SHARING_MODE, isPublishFlow());
+        fragArgs.putInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE, getFlowMode());
         mUiFragment.setArguments(fragArgs);
 
         if (shouldBePhoneSizedDialog()) {
@@ -158,19 +157,23 @@ public class JRFragmentHostActivity extends FragmentActivity {
         return getIntent().getExtras().getInt(JR_FRAGMENT_ID);
     }
 
-    public boolean isPublishFlow() {
-        return !isAuthFlow();
+    private int getFlowMode() {
+        return getIntent().getExtras().getInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE);
     }
 
-    public boolean isAuthFlow() {
-        return !getIntent().getExtras().getBoolean(JRUiFragment.SOCIAL_SHARING_MODE);
+    private boolean isSharingFlow() {
+        return getFlowMode() == JRUiFragment.JR_FRAGMENT_FLOW_SHARING;
+    }
+
+    private boolean isAuthFlow() {
+        return getFlowMode() == JRUiFragment.JR_FRAGMENT_FLOW_AUTH;
     }
     
-    public boolean isSpecificProviderFlow() {
+    private boolean isSpecificProviderFlow() {
         return getSpecificProvider() != null;
     }
     
-    public String getSpecificProvider() {
+    private String getSpecificProvider() {
         return getIntent().getExtras().getString(JR_PROVIDER);
     }
 

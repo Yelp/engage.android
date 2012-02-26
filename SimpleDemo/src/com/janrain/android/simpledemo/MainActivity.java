@@ -177,7 +177,7 @@ public class MainActivity extends FragmentActivity {
         
         mBtnTestSpecificProvider.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mEngage.showAuthenticationDialog(null, "facebook");
+                mEngage.showAuthenticationDialog("facebook");
             }
         });
     }
