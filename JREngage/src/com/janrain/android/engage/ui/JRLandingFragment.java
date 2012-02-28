@@ -49,6 +49,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
+import com.janrain.android.engage.session.JRAuthenticatedUser;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.utils.AndroidUtils;
 
@@ -145,8 +146,12 @@ public class JRLandingFragment extends JRUiFragment {
             mUserInput.setVisibility(View.GONE);
 
             mWelcomeLabel.setVisibility(View.VISIBLE);
-            mWelcomeLabel.setText(mSession.getAuthenticatedUserForProvider(
-                    mProvider).getWelcomeMessage());
+            JRAuthenticatedUser user = mSession.getAuthenticatedUserForProvider(mProvider);
+            if (user == null) {
+                finishFragmentWithResult(RESULT_RESTART);
+                return view;
+            }
+            mWelcomeLabel.setText(user.getWelcomeMessage());
         }
 
         return view;

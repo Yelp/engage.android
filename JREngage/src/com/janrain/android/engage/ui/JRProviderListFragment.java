@@ -132,7 +132,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
             for (JRProvider p : mProviderList) mAdapter.add(p);
             mAdapter.notifyDataSetChanged();
-            showHideTaglines();
+            maybeShowHideTaglines();
         }
     };
 
@@ -325,6 +325,7 @@ public class JRProviderListFragment extends JRUiFragment {
                 && !session.getAlwaysForceReauth()
                 && !returningAuthProvider.getForceReauth()
                 && session.getAuthProviders().contains(returningAuthProvider)
+                && session.getAuthenticatedUserForProvider(returningAuthProvider) != null
                 && session.getEnabledAuthenticationProviders().contains(session.getReturningAuthProvider()));
 
 //        iOS library conditions which are not applicable to Android because this is only called when the
