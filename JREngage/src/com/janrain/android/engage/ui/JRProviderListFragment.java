@@ -297,6 +297,7 @@ public class JRProviderListFragment extends JRUiFragment {
                 && !session.getAlwaysForceReauth()
                 && !returningAuthProvider.getForceReauth()
                 && session.getAuthProviders().contains(returningAuthProvider)
+                && session.getAuthenticatedUserForProvider(returningAuthProvider) != null
                 && session.getEnabledAuthenticationProviders().contains(session.getReturningAuthProvider()));
 
 //        Not applicable to Android because this is only called when the provider list is already starting
