@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <declare-styleable name="ColorButton">
         <attr name="jr_color" format="color"/>
     </declare-styleable>
-
-    <attr name="jr_listview_row_text" format="reference"/>
 
 </resources>

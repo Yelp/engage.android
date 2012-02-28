@@ -32,8 +32,8 @@
   -->
 
 <resources>
-
-    <style name="jr_listview_row_text_custom" parent="jr_listview_row_text_default">
+<!--parent="jr_listview_row_text_default"-->
+    <style name="jr_listview_row_text_default" >
         <item name="android:textSize">30sp</item>
     </style>
 

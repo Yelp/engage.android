@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources
+    xmlns:jr="http://schemas.android.com/apk/res-auto">
     <style name="jr_dialog" parent="@android:style/Theme.Dialog">
-        <item name="jr_listview_row_text">@style/jr_listview_row_text_default</item>
     </style>
     <style name="jr_fullscreen_no_title" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="jr_listview_row_text">@style/jr_listview_row_text_default</item>
     </style>
     <style name="jr_fullscreen" parent="android:style/Theme.Light">
-        <item name="jr_listview_row_text">@style/jr_listview_row_text_default</item>
     </style>
 
     <style name="jr_about_dialog_text">

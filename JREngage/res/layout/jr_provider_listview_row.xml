@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:jr="http://schemas.android.com/apk/res/com.janrain.android.engage"
+    xmlns:jr="http://schemas.android.com/apk/res-auto"
     android:id="@+id/jr_provider_row_layout"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
@@ -27,7 +27,12 @@
         android:layout_toRightOf="@id/jr_row_provider_icon"
         android:layout_centerVertical="true"
 
-        style="jr_listview_row_text"
+        style="?android:style/TextAppearance.Large"
         />
-
+    <!--android:singleLine="true"-->
+    <!--android:text="@string/jr_provider_unknown"-->
+    <!--android:textSize="20dip"-->
+    <!--android:padding="6dip"-->
+    <!--android:textColor="?android:attr/textColorPrimaryInverse"-->
+    <!--android:textColor="@android:color/primary_text_light"-->
 </RelativeLayout>
