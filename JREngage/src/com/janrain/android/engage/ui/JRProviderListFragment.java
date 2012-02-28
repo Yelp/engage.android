@@ -130,7 +130,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
             for (JRProvider p : mProviderList) mAdapter.add(p);
             mAdapter.notifyDataSetChanged();
-            showHideTaglines();
+            maybeShowHideTaglines();
         }
     };
 

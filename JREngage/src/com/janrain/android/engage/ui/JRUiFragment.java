@@ -217,7 +217,7 @@ public abstract class JRUiFragment extends Fragment {
     public void onResume() {
         super.onResume();
         JREngage.logd(TAG, "[onResume]");
-        if (hasView()) showHideTaglines();
+        maybeShowHideTaglines();
     }
 
     @Override
@@ -322,9 +322,10 @@ public abstract class JRUiFragment extends Fragment {
 
     /*package*/ void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh, JRSession session) {}
 
-    /*package*/ void showHideTaglines() {
-        if (mSession == null) {
-            Log.e(TAG, "Bailing out of showHideTaglines");
+    /*package*/ void maybeShowHideTaglines() {
+        if (mSession == null || getView() == null) {
+            Log.e(TAG, "Bailing out of maybeShowHideTaglines: mSession: " + mSession + " getView(): "
+                    + getView());
             return;
         }
 
