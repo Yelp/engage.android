@@ -5,7 +5,7 @@
     </style>
     <style name="jr_fullscreen_no_title" parent="@android:style/Theme.Light.NoTitleBar">
     </style>
-    <style name="jr_fullscreen" parent="android:style/Theme.Light">
+    <style name="jr_fullscreen" parent="android:style/Theme">
     </style>
 
     <style name="jr_about_dialog_text">

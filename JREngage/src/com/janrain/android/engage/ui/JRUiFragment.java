@@ -169,7 +169,7 @@ public abstract class JRUiFragment extends Fragment {
                 if (uiCustomization instanceof JRCustomUiConfiguration) {
                     mCustomUiConfiguration = (JRCustomUiConfiguration) uiCustomization;
                 } else if (uiCustomization instanceof JRCustomUiView) {
-                    mCustomUiConfiguration = new JRCustomUiConfiguration(getActivity()){
+                    mCustomUiConfiguration = new JRCustomUiConfiguration(){
                         {
                             //Type safe because the type of the instantiated instance from the
                             //class ref is run time type checked
@@ -357,9 +357,9 @@ public abstract class JRUiFragment extends Fragment {
         if (mSession == null || mSession.getHidePoweredBy()) {
             Log.e(TAG, "Bailing out of onCreateOptionsMenu");
             return;
-        } else {
-            inflater.inflate(R.menu.jr_about_menu, menu);
         }
+
+        inflater.inflate(R.menu.jr_about_menu, menu);
     }
 
     @Override

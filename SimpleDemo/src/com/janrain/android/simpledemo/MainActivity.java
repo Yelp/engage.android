@@ -46,6 +46,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.ui.JRCustomUiConfiguration;
 import com.janrain.android.engage.ui.JRCustomUiView;
 import com.janrain.android.engage.JREngage;
@@ -147,8 +148,9 @@ public class MainActivity extends FragmentActivity {
         mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
         mBtnTestPub.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                buildActivity();
-                mEngage.showSocialPublishingDialog(mActivity);
+//                buildActivity();
+//                mEngage.showSocialPublishingDialog(mActivity);
+                JRConnectionManager.createConnection("https://login.qype.com", null, null);
             }
         });
         mBtnTestPub.setOnLongClickListener(new View.OnLongClickListener() {
@@ -191,9 +193,8 @@ public class MainActivity extends FragmentActivity {
 
     public static class CustomUi extends JRCustomUiConfiguration {
         public CustomUi(Context c) {
-            super(c);
             mProviderListHeader = new CustomSignin();
-            mAuthenticationBackgroundDrawable = c.getResources().getDrawable(R.drawable.custom_signin_bg);
+//            mAuthenticationBackgroundDrawable = c.getResources().getDrawable(R.drawable.custom_signin_bg);
             mProviderListTitle = "Custom title";
         }
 
@@ -201,7 +202,7 @@ public class MainActivity extends FragmentActivity {
         public void onProviderListViewCreate(ListView providerListView) {
             super.onProviderListViewCreate(providerListView);
 
-            providerListView.setDividerHeight(AndroidUtils.scaleDipToPixels(20));
+//            providerListView.setDividerHeight(AndroidUtils.scaleDipToPixels(20));
         }
     }
 

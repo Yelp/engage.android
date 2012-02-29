@@ -53,17 +53,52 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
     public JRCustomUiView mProviderListHeader;
     public JRCustomUiView mProviderListFooter;
 
-    // Would be nice to do something analogous to this for modal dialogs on Android tablets
-//    #define 	kJRPopoverPresentationFrameValue
-//    #define 	kJRPopoverPresentationBarButtonItem
-//    #define 	kJRPopoverPresentationArrowDirection
+//     Would be nice to do something analogous to this for modal dialogs on Android tablets
+//?     kJRPopoverPresentationFrameValue
+//?     kJRPopoverPresentationBarButtonItem
+//?     kJRPopoverPresentationArrowDirection
+
+//?     kJRApplicationNavigationController
+//?     kJRCustomModalNavigationController
+//?     kJRNavigationControllerHidesCancelButton
+
+//Y     kJRAuthenticationBackgroundColor
+//Y     kJRSocialSharingBackgroundColor
+
+//Y     kJRAuthenticationBackgroundImageView
+//Y     kJRSocialSharingBackgroundImageView
+
+//?     kJRProviderTableTitleView
+//?     kJRSocialSharingTitleView
+
+//Y     kJRProviderTableTitleString
+//Y     kJRSocialSharingTitleString
+
+//Y     kJRProviderTableHeaderView
+//Y     kJRProviderTableFooterView
+
+//?     kJRProviderTableSectionHeaderView
+//?     kJRProviderTableSectionFooterView
+
+//?     kJRProviderTableSectionHeaderTitleString
+//?     kJRProviderTableSectionFooterTitleString
+
+//?     kJRPopoverPresentationFrameValue
+//?     kJRPopoverPresentationBarButtonItem
+//?     kJRPopoverPresentationArrowDirection
+
+//?     kJRRemoveProvidersFromAuthentication
+
+//    Deprecated
+//N     kJRAuthenticationBackgroundColorRGBa
+//N     kJRSocialSharingBackgroundColorRGBa
 
 //    TODO address parity of this vs existing implementation... support both or not?
-//    #define 	kJRRemoveProvidersFromAuthentication
+//      kJRRemoveProvidersFromAuthentication
     
-    private JRCustomUiConfiguration() {}
+//    private JRCustomUiConfiguration() {}
     
-    public JRCustomUiConfiguration(Context c) {}
+//    public JRCustomUiConfiguration(Context c) {}
 
     public void onProviderListViewCreate(ListView providerListView) {}
 

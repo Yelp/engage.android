@@ -175,7 +175,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
     @Override
     public void setTheme(int r) {
-        JREngage.logd(TAG, "setTheme: " + r);
+        JREngage.logd(TAG, "setTheme: " + r + " (" + Integer.toHexString(r) + ")");
         super.setTheme(r);
     }
 
