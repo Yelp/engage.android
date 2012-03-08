@@ -72,7 +72,7 @@ public final class Archiver {
      *      IllegalStateException if JREngage.getContext() returns null.
      */
     public static void save(String name, Object object) {
-        Context context = JREngage.getActivity();
+        Context context = JREngage.getApplicationContext();
         if (context == null) throw new IllegalStateException("context cannot be null");
         save(name, object, context);
     }
@@ -146,7 +146,7 @@ public final class Archiver {
      *      exceptions, de-serialization exceptions, cosmic rays, et cetera.)
      */
     public static <T> T load(String name) throws LoadException {
-        Context context = JREngage.getActivity();
+        Context context = JREngage.getApplicationContext();
         if (context == null) throw new IllegalStateException("[loadObject] JREngage.getContext() is null.");
         if (TextUtils.isEmpty(name)) throw new IllegalArgumentException("name parameter cannot be null");
 

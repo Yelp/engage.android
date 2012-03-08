@@ -31,31 +31,23 @@
  */
 
 /* SetFromMap is:
-*  Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  See the NOTICE file distributed with
-*  this work for additional information regarding copyright ownership.
-*  The ASF licenses this file to You under the Apache License, Version 2.0
-*  (the "License"); you may not use this file except in compliance with
-*  the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
-
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 
 package com.janrain.android.engage.utils;
-
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.os.Build;
-import com.janrain.android.engage.JREngage;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -69,14 +61,24 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.os.Build;
+
+import com.janrain.android.engage.JREngage;
+
 /**
  * @internal
- *
+ * 
  * @class AndroidUtils
  **/
 public class AndroidUtils {
     public static final String TAG = AndroidUtils.class.getSimpleName();
-    private AndroidUtils() {}
+
+    private AndroidUtils() {
+    }
 
     public static boolean isSmallNormalOrLargeScreen() {
         int screenConfig = getScreenSize();
@@ -85,9 +87,9 @@ public class AndroidUtils {
         // Motorola Xoom reports SCREENLAYOUT_SIZE_XLARGE
         // Nexus S reports SCREENLAYOUT_SIZE_NORMAL
 
-        return screenConfig == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
-                screenConfig == Configuration.SCREENLAYOUT_SIZE_SMALL ||
-                screenConfig == Configuration.SCREENLAYOUT_SIZE_LARGE;
+        return screenConfig == Configuration.SCREENLAYOUT_SIZE_NORMAL
+                || screenConfig == Configuration.SCREENLAYOUT_SIZE_SMALL
+                || screenConfig == Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
     public static boolean isCupcake() {
@@ -125,23 +127,23 @@ public class AndroidUtils {
     public static final int SDK_INT = getAndroidSdkInt();
 
     public static ApplicationInfo getApplicationInfo() {
-        String packageName = JREngage.getActivity().getPackageName();
+        String packageName = JREngage.getApplicationContext().getPackageName();
         try {
-            return JREngage.getActivity().getPackageManager().getApplicationInfo(packageName, 0);
+            return JREngage.getApplicationContext().getPackageManager().getApplicationInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static int scaleDipToPixels(int dip) {
-        Context c = JREngage.getActivity();
+        Context c = JREngage.getApplicationContext();
         final float scale = c.getResources().getDisplayMetrics().density;
         return (int) (((float) dip) * scale);
     }
 
     private static int getScreenSize() {
 
-        int screenConfig = JREngage.getActivity().getResources().getConfiguration().screenLayout;
+        int screenConfig = JREngage.getApplicationContext().getResources().getConfiguration().screenLayout;
         screenConfig &= Configuration.SCREENLAYOUT_SIZE_MASK;
         return screenConfig;
     }
@@ -151,32 +153,29 @@ public class AndroidUtils {
     }
 
     public static boolean isLandscape() {
-        return JREngage.getActivity().getResources().getConfiguration().orientation ==
-                Configuration.ORIENTATION_LANDSCAPE;
+        return JREngage.getApplicationContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
-    //public static int getScreenWidth() {
-    //    DisplayMetrics metrics = new DisplayMetrics();
-    //    JREngage.getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-    //    metrics.get
-    //}
+    // public static int getScreenWidth() {
+    // DisplayMetrics metrics = new DisplayMetrics();
+    // JREngage.getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+    // metrics.get
+    // }
 
     /* XXX horrible hack importing the API 9 implementation for compatibility: */
-    /*  This license is for the following class only:
-     *  Licensed to the Apache Software Foundation (ASF) under one or more
-     *  contributor license agreements.  See the NOTICE file distributed with
-     *  this work for additional information regarding copyright ownership.
-     *  The ASF licenses this file to You under the Apache License, Version 2.0
-     *  (the "License"); you may not use this file except in compliance with
-     *  the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
+    /*
+     * This license is for the following class only: Licensed to the Apache Software Foundation
+     * (ASF) under one or more contributor license agreements. See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership. The ASF licenses this
+     * file to You under the Apache License, Version 2.0 (the "License"); you may not use this file
+     * except in compliance with the License. You may obtain a copy of the License at
+     * 
+     * http://www.apache.org/licenses/LICENSE-2.0
+     * 
+     * Unless required by applicable law or agreed to in writing, software distributed under the
+     * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+     * either express or implied. See the License for the specific language governing permissions
+     * and limitations under the License.
      */
     public static class SetFromMap<E> extends AbstractSet<E> implements Serializable {
         private Map<E, Boolean> m;
@@ -188,46 +187,58 @@ public class AndroidUtils {
             backingSet = map.keySet();
         }
 
-        @Override public boolean equals(Object object) {
+        @Override
+        public boolean equals(Object object) {
             return backingSet.equals(object);
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return backingSet.hashCode();
         }
 
-        @Override public boolean add(E object) {
+        @Override
+        public boolean add(E object) {
             return m.put(object, Boolean.TRUE) == null;
         }
 
-        @Override public void clear() {
+        @Override
+        public void clear() {
             m.clear();
         }
 
-        @Override public String toString() {
+        @Override
+        public String toString() {
             return backingSet.toString();
         }
 
-        @Override public boolean contains(Object object) {
+        @Override
+        public boolean contains(Object object) {
             return backingSet.contains(object);
         }
-        @Override public boolean containsAll(Collection<?> collection) {
+
+        @Override
+        public boolean containsAll(Collection<?> collection) {
             return backingSet.containsAll(collection);
         }
 
-        @Override public boolean isEmpty() {
+        @Override
+        public boolean isEmpty() {
             return m.isEmpty();
         }
 
-        @Override public boolean remove(Object object) {
+        @Override
+        public boolean remove(Object object) {
             return m.remove(object) != null;
         }
 
-        @Override public boolean retainAll(Collection<?> collection) {
+        @Override
+        public boolean retainAll(Collection<?> collection) {
             return backingSet.retainAll(collection);
         }
 
-        @Override public Object[] toArray() {
+        @Override
+        public Object[] toArray() {
             return backingSet.toArray();
         }
 
@@ -236,17 +247,19 @@ public class AndroidUtils {
             return backingSet.toArray(contents);
         }
 
-        @Override public Iterator<E> iterator() {
+        @Override
+        public Iterator<E> iterator() {
             return backingSet.iterator();
         }
 
-        @Override public int size() {
+        @Override
+        public int size() {
             return m.size();
         }
 
         @SuppressWarnings("unchecked")
-        private void readObject(ObjectInputStream stream)
-                throws IOException, ClassNotFoundException {
+        private void readObject(ObjectInputStream stream) throws IOException,
+                ClassNotFoundException {
             stream.defaultReadObject();
             backingSet = m.keySet();
         }

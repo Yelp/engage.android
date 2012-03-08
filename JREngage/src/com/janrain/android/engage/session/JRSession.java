@@ -1143,6 +1143,6 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     private Context getContext() {
-        return JREngage.getActivity();
+        return JREngage.getApplicationContext();
     }
 }

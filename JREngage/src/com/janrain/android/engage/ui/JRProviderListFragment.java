@@ -73,13 +73,13 @@ public class JRProviderListFragment extends JRUiFragment {
      **/
     private class ProviderAdapter extends ArrayAdapter<JRProvider> {
         LayoutInflater li = (LayoutInflater)
-                JREngage.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                JREngage.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         public ProviderAdapter() {
             // The super class only ends up using the last parameter passed into this super constructor,
             // the List.  The first two parameters are never used.
 
-            super(JREngage.getActivity(), 0, mProviderList);
+            super(JREngage.getApplicationContext(), 0, mProviderList);
         }
 
         @Override

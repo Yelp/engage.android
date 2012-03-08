@@ -40,6 +40,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSession;
@@ -51,13 +52,13 @@ public class JRFragmentHostActivity extends FragmentActivity {
     public static final String JR_PROVIDER = "JR_PROVIDER";
     public static final String JR_AUTH_FLOW = "com.janrain.android.engage.JR_AUTH_FLOW";
     public static final String JR_FRAGMENT_ID = "com.janrain.android.engage.JR_FRAGMENT_ID";
-    public static final int JR_PROVIDER_LIST = 4;
+    public static final int JR_PROVIDER_LIST = 5;
     public static final int JR_LANDING = 1;
-    public static final int JR_WEBVIEW = 2;
-    public static final int JR_PUBLISH = 3;
+    public static final int JR_WEBBROWSER = 2;
+    public static final int JR_WEBVIEW = 3;
+    public static final int JR_PUBLISH = 4;
     public static final String ACTION_FINISH_FRAGMENT = "com.janrain.android.engage.ACTION_FINISH_FRAGMENT";
-    public static final String EXTRA_FINISH_FRAGMENT_TARGET =
-            "com.janrain.android.engage.EXTRA_FINISH_FRAGMENT_TARGET";
+    public static final String EXTRA_FINISH_FRAGMENT_TARGET = "com.janrain.android.engage.EXTRA_FINISH_FRAGMENT_TARGET";
     public static final String FINISH_TARGET_ALL = "JR_FINISH_ALL";
     public static final IntentFilter FINISH_INTENT_FILTER = new IntentFilter(ACTION_FINISH_FRAGMENT);
 
@@ -91,29 +92,30 @@ public class JRFragmentHostActivity extends FragmentActivity {
             return;
 
             /* Bad old conclusion: */
-            // This control flow path is not reached  because this activity handles configuration changes
+            // This control flow path is not reached because this activity handles configuration
+            // changes
             // and doesn't implement onSaveInstanceState
 
-            //throw new IllegalStateException("unexpected not null savedInstanceState");
+            // throw new IllegalStateException("unexpected not null savedInstanceState");
         }
 
         switch (getFragmentId()) {
-            case JR_PROVIDER_LIST:
-                mUiFragment = new JRProviderListFragment();
-                break;
-            case JR_LANDING:
-                mUiFragment = new JRLandingFragment();
-                break;
-            case JR_WEBVIEW:
-                mUiFragment = new JRWebViewFragment();
-                break;
-            case JR_PUBLISH:
-                mUiFragment = new JRPublishFragment();
-                break;
-            default:
-                throw new IllegalFragmentIdException(getFragmentId());
+        case JR_PROVIDER_LIST:
+            mUiFragment = new JRProviderListFragment();
+            break;
+        case JR_LANDING:
+            mUiFragment = new JRLandingFragment();
+            break;
+        case JR_WEBVIEW:
+            mUiFragment = new JRWebViewFragment();
+            break;
+        case JR_PUBLISH:
+            mUiFragment = new JRPublishFragment();
+            break;
+        default:
+            throw new IllegalFragmentIdException(getFragmentId());
         }
-        
+
         mUiFragment.onFragmentHostActivityCreate(this, mSession);
 
         if (shouldBePhoneSizedDialog()) {
@@ -134,19 +136,17 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 ((CustomMeasuringFrameLayout) fragmentContainer).setTargetHeightDip(480);
                 ((CustomMeasuringFrameLayout) fragmentContainer).setTargetWidthDip(320);
             } else {
-//                if (mUiFragment instanceof JRWebViewFragment) ((JRWebViewFragment) mUiFragment).setUseDesktopUa(true);
+                // if (mUiFragment instanceof JRWebViewFragment) ((JRWebViewFragment)
+                // mUiFragment).setUseDesktopUa(true);
             }
         }
 
         mUiFragment.setArguments(getIntent().getExtras());
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.jr_fragment_container, mUiFragment)
-                .setTransition(FragmentTransaction.TRANSIT_NONE)
-                .commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.jr_fragment_container, mUiFragment)
+                .setTransition(FragmentTransaction.TRANSIT_NONE).commit();
     }
 
-    /*package*/ boolean shouldBePhoneSizedDialog() {
+    /* package */boolean shouldBePhoneSizedDialog() {
         return AndroidUtils.isXlarge() && !(mUiFragment instanceof JRPublishFragment);
     }
 
@@ -161,11 +161,11 @@ public class JRFragmentHostActivity extends FragmentActivity {
     public boolean isAuthFlow() {
         return getIntent().getExtras().getBoolean(JR_AUTH_FLOW);
     }
-    
+
     public boolean isSpecificProviderFlow() {
         return getSpecificProvider() != null;
     }
-    
+
     public String getSpecificProvider() {
         return getIntent().getExtras().getString(JR_PROVIDER);
     }
@@ -185,19 +185,23 @@ public class JRFragmentHostActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         JREngage.logd(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
-        /* Sometimes this activity starts an activity by proxy for its fragment, in that case we
+        /*
+         * Sometimes this activity starts an activity by proxy for its fragment, in that case we
          * delegate the result to the fragment here.
          */
-        if (requestCode <= 1<<16) mUiFragment.onActivityResult(requestCode, resultCode, data);
-        /* However, the Fragment API munges activityForResult invocations from fragments by bitshifting
-         * the request code up two bytes. This method doesn't handle such request codes; they dispatch
-         * by the Fragment API path.
+        if (requestCode <= 1 << 16)
+            mUiFragment.onActivityResult(requestCode, resultCode, data);
+        /*
+         * However, the Fragment API munges activityForResult invocations from fragments by
+         * bitshifting the request code up two bytes. This method doesn't handle such request codes;
+         * they dispatch by the Fragment API path.
          */
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (AndroidUtils.isCupcake() && keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (AndroidUtils.isCupcake() && keyCode == KeyEvent.KEYCODE_BACK
+                && event.getRepeatCount() == 0) {
             // Take care of calling this method on earlier versions of
             // the platform where it doesn't exist.
             onBackPressed();
@@ -250,6 +254,12 @@ public class JRFragmentHostActivity extends FragmentActivity {
         return i;
     }
 
+    public static Intent createWebBrowserIntent(Activity activity) {
+        Intent i = createIntentForCurrentScreen(activity, false);
+        i.putExtra(JR_FRAGMENT_ID, JR_WEBBROWSER);
+        return i;
+    }
+
     public static Intent createWebViewIntent(Activity activity) {
         Intent i = createIntentForCurrentScreen(activity, false);
         i.putExtra(JR_FRAGMENT_ID, JR_WEBVIEW);
@@ -257,7 +267,9 @@ public class JRFragmentHostActivity extends FragmentActivity {
     }
 
     /* ~aliases for alternative activity declarations for this activity */
-    public static class Fullscreen extends JRFragmentHostActivity {}
+    public static class Fullscreen extends JRFragmentHostActivity {
+    }
 
-    public static class FullscreenNoTitleBar extends Fullscreen {}
+    public static class FullscreenNoTitleBar extends Fullscreen {
+    }
 }

@@ -126,7 +126,7 @@ public class JRAuthenticatedUser implements Serializable {
     }
 
     private Context getContext() {
-        return JREngage.getActivity();
+        return JREngage.getApplicationContext();
     }
 
     public void downloadProfilePic(final ProfilePicAvailableListener callback) {

@@ -33,12 +33,13 @@ package com.janrain.android.engage.utils;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
 import com.janrain.android.engage.JREngage;
 
 /**
  * @internal
- * @class Prefs
- * Utility class used for managing preferences in the Android global shared preferences.
+ * @class Prefs Utility class used for managing preferences in the Android global shared
+ *        preferences.
  */
 public final class Prefs {
     public static final String KEY_JR_USER_INPUT = "jr_pref_user_input.";
@@ -52,13 +53,16 @@ public final class Prefs {
     public static final String KEY_JR_USER_COMMENT = "jr_user_comment";
     public static final String KEY_JR_USER_COMMENT_TIME = "jr_user_comment_time";
 
-    private Prefs() {}
+    private Prefs() {
+    }
 
     /**
      * Wrapper for getting shared preference string value by key.
-     *
-     * @param key      The key of the preference to get.
-     * @param defValue The default value if not found.
+     * 
+     * @param key
+     *            The key of the preference to get.
+     * @param defValue
+     *            The default value if not found.
      * @return The value of the preference, or defValue if not found.
      */
     public static String getString(String key, String defValue) {
@@ -67,9 +71,11 @@ public final class Prefs {
 
     /**
      * Wrapper for getting shared preference boolean value by key.
-     *
-     * @param key      The key of the preference to get.
-     * @param defValue The default value if not found.
+     * 
+     * @param key
+     *            The key of the preference to get.
+     * @param defValue
+     *            The default value if not found.
      * @return The value of the preference, or defValue if not found.
      */
     public static boolean getBoolean(String key, boolean defValue) {
@@ -78,9 +84,11 @@ public final class Prefs {
 
     /**
      * Wrapper for getting shared preference integer value by key.
-     *
-     * @param key      The key of the preference to get.
-     * @param defValue The default value if not found.
+     * 
+     * @param key
+     *            The key of the preference to get.
+     * @param defValue
+     *            The default value if not found.
      * @return The value of the preference, or defValue if not found.
      */
     public static int getInt(String key, int defValue) {
@@ -108,7 +116,7 @@ public final class Prefs {
     }
 
     private static SharedPreferences getSharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(JREngage.getActivity());
+        return PreferenceManager.getDefaultSharedPreferences(JREngage.getApplicationContext());
     }
 
     private static SharedPreferences.Editor getEditor() {
