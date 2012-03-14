@@ -32,9 +32,18 @@
   -->
 
 <resources>
-<!--parent="jr_listview_row_text_default"-->
-    <style name="jr_listview_row_text_default" >
-        <item name="android:textSize">30sp</item>
+    <!--TODO fixme-->
+    <style name="jr_dialog" parent="@android:style/Theme.Dialog">
+    </style>
+
+    <style name="jr_fullscreen_no_title" parent="@android:style/Theme.Black.NoTitleBar">
+    </style>
+
+    <style name="jr_fullscreen" parent="android:style/Theme.Black">
+    </style>
+
+    <style name="jr_about_dialog_text">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
 </resources>

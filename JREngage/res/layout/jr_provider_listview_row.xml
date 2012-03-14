@@ -7,7 +7,7 @@
     android:padding="6dip"
     >
 
-<ImageView
+    <ImageView
         android:id="@+id/jr_row_provider_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -29,7 +29,7 @@
         android:singleLine="true"
         android:textSize="20dip"
         android:padding="6dip"
-        android:textAppearance="?android:textAppearanceListItem"
+        android:textAppearance="?android:attr/textAppearanceListItem"
         />
-    <!--android:textColor="@android:color/primary_text_light"-->
+
 </RelativeLayout>

@@ -29,10 +29,12 @@
         android:label="@string/app_name"
         android:debuggable="true"
         android:hardwareAccelerated="true"
-        android:theme="@android:style/Theme.Light"
+        android:theme="@android:style/Theme.Holo.Light"
         >
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:theme="@android:style/Theme.Holo.Light"
+            >
             <!--android:launchMode="singleTask">-->
                 <!--singleTask isn't working as documented, instead it's behaving as described in
                     this bug report:
@@ -54,10 +56,11 @@
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
 
+        <!--TODO fixme-->
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/jr_fullscreen"
+            android:theme="@android:style/Theme.Holo"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
 

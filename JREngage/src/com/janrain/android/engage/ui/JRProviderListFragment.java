@@ -43,7 +43,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -85,14 +84,14 @@ public class JRProviderListFragment extends JRUiFragment {
      * Array adapter used to render individual providers in list view.
      **/
     private class ProviderAdapter extends ArrayAdapter<JRProvider> {
-        LayoutInflater li = (LayoutInflater)
-                JREngage.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater mLayoutInflater =
+                (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         public ProviderAdapter() {
             // The super class only ends up using the last parameter passed into this super constructor,
             // the List.  The first two parameters are never used.
 
-            super(JREngage.getActivity(), 0, mProviderList);
+            super(JREngage.getActivity(), R.layout.jr_provider_listview_row, mProviderList);
         }
 
         @Override
@@ -100,7 +99,7 @@ public class JRProviderListFragment extends JRUiFragment {
             if (convertView == null) {
                 // This line is pretty much copied from the super implementation, which doesn't attach
                 // the newly inflated View to it's parent. I don't know why.
-                convertView = li.inflate(R.layout.jr_provider_listview_row, parent, false);
+                convertView = mLayoutInflater.inflate(R.layout.jr_provider_listview_row, parent, false);
             }
 
             ImageView icon = (ImageView) convertView.findViewById(R.id.jr_row_provider_icon);

@@ -192,7 +192,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public static class CustomUi extends JRCustomUiConfiguration {
-        public CustomUi(Context c) {
+        public CustomUi() {
             mProviderListHeader = new CustomSignin();
 //            mAuthenticationBackgroundDrawable = c.getResources().getDrawable(R.drawable.custom_signin_bg);
             mProviderListTitle = "Custom title";
@@ -201,7 +201,6 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onProviderListViewCreate(ListView providerListView) {
             super.onProviderListViewCreate(providerListView);
-
 //            providerListView.setDividerHeight(AndroidUtils.scaleDipToPixels(20));
         }
     }

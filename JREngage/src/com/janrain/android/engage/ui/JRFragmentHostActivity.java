@@ -122,8 +122,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
             // (Also, have to set the Theme before the content view is loaded so it's applied.)
         }
-        
-//        getTheme().applyStyle(R.style.);
 
         setContentView(R.layout.jr_fragment_host_activity);
 
