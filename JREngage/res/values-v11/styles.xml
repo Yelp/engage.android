@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--<style name="jr_dialog" parent="@android:style/Theme.Holo.Light.DialogWhenLarge.NoActionBar">-->
     <style name="jr_dialog" parent="@android:style/Theme.Holo.Light.DialogWhenLarge.NoActionBar">
         <item name="android:windowMinWidthMinor">71%</item>
         <item name="android:windowMinWidthMajor">71%</item>
     </style>
 
-    <style name="jr_dialog_phone_sized" parent="jr_dialog">
+    <!--<style name="jr_dialog_phone_sized" parent="jr_dialog">-->
+    <style name="jr_dialog_phone_sized">
         <item name="android:windowMinWidthMinor">320dip</item>
         <item name="android:windowMinWidthMajor">320dip</item>
     </style>
@@ -17,7 +19,13 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="jr_fullscreen" parent="@android:style/Theme.Holo.Light" />
+    <style name="jr_fullscreen" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/custom_actionbar</item>
+    </style>
+
+    <style name="custom_actionbar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:displayOptions">useLogo|showHome|showTitle|homeAsUp</item>
+    </style>
 
     <style name="jr_about_dialog_text"/>
 

@@ -40,7 +40,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSession;
@@ -116,13 +118,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
         fragArgs.putInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE, getFlowMode());
         mUiFragment.setArguments(fragArgs);
 
-        if (shouldBePhoneSizedDialog()) {
-            // Need to set a new theme in order to achieve a small dialog
-            // because the theme for this activity has minWidth{Major,Minor}=71%
-            setTheme(R.style.jr_dialog_phone_sized);
-
-            // (Also, have to set the Theme before the content view is loaded so it's applied.)
-        }
+        if (shouldBePhoneSizedDialog()) getTheme().applyStyle(R.style.jr_dialog_phone_sized, true);
 
         setContentView(R.layout.jr_fragment_host_activity);
 
@@ -142,6 +138,11 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 .add(R.id.jr_fragment_container, mUiFragment)
                 .setTransition(FragmentTransaction.TRANSIT_NONE)
                 .commit();
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
     }
 
     /*package*/ boolean shouldBePhoneSizedDialog() {
@@ -216,6 +217,17 @@ public class JRFragmentHostActivity extends FragmentActivity {
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
+            onBackPressed();
+            return true;
+        }
+
+        // Delegate everything else to Activity.
+        return super.onTouchEvent(event);
     }
 
     @Override
