@@ -216,8 +216,9 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
             return;
         }
 
-        mJREngage = JREngage.initInstance(ctx, appId, tokenUrl, this);
-        if (mJREngage == null) { // TODO: Not sure if this will ever happen on Android, or if this check is even necessary
+        try {
+            mJREngage = JREngage.initInstance(ctx, appId, tokenUrl, this);
+        } catch (IllegalArgumentException e) {
             postResultAndCleanUp(buildFailureResult(JREngageError.ConfigurationError.GENERIC_CONFIGURATION_ERROR,
                     "There was an error initializing JREngage: returned JREngage object was null"));
             return;
@@ -227,12 +228,11 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     }
 
     private synchronized void showAuthenticationDialog() {
-        mJREngage.showAuthenticationDialog();
+        mJREngage.showAuthenticationDialog(ctx);
     }
 
     private synchronized void showSharingDialog(String activityString) {
         mWeAreSharing = true;
-        JRDictionary activityDictionary = null;
 
         if (activityString == null || activityString.equals("")) {
             postResultAndCleanUp(buildFailureResult(JREngageError.SocialPublishingError.ACTIVITY_NULL,
@@ -240,25 +240,20 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
             return;
         }
 
+        JRActivityObject activity;
         try {
-            activityDictionary = JRDictionary.fromJSON(activityString);
+            activity = new JRActivityObject(JRDictionary.fromJsonString(activityString));
         } catch (JSONException e) {
             postResultAndCleanUp(buildJsonFailureResult(JREngageError.SocialPublishingError.BAD_ACTIVITY_JSON,
                     "The JSON passed was not a valid activity object"));
             return;
-        }
-
-        // TODO: Find out what Nathan wants to do about invalid args for activity constructors, return null
-        // or throw an invalid arg exception.  Writing as if it gets changed to returning null; invalid
-        // arg exceptions shouldn't be caught anyway...
-        JRActivityObject activity = new JRActivityObject(activityDictionary);
-        if (activity == null) {
+        } catch (IllegalArgumentException ignore) {
             postResultAndCleanUp(buildJsonFailureResult(JREngageError.SocialPublishingError.BAD_ACTIVITY_JSON,
                     "The JSON passed was not a valid activity object"));
             return;
         }
         
-        mJREngage.showSocialPublishingDialog(activity);
+        mJREngage.showSocialPublishingDialog(ctx, activity);
     }
 
     public synchronized void jrEngageDialogDidFailToShowWithError(JREngageError error) {

@@ -34,7 +34,6 @@ package com.janrain.android.quickshare;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Config;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,8 +42,6 @@ import android.webkit.WebView;
 import android.widget.Button;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.utils.AndroidUtils;
-
-import java.util.List;
 
 public class StoryDetailFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = StoryDetailFragment.class.getSimpleName();
@@ -162,7 +159,7 @@ public class StoryDetailFragment extends Fragment implements View.OnClickListene
             mQuickShare.getJREngage().showSocialPublishingFragment(jra, getActivity(), getId(), true,
                     null, null, null, null);
         } else {
-            mQuickShare.getJREngage().showSocialPublishingDialog(jra);
+            mQuickShare.getJREngage().showSocialPublishingDialog(getActivity(), jra);
         }
     }
 }

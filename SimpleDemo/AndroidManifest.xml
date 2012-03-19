@@ -29,11 +29,11 @@
         android:label="@string/app_name"
         android:debuggable="true"
         android:hardwareAccelerated="true"
-        android:theme="@android:style/Theme.Holo.Light"
+        android:theme="@android:style/Theme.Light"
         >
 
         <activity android:name=".MainActivity"
-            android:theme="@android:style/Theme.Holo.Light"
+            android:theme="@android:style/Theme.Light"
             >
             <!--android:launchMode="singleTask">-->
                 <!--singleTask isn't working as documented, instead it's behaving as described in
@@ -49,6 +49,12 @@
         </activity>
 
         <!-- For Janrain Engage library -->
+        <!-- This activity should have a dialog theme with no action bar and no title bar:
+                <item name="android:windowActionBar">false</item>
+                <item name="android:windowNoTitle">true</item>
+            It should be extended from one of the Dialog themes, e.g. Theme.Holo.Light.Dialog, or
+            Theme.Dialog, etc.
+        -->
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
             android:configChanges="orientation|screenSize"
@@ -56,14 +62,18 @@
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
 
-        <!--TODO fixme-->
+        <!-- This activity can have any theme. Light/Dark/Holo-->
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"
             android:configChanges="orientation|screenSize"
-            android:theme="@android:style/Theme.Holo"
+            android:theme="@style/jr_fullscreen"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
 
+        <!-- This activity should have no title bar. This can be done by adding:
+                <item name="android:windowActionBar">false</item>
+                <item name="android:windowNoTitle">true</item>
+            to the theme. -->
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$FullscreenNoTitleBar"
             android:configChanges="orientation|screenSize"

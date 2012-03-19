@@ -92,7 +92,7 @@ public class JRProviderListFragment extends JRUiFragment {
             // The super class only ends up using the last parameter passed into this super constructor,
             // the List.  The first two parameters are never used.
 
-            super(JREngage.getActivity(), R.layout.jr_provider_listview_row, mProviderList);
+            super(getActivity(), 0, mProviderList);
         }
 
         @Override

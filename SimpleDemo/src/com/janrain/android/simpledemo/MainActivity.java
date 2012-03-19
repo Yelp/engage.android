@@ -46,7 +46,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.ui.JRCustomUiConfiguration;
 import com.janrain.android.engage.ui.JRCustomUiView;
 import com.janrain.android.engage.JREngage;
@@ -59,7 +58,6 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.types.JREmailObject;
 import com.janrain.android.engage.types.JRImageMediaObject;
 import com.janrain.android.engage.types.JRSmsObject;
-import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Prefs;
 
 import java.io.IOException;

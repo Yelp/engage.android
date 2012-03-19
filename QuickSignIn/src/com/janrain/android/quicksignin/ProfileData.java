@@ -31,7 +31,6 @@
  */
 package com.janrain.android.quicksignin;
 
-import android.util.Config;
 import android.util.Log;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.Archiver;
@@ -58,23 +57,19 @@ public class ProfileData {
     public static ProfileData getInstance() {
 
         if (sInstance != null) {
-            if (Config.LOGD)
-                Log.d(TAG, "[getInstance] returning existing instance.");
+            Log.d(TAG, "[getInstance] returning existing instance.");
 
             return sInstance;
         }
 
         sInstance = new ProfileData();
-        if (Config.LOGD)
             Log.d(TAG, "[getInstance] returning new instance.");
 
         return sInstance;
     }
 
     private ProfileData() {
-        if (Config.LOGD) {
-            Log.d(TAG, "[ctor] creating instance.");
-        }
+        Log.d(TAG, "[ctor] creating instance.");
 
         try {
             mLoginSnapshots = Archiver.load(ARCHIVE_LOGIN_SNAPSHOTS);

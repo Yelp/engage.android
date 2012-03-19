@@ -231,7 +231,7 @@ public abstract class JRUiFragment extends Fragment {
             if (d.mShowing) d.mDialog.show();
         }
 
-//        FragmentManager fm = getApplicationContext().getSupportFragmentManager();
+//        FragmentManager fm = getActivity().getSupportFragmentManager();
 //        fm.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
 //            public void onBackStackChanged() {
 //                Log.e(TAG, "onBackStackChanged");

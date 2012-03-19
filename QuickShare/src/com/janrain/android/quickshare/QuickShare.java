@@ -46,7 +46,6 @@ import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.text.Editable;
 import android.text.Html;
-import android.util.Config;
 import android.util.Log;
 import android.util.Pair;
 import android.util.Xml;
@@ -86,10 +85,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
-import static java.lang.Math.log;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 
 public class QuickShare extends Application {
     private static QuickShare sInstance;
@@ -196,7 +191,7 @@ public class QuickShare extends Application {
     }
 
     private void logd(String function, String message) {
-        if (Config.LOGD && function != null && message != null) Log.d(TAG, "[" + function + "] " + message);
+        if (function != null && message != null) Log.d(TAG, "[" + function + "] " + message);
     }
 
     public ImageLoader getImageLoader() {
@@ -363,9 +358,7 @@ public class QuickShare extends Application {
             mStoryLinks.clear();
         }
 
-        if (Config.LOGD) {
-            Log.d(TAG, "[deleteAllStories] " + ((Integer) mStories.size()).toString() + " stories remain");
-        }
+        Log.d(TAG, "[deleteAllStories] " + ((Integer) mStories.size()).toString() + " stories remain");
 
         Archiver.save(ARCHIVE_STORIES_ARRAY, mStories, this);
         Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks, this);
@@ -381,7 +374,7 @@ public class QuickShare extends Application {
                 toastText = error.getMessage();
             }
 
-            Toast.makeText(JREngage.getActivity(), toastText, Toast.LENGTH_LONG).show();
+            Toast.makeText(JREngage.getApplicationContext(), toastText, Toast.LENGTH_LONG).show();
         }
 
         public void jrAuthenticationDidNotComplete() {}

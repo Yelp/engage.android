@@ -39,7 +39,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Config;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -88,8 +87,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
      *      Note: Otherwise it is null.
      */
     public void onCreate(Bundle savedInstanceState) {
-        if (Config.LOGD)
-            Log.d(TAG, "[onCreate]");
+        Log.d(TAG, "[onCreate]");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profiles_listview);
@@ -123,8 +121,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
     @Override
     protected void onStart() {
-        if (Config.LOGD)
-            Log.d(TAG, "[onStart]");
+        Log.d(TAG, "[onStart]");
 
         super.onStart();
     }
@@ -334,7 +331,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
              * returning user landing page, uncomment the following two lines, and comment-out the third */
             /* mEngage.setAlwaysForceReauthentication(true); */
             /* mEngage.showAuthenticationDialog(true); */
-            mEngage.showAuthenticationDialog();
+            mEngage.showAuthenticationDialog(this);
         }
     }
 }
