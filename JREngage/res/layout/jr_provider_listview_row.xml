@@ -29,7 +29,11 @@
         android:singleLine="true"
         android:textSize="20dip"
         android:padding="6dip"
-        android:textAppearance="?android:attr/textAppearanceListItem"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         />
+    <!-- textAppearanceListItem isn't compatible down to API 4 -->
+    <!--android:textAppearance="?android:attr/textAppearanceListItemSmall"-->
+
+    <!--android:textColor="?android:attr/textColorPrimary"-->
 
 </RelativeLayout>

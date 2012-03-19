@@ -10,15 +10,15 @@
         <item name="android:windowMinWidthMajor">320dip</item>
     </style>
 
-    <style name="jr_fullscreen" parent="@android:style/Theme.Holo.Light" />
-
+    <!-- This would be Theme.Holo.Light.NoActionBar but a bug prevents this: -->
     <!-- http://code.google.com/p/android/issues/detail?id=15862 -->
     <style name="jr_fullscreen_no_title" parent="@android:style/Theme.Holo.Light">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="jr_about_dialog_text">
-    </style>
+    <style name="jr_fullscreen" parent="@android:style/Theme.Holo.Light" />
+
+    <style name="jr_about_dialog_text"/>
 
 </resources>

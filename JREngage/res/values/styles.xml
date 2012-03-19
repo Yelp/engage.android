@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- I don't think this is ever used because we only use jr_dialog on v11 devices -->
     <style name="jr_dialog" parent="@android:style/Theme.Dialog">
     </style>
 
+    <!-- This is used definitely -->
+    <!-- v11 just switches it to Theme.Holo.Light.NoTitleBar -->
     <style name="jr_fullscreen_no_title" parent="@android:style/Theme.Light.NoTitleBar">
     </style>
 
-    <style name="jr_fullscreen" parent="android:style/Theme">
+    <!-- This too, v11 makes it Theme.Holo.Light though -->
+    <style name="jr_fullscreen" parent="android:style/Theme.Light">
     </style>
 
     <style name="jr_about_dialog_text">

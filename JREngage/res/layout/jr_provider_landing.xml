@@ -69,12 +69,12 @@
             />
 
         <LinearLayout
-            android:id="@+id/jr_landing_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
             android:orientation="horizontal"
             >
+            <!--android:id="@+id/jr_landing_buttons"-->
 
             <Button
                 android:id="@+id/jr_landing_switch_account_button"
@@ -98,7 +98,6 @@
                 android:layout_gravity="center_vertical"
 
                 android:text="@string/jr_landing_signin_button_text"
-                android:visibility="visible"
                 style="?android:textAppearanceLarge"
                 />
 
