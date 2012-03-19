@@ -165,7 +165,6 @@ public abstract class JRUiFragment extends Fragment {
                 Constructor c = classRef.getConstructor(Context.class);
                 final JRUiCustomization uiCustomization =
                         (JRUiCustomization) c.newInstance(getActivity().getApplicationContext());
-//                final JRUiCustomization uiCustomization = (JRUiCustomization) classRef.newInstance();
                 if (uiCustomization instanceof JRCustomUiConfiguration) {
                     mCustomUiConfiguration = (JRCustomUiConfiguration) uiCustomization;
                 } else if (uiCustomization instanceof JRCustomUiView) {
@@ -230,27 +229,6 @@ public abstract class JRUiFragment extends Fragment {
             d.mDialog = onCreateDialog(d.mId, d.mOptions);
             if (d.mShowing) d.mDialog.show();
         }
-
-//        FragmentManager fm = getActivity().getSupportFragmentManager();
-//        fm.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-//            public void onBackStackChanged() {
-//                Log.e(TAG, "onBackStackChanged");
-//            }
-//        });
-
-//        ViewGroup vg = (ViewGroup) getView().getParent();
-//        if (vg != null && !(getActivity() instanceof JRFragmentHostActivity)) {
-//            vg.setOnKeyListener(new View.OnKeyListener() {
-//                public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-//                        Log.e(TAG, "[VGONKEYPRESSED!]");
-//                        onBackPressed();
-//                        return true;
-//                    }
-//                    return false;
-//                }
-//            });
-//        }
     }
 
     @Override

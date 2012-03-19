@@ -53,6 +53,10 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
     public JRCustomUiView mProviderListHeader;
     public JRCustomUiView mProviderListFooter;
 
+//Y     do support
+//?     not sure whether to support
+//N     will not support
+
 //     Would be nice to do something analogous to this for modal dialogs on Android tablets
 //?     kJRPopoverPresentationFrameValue
 //?     kJRPopoverPresentationBarButtonItem
@@ -95,10 +99,6 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
 
 //    TODO address parity of this vs existing implementation... support both or not?
 //      kJRRemoveProvidersFromAuthentication
-    
-//    private JRCustomUiConfiguration() {}
-    
-//    public JRCustomUiConfiguration(Context c) {}
 
     public void onProviderListViewCreate(ListView providerListView) {}
 
