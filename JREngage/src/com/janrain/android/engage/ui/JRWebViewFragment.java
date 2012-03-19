@@ -491,7 +491,7 @@ public class JRWebViewFragment extends JRUiFragment {
         JRDictionary payloadDictionary;
         String alertTitle, alertMessage, logMessage;
         try {
-            payloadDictionary = JRDictionary.fromJSON(payloadString);
+            payloadDictionary = JRDictionary.fromJsonString(payloadString);
         } catch (JSONException e) {
             Log.e(TAG, "[connectionDidFinishLoading] failure: " + payloadString);
             mIsFinishPending = true;

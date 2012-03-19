@@ -198,7 +198,7 @@ public class JRProvider implements Serializable {
 
         /* We call this function in the constructor, simply to preemptively download the icons
          if they aren't already there. */
-        getProviderLogo(JREngage.getActivity());
+        getProviderLogo(JREngage.getApplicationContext());
     }
     
     public List<String> getCookieDomains () { /* (readonly) */
@@ -424,12 +424,8 @@ public class JRProvider implements Serializable {
         return mName;
     }
 
-    private Context getContext() {
-        return JREngage.getActivity();
-    }
-
     private Resources getResources() {
-        return getContext().getResources();
+        return JREngage.getApplicationContext().getResources();
     }
 
     public int getProviderColor(boolean withAlpha) {

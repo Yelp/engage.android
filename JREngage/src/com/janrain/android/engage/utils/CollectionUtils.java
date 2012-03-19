@@ -31,6 +31,7 @@
  */
 package com.janrain.android.engage.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,20 +42,27 @@ import java.util.Map;
  * @class CollectionUtils
  **/
 public final class CollectionUtils {
-
     public static boolean isEmpty(List<?> list) {
         return ((list == null) || (list.size() < 1));
     }
 
-    interface Function<T> {
-        T operate(T val);
+    public static interface Function<L, R> {
+        L operate(R val);
     }
+    
+    public static <K, L, R> Map<K, L> map(Map<K, R> map, Function<L, R> f) {
+        Map<K, L> retMap = new HashMap<K, L>();
 
-    public static <T> Map<?, T> replaceValues(Map<?, T> map, Function<T> f) {
-        Map<?, T> retMap = new HashMap<Object, T>(map);
-
-        for (Map.Entry<?, T> e : map.entrySet()) e.setValue(f.operate(e.getValue()));
+        for (Map.Entry<K, R> e : map.entrySet()) retMap.put(e.getKey(), f.operate(e.getValue()));
 
         return retMap;
+    }
+
+    public static <L, R> List<L> map(List<R> list, Function<L, R> f) {
+        List<L> retList = new ArrayList<L>();
+
+        for (R e : list) retList.add(f.operate(e));
+
+        return retList;
     }
 }

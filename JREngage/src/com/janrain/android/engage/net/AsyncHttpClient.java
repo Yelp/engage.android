@@ -180,9 +180,9 @@ public final class AsyncHttpClient {
 
             try {
 //                if (!mUrl.contains("mobile_config_and_baseurl") && !mUrl.contains("appspot.com")) {
-//                    JREngage.getActivity().runOnUiThread(new Runnable() {
+//                    JREngage.getApplicationContext().runOnUiThread(new Runnable() {
 //                        public void run() {
-//                            Toast.makeText(JREngage.getActivity(), "MEU load started", Toast.LENGTH_LONG).show();
+//                            Toast.makeText(JREngage.getApplicationContext(), "MEU load started", Toast.LENGTH_LONG).show();
 //                        }
 //                    });
 //                }

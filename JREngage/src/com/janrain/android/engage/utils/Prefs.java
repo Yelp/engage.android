@@ -108,7 +108,7 @@ public final class Prefs {
     }
 
     private static SharedPreferences getSharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(JREngage.getActivity());
+        return PreferenceManager.getDefaultSharedPreferences(JREngage.getApplicationContext());
     }
 
     private static SharedPreferences.Editor getEditor() {

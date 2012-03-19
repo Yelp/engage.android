@@ -52,7 +52,7 @@ public enum JREnvironment {
     }
 
     public String getServerUrl() {
-        return JREngage.getActivity().getString(mServerUrlResourceId);
+        return JREngage.getApplicationContext().getString(mServerUrlResourceId);
     }
 }
 /**

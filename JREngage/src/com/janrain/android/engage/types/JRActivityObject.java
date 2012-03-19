@@ -49,6 +49,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.janrain.android.engage.utils.CollectionUtils.map;
+import static com.janrain.android.engage.utils.CollectionUtils.Function;
 
 /*
  * @file
@@ -262,7 +264,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
      *   if action is null
      **/
     public JRActivityObject(String action, String url) {
-        initJRActivityObject(action, url);
+        init(action, url);
     }
 
     /**
@@ -276,7 +278,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
      *   if action is null
      **/
     public JRActivityObject(String action) {
-        initJRActivityObject(action, "");
+        init(action, "");
     }
 /*@}*/
 
@@ -292,14 +294,16 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
     public JRActivityObject(JRDictionary activity) {
         if (activity == null) throw new IllegalArgumentException("illegal null action");
 
-        initJRActivityObject(activity.getAsString("action"), activity.getAsString("url", ""));
+        init(activity.getAsString("action"), activity.getAsString("url", ""));
 
         mTitle       = activity.getAsString("resourceTitle");
         mDescription = activity.getAsString("resourceDescription");
 
         List<JRDictionary> actionLinks = activity.getAsListOfDictionaries("actionLinks", true);
 
-        for (JRDictionary actionLink : actionLinks) mActionLinks.add(new JRActionLink(actionLink));
+        mActionLinks.addAll(map(actionLinks, new Function<JRActionLink, JRDictionary>() {
+            public JRActionLink operate(JRDictionary val) { return new JRActionLink(val); }
+        }));
 
         List<JRDictionary> medias;
         medias = activity.getAsListOfDictionaries("media", true);
@@ -321,7 +325,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
     }
 
 
-    private void initJRActivityObject(String action, String url) {
+    private void init(String action, String url) {
         if (action == null) throw new IllegalArgumentException("illegal null action");
         if (url == null) url = "";
 

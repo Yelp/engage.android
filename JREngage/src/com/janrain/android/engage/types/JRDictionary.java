@@ -107,7 +107,7 @@ public final class JRDictionary extends HashMap<String, Object> {
      * @throws JSONException
      *      When the JSON couldn't be parsed.
      **/
-    public static JRDictionary fromJSON(String json) throws JSONException {
+    public static JRDictionary fromJsonString(String json) throws JSONException {
         JSONTokener jsonTokener = new JSONTokener(json);
 
         Object jsonObject = jsonTokener.nextValue();

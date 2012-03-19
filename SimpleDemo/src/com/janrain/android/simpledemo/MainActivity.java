@@ -125,7 +125,7 @@ public class MainActivity extends FragmentActivity {
         mBtnTestAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 //                mEngage.setEnabledAuthenticationProviders(new String[]{"facebook"});
-                mEngage.showAuthenticationDialog(CustomUi.class);
+                mEngage.showAuthenticationDialog(MainActivity.this, CustomUi.class);
             }
         });
 //        mBtnTestAuth.setOnLongClickListener(new View.OnLongClickListener() {
@@ -148,9 +148,8 @@ public class MainActivity extends FragmentActivity {
         mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
         mBtnTestPub.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-//                buildActivity();
-//                mEngage.showSocialPublishingDialog(mActivity);
-                JRConnectionManager.createConnection("https://login.qype.com", null, null);
+                buildActivity();
+                mEngage.showSocialPublishingDialog(MainActivity.this, mActivity);
             }
         });
         mBtnTestPub.setOnLongClickListener(new View.OnLongClickListener() {
@@ -186,7 +185,7 @@ public class MainActivity extends FragmentActivity {
         
         mBtnTestSpecificProvider.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mEngage.showAuthenticationDialog("facebook");
+                mEngage.showAuthenticationDialog(MainActivity.this, "facebook");
             }
         });
     }

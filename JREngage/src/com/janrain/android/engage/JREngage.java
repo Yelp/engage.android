@@ -94,7 +94,6 @@ import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.ui.JRFragmentHostActivity;
-import com.janrain.android.engage.ui.JRProviderListFragment;
 import com.janrain.android.engage.ui.JRPublishFragment;
 import com.janrain.android.engage.ui.JRUiCustomization;
 import com.janrain.android.engage.ui.JRUiFragment;
@@ -135,7 +134,8 @@ public class JREngage {
 	private static JREngage sInstance;
 
     /* Application context */
-    private Activity mActivity;
+    private Context mApplicationContext;
+    private Activity mActivityContext;
 
 	/* Holds configuration and state for the JREngage library */
 	private JRSession mSession;
@@ -143,7 +143,24 @@ public class JREngage {
 	/* Delegates (listeners) array */
 	private ArrayList<JREngageDelegate> mDelegates = new ArrayList<JREngageDelegate>();
 
-    private JREngage() {}
+    private JREngage(Context applicationContext,
+                     String appId,
+                     String tokenUrl,
+                     JREngageDelegate delegate) {
+        sInstance = this;
+        mApplicationContext = applicationContext.getApplicationContext();
+        if (applicationContext instanceof Activity) mActivityContext = (Activity) applicationContext;
+        mDelegates = new ArrayList<JREngageDelegate>();
+        if (delegate != null) mDelegates.add(delegate);
+        mSession = JRSession.getInstance(appId, tokenUrl, mJrsd);
+
+        // Sign-in UI fragment is not yet embeddable
+        //if (activity1 instanceof FragmentActivity) {
+        //    FrameLayout fragmentContainer = (FrameLayout) activity1.findViewById(R.id.jr_signin_fragment);
+        //    if (fragmentContainer != null) {
+        //    }
+        //}
+    }
 
 /**
  * @name Get the JREngage Instance
@@ -153,58 +170,8 @@ public class JREngage {
     /**
      * Initializes and returns the singleton instance of JREngage.
      *
-     * @param activity
-     * 		The Android Activity, used for access to system resources (e.g. global
-     * 		preferences).  This value cannot be null
-     *
-     * @param appId
-     * 		Your 20-character application ID.  You can find this on your application's
-     * 		Engage Dashboard at <a href="http://rpxnow.com">http://rpxnow.com</a>.  This value
-     * 		cannot be null
-     *
-     * @param tokenUrl
-     * 		The URL on your server where you wish to complete authentication, or null.  If provided,
-     *   	the JREngage library will post the user's authentication token to this URL where it can
-     *   	used for further authentication and processing.  When complete, the library will pass
-     *   	the server's response back to the your application
-
-     * @param delegate
-     * 		The delegate object that implements the JREngageDelegate interface
-     *
-     * @return
-     * 		The shared instance of the JREngage object initialized with the given
-     *   	appId, tokenUrl, and delegate.  If the given appId is null, returns null
-     **/
-    public static JREngage initInstance(Activity activity,
-                                        String appId,
-                                        String tokenUrl,
-                                        JREngageDelegate delegate) {
-        if (activity == null) {
-            Log.e(TAG, "[initialize] context parameter cannot be null.");
-            throw new IllegalArgumentException("context parameter cannot be null.");
-        }
-
-        if (TextUtils.isEmpty(appId)) {
-            Log.e(TAG, "[initialize] appId parameter cannot be null.");
-            throw new IllegalArgumentException("appId parameter cannot be null.");
-        }
-
-        logd(TAG, "[initInstance] git resource '" + activity.getString(R.string.jr_git_describe) +
-                "' activity '" + activity + "' appId '" + appId + "' tokenUrl '" + tokenUrl + "'");
-
-        if (sInstance == null) sInstance = new JREngage();
-        sInstance.initialize(activity, appId, tokenUrl, delegate);
-
-        return sInstance;
-    }
-
-    /**
-     * Initializes and returns the singleton instance of JREngage.
-     *
-     * @deprecated Use #initInstance(Activity, String, String, JREngageDelegate) instead.
-     *
      * @param context
-     * 		The Android Activity, used for access to system resources (e.g. global
+     * 		The Android Context used to access to system resources (e.g. global
      * 		preferences).  This value cannot be null
      *
      * @param appId
@@ -229,7 +196,26 @@ public class JREngage {
                                         String appId,
                                         String tokenUrl,
                                         JREngageDelegate delegate) {
-        return initInstance((Activity) context, appId, tokenUrl, delegate);
+        if (context == null) {
+            Log.e(TAG, "[initialize] context parameter cannot be null.");
+            throw new IllegalArgumentException("context parameter cannot be null.");
+        }
+
+        if (TextUtils.isEmpty(appId)) {
+            Log.e(TAG, "[initialize] appId parameter cannot be null.");
+            throw new IllegalArgumentException("appId parameter cannot be null.");
+        }
+
+        logd(TAG, "[initInstance] git resource '" + context.getString(R.string.jr_git_describe) +
+                "' activity '" + context + "' appId '" + appId + "' tokenUrl '" + tokenUrl + "'");
+
+        if (sInstance == null) {
+            new JREngage(context, appId, tokenUrl, delegate);
+        } else {
+            Log.e(TAG, "Ignoring call which would reinitialize JREngage");
+        }
+
+        return sInstance;
     }
 
 	/**
@@ -250,50 +236,36 @@ public class JREngage {
 	 * @return
 	 * 		The Activity object used to initialize this library
 	 **/
-    public static Activity getActivity() {
-        return (sInstance == null) ? null : sInstance.mActivity;
+    public static Context getApplicationContext() {
+        return (sInstance == null) ? null : sInstance.mApplicationContext;
     }
 
     /**
      * @internal
-     * @deprecated use setActivityContext(Activity) instead
-     * Set the Activity used to start Engage dialogs from
+     * @deprecated specify the Activity context as a parameter to show*Dialog instead, and the application
+     *  context as a parameter to JREngage.initInstance
      *
      * @param context
-     *      An Activity from which startActivity will be called
-     *
+     *      A Context to use to load resources. If an instance of Activity, from which startActivity will be 
+     *      called to show library Activities if not specified in the call to show*Dialog.
      **/
     public static void setContext(Context context) {
-        sInstance.mActivity = (Activity) context;
+        sInstance.mApplicationContext = context;
+        if (context instanceof Activity) sInstance.mActivityContext = (Activity) context;
     }
 
     /**
      * @internal
-     * Returns the application context used to initialize the library.
+     * @deprecated specify the Activity context as a parameter to show*Dialog instead
      *
      * @param activity
      *      An Activity from which startActivity will be called
+     *
      **/
     public static void setActivityContext(Activity activity) {
-        sInstance.mActivity = activity;
+        sInstance.mApplicationContext = activity.getApplicationContext();
+        sInstance.mActivityContext = activity;
     }
-
-	private void initialize(Activity activity,
-                            String appId,
-                            String tokenUrl,
-                            JREngageDelegate delegate) {
-        mActivity = activity;
-        mDelegates = new ArrayList<JREngageDelegate>();
-        if (delegate != null && !mDelegates.contains(delegate)) mDelegates.add(delegate);
-        mSession = JRSession.getInstance(appId, tokenUrl, mJrsd);
-
-        // Sign-in UI fragment is not yet embeddable
-        //if (activity1 instanceof FragmentActivity) {
-        //    FrameLayout fragmentContainer = (FrameLayout) activity1.findViewById(R.id.jr_signin_fragment);
-        //    if (fragmentContainer != null) {
-        //    }
-        //}
-	}
 
 /**
  * @name Manage Authenticated Users
@@ -374,7 +346,7 @@ public class JREngage {
         Intent intent = new Intent(JRFragmentHostActivity.ACTION_FINISH_FRAGMENT);
         intent.putExtra(JRFragmentHostActivity.EXTRA_FINISH_FRAGMENT_TARGET,
                 JRFragmentHostActivity.FINISH_TARGET_ALL);
-        mActivity.sendBroadcast(intent);
+        mApplicationContext.sendBroadcast(intent);
     }
 
 /**
@@ -467,39 +439,91 @@ public class JREngage {
 /*@{*/
 
     /**
-     * Begins authentication.  The library will
-     * start a new Android Activity and take the user through the sign-in process.
+     * @deprecated use showAuthenticationDialog(Activity fromActivity) instead
      **/
     public void showAuthenticationDialog() {
         JREngage.logd(TAG, "[showAuthenticationDialog]");
 
-        showAuthenticationDialog(false);
+        showAuthenticationDialog(mActivityContext, false);
     }
-    
-    public void showAuthenticationDialog(Class<? extends JRUiCustomization> uiCustomization) {
-        showAuthenticationDialog(false, null, uiCustomization);
+
+    /**
+     * Start a new Android Activity and take the user through the sign-in process.
+     * 
+     * @param fromActivity
+     *  The Activity from which to show the authentication dialog
+     */
+    public void showAuthenticationDialog(Activity fromActivity) {
+        showAuthenticationDialog(fromActivity, false);
+    }
+
+    /**
+     * Start a new Android Activity and take the user through the sign-in process.
+     *
+     * @param fromActivity
+     *  The Activity from which to show the authentication dialog
+     *
+     * @param uiCustomization
+     *  A Class reference to a subclass of JRCustomUiConfiguration or JRCustomUiView
+     *
+     *  If the reference is to a JRCustomView subclass then the an instance of that custom view will be
+     *  displayed as the header of the list of providers the user is presented with. This header is the usual
+     *  place to include custom username/password authentication UI.
+     *
+     *  If the reference is to a JRCustomUiConfiguration subclass then all of the customizations specified
+     *  by an instance of that subclass will be applied.
+     */
+    public void showAuthenticationDialog(Activity fromActivity,
+                                         Class<? extends JRUiCustomization> uiCustomization) {
+        showAuthenticationDialog(fromActivity, false, null, uiCustomization);
+    }
+
+    /**
+     * @deprecated use showAuthenticationDialog(Activity fromActivity, boolean skipReturningUserLandingPage)
+     *  instead.
+     * @param skipReturningUserLandingPage
+     *  See showAuthenticationDialog(Activity fromActivity, boolean skipReturningUserLandingPage)
+     */
+    public void showAuthenticationDialog(boolean skipReturningUserLandingPage) {
+        showAuthenticationDialog(mActivityContext, skipReturningUserLandingPage);
     }
 
     /**
      * Begins authentication.  The library will
      * start a new Android Activity and take the user through the sign-in process.
+     *
+     * @param fromActivity
+     *  The Activity from which to show the authentication dialog
      *
      * @param skipReturningUserLandingPage
      *  Prevents the dialog from opening to the returning-user landing page when \c true.  That is, the
      *  dialog will always open straight to the list of providers.  The dialog falls back to the default
      *  behavior when \c false
-     *
+     *  
      * @note
      *  If you always want to force the user to re-enter his/her credentials, pass \c true to the method
      *  setAlwaysForceReauthentication().
      **/
-    public void showAuthenticationDialog(boolean skipReturningUserLandingPage) {
-        showAuthenticationDialog(skipReturningUserLandingPage, null);
+    public void showAuthenticationDialog(Activity fromActivity, boolean skipReturningUserLandingPage) {
+        showAuthenticationDialog(fromActivity, skipReturningUserLandingPage, null);
     }
-    
+
+    /**
+     * @deprecated use showAuthenticationDialog(Activity fromActivity, String provider) instead
+     * 
+     * @param provider
+     *  See showAuthenticationDialog(Activity fromActivity, String provider)
+     */
+    public void showAuthenticationDialog(String provider) {
+        showAuthenticationDialog(mActivityContext, provider);
+    }
+
     /**
      * Begins authentication.  The library will
      * start a new Android Activity and take the user through the sign-in process.
+     *
+     * @param fromActivity    
+     *  The Activity from which to show the authentication dialog
      *
      * @param provider
      *  Specify a provider to start authentication with. No provider selection list will be shown, the user
@@ -509,14 +533,29 @@ public class JREngage {
      * @note
      *  If you always want to force the user to re-enter his/her credentials, pass \c true to the method
      *  setAlwaysForceReauthentication().
-     **/
-    public void showAuthenticationDialog(String provider) {
-        showAuthenticationDialog(null, provider, null);
+     */
+    public void showAuthenticationDialog(Activity fromActivity, String provider) {
+        showAuthenticationDialog(fromActivity, null, provider, null);
     }
 
     /**
+     * @deprecated use showAuthenticationDialog(Activity fromActivity, String provider) instead
+     *
+     * @param provider
+     *  See showAuthenticationDialog(Activity fromActivity, String provider)
+     *
+     * @param skipReturningUserLandingPage
+     *  See showAuthenticationDialog(Activity fromActivity, String provider)
+     */
+    public void showAuthenticationDialog(Boolean skipReturningUserLandingPage, String provider) {
+        showAuthenticationDialog(mActivityContext, skipReturningUserLandingPage, provider);
+    }
+    /**
      * Begins authentication.  The library will
      * start a new Android Activity and take the user through the sign-in process.
+     *
+     * @param fromActivity
+     *  The Activity from which to show the authentication dialog
      *
      * @param skipReturningUserLandingPage
      *  Prevents the dialog from opening to the returning-user landing page when \c true.  That is, the
@@ -531,14 +570,34 @@ public class JREngage {
      * @note
      *  If you always want to force the user to re-enter his/her credentials, pass \c true to the method
      *  setAlwaysForceReauthentication().
-     **/
-    public void showAuthenticationDialog(Boolean skipReturningUserLandingPage, String provider) {
-        showAuthenticationDialog(skipReturningUserLandingPage, provider, null);
+     */
+    public void showAuthenticationDialog(Activity fromActivity, 
+                                         Boolean skipReturningUserLandingPage, 
+                                         String provider) {
+        showAuthenticationDialog(fromActivity, skipReturningUserLandingPage, provider, null);
     }
 
     /**
+     * @deprecated use showAuthenticationDialog(Activity fromActivity, Boolean skipReturningUserLandingPage,
+     *      String provider, Class&lt;? extends JRUiCustomization> uiCustomiztion) instead.
+     * @param skipReturningUserLandingPage
+     *  See the undeprecated method
+     * @param provider
+     *  See the undeprecated method
+     * @param uiCustomization
+     *  See the undeprecated method
+     */
+    public void showAuthenticationDialog(Boolean skipReturningUserLandingPage,
+                                         String provider,
+                                         Class<? extends JRUiCustomization> uiCustomization) {
+        showAuthenticationDialog(mActivityContext, skipReturningUserLandingPage, provider, uiCustomization);
+    }
+    /**
      * Begins authentication.  The library will
      * start a new Android Activity and take the user through the sign-in process.
+     *
+     * @param fromActivity
+     *  The Activity from which to show the authentication dialog
      *
      * @param skipReturningUserLandingPage
      *  Prevents the dialog from opening to the returning-user landing page when \c true.  That is, the
@@ -557,7 +616,8 @@ public class JREngage {
      *  If you always want to force the user to re-enter his/her credentials, pass \c true to the method
      *  setAlwaysForceReauthentication().
      **/
-    public void showAuthenticationDialog(Boolean skipReturningUserLandingPage, 
+    public void showAuthenticationDialog(Activity fromActivity,
+                                         Boolean skipReturningUserLandingPage,
                                          String provider,
                                          Class<? extends JRUiCustomization> uiCustomization) {
         if (checkSessionDataError()) return;
@@ -567,15 +627,15 @@ public class JREngage {
         Intent i;
         JRProvider p = mSession.getProviderByName(provider);
         if (p == null) {
-            i = JRFragmentHostActivity.createProviderListIntent(mActivity);
+            i = JRFragmentHostActivity.createProviderListIntent(fromActivity);
             if (uiCustomization != null) {
                 i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS, uiCustomization.getName());
             }
         } else {
             if (p.requiresInput()) {
-                i = JRFragmentHostActivity.createUserLandingIntent(mActivity);
+                i = JRFragmentHostActivity.createUserLandingIntent(fromActivity);
             } else {
-                i = JRFragmentHostActivity.createWebViewIntent(mActivity);
+                i = JRFragmentHostActivity.createWebViewIntent(fromActivity);
             }
             i.putExtra(JRFragmentHostActivity.JR_PROVIDER, provider);
             p.setForceReauth(true);
@@ -583,34 +643,46 @@ public class JREngage {
         }
 
         i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_AUTH);
-        mActivity.startActivity(i);
+        fromActivity.startActivity(i);
+    }
+
+    /**
+     * @deprecated use showSocialPublishingDialog(Activity fromActivity, JRActivityObject activity) instead
+     * @param activity
+     *      See the undeprecated method
+     */
+    public void showSocialPublishingDialog(JRActivityObject activity) {
+        showSocialPublishingDialog(mActivityContext, activity);
     }
 
     /**
      * Begin social publishing.  The library will start a new Android \e Activity enabling the user to
      * publish a social share.  The user will also be taken through the sign-in process, if necessary.
      *
+     * @param fromActivity
+     *  The Activity from which to show the authentication dialog
+     *
      * @param activity
      *   The activity you wish to share
      **/
-    public void showSocialPublishingDialog(JRActivityObject activity) {
+    public void showSocialPublishingDialog(Activity fromActivity, JRActivityObject activity) {
         JREngage.logd(TAG, "[showSocialPublishingDialog]");
         /* If there was error configuring the library, sessionData.error will not be null. */
         if (checkSessionDataError()) return;
         checkNullJRActivity(activity);
         mSession.setJRActivity(activity);
 
-        Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(mActivity, false);
+        Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(fromActivity, false);
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
         i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
-        mActivity.startActivity(i);
+        fromActivity.startActivity(i);
     }
 
     /**
      * Begin social publishing.  The library will display a new Android \e Fragment enabling the user to
      * publish a social share.  The user will also be taken through the sign-in process, if necessary.
      *
-     * @param activity
+     * @param jrActivity
      *   The activity you wish to share
      * @param hostActivity
      *   The android.support.v4.app.FragmentActivity which will host the publishing fragment
@@ -628,7 +700,7 @@ public class JREngage {
      * @param customExitAnimation
      *   Set a custom exit animation.  May be null if-and-only-if customEnterAnimation is also null
      **/
-    public void showSocialPublishingFragment(JRActivityObject activity,
+    public void showSocialPublishingFragment(JRActivityObject jrActivity,
                                              FragmentActivity hostActivity,
                                              int containerId,
                                              boolean addToBackStack,
@@ -637,9 +709,9 @@ public class JREngage {
                                              Integer customEnterAnimation,
                                              Integer customExitAnimation) {
         JREngage.logd(TAG, "[showSocialPublishingFragment]");
-        checkNullJRActivity(activity);
+        checkNullJRActivity(jrActivity);
 
-        JRUiFragment f = createSocialPublishingFragment(activity);
+        JRUiFragment f = createSocialPublishingFragment(jrActivity);
         Bundle arguments = new Bundle();
         arguments.putInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
         f.setArguments(arguments);
@@ -659,35 +731,35 @@ public class JREngage {
      * This simple variant displays the Fragment, does not add it to the Fragment back stack, and uses default
      * animations.
      *
-     * @param activity
+     * @param jrActivity
      *   The activity you wish to share
      * @param hostActivity
      *   The android.support.v4.app.FragmentActivity which will host the publishing fragment
      * @param containerId
      *   The resource ID of a FrameLayout to embed the publishing fragment in
      **/
-    public void showSocialPublishingFragment(JRActivityObject activity,
+    public void showSocialPublishingFragment(JRActivityObject jrActivity,
                                              FragmentActivity hostActivity,
                                              int containerId) {
-        showSocialPublishingFragment(activity, hostActivity, containerId, false, null, null, null, null);
+        showSocialPublishingFragment(jrActivity, hostActivity, containerId, false, null, null, null, null);
     }
 
     /**
      * Create a new android.support.v4.Fragment for social publishing.  Use this if you wish to manage the
      * FragmentTransaction yourself.
      *
-     * @param activity
+     * @param jrActivity
      *  The JRActivityObject to share, may not be null
      *
      * @return
      *  The created Fragment, or null upon error (caused by library configuration failure)
      */
-    public JRPublishFragment createSocialPublishingFragment(JRActivityObject activity) {
+    public JRPublishFragment createSocialPublishingFragment(JRActivityObject jrActivity) {
         if (checkSessionDataError()) return null;
 
-        checkNullJRActivity(activity);
+        checkNullJRActivity(jrActivity);
 
-        mSession.setJRActivity(activity);
+        mSession.setJRActivity(jrActivity);
         
         Bundle arguments = new Bundle();
         arguments.putInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);

@@ -54,6 +54,7 @@ import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSession;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 

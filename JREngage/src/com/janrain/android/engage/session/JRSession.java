@@ -49,10 +49,9 @@ import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.ui.JRFragmentHostActivity;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Archiver;
-import com.janrain.android.engage.utils.ListUtils;
+import com.janrain.android.engage.utils.CollectionUtils;
 import com.janrain.android.engage.utils.Prefs;
 import com.janrain.android.engage.utils.StringUtils;
 import org.apache.http.HttpStatus;
@@ -168,10 +167,11 @@ public class JRSession implements JRConnectionManagerDelegate {
 		mTokenUrl = tokenUrl;
 
         ApplicationInfo ai = AndroidUtils.getApplicationInfo();
-        String appName = getContext().getPackageManager().getApplicationLabel(ai).toString();
-        appName += ":" + getContext().getPackageName();
+        String appName = getApplicationContext().getPackageManager().getApplicationLabel(ai).toString();
+        appName += ":" + getApplicationContext().getPackageName();
         mUrlEncodedAppName = AndroidUtils.urlEncode(appName);
-        mUrlEncodedLibraryVersion = AndroidUtils.urlEncode(getContext().getString(R.string.jr_git_describe));
+        mUrlEncodedLibraryVersion =
+                AndroidUtils.urlEncode(getApplicationContext().getString(R.string.jr_git_describe));
 
         try {
             if (!mUrlEncodedLibraryVersion.equals(Prefs.getString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, ""))) {
@@ -242,7 +242,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 	}
 
     private String getString(int resourceId) {
-        return getContext().getString(resourceId);
+        return getApplicationContext().getString(resourceId);
     }
 
     public JREngageError getError() {
@@ -389,7 +389,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             if (tag.equals(TAG_GET_CONFIGURATION)) {
                 Log.e(TAG, "[connectionDidFail] for getConfiguration");
                 mError = new JREngageError(
-                        getContext().getString(R.string.jr_getconfig_network_failure_message),
+                        getApplicationContext().getString(R.string.jr_getconfig_network_failure_message),
                         ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
                         JREngageError.ErrorType.CONFIGURATION_FAILED,
                         ex);
@@ -441,7 +441,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 
         JRDictionary responseDict;
         try {
-            responseDict = JRDictionary.fromJSON(payload);
+            responseDict = JRDictionary.fromJsonString(payload);
         } catch (JSONException e) {
             responseDict = null;
         }
@@ -469,7 +469,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 
             if (errorDict == null) {
                 publishError = new JREngageError(
-                        getContext().getString(R.string.jr_problem_sharing),
+                        getApplicationContext().getString(R.string.jr_problem_sharing),
                         SocialPublishingError.FAILED,
                         ErrorType.PUBLISH_FAILED);
             } else {
@@ -526,7 +526,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                     case 1000: /* Extracting code failed; Fall through. */
                     default: // TODO Other errors (find them)
                         publishError = new JREngageError(
-                                getContext().getString(R.string.jr_problem_sharing),
+                                getApplicationContext().getString(R.string.jr_problem_sharing),
                                 SocialPublishingError.FAILED,
                                 ErrorType.PUBLISH_FAILED);
                         break;
@@ -576,7 +576,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                 } else {
                     Log.e(TAG, "failed to parse response for getConfiguration");
                     mError = new JREngageError(
-                            getContext().getString(R.string.jr_getconfig_parse_error_message),
+                            getApplicationContext().getString(R.string.jr_getconfig_parse_error_message),
                             ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
                             ErrorType.CONFIGURATION_FAILED);
                 }
@@ -630,7 +630,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         JRDictionary jsonDict = null;
         Exception jsonEx = null;
         try {
-            jsonDict = JRDictionary.fromJSON(dataStr);
+            jsonDict = JRDictionary.fromJsonString(dataStr);
         } catch (JSONException e) {
             Log.e(TAG, "[finishGetConfiguration] json error: ", e);
             jsonEx = e;
@@ -640,7 +640,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         if (jsonDict == null) {
             Log.e(TAG, "[finishGetConfiguration] failed.");
             return new JREngageError(
-                    getContext().getString(R.string.jr_getconfig_parse_error_message),
+                    getApplicationContext().getString(R.string.jr_getconfig_parse_error_message),
                     ConfigurationError.JSON_ERROR,
                     ErrorType.CONFIGURATION_FAILED,
                     jsonEx);
@@ -713,7 +713,7 @@ public class JRSession implements JRConnectionManagerDelegate {
              * is, the lists of auth and sharing providers are null), go ahead and update it too.
              * The dialogs won't try and do anything until we're done updating the lists. */
             if (!isUiShowing() ||
-                    (ListUtils.isEmpty(mAuthProviders) && ListUtils.isEmpty(mSharingProviders))) {
+                    (CollectionUtils.isEmpty(mAuthProviders) && CollectionUtils.isEmpty(mSharingProviders))) {
                 mNewEtag = eTag;
                 return finishGetConfiguration(dataStr);
             }
@@ -842,7 +842,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     private void deleteWebViewCookiesForDomain(String domain, boolean secure) {
-        CookieSyncManager csm = CookieSyncManager.createInstance(getContext());
+        CookieSyncManager csm = CookieSyncManager.createInstance(getApplicationContext());
         CookieManager cm = CookieManager.getInstance();
 
         /* http://code.google.com/p/android/issues/detail?id=19294 */
@@ -1162,7 +1162,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
     }
 
-    private Context getContext() {
-        return JREngage.getActivity();
+    private Context getApplicationContext() {
+        return JREngage.getApplicationContext();
     }
 }

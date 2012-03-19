@@ -84,7 +84,8 @@ public class JRAuthenticatedUser implements Serializable {
         mIdentifier = mobileEndPointResponse.getAsDictionary(KEY_AUTH_INFO).getAsDictionary(KEY_PROFILE)
                 .getAsString(KEY_IDENTIFIER);
         mWelcomeMessage = welcomeMessage == null ?
-                getContext().getResources().getString(R.string.jr_welcome_back_message) + mPreferredUsername
+                getApplicationContext().getResources().getString(R.string.jr_welcome_back_message)
+                        + mPreferredUsername
                 : welcomeMessage;
         mDisplayName = mobileEndPointResponse.getAsDictionary(KEY_AUTH_INFO).getAsDictionary(KEY_PROFILE)
                 .getAsString(KEY_DISPLAY_NAME);
@@ -125,14 +126,14 @@ public class JRAuthenticatedUser implements Serializable {
         return AndroidUtils.urlEncode(mPhoto);
     }
 
-    private Context getContext() {
-        return JREngage.getActivity();
+    private Context getApplicationContext() {
+        return JREngage.getApplicationContext();
     }
 
     public void downloadProfilePic(final ProfilePicAvailableListener callback) {
         FileInputStream fis;
         try {
-            fis = getContext().openFileInput("userpic~" + getCachedProfilePicKey());
+            fis = getApplicationContext().openFileInput("userpic~" + getCachedProfilePicKey());
         } catch (ProfilePicMissingException e) {
             return;
         } catch (FileNotFoundException e) {
@@ -153,8 +154,8 @@ public class JRAuthenticatedUser implements Serializable {
                                                                String requestUrl,
                                                                Object tag) {
                             try {
-                                FileOutputStream fos = getContext().openFileOutput("userpic~" +
-                                       getCachedProfilePicKey(), Activity.MODE_PRIVATE);
+                                FileOutputStream fos = getApplicationContext().openFileOutput("userpic~" +
+                                        getCachedProfilePicKey(), Activity.MODE_PRIVATE);
                                 fos.write(payload);
                                 fos.close();
                                 Bitmap bitmap = BitmapFactory.decodeByteArray(payload, 0, payload.length);
@@ -171,7 +172,7 @@ public class JRAuthenticatedUser implements Serializable {
 
     public void deleteCachedProfilePic() {
         try {
-            getContext().deleteFile("userpic~" + getCachedProfilePicKey());
+            getApplicationContext().deleteFile("userpic~" + getCachedProfilePicKey());
         } catch (ProfilePicMissingException ignore) {}
     }
 

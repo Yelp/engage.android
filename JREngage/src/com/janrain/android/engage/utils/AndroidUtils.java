@@ -125,22 +125,22 @@ public class AndroidUtils {
     public static final int SDK_INT = getAndroidSdkInt();
 
     public static ApplicationInfo getApplicationInfo() {
-        String packageName = JREngage.getActivity().getPackageName();
+        String packageName = JREngage.getApplicationContext().getPackageName();
         try {
-            return JREngage.getActivity().getPackageManager().getApplicationInfo(packageName, 0);
+            return JREngage.getApplicationContext().getPackageManager().getApplicationInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static int scaleDipToPixels(int dip) {
-        Context c = JREngage.getActivity();
+        Context c = JREngage.getApplicationContext();
         final float scale = c.getResources().getDisplayMetrics().density;
         return (int) (((float) dip) * scale);
     }
 
     private static int getScreenSize() {
-        int screenConfig = JREngage.getActivity().getResources().getConfiguration().screenLayout;
+        int screenConfig = JREngage.getApplicationContext().getResources().getConfiguration().screenLayout;
         screenConfig &= Configuration.SCREENLAYOUT_SIZE_MASK;
         return screenConfig;
     }
@@ -150,13 +150,13 @@ public class AndroidUtils {
     }
 
     public static boolean isLandscape() {
-        return JREngage.getActivity().getResources().getConfiguration().orientation ==
+        return JREngage.getApplicationContext().getResources().getConfiguration().orientation ==
                 Configuration.ORIENTATION_LANDSCAPE;
     }
 
     //public static int getScreenWidth() {
     //    DisplayMetrics metrics = new DisplayMetrics();
-    //    JREngage.getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+    //    JREngage.getApplicationContext().getWindowManager().getDefaultDisplay().getMetrics(metrics);
     //    metrics.get
     //}
 
