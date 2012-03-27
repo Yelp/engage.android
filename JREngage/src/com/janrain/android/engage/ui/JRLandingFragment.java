@@ -123,7 +123,6 @@ public class JRLandingFragment extends JRUiFragment {
             mSignInButton.setTextColor(getColor(android.R.color.white));
         }
 
-        if (getActivity() instanceof JRFragmentHostActivity) getActivity().setTitle(getCustomTitle());
         mLogo.setImageDrawable(mProvider.getProviderLogo(getActivity()));
 
         if (mProvider.getName().equals("openid")) {
@@ -271,6 +270,9 @@ public class JRLandingFragment extends JRUiFragment {
         JRProvider provider = mSession.getCurrentlyAuthenticatingProvider();
         if (provider.requiresInput()) {
             return provider.getUserInputDescriptor();
+        } else if (getCustomUiConfiguration() != null &&
+                getCustomUiConfiguration().mLandingTitle != null) {
+            return getCustomUiConfiguration().mLandingTitle;
         } else {
             return getString(R.string.jr_landing_default_custom_title);
         }
@@ -293,5 +295,10 @@ public class JRLandingFragment extends JRUiFragment {
         super.setFragmentResult(result);
         if (mSession == null) return;
         if (isSpecificProviderFlow()) mSession.triggerAuthenticationDidCancel();
+    }
+
+    @Override
+    /*package*/ boolean shouldShowTitleWhenDialog() {
+        return getCustomUiConfiguration() != null && getCustomUiConfiguration().mShowLandingTitleWhenDialog;
     }
 }

@@ -688,4 +688,16 @@ public class JRWebViewFragment extends JRUiFragment {
             mSession.triggerAuthenticationDidCancel();
         }
     }
+
+    @Override
+    /*package*/ boolean shouldShowTitleWhenDialog() {
+        return getCustomUiConfiguration() != null &&
+                getCustomUiConfiguration().mShowWebViewTitleWhenDialog;
+    }
+
+    @Override
+    String getCustomTitle() {
+        if (getCustomUiConfiguration() != null) return getCustomUiConfiguration().mWebViewTitle;
+        return null;
+    }
 }

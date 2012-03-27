@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- {Selects between Theme.Dialog, and Theme.Holo.Light.Dialog} -->
+    <style name="jr_dialog" parent="@android:style/Theme.Dialog"/>
 
-    <!-- I don't think this is ever used because we only use jr_dialog on v11 devices -->
-    <style name="jr_dialog" parent="@android:style/Theme.Dialog">
-    </style>
+    <!-- {Selects between Theme.Light and Theme.Holo.Light} -->
+    <style name="jr_fullscreen" parent="android:style/Theme.Light" />
 
-    <!-- This is used definitely -->
-    <!-- v11 just switches it to Theme.Holo.Light.NoTitleBar -->
-    <style name="jr_fullscreen_no_title" parent="@android:style/Theme.Light.NoTitleBar">
-    </style>
+    <!-- TOO fix doc comment-->
+    <!-- {Selects between Theme.Light.NoTitleBar and Theme.Holo.Light.NoActionBar} -->
+    <!--<style name="jr_fullscreen_no_title" parent="@android:style/Theme.Light.NoTitleBar" />-->
+    <style name="jr_fullscreen_no_title" parent="jr_fullscreen"/>
 
-    <!-- This too, v11 makes it Theme.Holo.Light though -->
-    <style name="jr_fullscreen" parent="android:style/Theme.Light">
-    </style>
+    <!-- Dark versions of the above -->
+    <style name="jr_dialog_dark" parent="@android:style/Theme.Dialog"/>
+    <style name="jr_fullscreen_dark" parent="android:style/Theme"/>
+    <style name="jr_fullscreen_no_title_dark" parent="jr_fullscreen_dark"/>
 
     <style name="jr_about_dialog_text">
         <item name="android:textColor">@android:color/white</item>

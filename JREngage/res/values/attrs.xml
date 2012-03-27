@@ -5,4 +5,7 @@
         <attr name="jr_color" format="color"/>
     </declare-styleable>
 
+    <attr name="jrCustomLandingStyle" format="reference"/>
+    <attr name="jrCustomLandingRootViewStyle" format="reference"/>
+
 </resources>

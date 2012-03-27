@@ -4,6 +4,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
+    style="?jrCustomLandingRootViewStyle"
     >
 
     <!--
@@ -13,9 +15,9 @@
       -->
     <LinearLayout
         android:id="@+id/jr_landing_dialog"
-        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         android:layout_gravity="center_horizontal"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
@@ -23,6 +25,9 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
+
+        android:orientation="vertical"
+        style="?jrCustomLandingStyle"
         >
 
         <ImageView
@@ -74,7 +79,6 @@
 
             android:orientation="horizontal"
             >
-            <!--android:id="@+id/jr_landing_buttons"-->
 
             <Button
                 android:id="@+id/jr_landing_switch_account_button"
@@ -84,9 +88,9 @@
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
 
+                android:textSize="14sp"
                 android:text="@string/jr_landing_switch_account_button_text"
                 android:visibility="invisible"
-                style="?android:textAppearanceSmall"
                 />
 
             <com.janrain.android.engage.ui.ColorButton
@@ -97,8 +101,8 @@
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
 
+                android:textSize="22sp"
                 android:text="@string/jr_landing_signin_button_text"
-                style="?android:textAppearanceLarge"
                 />
 
         </LinearLayout>

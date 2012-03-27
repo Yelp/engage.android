@@ -1178,4 +1178,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         if (getCustomUiConfiguration() != null) title = getCustomUiConfiguration().mSharingTitle;
         return title;
     }
+
+    @Override
+    public boolean shouldShowTitleWhenDialog() {
+        return getCustomUiConfiguration() != null && getCustomUiConfiguration().mShowSharingTitleWhenDialog;
+    }
 }

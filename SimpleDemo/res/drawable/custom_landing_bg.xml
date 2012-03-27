@@ -31,17 +31,10 @@
   ~  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   ~  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
   -->
+
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid
-            android:color="@color/jr_janrain_lightblue" />
-    <stroke
-            android:width="1dp"
-            android:color="#FF565656" />
-    <padding
-            android:left="7dp"
-            android:top="7dp"
-            android:right="7dp"
-            android:bottom="7dp" />
-    <corners
-            android:radius="8dp"/>
+
+    <!--<solid android:color="#ccc"/>-->
+    <solid android:color="#444"/>
+
 </shape>

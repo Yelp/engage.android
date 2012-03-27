@@ -130,9 +130,7 @@ public final class JRDictionary extends HashMap<String, Object> {
             jsonStringer.endObject();
         } else if (object instanceof Object[]) {
             jsonStringer.array();
-            for (Object o : (Object[]) object) {
-                jsonify(o, jsonStringer);
-            }
+            for (Object o : (Object[]) object) jsonify(o, jsonStringer);
             jsonStringer.endArray();
         } else if (object instanceof Collection) {
             jsonify(((Collection) object).toArray(), jsonStringer);

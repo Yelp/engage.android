@@ -168,11 +168,6 @@ public class JRProviderListFragment extends JRUiFragment {
             }
 
             if (customUiConfiguration.mAuthenticationBackgroundDrawable != null) {
-//                FrameLayout outerContainer =
-//                        (FrameLayout) inflatedLayout.findViewById(R.id.jr_provider_list_container);
-//                doCustomViewCreate(customUiConfiguration.mAuthenticationBackgroundDrawable, inflater,
-//                        savedInstanceState, outerContainer);
-//                outerContainer.addView(customUiConfiguration.mAuthenticationBackgroundDrawable.getView(), 0);
                 mListView.setBackgroundDrawable(customUiConfiguration.mAuthenticationBackgroundDrawable);
                 mListView.setCacheColorHint(0);
             }
@@ -214,7 +209,7 @@ public class JRProviderListFragment extends JRUiFragment {
      */
     private ListView.OnItemClickListener itemClickListener = new ListView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            JRProvider provider = mAdapter.getItem(position);
+            JRProvider provider = mAdapter.getItem((int) id);
             mSession.setCurrentlyAuthenticatingProvider(provider);
 
             if (provider.requiresInput() ||
@@ -336,6 +331,8 @@ public class JRProviderListFragment extends JRUiFragment {
     }
     
     /*package*/ void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh, JRSession session) {
+        super.onFragmentHostActivityCreate(jrfh, session);
+
         /* check and see whether we should start the landing page */
         /* this is delegated to from JRFragmentHostActivity.onCreate(...) so that the provider list skips */
         /* rendering it's UI */
@@ -359,5 +356,11 @@ public class JRProviderListFragment extends JRUiFragment {
         String title = null;
         if (getCustomUiConfiguration() != null) title = getCustomUiConfiguration().mProviderListTitle;
         return title;
+    }
+
+    @Override
+    /*package*/ boolean shouldShowTitleWhenDialog() {
+        return getCustomUiConfiguration() != null &&
+                getCustomUiConfiguration().mShowProviderListTitleWhenDialog;
     }
 }

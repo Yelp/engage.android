@@ -38,10 +38,12 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
@@ -51,17 +53,22 @@ import com.janrain.android.engage.utils.AndroidUtils;
 public class JRFragmentHostActivity extends FragmentActivity {
     private static final String TAG = JRFragmentHostActivity.class.getSimpleName();
 
-    public static final String JR_PROVIDER = "JR_PROVIDER";
+    public static final String JR_UI_CUSTOMIZATION_CLASS = "jr_ui_customization_class";
     public static final String JR_FRAGMENT_ID = "com.janrain.android.engage.JR_FRAGMENT_ID";
+    public static final String JR_PROVIDER = "JR_PROVIDER";
     public static final int JR_PROVIDER_LIST = 4;
     public static final int JR_LANDING = 1;
     public static final int JR_WEBVIEW = 2;
     public static final int JR_PUBLISH = 3;
+    private static final String JR_OPERATION_MODE = "JR_OPERATION_MODE";
+    private static final int JR_DIALOG = 0;
+    private static final int JR_FULLSCREEN = 1;
+    private static final int JR_FULLSCREEN_NO_TITLE = 2;
+
     public static final String ACTION_FINISH_FRAGMENT = "com.janrain.android.engage.ACTION_FINISH_FRAGMENT";
     public static final String EXTRA_FINISH_FRAGMENT_TARGET =
             "com.janrain.android.engage.EXTRA_FINISH_FRAGMENT_TARGET";
     public static final String FINISH_TARGET_ALL = "JR_FINISH_ALL";
-    public static final String JR_UI_CUSTOMIZATION_CLASS = "jr_ui_customization_class";
 
     public static final IntentFilter FINISH_INTENT_FILTER = new IntentFilter(ACTION_FINISH_FRAGMENT);
 
@@ -112,13 +119,41 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 throw new IllegalFragmentIdException(getFragmentId());
         }
         
-        mUiFragment.onFragmentHostActivityCreate(this, mSession);
-
         Bundle fragArgs = new Bundle();
         fragArgs.putInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE, getFlowMode());
+        fragArgs.putAll(getIntent().getExtras());
         mUiFragment.setArguments(fragArgs);
 
-        if (shouldBePhoneSizedDialog()) getTheme().applyStyle(R.style.jr_dialog_phone_sized, true);
+        mUiFragment.onFragmentHostActivityCreate(this, mSession);
+
+        if (shouldBeDialog()) {
+            TypedValue dialogThemeVal = new TypedValue();
+            getTheme().resolveAttribute(android.R.attr.dialogTheme, dialogThemeVal, false);
+            if (dialogThemeVal.type != 0) {
+                getTheme().applyStyle(dialogThemeVal.data, true);
+            } else {
+                /* dialogTheme attribute wasn't added to themes until API 11 so just use Theme.Dialog if
+                 * by some freak of nature there's an XLarge screen running < API 11
+                 */
+                Log.e(TAG, "Unexpected dialog mode without dialogTheme attribute defined in the current " +
+                        "theme");
+                getTheme().applyStyle(android.R.style.Theme_Dialog, true);
+            }
+
+            if (shouldBePhoneSizedDialog()) {
+                getTheme().applyStyle(R.style.jr_dialog_phone_sized, true);
+            } else {
+                getTheme().applyStyle(R.style.jr_dialog_71_percent, true);
+            }
+
+            if (!mUiFragment.shouldShowTitleWhenDialog()) {
+                getTheme().applyStyle(R.style.jr_disable_title_and_action_bar_style, true);
+            }
+        } else if (getIntent().getExtras().getInt(JR_OPERATION_MODE) == JR_FULLSCREEN_NO_TITLE) {
+            getTheme().applyStyle(R.style.jr_disable_title_and_action_bar_style, true);
+        } else if (getIntent().getExtras().getInt(JR_OPERATION_MODE) == JR_FULLSCREEN) {
+            getTheme().applyStyle(R.style.jr_fullscreen_style, true);
+        }
 
         setContentView(R.layout.jr_fragment_host_activity);
 
@@ -127,12 +162,20 @@ public class JRFragmentHostActivity extends FragmentActivity {
             // CMFL -> dialog mode on a tablet
             if (shouldBePhoneSizedDialog()) {
                 // Do the actual setting of the target size to achieve phone sized dialog.
-                ((CustomMeasuringFrameLayout) fragmentContainer).setTargetHeightDip(480);
-                ((CustomMeasuringFrameLayout) fragmentContainer).setTargetWidthDip(320);
+                ((CustomMeasuringFrameLayout) fragmentContainer).setTargetSizeDip(320, 480);
+//                getWindow().setFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND,
+//                        WindowManager.LayoutParams.FLAG);
+                getWindow().makeActive();
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(getWindow().getAttributes());
+                lp.width = AndroidUtils.scaleDipToPixels(320);
+                // After discussing it with Lilli we think it makes sense to let the height of the window
+                // grow if the title is enabled
+//                lp.height = AndroidUtils.scaleDipToPixels(480);
+                getWindow().setAttributes(lp);
             }
         }
 
-        mUiFragment.setArguments(getIntent().getExtras());
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.jr_fragment_container, mUiFragment)
@@ -145,8 +188,12 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
     }
 
-    /*package*/ boolean shouldBePhoneSizedDialog() {
-        return AndroidUtils.isXlarge() && !(mUiFragment instanceof JRPublishFragment);
+    private boolean shouldBePhoneSizedDialog() {
+        return shouldBeDialog() && !(mUiFragment instanceof JRPublishFragment);
+    }
+
+    private boolean shouldBeDialog() {
+        return AndroidUtils.isXlarge();
     }
 
     private int getFragmentId() {
@@ -157,26 +204,8 @@ public class JRFragmentHostActivity extends FragmentActivity {
         return getIntent().getExtras().getInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE);
     }
 
-    private boolean isSharingFlow() {
-        return getFlowMode() == JRUiFragment.JR_FRAGMENT_FLOW_SHARING;
-    }
-
-    private boolean isAuthFlow() {
-        return getFlowMode() == JRUiFragment.JR_FRAGMENT_FLOW_AUTH;
-    }
-    
-    private boolean isSpecificProviderFlow() {
-        return getSpecificProvider() != null;
-    }
-    
     private String getSpecificProvider() {
         return getIntent().getExtras().getString(JR_PROVIDER);
-    }
-
-    @Override
-    public void setTheme(int r) {
-        JREngage.logd(TAG, "setTheme: " + r + " (" + Integer.toHexString(r) + ")");
-        super.setTheme(r);
     }
 
     @Override
@@ -250,16 +279,20 @@ public class JRFragmentHostActivity extends FragmentActivity {
     }
 
     public static Intent createIntentForCurrentScreen(Activity activity, boolean showTitleBar) {
+        Intent intent = new Intent(activity, JRFragmentHostActivity.class);
         if (AndroidUtils.isSmallNormalOrLargeScreen()) {
             if (showTitleBar) {
-                return new Intent(activity, Fullscreen.class);
+                intent.putExtra(JR_OPERATION_MODE, JR_FULLSCREEN);
+//                return new Intent(activity, Fullscreen.class);
             } else {
-                return new Intent(activity, FullscreenNoTitleBar.class);
+                intent.putExtra(JR_OPERATION_MODE, JR_FULLSCREEN_NO_TITLE);
+//                return new Intent(activity, FullscreenNoTitleBar.class);
             }
         } else { // Honeycomb (because the screen is large+)
             // ignore showTitleBar, this activity dynamically enables and disables its title
-            return new Intent(activity, JRFragmentHostActivity.class);
+            intent.putExtra(JR_OPERATION_MODE, JR_DIALOG);
         }
+        return intent;
     }
 
     public static Intent createProviderListIntent(Activity activity) {
@@ -281,7 +314,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
     }
 
     /* ~aliases for alternative activity declarations for this activity */
-    public static class Fullscreen extends JRFragmentHostActivity {}
+//    public static class Fullscreen extends JRFragmentHostActivity {}
 
-    public static class FullscreenNoTitleBar extends Fullscreen {}
+//    public static class FullscreenNoTitleBar extends Fullscreen {}
 }

@@ -32,13 +32,16 @@
 
 <resources>
 
-    <!-- A custom iPhone inspired grey rounded rect background -->
-    <style name="custom_landing_box">
-        <item name="android:background">@drawable/custom_landing_box</item>
+    <style name="custom_fullscreen" parent="jr_fullscreen">
+        <item name="jrCustomLandingStyle">@style/custom_landing_box</item>
+        <item name="jrCustomLandingRootViewStyle">@style/custom_landing_root</item>
     </style>
 
-    <style name="custom_landing_root">
-        <item name="android:background">@drawable/custom_landing_bg</item>
+    <style name="custom_fullscreen_dark" parent="jr_fullscreen_dark">
+        <item name="android:windowIsFloating">true</item>
+        <!--<item name="android:textColorPrimary">@android:color/primary_text_light</item>-->
+        <!--<item name="android:textColorSecondary">@android:color/secondary_text_light</item>-->
+        <!--<item name="jrCustomLandingStyle">@style/custom_landing_box</item>-->
     </style>
 
 </resources>

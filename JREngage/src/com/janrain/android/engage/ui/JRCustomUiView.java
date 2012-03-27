@@ -53,7 +53,7 @@ public abstract class JRCustomUiView extends JRUiCustomization {
      * @internal
      * @hide
      */
-    public final View doOnCreateView(JRUiFragment fragment,
+    /*package*/ final View doOnCreateView(JRUiFragment fragment,
                                Context context,
                                LayoutInflater inflater,
                                ViewGroup container,

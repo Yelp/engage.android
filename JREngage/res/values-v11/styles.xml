@@ -1,31 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--<style name="jr_dialog" parent="@android:style/Theme.Holo.Light.DialogWhenLarge.NoActionBar">-->
-    <style name="jr_dialog" parent="@android:style/Theme.Holo.Light.DialogWhenLarge.NoActionBar">
+
+    <!-- {Selects between Theme.Dialog, and Theme.Holo.Light.DialogWhenLarge.NoActionBar} -->
+    <style name="jr_dialog" parent="@android:style/Theme.Holo.Light.DialogWhenLarge.NoActionBar"/>
+
+    <!-- {Selects between Theme.Light and Theme.Holo.Light} -->
+    <style name="jr_fullscreen" parent="@android:style/Theme.Holo.Light"/>
+
+    <!-- No longer needed -->
+    <!-- TODO fix doc comment-->
+    <!-- {Selects between Theme.Light.NoTitleBar and what would be Theme.Holo.Light.NoActionBar but a bug
+        prevents this: http://code.google.com/p/android/issues/detail?id=15862 -->
+    <!--<style name="jr_fullscreen_no_title" parent="@android:style/Theme.Holo.Light.NoActionBar"/>-->
+
+    <style name="jr_dialog_dark" parent="@android:style/Theme.Holo.DialogWhenLarge.NoActionBar"/>
+    <style name="jr_fullscreen_dark" parent="android:style/Theme.Holo"/>
+
+    <!-- No longer needed -->
+    <!--<style name="jr_fullscreen_no_title_dark" parent="@android:style/Theme.NoTitleBar"/>-->
+
+    <style name="jr_dialog_71_percent">
         <item name="android:windowMinWidthMinor">71%</item>
         <item name="android:windowMinWidthMajor">71%</item>
     </style>
 
-    <!--<style name="jr_dialog_phone_sized" parent="jr_dialog">-->
     <style name="jr_dialog_phone_sized">
         <item name="android:windowMinWidthMinor">320dip</item>
         <item name="android:windowMinWidthMajor">320dip</item>
     </style>
 
-    <!-- This would be Theme.Holo.Light.NoActionBar but a bug prevents this: -->
-    <!-- http://code.google.com/p/android/issues/detail?id=15862 -->
-    <style name="jr_fullscreen_no_title" parent="@android:style/Theme.Holo.Light">
+    <style name="jr_disable_title_and_action_bar_style">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="jr_fullscreen" parent="@android:style/Theme.Holo.Light">
-        <item name="android:actionBarStyle">@style/custom_actionbar</item>
-    </style>
-
-    <style name="custom_actionbar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:displayOptions">useLogo|showHome|showTitle|homeAsUp</item>
-    </style>
+    <style name="jr_fullscreen_style"/>
 
     <style name="jr_about_dialog_text"/>
 

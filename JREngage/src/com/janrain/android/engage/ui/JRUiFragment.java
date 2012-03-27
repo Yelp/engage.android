@@ -156,46 +156,8 @@ public abstract class JRUiFragment extends Fragment {
         if (!isEmbeddedMode()) setRetainInstance(true);
         setHasOptionsMenu(true);
 
-        String uiCustomizationName =
-                getArguments().getString(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS);
-
-        if (uiCustomizationName != null) {
-            try {
-                Class classRef = Class.forName(uiCustomizationName);
-                Constructor c = classRef.getConstructor(Context.class);
-                final JRUiCustomization uiCustomization =
-                        (JRUiCustomization) c.newInstance(getActivity().getApplicationContext());
-                if (uiCustomization instanceof JRCustomUiConfiguration) {
-                    mCustomUiConfiguration = (JRCustomUiConfiguration) uiCustomization;
-                } else if (uiCustomization instanceof JRCustomUiView) {
-                    mCustomUiConfiguration = new JRCustomUiConfiguration(){
-                        {
-                            //Type safe because the type of the instantiated instance from the
-                            //class ref is run time type checked
-                            mProviderListHeader = (JRCustomUiView) uiCustomization;
-                        }
-                    };
-                } else {
-                    Log.e(TAG, "Unexpected class from: " + uiCustomizationName);
-                    //Not possible at the moment, there are only two subclasses of abstract JRUiCustomization
-                }
-
-                if (getCustomTitle() != null && getActivity() instanceof JRFragmentHostActivity) {
-                    getActivity().setTitle(getCustomTitle());
-                }
-            } catch (ClassNotFoundException e) {
-                customSigninReflectionError(uiCustomizationName, e);
-            } catch (ClassCastException e) {
-                customSigninReflectionError(uiCustomizationName, e);
-            } catch (java.lang.InstantiationException e) {
-                customSigninReflectionError(uiCustomizationName, e);
-            } catch (IllegalAccessException e) {
-                customSigninReflectionError(uiCustomizationName, e);
-            } catch (NoSuchMethodException e) {
-                customSigninReflectionError(uiCustomizationName, e);
-            } catch (InvocationTargetException e) {
-                customSigninReflectionError(uiCustomizationName, e);
-            }
+        if (getCustomTitle() != null && getActivity() instanceof JRFragmentHostActivity) {
+            getActivity().setTitle(getCustomTitle());
         }
     }
 
@@ -350,7 +312,39 @@ public abstract class JRUiFragment extends Fragment {
         }
     }
 
-    /*package*/ void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh, JRSession session) {}
+    /*package*/ void onFragmentHostActivityCreate(JRFragmentHostActivity jrfh, JRSession session) {
+        String uiCustomizationName =
+                getArguments().getString(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS);
+
+        if (uiCustomizationName != null) {
+            try {
+                Class classRef = Class.forName(uiCustomizationName);
+                final JRUiCustomization uiCustomization = (JRUiCustomization) classRef.newInstance();
+                if (uiCustomization instanceof JRCustomUiConfiguration) {
+                    mCustomUiConfiguration = (JRCustomUiConfiguration) uiCustomization;
+                } else if (uiCustomization instanceof JRCustomUiView) {
+                    mCustomUiConfiguration = new JRCustomUiConfiguration(){
+                        {
+                            //Type safe because the type of the instantiated instance from the
+                            //class ref is run time type checked
+                            mProviderListHeader = (JRCustomUiView) uiCustomization;
+                        }
+                    };
+                } else {
+                    Log.e(TAG, "Unexpected class from: " + uiCustomizationName);
+                    //Not possible at the moment, there are only two subclasses of abstract JRUiCustomization
+                }
+            } catch (ClassNotFoundException e) {
+                customSigninReflectionError(uiCustomizationName, e);
+            } catch (ClassCastException e) {
+                customSigninReflectionError(uiCustomizationName, e);
+            } catch (java.lang.InstantiationException e) {
+                customSigninReflectionError(uiCustomizationName, e);
+            } catch (IllegalAccessException e) {
+                customSigninReflectionError(uiCustomizationName, e);
+            }
+        }
+    }
 
     /*package*/ void maybeShowHideTaglines() {
         if (mSession == null || getView() == null) {
@@ -586,7 +580,7 @@ public abstract class JRUiFragment extends Fragment {
     /*package*/ void onBackPressed() {}
 
     private void customSigninReflectionError(String customName, Exception e) {
-        Log.e(TAG, "Can't load custom signin class: " + customName + "\n" + e);
+        Log.e(TAG, "Can't load custom signin class: " + customName + "\n", e);
     }
 
     /*package*/ JRCustomUiConfiguration getCustomUiConfiguration() {
@@ -614,5 +608,9 @@ public abstract class JRUiFragment extends Fragment {
 
     /*package*/ String getCustomTitle() {
         return null;
+    }
+
+    /*package*/ boolean shouldShowTitleWhenDialog() {
+        return false;
     }
 }

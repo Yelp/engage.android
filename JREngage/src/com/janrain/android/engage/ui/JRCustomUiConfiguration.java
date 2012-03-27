@@ -48,7 +48,14 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
     public Drawable mSharingBackgroundDrawable;
 
     public String mProviderListTitle;
+    public String mLandingTitle;
+    public String mWebViewTitle;
     public String mSharingTitle;
+
+    public boolean mShowProviderListTitleWhenDialog;
+    public boolean mShowLandingTitleWhenDialog;
+    public boolean mShowWebViewTitleWhenDialog;
+    public boolean mShowSharingTitleWhenDialog;
 
     public JRCustomUiView mProviderListHeader;
     public JRCustomUiView mProviderListFooter;

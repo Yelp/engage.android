@@ -8,7 +8,7 @@
     android:layout_weight="0.0"
     android:layout_alignParentBottom="true"
 
-    android:background="@drawable/jr_bg_footer"
+    android:background="#333"
     >
 
     <TextView
@@ -21,7 +21,7 @@
 
         android:singleLine="true"
         android:text="@string/jr_powered_by"
-        android:textColor="#ffffff"
+        android:textColor="#fff"
         android:textStyle="italic"
         />
 

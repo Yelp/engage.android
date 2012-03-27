@@ -35,14 +35,12 @@ package com.janrain.android.engage.ui;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 import com.janrain.android.engage.utils.AndroidUtils;
 
 /**
  * @internal
- *
- * CustomMeasuringFrameLayout defaults to a size equal to ~half of the available area of the screen
- * If targetHeightDip is set, then CMFL tries to achieve that size instead.
  *
  * Two modes of operation:
  *  - default: 1/2 available screen area by using 71% of each dimension
@@ -75,10 +73,29 @@ public class CustomMeasuringFrameLayout extends FrameLayout {
 
     private void init(Context c) {
         mContext = c;
-        ensureTargetSize(c.getResources().getConfiguration());
+        computeTargetSize();
     }
 
-    private void ensureTargetSize(Configuration c) {
+    public void setTargetSizeDip(Integer wDip, Integer hDip) {
+        mTargetHeightDip = hDip;
+        mTargetHeight = AndroidUtils.scaleDipToPixels(hDip);
+        
+        mTargetWidthDip = wDip;
+        mTargetWidth = AndroidUtils.scaleDipToPixels(wDip);
+
+        // Tried this to keep the window from growing larger than the desired size, but it didn't work,
+        // instead, it resulted in a FrameLayout of the right size in a too-big window.
+//        setLayoutParams(new LayoutParams(mTargetWidth, mTargetHeight));
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        computeTargetSize();
+    }
+
+    private void computeTargetSize() {
         if (mTargetHeightDip == null) {
             mTargetHeight = (int) (mContext.getResources().getDisplayMetrics().heightPixels * 0.71);
         }
@@ -101,6 +118,7 @@ public class CustomMeasuringFrameLayout extends FrameLayout {
                 hM = MeasureSpec.EXACTLY;
                 break;
             case MeasureSpec.EXACTLY:
+//                h = mTargetHeight;
                 break;
             case MeasureSpec.UNSPECIFIED:
                 h = mTargetHeight;
@@ -114,6 +132,7 @@ public class CustomMeasuringFrameLayout extends FrameLayout {
                 wM = MeasureSpec.EXACTLY;
                 break;
             case MeasureSpec.EXACTLY:
+//                w = mTargetWidth;
                 break;
             case MeasureSpec.UNSPECIFIED:
                 w = mTargetWidth;
@@ -125,22 +144,7 @@ public class CustomMeasuringFrameLayout extends FrameLayout {
         widthMeasureSpec = MeasureSpec.makeMeasureSpec(w, wM);
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    @Override
-    protected void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        ensureTargetSize(newConfig);
-    }
-
-    public void setTargetHeightDip(Integer dip) {
-        mTargetHeightDip = dip;
-        mTargetHeight = AndroidUtils.scaleDipToPixels(dip);
-    }
-
-    public void setTargetWidthDip(Integer dip) {
-        mTargetWidthDip = dip;
-        mTargetWidth = AndroidUtils.scaleDipToPixels(dip);
+//        Log.d("CMFL", "wM:" + wM + " w:" + w + " hM:" + hM + " h:" + h + " mw:" + getMeasuredWidth() +
+//                " mh:" + getMeasuredHeight());
     }
 }

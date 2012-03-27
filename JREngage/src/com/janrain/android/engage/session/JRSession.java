@@ -432,10 +432,6 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 	}
 
-    public void connectionDidStop(String requestUrl, Object tag) {
-        // Noop because connections are not stopped for this delegate
-    }
-
     private void processShareActivityResponse(String payload, JRDictionary userDataTag) {
         String providerName = userDataTag.getAsString(USERDATA_PROVIDER_NAME_KEY);
 
@@ -560,9 +556,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                 Log.e(TAG, "unexpected userdata found in ConnectionDidFinishLoading full");
             }
         } else if (tag instanceof String) {
-            String s = (String) tag;
-
-            if (s.equals("getConfiguration")) {
+            if (tag.equals("getConfiguration")) {
                 if (headers.getResponseCode() == HttpStatus.SC_NOT_MODIFIED) {
                     /* If the ETag matched, we're done. */
                     JREngage.logd(TAG, "[connectionDidFinishLoading] HTTP_NOT_MODIFIED -> matched ETag");
@@ -614,9 +608,9 @@ public class JRSession implements JRConnectionManagerDelegate {
                 mUrlEncodedLibraryVersion);
         JREngage.logd(TAG, "[startGetConfiguration] url: " + urlString);
 
-        BasicNameValuePair eTagHeader = new BasicNameValuePair("If-None-Match", mOldEtag);
+//        BasicNameValuePair eTagHeader = new BasicNameValuePair("If-None-Match", mOldEtag);
         List<NameValuePair> headerList = new ArrayList<NameValuePair>();
-        headerList.add(eTagHeader);
+//        headerList.add(eTagHeader);
 
         JRConnectionManager.createConnection(urlString, this, TAG_GET_CONFIGURATION, headerList);
 
