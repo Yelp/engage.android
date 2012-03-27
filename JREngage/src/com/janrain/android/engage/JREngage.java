@@ -538,9 +538,7 @@ public class JREngage {
 
         if (skipReturningUserLandingPage != null) mSession.setSkipLandingPage(skipReturningUserLandingPage);
 
-        JRProvider p = mSession.getProviderByName(provider);
-
-        if (p == null && !mSession.isGetMobileConfigDone()) {
+        if (mSession.getProviderByName(provider) == null && !mSession.isGetMobileConfigDone()) {
             final ProgressDialog pd = new ProgressDialog(mActivity);
             pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             pd.setIndeterminate(true);
