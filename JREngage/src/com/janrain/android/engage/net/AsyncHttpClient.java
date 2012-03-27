@@ -186,7 +186,7 @@ public final class AsyncHttpClient {
 //                        }
 //                    });
 //                }
-//                try { Thread.sleep(3000); } catch (InterruptedException ignore) {}
+//                try { Thread.sleep(10000); } catch (InterruptedException ignore) {}
 
                 InetAddress ia = InetAddress.getByName(mRequest.getURI().getHost());
                 JREngage.logd(TAG, "Connecting to: " + ia.getHostAddress());

@@ -1147,7 +1147,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         }
 
         @Override
-        public void mobileConfigDidFinish() {
+        public void configDidFinish() {
             if (mWaitingForMobileConfig) {
                 dismissDialog(DIALOG_MOBILE_CONFIG_LOADING);
                 mWaitingForMobileConfig = false;

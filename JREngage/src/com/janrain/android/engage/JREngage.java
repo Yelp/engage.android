@@ -76,6 +76,7 @@ package com.janrain.android.engage;
  **/
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -86,6 +87,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
@@ -141,7 +143,10 @@ public class JREngage {
 	private JRSession mSession;
 
 	/* Delegates (listeners) array */
-	private ArrayList<JREngageDelegate> mDelegates = new ArrayList<JREngageDelegate>();
+	private List<JREngageDelegate> mDelegates = new ArrayList<JREngageDelegate>();
+    
+    /* Listeners to JRSessionDelegate#configDidFinish(); */
+    private ArrayList<ConfigFinishListener> mConfigFinishListeners = new ArrayList<ConfigFinishListener>();
 
     private JREngage(Context applicationContext,
                      String appId,
@@ -616,14 +621,59 @@ public class JREngage {
      *  If you always want to force the user to re-enter his/her credentials, pass \c true to the method
      *  setAlwaysForceReauthentication().
      **/
-    public void showAuthenticationDialog(Activity fromActivity,
+    public void showAuthenticationDialog(final Activity fromActivity,
                                          Boolean skipReturningUserLandingPage,
-                                         String provider,
-                                         Class<? extends JRUiCustomization> uiCustomization) {
+                                         final String provider,
+                                         final Class<? extends JRUiCustomization> uiCustomization) {
         if (checkSessionDataError()) return;
 
         if (skipReturningUserLandingPage != null) mSession.setSkipLandingPage(skipReturningUserLandingPage);
 
+        if (mSession.getProviderByName(provider) == null && !mSession.isGetMobileConfigDone()) {
+            final ProgressDialog pd = new ProgressDialog(fromActivity);
+            pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            pd.setIndeterminate(true);
+            pd.setCancelable(false);
+            pd.show();
+
+            // TODO add progress dialog customizability
+            // Fix up the progress dialog's appearance
+            View message = pd.findViewById(android.R.id.message);
+            if (message != null) message.setVisibility(View.GONE);
+            View progressBar = pd.findViewById(android.R.id.progress);
+            if (progressBar != null &&
+                    progressBar.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                ((ViewGroup.MarginLayoutParams) progressBar.getLayoutParams()).setMargins(0, 0, 0, 0);
+            }
+
+            mConfigFinishListeners.add(new ConfigFinishListener() {
+                public void configDidFinish() {
+                    mConfigFinishListeners.remove(this);
+                    checkSessionDataError();
+                    pd.dismiss();
+                    showDirectProviderFlowInternal(fromActivity, provider, uiCustomization);
+                }
+            });
+        } else {
+            showDirectProviderFlowInternal(fromActivity, provider, uiCustomization);
+        }
+    }
+
+    /**
+     * @internal 
+     * @hide
+     */
+    private interface ConfigFinishListener {
+        void configDidFinish();
+    }
+
+    /**
+     * @internal 
+     * @hide
+     */
+    private void showDirectProviderFlowInternal(Activity fromActivity,
+                                                String provider,
+                                                Class<? extends JRUiCustomization> uiCustomization) {
         Intent i;
         JRProvider p = mSession.getProviderByName(provider);
         if (p == null) {
@@ -631,6 +681,8 @@ public class JREngage {
             if (uiCustomization != null) {
                 i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS, uiCustomization.getName());
             }
+            Log.e(TAG, "Provider " + provider + " is not in the set of configured providers.");
+            i = JRFragmentHostActivity.createProviderListIntent(fromActivity);
         } else {
             if (p.requiresInput()) {
                 i = JRFragmentHostActivity.createUserLandingIntent(fromActivity);
@@ -1023,15 +1075,12 @@ public class JREngage {
             }
         }
 
-        // This doesn't work because JREngageDelegate doesn't have an appropriate method to announce an
-        // error event independent of the display of a dialog
-        //@Override
-        //public void mobileConfigDidFinish() {
-        //    JREngageError err = mSession.getError();
-        //    if (err != null) {
-        //        engageDidFailWithError(err);
-        //    }
-        //}
+        @Override
+        public void configDidFinish() {
+            for (ConfigFinishListener cfl : new ArrayList<ConfigFinishListener>(mConfigFinishListeners)) {
+                cfl.configDidFinish();
+            }
+        }
     };
 
     private synchronized List<JREngageDelegate> getDelegatesCopy() {

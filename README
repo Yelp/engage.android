@@ -1,29 +1,6 @@
 Welcome to the Janrain Engage library for the Android platform.  This library is available
 open-source under a Berkeley license, as found in the LICENSE file.
 
-What's new in Janrain Engage for Android 2.0:
-
-- Tablet support:
-  - Social sharing now runs either as an embedded Fragment or in a dialog
-  - Authentication runs in a dialog
-  - Support for Theme.Holo.Light, including appropriate themes for 'xlarge' screens
-- Other new features:
-  - Filtering the available social-sharing and authentication providers at run time
-  - JRConnectionManager's networking layer now supports gzip compression for faster network operations
-  - Eliminated Jackson JSON library dependency (~800k of redistributable overhead)
-  - Sharing UI adjusts the display of its layout based on the available size (which can change based on the
-    raised-state of the software keyboard.)
-  - The ~Share button now remains visible above the keyboard when the keyboard is raised, but other UI
-    elements disappear to accommodate the smaller available space.
-- Bug fixes:
-  - No more NullPointerExceptions from JRConnectionManager
-  - User messages are now propagated to email/SMS intents the first time the button is pressed.
-  - Switched from URLConnection to HttpClient to avoid intermittent network failures.
-  - Multiple use auth_info tokens are no longer required.
-
-In addition to new features and bug fixes, compatibility with Cupcake is dropped. (Engage for Android is now
-compatible with Donut and above.)
-
 Updating from 1.x to 2.0:
 
 - Replace the activity declarations in your AndroidManifest.xml with fresh copies from
@@ -49,27 +26,7 @@ Using tablet support:
 
 Getting Started:
 
-You will need git and the Android SDK with API level 13 (Android 3.2) or above. Project files are
-maintained for IntelliJ.
-
-First, download the SDK:
-  git clone https://github.com/janrain/engage.android.git
-
-Add your Engage App ID to the examples:
-- engage.android/QuickShare/src/com/janrain/android/quickshare/QuickShareEnvironment.java
-- engage.android/QuickShare/src/com/janrain/android/quicksignin/QuickSignInEnvironment.java
-(Following the instructions in the comments.)
-
-Compile with ant:
-  $ cd engage.android/QuickShare
-  $ android update project -p . -t android-13
-  $ ant compile
-
-Install with ant (adb must be running and an Android device or emulator must be available):
-  $ ant install
-
-For more documentation (including IDE integration setup instructions) please see
-http://documentation.android.com/engage/sdks/android
+http://rpxnow.com/docs/android
 
 To report bugs or ask questions:
 
