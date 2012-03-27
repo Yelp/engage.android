@@ -76,6 +76,7 @@ package com.janrain.android.engage;
  **/
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -86,6 +87,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
@@ -94,7 +96,6 @@ import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.ui.JRFragmentHostActivity;
-import com.janrain.android.engage.ui.JRProviderListFragment;
 import com.janrain.android.engage.ui.JRPublishFragment;
 import com.janrain.android.engage.ui.JRUiFragment;
 
@@ -140,7 +141,10 @@ public class JREngage {
 	private JRSession mSession;
 
 	/* Delegates (listeners) array */
-	private ArrayList<JREngageDelegate> mDelegates = new ArrayList<JREngageDelegate>();
+	private List<JREngageDelegate> mDelegates = new ArrayList<JREngageDelegate>();
+    
+    /* Listeners to JRSessionDelegate#configDidFinish(); */
+    private ArrayList<ConfigFinishListener> mConfigFinishListeners = new ArrayList<ConfigFinishListener>();
 
     private JREngage() {}
 
@@ -529,14 +533,59 @@ public class JREngage {
      *  If you always want to force the user to re-enter his/her credentials, pass \c true to the method
      *  setAlwaysForceReauthentication().
      **/
-    public void showAuthenticationDialog(Boolean skipReturningUserLandingPage, String provider) {
+    public void showAuthenticationDialog(Boolean skipReturningUserLandingPage, final String provider) {
         if (checkSessionDataError()) return;
 
         if (skipReturningUserLandingPage != null) mSession.setSkipLandingPage(skipReturningUserLandingPage);
 
+        JRProvider p = mSession.getProviderByName(provider);
+
+        if (p == null && !mSession.isGetMobileConfigDone()) {
+            final ProgressDialog pd = new ProgressDialog(mActivity);
+            pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            pd.setIndeterminate(true);
+            pd.setCancelable(false);
+            pd.show();
+
+            // Fix up the progress dialog's appearance
+            View message = pd.findViewById(android.R.id.message);
+            if (message != null) message.setVisibility(View.GONE);
+            View progressBar = pd.findViewById(android.R.id.progress);
+            if (progressBar != null &&
+                    progressBar.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                ((ViewGroup.MarginLayoutParams) progressBar.getLayoutParams()).setMargins(0, 0, 0, 0);
+            }
+
+            mConfigFinishListeners.add(new ConfigFinishListener() {
+                public void configDidFinish() {
+                    mConfigFinishListeners.remove(this);
+                    checkSessionDataError();
+                    pd.dismiss();
+                    showDirectProviderFlowInternal(provider);
+                }
+            });
+        } else {
+            showDirectProviderFlowInternal(provider);
+        }
+    }
+
+    /**
+     * @internal 
+     * @hide
+     */
+    private interface ConfigFinishListener {
+        void configDidFinish();
+    }
+
+    /**
+     * @internal 
+     * @hide
+     */
+    private void showDirectProviderFlowInternal(String provider) {
         Intent i;
         JRProvider p = mSession.getProviderByName(provider);
         if (p == null) {
+            Log.e(TAG, "Provider " + provider + " is not in the set of configured providers.");
             i = JRFragmentHostActivity.createProviderListIntent(mActivity);
         } else {
             if (p.requiresInput()) {
@@ -918,15 +967,12 @@ public class JREngage {
             }
         }
 
-        // This doesn't work because JREngageDelegate doesn't have an appropriate method to announce an
-        // error event independent of the display of a dialog
-        //@Override
-        //public void mobileConfigDidFinish() {
-        //    JREngageError err = mSession.getError();
-        //    if (err != null) {
-        //        engageDidFailWithError(err);
-        //    }
-        //}
+        @Override
+        public void configDidFinish() {
+            for (ConfigFinishListener cfl : new ArrayList<ConfigFinishListener>(mConfigFinishListeners)) {
+                cfl.configDidFinish();
+            }
+        }
     };
 
     private synchronized List<JREngageDelegate> getDelegatesCopy() {

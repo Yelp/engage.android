@@ -49,7 +49,6 @@ import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.ui.JRFragmentHostActivity;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Archiver;
 import com.janrain.android.engage.utils.ListUtils;
@@ -179,7 +178,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                 // any invalid state.
                 throw new Archiver.LoadException(null);
             }
-            
+
             /* load the last used auth and social providers */
             mReturningSharingProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_SHARING_PROVIDER, "");
             mReturningAuthProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_AUTH_PROVIDER, "");
@@ -1100,7 +1099,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     private void triggerMobileConfigDidFinish() {
-        for (JRSessionDelegate d : getDelegatesCopy()) d.mobileConfigDidFinish();
+        for (JRSessionDelegate d : getDelegatesCopy()) d.configDidFinish();
     }
 
     private synchronized List<JRSessionDelegate> getDelegatesCopy() {

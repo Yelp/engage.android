@@ -149,7 +149,7 @@ public interface JRSessionDelegate {
     /**
      * Triggered when JRSession has finished loading the mobile configuration
      */
-    void mobileConfigDidFinish();
+    void configDidFinish();
 
     /**
      * @internal
@@ -176,6 +176,6 @@ public interface JRSessionDelegate {
         public void publishingJRActivityDidFail(JRActivityObject activity,
                                                 JREngageError error,
                                                 String provider) {}
-        public void mobileConfigDidFinish() {}
+        public void configDidFinish() {}
     }
 }
