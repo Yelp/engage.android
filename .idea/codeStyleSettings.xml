@@ -6,11 +6,18 @@
         <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="99" />
         <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="99" />
         <option name="RIGHT_MARGIN" value="110" />
+        <option name="LINE_COMMENT_AT_FIRST_COLUMN" value="false" />
+        <option name="BLOCK_COMMENT_AT_FIRST_COLUMN" value="false" />
         <XML>
           <option name="XML_ATTRIBUTE_WRAP" value="4" />
           <option name="XML_ALIGN_ATTRIBUTES" value="false" />
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>
+        <codeStyleSettings language="Groovy">
+          <option name="LINE_COMMENT_AT_FIRST_COLUMN" value="false" />
+          <option name="BLOCK_COMMENT_AT_FIRST_COLUMN" value="false" />
+          <option name="PARENT_SETTINGS_INSTALLED" value="true" />
+        </codeStyleSettings>
         <codeStyleSettings language="JAVA">
           <option name="CALL_PARAMETERS_WRAP" value="5" />
           <option name="METHOD_PARAMETERS_WRAP" value="5" />
