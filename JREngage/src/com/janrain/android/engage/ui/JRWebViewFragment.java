@@ -192,7 +192,7 @@ public class JRWebViewFragment extends JRUiFragment {
             fm.beginTransaction().add(mRetain, JR_RETAIN).commit();
         }
     }
-    
+
     private void configureWebViewUa() {
         String customUa = mProvider.getWebViewOptions().getAsString(JRDictionary.KEY_USER_AGENT);
         //if (mUseDesktopUa) mWebViewSettings.setUserAgentString(getString(R.string.jr_desktop_browser_ua));
@@ -348,7 +348,6 @@ public class JRWebViewFragment extends JRUiFragment {
         String urlToLoad = url + "&auth_info=true";
         JREngage.logd(TAG, "[loadMobileEndpointUrl] loading URL: " + urlToLoad);
 
-
         JRConnectionManager.createConnection(urlToLoad, mRetain.mConnectionDelegate, null);
     }
 
@@ -392,7 +391,6 @@ public class JRWebViewFragment extends JRUiFragment {
 
             return false;
         }
-
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {

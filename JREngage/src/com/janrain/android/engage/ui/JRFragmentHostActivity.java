@@ -127,19 +127,29 @@ public class JRFragmentHostActivity extends FragmentActivity {
         mUiFragment.onFragmentHostActivityCreate(this, mSession);
 
         if (shouldBeDialog()) {
-            TypedValue dialogThemeVal = new TypedValue();
-            getTheme().resolveAttribute(android.R.attr.dialogTheme, dialogThemeVal, false);
-            if (dialogThemeVal.type != 0) {
-                getTheme().applyStyle(dialogThemeVal.data, true);
-            } else {
-                /* dialogTheme attribute wasn't added to themes until API 11 so just use Theme.Dialog if
-                 * by some freak of nature there's an XLarge screen running < API 11
-                 */
-                Log.e(TAG, "Unexpected dialog mode without dialogTheme attribute defined in the current " +
-                        "theme");
-                getTheme().applyStyle(android.R.style.Theme_Dialog, true);
+            try {
+                PackageManager pm = getPackageManager();
+                ActivityInfo ai = pm.getActivityInfo(new ComponentName(this, Fullscreen.class), 0);
+                int theme = ai.getThemeResource();
+                getTheme().applyStyle(theme, false);
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.e(TAG, "Unable to instantiate ComponentName for Fullscreen, defaulting to unstyled " +
+                        "Dialog theme");
             }
 
+            //TypedValue dialogThemeVal = new TypedValue();
+            //getTheme().resolveAttribute(android.R.attr.dialogTheme, dialogThemeVal, false);
+            //if (dialogThemeVal.type != 0) {
+            //    getTheme().applyStyle(dialogThemeVal.data, true);
+            //} else {
+            //    /* dialogTheme attribute wasn't added to themes until API 11 so just use Theme.Dialog if
+            //     * by some freak of nature there's an XLarge screen running < API 11
+            //     */
+            //    Log.e(TAG, "Unexpected dialog mode without dialogTheme attribute defined in the current " +
+            //            "theme");
+            //    getTheme().applyStyle(android.R.style.Theme_Dialog, true);
+            //}
+            
             if (shouldBePhoneSizedDialog()) {
                 getTheme().applyStyle(R.style.jr_dialog_phone_sized, true);
             } else {

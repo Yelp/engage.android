@@ -280,7 +280,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mTabHost.getTabWidget().setVisibility(View.GONE);
 
         mSharingProviders = mSession.getSharingProviders();
-        if (mSharingProviders.size() == 0 && !mSession.isGetMobileConfigDone()) {
+        if (mSharingProviders.size() == 0 && !mSession.isConfigDone()) {
             /* Hide the email/SMS tab so things look nice as we load the providers */
             getView().findViewById(R.id.jr_tab_email_sms_content).setVisibility(View.GONE);
             mWaitingForMobileConfig = true;

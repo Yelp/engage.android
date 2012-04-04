@@ -71,7 +71,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     private static final String TAG = JRSession.class.getSimpleName();
 
     private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
-//    private static final JREnvironment ENVIRONMENT = JREnvironment.TESTING;
+    //private static final JREnvironment ENVIRONMENT = JREnvironment.TESTING;
 //    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
     //private static final JREnvironment ENVIRONMENT = JREnvironment.LILLI;
     //private static final JREnvironment ENVIRONMENT = JREnvironment.NATHAN;
@@ -114,7 +114,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     private String mBaseUrl;
     private String mUrlEncodedAppName;
 
-    private boolean mGetConfigDone = false;
+    private boolean mConfigDone = false;
     private String mOldEtag;
     private String mSavedConfigurationBlock = "";
     private String mSavedEtag;
@@ -210,6 +210,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             /* If the configuration for this RP has changed, the etag will have changed, and we need
              * to update our current configuration information. */
             mOldEtag = Prefs.getString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
+//            throw new Archiver.LoadException(null);
         } catch (Archiver.LoadException e) {
             Log.e(TAG, "LoadException loading serialized configuration, initializing from empty state", e);
             /* Blank slate */
@@ -235,7 +236,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             // (The library is accepting of values not belonging to the set of enabled providers.)
             mReturningAuthProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_AUTH_PROVIDER, null);
             mReturningSharingProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_SHARING_PROVIDER, null);
-            mGetConfigDone = false;
+            //mConfigDone = false;
         }
 
         mError = startGetConfiguration();
@@ -377,6 +378,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             mSavedConfigurationBlock = "";
             mNewEtag = mSavedEtag;
             mError = finishGetConfiguration(s);
+            triggerConfigDidFinish();
         }
     }
 
@@ -393,11 +395,10 @@ public class JRSession implements JRConnectionManagerDelegate {
                         ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
                         JREngageError.ErrorType.CONFIGURATION_FAILED,
                         ex);
-                mGetConfigDone = true;
-                triggerMobileConfigDidFinish();
+                triggerConfigDidFinish();
             } else {
-                Log.e(TAG, "[connectionDidFail] unrecognized ConnectionManager tag: "
-                        + tag + " with Exception: " + ex);
+                Log.e(TAG, "[connectionDidFail] unrecognized ConnectionManager tag: " + tag +
+                        " with Exception: " + ex);
             }
         } else if (tag instanceof JRDictionary) {
             JRDictionary dictionary = (JRDictionary) tag;
@@ -560,8 +561,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                 if (headers.getResponseCode() == HttpStatus.SC_NOT_MODIFIED) {
                     /* If the ETag matched, we're done. */
                     JREngage.logd(TAG, "[connectionDidFinishLoading] HTTP_NOT_MODIFIED -> matched ETag");
-
-                    mGetConfigDone = true;
+                    triggerConfigDidFinish();
                     return;
                 }
 
@@ -595,7 +595,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     public void tryToReconfigureLibrary() {
         JREngage.logd(TAG, "[tryToReconfigureLibrary]");
 
-        mGetConfigDone = false;
+        mConfigDone = false;
         mError = null;
         mError = startGetConfiguration();
     }
@@ -689,9 +689,6 @@ public class JRSession implements JRConnectionManagerDelegate {
         /* 'git-tag'-like library version tag to prevent reloading stale data from disk */
         Prefs.putString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, mUrlEncodedLibraryVersion);
 
-        mGetConfigDone = true;
-        triggerMobileConfigDidFinish();
-
         return null;
     }
 
@@ -699,7 +696,6 @@ public class JRSession implements JRConnectionManagerDelegate {
         JREngage.logd(TAG, "[finishGetConfiguration-etag]");
 
         if (!mOldEtag.equals(eTag)) {
-
             /* We can only update all of our data if the UI isn't currently using that
              * information.  Otherwise, the library may crash/behave inconsistently.  If a
              * dialog isn't showing, go ahead and update that information.  Or, in the case
@@ -720,9 +716,6 @@ public class JRSession implements JRConnectionManagerDelegate {
             mSavedConfigurationBlock = dataStr;
             mSavedEtag = eTag;
         }
-
-        mGetConfigDone = true;
-        triggerMobileConfigDidFinish();
 
         return null;
     }
@@ -1093,7 +1086,8 @@ public class JRSession implements JRConnectionManagerDelegate {
         for (JRSessionDelegate delegate : getDelegatesCopy()) delegate.publishingDidCancel();
     }
 
-    private void triggerMobileConfigDidFinish() {
+    private void triggerConfigDidFinish() {
+        mConfigDone = true;
         for (JRSessionDelegate d : getDelegatesCopy()) d.configDidFinish();
     }
 
@@ -1113,8 +1107,8 @@ public class JRSession implements JRConnectionManagerDelegate {
         mCurrentlyPublishingProvider = getProviderByName(provider);
     }
 
-    public boolean isGetMobileConfigDone() {
-        return mGetConfigDone;
+    public boolean isConfigDone() {
+        return mConfigDone;
     }
 
     public static JREnvironment getEnvironment() {
