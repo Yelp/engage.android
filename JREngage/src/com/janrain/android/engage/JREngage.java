@@ -650,8 +650,8 @@ public class JREngage {
                 public void configDidFinish() {
                     mConfigFinishListeners.remove(this);
                     checkSessionDataError();
-                    pd.dismiss();
                     showDirectProviderFlowInternal(fromActivity, provider, uiCustomization);
+                    pd.dismiss();
                 }
             });
         } else {

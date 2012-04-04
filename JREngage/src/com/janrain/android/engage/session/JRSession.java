@@ -72,7 +72,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 
     private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
     //private static final JREnvironment ENVIRONMENT = JREnvironment.TESTING;
-//    private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
+    //private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
     //private static final JREnvironment ENVIRONMENT = JREnvironment.LILLI;
     //private static final JREnvironment ENVIRONMENT = JREnvironment.NATHAN;
 
@@ -210,7 +210,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             /* If the configuration for this RP has changed, the etag will have changed, and we need
              * to update our current configuration information. */
             mOldEtag = Prefs.getString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
-//            throw new Archiver.LoadException(null);
+            //throw new Archiver.LoadException(null);
         } catch (Archiver.LoadException e) {
             Log.e(TAG, "LoadException loading serialized configuration, initializing from empty state", e);
             /* Blank slate */
@@ -557,7 +557,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                 Log.e(TAG, "unexpected userdata found in ConnectionDidFinishLoading full");
             }
         } else if (tag instanceof String) {
-            if (tag.equals("getConfiguration")) {
+            if (tag.equals(TAG_GET_CONFIGURATION)) {
                 if (headers.getResponseCode() == HttpStatus.SC_NOT_MODIFIED) {
                     /* If the ETag matched, we're done. */
                     JREngage.logd(TAG, "[connectionDidFinishLoading] HTTP_NOT_MODIFIED -> matched ETag");
@@ -565,15 +565,8 @@ public class JRSession implements JRConnectionManagerDelegate {
                     return;
                 }
 
-                if (payloadString.contains("\"provider_info\":{")) {
-                    mError = finishGetConfiguration(payloadString, headers.getETag());
-                } else {
-                    Log.e(TAG, "failed to parse response for getConfiguration");
-                    mError = new JREngageError(
-                            getApplicationContext().getString(R.string.jr_getconfig_parse_error_message),
-                            ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
-                            ErrorType.CONFIGURATION_FAILED);
-                }
+                mError = finishGetConfiguration(payloadString, headers.getETag());
+                if (!isUiShowing()) triggerConfigDidFinish();
             } else {
                 Log.e(TAG, "unexpected userData found in ConnectionDidFinishLoading full");
             }
