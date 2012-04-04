@@ -60,9 +60,11 @@
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/custom_fullscreen_dark"
+            android:theme="@style/jr_dialog_base"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
+        <!--android:theme="@style/android:Theme.Dialog"-->
+        <!--android:theme="@style/jr_dialog_dark"-->
 
         <!--This activity must have a normal non-dialog theme such as Theme, Theme.Light, Theme.Holo, etc.
 
@@ -70,12 +72,12 @@
             Theme.Light (or Theme) on API 4-10 and
             Theme.Holo.Light (or Theme.Holo) on API 11+
             -->
-        <!--<activity-->
-            <!--android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"-->
-            <!--android:configChanges="orientation|screenSize"-->
-            <!--android:theme="@style/custom_fullscreen_dark"-->
-            <!--android:windowSoftInputMode="adjustResize|stateHidden"-->
-            <!--/>-->
+        <activity
+            android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/custom_fullscreen_dark"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            />
         <!--android:theme="@style/custom_fullscreen"-->
 
         <!-- TODO document dark themes-->

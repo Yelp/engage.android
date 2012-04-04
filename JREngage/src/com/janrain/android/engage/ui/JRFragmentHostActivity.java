@@ -36,18 +36,15 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.content.pm.ComponentInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
@@ -178,15 +175,14 @@ public class JRFragmentHostActivity extends FragmentActivity {
             if (shouldBePhoneSizedDialog()) {
                 // Do the actual setting of the target size to achieve phone sized dialog.
                 ((CustomMeasuringFrameLayout) fragmentContainer).setTargetSizeDip(320, 480);
-//                getWindow().setFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND,
-//                        WindowManager.LayoutParams.FLAG);
                 getWindow().makeActive();
                 WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
                 lp.copyFrom(getWindow().getAttributes());
                 lp.width = AndroidUtils.scaleDipToPixels(320);
                 // After discussing it with Lilli we think it makes sense to let the height of the window
                 // grow if the title is enabled
-//                lp.height = AndroidUtils.scaleDipToPixels(480);
+                //int targetHeight = mUiFragment.getCustomTitle() == null ? 480 : 560;
+                //lp.height = AndroidUtils.scaleDipToPixels(targetHeight);
                 getWindow().setAttributes(lp);
             }
         }
@@ -277,6 +273,16 @@ public class JRFragmentHostActivity extends FragmentActivity {
         // Delegate everything else to Activity.
         return super.onTouchEvent(event);
     }
+
+    //@Override
+    //public boolean dispatchTouchEvent(MotionEvent event) {
+    //    if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
+    //        onBackPressed();
+    //        return true;
+    //    }
+    //
+    //    return super.dispatchTouchEvent(event);
+    //}
 
     @Override
     public void onBackPressed() {

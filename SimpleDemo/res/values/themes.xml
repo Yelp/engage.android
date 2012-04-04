@@ -38,7 +38,6 @@
     </style>
 
     <style name="custom_fullscreen_dark" parent="jr_fullscreen_dark">
-        <item name="android:windowIsFloating">true</item>
         <!--<item name="android:textColorPrimary">@android:color/primary_text_light</item>-->
         <!--<item name="android:textColorSecondary">@android:color/secondary_text_light</item>-->
         <!--<item name="jrCustomLandingStyle">@style/custom_landing_box</item>-->
