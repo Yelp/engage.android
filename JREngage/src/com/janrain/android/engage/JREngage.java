@@ -993,10 +993,6 @@ public class JREngage {
 /*@}*/
 
     private JRSessionDelegate mJrsd = new JRSessionDelegate.SimpleJRSessionDelegate() {
-        public void authenticationDidRestart() {
-            JREngage.logd(TAG, "[authenticationDidRestart]");
-        }
-
         public void authenticationDidCancel() {
             JREngage.logd(TAG, "[authenticationDidCancel]");
 

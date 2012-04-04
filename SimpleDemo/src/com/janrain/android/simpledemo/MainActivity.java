@@ -122,27 +122,27 @@ public class MainActivity extends FragmentActivity {
 
         mBtnTestAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-//                mEngage.setEnabledAuthenticationProviders(new String[]{"facebook"});
+                //mEngage.setEnabledAuthenticationProviders(new String[]{"facebook"});
                 mEngage.showAuthenticationDialog(MainActivity.this, CustomUi.class);
-//                mEngage.showAuthenticationDialog(MainActivity.this);
+                //mEngage.showAuthenticationDialog(MainActivity.this);
             }
         });
-//        mBtnTestAuth.setOnLongClickListener(new View.OnLongClickListener() {
-//            public boolean onLongClick(View v) {
-//                if (findViewById(R.id.jr_signin_fragment) != null) {
-//                    mEngage.showSocialSignInFragment(
-//                            MainActivity.this,
-//                            com.janrain.android.engage.R.id.jr_publish_fragment,
-//                            false,
-//                            null,
-//                            null,
-//                            null,
-//                            null);
-//                }
-//
-//                return true;
-//            }
-//        });
+        //mBtnTestAuth.setOnLongClickListener(new View.OnLongClickListener() {
+        //    public boolean onLongClick(View v) {
+        //        if (findViewById(R.id.jr_signin_fragment) != null) {
+        //            mEngage.showSocialSignInFragment(
+        //                    MainActivity.this,
+        //                    com.janrain.android.engage.R.id.jr_publish_fragment,
+        //                    false,
+        //                    null,
+        //                    null,
+        //                    null,
+        //                    null);
+        //        }
+        //
+        //        return true;
+        //    }
+        //});
 
         mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
         mBtnTestPub.setOnClickListener(new View.OnClickListener() {
@@ -184,7 +184,7 @@ public class MainActivity extends FragmentActivity {
         
         mBtnTestSpecificProvider.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mEngage.showAuthenticationDialog(MainActivity.this, "facebook");
+                mEngage.showAuthenticationDialog(MainActivity.this, "openid");
             }
         });
     }
@@ -192,14 +192,14 @@ public class MainActivity extends FragmentActivity {
     public static class CustomUi extends JRCustomUiConfiguration {
         public CustomUi() {
             mProviderListHeader = new CustomSignin();
-//            mAuthenticationBackgroundDrawable = c.getResources().getDrawable(R.drawable.custom_signin_bg);
+            //mAuthenticationBackgroundDrawable = c.getResources().getDrawable(R.drawable.custom_signin_bg);
             mProviderListTitle = "Custom title";
         }
 
         @Override
         public void onProviderListViewCreate(ListView providerListView) {
             super.onProviderListViewCreate(providerListView);
-//            providerListView.setDividerHeight(AndroidUtils.scaleDipToPixels(20));
+            //providerListView.setDividerHeight(AndroidUtils.scaleDipToPixels(20));
         }
     }
 
@@ -292,7 +292,7 @@ public class MainActivity extends FragmentActivity {
             String message = "Authentication successful" + ((TextUtils.isEmpty(displayName))
                     ? "" : (" for user: " + displayName));
 
-//            Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+            //Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
             showResultDialog(message);
         }
 
@@ -307,36 +307,8 @@ public class MainActivity extends FragmentActivity {
         }
         
         private void showResultDialog(String title, String message) {
-//            03-22 15:01:34.119: ERROR/AndroidRuntime(575): FATAL EXCEPTION: main
-//            android.view.WindowManager$BadTokenException: Unable to add window -- token android.os.BinderProxy@41614670 is not valid; is your activity running?
-//            at android.view.ViewRootImpl.setView(ViewRootImpl.java:513)
-//            at android.view.WindowManagerImpl.addView(WindowManagerImpl.java:301)
-//            at android.view.WindowManagerImpl.addView(WindowManagerImpl.java:215)
-//            at android.view.WindowManagerImpl$CompatModeWrapper.addView(WindowManagerImpl.java:140)
-//            at android.view.Window$LocalWindowManager.addView(Window.java:537)
-//            at android.app.Dialog.show(Dialog.java:278)
-//            at android.app.AlertDialog$Builder.show(AlertDialog.java:932)
-//            at com.janrain.android.simpledemo.MainActivity$6.showResultDialog(MainActivity.java:310)
-//            at com.janrain.android.simpledemo.MainActivity$6.showResultDialog(MainActivity.java:317)
-//            at com.janrain.android.simpledemo.MainActivity$6.jrAuthenticationDidSucceedForUser(MainActivity.java:296)
-//            at com.janrain.android.engage.JREngage$1.authenticationDidComplete(JREngage.java:958)
-//            at com.janrain.android.engage.session.JRSession.triggerAuthenticationDidCompleteWithPayload(JRSession.java:1009)
-//            at com.janrain.android.engage.ui.JRWebViewFragment.connectionDidFinishLoading(JRWebViewFragment.java:511)
-//            at com.janrain.android.engage.ui.JRWebViewFragment.access$1300(JRWebViewFragment.java:79)
-//            at com.janrain.android.engage.ui.JRWebViewFragment$RetainFragment.maybeDispatchMessages(JRWebViewFragment.java:665)
-//            at com.janrain.android.engage.ui.JRWebViewFragment$RetainFragment.access$1200(JRWebViewFragment.java:601)
-//            at com.janrain.android.engage.ui.JRWebViewFragment$RetainFragment$1.connectionDidFinishLoading(JRWebViewFragment.java:649)
-//            at com.janrain.android.engage.net.JRConnectionManager$HttpCallbackWrapper.run(JRConnectionManager.java:242)
-//            at android.os.Handler.handleCallback(Handler.java:605)
-//            at android.os.Handler.dispatchMessage(Handler.java:92)
-//            at android.os.Looper.loop(Looper.java:137)
-//            at android.app.ActivityThread.main(ActivityThread.java:4424)
-//            at java.lang.reflect.Method.invokeNative(Native Method)
-//            at java.lang.reflect.Method.invoke(Method.java:511)
-//            at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:784)
-//            at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:551)
-//            at dalvik.system.NativeStart.main(Native Method)
-
+            // This shouldn't be done here because MainActivity isn't displayed (resumed?) when this is
+            // called but it works most of the time.
             (new AlertDialog.Builder(MainActivity.this)).setTitle(title)
                     .setMessage(message)
                     .setNeutralButton("OK", null)

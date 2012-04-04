@@ -227,18 +227,17 @@ public class JRLandingFragment extends JRUiFragment {
                 case Activity.RESULT_OK:
                     finishFragmentWithResult(Activity.RESULT_OK);
                     break;
-                case JRWebViewFragment.RESULT_FAIL:
+                case JRWebViewFragment.RESULT_FAIL_AND_STOP:
+                    finishFragmentWithResult(RESULT_FAIL);
+                case JRWebViewFragment.RESULT_FAIL_AND_RESTART:
                     // Fall through
                 case JRWebViewFragment.RESULT_RESTART:
                     finishFragmentWithResult(RESULT_RESTART);
                     break;
                 case JRWebViewFragment.RESULT_BAD_OPENID_URL:
                     break;
-//                    See RESULT_CANCELED in JRProviderListFragment.
-//                    case Activity.RESULT_CANCELED:
                 default:
                     Log.e(TAG, "Unrecognized request/result code " + requestCode + "/" + resultCode);
-
             }
         } else {
             Log.e(TAG, "Unrecognized request/result code " + requestCode + "/" + resultCode);

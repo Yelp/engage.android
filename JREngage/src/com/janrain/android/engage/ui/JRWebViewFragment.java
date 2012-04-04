@@ -35,8 +35,11 @@ import java.net.URL;
 import java.util.List;
 
 import android.app.Dialog;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.webkit.ConsoleMessage;
+import android.widget.FrameLayout;
 import org.json.JSONException;
 
 import android.app.Activity;
@@ -89,15 +92,16 @@ public class JRWebViewFragment extends JRUiFragment {
     private static final int KEY_ALERT_DIALOG = 1;
 
     public static final int RESULT_RESTART = Activity.RESULT_FIRST_USER;
-    public static final int RESULT_FAIL = Activity.RESULT_FIRST_USER + 1;
+    //public static final int RESULT_FAIL_AND_RESTART = Activity.RESULT_FIRST_USER + 1;
     public static final int RESULT_BAD_OPENID_URL = Activity.RESULT_FIRST_USER + 2;
-    
+    public static final int RESULT_FAIL_AND_STOP = Activity.RESULT_FIRST_USER + 3;
+
     private WebView mWebView;
     private boolean mIsAlertShowing = false;
     private boolean mIsFinishPending = false;
     private boolean mIsLoadingMobileEndpoint = false;
     private String mCurrentlyLoadingUrl;
-//    private boolean mUseDesktopUa = false;
+    //private boolean mUseDesktopUa = false;
     private JRProvider mProvider;
     private WebSettings mWebViewSettings;
     private ProgressBar mProgressSpinner;
@@ -113,7 +117,6 @@ public class JRWebViewFragment extends JRUiFragment {
         mProgressSpinner = (ProgressBar)view.findViewById(R.id.jr_webview_progress);
 
         mWebViewSettings = mWebView.getSettings();
-        mWebViewSettings.setSavePassword(false);
 
         // Shim some information about the OS version into the WebView for use by hax ala Yahoo:
         mWebView.addJavascriptInterface(new Object() {
@@ -136,11 +139,7 @@ public class JRWebViewFragment extends JRUiFragment {
                     }
                 }, "jrengage_mobile");
 
-        mWebViewSettings.setBuiltInZoomControls(true);
-        mWebViewSettings.setLoadsImagesAutomatically(true);
-        mWebViewSettings.setJavaScriptEnabled(true);
-        mWebViewSettings.setJavaScriptCanOpenWindowsAutomatically(false);
-        mWebViewSettings.setSupportZoom(true);
+        ensureWebViewSettings(mWebViewSettings);
 
         mWebView.setWebViewClient(mWebViewClient);
         mWebView.setWebChromeClient(mWebChromeClient);
@@ -155,6 +154,18 @@ public class JRWebViewFragment extends JRUiFragment {
         }
 
         return view;
+    }
+
+    private void ensureWebViewSettings(WebSettings webViewSettings) {
+        //webViewSettings.setUserAgentString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) " +
+        //        "AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.142 Safari/535.19");
+        webViewSettings.setSavePassword(false);
+        webViewSettings.setSupportMultipleWindows(true);
+        webViewSettings.setBuiltInZoomControls(true);
+        webViewSettings.setLoadsImagesAutomatically(true);
+        webViewSettings.setJavaScriptEnabled(true);
+        webViewSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        webViewSettings.setSupportZoom(true);
     }
 
     @Override
@@ -182,6 +193,8 @@ public class JRWebViewFragment extends JRUiFragment {
             configureWebViewUa();
             URL startUrl = mSession.startUrlForCurrentlyAuthenticatingProvider();
             mWebView.loadUrl(startUrl.toString());
+            //mWebView.loadUrl("http://10.0.1.109/~nathan/share_widget_webview_test/test.html");
+            //mWebView.loadUrl("http://10.0.1.168/~nathan/share_widget_webview_test/test.html");
         }
 
         FragmentManager fm = getActivity().getSupportFragmentManager();
@@ -384,12 +397,7 @@ public class JRWebViewFragment extends JRUiFragment {
             /* Intercept and sink mailto links because the webview auto-linkifies example email addresses
              * in the Google and Yahoo login pages and it's too easy to fat finger them :(
              */
-            Uri uri = Uri.parse(url);
-            if (uri.getScheme().equals("mailto")) {
-                return true;
-            }
-
-            return false;
+            return Uri.parse(url).getScheme().equals("mailto");
         }
 
         @Override
@@ -400,8 +408,8 @@ public class JRWebViewFragment extends JRUiFragment {
             if (isMobileEndpointUrl(url)) {
                 JREngage.logd(TAG, "[onPageStarted] looks like JR mobile endpoint URL");
                 loadMobileEndpointUrl(url);
-                mWebView.stopLoading();
-                mWebView.loadUrl("about:blank");
+                view.stopLoading();
+                view.loadUrl("about:blank");
             } else {
                 mCurrentlyLoadingUrl = url;
             }
@@ -421,13 +429,11 @@ public class JRWebViewFragment extends JRUiFragment {
              */
             List<String> jsInjects =
                     mProvider.getWebViewOptions().getAsListOfStrings(JRDictionary.KEY_JS_INJECTIONS, true);
-            for (String i : jsInjects) mWebView.loadUrl("javascript:" + i);
+            for (String i : jsInjects) view.loadUrl("javascript:" + i);
 
             boolean showZoomControl = 
                     mProvider.getWebViewOptions().getAsBoolean(JRDictionary.KEY_SHOW_ZOOM_CONTROL);
-            if (showZoomControl) mWebView.invokeZoomPicker();
-
-            super.onPageFinished(view, url);
+            if (showZoomControl) view.invokeZoomPicker();
         }
 
         @Override
@@ -439,22 +445,21 @@ public class JRWebViewFragment extends JRUiFragment {
             hideProgressSpinner();
 
             mIsFinishPending = true;
-            setFragmentResult(RESULT_FAIL);
             showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
                     getString(R.string.jr_webview_error_dialog_msg));
 
-            JREngageError err = new JREngageError(
+            setFragmentResult(JRWebViewFragment.RESULT_FAIL_AND_STOP);
+            mSession.triggerAuthenticationDidFail(new JREngageError(
                     "Authentication failed: " + description,
                     JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                    JREngageError.ErrorType.AUTHENTICATION_FAILED);
-            mSession.triggerAuthenticationDidFail(err);
+                    JREngageError.ErrorType.AUTHENTICATION_FAILED));
         }
     };
 
     private WebChromeClient mWebChromeClient = new WebChromeClient() {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
-            /* We hide the progress spinner if it's over half finished.
+            /* Hide the progress spinner if the page is more than half finished loading.
              * This is motivated by two things:
              *  - The page is usually loaded enough to interact with
              *  - Hyves keeps some page resource request open or something for several minutes
@@ -464,13 +469,48 @@ public class JRWebViewFragment extends JRUiFragment {
                 hideProgressSpinner();
             }
         }
+
+        @Override
+        public boolean onCreateWindow(WebView view,
+                                      boolean isDialog,
+                                      boolean isUserGesture,
+                                      Message resultMsg) {
+            JREngage.logd(TAG, "[onCreateWindow] " + view);
+            WebView newWebView = new WebView(getActivity());
+            view.setVisibility(View.GONE);
+            ((FrameLayout) view.getParent()).addView(newWebView, 0, view.getLayoutParams());
+            ensureWebViewSettings(newWebView.getSettings());
+            newWebView.setScrollBarStyle(WebView.SCROLLBARS_INSIDE_OVERLAY);
+            newWebView.getSettings().setBuiltInZoomControls(false);
+            newWebView.setWebViewClient(mWebViewClient);
+            newWebView.setWebChromeClient(this);
+            ((WebView.WebViewTransport) resultMsg.obj).setWebView(newWebView);
+            resultMsg.sendToTarget();
+            return true;
+        }
+
+        @Override
+        public void onCloseWindow(WebView window) {
+            JREngage.logd(TAG, "[onCloseWindow]" + window);
+            if (window != mWebView) {
+                mWebView.loadUrl("javascript:janrain.engage.share.loginPopupCallback(\"" +
+                        JRWebViewFragment.this.mProvider.getName() + "\");");
+                ((FrameLayout) window.getParent()).removeView(window);
+                mWebView.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+            JREngage.logd(TAG, "[console] message: '" + consoleMessage.message() + "'");
+            return true;
+        }
     };
 
     @Override
     /*package*/ void onBackPressed() {
         if (mRetain != null) JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
-        mSession.triggerAuthenticationDidRestart();
-        finishFragmentWithResult(RESULT_RESTART);
+        doAuthRestart();
     }
 
 //    public void setUseDesktopUa(boolean use) {
@@ -491,11 +531,15 @@ public class JRWebViewFragment extends JRUiFragment {
         try {
             payloadDictionary = JRDictionary.fromJsonString(payloadString);
         } catch (JSONException e) {
-            Log.e(TAG, "[connectionDidFinishLoading] failure: " + payloadString);
+            Log.e(TAG, "[connectionDidFinishLoading] failure parsing JSON: " + payloadString);
             mIsFinishPending = true;
-            setFragmentResult(RESULT_FAIL);
             showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
                     getString(R.string.jr_webview_error_dialog_msg));
+            setFragmentResult(JRWebViewFragment.RESULT_FAIL_AND_STOP);
+            mSession.triggerAuthenticationDidFail(new JREngageError(
+                    "Authentication failed: " + payloadString,
+                    JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                    JREngageError.ErrorType.AUTHENTICATION_FAILED));
             return;
         }
 
@@ -551,21 +595,28 @@ public class JRWebViewFragment extends JRUiFragment {
                 showAlertDialog("OpenID Error", "The URL you entered does not appear to be an OpenID");
             } else if ("canceled".equals(error)) {
                 mProvider.setForceReauth(true);
-                mSession.triggerAuthenticationDidRestart();
-                finishFragmentWithResult(RESULT_RESTART);
+                doAuthRestart();
             } else {
                 Log.e(TAG, "unrecognized error: " + error);
-                JREngageError err = new JREngageError(
-                        "Authentication failed: " + payloadString,
-                        JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
-                        JREngageError.ErrorType.AUTHENTICATION_FAILED);
-
-                mSession.triggerAuthenticationDidFail(err);
                 mIsFinishPending = true;
-                setFragmentResult(RESULT_FAIL);
                 showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
                         getString(R.string.jr_webview_error_dialog_msg));
+                setFragmentResult(JRWebViewFragment.RESULT_FAIL_AND_STOP);
+                mSession.triggerAuthenticationDidFail(new JREngageError(
+                        "Authentication failed: " + payloadString,
+                        JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
+                        JREngageError.ErrorType.AUTHENTICATION_FAILED));
             }
+        }
+    }
+
+    private void doAuthRestart() {
+        if (isSpecificProviderFlow() && mProvider != null && !mProvider.requiresInput()) {
+            mSession.triggerAuthenticationDidCancel();
+            finishFragmentWithResult(RESULT_RESTART);
+        } else {
+            mSession.triggerAuthenticationDidRestart();
+            finishFragmentWithResult(RESULT_RESTART);
         }
     }
 
@@ -573,20 +624,19 @@ public class JRWebViewFragment extends JRUiFragment {
         JREngage.logd(TAG, "[connectionDidFail] userdata: " + tag, ex);
 
         if (hasView()) {
-            // This is designed to not run if the user pressed the back button after the MEU started
+            // This is intended to not run if the user pressed the back button after the MEU started
             // loading but before it failed.
             // The test is probably not quite right and that if the timing is bad both onBackPressed()
             // and this method will call setResult
-            final JREngageError error = new JREngageError(
+            mIsFinishPending = true;
+            showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
+                    getString(R.string.jr_dialog_network_error));
+            setFragmentResult(JRWebViewFragment.RESULT_FAIL_AND_STOP);
+            mSession.triggerAuthenticationDidFail(new JREngageError(
                     "Authentication failed",
                     JREngageError.AuthenticationError.AUTHENTICATION_FAILED,
                     JREngageError.ErrorType.AUTHENTICATION_FAILED,
-                    ex);
-            mSession.triggerAuthenticationDidFail(error);
-            mIsFinishPending = true;
-            setFragmentResult(RESULT_FAIL);
-            showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
-                    getString(R.string.jr_dialog_network_error));
+                    ex));
         }
     }
 
@@ -675,15 +725,6 @@ public class JRWebViewFragment extends JRUiFragment {
                     mDeferredCdfO = null;
                 }
             }
-        }
-    }
-
-    @Override
-    /*package*/ void setFragmentResult(int result) {
-        super.setFragmentResult(result);
-        if (mSession == null) return;
-        if (isSpecificProviderFlow() && mProvider != null && !mProvider.requiresInput()) {
-            mSession.triggerAuthenticationDidCancel();
         }
     }
 

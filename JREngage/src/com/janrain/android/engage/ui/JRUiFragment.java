@@ -501,6 +501,10 @@ public abstract class JRUiFragment extends Fragment {
     /*package*/ void setFragmentResult(int result) {
         mFragmentResult = result;
     }
+    
+    /*package*/ Integer getFragmentResult() {
+        return mFragmentResult;
+    }
 
     /*package*/ void finishFragmentWithResult(int result) {
         setFragmentResult(result);
