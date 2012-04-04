@@ -32,8 +32,12 @@
 package com.janrain.android.engage.ui;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ComponentInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -159,9 +163,10 @@ public class JRFragmentHostActivity extends FragmentActivity {
             if (!mUiFragment.shouldShowTitleWhenDialog()) {
                 getTheme().applyStyle(R.style.jr_disable_title_and_action_bar_style, true);
             }
-        } else if (getIntent().getExtras().getInt(JR_OPERATION_MODE) == JR_FULLSCREEN_NO_TITLE) {
+        } else if (getOperationMode() == JR_FULLSCREEN_NO_TITLE) {
             getTheme().applyStyle(R.style.jr_disable_title_and_action_bar_style, true);
-        } else if (getIntent().getExtras().getInt(JR_OPERATION_MODE) == JR_FULLSCREEN) {
+        } else if (getOperationMode() == JR_FULLSCREEN) {
+            // Currently a noop
             getTheme().applyStyle(R.style.jr_fullscreen_style, true);
         }
 
@@ -194,8 +199,12 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+        //        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
+    }
+
+    private int getOperationMode() {
+        return getIntent().getExtras().getInt(JR_OPERATION_MODE);
     }
 
     private boolean shouldBePhoneSizedDialog() {
@@ -289,17 +298,17 @@ public class JRFragmentHostActivity extends FragmentActivity {
     }
 
     public static Intent createIntentForCurrentScreen(Activity activity, boolean showTitleBar) {
-        Intent intent = new Intent(activity, JRFragmentHostActivity.class);
+        Intent intent;
         if (AndroidUtils.isSmallNormalOrLargeScreen()) {
+            intent = new Intent(activity, Fullscreen.class);
             if (showTitleBar) {
                 intent.putExtra(JR_OPERATION_MODE, JR_FULLSCREEN);
-//                return new Intent(activity, Fullscreen.class);
             } else {
                 intent.putExtra(JR_OPERATION_MODE, JR_FULLSCREEN_NO_TITLE);
-//                return new Intent(activity, FullscreenNoTitleBar.class);
             }
         } else { // Honeycomb (because the screen is large+)
             // ignore showTitleBar, this activity dynamically enables and disables its title
+            intent = new Intent(activity, JRFragmentHostActivity.class);
             intent.putExtra(JR_OPERATION_MODE, JR_DIALOG);
         }
         return intent;
@@ -324,7 +333,5 @@ public class JRFragmentHostActivity extends FragmentActivity {
     }
 
     /* ~aliases for alternative activity declarations for this activity */
-//    public static class Fullscreen extends JRFragmentHostActivity {}
-
-//    public static class FullscreenNoTitleBar extends Fullscreen {}
+    public static class Fullscreen extends JRFragmentHostActivity {}
 }
