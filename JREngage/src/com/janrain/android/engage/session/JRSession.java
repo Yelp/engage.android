@@ -377,8 +377,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             String s = mSavedConfigurationBlock;
             mSavedConfigurationBlock = "";
             mNewEtag = mSavedEtag;
-            mError = finishGetConfiguration(s);
-            triggerConfigDidFinish();
+            finishGetConfiguration(s);
         }
     }
 
@@ -565,8 +564,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                     return;
                 }
 
-                mError = finishGetConfiguration(payloadString, headers.getETag());
-                if (!isUiShowing()) triggerConfigDidFinish();
+                finishGetConfiguration(payloadString, headers.getETag());
             } else {
                 Log.e(TAG, "unexpected userData found in ConnectionDidFinishLoading full");
             }
@@ -601,21 +599,20 @@ public class JRSession implements JRConnectionManagerDelegate {
                 mUrlEncodedLibraryVersion);
         JREngage.logd(TAG, "[startGetConfiguration] url: " + urlString);
 
-//        BasicNameValuePair eTagHeader = new BasicNameValuePair("If-None-Match", mOldEtag);
+        BasicNameValuePair eTagHeader = new BasicNameValuePair("If-None-Match", mOldEtag);
         List<NameValuePair> headerList = new ArrayList<NameValuePair>();
-//        headerList.add(eTagHeader);
+        headerList.add(eTagHeader);
 
         JRConnectionManager.createConnection(urlString, this, TAG_GET_CONFIGURATION, headerList);
 
         return null;
     }
 
-    private JREngageError finishGetConfiguration(String dataStr) {
+    private void finishGetConfiguration(String dataStr) {
         JREngage.logd(TAG, "[finishGetConfiguration]");
 
-        /* Attempt to parse the return string as JSON.*/
         JRDictionary jsonDict = null;
-        Exception jsonEx = null;
+        JSONException jsonEx = null;
         try {
             jsonDict = JRDictionary.fromJsonString(dataStr);
         } catch (JSONException e) {
@@ -623,94 +620,64 @@ public class JRSession implements JRConnectionManagerDelegate {
             jsonEx = e;
         }
 
-        /* If the parsed dictionary object is null or an exception has occurred, return */
         if (jsonDict == null) {
             Log.e(TAG, "[finishGetConfiguration] failed.");
-            return new JREngageError(
+            mError = new JREngageError(
                     getApplicationContext().getString(R.string.jr_getconfig_parse_error_message),
                     ConfigurationError.JSON_ERROR,
                     ErrorType.CONFIGURATION_FAILED,
                     jsonEx);
         }
 
-        /* Check to see if the base URL has changed */
-        String baseUrl = jsonDict.getAsString("baseurl", "");
-        if (!baseUrl.equals(mBaseUrl)) {
-            /* Save the new base URL */
-            mBaseUrl = StringUtils.chomp(baseUrl, "/");
-            Prefs.putString(Prefs.KEY_JR_BASE_URL, mBaseUrl);
-        }
+        mBaseUrl = StringUtils.chomp(jsonDict.getAsString("baseurl", ""), "/");
+        Prefs.putString(Prefs.KEY_JR_BASE_URL, mBaseUrl);
 
-        /* Get the providers out of the provider_info section.  These are likely to have changed. */
-        JRDictionary providerInfo = jsonDict.getAsDictionary("provider_info");
         mAllProviders = new HashMap<String, JRProvider>();
-
-        /* For each provider */
+        JRDictionary providerInfo = jsonDict.getAsDictionary("provider_info");
         for (String name : providerInfo.keySet()) {
-            /* Get its dictionary */
-            JRDictionary dictionary = providerInfo.getAsDictionary(name);
-            /* Use this to create a provider object */
-            JRProvider provider = new JRProvider(name, dictionary);
-            /* and finally add the object to our dictionary of providers */
-            mAllProviders.put(name, provider);
+            mAllProviders.put(name, new JRProvider(name, providerInfo.getAsDictionary(name)));
         }
+        Archiver.save(ARCHIVE_ALL_PROVIDERS, mAllProviders);
 
-        /* Get the ordered list of auth providers */
         mAuthProviders = jsonDict.getAsListOfStrings("enabled_providers");
-        /* Get the ordered list of sharing providers */
         mSharingProviders = jsonDict.getAsListOfStrings("social_providers");
+        Archiver.save(ARCHIVE_AUTH_PROVIDERS, mAuthProviders);
+        Archiver.save(ARCHIVE_SHARING_PROVIDERS, mSharingProviders);
 
-        /* By redundantly calling these setters it is ensured that the returning auth and sharing providers,
+        mHidePoweredBy = jsonDict.getAsBoolean("hide_tagline", false);
+        Prefs.putBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, mHidePoweredBy);
+
+        /* Ensures that the returning auth and sharing providers,
          * if set, are members of the configured set of providers. */
         setReturningAuthProvider(mReturningAuthProvider);
         setReturningSharingProvider(mReturningSharingProvider);
 
-        /* Done! */
-
-        /* Save data to local store */
-        Archiver.save(ARCHIVE_ALL_PROVIDERS, mAllProviders);
-        Archiver.save(ARCHIVE_AUTH_PROVIDERS, mAuthProviders);
-        Archiver.save(ARCHIVE_SHARING_PROVIDERS, mSharingProviders);
-
-        /* Figure out of whether to hide the "powered by" line */
-        mHidePoweredBy = jsonDict.getAsBoolean("hide_tagline", false);
-        Prefs.putBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, mHidePoweredBy);
-
-        /* Once we know everything is parsed and saved, save the new etag */
         Prefs.putString(Prefs.KEY_JR_CONFIGURATION_ETAG, mNewEtag);
-
-        /* 'git-tag'-like library version tag to prevent reloading stale data from disk */
         Prefs.putString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, mUrlEncodedLibraryVersion);
 
-        return null;
+        mError = null;
+        triggerConfigDidFinish();
     }
 
-    private JREngageError finishGetConfiguration(String dataStr, String eTag) {
+    private void finishGetConfiguration(String dataStr, String eTag) {
         JREngage.logd(TAG, "[finishGetConfiguration-etag]");
-
-        if (!mOldEtag.equals(eTag)) {
-            /* We can only update all of our data if the UI isn't currently using that
-             * information.  Otherwise, the library may crash/behave inconsistently.  If a
-             * dialog isn't showing, go ahead and update that information.  Or, in the case
-             * where a dialog is showing but there isn't any data that it could be using (that
-             * is, the lists of auth and sharing providers are null), go ahead and update it too.
-             * The dialogs won't try and do anything until we're done updating the lists. */
-            if (!isUiShowing() ||
-                    (CollectionUtils.isEmpty(mAuthProviders) && CollectionUtils.isEmpty(mSharingProviders))) {
-                mNewEtag = eTag;
-                return finishGetConfiguration(dataStr);
-            }
-
-            /* Otherwise, we have to save all this information for later.  The
-             * UserInterfaceMaestro sends a signal to sessionData when the dialog closes (by
-             * setting the boolean dialogIsShowing to false. In the setter function, sessionData
-             * checks to see if there's anything stored in the savedConfigurationBlock, and
-             * updates it then. */
-            mSavedConfigurationBlock = dataStr;
-            mSavedEtag = eTag;
+        /* Only update all the config if the UI isn't currently displayed / using that
+         * information.  Otherwise, the library may crash/behave inconsistently. In the case
+         * where a dialog is showing but there isn't any config data that it could be using (that
+         * is, the lists of auth and sharing providers are empty), update the config. */
+        if (!isUiShowing() ||
+                (CollectionUtils.isEmpty(mAuthProviders) && CollectionUtils.isEmpty(mSharingProviders))) {
+            mNewEtag = eTag;
+            finishGetConfiguration(dataStr);
+            return;
         }
 
-        return null;
+        /* Otherwise, we have to save all this information for later. When no UI is displayed
+         * mSavedConfigurationBlock is checked and the config is updated then. */
+        mSavedConfigurationBlock = dataStr;
+        mSavedEtag = eTag;
+
+        mError = null;
     }
 
     private boolean isUiShowing() {
@@ -901,14 +868,12 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 
         String deviceToken = user.getDeviceToken();
-
         String activityJson = mActivity.toJRDictionary().toJSON();
-        
         String urlEncodedActivityJson = AndroidUtils.urlEncode(activityJson);
 
         StringBuilder body = new StringBuilder();
-        body.append("activity=").append(urlEncodedActivityJson);
 
+        body.append("activity=").append(urlEncodedActivityJson);
         /* These are undocumented parameters for the mobile library's use */
         body.append("&device_token=").append(deviceToken);
         body.append("&url_shortening=true");
