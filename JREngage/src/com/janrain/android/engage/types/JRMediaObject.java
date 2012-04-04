@@ -41,10 +41,10 @@ import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import java.io.Serializable;
 
 /**
- * @internal
- *
  * @class JRMediaObject
- * Base class for JRImageMediaObject, JRFlashMediaObject, and JRMp3MediaObject.
+ * Super class for JRImageMediaObject, JRFlashMediaObject, and JRMp3MediaObject -- the media objects that
+ * are shareable in JRActivityObjects. Do not subclass this object, instead instantiate one of the supplied
+ * subclasses.
  **/
 public abstract class JRMediaObject implements Serializable, JRJsonifiable {
     private transient Bitmap mThumbnailBitmap;
@@ -53,6 +53,10 @@ public abstract class JRMediaObject implements Serializable, JRJsonifiable {
     public String getThumbnail() {return null; }
     public abstract String getType();
 
+    /**
+     * @internal
+     * @param tal
+     */
     public void downloadThumbnail(final ThumbnailAvailableListener tal) {
         if (mThumbnailBitmap != null) {
             tal.onThumbnailAvailable(mThumbnailBitmap);
@@ -76,9 +80,16 @@ public abstract class JRMediaObject implements Serializable, JRJsonifiable {
         }
     }
 
+    /**
+     * @internal
+     */
     public interface ThumbnailAvailableListener {
         public void onThumbnailAvailable(Bitmap b);
     }
 
+    /**
+     * @internal
+     * @return
+     */
     public abstract JRDictionary toJRDictionary();
 }
