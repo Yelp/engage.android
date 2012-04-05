@@ -513,9 +513,9 @@ public class JRWebViewFragment extends JRUiFragment {
         doAuthRestart();
     }
 
-//    public void setUseDesktopUa(boolean use) {
-//        mUseDesktopUa = use;
-//    }
+    //public void setUseDesktopUa(boolean use) {
+    //    mUseDesktopUa = use;
+    //}
 
     private void connectionDidFinishLoading(HttpResponseHeaders headers,
                                            byte[] payload,

@@ -35,12 +35,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.util.Log;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.types.JRDictionary;
@@ -53,9 +51,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.ref.SoftReference;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -196,7 +191,7 @@ public class JRProvider implements Serializable {
             mUserInputDescriptor = "";
         }
 
-        /* We call this function in the constructor, simply to preemptively download the icons
+        /* We call this function in the constructor to preemptively download the icons
          if they aren't already there. */
         getProviderLogo(JREngage.getApplicationContext());
     }
@@ -287,7 +282,6 @@ public class JRProvider implements Serializable {
             return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
         }
 
-
         try {
             String iconFileName = "providericon~" + drawableName + ".png";
 
@@ -297,42 +291,14 @@ public class JRProvider implements Serializable {
                 // DENSITY_XHIGH constant defined yet.  Fortunately it does the right thing
                 // if you pass in the DPI as an int
 
-                //icon.setDensity(320);
-                // TODO move reflection to util.Android
-                try {
-                    Method setDensity = icon.getClass().getDeclaredMethod("setDensity", int.class);
-                    setDensity.invoke(icon, 320);
-                } catch (NoSuchMethodException e) {
-                    Log.e(TAG, "Unexpected: " + e);
-                } catch (IllegalAccessException e) {
-                    Log.e(TAG, "Unexpected: " + e);
-                } catch (InvocationTargetException e) {
-                    Log.e(TAG, "Unexpected: " + e);
-                }
+                AndroidUtils.bitmapSetDensity(icon);
             } else {
                 c.deleteFile(iconFileName);
                 downloadIcons(c);
                 return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
             }
 
-            // TODO move reflection to util.Android
-            //return new BitmapDrawable(c.getResources(), icon);
-            try {
-                Class bitmapDrawableClass = Class.forName("android.graphics.drawable.BitmapDrawable");
-                Constructor newBitmapDrawable =
-                        bitmapDrawableClass.getDeclaredConstructor(Resources.class, Bitmap.class);
-                return (BitmapDrawable) newBitmapDrawable.newInstance(c.getResources(), icon);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            } catch (InstantiationException e) {
-                throw new RuntimeException(e);
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
+            return AndroidUtils.newBitmapDrawable(c, icon);
         } catch (FileNotFoundException e) {
             downloadIcons(c);
 

@@ -60,11 +60,9 @@
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/jr_dialog_base"
+            android:theme="@style/android:Theme.Holo.Dialog"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
-        <!--android:theme="@style/android:Theme.Dialog"-->
-        <!--android:theme="@style/jr_dialog_dark"-->
 
         <!--This activity must have a normal non-dialog theme such as Theme, Theme.Light, Theme.Holo, etc.
 
@@ -78,21 +76,6 @@
             android:theme="@style/custom_fullscreen_dark"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
-        <!--android:theme="@style/custom_fullscreen"-->
-
-        <!-- TODO document dark themes-->
-        <!--This activity must have a normal non-dialog theme such as Theme, Theme.Light, Theme.Holo, etc.
-
-            Using android:theme="@style/jr_fullscreen_no_title" will result in Theme.Light on API 4-10 and
-            Theme.Holo.Light on API 11+. (The theme jr_fullscreen_no_title is an alias for jr_fullscreen. The
-            title and action bar of this activity are disabled at runtime.
-            -->
-        <!--<activity-->
-            <!--android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$FullscreenNoTitleBar"-->
-            <!--android:configChanges="orientation|screenSize"-->
-            <!--android:theme="@style/jr_fullscreen_no_title_dark"-->
-            <!--android:windowSoftInputMode="adjustResize|stateHidden"-->
-            <!--/>-->
 
     </application>
 

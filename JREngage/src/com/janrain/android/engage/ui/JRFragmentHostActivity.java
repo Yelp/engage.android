@@ -75,6 +75,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
     private JRUiFragment mUiFragment;
     private JRSession mSession;
+    private Integer m_Result;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,15 +129,15 @@ public class JRFragmentHostActivity extends FragmentActivity {
         mUiFragment.onFragmentHostActivityCreate(this, mSession);
 
         if (shouldBeDialog()) {
-            try {
-                PackageManager pm = getPackageManager();
-                ActivityInfo ai = pm.getActivityInfo(new ComponentName(this, Fullscreen.class), 0);
-                int theme = ai.getThemeResource();
-                getTheme().applyStyle(theme, false);
-            } catch (PackageManager.NameNotFoundException e) {
-                Log.e(TAG, "Unable to instantiate ComponentName for Fullscreen, defaulting to unstyled " +
-                        "Dialog theme");
-            }
+            //try {
+            //    PackageManager pm = getPackageManager();
+            //    ActivityInfo ai = pm.getActivityInfo(new ComponentName(this, Fullscreen.class), 0);
+            //    int theme = ai.getThemeResource();
+            //    getTheme().applyStyle(theme, false);
+            //} catch (PackageManager.NameNotFoundException e) {
+            //    Log.e(TAG, "Unable to instantiate ComponentName for Fullscreen, defaulting to unstyled " +
+            //            "Dialog theme");
+            //}
 
             //TypedValue dialogThemeVal = new TypedValue();
             //getTheme().resolveAttribute(android.R.attr.dialogTheme, dialogThemeVal, false);
@@ -150,7 +151,9 @@ public class JRFragmentHostActivity extends FragmentActivity {
             //            "theme");
             //    getTheme().applyStyle(android.R.style.Theme_Dialog, true);
             //}
-            
+
+            AndroidUtils.setFinishOnTouchOutside(this, true);
+
             if (shouldBePhoneSizedDialog()) {
                 getTheme().applyStyle(R.style.jr_dialog_phone_sized, true);
             } else {
@@ -193,10 +196,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 .setTransition(FragmentTransaction.TRANSIT_NONE)
                 .commit();
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-        //        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
     }
 
     private int getOperationMode() {
@@ -263,26 +262,28 @@ public class JRFragmentHostActivity extends FragmentActivity {
         }
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
-            onBackPressed();
-            return true;
-        }
-
-        // Delegate everything else to Activity.
-        return super.onTouchEvent(event);
+    // Unforuntately setResult is final so it can't be overridden to track the result-definedness state of
+    // the activity, which is used to track unplanned #finish()es and to fire onBackPressed at that time.
+    //@Override
+    //public void setResult() { }
+    /*package*/ void _setResult(int resultCode) {
+        setResult(resultCode);
+        m_Result = resultCode;
     }
 
-    //@Override
-    //public boolean dispatchTouchEvent(MotionEvent event) {
-    //    if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
-    //        onBackPressed();
-    //        return true;
-    //    }
-    //
-    //    return super.dispatchTouchEvent(event);
-    //}
+    /**
+     * @internal
+     * Intercepts finish calls triggered by setFinishOnTouchOutside by detecting whether a result has been
+     * specified yet.
+     */
+    @Override
+    public void finish() {
+        if (m_Result == null) {
+            onBackPressed();
+        } else {
+            super.finish();
+        }
+    }
 
     @Override
     public void onBackPressed() {

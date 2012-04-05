@@ -50,17 +50,27 @@
 
 package com.janrain.android.engage.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.Log;
 import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.session.JRProvider;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.AbstractSet;
@@ -152,6 +162,51 @@ public class AndroidUtils {
     public static boolean isLandscape() {
         return JREngage.getApplicationContext().getResources().getConfiguration().orientation ==
                 Configuration.ORIENTATION_LANDSCAPE;
+    }
+    
+    public static void setFinishOnTouchOutside(Activity activity, boolean finish) {
+        try {
+            Method m = activity.getClass().getMethod("setFinishOnTouchOutside", boolean.class);
+            m.invoke(activity, finish);
+        } catch (NoSuchMethodException e) {
+            Log.e(TAG, "[setFinishOnTouchOutside]", e);
+        } catch (InvocationTargetException e) {
+            Log.e(TAG, "[setFinishOnTouchOutside]", e);
+        } catch (IllegalAccessException e) {
+            Log.e(TAG, "[setFinishOnTouchOutside]", e);
+        }
+    }
+
+    public static Drawable newBitmapDrawable(Context c, Bitmap icon) {
+        try {
+            Class bitmapDrawableClass = Class.forName("android.graphics.drawable.BitmapDrawable");
+            Constructor bitmapDrawableConstructor =
+                    bitmapDrawableClass.getDeclaredConstructor(Resources.class, Bitmap.class);
+            return (BitmapDrawable) bitmapDrawableConstructor.newInstance(c.getResources(), icon);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void bitmapSetDensity(Bitmap icon) {
+        try {
+            Method setDensity = icon.getClass().getDeclaredMethod("setDensity", int.class);
+            setDensity.invoke(icon, 320);
+        } catch (NoSuchMethodException e) {
+            Log.e(TAG, "Unexpected: " + e);
+        } catch (IllegalAccessException e) {
+            Log.e(TAG, "Unexpected: " + e);
+        } catch (InvocationTargetException e) {
+            Log.e(TAG, "Unexpected: " + e);
+        }
     }
 
     //public static int getScreenWidth() {

@@ -8,11 +8,6 @@
     style="?jrCustomLandingRootViewStyle"
     >
 
-    <!--
-       - Bordered box/container.
-       -
-       - TODO:  Layout is filling vertically and not centered in landscape mode.
-      -->
     <LinearLayout
         android:id="@+id/jr_landing_dialog"
         android:layout_width="wrap_content"

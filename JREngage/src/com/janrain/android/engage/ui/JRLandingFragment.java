@@ -229,8 +229,6 @@ public class JRLandingFragment extends JRUiFragment {
                     break;
                 case JRWebViewFragment.RESULT_FAIL_AND_STOP:
                     finishFragmentWithResult(RESULT_FAIL);
-                case JRWebViewFragment.RESULT_FAIL_AND_RESTART:
-                    // Fall through
                 case JRWebViewFragment.RESULT_RESTART:
                     finishFragmentWithResult(RESULT_RESTART);
                     break;
@@ -285,15 +283,19 @@ public class JRLandingFragment extends JRUiFragment {
             finishFragmentWithResult(RESULT_RESTART);
             return;
         }
-        mSession.triggerAuthenticationDidRestart();
+
+        if (isSpecificProviderFlow()) {
+            mSession.triggerAuthenticationDidCancel();
+        } else {
+            mSession.triggerAuthenticationDidRestart();
+        }
+
         finishFragmentWithResult(RESULT_RESTART);
     }
 
     @Override
         /*package*/ void setFragmentResult(int result) {
         super.setFragmentResult(result);
-        if (mSession == null) return;
-        if (isSpecificProviderFlow()) mSession.triggerAuthenticationDidCancel();
     }
 
     @Override

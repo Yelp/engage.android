@@ -251,8 +251,6 @@ public class JRProviderListFragment extends JRUiFragment {
                     case JRWebViewFragment.RESULT_FAIL_AND_STOP:
                         finishFragmentWithResult(RESULT_FAIL);
                         return;
-                    case JRWebViewFragment.RESULT_FAIL_AND_RESTART:
-                        break;
                     case JRWebViewFragment.RESULT_RESTART:
                         break;
                     case JRWebViewFragment.RESULT_BAD_OPENID_URL:
@@ -307,8 +305,8 @@ public class JRProviderListFragment extends JRUiFragment {
     }
 
     private void cancelProviderList() {
-        finishFragmentWithResult(Activity.RESULT_CANCELED);
         if (mSession != null) mSession.triggerAuthenticationDidCancel();
+        finishFragmentWithResult(Activity.RESULT_CANCELED);
     }
 
     /*package*/ static boolean shouldOpenDirectToUserLandingPage(JRSession session) {
@@ -348,8 +346,7 @@ public class JRProviderListFragment extends JRUiFragment {
     }
 
     public void finishJrSignin() {
-        getActivity().setResult(JRProviderListFragment.RESULT_NATIVE_SIGNIN);
-        getActivity().finish();
+        finishFragmentWithResult(JRProviderListFragment.RESULT_NATIVE_SIGNIN);
     }
     
     public String getCustomTitle() {

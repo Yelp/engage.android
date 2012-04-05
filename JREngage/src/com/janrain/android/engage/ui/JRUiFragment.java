@@ -234,7 +234,7 @@ public abstract class JRUiFragment extends Fragment {
         JREngage.logd(TAG, "[onDestroy]");
         if (mFragmentResult != null) {
             if (getActivity() instanceof JRFragmentHostActivity) {
-                getActivity().setResult(mFragmentResult);
+                ((JRFragmentHostActivity) getActivity())._setResult(mFragmentResult);
             } else if (getTargetFragment() != null) {
                 getTargetFragment().onActivityResult(getTargetRequestCode(), mFragmentResult, null);
             }
@@ -513,7 +513,7 @@ public abstract class JRUiFragment extends Fragment {
 
     /*package*/ void finishFragment() {
         if (getActivity() instanceof JRFragmentHostActivity) {
-            if (mFragmentResult != null) getActivity().setResult(mFragmentResult);
+            if (mFragmentResult != null) ((JRFragmentHostActivity) getActivity())._setResult(mFragmentResult);
             getActivity().finish();
         } else {
             FragmentManager fm = getActivity().getSupportFragmentManager();
