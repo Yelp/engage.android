@@ -246,6 +246,8 @@ public class JRWebViewFragment extends JRUiFragment {
     public void onDestroy() {
         super.onDestroy();
 
+        mWebView.destroy();
+
         if (mRetain != null) JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
     }
 
@@ -502,13 +504,15 @@ public class JRWebViewFragment extends JRUiFragment {
 
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-            JREngage.logd(TAG, "[console] message: '" + consoleMessage.message() + "'");
+            JREngage.logd(TAG, "[console] message: '" + AndroidUtils.getConsoleMessageMessage(consoleMessage)
+                    + "'");
             return true;
         }
     };
 
     @Override
     /*package*/ void onBackPressed() {
+        JREngage.logd(TAG, "[onBackPressed]");
         if (mRetain != null) JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
         doAuthRestart();
     }
@@ -611,6 +615,7 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     private void doAuthRestart() {
+        JREngage.logd(TAG, "[doAuthRestart]");
         if (isSpecificProviderFlow() && mProvider != null && !mProvider.requiresInput()) {
             mSession.triggerAuthenticationDidCancel();
             finishFragmentWithResult(RESULT_RESTART);
@@ -731,6 +736,7 @@ public class JRWebViewFragment extends JRUiFragment {
     @Override
     /*package*/ boolean shouldShowTitleWhenDialog() {
         return getCustomUiConfiguration() != null &&
+                getCustomUiConfiguration().mShowWebViewTitleWhenDialog != null &&
                 getCustomUiConfiguration().mShowWebViewTitleWhenDialog;
     }
 
