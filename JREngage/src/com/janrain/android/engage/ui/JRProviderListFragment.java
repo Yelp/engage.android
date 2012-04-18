@@ -358,6 +358,7 @@ public class JRProviderListFragment extends JRUiFragment {
     @Override
     /*package*/ boolean shouldShowTitleWhenDialog() {
         return getCustomUiConfiguration() != null &&
+                getCustomUiConfiguration().mShowProviderListTitleWhenDialog != null &&
                 getCustomUiConfiguration().mShowProviderListTitleWhenDialog;
     }
 }
