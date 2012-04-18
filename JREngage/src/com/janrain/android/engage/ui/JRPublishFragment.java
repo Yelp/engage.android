@@ -42,8 +42,12 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -56,7 +60,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -82,6 +85,8 @@ import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.janrain.android.engage.utils.AndroidUtils.scaleDipToPixels;
 
 /**
  * @class JRPublishFragment
@@ -143,7 +148,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private LinearLayout mUserProfileContainer;
     private ImageView mUserProfilePic;
     private TextView mUserNameView;
-    private Button mSignOutButton;
+    private TextView mSignOutButton;
     private ColorButton mShareButton;
     private ColorButton mConnectAndShareButton;
     private LinearLayout mSharedTextAndCheckMarkContainer;
@@ -183,7 +188,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mUserProfileContainer = (LinearLayout) content.findViewById(R.id.jr_user_profile_container);
         mUserProfilePic = (ImageView) content.findViewById(R.id.jr_profile_pic);
         mUserNameView = (TextView) content.findViewById(R.id.jr_user_name);
-        mSignOutButton = (Button) content.findViewById(R.id.jr_sign_out_button);
+        mSignOutButton = (TextView) content.findViewById(R.id.jr_sign_out_button);
         mShareButton = (ColorButton) content.findViewById(R.id.jr_just_share_button);
         mConnectAndShareButton = (ColorButton) content.findViewById(R.id.jr_connect_and_share_button);
         mSharedTextAndCheckMarkContainer = (LinearLayout) content.findViewById(
@@ -201,8 +206,34 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mUserCommentView.addTextChangedListener(mUserCommentTextWatcher);
         mEmailSmsComment.addTextChangedListener(mEmailSmsCommentTextWatcher);
 
-        mSmsButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
-        mEmailButton.setColor(getColor(R.color.jr_janrain_darkblue_light_100percent));
+        mSmsButton.setColor(getColor(R.color.jr_janrain_darkblue));
+        mEmailButton.setColor(getColor(R.color.jr_janrain_darkblue));
+
+        //// LayerLists can't look up theme attribute values, so this is constructed programmatically.
+        //Drawable[] da = new Drawable[2];
+        int colorBackground = getColor(getThemeAttributeValue(android.R.attr.colorBackground));
+        //da[0] = new ColorDrawable(colorBackground);
+        ////da[1] = new ColorDrawable((0x00F2f2f2 & 0x00ffffff) | 0xff000000);
+        //da[1] = new ColorDrawable(getColor(R.color.jr_preview_outer_grey_bg_rect));
+        ////Put it in an inset because programmatic backgrounds don't expand with XML specified padding :(
+        //LayerDrawable ld = new LayerDrawable(da);
+        //Drawable id = new InsetDrawable(ld, scaleDipToPixels(5), 0, scaleDipToPixels(5), 0);
+        //View previewLabelView = content.findViewById(R.id.jr_preview_label);
+        //previewLabelView.setBackgroundDrawable(ld);
+        //previewLabelView.setPadding(scaleDipToPixels(5), 0, scaleDipToPixels(5), 0);
+
+        // Janrain Engage for Android with DynaColor™
+        float[] bgHsv = new float[3];
+        float[] jrBlueLightHsv = new float[3];
+        float[] jrBlueDarkHsv = new float[3];
+        Color.colorToHSV(colorBackground, bgHsv);
+        Color.colorToHSV(getColor(R.color.jr_janrain_darkblue), jrBlueDarkHsv);
+        Color.colorToHSV(getColor(R.color.jr_janrain_darkblue_lightened), jrBlueLightHsv);
+        ((TextView) content.findViewById(R.id.jr_media_content_title)).setTextColor(
+                Math.abs(bgHsv[2] - jrBlueDarkHsv[2]) > Math.abs(bgHsv[2] - jrBlueLightHsv[2]) ?
+                        getColor(R.color.jr_janrain_darkblue)
+                        : getColor(R.color.jr_janrain_darkblue_lightened)
+        );
     }
 
     private void configureEmailSmsButtons() {
@@ -485,8 +516,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private void setTabSpecIndicator(TabHost.TabSpec spec, Drawable iconSet, String label) {
         boolean doBasicTabs = false;
         try {
-            //todo basic tabs? should be part of custom ui?
-            if (AndroidUtils.SDK_INT >= 11 && false) {
+            if (AndroidUtils.SDK_INT >= 11 && getCustomUiConfiguration() != null &&
+                    getCustomUiConfiguration().mUseSystemTabs) {
                 doBasicTabs = true;
             } else {
                 LinearLayout ll = createTabSpecIndicator(label, iconSet);
@@ -525,6 +556,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         /* Background */
         int selectedColor = android.R.color.transparent;
+        //int selectedColor = android.R.color.white;
         int unselectedColor = android.R.color.darker_gray;
         StateListDrawable tabBackground = new StateListDrawable();
         tabBackground.addState(new int[]{android.R.attr.state_selected},
@@ -543,18 +575,30 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 AndroidUtils.scaleDipToPixels(0),
                 AndroidUtils.scaleDipToPixels(4)
         );
+        label.setTextColor(getTextColorPrimary());
         ll.addView(label);
 
         return ll;
     }
 
+    private int getTextColorPrimary() {
+        return getColor(getThemeAttributeValue(android.R.attr.textColorPrimary));
+    }
+
+    private int getThemeAttributeValue(int attribute) {
+        TypedValue outVal = new TypedValue();
+        getActivity().getTheme().resolveAttribute(attribute, outVal, false);
+        return outVal.data;
+    }
+
     private void configureViewElementsBasedOnProvider() {
         JRDictionary socialSharingProperties = mSelectedProvider.getSocialSharingProperties();
 
-        if (socialSharingProperties.getAsBoolean("content_replaces_action"))
+        if (socialSharingProperties.getAsBoolean("content_replaces_action")) {
             updatePreviewTextWhenContentReplacesAction();
-        else
+        } else {
             updatePreviewTextWhenContentDoesNotReplaceAction();
+        }
 
         if (isPublishThunk()) {
             mMaxCharacters = socialSharingProperties
@@ -567,22 +611,19 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         updateCharacterCount();
 
-        boolean can_share_media = socialSharingProperties.getAsBoolean("can_share_media");
+        boolean canShareMedia = socialSharingProperties.getAsBoolean("can_share_media");
+        setViewVisible(mMediaContentView, mJrActivity.getMedia().size() > 0 && canShareMedia);
 
-        /* Switch on or off the media content view based on the presence of media and ability to
-         * display it */
-        setViewVisible(mMediaContentView, mJrActivity.getMedia().size() > 0 && can_share_media);
+        //int lightenedProviderColor = mSelectedProvider.getProviderColor(true);
+        int providerColor = mSelectedProvider.getProviderColor(false);
 
-        /* Switch on or off the action label view based on the provider accepting an action */
+        int alphaProviderColor = (providerColor & 0x00FFFFFF) | 0x44000000;
 
-        int colorWithAlpha = mSelectedProvider.getProviderColor(true);
-        int colorNoAlpha = mSelectedProvider.getProviderColor(false);
+        mUserProfileInformationAndShareButtonContainer.setBackgroundColor(alphaProviderColor);
 
-        mUserProfileInformationAndShareButtonContainer.setBackgroundColor(colorWithAlpha);
-
-        mShareButton.setColor(colorNoAlpha);
-        mConnectAndShareButton.setColor(colorNoAlpha);
-        mPreviewBoxBorder.getBackground().setColorFilter(colorNoAlpha, PorterDuff.Mode.SRC_ATOP);
+        mShareButton.setColor(providerColor);
+        mConnectAndShareButton.setColor(providerColor);
+        mPreviewBoxBorder.getBackground().setColorFilter(providerColor, PorterDuff.Mode.SRC_ATOP);
 
         mProviderIcon.setImageDrawable(mSelectedProvider.getProviderIcon(getActivity()));
     }
@@ -1181,6 +1222,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     public boolean shouldShowTitleWhenDialog() {
-        return getCustomUiConfiguration() != null && getCustomUiConfiguration().mShowSharingTitleWhenDialog;
+        return getCustomUiConfiguration() != null &&
+                getCustomUiConfiguration().mShowSharingTitleWhenDialog != null &&
+                getCustomUiConfiguration().mShowSharingTitleWhenDialog;
     }
 }
