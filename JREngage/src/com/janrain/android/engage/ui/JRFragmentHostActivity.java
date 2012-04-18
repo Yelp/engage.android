@@ -45,6 +45,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
@@ -83,27 +84,17 @@ public class JRFragmentHostActivity extends FragmentActivity {
         JREngage.logd(TAG, "[onCreate]: " + getFragmentId());
 
         mSession = JRSession.getInstance();
-        /* For the case when this activity is relaunched after the process was killed */
-        if (mSession == null) {
-            Log.e(TAG, "bailing out after a process kill/restart");
 
-            // May be needed to prevent fragment recreation error
-            setContentView(R.layout.jr_fragment_host_activity);
-
-            finish();
-            return;
-        }
-
-        if (savedInstanceState != null) {
+        if (mSession == null || savedInstanceState != null) {
             /* This flow control path is reached when there's process death and restart */
-            Log.e(TAG, "bailing out after a process kill/restart (with non-null JRSession");
+            Log.e(TAG, "bailing out after a process kill/restart. mSession: " + mSession);
 
-            // May be needed to prevent fragment recreation error
+            // prevent fragment recreation error
             setContentView(R.layout.jr_fragment_host_activity);
-            finish();
+            super.finish();
             return;
         }
-        
+
         switch (getFragmentId()) {
             case JR_PROVIDER_LIST:
                 mUiFragment = new JRProviderListFragment();
@@ -129,29 +120,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
         mUiFragment.onFragmentHostActivityCreate(this, mSession);
 
         if (shouldBeDialog()) {
-            //try {
-            //    PackageManager pm = getPackageManager();
-            //    ActivityInfo ai = pm.getActivityInfo(new ComponentName(this, Fullscreen.class), 0);
-            //    int theme = ai.getThemeResource();
-            //    getTheme().applyStyle(theme, false);
-            //} catch (PackageManager.NameNotFoundException e) {
-            //    Log.e(TAG, "Unable to instantiate ComponentName for Fullscreen, defaulting to unstyled " +
-            //            "Dialog theme");
-            //}
-
-            //TypedValue dialogThemeVal = new TypedValue();
-            //getTheme().resolveAttribute(android.R.attr.dialogTheme, dialogThemeVal, false);
-            //if (dialogThemeVal.type != 0) {
-            //    getTheme().applyStyle(dialogThemeVal.data, true);
-            //} else {
-            //    /* dialogTheme attribute wasn't added to themes until API 11 so just use Theme.Dialog if
-            //     * by some freak of nature there's an XLarge screen running < API 11
-            //     */
-            //    Log.e(TAG, "Unexpected dialog mode without dialogTheme attribute defined in the current " +
-            //            "theme");
-            //    getTheme().applyStyle(android.R.style.Theme_Dialog, true);
-            //}
-
             AndroidUtils.setFinishOnTouchOutside(this, true);
 
             if (shouldBePhoneSizedDialog()) {
@@ -164,10 +132,10 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 getTheme().applyStyle(R.style.jr_disable_title_and_action_bar_style, true);
             }
         } else if (getOperationMode() == JR_FULLSCREEN_NO_TITLE) {
+            getWindow().requestFeature(Window.FEATURE_NO_TITLE);
             getTheme().applyStyle(R.style.jr_disable_title_and_action_bar_style, true);
         } else if (getOperationMode() == JR_FULLSCREEN) {
-            // Currently a noop
-            getTheme().applyStyle(R.style.jr_fullscreen_style, true);
+            // noop
         }
 
         setContentView(R.layout.jr_fragment_host_activity);
@@ -195,7 +163,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 .add(R.id.jr_fragment_container, mUiFragment)
                 .setTransition(FragmentTransaction.TRANSIT_NONE)
                 .commit();
-
     }
 
     private int getOperationMode() {
@@ -262,7 +229,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
         }
     }
 
-    // Unforuntately setResult is final so it can't be overridden to track the result-definedness state of
+    // Unfortunately setResult is final so it can't be overridden to track the result-definedness state of
     // the activity, which is used to track unplanned #finish()es and to fire onBackPressed at that time.
     //@Override
     //public void setResult() { }
@@ -314,7 +281,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
                 intent.putExtra(JR_OPERATION_MODE, JR_FULLSCREEN_NO_TITLE);
             }
         } else { // Honeycomb (because the screen is large+)
-            // ignore showTitleBar, this activity dynamically enables and disables its title
             intent = new Intent(activity, JRFragmentHostActivity.class);
             intent.putExtra(JR_OPERATION_MODE, JR_DIALOG);
         }
