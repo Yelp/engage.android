@@ -76,7 +76,7 @@
         android:paddingRight="10dip"
 
         android:orientation="vertical"
-        android:background="@color/jr_janrain_darkblue_light_20percent"
+        android:background="@color/jr_janrain_darkblue_lightened"
         >
 
         <ImageView
