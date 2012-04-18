@@ -61,8 +61,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
+import android.webkit.ConsoleMessage;
 import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.session.JRProvider;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -196,10 +196,10 @@ public class AndroidUtils {
         }
     }
 
-    public static void bitmapSetDensity(Bitmap icon) {
+    public static void bitmapSetDensity(Bitmap icon, int density) {
         try {
             Method setDensity = icon.getClass().getDeclaredMethod("setDensity", int.class);
-            setDensity.invoke(icon, 320);
+            setDensity.invoke(icon, density);
         } catch (NoSuchMethodException e) {
             Log.e(TAG, "Unexpected: " + e);
         } catch (IllegalAccessException e) {
@@ -207,6 +207,19 @@ public class AndroidUtils {
         } catch (InvocationTargetException e) {
             Log.e(TAG, "Unexpected: " + e);
         }
+    }
+
+    public static String getConsoleMessageMessage(ConsoleMessage consoleMessage) {
+        try {
+            Method message = consoleMessage.getClass().getMethod("message");
+            return (String) message.invoke(consoleMessage);
+        } catch (NoSuchMethodException ignore) {
+        } catch (InvocationTargetException ignore) {
+        } catch (IllegalAccessException ignore) {
+        }
+
+        Log.e(TAG, "[getConsoleMessageMessage] unexpected reflection exception");
+        return null;
     }
 
     //public static int getScreenWidth() {

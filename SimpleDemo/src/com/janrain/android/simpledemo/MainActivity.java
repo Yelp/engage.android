@@ -105,7 +105,8 @@ public class MainActivity extends FragmentActivity {
             "mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quam nunc putamus " +
             "parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta " +
             "decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.";
-    private String mImageUrl = "http://www.janrain.com/sites/default/themes/janrain/logo.png";
+    //private String mImageUrl = "http://www.janrain.com/sites/default/themes/janrain/logo.png";
+    private String mImageUrl = "http://janrain.com/wp-content/themes/janrain/assets/images/sprite.png";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -148,7 +149,7 @@ public class MainActivity extends FragmentActivity {
         mBtnTestPub.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 buildActivity();
-                mEngage.showSocialPublishingDialog(MainActivity.this, mActivity);
+                mEngage.showSocialPublishingDialog(MainActivity.this, mActivity, CustomUi.class);
             }
         });
         mBtnTestPub.setOnLongClickListener(new View.OnLongClickListener() {
@@ -184,7 +185,7 @@ public class MainActivity extends FragmentActivity {
         
         mBtnTestSpecificProvider.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mEngage.showAuthenticationDialog(MainActivity.this, "openid");
+                mEngage.showAuthenticationDialog(MainActivity.this, "facebook");
             }
         });
     }
@@ -193,7 +194,8 @@ public class MainActivity extends FragmentActivity {
         public CustomUi() {
             mProviderListHeader = new CustomSignin();
             //mAuthenticationBackgroundDrawable = c.getResources().getDrawable(R.drawable.custom_signin_bg);
-            mProviderListTitle = "Custom title";
+            mProviderListTitle = "Custom provider list title";
+            mUseSystemTabs = true;
         }
 
         @Override

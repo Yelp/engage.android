@@ -6,12 +6,6 @@
     android:background="@drawable/bg_janrain_blue_gradient"
     android:padding="10dp"
     >
-        <!-- layout_gravity is for LinearLayout children to specify to their parent -->
-        <!-- layout_weight is for LinearLayout children to specify to their parent -->
-        <!-- layout_centerInParent is for RelativeLayout children to specify to their parent -->
-        <!-- layout_alignParentTop is for RelativeLayout -->
-        <!-- gravity means "apply gravity to the content of this view" -->
-        <!-- layout_gravity means "apply gravity to this view within its parent." -->
 
     <View
         android:layout_width="0dp"
@@ -51,14 +45,16 @@
         android:id="@+id/janrain_welcome_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         android:layout_gravity="center"
-        android:gravity="center"
         android:layout_marginTop="10dp"
         android:layout_marginRight="15dp"
         android:layout_marginBottom="0dp"
         android:layout_marginLeft="15dp"
+
+        android:gravity="center"
         android:textSize="@dimen/textSizeLarge"
-        android:textColor="@color/jr_janrain_darkblue_light_100percent"
+        android:textColor="@color/jr_janrain_darkblue"
         android:text="@string/janrain_welcome_message"
         />
 

@@ -5,7 +5,7 @@
     android:versionName="1.0">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="13" />
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="20" />
 
     <!--
         Tab appearance notes
@@ -60,7 +60,7 @@
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/android:Theme.Holo.Dialog"
+            android:theme="@style/jr_dialog"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
 
@@ -73,8 +73,9 @@
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/custom_fullscreen_dark"
+            android:theme="@style/custom_fullscreen"
             android:windowSoftInputMode="adjustResize|stateHidden"
+            android:hardwareAccelerated="true"
             />
 
     </application>

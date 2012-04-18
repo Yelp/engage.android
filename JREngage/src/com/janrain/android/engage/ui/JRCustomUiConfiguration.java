@@ -41,24 +41,27 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class JRCustomUiConfiguration extends JRUiCustomization {
-    public Integer mAuthenticationBackgroundColor;
+    public Integer mAuthenticationBackgroundColor; // could yeah do this through theme
     public Drawable mAuthenticationBackgroundDrawable;
 
     public Integer mSharingBackgroundColor;
     public Drawable mSharingBackgroundDrawable;
 
-    public String mProviderListTitle;
+    public String mProviderListTitle; // could yeah do this through theme
     public String mLandingTitle;
     public String mWebViewTitle;
     public String mSharingTitle;
 
-    public boolean mShowProviderListTitleWhenDialog;
-    public boolean mShowLandingTitleWhenDialog;
-    public boolean mShowWebViewTitleWhenDialog;
-    public boolean mShowSharingTitleWhenDialog;
+    public Boolean mShowProviderListTitleWhenDialog; // could yeah do this through theme
+    public Boolean mShowLandingTitleWhenDialog;
+    public Boolean mShowWebViewTitleWhenDialog;
+    public Boolean mShowSharingTitleWhenDialog;
 
-    public JRCustomUiView mProviderListHeader;
+    public JRCustomUiView mProviderListHeader; // tough... string?
     public JRCustomUiView mProviderListFooter;
+    
+    public Drawable mIndeterminateProgress; // could yeah do this through theme
+    public boolean mUseSystemTabs; // could yeah do this through theme
 
 //Y     do support
 //?     not sure whether to support

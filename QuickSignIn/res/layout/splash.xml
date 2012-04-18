@@ -55,7 +55,7 @@
         android:layout_marginLeft="15dp"
 
         android:textSize="@dimen/textSizeLarge"
-        android:textColor="@color/jr_janrain_darkblue_light_100percent"
+        android:textColor="@color/jr_janrain_darkblue"
         android:text="@string/janrain_welcome_message"
         />
 
