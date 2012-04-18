@@ -945,13 +945,13 @@ public class JRSession implements JRConnectionManagerDelegate {
     public void triggerAuthenticationDidCompleteWithPayload(JRDictionary rpx_result) {
         JREngage.logd(TAG, "[triggerAuthenticationDidCompleteWithPayload]");
 
-        /* Instantiate a user object, keep track of it. */
         JRAuthenticatedUser user = new JRAuthenticatedUser(
                 rpx_result,
                 mCurrentlyAuthenticatingProvider.getName(),
                 getWelcomeMessageFromCookieString());
         mAuthenticatedUsersByProvider.put(mCurrentlyAuthenticatingProvider.getName(), user);
         Archiver.save(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
+
         String authInfoToken = rpx_result.getAsString("token");
         JRDictionary authInfoDict = rpx_result.getAsDictionary("auth_info");
         authInfoDict.put("token", authInfoToken);
