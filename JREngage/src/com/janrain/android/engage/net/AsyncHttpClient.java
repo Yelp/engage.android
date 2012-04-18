@@ -244,7 +244,7 @@ public final class AsyncHttpClient {
                     // This shouldn't be globbed together, but instead be structured
                     // to allow the error handler to make meaningful use of the web
                     // servers response (contained in String r)
-                    String message = "[run] Unexpected HTTP response:  [responseCode: "
+                    String message = "[run] Unexpected HTTP response for " + mUrl + " :  [responseCode: "
                             + response.getStatusLine().getStatusCode() + " | reasonPhrase: "
                             + response.getStatusLine().getReasonPhrase() + " | entity: "
                             + dataString;
