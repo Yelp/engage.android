@@ -39,6 +39,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Log;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.types.JRDictionary;
@@ -174,12 +175,6 @@ public class JRProvider implements Serializable {
         mSocialSharingProperties = dictionary.getAsDictionary(KEY_SOCIAL_SHARING_PROPERTIES);
         mWebViewOptions = dictionary.getAsDictionary(KEY_ANDROID_WEBVIEW_OPTIONS, true);
 
-        // No default cookie domains for now
-        //if (mCookieDomains.size() == 0) {
-        //    mCookieDomains.add(mName + ".com");
-        //    mCookieDomains.add("www." + mName + ".com");
-        //}
-
         loadDynamicVariables();
 
         if (mRequiresInput) {
@@ -291,19 +286,15 @@ public class JRProvider implements Serializable {
                 // DENSITY_XHIGH constant defined yet.  Fortunately it does the right thing
                 // if you pass in the DPI as an int
 
-                AndroidUtils.bitmapSetDensity(icon);
+                AndroidUtils.bitmapSetDensity(icon, 320);
+                return AndroidUtils.newBitmapDrawable(c, icon);
             } else {
                 c.deleteFile(iconFileName);
-                downloadIcons(c);
-                return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
             }
+        } catch (FileNotFoundException ignore) { }
 
-            return AndroidUtils.newBitmapDrawable(c, icon);
-        } catch (FileNotFoundException e) {
-            downloadIcons(c);
-
-            return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
-        }
+        downloadIcons(c);
+        return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
     }
 
     public Drawable getProviderIcon(Context c) {
@@ -351,10 +342,9 @@ public class JRProvider implements Serializable {
             @Override
             public Void doInBackground(Void... s) {
                 for (String iconFileName : iconFileNames) {
-                    try {
-                        if (Arrays.asList(c.fileList()).contains("providericon~" + iconFileName))
-                            continue;
+                    if (Arrays.asList(c.fileList()).contains("providericon~" + iconFileName)) continue;
 
+                    try {
                         JREngage.logd(TAG, "Downloading icon: " + iconFileName);
                         URL url = new URL(JRSession.getEnvironment().getServerUrl()
                                 + "/cdn/images/mobile_icons/android/" + iconFileName);
@@ -394,44 +384,36 @@ public class JRProvider implements Serializable {
         return JREngage.getApplicationContext().getResources();
     }
 
-    public int getProviderColor(boolean withAlpha) {
-        Object arrayOfColorStrings = getSocialSharingProperties().get("color_values");
+    /**
+     * @internal
+     * @param lighter
+     *  If true then return the blend of the providers color at 20% alpha over a white background
+     * @return
+     *  The color
+     */
+    public int getProviderColor(boolean lighter) {
+        Exception error;
+        try {
+            List colorList = (List) getSocialSharingProperties().get("color_values");
 
-        if (!(arrayOfColorStrings instanceof ArrayList)) {
-            /* If there's ever an error, just return Janrain blue */
-            if (withAlpha) return getResources().getColor(R.color.jr_janrain_darkblue_light_20percent);
-            else return getResources().getColor(R.color.jr_janrain_darkblue_light_100percent);
-        }
+            int finalColor = 255; // Full alpha
+            for (int i=0; i<3; i++) {
+                finalColor <<= 8;
+                int newByte = (int) (((Double) colorList.get(i)) * 255.0);
+                if (lighter) newByte = (int) (newByte * 0.2d + 255 * 0.8d);
 
-        // todo see if we can write this in a compile-time--type-safe way
-        @SuppressWarnings("unchecked")
-        ArrayList<Double> colorArray = new ArrayList<Double>((ArrayList<Double>) arrayOfColorStrings);
-
-        /* We need to reorder the array (which is RGBA, the color format returned by Engage) to the color format
-         * used by Android (which is ARGB), by moving the last element (alpha) to the front */
-        Double alphaValue = colorArray.remove(3);
-        if (withAlpha) {
-            colorArray.add(0, alphaValue);
-        } else {
-            colorArray.add(0, 1.0);
-        }
-
-        int finalColor = 0;
-        for (Object colorValue : colorArray) {
-            /* If there's ever an error, just return Janrain blue (at 20% opacity) */
-            if(!(colorValue instanceof Double)) {
-                return getResources().getColor(R.color.jr_janrain_darkblue_light_20percent);
+                // protect against floating point imprecision overflowing one byte:
+                finalColor += Math.min(newByte, 255);
             }
 
-            double colorValue_Fraction = (Double)colorValue;
-
-            /* First, get an int from the double, which is the decimal percentage of 255 */
-            int colorValue_Int = (int)(colorValue_Fraction * 255.0);
-
-            finalColor *= 256;
-            finalColor += colorValue_Int;
+            return finalColor;
+        } catch (ClassCastException e) {
+            error = e;
+        } catch (IndexOutOfBoundsException e) {
+            error = e;
         }
 
-        return finalColor;
+        Log.e(TAG, "Error parsing provider color: ", error);
+        return getResources().getColor(R.color.jr_janrain_darkblue_lightened);
     }
 }
