@@ -98,8 +98,6 @@
 
             android:background="@drawable/jr_bg_publish_preview"
             >
-            <!--android:paddingBottom="4dip"-->
-            <!--android:paddingTop="4dip"-->
 
             <LinearLayout
                 android:id="@+id/jr_preview_box_border"
@@ -111,16 +109,8 @@
                 android:paddingTop="@dimen/jr_preview_label_padding"
 
                 android:orientation="vertical"
-                android:background="@drawable/jr_bg_publish_preview_border_inset"
+                android:background="@drawable/jr_bg_publish_preview_border"
                 >
-                <!--android:paddingBottom="3dp"-->
-                <!--android:paddingLeft="3dp"-->
-                <!--android:paddingRight="3dp"-->
-                <!--These became ignored when refactored blanking layout to extend FrameLayout-->
-                <!--android:layout_marginTop="8dip"-->
-                <!--android:layout_marginBottom="4dip"-->
-                <!--android:layout_marginRight="4dip"-->
-                <!--android:layout_marginLeft="4dip"-->
 
                 <TextView
                     android:id="@+id/jr_preview_text_view"
@@ -135,6 +125,7 @@
                     android:textSize="@dimen/jr_preview_text_size"
                     android:bufferType="spannable"
                     />
+                <!--android:textColor="@android:color/primary_text_light"-->
 
                 <RelativeLayout
                     android:id="@+id/jr_media_content_view"
@@ -177,7 +168,7 @@
                         android:singleLine="true"
                         android:ellipsize="end"
                         android:textStyle="bold"
-                        android:textColor="@color/jr_janrain_darkblue_light_100percent"
+                        android:textColor="@color/jr_janrain_darkblue"
                         android:textSize="@dimen/jr_media_content_title_size"
                         />
 
@@ -206,6 +197,20 @@
                 android:paddingLeft="@dimen/jr_preview_label_paddingLeft"
                 >
 
+                <!-- Fucking Android -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+
+                    android:text="@string/jr_preview"
+                    android:textColor="#0000"
+                    android:textSize="@dimen/jr_preview_label_size"
+                    android:background="?android:attr/colorBackground"
+                    />
+
                 <TextView
                     android:id="@+id/jr_preview_label"
                     android:layout_width="wrap_content"
@@ -214,11 +219,10 @@
                     android:paddingLeft="5dip"
                     android:paddingRight="5dip"
 
-                    android:singleLine="true"
                     android:text="@string/jr_preview"
                     android:textColor="@color/jr_preview_label"
                     android:textSize="@dimen/jr_preview_label_size"
-                    android:background="@color/jr_preview_background"
+                    android:background="@color/jr_preview_outer_grey_bg_rect"
                     />
 
             </FrameLayout>
@@ -255,7 +259,6 @@
         android:layout_above="@+id/jr_user_profile_information_and_share_button_container"
         />
 
-
     <LinearLayout
         android:id="@+id/jr_user_profile_information_and_share_button_container"
         android:layout_width="match_parent"
@@ -265,7 +268,7 @@
         android:gravity="top|center_horizontal"
 
         android:orientation="vertical"
-        android:background="@color/jr_janrain_darkblue_light_20percent"
+        android:background="@color/jr_janrain_darkblue_lightened"
         >
 
         <FrameLayout
@@ -331,6 +334,8 @@
 
                             android:src="@drawable/jr_triangle_icon"
                             />
+                        <!--android:src="?jrPublishTriangleResource"-->
+                        <!--android:visibility="?jrPublishTriangleVisibility"-->
 
                         <TextView
                             android:id="@+id/jr_user_name"
@@ -345,7 +350,7 @@
                             android:textSize="@dimen/jr_username_text_size"
                             />
 
-                        <Button
+                        <TextView
                             android:id="@+id/jr_sign_out_button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -354,8 +359,6 @@
                             android:layout_weight="4"
                             android:paddingBottom="10dip"
 
-                            android:textColor="#AA000000"
-                            android:background="#00000000"
                             android:text="@string/jr_sign_out_button"
                             android:textSize="@dimen/jr_signout_button_text_size"
                             android:layout_marginRight="30dip"
@@ -407,7 +410,6 @@
                         android:text="@string/jr_shared"
                         android:textSize="@dimen/jr_shared_text_size"
                         android:textStyle="bold"
-                        android:textColor="#aa000000"
                         />
 
                     <ImageView
