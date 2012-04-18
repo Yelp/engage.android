@@ -445,7 +445,6 @@ public final class JRDictionary extends HashMap<String, Object> {
      * 		The \e ArrayList<String> value if key is found, empty array or null otherwise (based on value
 	 *      of the \e shouldCreateIfNotFound flag)
      **/
-
     // We runtime type check the return value so we can safely ignore this unchecked
     // assignment error.
     @SuppressWarnings("unchecked")
