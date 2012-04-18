@@ -672,26 +672,28 @@ public class JREngage {
      * @hide
      */
     private void showDirectProviderFlowInternal(Activity fromActivity,
-                                                String provider,
+                                                String providerName,
                                                 Class<? extends JRUiCustomization> uiCustomization) {
         Intent i;
-        JRProvider p = mSession.getProviderByName(provider);
-        if (p == null) {
-            i = JRFragmentHostActivity.createProviderListIntent(fromActivity);
-            if (uiCustomization != null) {
-                i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS, uiCustomization.getName());
-            }
-            Log.e(TAG, "Provider " + provider + " is not in the set of configured providers.");
-            i = JRFragmentHostActivity.createProviderListIntent(fromActivity);
-        } else {
-            if (p.requiresInput()) {
+        JRProvider provider = mSession.getProviderByName(providerName);
+        if (provider != null) {
+            if (provider.requiresInput()) {
                 i = JRFragmentHostActivity.createUserLandingIntent(fromActivity);
             } else {
                 i = JRFragmentHostActivity.createWebViewIntent(fromActivity);
             }
-            i.putExtra(JRFragmentHostActivity.JR_PROVIDER, provider);
-            p.setForceReauth(true);
-            mSession.setCurrentlyAuthenticatingProvider(p);
+            i.putExtra(JRFragmentHostActivity.JR_PROVIDER, providerName);
+            provider.setForceReauth(true);
+            mSession.setCurrentlyAuthenticatingProvider(provider);
+        } else {
+            if (providerName != null) {
+                Log.e(TAG, "Provider " + providerName + " is not in the set of configured providers.");
+            }
+
+            i = JRFragmentHostActivity.createProviderListIntent(fromActivity);
+            if (uiCustomization != null) {
+                i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS, uiCustomization.getName());
+            }
         }
 
         i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_AUTH);
@@ -718,6 +720,25 @@ public class JREngage {
      *   The activity you wish to share
      **/
     public void showSocialPublishingDialog(Activity fromActivity, JRActivityObject activity) {
+        showSocialPublishingDialog(fromActivity, activity, null);
+    }
+
+    /**
+     * Begin social publishing.  The library will start a new Android \e Activity enabling the user to
+     * publish a social share.  The user will also be taken through the sign-in process, if necessary.
+     *
+     * @param fromActivity
+     *  The Activity from which to show the authentication dialog
+     *
+     * @param activity
+     *   The activity you wish to share
+     *
+     * @param uiCustomization
+     *  The custom sign-in object to display in the provider list. May be null for no custom sign-in.
+     **/
+    public void showSocialPublishingDialog(Activity fromActivity,
+                                           JRActivityObject activity,
+                                           Class<? extends JRUiCustomization> uiCustomization) {
         JREngage.logd(TAG, "[showSocialPublishingDialog]");
         /* If there was error configuring the library, sessionData.error will not be null. */
         if (checkSessionDataError()) return;
@@ -725,6 +746,9 @@ public class JREngage {
         mSession.setJRActivity(activity);
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(fromActivity, false);
+        if (uiCustomization != null) {
+            i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS, uiCustomization.getName());
+        }
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
         i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
         fromActivity.startActivity(i);
