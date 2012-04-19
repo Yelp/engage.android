@@ -74,14 +74,6 @@ public class ProfilesActivity extends ListActivity implements JREngageDelegate {
     private boolean mEditing;
     private String mDialogErrorMessage;
 
-    /**
-     * Called when the activity is first created.
-     *
-     * @param savedInstanceState
-     *      If the activity is being re-initialized after previously being shut down then this
-     *      Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
-     *      Note: Otherwise it is null.
-     */
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "[onCreate]");
 
@@ -101,9 +93,6 @@ public class ProfilesActivity extends ListActivity implements JREngageDelegate {
         setListAdapter(mAdapter);
     }
 
-    /**
-     * This method will be called when an item in the list is selected.
-     */
     @Override
     protected void onListItemClick(ListView l, View v, int pos, long id) {
         Log.d(TAG, "[onListItemClick] at position: " + ((Integer)pos).toString());
@@ -166,9 +155,6 @@ public class ProfilesActivity extends ListActivity implements JREngageDelegate {
         }
     }
 
-    /**
-     * Initialize the contents of the Activity's standard options menu.
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -187,9 +173,6 @@ public class ProfilesActivity extends ListActivity implements JREngageDelegate {
         return true;
     }
 
-    /**
-    * This hook is called whenever an item in your options menu is selected.
-    */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
