@@ -33,13 +33,13 @@ package com.janrain.android.quicksignin;
 
 import java.io.Serializable;
 
-public class LoginSnapshot implements Serializable {
+public class SigninSnapshot implements Serializable {
     private String mTimeStamp;
     private String mIdentifier;
     private String mProvider;
     private String mDisplayName;
 
-    public LoginSnapshot(String timeStamp, String identifier, String provider, String displayName) {
+    public SigninSnapshot(String timeStamp, String identifier, String provider, String displayName) {
         mTimeStamp = timeStamp;
         mIdentifier = identifier;
         mProvider = provider;

@@ -56,7 +56,7 @@ import java.util.List;
 import static com.janrain.android.quicksignin.QuickSignInEnvironment.getAppId;
 import static com.janrain.android.quicksignin.QuickSignInEnvironment.getTokenUrl;
 
-public class ProfilesActivity extends ListActivity implements View.OnClickListener, JREngageDelegate {
+public class ProfilesActivity extends ListActivity implements JREngageDelegate {
 
     private static final String TAG = ProfilesActivity.class.getSimpleName();
 
@@ -65,18 +65,14 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
     private static final int DIALOG_JRENGAGE_ERROR = 1;
 
-    private List<LoginSnapshot> mProfilesList;
     private ProfileAdapter mAdapter;
     private ProfileData mProfileData;
 
     private JREngage mEngage;
 
-    private Button mAddProfile;
+    private Button mAddProfile; // Also used as a "done editing" button for edit-mode
     private boolean mEditing;
     private String mDialogErrorMessage;
-
-    public ProfilesActivity() {
-    }
 
     /**
      * Called when the activity is first created.
@@ -93,42 +89,16 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
         setContentView(R.layout.profiles_listview);
 
         mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
-        //mEngage.setAlwaysForceReauthentication(true);
 
         mEditing = false;
 
         mAddProfile = (Button)findViewById(R.id.btn_add_profile);
-        mAddProfile.setOnClickListener(this);
+        mAddProfile.setOnClickListener(mAddProfileClickListener);
 
         mProfileData = ProfileData.getInstance();
-        mProfilesList = mProfileData.getProfilesList();
 
-        if (mProfilesList == null) {
-            mProfilesList = new ArrayList<LoginSnapshot>();
-        }
-
-        mAdapter = new ProfileAdapter(this, R.layout.profiles_listview_row, mProfilesList);
+        mAdapter = new ProfileAdapter(this, R.layout.profiles_listview_row, mProfileData.getProfilesList());
         setListAdapter(mAdapter);
-
-        if (mProfilesList.size() == 0) {
-
-        }
-    }
-
-    public void onResume () {
-        super.onResume();
-    }
-
-    @Override
-    protected void onStart() {
-        Log.d(TAG, "[onStart]");
-
-        super.onStart();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     /**
@@ -138,18 +108,15 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
     protected void onListItemClick(ListView l, View v, int pos, long id) {
         Log.d(TAG, "[onListItemClick] at position: " + ((Integer)pos).toString());
 
-        LoginSnapshot snapshot = mAdapter.getItem(pos);
+        SigninSnapshot snapshot = mAdapter.getItem(pos);
         mProfileData.setCurrentProfileByIdentifier(snapshot.getIdentifier());
-        this.startActivity(new Intent(this, ProfileDetailActivity.class));
+        startActivity(new Intent(this, ProfileDetailActivity.class));
     }
 
-    /*
-     * Array adapter used to render individual providers in list view.
-     */
-    private class ProfileAdapter extends ArrayAdapter<LoginSnapshot> implements View.OnClickListener {
+    private class ProfileAdapter extends ArrayAdapter<SigninSnapshot> {
         private int mResourceId;
 
-        public ProfileAdapter(Context context, int resId, List<LoginSnapshot> items) {
+        public ProfileAdapter(Context context, int resId, List<SigninSnapshot> items) {
             super(context, -1, items);
 
             mResourceId = resId;
@@ -174,32 +141,28 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
             ImageView icon = (ImageView)v.findViewById(R.id.row_profile_provider_icon);
             TextView name = (TextView)v.findViewById(R.id.row_profile_preferred_username_label);
             TextView timestamp = (TextView)v.findViewById(R.id.row_profile_timestamp_label);
-            Button deleteRow = (Button)v.findViewById(R.id.row_delete_button);
+            Button deleteRowButton = (Button)v.findViewById(R.id.row_delete_button);
 
-            LoginSnapshot snapshot = getItem(position);
+            SigninSnapshot snapshot = getItem(position);
 
-            Log.d(TAG, "[getView] for row " + ((Integer) position).toString() + ": " +
-                    snapshot.getDisplayName());
+            Log.d(TAG, "[getView] for row " + position + ": " + snapshot.getDisplayName());
 
             icon.setImageDrawable(getProviderIconDrawable(snapshot.getProvider()));
             name.setText(snapshot.getDisplayName());
             timestamp.setText(snapshot.getTimeStamp());
 
-            deleteRow.setTag(position);
-            deleteRow.setOnClickListener(this);
+            deleteRowButton.setTag(position);
+            deleteRowButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                    int position = (Integer)view.getTag();
+                    mProfileData.deleteLoginSnapshotAtPosition(position);
+                    ProfileAdapter.this.notifyDataSetChanged();
+                }
+            });
 
-            if (mEditing)
-                deleteRow.setVisibility(View.VISIBLE);
-            else
-                deleteRow.setVisibility(View.GONE);
+            deleteRowButton.setVisibility(mEditing ? View.VISIBLE : View.GONE);
 
             return v;
-        }
-
-        public void onClick(View view) {
-            Integer position = ((Integer)view.getTag());
-            mProfileData.deleteLoginSnapshotAtPosition(position);
-            this.notifyDataSetChanged();
         }
     }
 
@@ -215,10 +178,11 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (!mEditing)
+        if (!mEditing) {
             menu.findItem(R.id.edit_profiles).setTitle(R.string.edit_profiles);
-        else
+        } else {
             menu.findItem(R.id.edit_profiles).setTitle(R.string.done_editing);
+        }
 
         return true;
     }
@@ -283,7 +247,7 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
 
         mProfileData.addProfile(auth_info, provider);
         mAdapter.notifyDataSetChanged();
-                    
+
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
@@ -321,17 +285,21 @@ public class ProfilesActivity extends ListActivity implements View.OnClickListen
                                                  String provider) {
     }
 
-    public void onClick(View view) {
-        if (mEditing) {
-            mEditing = false;
-            mAddProfile.setText(R.string.add_another_profile);
-            mAdapter.notifyDataSetChanged();
-        } else {
-            /* To see an example of how you can force the user to always reauthenticate and skip the
-             * returning user landing page, uncomment the following two lines, and comment-out the third */
-            /* mEngage.setAlwaysForceReauthentication(true); */
-            /* mEngage.showAuthenticationDialog(true); */
-            mEngage.showAuthenticationDialog(this);
+    View.OnClickListener mAddProfileClickListener = new View.OnClickListener() {
+        public void onClick(View view) {
+            // This button/listener becomes a "done editing" button when the user enters edit mode
+            if (mEditing) {
+                mEditing = false;
+                mAddProfile.setText(R.string.add_another_profile);
+                mAdapter.notifyDataSetChanged();
+            } else {
+                /* To see an example of how you can force the user to always reauthenticate and skip the
+                /* returning user landing page, uncomment the following two lines, and comment-out the
+                /* third */
+                /* mEngage.setAlwaysForceReauthentication(true); */
+                /* mEngage.showAuthenticationDialog(ProfilesActivity.this, true); */
+                mEngage.showAuthenticationDialog(ProfilesActivity.this);
+            }
         }
-    }
+    };
 }

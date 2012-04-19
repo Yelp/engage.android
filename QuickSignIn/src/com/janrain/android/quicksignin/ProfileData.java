@@ -50,7 +50,7 @@ public class ProfileData {
     private static final String ARCHIVE_ALL_PROFILES = "allProfiles";
     private static final String ARCHIVE_LOGIN_SNAPSHOTS = "loginSnapshots";
 
-    private List<LoginSnapshot> mLoginSnapshots;
+    private List<SigninSnapshot> mSigninSnapshots = new ArrayList<SigninSnapshot>();
     private Map<String, JRDictionary> mProfiles;
     private JRDictionary mCurrentProfile;
 
@@ -72,16 +72,16 @@ public class ProfileData {
         Log.d(TAG, "[ctor] creating instance.");
 
         try {
-            mLoginSnapshots = Archiver.load(ARCHIVE_LOGIN_SNAPSHOTS);
+            mSigninSnapshots = Archiver.load(ARCHIVE_LOGIN_SNAPSHOTS);
             mProfiles = Archiver.load(ARCHIVE_ALL_PROFILES);
         } catch (Archiver.LoadException e) {
-            mLoginSnapshots = new ArrayList<LoginSnapshot>();
+            mSigninSnapshots = new ArrayList<SigninSnapshot>();
             mProfiles = new HashMap<String, JRDictionary>();
         }
     }
 
-    public List<LoginSnapshot> getProfilesList() {
-        return mLoginSnapshots;
+    public List<SigninSnapshot> getProfilesList() {
+        return mSigninSnapshots;
     }
 
     public void addProfile(JRDictionary auth_info, String provider) {
@@ -96,27 +96,27 @@ public class ProfileData {
             if (profile.containsKey("address")) profile.put("address", flattenAddress(profile));
         }
         
-        LoginSnapshot snapshot = new LoginSnapshot(timestamp, identifier, provider, displayName);
-        mLoginSnapshots.add(0, snapshot);
+        SigninSnapshot snapshot = new SigninSnapshot(timestamp, identifier, provider, displayName);
+        mSigninSnapshots.add(0, snapshot);
 
         mProfiles.put(identifier, profile);
 
         Archiver.save(ARCHIVE_ALL_PROFILES, mProfiles);
-        Archiver.save(ARCHIVE_LOGIN_SNAPSHOTS, mLoginSnapshots);
+        Archiver.save(ARCHIVE_LOGIN_SNAPSHOTS, mSigninSnapshots);
     }
 
     public void deleteLoginSnapshotAtPosition(int position) {
-        mLoginSnapshots.remove(position);
+        mSigninSnapshots.remove(position);
         Archiver.save(ARCHIVE_ALL_PROFILES, mProfiles);
-        Archiver.save(ARCHIVE_LOGIN_SNAPSHOTS, mLoginSnapshots);
+        Archiver.save(ARCHIVE_LOGIN_SNAPSHOTS, mSigninSnapshots);
     }
 
     public void deleteAllProfiles() {
-        mLoginSnapshots.clear();
+        mSigninSnapshots.clear();
         mProfiles.clear();
 
         Archiver.save(ARCHIVE_ALL_PROFILES, mProfiles);
-        Archiver.save(ARCHIVE_LOGIN_SNAPSHOTS, mLoginSnapshots);
+        Archiver.save(ARCHIVE_LOGIN_SNAPSHOTS, mSigninSnapshots);
     }
 
     public void setCurrentProfileByIdentifier(String identifier) {
