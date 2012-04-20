@@ -57,7 +57,6 @@ import static com.janrain.android.quicksignin.QuickSignInEnvironment.getAppId;
 import static com.janrain.android.quicksignin.QuickSignInEnvironment.getTokenUrl;
 
 public class ProfilesActivity extends ListActivity implements JREngageDelegate {
-
     private static final String TAG = ProfilesActivity.class.getSimpleName();
 
     private static String ENGAGE_APP_ID = getAppId();
