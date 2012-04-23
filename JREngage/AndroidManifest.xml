@@ -11,9 +11,15 @@
         https://groups.google.com/group/android-developers/browse_thread/thread/0b4a5d751346655b/9db36f18521fca7d#9db36f18521fca7d -->
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="13"/>
+    <uses-sdk android:minSdkVersion="4"/>
 
-    <!-- For Janrain Engage library -->
+    <!-- The following activities are for the Janrain Engage for Android library -->
+    <!-- This activity must have a dialog theme such as Theme.Holo.Dialog, or
+        Theme.Dialog, etc.
+
+        Using android:theme="@style/jr_dialog" will result in Theme.Dialog on API 4-10 and
+        Theme.Holo.Light.DialogWhenLarge.NoActionBar on API 11+
+    -->
     <activity
         android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
         android:configChanges="orientation|screenSize"
@@ -21,19 +27,17 @@
         android:windowSoftInputMode="adjustResize|stateHidden"
         />
 
+    <!-- This activity must have a normal (non-dialog) theme such as Theme, Theme.Light, Theme.Holo, etc.
+
+        Using android:theme="@style/jr_fullscreen" or "@style/jr_fullscreen_dark" will result in
+        Theme.Light (or Theme) on API 4-10 and
+        Theme.Holo.Light (or Theme.Holo) on API 11+
+    -->
     <activity
         android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"
         android:configChanges="orientation|screenSize"
         android:theme="@style/jr_fullscreen"
         android:windowSoftInputMode="adjustResize|stateHidden"
         />
-
-    <activity
-        android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$FullscreenNoTitleBar"
-        android:configChanges="orientation|screenSize"
-        android:theme="@style/jr_fullscreen_no_title"
-        android:windowSoftInputMode="adjustResize|stateHidden"
-        />
-
 
 </manifest>
