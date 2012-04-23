@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.reflect.Array.newInstance;
+
 /**
  * @internal
  *
@@ -49,20 +51,73 @@ public final class CollectionUtils {
     public static interface Function<L, R> {
         L operate(R val);
     }
-    
-    public static <K, L, R> Map<K, L> map(Map<K, R> map, Function<L, R> f) {
-        Map<K, L> retMap = new HashMap<K, L>();
+
+    /**
+     * Maps a function f onto the values of a map map. Returns a new map with with the result.
+     * @param map
+     *      A map onto which to apply f to the values of
+     * @param f
+     *      A function mapped onto the values of map
+     * @param <K>
+     *      The key type for map
+     * @param <L>
+     *      The left hand side type of f
+     * @param <R>
+     *      The right hand side type of f
+     * @return
+     *      A new map&gt;K, L> with with the result.
+     */
+    public static <K, L, R> HashMap<K, L> map(Map<K, R> map, Function<L, R> f) {
+        HashMap<K, L> retMap = new HashMap<K, L>();
 
         for (Map.Entry<K, R> e : map.entrySet()) retMap.put(e.getKey(), f.operate(e.getValue()));
 
         return retMap;
     }
 
-    public static <L, R> List<L> map(List<R> list, Function<L, R> f) {
-        List<L> retList = new ArrayList<L>();
+    /**
+     * Maps a function f onto the values of a list list. Returns a new list with with the result.
+     * @param list
+     *      A list onto which to apply f to the values of
+     * @param f
+     *      A function mapped onto the values of list
+     * @param <L>
+     *      The left hand side type of f
+     * @param <R>
+     *      The right hand side type of f
+     * @return
+     *      A new list&gt;L> with the result
+     */
+    public static <L, R> ArrayList<L> map(List<R> list, Function<L, R> f) {
+        ArrayList<L> retList = new ArrayList<L>();
 
         for (R e : list) retList.add(f.operate(e));
 
         return retList;
+    }
+
+    public static int[] test() { return new int[] {1};}
+
+    /**
+     * Maps a function f onto the values of a array array. Returns a new array with with the result.
+     * @param array
+     *      A array onto which to apply f to the values of
+     * @param f
+     *      A function mapped onto the values of array
+     * @param <L>
+     *      The left hand side type of f
+     * @param <R>
+     *      The right hand side type of f
+     * @return
+     *      A new array[L] with the result
+     */
+    @SuppressWarnings("unchecked")
+    public static <L, R> L[] map(R[] array, Function<L, R> f) {
+        L[] retArray = (L[]) newInstance(array.getClass().getComponentType(), array.length);
+
+        int i = 0;
+        for (R e : array) retArray[i++] = (f.operate(e));
+
+        return retArray;
     }
 }

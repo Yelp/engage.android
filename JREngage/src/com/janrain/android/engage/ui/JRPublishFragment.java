@@ -42,12 +42,12 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
-import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -61,6 +61,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -78,6 +79,7 @@ import com.janrain.android.engage.types.JREmailObject;
 import com.janrain.android.engage.types.JRMediaObject;
 import com.janrain.android.engage.types.JRSmsObject;
 import com.janrain.android.engage.utils.AndroidUtils;
+import com.janrain.android.engage.utils.CollectionUtils;
 import com.janrain.android.engage.utils.Prefs;
 
 import java.lang.reflect.InvocationTargetException;
@@ -86,6 +88,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.janrain.android.engage.utils.AndroidUtils.ColorDrawableGetColor;
 import static com.janrain.android.engage.utils.AndroidUtils.scaleDipToPixels;
 
 /**
@@ -209,18 +212,68 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mSmsButton.setColor(getColor(R.color.jr_janrain_darkblue));
         mEmailButton.setColor(getColor(R.color.jr_janrain_darkblue));
 
-        //// LayerLists can't look up theme attribute values, so this is constructed programmatically.
-        //Drawable[] da = new Drawable[2];
-        int colorBackground = getColor(getThemeAttributeValue(android.R.attr.colorBackground));
-        //da[0] = new ColorDrawable(colorBackground);
-        ////da[1] = new ColorDrawable((0x00F2f2f2 & 0x00ffffff) | 0xff000000);
-        //da[1] = new ColorDrawable(getColor(R.color.jr_preview_outer_grey_bg_rect));
-        ////Put it in an inset because programmatic backgrounds don't expand with XML specified padding :(
-        //LayerDrawable ld = new LayerDrawable(da);
-        //Drawable id = new InsetDrawable(ld, scaleDipToPixels(5), 0, scaleDipToPixels(5), 0);
-        //View previewLabelView = content.findViewById(R.id.jr_preview_label);
-        //previewLabelView.setBackgroundDrawable(ld);
-        //previewLabelView.setPadding(scaleDipToPixels(5), 0, scaleDipToPixels(5), 0);
+        /* Retrieve the background color */
+        /* TODO should default to android.R.attr.colorBackground if windowBackground can't be parlayed into a
+         * color */
+        int colorBackground = 0;
+        TypedValue outVal = new TypedValue();
+        getActivity().getTheme().resolveAttribute(android.R.attr.windowBackground, outVal, false);
+        if (outVal.type == TypedValue.TYPE_REFERENCE) {
+            Drawable windowBackgroundDrawable = getResources().getDrawable(outVal.data);
+            if (windowBackgroundDrawable instanceof StateListDrawable) {
+                windowBackgroundDrawable.setState(new int[]{});
+                Drawable activeWindowBackgroundDrawable = windowBackgroundDrawable.getCurrent();
+                if (activeWindowBackgroundDrawable instanceof ColorDrawable) {
+                    colorBackground = ColorDrawableGetColor((ColorDrawable) activeWindowBackgroundDrawable);
+                }
+            } else if (windowBackgroundDrawable instanceof ColorDrawable) {
+                colorBackground = ColorDrawableGetColor((ColorDrawable) windowBackgroundDrawable);
+            }
+        } else if (outVal.type == TypedValue.TYPE_INT_COLOR_ARGB8 ||
+                outVal.type == TypedValue.TYPE_INT_COLOR_ARGB4 ||
+                outVal.type == TypedValue.TYPE_INT_COLOR_RGB8 ||
+                outVal.type == TypedValue.TYPE_INT_COLOR_RGB4) {
+            colorBackground = outVal.data;
+        }
+
+        /* TODO this ended up being more complicated than it needed to be. The manual alpha compositing can
+         * be deleted in favor of either stacked views in the layout XML or a LayerDrawable background
+         * composed programmatically here.
+         */
+        int colorGreyOutermostBox = getColor(R.color.jr_preview_outer_grey_bg_rect);
+        Double[] colorBackgroundArray = {
+                (double) Color.alpha(colorBackground),
+                (double) Color.red(colorBackground),
+                (double) Color.green(colorBackground),
+                (double) Color.blue(colorBackground),
+        };
+        Double[] colorGreyBoxArray = {
+                (double) Color.alpha(colorGreyOutermostBox),
+                (double) Color.red(colorGreyOutermostBox),
+                (double) Color.green(colorGreyOutermostBox),
+                (double) Color.blue(colorGreyOutermostBox),
+        };
+        colorBackgroundArray = CollectionUtils.map(colorBackgroundArray,
+                new CollectionUtils.Function<Double, Double>() {
+                    public Double operate(Double val) { return val / 255d; }
+                });
+        colorGreyBoxArray = CollectionUtils.map(colorGreyBoxArray,
+                new CollectionUtils.Function<Double, Double>() {
+                    public Double operate(Double val) { return val / 255d; }
+                });
+        double bgFraction = 1d - colorGreyBoxArray[0];
+        double fgFraction = colorGreyBoxArray[0];
+        int[] compositedColor = new int[] {
+                255,
+                (int) ((bgFraction * colorBackgroundArray[1] + fgFraction * colorGreyBoxArray[1]) * 255d),
+                (int) ((bgFraction * colorBackgroundArray[2] + fgFraction * colorGreyBoxArray[2]) * 255d),
+                (int) ((bgFraction * colorBackgroundArray[3] + fgFraction * colorGreyBoxArray[3]) * 255d)
+        };
+        int compositedColorInt =
+                Color.argb(compositedColor[0], compositedColor[1], compositedColor[2], compositedColor[3]);
+        View previewLabelView = content.findViewById(R.id.jr_preview_label);
+        previewLabelView.setBackgroundDrawable(new ColorDrawable(compositedColorInt));
+        previewLabelView.setPadding(scaleDipToPixels(5), 0, scaleDipToPixels(5), 0);
 
         // Janrain Engage for Android with DynaColor™
         float[] bgHsv = new float[3];
@@ -556,7 +609,6 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
         /* Background */
         int selectedColor = android.R.color.transparent;
-        //int selectedColor = android.R.color.white;
         int unselectedColor = android.R.color.darker_gray;
         StateListDrawable tabBackground = new StateListDrawable();
         tabBackground.addState(new int[]{android.R.attr.state_selected},

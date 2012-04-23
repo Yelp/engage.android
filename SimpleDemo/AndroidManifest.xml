@@ -60,6 +60,7 @@
             android:configChanges="orientation|screenSize"
             android:theme="@style/jr_dialog"
             android:windowSoftInputMode="adjustResize|stateHidden"
+            android:hardwareAccelerated="false"
             />
 
         <!-- This activity must have a normal (non-dialog) theme such as Theme, Theme.Light, Theme.Holo, etc.
@@ -73,6 +74,7 @@
             android:configChanges="orientation|screenSize"
             android:theme="@style/jr_fullscreen"
             android:windowSoftInputMode="adjustResize|stateHidden"
+            android:hardwareAccelerated="false"
             />
 
     </application>

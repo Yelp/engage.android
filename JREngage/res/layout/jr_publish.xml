@@ -25,10 +25,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
-            <!--According to
-                http://code.google.com/p/foursquared/source/browse/main/res/layout/main_activity.xml
-                paddingTop of 0 should obscure the tabStrip, but it doesn't work here for some
-                reason-->
 
             <include
                 android:id="@+id/jr_tab_email_sms_content"

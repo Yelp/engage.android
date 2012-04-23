@@ -57,7 +57,9 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
@@ -317,5 +319,22 @@ public class AndroidUtils {
             stream.defaultReadObject();
             backingSet = m.keySet();
         }
+    }
+
+    public static int ColorDrawableGetColor(ColorDrawable d) {
+        try {
+            Method getColor = d.getClass().getMethod("getColor");
+            return (Integer) getColor.invoke(d);
+        } catch (NoSuchMethodException ignore) {
+        } catch (InvocationTargetException ignore) {
+        } catch (IllegalAccessException ignore) {
+        } catch (ClassCastException ignore) {
+        }
+
+        // For some reason the following doesn't work on Android 15, but the above does, and the below
+        // works for Android <= 10, so the function works but is a dirty hack.
+        Bitmap b = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+        d.draw(new Canvas(b));
+        return b.getPixel(0, 0);
     }
 }

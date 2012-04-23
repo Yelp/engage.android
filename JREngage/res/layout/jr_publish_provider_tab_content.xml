@@ -147,10 +147,12 @@
                         android:id="@+id/jr_media_content_image"
                         android:layout_width="@dimen/jr_media_icon_size"
                         android:layout_height="@dimen/jr_media_icon_size"
-                        android:scaleType="centerCrop"
+
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentTop="true"
                         android:layout_margin="5dip"
+
+                        android:scaleType="centerCrop"
                         android:src="@drawable/jr_media60x60"
                         />
 
@@ -193,6 +195,7 @@
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:paddingLeft="@dimen/jr_preview_label_paddingLeft"
                 >
 
@@ -207,7 +210,6 @@
                     android:text="@string/jr_preview"
                     android:textColor="@color/jr_preview_label"
                     android:textSize="@dimen/jr_preview_label_size"
-                    android:background="@color/jr_preview_outer_grey_bg_rect"
                     />
 
             </FrameLayout>
