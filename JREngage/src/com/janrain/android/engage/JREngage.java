@@ -86,9 +86,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSession;
@@ -636,15 +640,13 @@ public class JREngage {
             pd.setCancelable(false);
             pd.show();
 
-            // TODO add progress dialog customizability
+            // TODO add progress dialog customization
             // Fix up the progress dialog's appearance
             View message = pd.findViewById(android.R.id.message);
             if (message != null) message.setVisibility(View.GONE);
+
             View progressBar = pd.findViewById(android.R.id.progress);
-            if (progressBar != null &&
-                    progressBar.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-                ((ViewGroup.MarginLayoutParams) progressBar.getLayoutParams()).setMargins(0, 0, 0, 0);
-            }
+            if (progressBar != null) collapseViewLayout(findViewHierarchyRoot(progressBar));
 
             mConfigFinishListeners.add(new ConfigFinishListener() {
                 public void configDidFinish() {
@@ -656,6 +658,39 @@ public class JREngage {
             });
         } else {
             showDirectProviderFlowInternal(fromActivity, provider, uiCustomization);
+        }
+    }
+
+    /**
+     * @internal
+     * @hide
+     */
+    private ViewGroup findViewHierarchyRoot(View v) {
+        ViewParent parent = v.getParent();
+        if (parent != null && parent instanceof ViewGroup) return findViewHierarchyRoot((View) parent);
+        if (v instanceof ViewGroup) return (ViewGroup) v;
+        return null;
+    }
+
+    /**
+     * @internal
+     * @hide
+     */
+    private void collapseViewLayout(View v) {
+        if (v.getLayoutParams() != null) {
+            v.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            v.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
+            if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                ((ViewGroup.MarginLayoutParams) v.getLayoutParams()).setMargins(0, 0, 0, 0);
+            }
+            if (v.getLayoutParams() instanceof LinearLayout.LayoutParams) {
+                ((LinearLayout.LayoutParams) v.getLayoutParams()).gravity = Gravity.CENTER;
+            }
+        }
+
+        if (v instanceof ViewGroup) {
+            int childCount = ((ViewGroup) v).getChildCount();
+            for (int i = 0; i < childCount; i++) collapseViewLayout(((ViewGroup) v).getChildAt(i));
         }
     }
 
