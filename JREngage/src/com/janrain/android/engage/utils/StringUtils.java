@@ -83,13 +83,13 @@ public final class StringUtils {
      * @return
      *      The JSONified string.
      */
-    //public static String toJSON(String str) {
+    //public static String toJson(String str) {
     //    String retval = null;
     //    try {
     //        ObjectMapper mapper = new ObjectMapper();
     //        retval = mapper.writeValueAsString(str);
     //    } catch (IOException e) {
-    //        Log.w(TAG, "[toJSON] problem serializing JSON string: ", e);
+    //        Log.w(TAG, "[toJson] problem serializing JSON string: ", e);
     //    }
     //
     //    return retval;

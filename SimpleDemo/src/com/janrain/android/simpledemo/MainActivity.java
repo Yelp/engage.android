@@ -88,6 +88,7 @@ public class MainActivity extends FragmentActivity {
     private Button mBtnTestPub;
     private EditText mUrlEditText;
     private Button mBtnTestSpecificProvider;
+    private Button mBtnTestBetaDirectShare;
 
     // Activity object variables
     private String mTitleText = "title text";
@@ -120,6 +121,7 @@ public class MainActivity extends FragmentActivity {
         mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
         mUrlEditText = (EditText) findViewById(R.id.share_url);
         mBtnTestSpecificProvider = (Button) findViewById(R.id.btn_test_specific_provider);
+        mBtnTestBetaDirectShare = (Button) findViewById(R.id.btn_test_beta_direct_share);
 
         mBtnTestAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -171,7 +173,8 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        mUrlEditText.setText(Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs"));
+        mActionLink = Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs");
+        mUrlEditText.setText(mActionLink);
         mUrlEditText.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
@@ -186,6 +189,13 @@ public class MainActivity extends FragmentActivity {
         mBtnTestSpecificProvider.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mEngage.showAuthenticationDialog(MainActivity.this, "facebook");
+            }
+        });
+
+        mBtnTestBetaDirectShare.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                buildActivity();
+                mEngage.showBetaDirectShareDialog(MainActivity.this, mActivity);
             }
         });
     }

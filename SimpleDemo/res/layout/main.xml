@@ -38,6 +38,14 @@
         android:text="Direct sign-in to Facebook"
         />
 
+    <Button
+        android:id="@+id/btn_test_beta_direct_share"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+
+        android:text="Launch Beta Direct Share Widget"
+        />
+
     <FrameLayout
             android:id="@id/jr_publish_fragment"
             android:layout_width="match_parent"

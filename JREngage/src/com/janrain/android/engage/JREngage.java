@@ -92,7 +92,6 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSession;
@@ -737,11 +736,11 @@ public class JREngage {
 
     /**
      * @deprecated use showSocialPublishingDialog(Activity fromActivity, JRActivityObject activity) instead
-     * @param activity
+     * @param jrActivity
      *      See the undeprecated method
      */
-    public void showSocialPublishingDialog(JRActivityObject activity) {
-        showSocialPublishingDialog(mActivityContext, activity);
+    public void showSocialPublishingDialog(JRActivityObject jrActivity) {
+        showSocialPublishingDialog(mActivityContext, jrActivity);
     }
 
     /**
@@ -749,13 +748,13 @@ public class JREngage {
      * publish a social share.  The user will also be taken through the sign-in process, if necessary.
      *
      * @param fromActivity
-     *  The Activity from which to show the authentication dialog
+     *  The Activity from which to show the sharing dialog
      *
-     * @param activity
+     * @param jrActivity
      *   The activity you wish to share
      **/
-    public void showSocialPublishingDialog(Activity fromActivity, JRActivityObject activity) {
-        showSocialPublishingDialog(fromActivity, activity, null);
+    public void showSocialPublishingDialog(Activity fromActivity, JRActivityObject jrActivity) {
+        showSocialPublishingDialog(fromActivity, jrActivity, null);
     }
 
     /**
@@ -763,22 +762,22 @@ public class JREngage {
      * publish a social share.  The user will also be taken through the sign-in process, if necessary.
      *
      * @param fromActivity
-     *  The Activity from which to show the authentication dialog
+     *  The Activity from which to show the sharing dialog
      *
-     * @param activity
+     * @param jrActivity
      *   The activity you wish to share
      *
      * @param uiCustomization
      *  The custom sign-in object to display in the provider list. May be null for no custom sign-in.
      **/
     public void showSocialPublishingDialog(Activity fromActivity,
-                                           JRActivityObject activity,
+                                           JRActivityObject jrActivity,
                                            Class<? extends JRUiCustomization> uiCustomization) {
         JREngage.logd(TAG, "[showSocialPublishingDialog]");
         /* If there was error configuring the library, sessionData.error will not be null. */
         if (checkSessionDataError()) return;
-        checkNullJRActivity(activity);
-        mSession.setJRActivity(activity);
+        checkNullJRActivity(jrActivity);
+        mSession.setJRActivity(jrActivity);
 
         Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(fromActivity, false);
         if (uiCustomization != null) {
@@ -786,6 +785,25 @@ public class JREngage {
         }
         i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
         i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
+        fromActivity.startActivity(i);
+    }
+
+    /**
+     * Launch the beta direct share widget
+     *
+     * @param fromActivity
+     *  The Activity from which to show the sharing dialog
+     *
+     * @param jrActivity
+     *   The activity you wish to share
+     */
+    public void showBetaDirectShareDialog(Activity fromActivity,
+                                          JRActivityObject jrActivity) {
+        JREngage.logd(TAG, "[showBetaDirectShareDialog]");
+        Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(fromActivity, false);
+        i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_WEBVIEW);
+        i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_BETA_DIRECT_SHARE);
+        i.putExtra(JRUiFragment.JR_ACTIVITY_JSON, jrActivity.toJRDictionary().toJson());
         fromActivity.startActivity(i);
     }
 

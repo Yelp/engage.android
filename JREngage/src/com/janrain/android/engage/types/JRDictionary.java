@@ -84,7 +84,7 @@ public final class JRDictionary extends HashMap<String, Object> {
      * @return
      *      JSON representation of the specified JRDictionary object
      **/
-    public String toJSON() {
+    public String toJson() {
         JSONStringer jsonStringer = new JSONStringer();
 
         try {
@@ -93,6 +93,16 @@ public final class JRDictionary extends HashMap<String, Object> {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Encodes the JRDictionary into a JSON string.
+     *
+     * @return
+     *      JSON representation of the specified JRDictionary object
+     **/
+    public String toJSON() {
+        return toJson();
     }
 
     /**

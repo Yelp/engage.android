@@ -77,11 +77,13 @@ public abstract class JRUiFragment extends Fragment {
     public static final String JR_FRAGMENT_FLOW_MODE = "jr_fragment_flow_mode";
     public static final int JR_FRAGMENT_FLOW_AUTH = 0;
     public static final int JR_FRAGMENT_FLOW_SHARING = 1;
+    public static final int JR_FRAGMENT_FLOW_BETA_DIRECT_SHARE = 2;
 
     public static final int REQUEST_LANDING = 1;
     public static final int REQUEST_WEBVIEW = 2;
     public static final int DIALOG_ABOUT = 1000;
     public static final int DIALOG_PROGRESS = 1001;
+    public static final String JR_ACTIVITY_JSON = "JRActivityJson";
 
     private FinishReceiver mFinishReceiver;
     private HashMap<Integer, ManagedDialog> mManagedDialogs = new HashMap<Integer, ManagedDialog>();

@@ -173,7 +173,7 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     }
 
     private PluginResult buildSuccessResult(JRDictionary successDictionary) {
-        String message = successDictionary.toJSON();
+        String message = successDictionary.toJson();
 
         JREngage.logd("[buildSuccessResult]", message);
         return new PluginResult(Status.OK, message);
@@ -197,7 +197,7 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
         errorDictionary.put("message", message);
         errorDictionary.put("stat", "fail");
 
-        return errorDictionary.toJSON();
+        return errorDictionary.toJson();
     }
 
     private synchronized void showToast(final String message) {

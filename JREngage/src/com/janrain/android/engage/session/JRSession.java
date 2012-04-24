@@ -868,7 +868,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 
         String deviceToken = user.getDeviceToken();
-        String activityJson = mActivity.toJRDictionary().toJSON();
+        String activityJson = mActivity.toJRDictionary().toJson();
         String urlEncodedActivityJson = AndroidUtils.urlEncode(activityJson);
 
         StringBuilder body = new StringBuilder();

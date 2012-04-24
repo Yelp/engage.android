@@ -40,6 +40,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.webkit.ConsoleMessage;
 import android.widget.FrameLayout;
+import com.janrain.android.engage.types.JRActivityObject;
 import org.json.JSONException;
 
 import android.app.Activity;
@@ -173,6 +174,16 @@ public class JRWebViewFragment extends JRUiFragment {
         super.onActivityCreated(savedInstanceState);
 
         if (mSession == null) return;
+
+        if (getArguments().getInt(JR_FRAGMENT_FLOW_MODE) == JR_FRAGMENT_FLOW_BETA_DIRECT_SHARE) {
+            mWebView.loadUrl("http://nathan.janrain.com/~nathan/share_widget_webview/beta_share.html");
+            mWebView.loadUrl("javascript:jrengage_beta_share_activity = " +
+                    getArguments().getString(JR_ACTIVITY_JSON));
+
+            JREngage.logd(TAG, "returning from onActivityCreated early due to beta share widget flow mode");
+            return;
+        }
+
         mProvider = mSession.getCurrentlyAuthenticatingProvider();
         if (mProvider == null) {
             Log.e(TAG, "[onActivityCreated] null provider, bailing out");
@@ -193,8 +204,6 @@ public class JRWebViewFragment extends JRUiFragment {
             configureWebViewUa();
             URL startUrl = mSession.startUrlForCurrentlyAuthenticatingProvider();
             mWebView.loadUrl(startUrl.toString());
-            //mWebView.loadUrl("http://10.0.1.109/~nathan/share_widget_webview_test/test.html");
-            //mWebView.loadUrl("http://10.0.1.168/~nathan/share_widget_webview_test/test.html");
         }
 
         FragmentManager fm = getActivity().getSupportFragmentManager();
@@ -426,6 +435,11 @@ public class JRWebViewFragment extends JRUiFragment {
 
             hideProgressSpinner();
 
+            if (mProvider == null) {
+                JREngage.logd(TAG, "returning from onPageFinished early due to beta share widget flow " +
+                        "mode");
+                return;
+            }
             /* We inject some JS into the WebView. The JS is from the configuration pulled down from 
              * Engage. This way we can remotely fix up pages which render poorly/brokenly, like Yahoo!.
              */
@@ -445,6 +459,12 @@ public class JRWebViewFragment extends JRUiFragment {
                     + " | URL: " + url);
 
             hideProgressSpinner();
+
+            if (mProvider == null) {
+                JREngage.logd(TAG, "returning from onReceivedError early due to beta share widget flow " +
+                        "mode");
+                return;
+            }
 
             mIsFinishPending = true;
             showAlertDialog(getString(R.string.jr_webview_error_dialog_title),
@@ -481,6 +501,7 @@ public class JRWebViewFragment extends JRUiFragment {
             WebView newWebView = new WebView(getActivity());
             view.setVisibility(View.GONE);
             ((FrameLayout) view.getParent()).addView(newWebView, 0, view.getLayoutParams());
+            view.getParent().focusableViewAvailable(newWebView);
             ensureWebViewSettings(newWebView.getSettings());
             newWebView.setScrollBarStyle(WebView.SCROLLBARS_INSIDE_OVERLAY);
             newWebView.getSettings().setBuiltInZoomControls(false);
@@ -495,8 +516,8 @@ public class JRWebViewFragment extends JRUiFragment {
         public void onCloseWindow(WebView window) {
             JREngage.logd(TAG, "[onCloseWindow]" + window);
             if (window != mWebView) {
-                mWebView.loadUrl("javascript:janrain.engage.share.loginPopupCallback(\"" +
-                        JRWebViewFragment.this.mProvider.getName() + "\");");
+                // TODO fix hardcoding of FB here
+                mWebView.loadUrl("javascript:janrain.engage.share.loginPopupCallback(\"facebook\");");
                 ((FrameLayout) window.getParent()).removeView(window);
                 mWebView.setVisibility(View.VISIBLE);
             }
