@@ -179,6 +179,10 @@ public class JRWebViewFragment extends JRUiFragment {
             mWebView.loadUrl("http://nathan.janrain.com/~nathan/share_widget_webview/beta_share.html");
             mWebView.loadUrl("javascript:jrengage_beta_share_activity = " +
                     getArguments().getString(JR_ACTIVITY_JSON));
+            String jsUrl = "'http://rpxtraining.com/js/lib/jrauthenticate/share_beta.js'";
+            mWebView.loadUrl("javascript:jrengage_beta_share_js_url = " + jsUrl);
+            //String weinreUrl = "http://10.0.1.109:8080/target/target-script-min.js#anonymous";
+            //mWebView.loadUrl("javascript:weinreUrl = '" + weinreUrl + "';");
 
             JREngage.logd(TAG, "returning from onActivityCreated early due to beta share widget flow mode");
             return;
@@ -425,6 +429,16 @@ public class JRWebViewFragment extends JRUiFragment {
                 mCurrentlyLoadingUrl = url;
             }
 
+            //if (getArguments().getInt(JR_FRAGMENT_FLOW_MODE) == JR_FRAGMENT_FLOW_BETA_DIRECT_SHARE) {
+            //    Uri parsedUrl = Uri.parse(url);
+            //    if (parsedUrl.getPath().equals("xdr")) {
+            //        JREngage.logd(TAG, "auto-closing XDR");
+            //        view.stopLoading();
+            //        view.loadUrl("javascript:self.close();");
+            //        return;
+            //    }
+            //}
+
             showProgressSpinner();
         }
 
@@ -514,10 +528,10 @@ public class JRWebViewFragment extends JRUiFragment {
 
         @Override
         public void onCloseWindow(WebView window) {
-            JREngage.logd(TAG, "[onCloseWindow]" + window);
+            JREngage.logd(TAG, "[onCloseWindow]: " + window);
             if (window != mWebView) {
                 // TODO fix hardcoding of FB here
-                mWebView.loadUrl("javascript:janrain.engage.share.loginPopupCallback(\"facebook\");");
+                mWebView.loadUrl("javascript:janrain.engage.share.loginPopupCallback('facebook');");
                 ((FrameLayout) window.getParent()).removeView(window);
                 mWebView.setVisibility(View.VISIBLE);
             }
