@@ -213,7 +213,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             //throw new Archiver.LoadException(null);
         } catch (Archiver.LoadException e) {
             Log.w(TAG, "LoadException loading serialized configuration, initializing from empty state. " +
-                     " Version: " + mUrlEncodedLibraryVersion + "LoadException: " +
+                     " Version: " + mUrlEncodedLibraryVersion + " LoadException: " +
                     e.getStackTrace()[0].toString() + " Nested exception: " + e.getCause());
             /* Blank slate */
             mAuthenticatedUsersByProvider = new HashMap<String, JRAuthenticatedUser>();
