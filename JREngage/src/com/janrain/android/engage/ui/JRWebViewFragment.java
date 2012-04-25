@@ -40,7 +40,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.webkit.ConsoleMessage;
 import android.widget.FrameLayout;
-import com.janrain.android.engage.types.JRActivityObject;
 import org.json.JSONException;
 
 import android.app.Activity;
@@ -274,7 +273,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString(KEY_PROVIDER_NAME, mProvider.getName());
+        if (mProvider != null) outState.putString(KEY_PROVIDER_NAME, mProvider.getName());
         outState.putBoolean(KEY_IS_ALERT_SHOWING, mIsAlertShowing);
         outState.putBoolean(KEY_IS_FINISH_PENDING, mIsFinishPending);
         outState.putBoolean(KEY_IS_LOADING_MOBILE_ENDPOINT, mIsLoadingMobileEndpoint);
