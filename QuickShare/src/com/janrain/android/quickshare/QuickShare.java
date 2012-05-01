@@ -87,7 +87,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.Math.log;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -367,8 +366,8 @@ public class QuickShare extends Application {
             Log.d(TAG, "[deleteAllStories] " + ((Integer) mStories.size()).toString() + " stories remain");
         }
 
-        Archiver.save(ARCHIVE_STORIES_ARRAY, mStories, this);
-        Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks, this);
+        Archiver.asyncSave(ARCHIVE_STORIES_ARRAY, mStories, this);
+        Archiver.asyncSave(ARCHIVE_STORY_LINKS_HASH, mStoryLinks, this);
     }
 
     JREngageDelegate mJrEngageDelegate = new JREngageDelegate() {

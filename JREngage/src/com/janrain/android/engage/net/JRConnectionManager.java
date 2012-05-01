@@ -34,6 +34,7 @@ package com.janrain.android.engage.net;
 import android.os.Handler;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.utils.AndroidUtils;
+import com.janrain.android.engage.utils.ThreadUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -123,7 +124,7 @@ public class JRConnectionManager {
 
         connectionData.mHttpRequest = request;
 
-        new Thread(new AsyncHttpClient.HttpSender(new Handler(), connectionData)).start();
+        ThreadUtils.mExecutor.execute(new AsyncHttpClient.HttpExecutor(new Handler(), connectionData));
 
         synchronized (sDelegateConnections) {
             Set<ConnectionData> s = sDelegateConnections.get(delegate);

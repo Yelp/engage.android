@@ -92,8 +92,8 @@ public final class AsyncHttpClient {
 
     private AsyncHttpClient() {}
 
-	public static class HttpSender implements Runnable {
-		private static final String TAG = HttpSender.class.getSimpleName();
+	public static class HttpExecutor implements Runnable {
+		private static final String TAG = HttpExecutor.class.getSimpleName();
 
         private String mUrl;
         private List<NameValuePair> mHeaders;
@@ -103,9 +103,9 @@ public final class AsyncHttpClient {
         private HttpUriRequest mRequest;
         private JRConnectionManager.ConnectionData mConnectionData;
 
-        private HttpSender() {}
+        private HttpExecutor() {}
 
-        public HttpSender(Handler handler, JRConnectionManager.ConnectionData connectionData) {
+        public HttpExecutor(Handler handler, JRConnectionManager.ConnectionData connectionData) {
             mConnectionData = connectionData;
             mUrl = connectionData.getRequestUrl();
             mHeaders = connectionData.getRequestHeaders();

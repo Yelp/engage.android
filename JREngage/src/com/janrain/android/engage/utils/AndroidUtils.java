@@ -51,6 +51,7 @@
 package com.janrain.android.engage.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -61,6 +62,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.AbstractSet;
@@ -153,6 +156,18 @@ public class AndroidUtils {
     public static boolean isLandscape() {
         return JREngage.getActivity().getResources().getConfiguration().orientation ==
                 Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    public static void SharedPreferenceEditorApplyOrCommit(SharedPreferences.Editor editor) {
+        try {
+            Method SharedPrefsApply = editor.getClass().getMethod("apply");
+            SharedPrefsApply.invoke(editor);
+        } catch (NoSuchMethodException ignore) {
+        } catch (InvocationTargetException ignore) {
+        } catch (IllegalAccessException ignore) {
+        }
+
+        editor.commit();
     }
 
     //public static int getScreenWidth() {
