@@ -38,6 +38,15 @@
         android:text="Direct sign-in to Facebook"
         />
 
+    <Button
+        android:id="@+id/btn_main_activity"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+
+        android:text="Launch a child Activity"
+        android:onClick="launchChild"
+        />
+
     <FrameLayout
             android:id="@id/jr_publish_fragment"
             android:layout_width="match_parent"

@@ -32,6 +32,7 @@
 package com.janrain.android.simpledemo;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -163,7 +164,7 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        mUrlEditText.setText(Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs"));
+//        mUrlEditText.setText(Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs"));
         mUrlEditText.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
@@ -171,7 +172,7 @@ public class MainActivity extends FragmentActivity {
 
             public void afterTextChanged(Editable s) {
                 mActionLink = s.toString();
-                Prefs.putString(ACTION_LINK_KEY, mActionLink);
+//                Prefs.putString(ACTION_LINK_KEY, mActionLink);
             }
         });
         
@@ -181,7 +182,25 @@ public class MainActivity extends FragmentActivity {
             }
         });
     }
-    
+
+    public void launchChild(View view) {
+        startActivity(new Intent(this, MainActivity.class));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "[onResume]");
+        initEngage();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "[onDestroy]");
+        if (JREngage.getActivity() == this) JREngage.setActivityContext(null);
+    }
+
     private boolean initEngage() {
         String engageAppId = null;
         String engageTokenUrl = null;
@@ -201,7 +220,7 @@ public class MainActivity extends FragmentActivity {
         JREngage.sLoggingEnabled = true;
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, mJREngageDelegate);
         if (mEngage == null) return false;
-        
+
         return true;
     }
 
