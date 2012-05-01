@@ -32,7 +32,6 @@
 
 package com.janrain.android.engage.ui;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.ListView;
@@ -41,40 +40,36 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class JRCustomUiConfiguration extends JRUiCustomization {
-    public Integer mAuthenticationBackgroundColor; // could yeah do this through theme
-    public Drawable mAuthenticationBackgroundDrawable;
-
-    public Integer mSharingBackgroundColor;
-    public Drawable mSharingBackgroundDrawable;
-
-    public String mProviderListTitle; // could yeah do this through theme
+    public String mProviderListTitle; // Could do this through theme
     public String mLandingTitle;
     public String mWebViewTitle;
     public String mSharingTitle;
 
-    public Boolean mShowProviderListTitleWhenDialog; // could yeah do this through theme
+    public Boolean mShowProviderListTitleWhenDialog; // Could do this through theme
     public Boolean mShowLandingTitleWhenDialog;
     public Boolean mShowWebViewTitleWhenDialog;
     public Boolean mShowSharingTitleWhenDialog;
 
-    public JRCustomUiView mProviderListHeader; // tough... string?
+    public JRCustomUiView mProviderListHeader;
     public JRCustomUiView mProviderListFooter;
     
-    public Drawable mIndeterminateProgress; // could yeah do this through theme
-    public boolean mUseSystemTabs; // could yeah do this through theme
+    public Drawable mIndeterminateProgress; // Could do this through theme
+    public boolean mUseSystemTabs; // Could do this through theme
 
 //Y     do support
 //?     not sure whether to support
 //N     will not support
 
 //     Would be nice to do something analogous to this for modal dialogs on Android tablets
-//?     kJRPopoverPresentationFrameValue
-//?     kJRPopoverPresentationBarButtonItem
-//?     kJRPopoverPresentationArrowDirection
+//N     kJRPopoverPresentationFrameValue
+//N     kJRPopoverPresentationBarButtonItem
+//N     kJRPopoverPresentationArrowDirection
 
-//?     kJRApplicationNavigationController
-//?     kJRCustomModalNavigationController
-//?     kJRNavigationControllerHidesCancelButton
+// Offer some ActionBar customization
+
+//N     kJRApplicationNavigationController
+//N     kJRCustomModalNavigationController
+//N     kJRNavigationControllerHidesCancelButton
 
 //Y     kJRAuthenticationBackgroundColor
 //Y     kJRSocialSharingBackgroundColor
@@ -82,32 +77,20 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
 //Y     kJRAuthenticationBackgroundImageView
 //Y     kJRSocialSharingBackgroundImageView
 
-//?     kJRProviderTableTitleView
-//?     kJRSocialSharingTitleView
-
 //Y     kJRProviderTableTitleString
 //Y     kJRSocialSharingTitleString
+//Y     kJRProviderTableTitleView // could do something with action bar here
+//Y     kJRSocialSharingTitleView
+//?     kJRProviderTableSectionHeaderTitleString
+//?     kJRProviderTableSectionFooterTitleString
 
 //Y     kJRProviderTableHeaderView
 //Y     kJRProviderTableFooterView
 
-//?     kJRProviderTableSectionHeaderView
-//?     kJRProviderTableSectionFooterView
+//Y     kJRProviderTableSectionHeaderView
+//Y     kJRProviderTableSectionFooterView
 
-//?     kJRProviderTableSectionHeaderTitleString
-//?     kJRProviderTableSectionFooterTitleString
-
-//?     kJRPopoverPresentationFrameValue
-//?     kJRPopoverPresentationBarButtonItem
-//?     kJRPopoverPresentationArrowDirection
-
-//?     kJRRemoveProvidersFromAuthentication
-
-//    Deprecated
-//N     kJRAuthenticationBackgroundColorRGBa
-//N     kJRSocialSharingBackgroundColorRGBa
-
-//    TODO address parity of this vs existing implementation... support both or not?
+//    TODO address parity of this vs existing implementation
 //      kJRRemoveProvidersFromAuthentication
 
     public void onProviderListViewCreate(ListView providerListView) {}
@@ -130,8 +113,6 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
 
     private Set<JRCustomUiView> getNonNullCustomViews() {
         Set<JRCustomUiView> customUiViews = new HashSet<JRCustomUiView>();
-//        addIfNotNullAndViewCreated(customUiViews, mAuthenticationBackgroundDrawable);
-//        addIfNotNullAndViewCreated(customUiViews, mSharingBackgroundDrawable);
         addIfNotNullAndViewCreated(customUiViews, mProviderListFooter);
         addIfNotNullAndViewCreated(customUiViews, mProviderListHeader);
         return customUiViews;

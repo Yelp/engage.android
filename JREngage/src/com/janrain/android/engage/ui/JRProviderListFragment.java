@@ -96,6 +96,38 @@ public class JRProviderListFragment extends JRUiFragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            if (getItemViewType(position) == 0) {
+                return getSectionItemView(position - 1, convertView, parent);
+            } else {
+                return getSectionHeaderFooter(position, convertView, parent);
+            }
+        }
+
+        private View getSectionHeaderFooter(int position, View convertView, ViewGroup parent) {
+            if (position == 0) {
+                if (convertView == null) {
+                    TextView tv = new TextView(parent.getContext(),
+                            null,
+                            android.R.attr.listSeparatorTextViewStyle);
+                    tv.setText("section header view");
+                    return tv;
+                } else {
+                    return convertView;
+                }
+            } else {
+                if (convertView == null) {
+                    TextView tv = new TextView(parent.getContext(),
+                            null,
+                            android.R.attr.listSeparatorTextViewStyle);
+                    tv.setText("section footer view");
+                    return tv;
+                } else {
+                    return convertView;
+                }
+            }
+        }
+
+        private View getSectionItemView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 // This line is pretty much copied from the super implementation, which doesn't attach
                 // the newly inflated View to it's parent. I don't know why.
@@ -112,6 +144,26 @@ public class JRProviderListFragment extends JRUiFragment {
             label.setText(provider.getFriendlyName());
 
             return convertView;
+        }
+
+        @Override
+        public boolean isEnabled(int position) {
+            return getItemViewType(position) == 0;
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 2;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return (position == 0 || position == getCount() - 1) ? 1 : 0;
+        }
+
+        @Override
+        public int getCount() {
+            return super.getCount() + 2;
         }
     }
 
@@ -160,16 +212,6 @@ public class JRProviderListFragment extends JRUiFragment {
                         mListView);
                 mListView.addFooterView(customUiConfiguration.mProviderListFooter.getView());
             }
-
-            if (customUiConfiguration.mAuthenticationBackgroundColor != null) {
-                mListView.setBackgroundColor(customUiConfiguration.mAuthenticationBackgroundColor);
-                mListView.setCacheColorHint(customUiConfiguration.mAuthenticationBackgroundColor);
-            }
-
-            if (customUiConfiguration.mAuthenticationBackgroundDrawable != null) {
-                mListView.setBackgroundDrawable(customUiConfiguration.mAuthenticationBackgroundDrawable);
-                mListView.setCacheColorHint(0);
-            }
         }
 
         mProviderList = mSession.getAuthProviders();
@@ -181,7 +223,6 @@ public class JRProviderListFragment extends JRUiFragment {
 
         if (mProviderList.size() == 0) {
             mListView.setVisibility(View.GONE);
-            /* Show progress and poll for results */
             mLoadingProgress.setVisibility(View.VISIBLE);
 
             mTimer = new Timer();
@@ -203,12 +244,9 @@ public class JRProviderListFragment extends JRUiFragment {
         super.onDestroy();
     }
 
-    /**
-     * This method will be called when an item in the list is selected.
-     */
     private ListView.OnItemClickListener itemClickListener = new ListView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            JRProvider provider = mAdapter.getItem((int) id);
+            JRProvider provider = mAdapter.getItem((int) id - 1);
             mSession.setCurrentlyAuthenticatingProvider(provider);
 
             if (provider.requiresInput() ||

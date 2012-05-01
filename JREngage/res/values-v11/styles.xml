@@ -2,19 +2,23 @@
 <resources>
 
     <!-- {Selects between Theme.Dialog, and Theme.Holo.Light.DialogWhenLarge.NoActionBar} -->
-    <style name="jr_dialog" parent="@android:style/Theme.Holo.Light.DialogWhenLarge.NoActionBar"/>
+    <style name="Theme.Janrain.Dialog" parent="@android:style/Theme.Holo.DialogWhenLarge.NoActionBar"/>
 
-    <!-- {Selects between Theme.Light and Theme.Holo.Light} -->
-    <style name="jr_fullscreen" parent="@android:style/Theme.Holo.Light"/>
+    <!-- {Selects between Theme and Theme.Holo} -->
+    <style name="Theme.Janrain" parent="@android:style/Theme.Holo"/>
 
-    <!-- {@deprecated see values/styles.xml} -->
-    <style name="jr_fullscreen_no_title" parent="jr_fullscreen"/>
+    <!-- {Light versions of the above} -->
+    <style name="Theme.Janrain.Dialog.Light"
+        parent="@android:style/Theme.Holo.Light.DialogWhenLarge.NoActionBar"/>
+    <style name="Theme.Janrain.Light" parent="android:style/Theme.Holo.Light"/>
 
-    <!-- {Dark versions of the above} -->
+    <!-- {@deprecated Compatibility themes for v1 & v2} -->
     <style name="jr_dialog_dark" parent="@android:style/Theme.Holo.DialogWhenLarge.NoActionBar"/>
+    <style name="jr_fullscreen_no_title" parent="style/Theme.Janrain"/>
     <style name="jr_fullscreen_dark" parent="android:style/Theme.Holo"/>
-    <style name="jr_fullscreen_no_title_dark" parent="jr_fullscreen_dark"/>
+    <style name="jr_fullscreen_no_title_dark" parent="style/Theme.Janrain"/>
 
+    <!-- {@internal} -->
     <style name="jr_dialog_71_percent">
         <item name="android:windowMinWidthMinor">71%</item>
         <item name="android:windowMinWidthMajor">71%</item>

@@ -35,6 +35,6 @@
           package="com.janrain.android.engage">
           
     <!-- See engage.android/JREngage/AndroidManifest.xml for necessary Activity imports to include
-         in your Phonegap applicaation. -->
+         in your Phonegap application. -->
 
 </manifest>

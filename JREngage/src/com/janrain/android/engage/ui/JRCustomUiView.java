@@ -50,22 +50,6 @@ public abstract class JRCustomUiView extends JRUiCustomization {
     /*package*/ boolean mViewCreated = false;
 
     /**
-     * @internal
-     * @hide
-     */
-    /*package*/ final View doOnCreateView(JRUiFragment fragment,
-                               Context context,
-                               LayoutInflater inflater,
-                               ViewGroup container,
-                               Bundle savedInstanceState) {
-        mContext = context;
-        mUiFragment = fragment;
-        mViewCreated = true;
-        mView = onCreateView(context, inflater, container, savedInstanceState);
-        return mView;
-    }
-    
-    /**
      * This method should have no side effects as it may be called more than once per activity.
      * @param context The Context
      * @param inflater A LayoutInflater which can be used to inflate your layout file
@@ -73,12 +57,10 @@ public abstract class JRCustomUiView extends JRUiCustomization {
      * @param savedInstanceState Any state saved
      * @return Your custom sign-in view
      */
-    public View onCreateView(Context context,
+    public abstract View onCreateView(Context context,
                              LayoutInflater inflater,
                              ViewGroup container,
-                             Bundle savedInstanceState) {
-        return null; 
-    }
+                             Bundle savedInstanceState);
 
     /**
      * Retrieves the Activity object this custom view is a member of
@@ -173,5 +155,21 @@ public abstract class JRCustomUiView extends JRUiCustomization {
      */
     public void dismissProgressIndicator() {
         mUiFragment.dismissProgressDialogForCustomView();
+    }
+
+    /**
+     * @internal
+     * @hide
+     */
+    /*package*/ final View doOnCreateView(JRUiFragment fragment,
+                                          Context context,
+                                          LayoutInflater inflater,
+                                          ViewGroup container,
+                                          Bundle savedInstanceState) {
+        mContext = context;
+        mUiFragment = fragment;
+        mViewCreated = true;
+        mView = onCreateView(context, inflater, container, savedInstanceState);
+        return mView;
     }
 }

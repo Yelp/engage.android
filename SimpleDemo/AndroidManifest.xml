@@ -58,7 +58,7 @@
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/jr_dialog"
+            android:theme="@style/Theme.Janrain.Light"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:hardwareAccelerated="false"
             />
@@ -72,7 +72,7 @@
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/jr_fullscreen"
+            android:theme="@style/custom_fullscreen_dark"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:hardwareAccelerated="false"
             />

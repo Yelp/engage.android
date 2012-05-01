@@ -17,27 +17,27 @@
     <!-- This activity must have a dialog theme such as Theme.Holo.Dialog, or
         Theme.Dialog, etc.
 
-        Using android:theme="@style/jr_dialog" will result in Theme.Dialog on API 4-10 and
-        Theme.Holo.Light.DialogWhenLarge.NoActionBar on API 11+
+        Using android:theme="@style/Theme.Janrain.Dialog" will result in Theme.Dialog on API 4-10 and
+        Theme.Holo.DialogWhenLarge.NoActionBar on API 11+
     -->
     <activity
         android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
         android:configChanges="orientation|screenSize"
-        android:theme="@style/jr_dialog"
+        android:theme="@style/Theme.Janrain.Dialog.Light"
         android:windowSoftInputMode="adjustResize|stateHidden"
         android:hardwareAccelerated="false"
         />
 
     <!-- This activity must have a normal (non-dialog) theme such as Theme, Theme.Light, Theme.Holo, etc.
 
-        Using android:theme="@style/jr_fullscreen" or "@style/jr_fullscreen_dark" will result in
-        Theme.Light (or Theme) on API 4-10 and
-        Theme.Holo.Light (or Theme.Holo) on API 11+
+        Using android:theme="@style/Theme.Janrain" or "@style/Theme.Janrain.Light" will result in
+        Theme (or Theme.Light) on API 4-10 and
+        Theme.Holo (or Theme.Holo.Light) on API 11+
     -->
     <activity
         android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"
         android:configChanges="orientation|screenSize"
-        android:theme="@style/jr_fullscreen"
+        android:theme="@style/Theme.Janrain.Light"
         android:windowSoftInputMode="adjustResize|stateHidden"
         android:hardwareAccelerated="false"
         />

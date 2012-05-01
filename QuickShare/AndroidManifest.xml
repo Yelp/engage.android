@@ -17,7 +17,6 @@
         android:icon="@drawable/icon"
         android:theme="@style/JanrainDemoTheme"
         android:name="com.janrain.android.quickshare.QuickShare"
-        android:debuggable="true"
         android:hardwareAccelerated="true"
         >
 
@@ -46,14 +45,14 @@
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/jr_dialog"
+            android:theme="@style/Theme.Janrain.Dialog.Light"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
 
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/jr_fullscreen"
+            android:theme="@style/Theme.Janrain.Light"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
 

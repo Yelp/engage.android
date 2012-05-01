@@ -634,13 +634,14 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     }
 
     private int getTextColorPrimary() {
-        return getColor(getThemeAttributeValue(android.R.attr.textColorPrimary));
+        TypedValue data = getThemeAttributeValue(android.R.attr.textColorPrimary);
+        return (data.type == TypedValue.TYPE_REFERENCE) ? getColor(data.data) : data.data;
     }
 
-    private int getThemeAttributeValue(int attribute) {
+    private TypedValue getThemeAttributeValue(int attribute) {
         TypedValue outVal = new TypedValue();
         getActivity().getTheme().resolveAttribute(attribute, outVal, false);
-        return outVal.data;
+        return outVal;
     }
 
     private void configureViewElementsBasedOnProvider() {

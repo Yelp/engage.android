@@ -38,6 +38,7 @@ import android.app.Dialog;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.view.Window;
 import android.webkit.ConsoleMessage;
 import android.widget.FrameLayout;
 import org.json.JSONException;
@@ -144,6 +145,7 @@ public class JRWebViewFragment extends JRUiFragment {
         mWebView.setWebViewClient(mWebViewClient);
         mWebView.setWebChromeClient(mWebChromeClient);
         mWebView.setDownloadListener(mWebViewDownloadListener);
+        mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(KEY_IS_SPINNER_ON)) {
@@ -511,15 +513,32 @@ public class JRWebViewFragment extends JRUiFragment {
                                       boolean isUserGesture,
                                       Message resultMsg) {
             JREngage.logd(TAG, "[onCreateWindow] " + view);
+
             WebView newWebView = new WebView(getActivity());
+
             view.setVisibility(View.GONE);
             ((FrameLayout) view.getParent()).addView(newWebView, 0, view.getLayoutParams());
             view.getParent().focusableViewAvailable(newWebView);
+
             ensureWebViewSettings(newWebView.getSettings());
             newWebView.setScrollBarStyle(WebView.SCROLLBARS_INSIDE_OVERLAY);
             newWebView.getSettings().setBuiltInZoomControls(false);
             newWebView.setWebViewClient(mWebViewClient);
             newWebView.setWebChromeClient(this);
+
+            // Experimental popup displayed as dialog code
+            //Dialog d = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar);
+            //d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            //FrameLayout fl = new FrameLayout(getActivity());
+            //fl.addView(newWebView);
+            //fl.setPadding(AndroidUtils.scaleDipToPixels(15),
+            //        AndroidUtils.scaleDipToPixels(15),
+            //        AndroidUtils.scaleDipToPixels(15),
+            //        AndroidUtils.scaleDipToPixels(15));
+            //d.addContentView(fl, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+            //                ViewGroup.LayoutParams.MATCH_PARENT));
+            //d.show();
+
             ((WebView.WebViewTransport) resultMsg.obj).setWebView(newWebView);
             resultMsg.sendToTarget();
             return true;
