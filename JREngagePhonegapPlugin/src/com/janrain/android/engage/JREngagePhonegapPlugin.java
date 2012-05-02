@@ -208,8 +208,6 @@ public class JREngagePhonegapPlugin extends Plugin implements JREngageDelegate {
     }
 
     private synchronized void initializeJREngage(String appId, String tokenUrl) {
-        JREngage.sLoggingEnabled = true;
-
         if (appId == null || appId.equals("")) {
             postResultAndCleanUp(buildFailureResult(JREngageError.ConfigurationError.MISSING_APP_ID_ERROR,
                     "Missing appId in call to initialize"));

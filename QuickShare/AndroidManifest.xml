@@ -20,7 +20,7 @@
         android:hardwareAccelerated="true"
         >
 
-        <activity android:name="MainActivity">
+        <activity android:name=".SplashScreen">
 
             <intent-filter>
 

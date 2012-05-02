@@ -253,11 +253,8 @@ public class MainActivity extends FragmentActivity {
             }
         }
 
-        JREngage.sLoggingEnabled = true;
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, mJREngageDelegate);
-        if (mEngage == null) return false;
-        
-        return true;
+        return mEngage != null;
     }
 
     private void buildActivity() {

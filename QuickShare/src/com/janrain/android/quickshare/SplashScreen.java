@@ -39,8 +39,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements View.OnClickListener, QuickShare.FeedReaderListener {
-    private static final String TAG = MainActivity.class.getSimpleName();
+public class SplashScreen extends Activity implements View.OnClickListener, QuickShare.FeedReaderListener {
+    private static final String TAG = SplashScreen.class.getSimpleName();
 
     private Button mViewFeedSummary;
     private boolean mFeedHasLoaded;

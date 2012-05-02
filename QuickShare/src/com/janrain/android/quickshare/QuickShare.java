@@ -116,8 +116,6 @@ public class QuickShare extends Application {
         super.onCreate();
         Log.d(TAG, "[onCreate]");
 
-        JREngage.sLoggingEnabled = true;
-
         sInstance = this;
 
         JRFileResponseCache jrfrc = new JRFileResponseCache(this);

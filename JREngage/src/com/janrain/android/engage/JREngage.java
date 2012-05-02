@@ -79,6 +79,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -133,7 +134,12 @@ import java.util.List;
  **/
 public class JREngage {
 	private static final String TAG = JREngage.class.getSimpleName();
-    public static boolean sLoggingEnabled = false;
+
+    /**
+     * If not set library logging is automatically controlled via the "debuggable" flag for the application
+     * set in AndroidManifest.xml
+     */
+    public static Boolean sLoggingEnabled = false;
 
     /* Singleton instance of this class */
 	private static JREngage sInstance;
@@ -155,6 +161,10 @@ public class JREngage {
                      String appId,
                      String tokenUrl,
                      JREngageDelegate delegate) {
+        if (sLoggingEnabled == null) {
+            sLoggingEnabled =
+                    (0 != (applicationContext.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
+        }
         sInstance = this;
         mApplicationContext = applicationContext.getApplicationContext();
         if (applicationContext instanceof Activity) mActivityContext = (Activity) applicationContext;

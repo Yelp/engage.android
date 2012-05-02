@@ -37,16 +37,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import com.janrain.android.engage.JREngage;
 
-public class MainActivity extends Activity implements View.OnClickListener {
-    private static final String TAG = MainActivity.class.getSimpleName();
+public class SplashScreen extends Activity implements View.OnClickListener {
+    private static final String TAG = SplashScreen.class.getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        JREngage.sLoggingEnabled = true;
 
         setContentView(R.layout.splash);
 
