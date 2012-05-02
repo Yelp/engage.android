@@ -215,6 +215,7 @@ public class AndroidUtils {
         try {
             Method message = consoleMessage.getClass().getMethod("message");
             return (String) message.invoke(consoleMessage);
+            // + consoleMessage.sourceId() + consoleMessage.lineNumber();
         } catch (NoSuchMethodException ignore) {
         } catch (InvocationTargetException ignore) {
         } catch (IllegalAccessException ignore) {
