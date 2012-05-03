@@ -924,7 +924,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mUserNameView.setText(getAvatarName());
 
         mUserProfilePic.setImageResource(R.drawable.jr_profilepic_placeholder);
-        user.downloadProfilePic(new JRAuthenticatedUser.ProfilePicAvailableListener() {
+        user.asyncDownloadProfilePic(new JRAuthenticatedUser.ProfilePicAvailableListener() {
             public void onProfilePicAvailable(Bitmap b) {
                 if (mSelectedProvider.getName().equals(providerName))
                     mUserProfilePic.setImageBitmap(b);

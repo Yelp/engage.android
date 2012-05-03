@@ -134,7 +134,7 @@ public class JRAuthenticatedUser implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public void downloadProfilePic(final ProfilePicAvailableListener callback) {
+    public void asyncDownloadProfilePic(final ProfilePicAvailableListener callback) {
         final Handler uiThread = new Handler();
 
         ThreadUtils.mExecutor.execute(new Runnable() {
@@ -153,10 +153,8 @@ public class JRAuthenticatedUser implements Serializable {
             cachedProfilePic = BitmapFactory.decodeStream(fis);
         } catch (ProfilePicMissingException e) {
             return;
-        } catch (FileNotFoundException e) {
-            fis = null;
-        } catch (UnsupportedOperationException e) {
-            fis = null;
+        } catch (FileNotFoundException ignore) {
+        } catch (UnsupportedOperationException ignore) {
         } finally {
             try {
                 if (fis != null) {
@@ -173,7 +171,6 @@ public class JRAuthenticatedUser implements Serializable {
                 }
             });
         } else if (!TextUtils.isEmpty(getPhoto())) {
-            Looper.prepare(); // prepares the background thread for the connection delegate callback message
             JRConnectionManager.createConnection(getPhoto(),
                     new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
                         @Override
@@ -183,8 +180,8 @@ public class JRAuthenticatedUser implements Serializable {
                                                                Object tag) {
                             FileOutputStream fos = null;
                             try {
-                                fos = getContext().openFileOutput("userpic~" +
-                                       getCachedProfilePicKey(), Activity.MODE_PRIVATE);
+                                fos = getContext().openFileOutput("userpic~" + getCachedProfilePicKey(),
+                                        Activity.MODE_PRIVATE);
                                 fos.write(payload);
                                 final Bitmap bitmap =
                                         BitmapFactory.decodeByteArray(payload, 0, payload.length);
@@ -203,13 +200,12 @@ public class JRAuthenticatedUser implements Serializable {
                                 if (fos != null) {
                                     try {
                                         fos.close();
-                                    } catch (IOException ignore) {}
+                                    } catch (IOException ignore) {
+                                    }
                                 }
                             }
-                            Looper.myLooper().quit();
                         }
                     }, null);
-            Looper.loop();
         }
     }
 

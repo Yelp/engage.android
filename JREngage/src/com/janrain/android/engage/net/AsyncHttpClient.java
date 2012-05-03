@@ -178,6 +178,8 @@ public final class AsyncHttpClient {
 
             setupHttpClient();
 
+            JRConnectionManager.HttpCallbackWrapper callBack =
+                    new JRConnectionManager.HttpCallbackWrapper(mConnectionData);
             try {
 //                if (!mUrl.contains("mobile_config_and_baseurl") && !mUrl.contains("appspot.com")) {
 //                    JREngage.getActivity().runOnUiThread(new Runnable() {
@@ -255,18 +257,26 @@ public final class AsyncHttpClient {
                 }
 
                 mConnectionData.setResponse(ahr);
-                mHandler.post(new JRConnectionManager.HttpCallbackWrapper(mConnectionData));
+                invokeCallback(callBack);
             } catch (IOException e) {
                 Log.e(TAG, this.toString());
                 Log.e(TAG, "[run] Problem executing HTTP request. (" + e +")", e);
                 mConnectionData.setResponse(new AsyncHttpResponse(mUrl, e));
-                mHandler.post(new JRConnectionManager.HttpCallbackWrapper(mConnectionData));
+                invokeCallback(callBack);
             } catch (AbortedRequestException e) {
                 Log.e(TAG, "[run] Aborted request: " + mUrl);
                 mConnectionData.setResponse(new AsyncHttpResponse(mUrl, null));
-                mHandler.post(new JRConnectionManager.HttpCallbackWrapper(mConnectionData));
+                invokeCallback(callBack);
             }
 		}
+
+        private void invokeCallback(JRConnectionManager.HttpCallbackWrapper callBack) {
+            if (mHandler != null) {
+                mHandler.post(callBack);
+            } else {
+                callBack.run();
+            }
+        }
 
         public String toString() {
             if (mPostData == null) mPostData = new byte[0];

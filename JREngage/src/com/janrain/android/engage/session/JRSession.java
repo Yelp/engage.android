@@ -213,7 +213,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             Log.e(TAG, "LoadException loading serialized configuration, initializing from empty state", e);
             /* Blank slate */
             mAuthenticatedUsersByProvider = new HashMap<String, JRAuthenticatedUser>();
-            Archiver.save(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
+            Archiver.asyncSave(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
 
             // Note that these values are removed from the settings when resetting state to prevent
             // uninitialized state from being read on startup as valid state
@@ -680,9 +680,9 @@ public class JRSession implements JRConnectionManagerDelegate {
         /* Done! */
 
         /* Save data to local store */
-        Archiver.save(ARCHIVE_ALL_PROVIDERS, mAllProviders);
-        Archiver.save(ARCHIVE_AUTH_PROVIDERS, mAuthProviders);
-        Archiver.save(ARCHIVE_SHARING_PROVIDERS, mSharingProviders);
+        Archiver.asyncSave(ARCHIVE_ALL_PROVIDERS, mAllProviders);
+        Archiver.asyncSave(ARCHIVE_AUTH_PROVIDERS, mAuthProviders);
+        Archiver.asyncSave(ARCHIVE_SHARING_PROVIDERS, mSharingProviders);
 
         /* Figure out of whether to hide the "powered by" line */
         mHidePoweredBy = jsonDict.getAsBoolean("hide_tagline", false);
@@ -822,7 +822,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         if (mAuthenticatedUsersByProvider.containsKey(providerName)) {
             mAuthenticatedUsersByProvider.get(providerName).deleteCachedProfilePic();
             mAuthenticatedUsersByProvider.remove(providerName);
-            Archiver.save(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
+            Archiver.asyncSave(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
             triggerUserWasSignedOut(providerName);
         }
     }
@@ -1005,7 +1005,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                 mCurrentlyAuthenticatingProvider.getName(),
                 getWelcomeMessageFromCookieString());
         mAuthenticatedUsersByProvider.put(mCurrentlyAuthenticatingProvider.getName(), user);
-        Archiver.save(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
+        Archiver.asyncSave(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
         String authInfoToken = rpx_result.getAsString("token");
         JRDictionary authInfoDict = rpx_result.getAsDictionary("auth_info");
         authInfoDict.put("token", authInfoToken);

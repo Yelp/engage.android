@@ -106,22 +106,22 @@ public class ProfileData {
 
         mProfiles.put(identifier, profile);
 
-        Archiver.save(ARCHIVE_ALL_PROFILES, mProfiles);
-        Archiver.save(ARCHIVE_LOGIN_SNAPSHOTS, mLoginSnapshots);
+        Archiver.asyncSave(ARCHIVE_ALL_PROFILES, mProfiles);
+        Archiver.asyncSave(ARCHIVE_LOGIN_SNAPSHOTS, mLoginSnapshots);
     }
 
     public void deleteLoginSnapshotAtPosition(int position) {
         mLoginSnapshots.remove(position);
-        Archiver.save(ARCHIVE_ALL_PROFILES, mProfiles);
-        Archiver.save(ARCHIVE_LOGIN_SNAPSHOTS, mLoginSnapshots);
+        Archiver.asyncSave(ARCHIVE_ALL_PROFILES, mProfiles);
+        Archiver.asyncSave(ARCHIVE_LOGIN_SNAPSHOTS, mLoginSnapshots);
     }
 
     public void deleteAllProfiles() {
         mLoginSnapshots.clear();
         mProfiles.clear();
 
-        Archiver.save(ARCHIVE_ALL_PROFILES, mProfiles);
-        Archiver.save(ARCHIVE_LOGIN_SNAPSHOTS, mLoginSnapshots);
+        Archiver.asyncSave(ARCHIVE_ALL_PROFILES, mProfiles);
+        Archiver.asyncSave(ARCHIVE_LOGIN_SNAPSHOTS, mLoginSnapshots);
     }
 
     public void setCurrentProfileByIdentifier(String identifier) {

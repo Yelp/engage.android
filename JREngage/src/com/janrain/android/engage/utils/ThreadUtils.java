@@ -33,6 +33,7 @@
 package com.janrain.android.engage.utils;
 
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -47,12 +48,12 @@ import java.util.concurrent.TimeUnit;
 public class ThreadUtils {
     public static ThreadPoolExecutor mExecutor;
     static {
-        mExecutor = new ThreadPoolExecutor(0, 10, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(20));
+        mExecutor = new ThreadPoolExecutor(0, 10, 60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
         final ThreadFactory originalFactory = mExecutor.getThreadFactory();
         mExecutor.setThreadFactory(new ThreadFactory() {
             public Thread newThread(Runnable runnable) {
                 Thread t = originalFactory.newThread(runnable);
-                t.setName("ArchiverThread~" + t.getName());
+                t.setName("JREngage-ThreadUtils~" + t.getName());
                 return t;
             }
         });

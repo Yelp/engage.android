@@ -328,8 +328,8 @@ public class QuickShare extends Application {
                 }
 
                 logd("loadJanrainBlog", "saving stories");
-                Archiver.save(ARCHIVE_STORIES_ARRAY, mStories);
-                Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
+                Archiver.asyncSave(ARCHIVE_STORIES_ARRAY, mStories);
+                Archiver.asyncSave(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
                 logd("loadJanrainBlog", "stories saved");
 
                 return new Pair<Boolean, Exception>(true, null);

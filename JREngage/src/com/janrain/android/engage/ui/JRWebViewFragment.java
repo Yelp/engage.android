@@ -35,8 +35,11 @@ import java.net.URL;
 import java.util.List;
 
 import android.app.Dialog;
+import android.os.Handler;
+import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import com.janrain.android.engage.utils.ThreadUtils;
 import org.json.JSONException;
 
 import android.app.Activity;
@@ -107,7 +110,11 @@ public class JRWebViewFragment extends JRUiFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         JREngage.logd(TAG, "[onCreateView]");
         if (mSession == null) return null;
+        StrictMode.ThreadPolicy tp = StrictMode.getThreadPolicy();
+        StrictMode.allowThreadDiskReads();
+        StrictMode.allowThreadDiskWrites();
         View view = inflater.inflate(R.layout.jr_provider_webview, container, false);
+        StrictMode.setThreadPolicy(tp);
 
         mWebView = (WebView)view.findViewById(R.id.jr_webview);
         mProgressSpinner = (ProgressBar)view.findViewById(R.id.jr_webview_progress);
@@ -180,8 +187,17 @@ public class JRWebViewFragment extends JRUiFragment {
         } else {
             mProvider = mSession.getCurrentlyAuthenticatingProvider();
             configureWebViewUa();
-            URL startUrl = mSession.startUrlForCurrentlyAuthenticatingProvider();
-            mWebView.loadUrl(startUrl.toString());
+            final Handler uiThread = new Handler();
+            ThreadUtils.mExecutor.execute(new Runnable() {
+                public void run() {
+                    final URL startUrl = mSession.startUrlForCurrentlyAuthenticatingProvider();
+                    uiThread.post(new Runnable() {
+                        public void run() {
+                            mWebView.loadUrl(startUrl.toString());
+                        }
+                    });
+                }
+            });
         }
 
         FragmentManager fm = getActivity().getSupportFragmentManager();

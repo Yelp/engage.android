@@ -80,6 +80,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -98,10 +99,13 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.ui.JRFragmentHostActivity;
 import com.janrain.android.engage.ui.JRPublishFragment;
 import com.janrain.android.engage.ui.JRUiFragment;
+import com.janrain.android.engage.utils.ThreadUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * @brief
@@ -131,6 +135,10 @@ public class JREngage {
 	private static final String TAG = JREngage.class.getSimpleName();
     public static boolean sLoggingEnabled = false;
 
+    private boolean mInitializeIoBlocked = false;
+    private Queue<Runnable> mInitializationBlockedQueue = new LinkedList<Runnable>();
+    private Handler mUiThread;
+
     /* Singleton instance of this class */
 	private static JREngage sInstance;
 
@@ -145,6 +153,15 @@ public class JREngage {
     
     /* Listeners to JRSessionDelegate#configDidFinish(); */
     private ArrayList<ConfigFinishListener> mConfigFinishListeners = new ArrayList<ConfigFinishListener>();
+    {
+        mConfigFinishListeners.add(new ConfigFinishListener() {
+            public void configDidFinish() {
+                while (!mInitializationBlockedQueue.isEmpty()) {
+                    mUiThread.post(mInitializationBlockedQueue.remove());
+                }
+            }
+        });
+    }
 
     private JREngage() {}
 
@@ -178,10 +195,10 @@ public class JREngage {
      * 		The shared instance of the JREngage object initialized with the given
      *   	appId, tokenUrl, and delegate.  If the given appId is null, returns null
      **/
-    public static JREngage initInstance(Activity activity,
-                                        String appId,
-                                        String tokenUrl,
-                                        JREngageDelegate delegate) {
+    public static JREngage initInstance(final Activity activity,
+                                        final String appId,
+                                        final String tokenUrl,
+                                        final JREngageDelegate delegate) {
         if (activity == null) {
             Log.e(TAG, "[initialize] context parameter cannot be null.");
             throw new IllegalArgumentException("context parameter cannot be null.");
@@ -196,7 +213,14 @@ public class JREngage {
                 "' activity '" + activity + "' appId '" + appId + "' tokenUrl '" + tokenUrl + "'");
 
         if (sInstance == null) sInstance = new JREngage();
-        sInstance.initialize(activity, appId, tokenUrl, delegate);
+
+        sInstance.mInitializeIoBlocked = true;
+        ThreadUtils.mExecutor.execute(new Runnable() {
+            public void run() {
+                sInstance.initialize(activity, appId, tokenUrl, delegate);
+                sInstance.mInitializeIoBlocked = false;
+            }
+        });
 
         return sInstance;
     }
@@ -297,6 +321,15 @@ public class JREngage {
         //    }
         //}
 	}
+
+    private void initalizationGuard(Runnable r) {
+        if (mInitializeIoBlocked) {
+            mInitializationBlockedQueue.add(r);
+        } else {
+            r.run();
+        }
+    }
+
 
 /**
  * @name Manage Authenticated Users
@@ -494,7 +527,7 @@ public class JREngage {
      **/
     public void showAuthenticationDialog(boolean skipReturningUserLandingPage) {
         JREngage.logd(TAG, "[showAuthenticationDialog]: " + skipReturningUserLandingPage);
-        
+
         showAuthenticationDialog(skipReturningUserLandingPage, null);
     }
 

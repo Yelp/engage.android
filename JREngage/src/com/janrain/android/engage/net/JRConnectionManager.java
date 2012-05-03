@@ -32,6 +32,7 @@
 package com.janrain.android.engage.net;
 
 import android.os.Handler;
+import android.os.Looper;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.ThreadUtils;
@@ -124,8 +125,6 @@ public class JRConnectionManager {
 
         connectionData.mHttpRequest = request;
 
-        ThreadUtils.mExecutor.execute(new AsyncHttpClient.HttpExecutor(new Handler(), connectionData));
-
         synchronized (sDelegateConnections) {
             Set<ConnectionData> s = sDelegateConnections.get(delegate);
             if (s == null) {
@@ -133,6 +132,14 @@ public class JRConnectionManager {
                 sDelegateConnections.put(delegate, s);
             }
             s.add(connectionData);
+        }
+
+        if (Looper.myLooper() != null) {
+            // operate asynchronously, post a message back to the thread later
+            ThreadUtils.mExecutor.execute(new AsyncHttpClient.HttpExecutor(new Handler(), connectionData));
+        } else {
+            // operate synchronously
+            new AsyncHttpClient.HttpExecutor(null, connectionData).run();
         }
 
         JREngage.logd(TAG, "[executeHttpRequest] invoked");

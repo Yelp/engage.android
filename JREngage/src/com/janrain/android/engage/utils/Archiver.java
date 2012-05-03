@@ -76,7 +76,7 @@ public final class Archiver {
      * @throws
      *      IllegalStateException if JREngage.getContext() returns null.
      */
-    public static void save(String name, Object object) {
+    public static void asyncSave(String name, Object object) {
         Context context = JREngage.getActivity();
         if (context == null) throw new IllegalStateException("Illegal null Context");
         asyncSave(name, object, context);
