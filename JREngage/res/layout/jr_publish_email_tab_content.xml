@@ -61,8 +61,6 @@
         android:textSize="@dimen/jr_edit_text_size"
         android:inputType="textMultiLine|textAutoComplete"
         />
-    <!--android:imeOptions="actionSend"-->
-    <!--style="?android:attr/textAppearanceMedium"-->
 
     <LinearLayout
         android:id="@+id/jr_email_sms_button_layout"

@@ -32,19 +32,4 @@
 
 <resources>
 
-    <!--<style name="custom_fullscreen" parent="jr_fullscreen">-->
-    <!--<item name="jrCustomLandingStyle">@style/custom_landing_box</item>-->
-    <!--<item name="jrCustomLandingRootViewStyle">@style/custom_landing_root</item>-->
-    <style name="custom_fullscreen" parent="android:Theme.Holo.Light">
-        <item name="android:windowBackground">@color/jr_janrain_darkblue_lightened</item>
-        <item name="android:colorBackgroundCacheHint">?android:windowBackground</item>
-    </style>
-
-    <style name="custom_fullscreen_dark" parent="style/Theme.Janrain">
-        <item name="android:textColorPrimary">#ffff0000</item>
-        <!--<item name="android:textColorPrimary">@android:color/primary_text_light</item>-->
-        <!--<item name="android:textColorSecondary">@android:color/secondary_text_light</item>-->
-        <!--<item name="jrCustomLandingStyle">@style/custom_landing_box</item>-->
-    </style>
-
 </resources>

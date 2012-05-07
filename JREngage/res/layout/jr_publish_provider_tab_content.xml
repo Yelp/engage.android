@@ -71,7 +71,7 @@
         android:layout_marginBottom="5dip"
 
         android:singleLine="true"
-        android:textColor="#ff333333"
+        android:textColor="@color/jr_preview_label"
         android:text="@string/jr_calculating_remaining_characters"
         android:textSize="@dimen/jr_character_count_size"
         />

@@ -205,7 +205,10 @@ public class MainActivity extends FragmentActivity {
             mProviderListHeader = new CustomSignin();
             //mAuthenticationBackgroundDrawable = c.getResources().getDrawable(R.drawable.custom_signin_bg);
             mProviderListTitle = "Custom provider list title";
-            mUseSystemTabs = true;
+            mLandingTitle = "Landing";
+            mWebViewTitle = "WebView";
+            mSharingTitle = "Sharing";
+            //mUseSystemTabs = true;
         }
 
         @Override
@@ -227,7 +230,7 @@ public class MainActivity extends FragmentActivity {
             Button signIn = (Button) v.findViewById(R.id.custom_signin_button);
             signIn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "ZOMG CUSTOM SIGNIN!\n" + userName.getText() + "\n" + 
+                    Toast.makeText(getActivity(), "Custom signin:\n" + userName.getText() + "\n" +
                             password.getText(), Toast.LENGTH_LONG).show();
                     finishJrSignin();
                 }

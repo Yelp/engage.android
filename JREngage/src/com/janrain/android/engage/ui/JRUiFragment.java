@@ -58,11 +58,15 @@ import android.view.ViewGroup;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSession;
+import com.janrain.android.engage.utils.AndroidUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+
+import static com.janrain.android.engage.utils.AndroidUtils.ActionBarSetDisplayHomeAsUpEnabled;
+import static com.janrain.android.engage.utils.AndroidUtils.ActivityGetActionBar;
 
 /**
  * @internal
@@ -154,12 +158,14 @@ public abstract class JRUiFragment extends Fragment {
 
         mSession = JRSession.getInstance();
         if (mSession != null) mSession.setUiIsShowing(true);
-        /* Embedded mode isn't compatible with setRetainInstance */
+        /* Embedded fragments aren't compatible with setRetainInstance, because the parent Activity may
+         * not handle config changes */
         if (!isEmbeddedMode()) setRetainInstance(true);
         setHasOptionsMenu(true);
 
-        if (getCustomTitle() != null && getActivity() instanceof JRFragmentHostActivity) {
-            getActivity().setTitle(getCustomTitle());
+        if (getActivity() instanceof JRFragmentHostActivity) {
+            if (getCustomTitle() != null) getActivity().setTitle(getCustomTitle());
+            ActionBarSetDisplayHomeAsUpEnabled(ActivityGetActionBar(getActivity()), true);
         }
     }
 

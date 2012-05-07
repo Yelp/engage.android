@@ -40,21 +40,65 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class JRCustomUiConfiguration extends JRUiCustomization {
-    public String mProviderListTitle; // Could do this through theme
+    /**
+     * A custom title for the provider list activity
+     */
+    public String mProviderListTitle;
+
+    /**
+     * A custom title for the return experience and OpenID landing activity
+     */
     public String mLandingTitle;
+
+    /**
+     * A custom title for the WebView activity
+     */
     public String mWebViewTitle;
+
+    /**
+     * A custom title for the sharing activity
+     */
     public String mSharingTitle;
 
-    public Boolean mShowProviderListTitleWhenDialog; // Could do this through theme
+    /**
+     *
+     */
+    public Boolean mShowProviderListTitleWhenDialog;
+
+    /**
+     *
+     */
     public Boolean mShowLandingTitleWhenDialog;
+
+    /**
+     *
+     */
     public Boolean mShowWebViewTitleWhenDialog;
+
+    /**
+     *
+     */
     public Boolean mShowSharingTitleWhenDialog;
 
+    /**
+     *
+     */
     public JRCustomUiView mProviderListHeader;
+
+    /**
+     *
+     */
     public JRCustomUiView mProviderListFooter;
-    
-    public Drawable mIndeterminateProgress; // Could do this through theme
-    public boolean mUseSystemTabs; // Could do this through theme
+
+    /**
+     *
+     */
+    public Drawable mIndeterminateProgress;
+
+    /**
+     *
+     */
+    public Boolean mUseSystemTabs;
 
 //Y     do support
 //?     not sure whether to support
@@ -64,8 +108,6 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
 //N     kJRPopoverPresentationFrameValue
 //N     kJRPopoverPresentationBarButtonItem
 //N     kJRPopoverPresentationArrowDirection
-
-// Offer some ActionBar customization
 
 //N     kJRApplicationNavigationController
 //N     kJRCustomModalNavigationController
@@ -93,6 +135,9 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
 //    TODO address parity of this vs existing implementation
 //      kJRRemoveProvidersFromAuthentication
 
+    /**
+     *
+     */
     public void onProviderListViewCreate(ListView providerListView) {}
 
     /*package*/ final void onResume() {

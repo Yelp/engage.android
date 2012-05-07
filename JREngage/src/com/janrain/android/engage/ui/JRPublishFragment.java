@@ -570,6 +570,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         boolean doBasicTabs = false;
         try {
             if (AndroidUtils.SDK_INT >= 11 && getCustomUiConfiguration() != null &&
+                    getCustomUiConfiguration().mUseSystemTabs != null &&
                     getCustomUiConfiguration().mUseSystemTabs) {
                 doBasicTabs = true;
             } else {

@@ -112,6 +112,7 @@ public class JRProviderListFragment extends JRUiFragment {
                     tv.setText("section header view");
                     return tv;
                 } else {
+                    ((TextView) convertView).setText("section header view");
                     return convertView;
                 }
             } else {
@@ -122,6 +123,7 @@ public class JRProviderListFragment extends JRUiFragment {
                     tv.setText("section footer view");
                     return tv;
                 } else {
+                    ((TextView) convertView).setText("section footer view");
                     return convertView;
                 }
             }
@@ -212,6 +214,13 @@ public class JRProviderListFragment extends JRUiFragment {
                         mListView);
                 mListView.addFooterView(customUiConfiguration.mProviderListFooter.getView());
             }
+
+            customUiConfiguration.onProviderListViewCreate(mListView);
+
+            // This is buggy on the 2.3x86 emulator -- scrolling to the bottom of the list and then
+            // back to the top results in focus problems inside the customer header ViewGroup
+            // But, it works properly on a 2.1 HTC Hero with a trackball.
+            mListView.setItemsCanFocus(true);
         }
 
         mProviderList = mSession.getAuthProviders();

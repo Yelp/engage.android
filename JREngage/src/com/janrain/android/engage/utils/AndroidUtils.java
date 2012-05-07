@@ -179,6 +179,30 @@ public class AndroidUtils {
         }
     }
 
+    public static Object ActivityGetActionBar(Activity a) {
+        try {
+            Method getActionBar = a.getClass().getMethod("getActionBar");
+            return getActionBar.invoke(a);
+        } catch (NoSuchMethodException ignore) {
+        } catch (InvocationTargetException ignore) {
+        } catch (IllegalAccessException ignore) {
+        }
+
+        return null;
+    }
+
+    public static void ActionBarSetDisplayHomeAsUpEnabled(Object actionBar, boolean arg) {
+        if (actionBar == null) return;
+
+        try {
+            Method m = actionBar.getClass().getMethod("setDisplayHomeAsUpEnabled", boolean.class);
+            m.invoke(actionBar, arg);
+        } catch (NoSuchMethodException ignore) {
+        } catch (InvocationTargetException ignore) {
+        } catch (IllegalAccessException ignore) {
+        }
+    }
+
     public static Drawable newBitmapDrawable(Context c, Bitmap icon) {
         try {
             Class bitmapDrawableClass = Class.forName("android.graphics.drawable.BitmapDrawable");
