@@ -42,12 +42,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.InsetDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -61,7 +59,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -575,8 +572,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         boolean doBasicTabs = false;
         try {
             if (AndroidUtils.SDK_INT >= 11 && getCustomUiConfiguration() != null &&
-                    getCustomUiConfiguration().mUseSystemTabs != null &&
-                    getCustomUiConfiguration().mUseSystemTabs) {
+                    getCustomUiConfiguration().mSharingUsesSystemTabs != null &&
+                    getCustomUiConfiguration().mSharingUsesSystemTabs) {
                 doBasicTabs = true;
             } else {
                 LinearLayout ll = createTabSpecIndicator(label, iconSet);

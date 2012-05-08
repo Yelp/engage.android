@@ -50,6 +50,8 @@ public abstract class JRCustomUiView extends JRUiCustomization {
     /*package*/ boolean mViewCreated = false;
 
     /**
+     * Implement this method to return your custom view hierarchy for embedding in the Engage library UI.
+     *
      * This method should have no side effects as it may be called more than once per activity.
      * @param context The Context
      * @param inflater A LayoutInflater which can be used to inflate your layout file
@@ -103,7 +105,11 @@ public abstract class JRCustomUiView extends JRUiCustomization {
     public final String getString(int id, Object... formatArgs) {
         return getResources().getString(id, formatArgs);
     }
-    
+
+    /**
+     * Gets the created View hierarchy
+     * @return the created View hierarchy
+     */
     public final View getView() {
         return mView;
     }

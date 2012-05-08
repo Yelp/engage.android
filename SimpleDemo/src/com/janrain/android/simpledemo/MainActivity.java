@@ -208,7 +208,7 @@ public class MainActivity extends FragmentActivity {
             mLandingTitle = "Landing";
             mWebViewTitle = "WebView";
             mSharingTitle = "Sharing";
-            //mUseSystemTabs = true;
+            //mSharingUsesSystemTabs = true;
         }
 
         @Override

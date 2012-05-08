@@ -61,44 +61,46 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
     public String mSharingTitle;
 
     /**
-     *
+     * Controls the display of the provider list title/ActionBar when running in dialog mode on a tablet
      */
     public Boolean mShowProviderListTitleWhenDialog;
 
     /**
-     *
+     * Controls the display of the return experience / OpenID landing page title/ActionBar when running in
+     * dialog mode on a tablet
      */
     public Boolean mShowLandingTitleWhenDialog;
 
     /**
-     *
+     * Controls the display of the WebView title/ActionBar when running in dialog mode on a tablet
      */
     public Boolean mShowWebViewTitleWhenDialog;
 
     /**
-     *
+     * Controls the display of the sharing title/ActionBar when running in dialog mode on a tablet
      */
     public Boolean mShowSharingTitleWhenDialog;
 
     /**
-     *
+     * Provides a custom ListView header for the provider list. This can be used to implement your own
+     * username/password sign-in
      */
     public JRCustomUiView mProviderListHeader;
 
     /**
-     *
+     * Provides a custom ListView footer for the provider list.
      */
     public JRCustomUiView mProviderListFooter;
 
     /**
      *
      */
-    public Drawable mIndeterminateProgress;
+    //public Drawable mIndeterminateProgress;
 
     /**
-     *
+     * Controls the use of the default system tabs displayed in the sharing UI
      */
-    public Boolean mUseSystemTabs;
+    public Boolean mSharingUsesSystemTabs;
 
 //Y     do support
 //?     not sure whether to support
@@ -136,7 +138,8 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
 //      kJRRemoveProvidersFromAuthentication
 
     /**
-     *
+     * Called when the ListView for the provider list is created, but before the Adapter is set on it.
+     * You can use this method to customize the ListView
      */
     public void onProviderListViewCreate(ListView providerListView) {}
 
