@@ -74,12 +74,14 @@
         android:paddingRight="10dip"
 
         android:orientation="vertical"
-        android:background="@color/jr_janrain_darkblue_lightened"
+        android:background="@color/jr_some_other_blue"
         >
 
         <ImageView
+            android:id="@+id/jr_triangle_icon_view_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
             android:src="@drawable/jr_triangle_icon"
             />
 

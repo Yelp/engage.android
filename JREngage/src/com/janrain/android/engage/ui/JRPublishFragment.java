@@ -287,6 +287,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                         getColor(R.color.jr_janrain_darkblue)
                         : getColor(R.color.jr_janrain_darkblue_lightened)
         );
+
+        ImageView triangle = (ImageView) content.findViewById(R.id.jr_triangle_icon_view);
+        if (triangle != null) triangle.setColorFilter(colorBackground, PorterDuff.Mode.MULTIPLY);
+        triangle = (ImageView) content.findViewById(R.id.jr_triangle_icon_view_email);
+        if (triangle != null) triangle.setColorFilter(colorBackground, PorterDuff.Mode.MULTIPLY);
     }
 
     private void configureEmailSmsButtons() {
