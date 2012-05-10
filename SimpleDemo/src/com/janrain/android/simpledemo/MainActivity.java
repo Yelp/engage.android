@@ -48,6 +48,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+import com.janrain.android.engage.session.JRProvider;
+import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.ui.JRCustomUiConfiguration;
 import com.janrain.android.engage.ui.JRCustomUiView;
 import com.janrain.android.engage.JREngage;
@@ -309,6 +311,8 @@ public class MainActivity extends FragmentActivity {
         }
 
         public void jrAuthenticationDidSucceedForUser(JRDictionary authInfo, String provider) {
+            JRProvider p = JRSession.getInstance().getProviderByName(provider);
+            String deviceToken = JRSession.getInstance().getAuthenticatedUserForProvider(p).getDeviceToken();
             JRDictionary profile = (authInfo == null) ? null : authInfo.getAsDictionary("profile");
             String displayName = (profile == null) ? null : profile.getAsString("displayName");
             String message = "Authentication successful" + ((TextUtils.isEmpty(displayName))

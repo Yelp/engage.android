@@ -146,7 +146,7 @@ public class JREngage {
      */
     public static Boolean sLoggingEnabled;
 
-    private static  boolean sInitializeIoBlocked = false;
+    private static  boolean sInitializeIoBlocked = true;
     private Queue<Runnable> mInitializationBlockedQueue = new LinkedList<Runnable>();
     private Handler mUiThread = new Handler(Looper.getMainLooper());
 
@@ -234,14 +234,21 @@ public class JREngage {
 
         if (sInstance == null) {
             sInstance = new JREngage(context, delegate);
-            sInitializeIoBlocked = true;
+
             ThreadUtils.executeInBg(new Runnable() { public void run() {
                 //if (true) return;
+                //try {
+                //    Thread.sleep(2000);
+                //} catch (InterruptedException ignore) {
+                //}
                 sInstance.mSession = JRSession.getInstance(appId, tokenUrl, sInstance.mJrsd);
                 while (!sInstance.mInitializationBlockedQueue.isEmpty()) {
                     sInstance.mUiThread.post(sInstance.mInitializationBlockedQueue.remove());
                 }
-                sInitializeIoBlocked = false;
+                synchronized (sInstance) {
+                    sInitializeIoBlocked = false;
+                    sInstance.notifyAll();
+                }
             } });
         } else {
             Log.e(TAG, "Ignoring call which would reinitialize JREngage");
@@ -299,9 +306,16 @@ public class JREngage {
         sInstance.mActivityContext = activity;
     }
 
-    private void initializationGuard(Runnable r) {
+    private synchronized void initializationGuard(Runnable r) {
         if (sInitializeIoBlocked) {
-            mInitializationBlockedQueue.add(r);
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Log.e(TAG, "Unexpected InterruptedException");
+            }
+            //mActivityContext.getWindow().
+            //mInitializationBlockedQueue.add(r);
+            r.run();
         } else {
             r.run();
         }

@@ -963,6 +963,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         String authInfoToken = rpx_result.getAsString("token");
         JRDictionary authInfoDict = rpx_result.getAsDictionary("auth_info");
         authInfoDict.put("token", authInfoToken);
+        authInfoDict.put("device_token", user.getDeviceToken());
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.authenticationDidComplete(
@@ -1099,7 +1100,6 @@ public class JRSession implements JRConnectionManagerDelegate {
             return mEnabledAuthenticationProviders;
         }
     }
-
 
     public void setEnabledSharingProviders(List<String> enabledSharingProviders) {
         mEnabledSharingProviders = enabledSharingProviders;
