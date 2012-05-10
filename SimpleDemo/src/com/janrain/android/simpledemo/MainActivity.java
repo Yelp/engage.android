@@ -311,8 +311,7 @@ public class MainActivity extends FragmentActivity {
         }
 
         public void jrAuthenticationDidSucceedForUser(JRDictionary authInfo, String provider) {
-            JRProvider p = JRSession.getInstance().getProviderByName(provider);
-            String deviceToken = JRSession.getInstance().getAuthenticatedUserForProvider(p).getDeviceToken();
+            String deviceToken = authInfo.getAsString("device_token");
             JRDictionary profile = (authInfo == null) ? null : authInfo.getAsDictionary("profile");
             String displayName = (profile == null) ? null : profile.getAsString("displayName");
             String message = "Authentication successful" + ((TextUtils.isEmpty(displayName))
