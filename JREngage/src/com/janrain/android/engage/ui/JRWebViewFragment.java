@@ -186,9 +186,9 @@ public class JRWebViewFragment extends JRUiFragment {
             mWebView.loadUrl("http://nathan.janrain.com/~nathan/share_widget_webview/beta_share.html");
             mWebView.loadUrl("javascript:jrengage_beta_share_activity = " +
                     getArguments().getString(JR_ACTIVITY_JSON));
-            String jsUrl = "http://cdn.rpxtesting.com/js/lib/jrauthenticate/share_beta.js";
+            //String jsUrl = "http://cdn.rpxtesting.com/js/lib/jrauthenticate/share_beta.js";
             //String jsUrl = "http://rpxtraining.com/js/lib/jrauthenticate/share_beta.js";
-            mWebView.loadUrl("javascript:jrengage_beta_share_js_url = '" + jsUrl + "'");
+            //mWebView.loadUrl("javascript:jrengage_beta_share_js_url = '" + jsUrl + "'");
             //String weinreUrl = "http://10.0.1.109:8080/target/target-script-min.js#anonymous";
             //mWebView.loadUrl("javascript:weinreUrl = '" + weinreUrl + "';");
 
