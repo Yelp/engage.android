@@ -32,13 +32,20 @@
 
 package com.janrain.android.engage.ui;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.ListView;
 
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The abstract superclass of classes which define Engage library UI configuration customizations.
+ *
+ * Extend this class and implement a public default constructor.  In that constructor assign values to the
+ * fields you wish to use in your custom UI configuration.
+ *
+ * This class also supplies event hooks to further control the look and feel of the Engage library.
+ */
 public class JRCustomUiConfiguration extends JRUiCustomization {
     /**
      * A custom title for the provider list activity

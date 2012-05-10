@@ -159,9 +159,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (mSession == null) return null;
+        //if (mSession == null) return null;
         if (container == null) {
-            // We may have different layouts, and in one of them this
+            // There may be different layouts, and in one of them this
             // fragment's containing frame may not exist.  The fragment
             // may still be created from its saved state,
             return null;
@@ -1015,7 +1015,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
         mUserNameView.setText(getAvatarName());
 
         mUserProfilePic.setImageResource(R.drawable.jr_profilepic_placeholder);
-        user.downloadProfilePic(new JRAuthenticatedUser.ProfilePicAvailableListener() {
+        user.asyncDownloadProfilePic(new JRAuthenticatedUser.ProfilePicAvailableListener() {
             public void onProfilePicAvailable(Bitmap b) {
                 if (mSelectedProvider.getName().equals(providerName))
                     mUserProfilePic.setImageBitmap(b);

@@ -41,6 +41,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+/**
+ * The abstract superclass of classes which define custom View hierarchies for display in the Engage library
+ * user interface.
+ *
+ * Extend this class and implement onCreateView to return a custom View hierarchy.
+ *
+ * This class also supplies several utility methods for controlling the behavior of the UI of the Engage
+ * library.
+ */
 public abstract class JRCustomUiView extends JRUiCustomization {
     private static final String TAG = JRCustomUiView.class.getSimpleName();
     private View mView;

@@ -38,9 +38,11 @@ import android.app.Dialog;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.view.Window;
 import android.webkit.ConsoleMessage;
 import android.widget.FrameLayout;
+import android.os.Handler;
+import android.os.StrictMode;
+import com.janrain.android.engage.utils.ThreadUtils;
 import org.json.JSONException;
 
 import android.app.Activity;
@@ -112,7 +114,11 @@ public class JRWebViewFragment extends JRUiFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         JREngage.logd(TAG, "[onCreateView]");
         if (mSession == null) return null;
+        //StrictMode.ThreadPolicy tp = StrictMode.getThreadPolicy();
+        //StrictMode.allowThreadDiskReads();
+        //StrictMode.allowThreadDiskWrites();
         View view = inflater.inflate(R.layout.jr_provider_webview, container, false);
+        //StrictMode.setThreadPolicy(tp);
 
         mWebView = (WebView)view.findViewById(R.id.jr_webview);
         mProgressSpinner = (ProgressBar)view.findViewById(R.id.jr_webview_progress);
@@ -180,8 +186,8 @@ public class JRWebViewFragment extends JRUiFragment {
             mWebView.loadUrl("http://nathan.janrain.com/~nathan/share_widget_webview/beta_share.html");
             mWebView.loadUrl("javascript:jrengage_beta_share_activity = " +
                     getArguments().getString(JR_ACTIVITY_JSON));
-            //String jsUrl = "http://cdn.rpxtesting.com/js/lib/jrauthenticate/share_beta.js";
-            String jsUrl = "http://rpxtraining.com/js/lib/jrauthenticate/share_beta.js";
+            String jsUrl = "http://cdn.rpxtesting.com/js/lib/jrauthenticate/share_beta.js";
+            //String jsUrl = "http://rpxtraining.com/js/lib/jrauthenticate/share_beta.js";
             mWebView.loadUrl("javascript:jrengage_beta_share_js_url = '" + jsUrl + "'");
             //String weinreUrl = "http://10.0.1.109:8080/target/target-script-min.js#anonymous";
             //mWebView.loadUrl("javascript:weinreUrl = '" + weinreUrl + "';");
@@ -208,8 +214,17 @@ public class JRWebViewFragment extends JRUiFragment {
         } else {
             mProvider = mSession.getCurrentlyAuthenticatingProvider();
             configureWebViewUa();
-            URL startUrl = mSession.startUrlForCurrentlyAuthenticatingProvider();
-            mWebView.loadUrl(startUrl.toString());
+            final Handler uiThread = new Handler();
+            ThreadUtils.executeInBg(new Runnable() {
+                public void run() {
+                    final URL startUrl = mSession.startUrlForCurrentlyAuthenticatingProvider();
+                    uiThread.post(new Runnable() {
+                        public void run() {
+                            mWebView.loadUrl(startUrl.toString());
+                        }
+                    });
+                }
+            });
         }
 
         FragmentManager fm = getActivity().getSupportFragmentManager();

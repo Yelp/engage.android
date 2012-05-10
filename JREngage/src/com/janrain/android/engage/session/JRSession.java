@@ -103,8 +103,8 @@ public class JRSession implements JRConnectionManagerDelegate {
 
 	private Map<String, JRProvider> mAllProviders;
 	private List<String> mAuthProviders;
-    private List<String> mEnabledAuthenticationProviders = null;
-    private List<String> mEnabledSharingProviders = null;
+    private List<String> mEnabledAuthenticationProviders;
+    private List<String> mEnabledSharingProviders;
 	private List<String> mSharingProviders;
 	private Map<String, JRAuthenticatedUser> mAuthenticatedUsersByProvider;
 
@@ -116,7 +116,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 
     private boolean mConfigDone = false;
     private String mOldEtag;
-    private String mSavedConfigurationBlock = "";
+    private String mSavedConfigurationBlock;
     private String mSavedEtag;
     private String mNewEtag;
     private String mUrlEncodedLibraryVersion;
@@ -124,7 +124,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     private boolean mHidePoweredBy;
 	private boolean mAlwaysForceReauth;
     private boolean mSkipLandingPage;
-    private int mUiShowingCount = 0;
+    private int mUiShowingCount;
 
     private JREngageError mError;
 
@@ -177,7 +177,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             if (!mUrlEncodedLibraryVersion.equals(Prefs.getString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, ""))) {
                 // If the library versions don't match start with fresh state in order to break out of
                 // any invalid state.
-                throw new Archiver.LoadException(null);
+                throw new Archiver.LoadException("New library version with old serialized state");
             }
 
             /* load the last used auth and social providers */
@@ -193,12 +193,18 @@ public class JRSession implements JRConnectionManagerDelegate {
 
             /* Load the list of auth providers */
             mAuthProviders = (ArrayList<String>)Archiver.load(ARCHIVE_AUTH_PROVIDERS);
-            for (Object v : mAuthProviders) assert v instanceof String;
+            for (Object v : mAuthProviders) {
+                if (!(v instanceof  String)) throw new Archiver.LoadException("Non String in mAuthProviders");
+            }
             JREngage.logd(TAG, "auth providers: [" + TextUtils.join(",", mAuthProviders) + "]");
 
             /* Load the list of social providers */
             mSharingProviders = (ArrayList<String>)Archiver.load(ARCHIVE_SHARING_PROVIDERS);
-            for (Object v : mSharingProviders) assert v instanceof String;
+            for (Object v : mSharingProviders) {
+                if (!(v instanceof  String)) {
+                    throw new Archiver.LoadException("Non String in mSharingProviders");
+                }
+            }
             JREngage.logd(TAG, "sharing providers: [" + TextUtils.join(",", mSharingProviders) + "]");
 
             /* Load the base url */
@@ -217,7 +223,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                     e.getStackTrace()[0].toString() + " Nested exception: " + e.getCause());
             /* Blank slate */
             mAuthenticatedUsersByProvider = new HashMap<String, JRAuthenticatedUser>();
-            Archiver.save(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
+            Archiver.asyncSave(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
 
             // Note that these values are removed from the settings when resetting state to prevent
             // uninitialized state from being read on startup as valid state
@@ -375,9 +381,9 @@ public class JRSession implements JRConnectionManagerDelegate {
             mUiShowingCount--;
         }
 
-        if (mUiShowingCount == 0 && !mSavedConfigurationBlock.equals("")) {
+        if (mUiShowingCount == 0 && mSavedConfigurationBlock != null) {
             String s = mSavedConfigurationBlock;
-            mSavedConfigurationBlock = "";
+            mSavedConfigurationBlock = null;
             mNewEtag = mSavedEtag;
             finishGetConfiguration(s);
         }
@@ -639,12 +645,12 @@ public class JRSession implements JRConnectionManagerDelegate {
         for (String name : providerInfo.keySet()) {
             mAllProviders.put(name, new JRProvider(name, providerInfo.getAsDictionary(name)));
         }
-        Archiver.save(ARCHIVE_ALL_PROVIDERS, mAllProviders);
+        Archiver.asyncSave(ARCHIVE_ALL_PROVIDERS, mAllProviders);
 
         mAuthProviders = jsonDict.getAsListOfStrings("enabled_providers");
         mSharingProviders = jsonDict.getAsListOfStrings("social_providers");
-        Archiver.save(ARCHIVE_AUTH_PROVIDERS, mAuthProviders);
-        Archiver.save(ARCHIVE_SHARING_PROVIDERS, mSharingProviders);
+        Archiver.asyncSave(ARCHIVE_AUTH_PROVIDERS, mAuthProviders);
+        Archiver.asyncSave(ARCHIVE_SHARING_PROVIDERS, mSharingProviders);
 
         mHidePoweredBy = jsonDict.getAsBoolean("hide_tagline", false);
         Prefs.putBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, mHidePoweredBy);
@@ -772,7 +778,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         if (mAuthenticatedUsersByProvider.containsKey(providerName)) {
             mAuthenticatedUsersByProvider.get(providerName).deleteCachedProfilePic();
             mAuthenticatedUsersByProvider.remove(providerName);
-            Archiver.save(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
+            Archiver.asyncSave(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
             triggerUserWasSignedOut(providerName);
         }
     }
@@ -952,7 +958,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                 mCurrentlyAuthenticatingProvider.getName(),
                 getWelcomeMessageFromCookieString());
         mAuthenticatedUsersByProvider.put(mCurrentlyAuthenticatingProvider.getName(), user);
-        Archiver.save(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
+        Archiver.asyncSave(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
 
         String authInfoToken = rpx_result.getAsString("token");
         JRDictionary authInfoDict = rpx_result.getAsDictionary("auth_info");

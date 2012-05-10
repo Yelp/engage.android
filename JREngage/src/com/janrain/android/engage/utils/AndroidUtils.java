@@ -52,6 +52,7 @@ package com.janrain.android.engage.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -247,6 +248,18 @@ public class AndroidUtils {
 
         Log.e(TAG, "[getConsoleMessageMessage] unexpected reflection exception");
         return null;
+    }
+
+    public static void SharedPreferenceEditorApplyOrCommit(SharedPreferences.Editor editor) {
+        try {
+            Method SharedPrefsApply = editor.getClass().getMethod("apply");
+            SharedPrefsApply.invoke(editor);
+        } catch (NoSuchMethodException ignore) {
+        } catch (InvocationTargetException ignore) {
+        } catch (IllegalAccessException ignore) {
+        }
+
+        editor.commit();
     }
 
     //public static int getScreenWidth() {

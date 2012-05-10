@@ -322,8 +322,8 @@ public class QuickShare extends Application {
                 }
 
                 logd("loadJanrainBlog", "saving stories");
-                Archiver.save(ARCHIVE_STORIES_ARRAY, mStories);
-                Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
+                Archiver.asyncSave(ARCHIVE_STORIES_ARRAY, mStories);
+                Archiver.asyncSave(ARCHIVE_STORY_LINKS_HASH, mStoryLinks);
                 logd("loadJanrainBlog", "stories saved");
 
                 return new Pair<Boolean, Exception>(true, null);
@@ -358,8 +358,8 @@ public class QuickShare extends Application {
 
         Log.d(TAG, "[deleteAllStories] " + ((Integer) mStories.size()).toString() + " stories remain");
 
-        Archiver.save(ARCHIVE_STORIES_ARRAY, mStories, this);
-        Archiver.save(ARCHIVE_STORY_LINKS_HASH, mStoryLinks, this);
+        Archiver.asyncSave(ARCHIVE_STORIES_ARRAY, mStories, this);
+        Archiver.asyncSave(ARCHIVE_STORY_LINKS_HASH, mStoryLinks, this);
     }
 
     JREngageDelegate mJrEngageDelegate = new JREngageDelegate() {

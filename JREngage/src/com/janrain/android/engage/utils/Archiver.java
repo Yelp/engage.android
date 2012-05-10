@@ -40,6 +40,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @internal
@@ -49,11 +53,12 @@ import java.io.ObjectOutputStream;
  * the object to a binary format and saves to the protected storage area (disk).
  */
 public final class Archiver {
-	private static final String TAG = Archiver.class.getSimpleName();
-	// token used to separate parts of dictionary file name
-	private static final String DICTIONARY_FILE_SEPARATOR = "~";
-	// prefix + dictionary name
-	private static final String DICTIONARY_BASE_FORMAT = "dict" + DICTIONARY_FILE_SEPARATOR + "%s";
+    private static final String TAG = Archiver.class.getSimpleName();
+    // token used to separate parts of file name
+    private static final String DICTIONARY_FILENAME_SEPARATOR = "~";
+    // prefix + dictionary name
+    private static final String DICTIONARY_FILENAME_BASE_FORMAT = "dict" + DICTIONARY_FILENAME_SEPARATOR +
+            "%s";
 
     private Archiver() {}
 
@@ -71,10 +76,10 @@ public final class Archiver {
      * @throws
      *      IllegalStateException if JREngage.getContext() returns null.
      */
-    public static void save(String name, Object object) {
+    public static void asyncSave(String name, Object object) {
         Context context = JREngage.getApplicationContext();
-        if (context == null) throw new IllegalStateException("context cannot be null");
-        save(name, object, context);
+        if (context == null) throw new IllegalStateException("Illegal null Context");
+        asyncSave(name, object, context);
     }
 
     /**
@@ -91,45 +96,47 @@ public final class Archiver {
      *
      * @throws
      * 		IllegalArgumentException if the name parameter is null.
-     * @throws
-     *      IllegalStateException if JREngage.getContext() returns null.
      */
-    public static void save(String name, Object object, Context context) {
+    public static void asyncSave(final String name, final Object object, final Context context) {
         if (TextUtils.isEmpty(name)) throw new IllegalArgumentException("name parameter cannot be null");
 
-        String fileName = String.format(DICTIONARY_BASE_FORMAT, name);
+        ThreadUtils.executeInBg(new Runnable() {
+            public void run() {
+                String fileName = String.format(DICTIONARY_FILENAME_BASE_FORMAT, name);
 
-        // purge existing file
-        context.deleteFile(fileName);
+                // purge existing file
+                context.deleteFile(fileName);
 
-        FileOutputStream fos = null;
-        ObjectOutputStream oos = null;
-        try {
-            fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-            oos = new ObjectOutputStream(fos);
-            oos.writeObject(object);
-            oos.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                if (oos != null) {
+                FileOutputStream fos = null;
+                ObjectOutputStream oos = null;
+                try {
+                    fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+                    oos = new ObjectOutputStream(fos);
+                    oos.writeObject(object);
                     oos.close();
-                }
-            } catch (IOException ignore) {
-            }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    try {
+                        if (oos != null) {
+                            oos.close();
+                        }
+                    } catch (IOException ignore) {
+                    }
 
-            try {
-                if (fos != null) {
-                    fos.close();
+                    try {
+                        if (fos != null) {
+                            fos.close();
+                        }
+                    } catch (IOException ignore) {
+                    }
                 }
-            } catch (IOException ignore) {
             }
-        }
+        });
     }
 
     /**
-     * Loads (unarchives) the specified object from the local (protected) file system.
+     * Loads the specified object from the local (protected) file system.
      *
      * @param name
      * 		The name of the object to be loaded from disk.  This parameter cannot be null.
@@ -175,7 +182,7 @@ public final class Archiver {
      */
     @SuppressWarnings("unchecked")
     public static <T> T load(String name, Context context) throws LoadException {
-        String fileName = String.format(DICTIONARY_BASE_FORMAT, name);
+        String fileName = String.format(DICTIONARY_FILENAME_BASE_FORMAT, name);
 
         FileInputStream fis = null;
         ObjectInputStream ois = null;
@@ -203,7 +210,7 @@ public final class Archiver {
             }
         }
     }
-    
+
     public static void delete(String name) {
         Context context = JREngage.getApplicationContext();
         if (context == null) throw new IllegalStateException("[loadObject] JREngage.getContext() is null.");
@@ -213,12 +220,16 @@ public final class Archiver {
     }
 
     public static void delete(Context context, String name) {
-        String fileName = String.format(DICTIONARY_BASE_FORMAT, name);
+        String fileName = String.format(DICTIONARY_FILENAME_BASE_FORMAT, name);
         context.deleteFile(fileName);
 
     }
 
     public static class LoadException extends Exception {
+        public LoadException(String detailMessage) {
+            super(detailMessage);
+        }
+
         public LoadException(Throwable throwable) {
             super(throwable);
         }

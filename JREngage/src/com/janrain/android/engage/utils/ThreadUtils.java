@@ -30,10 +30,43 @@
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
 
-package com.janrain.android.engage.ui;
+package com.janrain.android.engage.utils;
+
+import android.os.Looper;
+
+import java.util.LinkedList;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
- * The abstract superclass of classes which define UI customizations for the Engage library
+ * Created with IntelliJ IDEA.
+ * User: nathan
+ * Date: 5/1/12
+ * Time: 1:52 PM
+ * To change this template use File | Settings | File Templates.
  */
-public abstract class JRUiCustomization {
+public class ThreadUtils {
+    private static ThreadPoolExecutor sExecutor;
+    static {
+        sExecutor = new ThreadPoolExecutor(0, 10, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10));
+        final ThreadFactory originalFactory = sExecutor.getThreadFactory();
+        sExecutor.setThreadFactory(new ThreadFactory() {
+            public Thread newThread(Runnable runnable) {
+                Thread t = originalFactory.newThread(runnable);
+                t.setName("JREngage-ThreadUtils~" + t.getName());
+                return t;
+            }
+        });
+    }
+
+    public static void executeInBg(Runnable r) {
+        if (Looper.myLooper() == null) {
+            r.run();
+        } else {
+            sExecutor.execute(r);
+        }
+    }
 }

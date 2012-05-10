@@ -33,7 +33,9 @@ package com.janrain.android.simpledemo;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -58,16 +60,12 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.types.JREmailObject;
 import com.janrain.android.engage.types.JRImageMediaObject;
 import com.janrain.android.engage.types.JRSmsObject;
-import com.janrain.android.engage.utils.Prefs;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public class MainActivity extends FragmentActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-
-    private static final int DIALOG_JR_ENGAGE_ERROR = 1;
-    public static final String ACTION_LINK_KEY = "action_link";
 
     private String readAsset(String fileName) {
         try {
@@ -83,12 +81,6 @@ public class MainActivity extends FragmentActivity {
 
     private JREngage mEngage;
     private JRActivityObject mActivity;
-
-    private Button mBtnTestAuth;
-    private Button mBtnTestPub;
-    private EditText mUrlEditText;
-    private Button mBtnTestSpecificProvider;
-    private Button mBtnTestBetaDirectShare;
 
     // Activity object variables
     private String mTitleText = "title text";
@@ -111,26 +103,43 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        //StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+        //        .detectAll()
+        //        .detectDiskReads()
+        //        .detectDiskWrites()
+        //        .detectNetwork()   // or .detectAll() for all detectable problems
+        //        .penaltyLog()
+        //        .penaltyDeath()
+        //        .build());
+        //StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+        //        .detectAll()
+        //        .detectLeakedSqlLiteObjects()
+        //        .detectLeakedClosableObjects()
+        //        .penaltyLog()
+        //        .penaltyDeath()
+        //        .build());
+
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
 
         setContentView(R.layout.main);
 
         if (!initEngage()) return;
-        
-        mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
-        mUrlEditText = (EditText) findViewById(R.id.share_url);
-        mBtnTestSpecificProvider = (Button) findViewById(R.id.btn_test_specific_provider);
-        mBtnTestBetaDirectShare = (Button) findViewById(R.id.btn_test_beta_direct_share);
 
-        mBtnTestAuth.setOnClickListener(new View.OnClickListener() {
+        Button testAuth = (Button) findViewById(R.id.btn_test_auth);
+        EditText shareUrlEdit = (EditText) findViewById(R.id.share_url);
+        Button testDirectAuth = (Button) findViewById(R.id.btn_test_specific_provider);
+        Button testBetaShare = (Button) findViewById(R.id.btn_test_beta_direct_share);
+
+        testAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //mEngage.setEnabledAuthenticationProviders(new String[]{"facebook"});
+                Log.d(TAG, "testAuth onClick");
                 mEngage.showAuthenticationDialog(MainActivity.this, CustomUi.class);
                 //mEngage.showAuthenticationDialog(MainActivity.this);
             }
         });
-        //mBtnTestAuth.setOnLongClickListener(new View.OnLongClickListener() {
+        //testAuth.setOnLongClickListener(new View.OnLongClickListener() {
         //    public boolean onLongClick(View v) {
         //        if (findViewById(R.id.jr_signin_fragment) != null) {
         //            mEngage.showSocialSignInFragment(
@@ -147,14 +156,14 @@ public class MainActivity extends FragmentActivity {
         //    }
         //});
 
-        mBtnTestPub = (Button)findViewById(R.id.btn_test_pub);
-        mBtnTestPub.setOnClickListener(new View.OnClickListener() {
+        Button testShare = (Button) findViewById(R.id.btn_test_pub);
+        testShare.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 buildActivity();
                 mEngage.showSocialPublishingDialog(MainActivity.this, mActivity, CustomUi.class);
             }
         });
-        mBtnTestPub.setOnLongClickListener(new View.OnLongClickListener() {
+        testShare.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View v) {
                 if (findViewById(R.id.jr_publish_fragment) != null) {
                     buildActivity();
@@ -173,26 +182,28 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        mActionLink = Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs");
-        mUrlEditText.setText(mActionLink);
-        mUrlEditText.addTextChangedListener(new TextWatcher() {
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        //mActionLink = Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs");
+        //shareUrlEdit.setText(mActionLink);
+        shareUrlEdit.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
             public void afterTextChanged(Editable s) {
                 mActionLink = s.toString();
-                Prefs.putString(ACTION_LINK_KEY, mActionLink);
+//                Prefs.putString(ACTION_LINK_KEY, mActionLink);
             }
         });
         
-        mBtnTestSpecificProvider.setOnClickListener(new View.OnClickListener() {
+        testDirectAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mEngage.showAuthenticationDialog(MainActivity.this, "facebook");
             }
         });
 
-        mBtnTestBetaDirectShare.setOnClickListener(new View.OnClickListener() {
+        testBetaShare.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 buildActivity();
                 mEngage.showBetaDirectShareDialog(MainActivity.this, mActivity);
@@ -239,7 +250,7 @@ public class MainActivity extends FragmentActivity {
             return v;
         }
     }
-    
+
     private boolean initEngage() {
         String engageAppId = null;
         String engageTokenUrl = null;
@@ -263,7 +274,6 @@ public class MainActivity extends FragmentActivity {
     private void buildActivity() {
         mActivity = new JRActivityObject("shared an article from the Janrain Blog!",
             mActionLink);
-        //mActivity = new JRActivityObject("did a barrel roll!");
 
         mActivity.setTitle(mTitleText);
         mActivity.setDescription(mDescriptionText);

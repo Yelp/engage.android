@@ -45,6 +45,7 @@ import com.janrain.android.engage.R;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Prefs;
+import com.janrain.android.engage.utils.ThreadUtils;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -338,10 +339,10 @@ public class JRProvider implements Serializable {
             "logo_" + mName + ".png"
         };
 
-        new AsyncTask<Void, Void, Void>(){
-            @Override
-            public Void doInBackground(Void... s) {
+        ThreadUtils.executeInBg(new Runnable() {
+            public void run() {
                 for (String iconFileName : iconFileNames) {
+                    FileOutputStream fos = null;
                     if (Arrays.asList(c.fileList()).contains("providericon~" + iconFileName)) continue;
 
                     try {
@@ -349,7 +350,7 @@ public class JRProvider implements Serializable {
                         URL url = new URL(JRSession.getEnvironment().getServerUrl()
                                 + "/cdn/images/mobile_icons/android/" + iconFileName);
                         InputStream is = url.openStream();
-                        FileOutputStream fos = c.openFileOutput("providericon~" + iconFileName,
+                        fos = c.openFileOutput("providericon~" + iconFileName,
                                 Context.MODE_PRIVATE);
 
                         byte buffer[] = new byte[1000];
@@ -358,15 +359,20 @@ public class JRProvider implements Serializable {
 
                         fos.close();
                     } catch (MalformedURLException e) {
-                        JREngage.logd(TAG, e.toString());
+                        JREngage.logd(TAG, e.toString(), e);
                     } catch (IOException e) {
-                        JREngage.logd(TAG, e.toString());
+                        JREngage.logd(TAG, e.toString(), e);
+                    } finally {
+                        if (fos != null) {
+                            try {
+                                fos.close();
+                            } catch (IOException ignore) {}
+                        }
                     }
                 }
                 mCurrentlyDownloading = false;
-                return null;
             }
-        }.execute();
+        });
     }
 
     public void loadDynamicVariables() {

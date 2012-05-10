@@ -2,6 +2,7 @@
   <dictionary name="nathan">
     <words>
       <w>debuggable</w>
+      <w>doxygen</w>
       <w>inflater</w>
       <w>janrain</w>
       <w>phonegap</w>
@@ -9,6 +10,8 @@
       <w>reauthenticate</w>
       <w>reauthentication</w>
       <w>szafranski</w>
+      <w>unarchive</w>
+      <w>unarchives</w>
     </words>
   </dictionary>
 </component>

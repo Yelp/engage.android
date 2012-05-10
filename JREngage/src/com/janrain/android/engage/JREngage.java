@@ -81,6 +81,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -103,10 +105,13 @@ import com.janrain.android.engage.ui.JRFragmentHostActivity;
 import com.janrain.android.engage.ui.JRPublishFragment;
 import com.janrain.android.engage.ui.JRUiCustomization;
 import com.janrain.android.engage.ui.JRUiFragment;
+import com.janrain.android.engage.utils.ThreadUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * @brief
@@ -139,7 +144,11 @@ public class JREngage {
      * If not set library logging is automatically controlled via the "debuggable" flag for the application
      * set in AndroidManifest.xml
      */
-    public static Boolean sLoggingEnabled = false;
+    public static Boolean sLoggingEnabled;
+
+    private static  boolean sInitializeIoBlocked = false;
+    private Queue<Runnable> mInitializationBlockedQueue = new LinkedList<Runnable>();
+    private Handler mUiThread;
 
     /* Singleton instance of this class */
 	private static JREngage sInstance;
@@ -156,21 +165,24 @@ public class JREngage {
     
     /* Listeners to JRSessionDelegate#configDidFinish(); */
     private ArrayList<ConfigFinishListener> mConfigFinishListeners = new ArrayList<ConfigFinishListener>();
+    {
+        mConfigFinishListeners.add(new ConfigFinishListener() {
+            public void configDidFinish() {
+                while (!mInitializationBlockedQueue.isEmpty()) {
+                    mUiThread.post(mInitializationBlockedQueue.remove());
+                }
+            }
+        });
+    }
 
-    private JREngage(Context applicationContext,
+    private JREngage(Context context,
                      String appId,
                      String tokenUrl,
                      JREngageDelegate delegate) {
-        if (sLoggingEnabled == null) {
-            sLoggingEnabled =
-                    (0 != (applicationContext.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
-        }
-        sInstance = this;
-        mApplicationContext = applicationContext.getApplicationContext();
-        if (applicationContext instanceof Activity) mActivityContext = (Activity) applicationContext;
+        mApplicationContext = context.getApplicationContext();
+        if (context instanceof Activity) mActivityContext = (Activity) context;
         mDelegates = new ArrayList<JREngageDelegate>();
-        if (delegate != null) mDelegates.add(delegate);
-        mSession = JRSession.getInstance(appId, tokenUrl, mJrsd);
+        if (delegate != null && !mDelegates.contains(delegate)) mDelegates.add(delegate);
 
         // Sign-in UI fragment is not yet embeddable
         //if (activity1 instanceof FragmentActivity) {
@@ -210,13 +222,17 @@ public class JREngage {
      * 		The shared instance of the JREngage object initialized with the given
      *   	appId, tokenUrl, and delegate.  If the given appId is null, returns null
      **/
-    public static JREngage initInstance(Context context,
-                                        String appId,
-                                        String tokenUrl,
-                                        JREngageDelegate delegate) {
+    public static JREngage initInstance(final Context context,
+                                        final String appId,
+                                        final String tokenUrl,
+                                        final JREngageDelegate delegate) {
         if (context == null) {
             Log.e(TAG, "[initialize] context parameter cannot be null.");
             throw new IllegalArgumentException("context parameter cannot be null.");
+        }
+
+        if (sLoggingEnabled == null) {
+            sLoggingEnabled = (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
         }
 
         if (TextUtils.isEmpty(appId)) {
@@ -228,7 +244,13 @@ public class JREngage {
                 "' activity '" + context + "' appId '" + appId + "' tokenUrl '" + tokenUrl + "'");
 
         if (sInstance == null) {
-            new JREngage(context, appId, tokenUrl, delegate);
+            sInstance = new JREngage(context, appId, tokenUrl, delegate);
+            sInitializeIoBlocked = true;
+            ThreadUtils.executeInBg(new Runnable() { public void run() {
+                if (true) return;
+                sInstance.mSession = JRSession.getInstance(appId, tokenUrl, sInstance.mJrsd);
+                sInitializeIoBlocked = false;
+            } });
         } else {
             Log.e(TAG, "Ignoring call which would reinitialize JREngage");
         }
@@ -285,6 +307,15 @@ public class JREngage {
         sInstance.mActivityContext = activity;
     }
 
+    private void initalizationGuard(Runnable r) {
+        if (mUiThread == null) mUiThread = new Handler(Looper.getMainLooper());
+        if (sInitializeIoBlocked) {
+            mInitializationBlockedQueue.add(r);
+        } else {
+            r.run();
+        }
+    }
+
 /**
  * @name Manage Authenticated Users
  * Methods that manage authenticated users remembered by the library
@@ -299,9 +330,11 @@ public class JREngage {
      *   <a href="http://documentation.janrain.com/engage/sdks/ios/mobile-providers#basicProviders">
      *   List of Providers</a>
      **/
-    public void signoutUserForProvider(String provider) {
+    public void signoutUserForProvider(final String provider) {
         JREngage.logd(TAG, "[signoutUserForProvider]");
-        mSession.forgetAuthenticatedUserForProvider(provider);
+        initalizationGuard(new Runnable() { public void run() {
+            mSession.forgetAuthenticatedUserForProvider(provider);
+        } });
     }
 
     /**
@@ -309,7 +342,9 @@ public class JREngage {
      **/
     public void signoutUserForAllProviders() {
         JREngage.logd(TAG, "[signoutUserForAllProviders]");
-        mSession.forgetAllAuthenticatedUsers();
+        initalizationGuard(new Runnable() { public void run() {
+            mSession.forgetAllAuthenticatedUsers();
+        } });
     }
 
     /**
@@ -443,9 +478,7 @@ public class JREngage {
     }
 
     private void checkNullJRActivity(JRActivityObject activity) {
-        if (activity == null) {
-            throw new IllegalArgumentException("Illegal null activity object");
-        }
+        if (activity == null) throw new IllegalArgumentException("Illegal null activity object");
     }
 
 /** @anchor showMethods **/
@@ -635,39 +668,41 @@ public class JREngage {
      *  setAlwaysForceReauthentication().
      **/
     public void showAuthenticationDialog(final Activity fromActivity,
-                                         Boolean skipReturningUserLandingPage,
+                                         final Boolean skipReturningUserLandingPage,
                                          final String provider,
                                          final Class<? extends JRUiCustomization> uiCustomization) {
-        if (checkSessionDataError()) return;
+        initalizationGuard(new Runnable() { public void run() {
+            if (checkSessionDataError()) return;
 
-        if (skipReturningUserLandingPage != null) mSession.setSkipLandingPage(skipReturningUserLandingPage);
+            if (skipReturningUserLandingPage != null) {
+                mSession.setSkipLandingPage(skipReturningUserLandingPage);
+            }
 
-        if (mSession.getProviderByName(provider) == null && !mSession.isConfigDone()) {
-            final ProgressDialog pd = new ProgressDialog(fromActivity);
-            pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            pd.setIndeterminate(true);
-            pd.setCancelable(false);
-            pd.show();
+            if (mSession.getProviderByName(provider) == null && !mSession.isConfigDone()) {
+                final ProgressDialog pd = new ProgressDialog(fromActivity);
+                pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                pd.setIndeterminate(true);
+                pd.setCancelable(false);
+                pd.show();
 
-            // TODO add progress dialog customization
-            // Fix up the progress dialog's appearance
-            View message = pd.findViewById(android.R.id.message);
-            if (message != null) message.setVisibility(View.GONE);
+                // TODO add progress dialog customization
+                // Fix up the progress dialog's appearance
+                View message = pd.findViewById(android.R.id.message);
+                if (message != null) message.setVisibility(View.GONE);
 
-            View progressBar = pd.findViewById(android.R.id.progress);
-            if (progressBar != null) collapseViewLayout(findViewHierarchyRoot(progressBar));
+                View progressBar = pd.findViewById(android.R.id.progress);
+                if (progressBar != null) collapseViewLayout(findViewHierarchyRoot(progressBar));
 
-            mConfigFinishListeners.add(new ConfigFinishListener() {
-                public void configDidFinish() {
+                mConfigFinishListeners.add(new ConfigFinishListener() { public void configDidFinish() {
                     mConfigFinishListeners.remove(this);
                     checkSessionDataError();
                     showDirectProviderFlowInternal(fromActivity, provider, uiCustomization);
                     pd.dismiss();
-                }
-            });
-        } else {
-            showDirectProviderFlowInternal(fromActivity, provider, uiCustomization);
-        }
+                } });
+            } else {
+                showDirectProviderFlowInternal(fromActivity, provider, uiCustomization);
+            }
+        } });
     }
 
     /**
@@ -715,33 +750,35 @@ public class JREngage {
      * @internal 
      * @hide
      */
-    private void showDirectProviderFlowInternal(Activity fromActivity,
-                                                String providerName,
-                                                Class<? extends JRUiCustomization> uiCustomization) {
-        Intent i;
-        JRProvider provider = mSession.getProviderByName(providerName);
-        if (provider != null) {
-            if (provider.requiresInput()) {
-                i = JRFragmentHostActivity.createUserLandingIntent(fromActivity);
+    private void showDirectProviderFlowInternal(final Activity fromActivity,
+                                                final String providerName,
+                                                final Class<? extends JRUiCustomization> uiCustomization) {
+        initalizationGuard(new Runnable() { public void run() {
+            Intent i;
+            JRProvider provider = mSession.getProviderByName(providerName);
+            if (provider != null) {
+                if (provider.requiresInput()) {
+                    i = JRFragmentHostActivity.createUserLandingIntent(fromActivity);
+                } else {
+                    i = JRFragmentHostActivity.createWebViewIntent(fromActivity);
+                }
+                i.putExtra(JRFragmentHostActivity.JR_PROVIDER, providerName);
+                provider.setForceReauth(true);
+                mSession.setCurrentlyAuthenticatingProvider(provider);
             } else {
-                i = JRFragmentHostActivity.createWebViewIntent(fromActivity);
-            }
-            i.putExtra(JRFragmentHostActivity.JR_PROVIDER, providerName);
-            provider.setForceReauth(true);
-            mSession.setCurrentlyAuthenticatingProvider(provider);
-        } else {
-            if (providerName != null) {
-                Log.e(TAG, "Provider " + providerName + " is not in the set of configured providers.");
+                if (providerName != null) {
+                    Log.e(TAG, "Provider " + providerName + " is not in the set of configured providers.");
+                }
+
+                i = JRFragmentHostActivity.createProviderListIntent(fromActivity);
+                if (uiCustomization != null) {
+                    i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS, uiCustomization.getName());
+                }
             }
 
-            i = JRFragmentHostActivity.createProviderListIntent(fromActivity);
-            if (uiCustomization != null) {
-                i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS, uiCustomization.getName());
-            }
-        }
-
-        i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_AUTH);
-        fromActivity.startActivity(i);
+            i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_AUTH);
+            fromActivity.startActivity(i);
+        } });
     }
 
     /**
@@ -780,22 +817,24 @@ public class JREngage {
      * @param uiCustomization
      *  The custom sign-in object to display in the provider list. May be null for no custom sign-in.
      **/
-    public void showSocialPublishingDialog(Activity fromActivity,
-                                           JRActivityObject jrActivity,
-                                           Class<? extends JRUiCustomization> uiCustomization) {
-        JREngage.logd(TAG, "[showSocialPublishingDialog]");
-        /* If there was error configuring the library, sessionData.error will not be null. */
-        if (checkSessionDataError()) return;
-        checkNullJRActivity(jrActivity);
-        mSession.setJRActivity(jrActivity);
+    public void showSocialPublishingDialog(final Activity fromActivity,
+                                           final JRActivityObject jrActivity,
+                                           final Class<? extends JRUiCustomization> uiCustomization) {
+        initalizationGuard(new Runnable() { public void run() {
+            JREngage.logd(TAG, "[showSocialPublishingDialog]");
+            /* If there was error configuring the library, sessionData.error will not be null. */
+            if (checkSessionDataError()) return;
+            checkNullJRActivity(jrActivity);
+            mSession.setJRActivity(jrActivity);
 
-        Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(fromActivity, false);
-        if (uiCustomization != null) {
-            i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS, uiCustomization.getName());
-        }
-        i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
-        i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
-        fromActivity.startActivity(i);
+            Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(fromActivity, false);
+            if (uiCustomization != null) {
+                i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS, uiCustomization.getName());
+            }
+            i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
+            i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
+            fromActivity.startActivity(i);
+        } });
     }
 
     /**
@@ -839,29 +878,31 @@ public class JREngage {
      * @param customExitAnimation
      *   Set a custom exit animation.  May be null if-and-only-if customEnterAnimation is also null
      **/
-    public void showSocialPublishingFragment(JRActivityObject jrActivity,
-                                             FragmentActivity hostActivity,
-                                             int containerId,
-                                             boolean addToBackStack,
-                                             Integer transit,
-                                             Integer transitRes,
-                                             Integer customEnterAnimation,
-                                             Integer customExitAnimation) {
+    public void showSocialPublishingFragment(final JRActivityObject jrActivity,
+                                             final FragmentActivity hostActivity,
+                                             final int containerId,
+                                             final boolean addToBackStack,
+                                             final Integer transit,
+                                             final Integer transitRes,
+                                             final Integer customEnterAnimation,
+                                             final Integer customExitAnimation) {
         JREngage.logd(TAG, "[showSocialPublishingFragment]");
         checkNullJRActivity(jrActivity);
 
-        JRUiFragment f = createSocialPublishingFragment(jrActivity);
-        Bundle arguments = new Bundle();
-        arguments.putInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
-        f.setArguments(arguments);
-        showFragment(f,
-                hostActivity,
-                containerId,
-                addToBackStack,
-                transit,
-                transitRes,
-                customEnterAnimation,
-                customExitAnimation);
+        //initalizationGuard(new Runnable() { public void run() {
+            JRUiFragment f = createSocialPublishingFragment(jrActivity);
+            Bundle arguments = new Bundle();
+            arguments.putInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
+            f.setArguments(arguments);
+            showFragment(f,
+                    hostActivity,
+                    containerId,
+                    addToBackStack,
+                    transit,
+                    transitRes,
+                    customEnterAnimation,
+                    customExitAnimation);
+        //} });
     }
 
     /**
@@ -894,12 +935,12 @@ public class JREngage {
      *  The created Fragment, or null upon error (caused by library configuration failure)
      */
     public JRPublishFragment createSocialPublishingFragment(JRActivityObject jrActivity) {
-        if (checkSessionDataError()) return null;
+        //if (checkSessionDataError()) return null;
 
         checkNullJRActivity(jrActivity);
 
-        mSession.setJRActivity(jrActivity);
-        
+        if (mSession != null) mSession.setJRActivity(jrActivity);
+
         Bundle arguments = new Bundle();
         arguments.putInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
 
@@ -995,7 +1036,7 @@ public class JREngage {
                               Integer transitRes,
                               Integer customEnterAnimation,
                               Integer customExitAnimation) {
-        if (checkSessionDataError()) return;
+        //if (checkSessionDataError()) return;
 
         View fragmentContainer = hostActivity.findViewById(containerId);
         if (!(fragmentContainer instanceof FrameLayout)) {
@@ -1017,7 +1058,6 @@ public class JREngage {
         ft.commit();
     }
 
-
 /** @anchor enableProviders **/
 /**
  * @name Enable a Subset of Providers
@@ -1037,8 +1077,10 @@ public class JREngage {
      *  providers configured on the Engage Dashboard, that intersection will be the providers that are
      *  actually available to the end-user.
      */
-    public void setEnabledAuthenticationProviders(List<String> enabledProviders) {
-        mSession.setEnabledAuthenticationProviders(enabledProviders);
+    public void setEnabledAuthenticationProviders(final List<String> enabledProviders) {
+        initalizationGuard(new Runnable() { public void run() {
+            mSession.setEnabledAuthenticationProviders(enabledProviders);
+        } });
     }
 
     /**
@@ -1048,8 +1090,10 @@ public class JREngage {
      *  providers configured on the Engage Dashboard, that intersection will be the providers that are
      *  actually available to the end-user.
      */
-    public void setEnabledAuthenticationProviders(String[] enabledProviders) {
-        mSession.setEnabledAuthenticationProviders(Arrays.asList(enabledProviders));
+    public void setEnabledAuthenticationProviders(final String[] enabledProviders) {
+        initalizationGuard(new Runnable() { public void run() {
+            mSession.setEnabledAuthenticationProviders(Arrays.asList(enabledProviders));
+        } });
     }
 
     /**
@@ -1063,8 +1107,10 @@ public class JREngage {
      *  set of providers configured on the Engage Dashboard, that intersection will be the providers that are
      *  actually available to the end-user.
      */
-    public void setEnabledSharingProviders(List<String> enabledSharingProviders) {
-        mSession.setEnabledSharingProviders(enabledSharingProviders);
+    public void setEnabledSharingProviders(final List<String> enabledSharingProviders) {
+        initalizationGuard(new Runnable() { public void run() {
+            mSession.setEnabledSharingProviders(enabledSharingProviders);
+        } });
     }
 
     /**
@@ -1074,8 +1120,12 @@ public class JREngage {
      *  set of providers configured on the Engage Dashboard, that intersection will be the providers that are
      *  actually available to the end-user.
      */
-    public void setEnabledSharingProviders(String[] enabledSharingProviders) {
-        mSession.setEnabledSharingProviders(Arrays.asList(enabledSharingProviders));
+    public void setEnabledSharingProviders(final String[] enabledSharingProviders) {
+        initalizationGuard(new Runnable() {
+            public void run() {
+                mSession.setEnabledSharingProviders(Arrays.asList(enabledSharingProviders));
+            }
+        });
     }
 /*@}*/
 
@@ -1171,11 +1221,11 @@ public class JREngage {
     }
 
     public static void logd(String tag, String msg, Throwable tr) {
-        if (sLoggingEnabled) Log.d(tag, msg, tr);
+        if (sLoggingEnabled == null || sLoggingEnabled) Log.d(tag, msg, tr);
     }
 
     public static void logd(String tag, String msg) {
-        if (sLoggingEnabled) Log.d(tag, msg);
+        if (sLoggingEnabled == null || sLoggingEnabled) Log.d(tag, msg);
     }
 }
 

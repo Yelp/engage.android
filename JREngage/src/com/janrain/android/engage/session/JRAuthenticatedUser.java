@@ -35,6 +35,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
@@ -44,6 +47,7 @@ import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
+import com.janrain.android.engage.utils.ThreadUtils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -121,7 +125,7 @@ public class JRAuthenticatedUser implements Serializable {
     
     public static class ProfilePicMissingException extends Exception {}
 
-    public String getCachedProfilePicKey() throws ProfilePicMissingException {
+    private String getCachedProfilePicKey() throws ProfilePicMissingException {
         if (TextUtils.isEmpty(mPhoto)) throw new ProfilePicMissingException();
         return AndroidUtils.urlEncode(mPhoto);
     }
@@ -130,21 +134,43 @@ public class JRAuthenticatedUser implements Serializable {
         return JREngage.getApplicationContext();
     }
 
-    public void downloadProfilePic(final ProfilePicAvailableListener callback) {
-        FileInputStream fis;
+    @SuppressWarnings("unchecked")
+    public void asyncDownloadProfilePic(final ProfilePicAvailableListener callback) {
+        final Handler uiThread = new Handler();
+
+        ThreadUtils.executeInBg(new Runnable() {
+            public void run() {
+                profilePicBackgroundThread(uiThread, callback);
+            }
+        });
+    }
+
+    private void profilePicBackgroundThread(final Handler uiThread,
+                                            final ProfilePicAvailableListener callback) {
+        FileInputStream fis = null;
+        Bitmap cachedProfilePic = null;
         try {
             fis = getApplicationContext().openFileInput("userpic~" + getCachedProfilePicKey());
+            cachedProfilePic = BitmapFactory.decodeStream(fis);
         } catch (ProfilePicMissingException e) {
             return;
-        } catch (FileNotFoundException e) {
-            fis = null;
-        } catch (UnsupportedOperationException e) {
-            fis = null;
+        } catch (FileNotFoundException ignore) {
+        } catch (UnsupportedOperationException ignore) {
+        } finally {
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+            } catch (IOException ignore) {}
         }
 
-        Bitmap cachedProfilePic = BitmapFactory.decodeStream(fis);
         if (cachedProfilePic != null) {
-            callback.onProfilePicAvailable(cachedProfilePic);
+            final Bitmap cachedProfilePic_ = cachedProfilePic;
+            uiThread.post(new Runnable() {
+                public void run() {
+                    callback.onProfilePicAvailable(cachedProfilePic_);
+                }
+            });
         } else if (!TextUtils.isEmpty(getPhoto())) {
             JRConnectionManager.createConnection(getPhoto(),
                     new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
@@ -153,27 +179,46 @@ public class JRAuthenticatedUser implements Serializable {
                                                                byte[] payload,
                                                                String requestUrl,
                                                                Object tag) {
+                            FileOutputStream fos = null;
                             try {
-                                FileOutputStream fos = getApplicationContext().openFileOutput("userpic~" +
+                                fos = getApplicationContext().openFileOutput("userpic~" +
                                         getCachedProfilePicKey(), Activity.MODE_PRIVATE);
                                 fos.write(payload);
-                                fos.close();
-                                Bitmap bitmap = BitmapFactory.decodeByteArray(payload, 0, payload.length);
-                                callback.onProfilePicAvailable(bitmap);
-                            } catch (ProfilePicMissingException e) {
+                                final Bitmap bitmap =
+                                        BitmapFactory.decodeByteArray(payload, 0, payload.length);
+                                if (bitmap != null) {
+                                    uiThread.post(new Runnable() {
+                                        public void run() {
+                                            callback.onProfilePicAvailable(bitmap);
+                                        }
+                                    });
+                                }
+                            } catch (ProfilePicMissingException ignore) {
                                 // Can't happen, would be caught above.
                             } catch (IOException e) {
-                                Log.e(TAG, "profile pic image loader exception: " + e.toString());
+                                Log.e(TAG, "profile pic image caching exception.", e);
+                            } finally {
+                                if (fos != null) {
+                                    try {
+                                        fos.close();
+                                    } catch (IOException ignore) {
+                                    }
+                                }
                             }
                         }
                     }, null);
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void deleteCachedProfilePic() {
-        try {
-            getApplicationContext().deleteFile("userpic~" + getCachedProfilePicKey());
-        } catch (ProfilePicMissingException ignore) {}
+        ThreadUtils.executeInBg(new Runnable() {
+            public void run() {
+                try {
+                    getApplicationContext().deleteFile("userpic~" + getCachedProfilePicKey());
+                } catch (ProfilePicMissingException ignore) {}
+            }
+        });
     }
 
     public interface ProfilePicAvailableListener {

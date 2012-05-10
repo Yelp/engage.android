@@ -35,6 +35,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import com.janrain.android.engage.JREngage;
 
+import static com.janrain.android.engage.utils.AndroidUtils.SharedPreferenceEditorApplyOrCommit;
+
 /**
  * @internal
  * @class Prefs
@@ -88,19 +90,19 @@ public final class Prefs {
     }
 
     public static void putString(String key, String value) {
-        getEditor().putString(key, value).commit();
+        SharedPreferenceEditorApplyOrCommit(getEditor().putString(key, value));
     }
 
     public static void putBoolean(String key, boolean value) {
-        getEditor().putBoolean(key, value).commit();
+        SharedPreferenceEditorApplyOrCommit(getEditor().putBoolean(key, value));
     }
 
     public static void putInt(String key, int value) {
-        getEditor().putInt(key, value).commit();
+        SharedPreferenceEditorApplyOrCommit(getEditor().putInt(key, value));
     }
 
     public static void putLong(String key, long value) {
-        getEditor().putLong(key, value).commit();
+        SharedPreferenceEditorApplyOrCommit(getEditor().putLong(key, value));
     }
 
     public static long getLong(String key, int defaultValue) {
@@ -116,6 +118,6 @@ public final class Prefs {
     }
 
     public static void remove(String key) {
-        getEditor().remove(key).commit();
+        SharedPreferenceEditorApplyOrCommit(getEditor().remove(key));
     }
 }
