@@ -148,7 +148,7 @@ public class JREngage {
 
     private static  boolean sInitializeIoBlocked = false;
     private Queue<Runnable> mInitializationBlockedQueue = new LinkedList<Runnable>();
-    private Handler mUiThread;
+    private Handler mUiThread = new Handler(Looper.getMainLooper());
 
     /* Singleton instance of this class */
 	private static JREngage sInstance;
@@ -165,19 +165,8 @@ public class JREngage {
     
     /* Listeners to JRSessionDelegate#configDidFinish(); */
     private ArrayList<ConfigFinishListener> mConfigFinishListeners = new ArrayList<ConfigFinishListener>();
-    {
-        mConfigFinishListeners.add(new ConfigFinishListener() {
-            public void configDidFinish() {
-                while (!mInitializationBlockedQueue.isEmpty()) {
-                    mUiThread.post(mInitializationBlockedQueue.remove());
-                }
-            }
-        });
-    }
 
     private JREngage(Context context,
-                     String appId,
-                     String tokenUrl,
                      JREngageDelegate delegate) {
         mApplicationContext = context.getApplicationContext();
         if (context instanceof Activity) mActivityContext = (Activity) context;
@@ -244,11 +233,14 @@ public class JREngage {
                 "' activity '" + context + "' appId '" + appId + "' tokenUrl '" + tokenUrl + "'");
 
         if (sInstance == null) {
-            sInstance = new JREngage(context, appId, tokenUrl, delegate);
+            sInstance = new JREngage(context, delegate);
             sInitializeIoBlocked = true;
             ThreadUtils.executeInBg(new Runnable() { public void run() {
-                if (true) return;
+                //if (true) return;
                 sInstance.mSession = JRSession.getInstance(appId, tokenUrl, sInstance.mJrsd);
+                while (!sInstance.mInitializationBlockedQueue.isEmpty()) {
+                    sInstance.mUiThread.post(sInstance.mInitializationBlockedQueue.remove());
+                }
                 sInitializeIoBlocked = false;
             } });
         } else {
@@ -307,8 +299,7 @@ public class JREngage {
         sInstance.mActivityContext = activity;
     }
 
-    private void initalizationGuard(Runnable r) {
-        if (mUiThread == null) mUiThread = new Handler(Looper.getMainLooper());
+    private void initializationGuard(Runnable r) {
         if (sInitializeIoBlocked) {
             mInitializationBlockedQueue.add(r);
         } else {
@@ -332,9 +323,11 @@ public class JREngage {
      **/
     public void signoutUserForProvider(final String provider) {
         JREngage.logd(TAG, "[signoutUserForProvider]");
-        initalizationGuard(new Runnable() { public void run() {
-            mSession.forgetAuthenticatedUserForProvider(provider);
-        } });
+        initializationGuard(new Runnable() {
+            public void run() {
+                mSession.forgetAuthenticatedUserForProvider(provider);
+            }
+        });
     }
 
     /**
@@ -342,9 +335,11 @@ public class JREngage {
      **/
     public void signoutUserForAllProviders() {
         JREngage.logd(TAG, "[signoutUserForAllProviders]");
-        initalizationGuard(new Runnable() { public void run() {
-            mSession.forgetAllAuthenticatedUsers();
-        } });
+        initializationGuard(new Runnable() {
+            public void run() {
+                mSession.forgetAllAuthenticatedUsers();
+            }
+        });
     }
 
     /**
@@ -671,38 +666,42 @@ public class JREngage {
                                          final Boolean skipReturningUserLandingPage,
                                          final String provider,
                                          final Class<? extends JRUiCustomization> uiCustomization) {
-        initalizationGuard(new Runnable() { public void run() {
-            if (checkSessionDataError()) return;
+        initializationGuard(new Runnable() {
+            public void run() {
+                if (checkSessionDataError()) return;
 
-            if (skipReturningUserLandingPage != null) {
-                mSession.setSkipLandingPage(skipReturningUserLandingPage);
-            }
+                if (skipReturningUserLandingPage != null) {
+                    mSession.setSkipLandingPage(skipReturningUserLandingPage);
+                }
 
-            if (mSession.getProviderByName(provider) == null && !mSession.isConfigDone()) {
-                final ProgressDialog pd = new ProgressDialog(fromActivity);
-                pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                pd.setIndeterminate(true);
-                pd.setCancelable(false);
-                pd.show();
+                if (mSession.getProviderByName(provider) == null && !mSession.isConfigDone()) {
+                    final ProgressDialog pd = new ProgressDialog(fromActivity);
+                    pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    pd.setIndeterminate(true);
+                    pd.setCancelable(false);
+                    pd.show();
 
-                // TODO add progress dialog customization
-                // Fix up the progress dialog's appearance
-                View message = pd.findViewById(android.R.id.message);
-                if (message != null) message.setVisibility(View.GONE);
+                    // TODO add progress dialog customization
+                    // Fix up the progress dialog's appearance
+                    View message = pd.findViewById(android.R.id.message);
+                    if (message != null) message.setVisibility(View.GONE);
 
-                View progressBar = pd.findViewById(android.R.id.progress);
-                if (progressBar != null) collapseViewLayout(findViewHierarchyRoot(progressBar));
+                    View progressBar = pd.findViewById(android.R.id.progress);
+                    if (progressBar != null) collapseViewLayout(findViewHierarchyRoot(progressBar));
 
-                mConfigFinishListeners.add(new ConfigFinishListener() { public void configDidFinish() {
-                    mConfigFinishListeners.remove(this);
-                    checkSessionDataError();
+                    mConfigFinishListeners.add(new ConfigFinishListener() {
+                        public void configDidFinish() {
+                            mConfigFinishListeners.remove(this);
+                            checkSessionDataError();
+                            showDirectProviderFlowInternal(fromActivity, provider, uiCustomization);
+                            pd.dismiss();
+                        }
+                    });
+                } else {
                     showDirectProviderFlowInternal(fromActivity, provider, uiCustomization);
-                    pd.dismiss();
-                } });
-            } else {
-                showDirectProviderFlowInternal(fromActivity, provider, uiCustomization);
+                }
             }
-        } });
+        });
     }
 
     /**
@@ -753,32 +752,36 @@ public class JREngage {
     private void showDirectProviderFlowInternal(final Activity fromActivity,
                                                 final String providerName,
                                                 final Class<? extends JRUiCustomization> uiCustomization) {
-        initalizationGuard(new Runnable() { public void run() {
-            Intent i;
-            JRProvider provider = mSession.getProviderByName(providerName);
-            if (provider != null) {
-                if (provider.requiresInput()) {
-                    i = JRFragmentHostActivity.createUserLandingIntent(fromActivity);
+        initializationGuard(new Runnable() {
+            public void run() {
+                Intent i;
+                JRProvider provider = mSession.getProviderByName(providerName);
+                if (provider != null) {
+                    if (provider.requiresInput()) {
+                        i = JRFragmentHostActivity.createUserLandingIntent(fromActivity);
+                    } else {
+                        i = JRFragmentHostActivity.createWebViewIntent(fromActivity);
+                    }
+                    i.putExtra(JRFragmentHostActivity.JR_PROVIDER, providerName);
+                    provider.setForceReauth(true);
+                    mSession.setCurrentlyAuthenticatingProvider(provider);
                 } else {
-                    i = JRFragmentHostActivity.createWebViewIntent(fromActivity);
-                }
-                i.putExtra(JRFragmentHostActivity.JR_PROVIDER, providerName);
-                provider.setForceReauth(true);
-                mSession.setCurrentlyAuthenticatingProvider(provider);
-            } else {
-                if (providerName != null) {
-                    Log.e(TAG, "Provider " + providerName + " is not in the set of configured providers.");
+                    if (providerName != null) {
+                        Log.e(TAG,
+                                "Provider " + providerName + " is not in the set of configured providers.");
+                    }
+
+                    i = JRFragmentHostActivity.createProviderListIntent(fromActivity);
+                    if (uiCustomization != null) {
+                        i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS,
+                                uiCustomization.getName());
+                    }
                 }
 
-                i = JRFragmentHostActivity.createProviderListIntent(fromActivity);
-                if (uiCustomization != null) {
-                    i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS, uiCustomization.getName());
-                }
+                i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_AUTH);
+                fromActivity.startActivity(i);
             }
-
-            i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_AUTH);
-            fromActivity.startActivity(i);
-        } });
+        });
     }
 
     /**
@@ -820,21 +823,23 @@ public class JREngage {
     public void showSocialPublishingDialog(final Activity fromActivity,
                                            final JRActivityObject jrActivity,
                                            final Class<? extends JRUiCustomization> uiCustomization) {
-        initalizationGuard(new Runnable() { public void run() {
-            JREngage.logd(TAG, "[showSocialPublishingDialog]");
-            /* If there was error configuring the library, sessionData.error will not be null. */
-            if (checkSessionDataError()) return;
-            checkNullJRActivity(jrActivity);
-            mSession.setJRActivity(jrActivity);
+        initializationGuard(new Runnable() {
+            public void run() {
+                JREngage.logd(TAG, "[showSocialPublishingDialog]");
+                /* If there was error configuring the library, sessionData.error will not be null. */
+                if (checkSessionDataError()) return;
+                checkNullJRActivity(jrActivity);
+                mSession.setJRActivity(jrActivity);
 
-            Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(fromActivity, false);
-            if (uiCustomization != null) {
-                i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS, uiCustomization.getName());
+                Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(fromActivity, false);
+                if (uiCustomization != null) {
+                    i.putExtra(JRFragmentHostActivity.JR_UI_CUSTOMIZATION_CLASS, uiCustomization.getName());
+                }
+                i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
+                i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
+                fromActivity.startActivity(i);
             }
-            i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_PUBLISH);
-            i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
-            fromActivity.startActivity(i);
-        } });
+        });
     }
 
     /**
@@ -889,7 +894,7 @@ public class JREngage {
         JREngage.logd(TAG, "[showSocialPublishingFragment]");
         checkNullJRActivity(jrActivity);
 
-        //initalizationGuard(new Runnable() { public void run() {
+        //initializationGuard(new Runnable() { public void run() {
             JRUiFragment f = createSocialPublishingFragment(jrActivity);
             Bundle arguments = new Bundle();
             arguments.putInt(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_SHARING);
@@ -1078,9 +1083,11 @@ public class JREngage {
      *  actually available to the end-user.
      */
     public void setEnabledAuthenticationProviders(final List<String> enabledProviders) {
-        initalizationGuard(new Runnable() { public void run() {
-            mSession.setEnabledAuthenticationProviders(enabledProviders);
-        } });
+        initializationGuard(new Runnable() {
+            public void run() {
+                mSession.setEnabledAuthenticationProviders(enabledProviders);
+            }
+        });
     }
 
     /**
@@ -1091,9 +1098,11 @@ public class JREngage {
      *  actually available to the end-user.
      */
     public void setEnabledAuthenticationProviders(final String[] enabledProviders) {
-        initalizationGuard(new Runnable() { public void run() {
-            mSession.setEnabledAuthenticationProviders(Arrays.asList(enabledProviders));
-        } });
+        initializationGuard(new Runnable() {
+            public void run() {
+                mSession.setEnabledAuthenticationProviders(Arrays.asList(enabledProviders));
+            }
+        });
     }
 
     /**
@@ -1108,9 +1117,11 @@ public class JREngage {
      *  actually available to the end-user.
      */
     public void setEnabledSharingProviders(final List<String> enabledSharingProviders) {
-        initalizationGuard(new Runnable() { public void run() {
-            mSession.setEnabledSharingProviders(enabledSharingProviders);
-        } });
+        initializationGuard(new Runnable() {
+            public void run() {
+                mSession.setEnabledSharingProviders(enabledSharingProviders);
+            }
+        });
     }
 
     /**
@@ -1121,7 +1132,7 @@ public class JREngage {
      *  actually available to the end-user.
      */
     public void setEnabledSharingProviders(final String[] enabledSharingProviders) {
-        initalizationGuard(new Runnable() {
+        initializationGuard(new Runnable() {
             public void run() {
                 mSession.setEnabledSharingProviders(Arrays.asList(enabledSharingProviders));
             }
