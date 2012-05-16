@@ -14,8 +14,5 @@ out/*
 log/*
 tmp/*
 
-# IDE stuff
-nbproject/
-#.idea/
-#*.iml
+proguard.cfg
 local.properties

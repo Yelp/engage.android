@@ -14,8 +14,10 @@ out/*
 log/*
 tmp/*
 
-# IDE stuff
-nbproject/
-#.idea/
-#*.iml
+proguard.cfg
 local.properties
+
+assests/token_url.txt
+assests/app_id.txt
+assests/*.appid
+assests/*.token_url
