@@ -1044,9 +1044,6 @@ public class JRSession implements JRConnectionManagerDelegate {
         for (JRSessionDelegate delegate : getDelegatesCopy()) delegate.publishingDialogDidFail(err);
     }
 
-    /**
-     *
-     */
     public void triggerPublishingDidCancel() {
         JREngage.logd(TAG, "[triggerPublishingDidCancel]");
 
