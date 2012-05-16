@@ -215,6 +215,8 @@ public class MainActivity extends FragmentActivity {
 
     public static class CustomUi extends JRCustomUiConfiguration {
         public CustomUi() {
+            mProviderListSectionHeader = "header";
+            mProviderListSectionFooter = "footer";
             mProviderListHeader = new CustomSignin();
             //mAuthenticationBackgroundDrawable = c.getResources().getDrawable(R.drawable.custom_signin_bg);
             mProviderListTitle = "Custom provider list title";

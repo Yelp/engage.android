@@ -95,6 +95,17 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
     public JRCustomUiView mProviderListHeader;
 
     /**
+     * Provides a custom section header displayed below the provider list header and above the list of
+     * providers.
+     */
+    public String mProviderListSectionHeader;
+
+    /**
+     * Provides a custom section footer displayed below the provider list and above the provider list footer.
+     */
+    public String mProviderListSectionFooter;
+
+    /**
      * Provides a custom ListView footer for the provider list.
      */
     public JRCustomUiView mProviderListFooter;

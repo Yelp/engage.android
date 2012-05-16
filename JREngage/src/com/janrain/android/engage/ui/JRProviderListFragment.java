@@ -77,6 +77,9 @@ public class JRProviderListFragment extends JRUiFragment {
     private TextView mEmptyTextLabel;
     private ProgressBar mLoadingProgress;
 
+    private boolean mSectionHeaderEnabled;
+    private boolean mSectionFooterEnabled;
+
     /**
      * @internal
      *
@@ -97,7 +100,7 @@ public class JRProviderListFragment extends JRUiFragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (getItemViewType(position) == 0) {
-                return getSectionItemView(position - 1, convertView, parent);
+                return getSectionItemView(position - (mSectionHeaderEnabled ? 1 : 0), convertView, parent);
             } else {
                 return getSectionHeaderFooter(position, convertView, parent);
             }
@@ -109,10 +112,10 @@ public class JRProviderListFragment extends JRUiFragment {
                     TextView tv = new TextView(parent.getContext(),
                             null,
                             android.R.attr.listSeparatorTextViewStyle);
-                    tv.setText("section header view");
+                    tv.setText(getCustomUiConfiguration().mProviderListSectionHeader);
                     return tv;
                 } else {
-                    ((TextView) convertView).setText("section header view");
+                    ((TextView) convertView).setText(getCustomUiConfiguration().mProviderListSectionHeader);
                     return convertView;
                 }
             } else {
@@ -120,10 +123,10 @@ public class JRProviderListFragment extends JRUiFragment {
                     TextView tv = new TextView(parent.getContext(),
                             null,
                             android.R.attr.listSeparatorTextViewStyle);
-                    tv.setText("section footer view");
+                    tv.setText(getCustomUiConfiguration().mProviderListSectionFooter);
                     return tv;
                 } else {
-                    ((TextView) convertView).setText("section footer view");
+                    ((TextView) convertView).setText(getCustomUiConfiguration().mProviderListSectionFooter);
                     return convertView;
                 }
             }
@@ -160,12 +163,13 @@ public class JRProviderListFragment extends JRUiFragment {
 
         @Override
         public int getItemViewType(int position) {
-            return (position == 0 || position == getCount() - 1) ? 1 : 0;
+            return ((mSectionHeaderEnabled && position == 0) ||
+                    (mSectionFooterEnabled && position == getCount() - 1)) ? 1 : 0;
         }
 
         @Override
         public int getCount() {
-            return super.getCount() + 2;
+            return super.getCount() + (mSectionHeaderEnabled ? 1 : 0) + (mSectionFooterEnabled ? 1 : 0);
         }
     }
 
@@ -203,6 +207,9 @@ public class JRProviderListFragment extends JRUiFragment {
 
         JRCustomUiConfiguration customUiConfiguration = getCustomUiConfiguration();
         if (customUiConfiguration != null) {
+            mSectionHeaderEnabled = getCustomUiConfiguration().mProviderListSectionHeader != null;
+            mSectionFooterEnabled = getCustomUiConfiguration().mProviderListSectionFooter != null;
+
             if (customUiConfiguration.mProviderListHeader != null) {
                 doCustomViewCreate(customUiConfiguration.mProviderListHeader, inflater, savedInstanceState,
                         mListView);
@@ -255,7 +262,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
     private ListView.OnItemClickListener itemClickListener = new ListView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            JRProvider provider = mAdapter.getItem((int) id - 1);
+            JRProvider provider = mAdapter.getItem((int) id - (mSectionHeaderEnabled ? 1 : 0));
             mSession.setCurrentlyAuthenticatingProvider(provider);
 
             if (provider.requiresInput() ||
