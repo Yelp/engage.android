@@ -58,11 +58,8 @@ import android.view.ViewGroup;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.session.JRSession;
-import com.janrain.android.engage.utils.AndroidUtils;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 import static com.janrain.android.engage.utils.AndroidUtils.ActionBarSetDisplayHomeAsUpEnabled;
@@ -330,12 +327,12 @@ public abstract class JRUiFragment extends Fragment {
                 final JRUiCustomization uiCustomization = (JRUiCustomization) classRef.newInstance();
                 if (uiCustomization instanceof JRCustomUiConfiguration) {
                     mCustomUiConfiguration = (JRCustomUiConfiguration) uiCustomization;
-                } else if (uiCustomization instanceof JRCustomUiView) {
+                } else if (uiCustomization instanceof JRCustomInterfaceView) {
                     mCustomUiConfiguration = new JRCustomUiConfiguration(){
                         {
                             //Type safe because the type of the instantiated instance from the
                             //class ref is run time type checked
-                            mProviderListHeader = (JRCustomUiView) uiCustomization;
+                            mProviderListHeader = (JRCustomInterfaceView) uiCustomization;
                         }
                     };
                 } else {
@@ -599,7 +596,7 @@ public abstract class JRUiFragment extends Fragment {
         return mCustomUiConfiguration;
     }
 
-    /*package*/ void doCustomViewCreate(JRCustomUiView view,
+    /*package*/ void doCustomViewCreate(JRCustomInterfaceView view,
                                     LayoutInflater inflater,
                                     Bundle savedInstanceState,
                                     ViewGroup container) {

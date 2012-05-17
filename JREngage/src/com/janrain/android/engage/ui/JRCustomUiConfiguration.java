@@ -92,7 +92,7 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
      * Provides a custom ListView header for the provider list. This can be used to implement your own
      * username/password sign-in
      */
-    public JRCustomUiView mProviderListHeader;
+    public JRCustomInterfaceView mProviderListHeader;
 
     /**
      * Provides a custom section header displayed below the provider list header and above the list of
@@ -108,7 +108,7 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
     /**
      * Provides a custom ListView footer for the provider list.
      */
-    public JRCustomUiView mProviderListFooter;
+    public JRCustomInterfaceView mProviderListFooter;
 
     /**
      *
@@ -162,29 +162,29 @@ public class JRCustomUiConfiguration extends JRUiCustomization {
     public void onProviderListViewCreate(ListView providerListView) {}
 
     /*package*/ final void onResume() {
-        for (JRCustomUiView v : getNonNullCustomViews()) v.onResume();
+        for (JRCustomInterfaceView v : getNonNullCustomViews()) v.onResume();
     }
 
     /*package*/ final void onPause() {
-        for (JRCustomUiView v : getNonNullCustomViews()) v.onPause();
+        for (JRCustomInterfaceView v : getNonNullCustomViews()) v.onPause();
     }
 
     /*package*/ final void onSaveInstanceState(Bundle outState) {
-        for (JRCustomUiView v : getNonNullCustomViews()) v.onSaveInstanceState(outState);
+        for (JRCustomInterfaceView v : getNonNullCustomViews()) v.onSaveInstanceState(outState);
     }
 
     /*package*/ final void onDestroy() {
-        for (JRCustomUiView v : getNonNullCustomViews()) v.onDestroy();
+        for (JRCustomInterfaceView v : getNonNullCustomViews()) v.onDestroy();
     }
 
-    private Set<JRCustomUiView> getNonNullCustomViews() {
-        Set<JRCustomUiView> customUiViews = new HashSet<JRCustomUiView>();
+    private Set<JRCustomInterfaceView> getNonNullCustomViews() {
+        Set<JRCustomInterfaceView> customUiViews = new HashSet<JRCustomInterfaceView>();
         addIfNotNullAndViewCreated(customUiViews, mProviderListFooter);
         addIfNotNullAndViewCreated(customUiViews, mProviderListHeader);
         return customUiViews;
     }
     
-    private void addIfNotNullAndViewCreated(Set<JRCustomUiView> set, JRCustomUiView v) {
+    private void addIfNotNullAndViewCreated(Set<JRCustomInterfaceView> set, JRCustomInterfaceView v) {
         if (v != null && v.mViewCreated) set.add(v);
     }
 }

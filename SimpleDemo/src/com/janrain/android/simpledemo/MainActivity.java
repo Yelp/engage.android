@@ -33,9 +33,7 @@ package com.janrain.android.simpledemo;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -48,10 +46,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.janrain.android.engage.session.JRProvider;
-import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.ui.JRCustomUiConfiguration;
-import com.janrain.android.engage.ui.JRCustomUiView;
+import com.janrain.android.engage.ui.JRCustomInterfaceView;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
@@ -233,7 +229,7 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    public static class CustomSignin extends JRCustomUiView {
+    public static class CustomSignin extends JRCustomInterfaceView {
         @Override
         public View onCreateView(Context context,
                 LayoutInflater inflater,

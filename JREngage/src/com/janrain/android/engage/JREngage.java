@@ -524,7 +524,7 @@ public class JREngage {
      *  The Activity from which to show the authentication dialog
      *
      * @param uiCustomization
-     *  A Class reference to a subclass of JRCustomUiConfiguration or JRCustomUiView
+     *  A Class reference to a subclass of JRCustomUiConfiguration or JRCustomInterfaceView
      *
      *  If the reference is to a JRCustomView subclass then the an instance of that custom view will be
      *  displayed as the header of the list of providers the user is presented with. This header is the usual

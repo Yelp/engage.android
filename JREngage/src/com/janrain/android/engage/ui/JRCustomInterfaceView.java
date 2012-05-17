@@ -50,8 +50,8 @@ import android.view.ViewGroup;
  * This class also supplies several utility methods for controlling the behavior of the UI of the Engage
  * library.
  */
-public abstract class JRCustomUiView extends JRUiCustomization {
-    private static final String TAG = JRCustomUiView.class.getSimpleName();
+public abstract class JRCustomInterfaceView extends JRUiCustomization {
+    private static final String TAG = JRCustomInterfaceView.class.getSimpleName();
     private View mView;
     private JRUiFragment mUiFragment;
     private Context mContext;
