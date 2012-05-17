@@ -88,7 +88,7 @@ public abstract class JRUiFragment extends Fragment {
 
     private FinishReceiver mFinishReceiver;
     private HashMap<Integer, ManagedDialog> mManagedDialogs = new HashMap<Integer, ManagedDialog>();
-    private JRCustomUiConfiguration mCustomUiConfiguration;
+    private JRCustomInterfaceConfiguration mCustomInterfaceConfiguration;
     private Integer mFragmentResult;
 
     /*package*/ JRSession mSession;
@@ -209,12 +209,12 @@ public abstract class JRUiFragment extends Fragment {
         super.onResume();
         JREngage.logd(TAG, "[onResume]");
         maybeShowHideTaglines();
-        if (mCustomUiConfiguration != null) mCustomUiConfiguration.onResume();
+        if (mCustomInterfaceConfiguration != null) mCustomInterfaceConfiguration.onResume();
     }
 
     @Override
     public void onPause() {
-        if (mCustomUiConfiguration != null) mCustomUiConfiguration.onPause();
+        if (mCustomInterfaceConfiguration != null) mCustomInterfaceConfiguration.onPause();
         JREngage.logd(TAG, "[" + new Object(){}.getClass().getEnclosingMethod().getName() + "]");
         super.onPause();
     }
@@ -247,7 +247,7 @@ public abstract class JRUiFragment extends Fragment {
 
         if (mSession != null) mSession.setUiIsShowing(false);
 
-        if (mCustomUiConfiguration != null) mCustomUiConfiguration.onDestroy();
+        if (mCustomInterfaceConfiguration != null) mCustomInterfaceConfiguration.onDestroy();
 
         super.onDestroy();
     }
@@ -275,7 +275,7 @@ public abstract class JRUiFragment extends Fragment {
         outState.putSerializable(KEY_MANAGED_DIALOGS, mManagedDialogs);
         outState.putParcelableArray(KEY_MANAGED_DIALOG_OPTIONS, dialogOptions);
 
-        if (mCustomUiConfiguration != null) mCustomUiConfiguration.onSaveInstanceState(outState);
+        if (mCustomInterfaceConfiguration != null) mCustomInterfaceConfiguration.onSaveInstanceState(outState);
 
         super.onSaveInstanceState(outState);
     }
@@ -324,20 +324,20 @@ public abstract class JRUiFragment extends Fragment {
         if (uiCustomizationName != null) {
             try {
                 Class classRef = Class.forName(uiCustomizationName);
-                final JRUiCustomization uiCustomization = (JRUiCustomization) classRef.newInstance();
-                if (uiCustomization instanceof JRCustomUiConfiguration) {
-                    mCustomUiConfiguration = (JRCustomUiConfiguration) uiCustomization;
-                } else if (uiCustomization instanceof JRCustomInterfaceView) {
-                    mCustomUiConfiguration = new JRCustomUiConfiguration(){
+                final JRCustomInterface customInterface = (JRCustomInterface) classRef.newInstance();
+                if (customInterface instanceof JRCustomInterfaceConfiguration) {
+                    mCustomInterfaceConfiguration = (JRCustomInterfaceConfiguration) customInterface;
+                } else if (customInterface instanceof JRCustomInterfaceView) {
+                    mCustomInterfaceConfiguration = new JRCustomInterfaceConfiguration(){
                         {
                             //Type safe because the type of the instantiated instance from the
                             //class ref is run time type checked
-                            mProviderListHeader = (JRCustomInterfaceView) uiCustomization;
+                            mProviderListHeader = (JRCustomInterfaceView) customInterface;
                         }
                     };
                 } else {
                     Log.e(TAG, "Unexpected class from: " + uiCustomizationName);
-                    //Not possible at the moment, there are only two subclasses of abstract JRUiCustomization
+                    //Not possible at the moment, there are only two subclasses of abstract JRCustomInterface
                 }
             } catch (ClassNotFoundException e) {
                 customSigninReflectionError(uiCustomizationName, e);
@@ -592,8 +592,8 @@ public abstract class JRUiFragment extends Fragment {
         Log.e(TAG, "Can't load custom signin class: " + customName + "\n", e);
     }
 
-    /*package*/ JRCustomUiConfiguration getCustomUiConfiguration() {
-        return mCustomUiConfiguration;
+    /*package*/ JRCustomInterfaceConfiguration getCustomUiConfiguration() {
+        return mCustomInterfaceConfiguration;
     }
 
     /*package*/ void doCustomViewCreate(JRCustomInterfaceView view,

@@ -46,7 +46,7 @@ import java.util.Set;
  *
  * This class also supplies event hooks to further control the look and feel of the Engage library.
  */
-public class JRCustomUiConfiguration extends JRUiCustomization {
+public class JRCustomInterfaceConfiguration extends JRCustomInterface {
     /**
      * A custom title for the provider list activity
      */

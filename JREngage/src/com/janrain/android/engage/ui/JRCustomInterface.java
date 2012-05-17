@@ -35,5 +35,5 @@ package com.janrain.android.engage.ui;
 /**
  * The abstract superclass of classes which define UI customizations for the Engage library
  */
-public abstract class JRUiCustomization {
+public abstract class JRCustomInterface {
 }

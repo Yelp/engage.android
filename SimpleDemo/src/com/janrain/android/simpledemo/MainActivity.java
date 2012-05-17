@@ -46,7 +46,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.janrain.android.engage.ui.JRCustomUiConfiguration;
+import com.janrain.android.engage.ui.JRCustomInterfaceConfiguration;
 import com.janrain.android.engage.ui.JRCustomInterfaceView;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
@@ -209,7 +209,7 @@ public class MainActivity extends FragmentActivity {
         });
     }
 
-    public static class CustomUi extends JRCustomUiConfiguration {
+    public static class CustomUi extends JRCustomInterfaceConfiguration {
         public CustomUi() {
             mProviderListSectionHeader = "header";
             mProviderListSectionFooter = "footer";

@@ -205,24 +205,24 @@ public class JRProviderListFragment extends JRUiFragment {
         mEmptyTextLabel = (TextView) inflatedLayout.findViewById(R.id.jr_empty_label);
         mLoadingProgress = (ProgressBar) inflatedLayout.findViewById(android.R.id.empty);
 
-        JRCustomUiConfiguration customUiConfiguration = getCustomUiConfiguration();
-        if (customUiConfiguration != null) {
+        JRCustomInterfaceConfiguration customInterfaceConfiguration = getCustomUiConfiguration();
+        if (customInterfaceConfiguration != null) {
             mSectionHeaderEnabled = getCustomUiConfiguration().mProviderListSectionHeader != null;
             mSectionFooterEnabled = getCustomUiConfiguration().mProviderListSectionFooter != null;
 
-            if (customUiConfiguration.mProviderListHeader != null) {
-                doCustomViewCreate(customUiConfiguration.mProviderListHeader, inflater, savedInstanceState,
+            if (customInterfaceConfiguration.mProviderListHeader != null) {
+                doCustomViewCreate(customInterfaceConfiguration.mProviderListHeader, inflater, savedInstanceState,
                         mListView);
-                mListView.addHeaderView(customUiConfiguration.mProviderListHeader.getView());
+                mListView.addHeaderView(customInterfaceConfiguration.mProviderListHeader.getView());
             }
 
-            if (customUiConfiguration.mProviderListFooter != null) {
-                doCustomViewCreate(customUiConfiguration.mProviderListFooter, inflater, savedInstanceState,
+            if (customInterfaceConfiguration.mProviderListFooter != null) {
+                doCustomViewCreate(customInterfaceConfiguration.mProviderListFooter, inflater, savedInstanceState,
                         mListView);
-                mListView.addFooterView(customUiConfiguration.mProviderListFooter.getView());
+                mListView.addFooterView(customInterfaceConfiguration.mProviderListFooter.getView());
             }
 
-            customUiConfiguration.onProviderListViewCreate(mListView);
+            customInterfaceConfiguration.onProviderListViewCreate(mListView);
 
             // This is buggy on the 2.3x86 emulator -- scrolling to the bottom of the list and then
             // back to the top results in focus problems inside the customer header ViewGroup

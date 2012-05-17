@@ -101,9 +101,9 @@ import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.session.JRSessionDelegate;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.engage.ui.JRCustomInterface;
 import com.janrain.android.engage.ui.JRFragmentHostActivity;
 import com.janrain.android.engage.ui.JRPublishFragment;
-import com.janrain.android.engage.ui.JRUiCustomization;
 import com.janrain.android.engage.ui.JRUiFragment;
 import com.janrain.android.engage.utils.ThreadUtils;
 
@@ -524,17 +524,17 @@ public class JREngage {
      *  The Activity from which to show the authentication dialog
      *
      * @param uiCustomization
-     *  A Class reference to a subclass of JRCustomUiConfiguration or JRCustomInterfaceView
+     *  A Class reference to a subclass of JRCustomInterfaceConfiguration or JRCustomInterfaceView
      *
      *  If the reference is to a JRCustomView subclass then the an instance of that custom view will be
      *  displayed as the header of the list of providers the user is presented with. This header is the usual
      *  place to include custom username/password authentication UI.
      *
-     *  If the reference is to a JRCustomUiConfiguration subclass then all of the customizations specified
+     *  If the reference is to a JRCustomInterfaceConfiguration subclass then all of the customizations specified
      *  by an instance of that subclass will be applied.
      */
     public void showAuthenticationDialog(Activity fromActivity,
-                                         Class<? extends JRUiCustomization> uiCustomization) {
+                                         Class<? extends JRCustomInterface> uiCustomization) {
         showAuthenticationDialog(fromActivity, false, null, uiCustomization);
     }
 
@@ -639,7 +639,7 @@ public class JREngage {
 
     /**
      * @deprecated use showAuthenticationDialog(Activity fromActivity, Boolean skipReturningUserLandingPage,
-     *      String provider, Class&lt;? extends JRUiCustomization> uiCustomiztion) instead.
+     *      String provider, Class&lt;? extends JRCustomInterface> uiCustomiztion) instead.
      * @param skipReturningUserLandingPage
      *  See the undeprecated method
      * @param provider
@@ -649,7 +649,7 @@ public class JREngage {
      */
     public void showAuthenticationDialog(Boolean skipReturningUserLandingPage,
                                          String provider,
-                                         Class<? extends JRUiCustomization> uiCustomization) {
+                                         Class<? extends JRCustomInterface> uiCustomization) {
         showAuthenticationDialog(mActivityContext, skipReturningUserLandingPage, provider, uiCustomization);
     }
     /**
@@ -679,7 +679,7 @@ public class JREngage {
     public void showAuthenticationDialog(final Activity fromActivity,
                                          final Boolean skipReturningUserLandingPage,
                                          final String provider,
-                                         final Class<? extends JRUiCustomization> uiCustomization) {
+                                         final Class<? extends JRCustomInterface> uiCustomization) {
         initializationGuard(new Runnable() {
             public void run() {
                 if (checkSessionDataError()) return;
@@ -765,7 +765,7 @@ public class JREngage {
      */
     private void showDirectProviderFlowInternal(final Activity fromActivity,
                                                 final String providerName,
-                                                final Class<? extends JRUiCustomization> uiCustomization) {
+                                                final Class<? extends JRCustomInterface> uiCustomization) {
         initializationGuard(new Runnable() {
             public void run() {
                 Intent i;
@@ -836,7 +836,7 @@ public class JREngage {
      **/
     public void showSocialPublishingDialog(final Activity fromActivity,
                                            final JRActivityObject jrActivity,
-                                           final Class<? extends JRUiCustomization> uiCustomization) {
+                                           final Class<? extends JRCustomInterface> uiCustomization) {
         initializationGuard(new Runnable() {
             public void run() {
                 JREngage.logd(TAG, "[showSocialPublishingDialog]");
