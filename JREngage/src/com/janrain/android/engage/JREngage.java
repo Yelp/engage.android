@@ -306,6 +306,18 @@ public class JREngage {
         sInstance.mActivityContext = activity;
     }
 
+    /**
+     * @internal
+     * @hide
+     */
+    public static synchronized void blockOnInitializationIo() {
+        if (sInstance != null) {
+            sInstance.initializationGuard(new Runnable() { public void run() { } }); // Empty on purpose
+        } else {
+            throw new RuntimeException("Can't block until JREngage.initInstance is invoked and finished.");
+        }
+    }
+
     private synchronized void initializationGuard(Runnable r) {
         if (sInitializeIoBlocked) {
             try {

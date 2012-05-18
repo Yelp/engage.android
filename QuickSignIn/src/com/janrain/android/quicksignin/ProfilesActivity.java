@@ -80,6 +80,7 @@ public class ProfilesActivity extends ListActivity implements JREngageDelegate {
         setContentView(R.layout.profiles_listview);
 
         mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
+        JREngage.blockOnInitializationIo();
 
         mEditing = false;
 
