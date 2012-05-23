@@ -73,6 +73,7 @@ public abstract class JRUiFragment extends Fragment {
     private static final String KEY_DIALOG_ID = "jr_dialog_id";
     private static final String KEY_MANAGED_DIALOG_OPTIONS = "jr_dialog_options";
     private static final String KEY_DIALOG_PROGRESS_TEXT = "jr_progress_dialog_text";
+    private static final String KEY_DIALOG_PROGRESS_CANCELABLE = "jr_progress_dialog_cancelable";
     private static final String PARENT_FRAGMENT_EMBEDDED = "jr_parent_fragment_embedded";
     
     public static final String JR_FRAGMENT_FLOW_MODE = "jr_fragment_flow_mode";
@@ -93,7 +94,7 @@ public abstract class JRUiFragment extends Fragment {
 
     /*package*/ JRSession mSession;
     /*package*/ final String TAG = getLogTag();
-    /*package*/ String getLogTag() { return this.getClass().getSimpleName(); }
+    /*package*/ String getLogTag() { return getClass().getSimpleName(); }
 
     /**
      * @internal
@@ -275,7 +276,9 @@ public abstract class JRUiFragment extends Fragment {
         outState.putSerializable(KEY_MANAGED_DIALOGS, mManagedDialogs);
         outState.putParcelableArray(KEY_MANAGED_DIALOG_OPTIONS, dialogOptions);
 
-        if (mCustomInterfaceConfiguration != null) mCustomInterfaceConfiguration.onSaveInstanceState(outState);
+        if (mCustomInterfaceConfiguration != null) {
+            mCustomInterfaceConfiguration.onSaveInstanceState(outState);
+        }
 
         super.onSaveInstanceState(outState);
     }
@@ -327,8 +330,11 @@ public abstract class JRUiFragment extends Fragment {
                 final JRCustomInterface customInterface = (JRCustomInterface) classRef.newInstance();
                 if (customInterface instanceof JRCustomInterfaceConfiguration) {
                     mCustomInterfaceConfiguration = (JRCustomInterfaceConfiguration) customInterface;
+                    if (mCustomInterfaceConfiguration.mColorButtons != null) {
+                        ColorButton.sEnabled = mCustomInterfaceConfiguration.mColorButtons;
+                    }
                 } else if (customInterface instanceof JRCustomInterfaceView) {
-                    mCustomInterfaceConfiguration = new JRCustomInterfaceConfiguration(){
+                    mCustomInterfaceConfiguration = new JRCustomInterfaceConfiguration() {
                         {
                             //Type safe because the type of the instantiated instance from the
                             //class ref is run time type checked
@@ -368,7 +374,7 @@ public abstract class JRUiFragment extends Fragment {
         if (bonusTagline != null) bonusTagline.setVisibility(visibility);
     }
 
-    /*package*/ ProgressDialog getProgressDialog(Bundle options) {
+    /*package*/ ProgressDialog createProgressDialog(Bundle options) {
         ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage(options.getString(KEY_DIALOG_PROGRESS_TEXT));
@@ -376,9 +382,14 @@ public abstract class JRUiFragment extends Fragment {
     }
 
     /*package*/ void showProgressDialog(String displayText) {
+        showProgressDialog(displayText, true);
+    }
+
+    /*package*/ ManagedDialog showProgressDialog(String displayText, boolean cancelable) {
         Bundle opts = new Bundle();
         opts.putString(KEY_DIALOG_PROGRESS_TEXT, displayText);
-        showDialog(DIALOG_PROGRESS, opts);
+        opts.putBoolean(KEY_DIALOG_PROGRESS_CANCELABLE, cancelable);
+        return showDialog(DIALOG_PROGRESS, opts);
     }
 
     /*package*/ void showProgressDialog() {
@@ -389,7 +400,7 @@ public abstract class JRUiFragment extends Fragment {
         dismissDialog(DIALOG_PROGRESS);
     }
 
-    private AlertDialog getAboutDialog() {
+    private AlertDialog createAboutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setPositiveButton(R.string.jr_about_button_ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -413,10 +424,10 @@ public abstract class JRUiFragment extends Fragment {
         Dialog dialog;
         switch (id) {
             case DIALOG_ABOUT:
-                dialog = getAboutDialog();
+                dialog = createAboutDialog();
                 break;
             case DIALOG_PROGRESS:
-                dialog = getProgressDialog(options);
+                dialog = createProgressDialog(options);
                 break;
             default:
                 dialog = null;
@@ -424,13 +435,19 @@ public abstract class JRUiFragment extends Fragment {
         return dialog;
     }
 
-    /*package*/ void onPrepareDialog(int id, Dialog d, Bundle options) {}
+    /*package*/ void onPrepareDialog(int id, Dialog d, Bundle options) {
+        switch (id) {
+            case DIALOG_PROGRESS:
+                d.setCancelable(options.getBoolean(KEY_DIALOG_PROGRESS_CANCELABLE, true));
+                d.setOnCancelListener(null);
+        }
+    }
 
     /*package*/ void showDialog(int dialogId) {
         showDialog(dialogId, new Bundle());
     }
 
-    /*package*/ void showDialog(int dialogId, Bundle options) {
+    /*package*/ ManagedDialog showDialog(int dialogId, Bundle options) {
         ManagedDialog d = mManagedDialogs.get(dialogId);
         if (d == null) {
             d = new ManagedDialog();
@@ -443,6 +460,8 @@ public abstract class JRUiFragment extends Fragment {
         onPrepareDialog(dialogId, d.mDialog, options);
         d.mDialog.show();
         //d.mShowing = true; // See also dismissDialog comment
+
+        return d;
     }
 
     /*package*/ void dismissDialog(int dialogId) {
@@ -607,8 +626,10 @@ public abstract class JRUiFragment extends Fragment {
                 savedInstanceState);
     }
 
-    public void showProgressDialogForCustomView() {
-        showProgressDialog();
+    public void showProgressDialogForCustomView(boolean cancelable,
+                                                DialogInterface.OnCancelListener cancelListener) {
+        ManagedDialog md = showProgressDialog(getString(R.string.jr_progress_loading), cancelable);
+        md.mDialog.setOnCancelListener(cancelListener);
     }
 
     public void dismissProgressDialogForCustomView() {

@@ -34,6 +34,7 @@ package com.janrain.android.engage.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
@@ -160,9 +161,15 @@ public abstract class JRCustomInterfaceView extends JRCustomInterface {
      * Utility method to show a progress indicator, convenient for usage during custom username/password
      * authentication. This is not the only way to display a progress dialog, it is also possible to
      * use getActivity to have the Activity object to use with the Android Dialog classes.
+     *
+     * @param cancelable
+     *  Whether the progress dialog is cancelable by the user, for example by pressing the back button
+     *
+     * @param cancelListener
+     *  The listener notified when the dialog is canceled (e.g. by the back button). Null for no listener
      */
-    public void showProgressIndicator() {
-        mUiFragment.showProgressDialogForCustomView();
+    public void showProgressIndicator(boolean cancelable, DialogInterface.OnCancelListener cancelListener) {
+        mUiFragment.showProgressDialogForCustomView(cancelable, cancelListener);
     }
 
     /**

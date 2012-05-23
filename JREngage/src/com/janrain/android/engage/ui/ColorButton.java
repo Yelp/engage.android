@@ -60,6 +60,7 @@ import java.util.ArrayList;
  */
 public class ColorButton extends Button {
     public static final String TAG = ColorButton.class.getSimpleName();
+    public static boolean sEnabled = true;
     private int mColor;
 
     public ColorButton(Context context) {
@@ -125,6 +126,8 @@ public class ColorButton extends Button {
     }
 
     private void colorify() {
+        if (!sEnabled) return;
+
         StateListDrawable b = (StateListDrawable) getBackground();
         //b.mutate(); bugged for <= 2.1 :( android issue # 17184
         StateListDrawable b_ = new StateListDrawable();
@@ -152,8 +155,11 @@ public class ColorButton extends Button {
                         && !ssl.contains(android.R.attr.state_focused))
                     d.setColorFilter(mColor, PorterDuff.Mode.MULTIPLY);
             }
-        } catch (IllegalAccessException e) { Log.e(TAG, e.toString()); return; }
-        catch (InvocationTargetException e) { Log.e(TAG, e.toString()); return; }
+        } catch (IllegalAccessException e) {
+            Log.e(TAG, e.toString()); return;
+        } catch (InvocationTargetException e) {
+            Log.e(TAG, e.toString()); return;
+        }
 
         setBackgroundDrawable(b_);
     }

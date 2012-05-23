@@ -120,6 +120,11 @@ public class JRCustomInterfaceConfiguration extends JRCustomInterface {
      */
     public Boolean mSharingUsesSystemTabs;
 
+    /**
+     * Controls coloring of buttons displayed by the library
+     */
+    public Boolean mColorButtons;
+
 //Y     do support
 //?     not sure whether to support
 //N     will not support

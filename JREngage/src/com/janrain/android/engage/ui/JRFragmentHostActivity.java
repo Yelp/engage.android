@@ -75,7 +75,6 @@ public class JRFragmentHostActivity extends FragmentActivity {
     public static final IntentFilter FINISH_INTENT_FILTER = new IntentFilter(ACTION_FINISH_FRAGMENT);
 
     private JRUiFragment mUiFragment;
-    private JRSession mSession;
     private Integer m_Result;
 
     @Override
@@ -83,13 +82,14 @@ public class JRFragmentHostActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         JREngage.logd(TAG, "[onCreate]: " + getFragmentId());
 
-        mSession = JRSession.getInstance();
+        JRSession session = JRSession.getInstance();
 
-        if (mSession == null || savedInstanceState != null) {
+        if (session == null || savedInstanceState != null) {
             /* This flow control path is reached when there's process death and restart */
-            Log.e(TAG, "bailing out after a process kill/restart. mSession: " + mSession);
+            Log.e(TAG, "bailing out after a process kill/restart. mSession: " + session);
 
-            // prevent fragment recreation error
+            // prevent fragment recreation error -- the system needs the fragment's container to exist
+            // even if the Activity is finishing right away
             setContentView(R.layout.jr_fragment_host_activity);
             super.finish();
             return;
@@ -117,7 +117,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
         fragArgs.putAll(getIntent().getExtras());
         mUiFragment.setArguments(fragArgs);
 
-        mUiFragment.onFragmentHostActivityCreate(this, mSession);
+        mUiFragment.onFragmentHostActivityCreate(this, session);
 
         if (shouldBeDialog()) {
             AndroidUtils.setFinishOnTouchOutside(this, true);
