@@ -42,10 +42,12 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -225,6 +227,12 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 }
             } else if (windowBackgroundDrawable instanceof ColorDrawable) {
                 colorBackground = ColorDrawableGetColor((ColorDrawable) windowBackgroundDrawable);
+            } else if (windowBackgroundDrawable instanceof NinePatchDrawable) {
+                Bitmap renderedNinePatch = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+                windowBackgroundDrawable.setBounds(0, 0, 99, 99);
+                windowBackgroundDrawable.draw(new Canvas(renderedNinePatch));
+                colorBackground = Bitmap.createScaledBitmap(renderedNinePatch, 1, 1, true)
+                        .getPixel(0, 0) & 0x00ffffff;
             }
         } else if (outVal.type == TypedValue.TYPE_INT_COLOR_ARGB8 ||
                 outVal.type == TypedValue.TYPE_INT_COLOR_ARGB4 ||

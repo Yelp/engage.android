@@ -33,6 +33,7 @@ package com.janrain.android.simpledemo;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -211,15 +212,16 @@ public class MainActivity extends FragmentActivity {
 
     public static class CustomUi extends JRCustomInterfaceConfiguration {
         public CustomUi() {
-            mProviderListSectionHeader = "header";
-            mProviderListSectionFooter = "footer";
-            mProviderListHeader = new CustomSignin();
+            //mProviderListSectionHeader = "header";
+            //mProviderListSectionFooter = "footer";
+            //mProviderListHeader = new CustomSignin();
             //mAuthenticationBackgroundDrawable = c.getResources().getDrawable(R.drawable.custom_signin_bg);
-            mProviderListTitle = "Custom provider list title";
-            mLandingTitle = "Landing";
-            mWebViewTitle = "WebView";
-            mSharingTitle = "Sharing";
+            //mProviderListTitle = "Sign-in to MyApplication";
+            //mLandingTitle = "Landing";
+            //mWebViewTitle = "WebView";
+            //mSharingTitle = "Sharing";
             //mSharingUsesSystemTabs = true;
+            //mColorButtons = false;
         }
 
         @Override
@@ -241,9 +243,10 @@ public class MainActivity extends FragmentActivity {
             Button signIn = (Button) v.findViewById(R.id.custom_signin_button);
             signIn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Custom signin:\n" + userName.getText() + "\n" +
+                    Toast.makeText(getActivity(), "CustomSignin:\n" + userName.getText() + "\n" +
                             password.getText(), Toast.LENGTH_LONG).show();
-                    finishJrSignin();
+                    //finishJrSignin();
+                    showProgressIndicator(false, null);
                 }
             });
 

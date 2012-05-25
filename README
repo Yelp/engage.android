@@ -1,6 +1,9 @@
 Welcome to the Janrain Engage library for the Android platform.  This library is available
 open-source under a Berkeley license, as found in the LICENSE file.
 
+Upgdating from 2.x to 3.0:
+- See the documentation on developers.janrain.com
+
 Updating from 1.x to 2.0:
 
 - Replace the activity declarations in your AndroidManifest.xml with fresh copies from
@@ -26,10 +29,9 @@ Using tablet support:
 
 Getting Started:
 
-http://rpxnow.com/docs/android
+http://developers.janrain.com/documentation/engage/mobile-libraries/android/
 
 To report bugs or ask questions:
 
 https://support.janrain.com/forums/20122381-android-library-q-a
 http://groups.google.com/group/rpx-developers
-android-dev@janrain.com

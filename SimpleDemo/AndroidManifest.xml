@@ -14,14 +14,7 @@
         android:theme="@android:style/Theme.Light"
         >
 
-        <activity android:name=".MainActivity"
-            android:theme="@android:style/Theme.Light"
-            >
-            <!--android:launchMode="singleTask">-->
-                <!--singleTask isn't working as documented, instead it's behaving as described in
-                    this bug report:
-                    http://code.google.com/p/android/issues/detail?id=11160&can=5&colspec=ID%20Type%20Status%20Owner%20Summary%20Stars
-                    -->
+        <activity android:name=".MainActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

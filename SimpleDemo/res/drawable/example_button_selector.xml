@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
   ~  Copyright (c) 2012, Janrain, Inc.
@@ -30,27 +32,7 @@
   ~  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
   -->
 
-<resources>
-
-    <!-- A custom iPhone inspired grey rounded rect background -->
-    <style name="custom_landing_box">
-        <item name="android:background">@drawable/custom_landing_box</item>
-    </style>
-
-    <style name="custom_landing_root">
-        <item name="android:background">@drawable/custom_landing_bg</item>
-    </style>
-
-    <style name="CustomTheme" parent="@style/Theme.Janrain">
-        <!--<item name="android:buttonStyle">@style/MyCustomButton</item>-->
-        <!--<item name="android:textColorPrimary">#ffff0000</item>-->
-        <!--<item name="android:windowBackground">@color/my_custom_color</item>-->
-        <item name="android:windowBackground">@drawable/example_gradient</item>
-        <item name="android:colorBackgroundCacheHint">#0000</item>
-    </style>
-
-    <style name="MyCustomButton" parent="android:Widget.Button">
-        <item name="android:background">@drawable/example_button_selector</item>
-    </style>
-
-</resources>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/my_custom_color" android:state_pressed="true"/>
+    <item android:drawable="@drawable/example"/>
+</selector>

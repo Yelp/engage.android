@@ -31,26 +31,7 @@
   -->
 
 <resources>
-
-    <!-- A custom iPhone inspired grey rounded rect background -->
-    <style name="custom_landing_box">
-        <item name="android:background">@drawable/custom_landing_box</item>
-    </style>
-
-    <style name="custom_landing_root">
-        <item name="android:background">@drawable/custom_landing_bg</item>
-    </style>
-
-    <style name="CustomTheme" parent="@style/Theme.Janrain">
-        <!--<item name="android:buttonStyle">@style/MyCustomButton</item>-->
-        <!--<item name="android:textColorPrimary">#ffff0000</item>-->
-        <!--<item name="android:windowBackground">@color/my_custom_color</item>-->
-        <item name="android:windowBackground">@drawable/example_gradient</item>
-        <item name="android:colorBackgroundCacheHint">#0000</item>
-    </style>
-
-    <style name="MyCustomButton" parent="android:Widget.Button">
-        <item name="android:background">@drawable/example_button_selector</item>
-    </style>
-
+    <color name="my_custom_color">#ff1a557c</color>
+    <color name="gradient_start">#fefeff</color>
+    <color name="gradient_end">#62c4e9</color>
 </resources>
