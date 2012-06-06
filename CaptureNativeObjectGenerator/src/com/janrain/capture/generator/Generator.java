@@ -37,6 +37,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import org.stringtemplate.v4.*;
+import org.stringtemplate.v4.compiler.CompiledST;
+import org.stringtemplate.v4.misc.STMessage;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,6 +59,8 @@ public class Generator {
     private static final String GENERATED_OBJECT_PACKAGE = "com.janrain.capture.gen";
     private static final File OUT_DIRECTORY =
             new File("gen/" + join(GENERATED_OBJECT_PACKAGE.split("\\."), "/") + "/");
+    private static final String ST_DIRECTORY = "CaptureNativeObjectGenerator/templates/";
+    private static final STGroupDir ST_GROUP = new STGroupDir(ST_DIRECTORY);
 
 
     public static void main(String[] args) throws JSONException, IOException {
@@ -74,16 +80,16 @@ public class Generator {
             throws JSONException, IOException {
         log("Object: " + objectName);
 
-        File out = new File(OUT_DIRECTORY, objectName + ".java");
-        FileOutputStream fos = new FileOutputStream(out);
-        fosPrintln(fos, "package " + GENERATED_OBJECT_PACKAGE + ";");
-        fosPrintln(fos);
-        fosPrintln(fos, "public class " + objectName + " extends JRCaptureObject {");
+        ST st = ST_GROUP.getInstanceOf("entity");
+        st.add("package", GENERATED_OBJECT_PACKAGE);
+        st.add("className", objectName);
 
         JSONArray attrDefs = jo.getJSONArray("attr_defs");
 
         for (int i = 0; i < attrDefs.length(); i++) {
             JSONObject attr = attrDefs.getJSONObject(i);
+            // attr can have
+            // description, name, type, case-sensitive, length, features, constraints, attr_defs
             String type = attr.getString("type");
             String name = attr.getString("name");
             String description = attr.optString("description");
@@ -91,46 +97,90 @@ public class Generator {
             Integer length = attr.has("length") ?
                     attr.get("length").equals(JSONObject.NULL) ? null : (Integer) attr.get("length")
                     : null;
-            //if (attr.has("features")) log(attr.get("features"));
+            Object features = attr.opt("features");
             // query
-            //if (attr.has("constraints")) log(attr.get("constraints"));
+            Object constraints = attr.opt("constraints");
             // required, unicode-printable, unique, alphabetic, alphanumeric, unicode-letters, email-address
             // locally-unique
 
-            //[description, name, type, case-sensitive, length, features, constraints, attr_defs]
+            CaptureStAttr stAttr = new CaptureStAttr(null, name, features, constraints, length,
+                    caseSensitive, description);
             if (type.equals("boolean")) {
-
+                stAttr.javaType = "Boolean";
             } else if (type.equals("date")) {
-
+                stAttr.javaType = "String";
             } else if (type.equals("dateTime")) {
-
+                stAttr.javaType = "String";
             } else if (type.equals("decimal")) {
-
+                stAttr.javaType = "Number";
             } else if (type.equals("id")) {
-
+                stAttr.javaType = "long";
             } else if (type.equals("integer")) {
-
+                stAttr.javaType = "Integer";
             } else if (type.equals("ipAddress")) {
-
+                stAttr.javaType = "String";
             } else if (type.equals("json")) {
-
+                stAttr.javaType = "String";
             } else if (type.equals("object")) {
-
+                stAttr.javaType = "JRCaptureEntity";
+                walkSchema(name, attr);
             } else if (type.equals("password")) {
-
+                stAttr.javaType = "String";
             } else if (type.equals("password")) {
-
+                stAttr.javaType = "Boolean";
             } else if (type.equals("plural")) {
-
+                stAttr.javaType = "JRPlural";
             } else if (type.equals("string")) {
-
+                stAttr.javaType = "String";
             } else if (type.equals("uuid")) {
-
+                stAttr.javaType = "String";
             }
+            st.add("attrs", stAttr);
         }
 
-        fosPrintln(fos, "}");
-        fos.close();
+        st.write(new File(OUT_DIRECTORY, objectName + ".java"), new STErrorListener() {
+            public void compileTimeError(STMessage stMessage) {
+                throw new RuntimeException(stMessage.toString());
+            }
+
+            public void runTimeError(STMessage stMessage) {
+                throw new RuntimeException(stMessage.toString());
+            }
+
+            public void IOError(STMessage stMessage) {
+                throw new RuntimeException(stMessage.toString());
+            }
+
+            public void internalError(STMessage stMessage) {
+                throw new RuntimeException(stMessage.toString());
+            }
+        });
+    }
+
+    public static class CaptureStAttr {
+        public String javaType;
+        public String propertyName;
+        public Object features;
+        public Object constraints;
+        public Integer length;
+        public Boolean caseSensitive;
+        public String description;
+
+        CaptureStAttr(String javaType,
+                      String propertyName,
+                      Object features,
+                      Object constraints,
+                      Integer length,
+                      Boolean caseSensitive,
+                      String description) {
+            this.javaType = javaType;
+            this.propertyName = propertyName;
+            this.features = features;
+            this.constraints = constraints;
+            this.length = length;
+            this.caseSensitive = caseSensitive;
+            this.description = description;
+        }
     }
 
     private static void fosPrintln(FileOutputStream fos, String line) throws IOException {
