@@ -38,7 +38,6 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import org.stringtemplate.v4.*;
-import org.stringtemplate.v4.compiler.CompiledST;
 import org.stringtemplate.v4.misc.STMessage;
 
 import java.io.File;
@@ -60,7 +59,7 @@ public class Generator {
     private static final File OUT_DIRECTORY =
             new File("gen/" + join(GENERATED_OBJECT_PACKAGE.split("\\."), "/") + "/");
     private static final String ST_DIRECTORY = "CaptureNativeObjectGenerator/templates/";
-    private static final STGroupDir ST_GROUP = new STGroupDir(ST_DIRECTORY);
+    private static final STGroupFile ST_GROUP = new STGroupFile(ST_DIRECTORY + "entity.stg");
 
 
     public static void main(String[] args) throws JSONException, IOException {
