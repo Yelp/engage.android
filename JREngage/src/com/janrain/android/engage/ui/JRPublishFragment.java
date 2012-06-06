@@ -231,7 +231,11 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 Bitmap renderedNinePatch = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
                 windowBackgroundDrawable.setBounds(0, 0, 99, 99);
                 windowBackgroundDrawable.draw(new Canvas(renderedNinePatch));
-                colorBackground = Bitmap.createScaledBitmap(renderedNinePatch, 1, 1, true)
+                //ImageView view = new ImageView(getActivity());
+                //view.setImageBitmap(renderedNinePatch);
+                //getActivity().setContentView(view);
+                Bitmap subsetNearCenter = Bitmap.createBitmap(renderedNinePatch, 24, 24, 50, 50);
+                colorBackground = Bitmap.createScaledBitmap(subsetNearCenter, 1, 1, false)
                         .getPixel(0, 0) & 0x00ffffff;
             }
         } else if (outVal.type == TypedValue.TYPE_INT_COLOR_ARGB8 ||
@@ -245,13 +249,13 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
          * be deleted in favor of either stacked views in the layout XML or a LayerDrawable background
          * composed programmatically here.
          */
-        int colorGreyOutermostBox = getColor(R.color.jr_preview_outer_grey_bg_rect);
         Double[] colorBackgroundArray = {
                 (double) Color.alpha(colorBackground),
                 (double) Color.red(colorBackground),
                 (double) Color.green(colorBackground),
                 (double) Color.blue(colorBackground),
         };
+        int colorGreyOutermostBox = getColor(R.color.jr_preview_outer_grey_bg_rect);
         Double[] colorGreyBoxArray = {
                 (double) Color.alpha(colorGreyOutermostBox),
                 (double) Color.red(colorGreyOutermostBox),
@@ -266,8 +270,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 new CollectionUtils.Function<Double, Double>() {
                     public Double operate(Double val) { return val / 255d; }
                 });
-        double bgFraction = 1d - colorGreyBoxArray[0];
         double fgFraction = colorGreyBoxArray[0];
+        double bgFraction = 1d - colorGreyBoxArray[0];
         int[] compositedColor = new int[] {
                 255,
                 (int) ((bgFraction * colorBackgroundArray[1] + fgFraction * colorGreyBoxArray[1]) * 255d),
