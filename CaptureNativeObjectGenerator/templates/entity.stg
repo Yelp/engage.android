@@ -1,10 +1,11 @@
 fieldDeclaration(attr) ::= <<
 <if(!attr.inheritedField)>
-private <attr.javaType> <attr.javaFieldName>;
+private <attr.javaType> <attr.javaFieldName>; // <attr.captureType> <attr.features> <attr.constraints>
 <endif>
 >>
 
 getterSetterDeclaration(attr) ::= <<
+
 /**
  * Get the value of <attr.captureFieldName>
  * Capture description: <attr.description>
@@ -16,8 +17,8 @@ getterSetterDeclaration(attr) ::= <<
 public <attr.javaType> get<attr.javaAccessorName>() {
     return <attr.javaFieldName>;
 }
-
 <if(!attr.readOnly)>
+
 /**
  * Set the value of <attr.captureFieldName>
  * Capture description: <attr.description>
@@ -42,7 +43,6 @@ import com.janrain.capture.*;
 
 public class <className> extends JRCaptureEntity {
     <attrs:fieldDeclaration()>
-
     <attrs:getterSetterDeclaration()>
 }
 

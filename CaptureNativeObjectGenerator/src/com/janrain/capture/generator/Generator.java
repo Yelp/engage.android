@@ -32,6 +32,8 @@
 
 package com.janrain.capture.generator;
 
+import com.janrain.capture.JRCapture;
+import com.janrain.capture.JRCaptureConfiguration;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,11 +52,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Generator {
-    private static final String ENTITY_TYPE_NAME = "user";
-    private static final String CAPTURE_DOMAIN = "mobile.dev.janraincapture.com";
-    private static final String CLIENT_ID = "zc7tx83fqy68mper69mxbt5dfvd7c2jh";
-    private static final String CLIENT_SECRET = "aqkcrjcf8ceexc5gfvw47fpazjfysyct";
-    private static final String GENERATED_OBJECT_PACKAGE = "com.janrain.capture.gen";
+    public static final String GENERATED_OBJECT_PACKAGE = "com.janrain.capture.gen";
     private static final File OUT_DIRECTORY = new File("CaptureNativeObjectGenerator/out/" +
             join(GENERATED_OBJECT_PACKAGE.split("\\."), "/") + "/");
     private static final String ST_DIRECTORY = "CaptureNativeObjectGenerator/templates/";
@@ -62,26 +60,18 @@ public class Generator {
     private static final List<String> READONLY_ATTRIBUTES = new ArrayList<String>(Arrays.asList(new String[] {
             "id", "uuid", "created", "lastUpdated", "parent_id", "profiles"
     }));
-    private static final List<String> DEPLURALIZATION_LIST =
-            new ArrayList<String>(Arrays.asList(new String [] {
-            "accounts", "account", "profiles", "profile", "addresses", "address", "friends", "friend",
-                    "photos", "photo", "emails", "email", "games", "game", "opponents", "opponent",
-                    "organizations", "organization", "phoneNumbers", "phoneNumber", "securityQuestions",
-                    "securityQuestion", "tags", "tag", "urls", "url", "relationships", "relationship",
-                    "ims", "im", "mice", "mouse"
-    }));
 
     public static void main(String[] args) throws JSONException, IOException {
-        URLConnection schemaConn = new URL("https://" + CAPTURE_DOMAIN + "/entityType?" +
-                "type_name=" + ENTITY_TYPE_NAME +
-                "&client_id=" + CLIENT_ID +
-                "&client_secret=" + CLIENT_SECRET
+        URLConnection schemaConn = new URL("https://" + JRCaptureConfiguration.CAPTURE_DOMAIN + "/entityType?" +
+                "type_name=" + JRCaptureConfiguration.ENTITY_TYPE_NAME +
+                "&client_id=" + JRCaptureConfiguration.CLIENT_ID +
+                "&client_secret=" + JRCaptureConfiguration.CLIENT_SECRET
         ).openConnection();
         schemaConn.connect();
         JSONObject jo = new JSONObject(new JSONTokener(schemaConn.getInputStream()));
 
         OUT_DIRECTORY.mkdirs();
-        walkSchema(ENTITY_TYPE_NAME, jo.getJSONObject("schema"));
+        walkSchema(JRCaptureConfiguration.ENTITY_TYPE_NAME, jo.getJSONObject("schema"));
     }
 
     private static void walkSchema(String entityName, JSONObject jo)
@@ -91,8 +81,8 @@ public class Generator {
         ST st = ST_GROUP.getInstanceOf("entity");
         st.add("package", GENERATED_OBJECT_PACKAGE);
         String className = "plural".equals(jo.optString("type")) ?
-                classNameFor(depluralize(entityName))
-                : classNameFor(entityName);
+                JRCapture.classNameFor(JRCapture.depluralize(entityName))
+                : JRCapture.classNameFor(entityName);
         st.add("className", className);
         JSONArray attrDefs = jo.getJSONArray("attr_defs");
 
@@ -134,7 +124,7 @@ public class Generator {
             } else if (attrType.equals("json")) {
                 stAttr.javaType = "String";
             } else if (attrType.equals("object")) {
-                stAttr.javaType = classNameFor(attrName);
+                stAttr.javaType = JRCapture.classNameFor(attrName);
                 walkSchema(attrName, attr);
             } else if (attrType.equals("password")) {
                 stAttr.javaType = "String";
@@ -147,7 +137,7 @@ public class Generator {
             } else if (attrType.equals("password-bcrypt")) {
                 stAttr.javaType = "String";
             } else if (attrType.equals("plural")) {
-                stAttr.javaType = "JRCapturePlural<" + classNameFor(depluralize(attrName)) + ">";
+                stAttr.javaType = "JRCapturePlural<" + JRCapture.classNameFor(JRCapture.depluralize(attrName)) + ">";
                 walkSchema(attrName, attr);
             } else if (attrType.equals("string")) {
                 stAttr.javaType = "String";
@@ -177,6 +167,11 @@ public class Generator {
                 throw new RuntimeException(stMessage.toString());
             }
         });
+    }
+
+    public static void log(Object o) {
+        System.out.println(o);
+        System.out.flush();
     }
 
     public static class CaptureStAttr {
@@ -213,39 +208,9 @@ public class Generator {
             this.description = description;
             this.readOnly = readOnly;
 
-            this.javaFieldName = snakeToCamel(captureFieldName);
-            this.javaAccessorName = upcaseFirst(this.javaFieldName);
+            this.javaFieldName = JRCapture.snakeToCamel(captureFieldName);
+            this.javaAccessorName = JRCapture.upcaseFirst(this.javaFieldName);
         }
-    }
-
-    private static String depluralize(String plural) {
-        int i;
-        if ((i = DEPLURALIZATION_LIST.indexOf(plural)) >= 0) return DEPLURALIZATION_LIST.get(i + 1);
-        log("Couldn't depluralize: " + plural);
-        return plural;
-    }
-
-    private static String classNameFor(String name) {
-        return upcaseFirst(snakeToCamel(name));
-    }
-
-    private static String upcaseFirst(String camelName) {
-        return camelName.substring(0, 1).toUpperCase() + camelName.substring(1);
-    }
-
-    private static String snakeToCamel(String snakeName) {
-        String[] namePieces = snakeName.split("_");
-        for (int i = 1; i < namePieces.length; i++) {
-            namePieces[i] = namePieces[i].substring(0, 1).toUpperCase() + namePieces[i].substring(1);
-        }
-        String retval = "";
-        for (String s : namePieces) retval += s;
-        return retval;
-    }
-
-    private static void log(Object o) {
-        System.out.println(o);
-        System.out.flush();
     }
 
     private static String jsonObjectKeysToString(JSONObject jo) {
