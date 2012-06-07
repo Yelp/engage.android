@@ -55,8 +55,8 @@ public class Generator {
     private static final String CLIENT_ID = "zc7tx83fqy68mper69mxbt5dfvd7c2jh";
     private static final String CLIENT_SECRET = "aqkcrjcf8ceexc5gfvw47fpazjfysyct";
     private static final String GENERATED_OBJECT_PACKAGE = "com.janrain.capture.gen";
-    private static final File OUT_DIRECTORY =
-            new File("gen/" + join(GENERATED_OBJECT_PACKAGE.split("\\."), "/") + "/");
+    private static final File OUT_DIRECTORY = new File("CaptureNativeObjectGenerator/out/" +
+            join(GENERATED_OBJECT_PACKAGE.split("\\."), "/") + "/");
     private static final String ST_DIRECTORY = "CaptureNativeObjectGenerator/templates/";
     private static final STGroupFile ST_GROUP = new STGroupFile(ST_DIRECTORY + "entity.stg");
     private static final List<String> READONLY_ATTRIBUTES = new ArrayList<String>(Arrays.asList(new String[] {
@@ -68,7 +68,7 @@ public class Generator {
                     "photos", "photo", "emails", "email", "games", "game", "opponents", "opponent",
                     "organizations", "organization", "phoneNumbers", "phoneNumber", "securityQuestions",
                     "securityQuestion", "tags", "tag", "urls", "url", "relationships", "relationship",
-                    "ims", "im"
+                    "ims", "im", "mice", "mouse"
     }));
 
     public static void main(String[] args) throws JSONException, IOException {
@@ -115,6 +115,7 @@ public class Generator {
 
             CaptureStAttr stAttr = new CaptureStAttr(null, attrName, attrType, features, constraints, length,
                     caseSensitive, description, READONLY_ATTRIBUTES.contains(attrName));
+            if (attrName.equals("id")) stAttr.inheritedField = true;
 
             if (attrType.equals("boolean")) {
                 stAttr.javaType = "Boolean";
@@ -188,6 +189,7 @@ public class Generator {
         public Boolean caseSensitive;
         public String description;
 
+        public boolean inheritedField = false;
         public boolean readOnly;
         public String javaFieldName;
         public String javaAccessorName; // e.g. javaFieldName with head up-cased

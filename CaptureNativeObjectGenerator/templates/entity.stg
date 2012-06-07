@@ -1,6 +1,7 @@
 fieldDeclaration(attr) ::= <<
+<if(!attr.inheritedField)>
 private <attr.javaType> <attr.javaFieldName>;
-
+<endif>
 >>
 
 getterSetterDeclaration(attr) ::= <<
@@ -36,6 +37,8 @@ entity(package, className, attrs) ::= <<
  * WARNING this code is automatically generated. Any changes made here will be overwritten.
  */
 package <package>;
+
+import com.janrain.capture.*;
 
 public class <className> extends JRCaptureEntity {
     <attrs:fieldDeclaration()>
