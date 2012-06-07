@@ -60,7 +60,15 @@ public class Generator {
     private static final String ST_DIRECTORY = "CaptureNativeObjectGenerator/templates/";
     private static final STGroupFile ST_GROUP = new STGroupFile(ST_DIRECTORY + "entity.stg");
     private static final List<String> READONLY_ATTRIBUTES = new ArrayList<String>(Arrays.asList(new String[] {
-            "id", "uuid", "created", "lastUpdated"
+            "id", "uuid", "created", "lastUpdated", "parent_id"
+    }));
+    private static final List<String> DEPLURALIZATION_LIST =
+            new ArrayList<String>(Arrays.asList(new String [] {
+            "accounts", "account", "profiles", "profile", "addresses", "address", "friends", "friend",
+                    "photos", "photo", "emails", "email", "games", "game", "opponents", "opponent",
+                    "organizations", "organization", "phoneNumbers", "phoneNumber", "securityQuestions",
+                    "securityQuestion", "tags", "tag", "urls", "url", "relationships", "relationship",
+                    "ims", "im"
     }));
 
     public static void main(String[] args) throws JSONException, IOException {
@@ -82,8 +90,10 @@ public class Generator {
 
         ST st = ST_GROUP.getInstanceOf("entity");
         st.add("package", GENERATED_OBJECT_PACKAGE);
-        st.add("className", objectName);
-
+        String className = "plural".equals(jo.optString("type")) ?
+                classNameFor(depluralize(objectName))
+                : classNameFor(objectName);
+        st.add("className", className);
         JSONArray attrDefs = jo.getJSONArray("attr_defs");
 
         for (int i = 0; i < attrDefs.length(); i++) {
@@ -103,7 +113,7 @@ public class Generator {
             // required, unicode-printable, unique, alphabetic, alphanumeric, unicode-letters, email-address
             // locally-unique
 
-            CaptureStAttr stAttr = new CaptureStAttr(null, name, features, constraints, length,
+            CaptureStAttr stAttr = new CaptureStAttr(null, name, type, features, constraints, length,
                     caseSensitive, description, READONLY_ATTRIBUTES.contains(name));
 
             if (type.equals("boolean")) {
@@ -129,13 +139,15 @@ public class Generator {
                 stAttr.javaType = "String";
             } else if (type.equals("password")) {
                 stAttr.javaType = "String";
+            } else if (type.equals("password-crypt-sha256")) {
+                stAttr.javaType = "String";
             } else if (type.equals("password-md5")) {
                 stAttr.javaType = "String";
             } else if (type.equals("password-bcrypt")) {
                 stAttr.javaType = "String";
             } else if (type.equals("plural")) {
-                stAttr.javaType = "JRCapturePlural";
-                //walkSchema(name, attr);
+                stAttr.javaType = "JRCapturePlural<" + classNameFor(depluralize(name)) + ">";
+                walkSchema(name, attr);
             } else if (type.equals("string")) {
                 stAttr.javaType = "String";
             } else if (type.equals("uuid")) {
@@ -147,7 +159,7 @@ public class Generator {
             st.add("attrs", stAttr);
         }
 
-        st.write(new File(OUT_DIRECTORY, objectName + ".java"), new STErrorListener() {
+        st.write(new File(OUT_DIRECTORY, className + ".java"), new STErrorListener() {
             public void compileTimeError(STMessage stMessage) {
                 throw new RuntimeException(stMessage.toString());
             }
@@ -169,6 +181,7 @@ public class Generator {
     public static class CaptureStAttr {
         public String javaType;
         public String captureFieldName;
+        public String captureType;
         public Object features;
         public Object constraints;
         public Integer length;
@@ -181,6 +194,7 @@ public class Generator {
 
         CaptureStAttr(String javaType,
                       String captureFieldName,
+                      String captureType,
                       Object features,
                       Object constraints,
                       Integer length,
@@ -189,6 +203,7 @@ public class Generator {
                       boolean readOnly) {
             this.javaType = javaType;
             this.captureFieldName = captureFieldName;
+            this.captureType = captureType;
             this.features = features;
             this.constraints = constraints;
             this.length = length;
@@ -199,6 +214,17 @@ public class Generator {
             this.javaFieldName = snakeToCamel(captureFieldName);
             this.javaAccessorName = upcaseFirst(this.javaFieldName);
         }
+    }
+
+    private static String depluralize(String plural) {
+        int i;
+        if ((i = DEPLURALIZATION_LIST.indexOf(plural)) >= 0) return DEPLURALIZATION_LIST.get(i);
+        log("Couldn't depluralize: " + plural);
+        return plural;
+    }
+
+    private static String classNameFor(String name) {
+        return upcaseFirst(snakeToCamel(name));
     }
 
     private static String upcaseFirst(String camelName) {

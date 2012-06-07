@@ -7,6 +7,9 @@ getterSetterDeclaration(attr) ::= <<
 /**
  * Get the value of <attr.captureFieldName>
  * Capture description: <attr.description>
+ * Capture type: <attr.captureType>
+ * Capture features: <attr.features>
+ * Capture constraints: <attr.constraints>
  * Unless the returned value is a JRCaptureEntity or a JRCapturePlural, the returned value is immutable.
  */
 public <attr.javaType> get<attr.javaAccessorName>() {
@@ -17,6 +20,9 @@ public <attr.javaType> get<attr.javaAccessorName>() {
 /**
  * Set the value of <attr.captureFieldName>
  * Capture description: <attr.description>
+ * Capture type: <attr.captureType>
+ * Capture features: <attr.features>
+ * Capture constraints: <attr.constraints>
  */
 public void set<attr.javaAccessorName>(<attr.javaType> value) {
     this.<attr.javaFieldName> = value;
