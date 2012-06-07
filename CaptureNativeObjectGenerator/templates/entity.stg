@@ -1,10 +1,28 @@
-propertyDeclaration(attr) ::= <<
+fieldDeclaration(attr) ::= <<
+private <attr.javaType> <attr.javaFieldName>;
+
+>>
+
+getterSetterDeclaration(attr) ::= <<
 /**
- * <attr.description>
+ * Get the value of <attr.captureFieldName>
+ * Capture description: <attr.description>
+ * Unless the returned value is a JRCaptureEntity or a JRCapturePlural, the returned value is immutable.
  */
-private <attr.javaType> <attr.propertyName>;
+public <attr.javaType> get<attr.javaAccessorName>() {
+    return <attr.javaFieldName>;
+}
 
+<if(!attr.readOnly)>
+/**
+ * Set the value of <attr.captureFieldName>
+ * Capture description: <attr.description>
+ */
+public void set<attr.javaAccessorName>(<attr.javaType> value) {
+    this.<attr.javaFieldName> = value;
+}
 
+<endif>
 >>
 
 entity(package, className, attrs) ::= <<
@@ -14,7 +32,9 @@ entity(package, className, attrs) ::= <<
 package <package>;
 
 public class <className> extends JRCaptureEntity {
-    <attrs:propertyDeclaration()>
+    <attrs:fieldDeclaration()>
+
+    <attrs:getterSetterDeclaration()>
 }
 
 >>

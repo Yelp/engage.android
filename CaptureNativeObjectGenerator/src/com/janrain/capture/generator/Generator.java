@@ -41,7 +41,6 @@ import org.stringtemplate.v4.*;
 import org.stringtemplate.v4.misc.STMessage;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -51,7 +50,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Generator {
-    private static final String ENTITY_TYPE_NAME = "user_dev";
+    private static final String ENTITY_TYPE_NAME = "user";
     private static final String CAPTURE_DOMAIN = "mobile.dev.janraincapture.com";
     private static final String CLIENT_ID = "zc7tx83fqy68mper69mxbt5dfvd7c2jh";
     private static final String CLIENT_SECRET = "aqkcrjcf8ceexc5gfvw47fpazjfysyct";
@@ -60,7 +59,9 @@ public class Generator {
             new File("gen/" + join(GENERATED_OBJECT_PACKAGE.split("\\."), "/") + "/");
     private static final String ST_DIRECTORY = "CaptureNativeObjectGenerator/templates/";
     private static final STGroupFile ST_GROUP = new STGroupFile(ST_DIRECTORY + "entity.stg");
-
+    private static final List<String> READONLY_ATTRIBUTES = new ArrayList<String>(Arrays.asList(new String[] {
+            "id", "uuid", "created", "lastUpdated"
+    }));
 
     public static void main(String[] args) throws JSONException, IOException {
         URLConnection schemaConn = new URL("https://" + CAPTURE_DOMAIN + "/entityType?" +
@@ -103,7 +104,8 @@ public class Generator {
             // locally-unique
 
             CaptureStAttr stAttr = new CaptureStAttr(null, name, features, constraints, length,
-                    caseSensitive, description);
+                    caseSensitive, description, READONLY_ATTRIBUTES.contains(name));
+
             if (type.equals("boolean")) {
                 stAttr.javaType = "Boolean";
             } else if (type.equals("date")) {
@@ -126,13 +128,21 @@ public class Generator {
             } else if (type.equals("password")) {
                 stAttr.javaType = "String";
             } else if (type.equals("password")) {
-                stAttr.javaType = "Boolean";
+                stAttr.javaType = "String";
+            } else if (type.equals("password-md5")) {
+                stAttr.javaType = "String";
+            } else if (type.equals("password-bcrypt")) {
+                stAttr.javaType = "String";
             } else if (type.equals("plural")) {
-                stAttr.javaType = "JRPlural";
+                stAttr.javaType = "JRCapturePlural";
+                //walkSchema(name, attr);
             } else if (type.equals("string")) {
                 stAttr.javaType = "String";
             } else if (type.equals("uuid")) {
                 stAttr.javaType = "String";
+            } else {
+                log("unrecognized type: " + type);
+                continue;
             }
             st.add("attrs", stAttr);
         }
@@ -158,36 +168,51 @@ public class Generator {
 
     public static class CaptureStAttr {
         public String javaType;
-        public String propertyName;
+        public String captureFieldName;
         public Object features;
         public Object constraints;
         public Integer length;
         public Boolean caseSensitive;
         public String description;
 
+        public boolean readOnly;
+        public String javaFieldName;
+        public String javaAccessorName; // e.g. javaFieldName with head up-cased
+
         CaptureStAttr(String javaType,
-                      String propertyName,
+                      String captureFieldName,
                       Object features,
                       Object constraints,
                       Integer length,
                       Boolean caseSensitive,
-                      String description) {
+                      String description,
+                      boolean readOnly) {
             this.javaType = javaType;
-            this.propertyName = propertyName;
+            this.captureFieldName = captureFieldName;
             this.features = features;
             this.constraints = constraints;
             this.length = length;
             this.caseSensitive = caseSensitive;
             this.description = description;
+            this.readOnly = readOnly;
+
+            this.javaFieldName = snakeToCamel(captureFieldName);
+            this.javaAccessorName = upcaseFirst(this.javaFieldName);
         }
     }
 
-    private static void fosPrintln(FileOutputStream fos, String line) throws IOException {
-        fos.write((line + "\n").getBytes());
+    private static String upcaseFirst(String camelName) {
+        return camelName.substring(0, 1).toUpperCase() + camelName.substring(1);
     }
 
-    private static void fosPrintln(FileOutputStream fos) throws IOException {
-        fosPrintln(fos, "");
+    private static String snakeToCamel(String snakeName) {
+        String[] namePieces = snakeName.split("_");
+        for (int i = 1; i < namePieces.length; i++) {
+            namePieces[i] = namePieces[i].substring(0, 1).toUpperCase() + namePieces[i].substring(1);
+        }
+        String retval = "";
+        for (String s : namePieces) retval += s;
+        return retval;
     }
 
     private static void log(Object o) {
@@ -205,8 +230,8 @@ public class Generator {
         return l;
     }
 
-    private static String join(String[] a, String seperator) {
-        return join(Arrays.asList(a), seperator);
+    private static String join(String[] a, String separator) {
+        return join(Arrays.asList(a), separator);
     }
 
     private static String join(List l, String separator) {
