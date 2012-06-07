@@ -60,7 +60,7 @@ public class Generator {
     private static final String ST_DIRECTORY = "CaptureNativeObjectGenerator/templates/";
     private static final STGroupFile ST_GROUP = new STGroupFile(ST_DIRECTORY + "entity.stg");
     private static final List<String> READONLY_ATTRIBUTES = new ArrayList<String>(Arrays.asList(new String[] {
-            "id", "uuid", "created", "lastUpdated", "parent_id"
+            "id", "uuid", "created", "lastUpdated", "parent_id", "profiles"
     }));
     private static final List<String> DEPLURALIZATION_LIST =
             new ArrayList<String>(Arrays.asList(new String [] {
@@ -84,15 +84,15 @@ public class Generator {
         walkSchema(ENTITY_TYPE_NAME, jo.getJSONObject("schema"));
     }
 
-    private static void walkSchema(String objectName, JSONObject jo)
+    private static void walkSchema(String entityName, JSONObject jo)
             throws JSONException, IOException {
-        log("Object: " + objectName);
+        log("Object: " + entityName);
 
         ST st = ST_GROUP.getInstanceOf("entity");
         st.add("package", GENERATED_OBJECT_PACKAGE);
         String className = "plural".equals(jo.optString("type")) ?
-                classNameFor(depluralize(objectName))
-                : classNameFor(objectName);
+                classNameFor(depluralize(entityName))
+                : classNameFor(entityName);
         st.add("className", className);
         JSONArray attrDefs = jo.getJSONArray("attr_defs");
 
@@ -100,8 +100,8 @@ public class Generator {
             JSONObject attr = attrDefs.getJSONObject(i);
             // attr can have
             // description, name, type, case-sensitive, length, features, constraints, attr_defs
-            String type = attr.getString("type");
-            String name = attr.getString("name");
+            String attrType = attr.getString("type");
+            String attrName = attr.getString("name");
             String description = attr.optString("description");
             Boolean caseSensitive = attr.has("case-sensitive") ? attr.getBoolean("case-sensitive") : null;
             Integer length = attr.has("length") ?
@@ -113,47 +113,47 @@ public class Generator {
             // required, unicode-printable, unique, alphabetic, alphanumeric, unicode-letters, email-address
             // locally-unique
 
-            CaptureStAttr stAttr = new CaptureStAttr(null, name, type, features, constraints, length,
-                    caseSensitive, description, READONLY_ATTRIBUTES.contains(name));
+            CaptureStAttr stAttr = new CaptureStAttr(null, attrName, attrType, features, constraints, length,
+                    caseSensitive, description, READONLY_ATTRIBUTES.contains(attrName));
 
-            if (type.equals("boolean")) {
+            if (attrType.equals("boolean")) {
                 stAttr.javaType = "Boolean";
-            } else if (type.equals("date")) {
+            } else if (attrType.equals("date")) {
                 stAttr.javaType = "String";
-            } else if (type.equals("dateTime")) {
+            } else if (attrType.equals("dateTime")) {
                 stAttr.javaType = "String";
-            } else if (type.equals("decimal")) {
+            } else if (attrType.equals("decimal")) {
                 stAttr.javaType = "Number";
-            } else if (type.equals("id")) {
+            } else if (attrType.equals("id")) {
                 stAttr.javaType = "long";
-            } else if (type.equals("integer")) {
+            } else if (attrType.equals("integer")) {
                 stAttr.javaType = "Integer";
-            } else if (type.equals("ipAddress")) {
+            } else if (attrType.equals("ipAddress")) {
                 stAttr.javaType = "String";
-            } else if (type.equals("json")) {
+            } else if (attrType.equals("json")) {
                 stAttr.javaType = "String";
-            } else if (type.equals("object")) {
-                stAttr.javaType = "JRCaptureEntity";
-                walkSchema(name, attr);
-            } else if (type.equals("password")) {
+            } else if (attrType.equals("object")) {
+                stAttr.javaType = classNameFor(attrName);
+                walkSchema(attrName, attr);
+            } else if (attrType.equals("password")) {
                 stAttr.javaType = "String";
-            } else if (type.equals("password")) {
+            } else if (attrType.equals("password")) {
                 stAttr.javaType = "String";
-            } else if (type.equals("password-crypt-sha256")) {
+            } else if (attrType.equals("password-crypt-sha256")) {
                 stAttr.javaType = "String";
-            } else if (type.equals("password-md5")) {
+            } else if (attrType.equals("password-md5")) {
                 stAttr.javaType = "String";
-            } else if (type.equals("password-bcrypt")) {
+            } else if (attrType.equals("password-bcrypt")) {
                 stAttr.javaType = "String";
-            } else if (type.equals("plural")) {
-                stAttr.javaType = "JRCapturePlural<" + classNameFor(depluralize(name)) + ">";
-                walkSchema(name, attr);
-            } else if (type.equals("string")) {
+            } else if (attrType.equals("plural")) {
+                stAttr.javaType = "JRCapturePlural<" + classNameFor(depluralize(attrName)) + ">";
+                walkSchema(attrName, attr);
+            } else if (attrType.equals("string")) {
                 stAttr.javaType = "String";
-            } else if (type.equals("uuid")) {
+            } else if (attrType.equals("uuid")) {
                 stAttr.javaType = "String";
             } else {
-                log("unrecognized type: " + type);
+                log("unrecognized type: " + attrType);
                 continue;
             }
             st.add("attrs", stAttr);
@@ -218,7 +218,7 @@ public class Generator {
 
     private static String depluralize(String plural) {
         int i;
-        if ((i = DEPLURALIZATION_LIST.indexOf(plural)) >= 0) return DEPLURALIZATION_LIST.get(i);
+        if ((i = DEPLURALIZATION_LIST.indexOf(plural)) >= 0) return DEPLURALIZATION_LIST.get(i + 1);
         log("Couldn't depluralize: " + plural);
         return plural;
     }
