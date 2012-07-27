@@ -41,13 +41,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created with IntelliJ IDEA.
- * User: nathan
- * Date: 5/1/12
- * Time: 1:52 PM
- * To change this template use File | Settings | File Templates.
- */
 public class ThreadUtils {
     private static ThreadPoolExecutor sExecutor;
     static {

@@ -715,11 +715,12 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     /**
+     * @internal
      * This class serves to respond to the MEU connection and delegates the result to the real fragment.
      * This is necessary because the real fragment can be destroyed and recreated if it's  in an Activity
      * which is destroyed and recreated because it cannot setRetainInstance(true) because it may be added to
      * the back stack.
-      */
+     */
     public static class RetainFragment extends Fragment {
         private static final String TAG  = RetainFragment.class.getSimpleName();
         JRWebViewFragment mTarget;
