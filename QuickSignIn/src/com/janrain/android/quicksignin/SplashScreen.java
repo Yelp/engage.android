@@ -47,8 +47,7 @@ public class SplashScreen extends Activity implements View.OnClickListener {
 
         setContentView(R.layout.splash);
 
-        Button mBtnTestAuth = (Button)findViewById(R.id.btn_test_auth);
-        mBtnTestAuth.setOnClickListener(this);
+        findViewById(R.id.btn_view_profiles).setOnClickListener(this);
     }
 
     public void onClick(View view) {

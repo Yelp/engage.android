@@ -616,6 +616,7 @@ public class JRWebViewFragment extends JRUiFragment {
         }
 
         JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
+        // TODO null guard here
         final String result = resultDictionary.getAsString("stat");
         if ("ok".equals(result)) {
             // TODO back button is no longer disabled because of the switch from modal dialog
