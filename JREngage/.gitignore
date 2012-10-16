@@ -18,3 +18,9 @@ proguard.cfg
 local.properties
 
 Doxygen/debug.txt
+
+target/*
+.project
+.classpath
+.settings/*
+libs
