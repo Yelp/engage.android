@@ -132,9 +132,9 @@ public class JRSession implements JRConnectionManagerDelegate {
         return sInstance;
 	}
 
-	public static JRSession getInstance(String appId,
-                                            String tokenUrl,
-                                            JRSessionDelegate delegate) {
+    public static JRSession getInstance(String appId,
+                                        String tokenUrl,
+                                        JRSessionDelegate delegate) {
         if (sInstance != null) {
             if (sInstance.isUiShowing()) {
                 Log.e(TAG, "Cannot reinitialize JREngage while its UI is showing");
@@ -147,10 +147,10 @@ public class JRSession implements JRConnectionManagerDelegate {
             sInstance = new JRSession(appId, tokenUrl, delegate);
         }
 
-		return sInstance;
-	}
+        return sInstance;
+    }
 
-	private JRSession(String appId, String tokenUrl, JRSessionDelegate delegate) {
+    private JRSession(String appId, String tokenUrl, JRSessionDelegate delegate) {
         initialize(appId, tokenUrl, delegate);
     }
 

@@ -74,8 +74,11 @@ import org.json.JSONException;
 import android.util.Log;
 import org.apache.cordova.api.CordovaPlugin;
 import org.apache.cordova.api.PluginResult;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import static com.janrain.android.engage.JREngageError.ConfigurationError;
 
 /**
  * Phonegap plugin for authenticating with Janrain Engage
@@ -129,14 +132,16 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
                     if (cmd.equals("print")) {
                         showToast(args.getString(0));
                     } else if (cmd.equals("initializeJREngage")) {
-                        initializeJREngage(args.getString(0), args.getString(1));
+                        String appId = args.get(0) == JSONObject.NULL ? null : args.getString(0);
+                        String tokenUrl = args.get(1) == JSONObject.NULL ? null : args.getString(1);
+                        initializeJREngage(appId, tokenUrl);
                     } else if (cmd.equals("showAuthenticationDialog")) {
                         showAuthenticationDialog();
                     } else if (cmd.equals("showSharingDialog")) {
                         showSharingDialog(args.getString(0));
                     } else { // TODO: Test these errors and verify that the single quotes are fine
                         postResultAndResetState(new PluginResult(PluginResult.Status.INVALID_ACTION,
-                                "{'stat':'fail','code':-1,'message':'Unknown action " + cmd + "'}"));
+                                buildFailureString(-1, "Unknown action: " + cmd)));
                     }
                 } catch (JSONException e) {
                     postResultAndResetState(buildJsonFailureResult(-1, "Error parsing arguments for " + cmd));
@@ -224,7 +229,7 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
 
     private synchronized void initializeJREngage(String appId, String tokenUrl) {
         if (appId == null || appId.equals("")) {
-            postResultAndResetState(buildFailureResult(JREngageError.ConfigurationError.MISSING_APP_ID_ERROR,
+            postResultAndResetState(buildFailureResult(ConfigurationError.MISSING_APP_ID_ERROR,
                     "Missing appId in call to initialize"));
             return;
         }
@@ -232,12 +237,13 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
         try {
             mJREngage = JREngage.initInstance(cordova.getActivity(), appId, tokenUrl, this);
         } catch (IllegalArgumentException e) {
-            postResultAndResetState(buildFailureResult(JREngageError.ConfigurationError.GENERIC_CONFIGURATION_ERROR,
+            postResultAndResetState(buildFailureResult(ConfigurationError.GENERIC_CONFIGURATION_ERROR,
                     "There was an error initializing JREngage: returned JREngage object was null"));
             return;
         }
 
-        postResultAndResetState(new PluginResult(PluginResult.Status.OK, "{'stat':'ok','message':'Initializing JREngage...'}"));
+        postResultAndResetState(new PluginResult(PluginResult.Status.OK,
+                "{'stat':'ok','message':'Initializing JREngage...'}"));
     }
 
     private synchronized void showAuthenticationDialog() {
