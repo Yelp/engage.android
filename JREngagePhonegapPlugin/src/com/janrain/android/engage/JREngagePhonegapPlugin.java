@@ -80,30 +80,9 @@ import java.util.ArrayList;
 
 import static com.janrain.android.engage.JREngageError.ConfigurationError;
 
-/**
- * Phonegap plugin for authenticating with Janrain Engage
- * <p>
- * result example - {"filename":"/sdcard","isdir":true,"children":[{"filename":"a.txt","isdir":false},{..}]}
- * </p>
- * <pre>
- * {@code
- * successCallback = function(result){
- *     //result is a json
- *
- * }
- * failureCallback = function(error){
- *     //error is error message
- * }
- *
- * </pre>
- * @author Lilli Szafranski and Nathan Ramsey
- *
- */
 public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDelegate {
     private static String TAG = "[JREngagePhonegapPlugin]";
     private JREngage mJREngage;
-    //private boolean mWaitingForLibrary;
-    //private PluginResult mResult;
 
     private JRDictionary mFullAuthenticationResponse     = null;
     private JRDictionary mFullSharingResponse            = null;
@@ -125,7 +104,6 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     public synchronized boolean execute(final String cmd, final JSONArray args,
                                         final CallbackContext callback) {
         mCallback = callback;
-        //mWaitingForLibrary = true;
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 try {
@@ -149,21 +127,6 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
             }
         });
 
-        //while (mWaitingForLibrary) {
-        //    Log.d("[JREngagePhoneGapWrapper]", "mWaitingForLibrary = true");
-        //    try {
-        //        wait();
-        //    } catch (InterruptedException e) { /* No exceptions are expected */
-        //        Log.e(TAG, "Interrupted exception: ", e);
-        //
-        //        resetPluginState();
-        //        callback.sendPluginResult(buildFailureResult(-1, "Unexpected InterruptedException: " + e));
-        //        return false;
-        //    }
-        //}
-
-        //Log.d(TAG, "[JREngagePhoneGapWrapper] mWaitingForLibrary = false" + mResult.getJSONString());
-
         return true;
     }
 
@@ -184,12 +147,8 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     }
 
     private synchronized void postResultAndResetState(PluginResult result) {
-        //mResult            = result;
-        //mWaitingForLibrary = false;
-
         resetPluginState();
         mCallback.sendPluginResult(result);
-        //notifyAll();
     }
 
     private PluginResult buildSuccessResult(JRDictionary successDictionary) {
@@ -290,7 +249,7 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
 
     public synchronized void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
         JREngage.logd(TAG, "[jrAuthenticationDidFailWithError] " + error);
-        // TODO: Test this on Android (fails and fails during sharing)
+        // TODO: Test this on Android (auth fails as well as sharing fails)
         if (!mWeAreSharing)
             postResultAndResetState(buildFailureResult(error));
     }
