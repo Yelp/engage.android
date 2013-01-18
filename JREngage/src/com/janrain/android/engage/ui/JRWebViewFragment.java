@@ -428,7 +428,10 @@ public class JRWebViewFragment extends JRUiFragment {
             /* Intercept and sink mailto links because the webview auto-linkifies example email addresses
              * in the Google and Yahoo login pages and it's too easy to fat finger them :(
              */
-            return Uri.parse(url).getScheme().equals("mailto");
+            if (Uri.parse(url).getScheme().equals("mailto")) return true;
+
+            // Same for any scheme besides HTTP or HTTPS, e.g. market://
+            return !(Uri.parse(url).getScheme().equals("http") || Uri.parse(url).getScheme().equals("https"));
         }
 
         @Override

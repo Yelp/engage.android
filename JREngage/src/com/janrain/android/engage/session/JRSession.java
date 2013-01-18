@@ -42,7 +42,6 @@ import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.JREngageError.ConfigurationError;
 import com.janrain.android.engage.JREngageError.ErrorType;
 import com.janrain.android.engage.JREngageError.SocialPublishingError;
-import com.janrain.android.engage.JREnvironment;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -70,17 +69,13 @@ import java.util.Map;
 public class JRSession implements JRConnectionManagerDelegate {
     private static final String TAG = JRSession.class.getSimpleName();
 
-    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
-    //private static final JREnvironment ENVIRONMENT = JREnvironment.TESTING;
-    //private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
-    //private static final JREnvironment ENVIRONMENT = JREnvironment.LILLI;
-    //private static final JREnvironment ENVIRONMENT = JREnvironment.NATHAN;
-
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
     private static final String ARCHIVE_AUTH_PROVIDERS = "authProviders";
     private static final String ARCHIVE_SHARING_PROVIDERS = "sharingProviders";
     private static final String ARCHIVE_AUTH_USERS_BY_PROVIDER = "jrAuthenticatedUsersByProvider";
 
+    private static final String RPXNOW_BASE_URL = "https://rpxnow.com";
+    public static String mEngageBaseUrl = RPXNOW_BASE_URL;
     private static final String UNFORMATTED_CONFIG_URL =
             "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s&version=%s";
     private static final String TAG_GET_CONFIGURATION = "getConfiguration";
@@ -249,10 +244,6 @@ public class JRSession implements JRConnectionManagerDelegate {
 
         mError = startGetConfiguration();
 	}
-
-    private String getString(int resourceId) {
-        return getApplicationContext().getString(resourceId);
-    }
 
     public JREngageError getError() {
         return mError;
@@ -601,7 +592,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 
     private JREngageError startGetConfiguration() {
         String urlString = String.format(UNFORMATTED_CONFIG_URL,
-                ENVIRONMENT.getServerUrl(),
+                mEngageBaseUrl,
                 mAppId,
                 mUrlEncodedAppName,
                 mUrlEncodedLibraryVersion);
@@ -841,7 +832,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         body.append("&device=").append("android");
         body.append("&appId=").append(mAppId);
 
-        String url = ENVIRONMENT.getServerUrl() + "/social/record_activity";
+        String url = mEngageBaseUrl + "/social/record_activity";
 
         JREngage.logd(TAG, "[notifyEmailSmsShare]: " + url + " data: " + body.toString());
 
@@ -889,7 +880,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         body.append("&device=android");
         body.append("&app_name=").append(mUrlEncodedAppName);
 
-        String url = ENVIRONMENT.getServerUrl() + "/api/v2/activity";
+        String url = mEngageBaseUrl + "/api/v2/activity";
 
         JREngage.logd(TAG, "[shareActivityForUser]: " + url + " data: " + body);
 
@@ -921,7 +912,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         body.append("&device=android");
         body.append("&app_name=").append(mUrlEncodedAppName);
 
-        String url = ENVIRONMENT.getServerUrl() + "/api/v2/set_status";
+        String url = mEngageBaseUrl + "/api/v2/set_status";
 
         JREngage.logd(TAG, "[setStatusForUser]: " + url + " data: " + body.toString());
 
@@ -1073,10 +1064,6 @@ public class JRSession implements JRConnectionManagerDelegate {
 
     public boolean isConfigDone() {
         return mConfigDone;
-    }
-
-    public static JREnvironment getEnvironment() {
-        return ENVIRONMENT;
     }
 
     public String getUrlEncodedAppName() {

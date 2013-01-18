@@ -347,8 +347,10 @@ public class JRProvider implements Serializable {
 
                     try {
                         JREngage.logd(TAG, "Downloading icon: " + iconFileName);
-                        URL url = new URL(JRSession.getEnvironment().getServerUrl()
-                                + "/cdn/images/mobile_icons/android/" + iconFileName);
+                        // This is the only point outside of JRSession that touches Engage. Maybe move this
+                        // there?
+                        URL url = new URL(JRSession.mEngageBaseUrl + "/cdn/images/mobile_icons/android/"
+                                + iconFileName);
                         InputStream is = url.openStream();
                         fos = c.openFileOutput("providericon~" + iconFileName,
                                 Context.MODE_PRIVATE);

@@ -47,6 +47,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.ui.JRCustomInterfaceConfiguration;
 import com.janrain.android.engage.ui.JRCustomInterfaceView;
 import com.janrain.android.engage.JREngage;
@@ -259,16 +260,19 @@ public class MainActivity extends FragmentActivity {
         String engageTokenUrl = null;
         try {
             engageAppId = readAsset("app_id.txt").trim();
-            engageTokenUrl = readAsset("token_url.txt").trim();
         } catch (NullPointerException e) {
-            // Only check for app ID, token URL is optional
-            if (engageAppId == null) {
-                new AlertDialog.Builder(this).setTitle("Configuration error")
-                        .setMessage("You need to create assets/app_id.txt, then recompile and reinstall.")
-                        .create().show();
-                return false;
-            }
+            new AlertDialog.Builder(this).setTitle("Configuration error")
+                    .setMessage("You need to create assets/app_id.txt, then recompile and reinstall.")
+                    .create().show();
+            return false;
         }
+
+        try { engageTokenUrl = readAsset("token_url.txt").trim(); } catch (NullPointerException ignored) {}
+        try {
+            // for configurability to test against e.g. staging
+            // don't do this:
+            JRSession.mEngageBaseUrl = readAsset("engage_base_url.txt").trim();
+        } catch (NullPointerException ignored) {}
 
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, mJREngageDelegate);
         return mEngage != null;
