@@ -275,7 +275,7 @@ public class JREngage {
         if (sInitalizationComplete) return;
 
         try {
-            sInstance.wait();
+            JREngage.class.wait();
         } catch (InterruptedException e) {
             Log.e(TAG, "Unexpected InterruptedException");
         }

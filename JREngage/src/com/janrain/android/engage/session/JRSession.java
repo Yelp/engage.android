@@ -968,9 +968,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 
         if (!TextUtils.isEmpty(mTokenUrl)) {
-            makeCallToTokenUrl(mTokenUrl,
-                               authInfoToken,
-                               mCurrentlyAuthenticatingProvider.getName());
+            makeCallToTokenUrl(mTokenUrl, authInfoToken, mCurrentlyAuthenticatingProvider.getName());
         }
 
         mCurrentlyAuthenticatingProvider.setForceReauth(false);
