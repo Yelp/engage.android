@@ -304,8 +304,7 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
         shareBlob.put("code", error.getCode());
         shareBlob.put("message", error.getMessage());
 
-        if (mShareBlobs == null)
-            mShareBlobs = new ArrayList<JRDictionary>();
+        if (mShareBlobs == null) mShareBlobs = new ArrayList<JRDictionary>();
 
         mShareBlobs.add(shareBlob);
     }

@@ -50,7 +50,6 @@ import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.janrain.android.quicksignin.QuickSignInEnvironment.getAppId;
@@ -80,7 +79,7 @@ public class ProfilesActivity extends ListActivity implements JREngageDelegate {
         setContentView(R.layout.profiles_listview);
 
         mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
-        JREngage.blockOnInitializationIo();
+        JREngage.blockOnInitialization();
 
         mEditing = false;
 
