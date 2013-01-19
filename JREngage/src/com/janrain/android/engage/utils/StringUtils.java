@@ -40,13 +40,16 @@ import android.text.TextUtils;
  * String utility methods.
  */
 public final class StringUtils {
+
+    public static final String[] TRUE_STRINGS = new String[]{"true", "yes"};
+    public static final String[] FALSE_STRINGS = new String[]{"false", "no"};
+
     private StringUtils() {
-        // no instance allowed, static utility class
     }
 
     /**
      * <p>Removes <code>separator</code> from the end of
-     * <code>str</code> if it's there, otherwise leave it alone.</p>
+     * <code>str</code> if present </p>
      *
      * <pre>
      * StringUtils.chomp(null, *)         = null
@@ -63,7 +66,7 @@ public final class StringUtils {
      *
      * @param str  the String to chomp from, may be null
      * @param separator  separator String, may be null
-     * @return String without trailing separator, <code>null</code> if null String input
+     * @return String without trailing separator, or <code>null</code> if str is null
      */
     public static String chomp(String str, String separator) {
         if (TextUtils.isEmpty(str) || separator == null) {
@@ -74,26 +77,6 @@ public final class StringUtils {
         }
         return str;
     }
-
-    /**
-     * Converts the specified string to it's JSON representation.
-     *
-     * @param str
-     *      The string to be converted to JSON.
-     * @return
-     *      The JSONified string.
-     */
-    //public static String toJson(String str) {
-    //    String retval = null;
-    //    try {
-    //        ObjectMapper mapper = new ObjectMapper();
-    //        retval = mapper.writeValueAsString(str);
-    //    } catch (IOException e) {
-    //        Log.w(TAG, "[toJson] problem serializing JSON string: ", e);
-    //    }
-    //
-    //    return retval;
-    //}
 
     /**
      * Converts string to boolean, checking for all supported meanings of true.
@@ -128,10 +111,9 @@ public final class StringUtils {
      *      <code>true</code> if the value is true, <code>false</code> otherwise.
      */
     public static boolean isTrue(String stringToCheck) {
-        final String[] STRINGS = { "true", "yes" };
         boolean retval = false;
         if (!TextUtils.isEmpty(stringToCheck)) {
-            for (String s : STRINGS) {
+            for (String s : TRUE_STRINGS) {
                 if (s.equalsIgnoreCase(stringToCheck)) {
                     retval = true;
                     break;
@@ -152,10 +134,9 @@ public final class StringUtils {
      *      <code>true</code> if the value is false, <code>false</code> otherwise.
      */
     public static boolean isFalse(String stringToCheck) {
-        final String[] STRINGS = { "false", "no" };
         boolean retval = false;
         if (!TextUtils.isEmpty(stringToCheck)) {
-            for (String s : STRINGS) {
+            for (String s : FALSE_STRINGS) {
                 if (s.equalsIgnoreCase(stringToCheck)) {
                     retval = true;
                     break;
@@ -163,5 +144,10 @@ public final class StringUtils {
             }
         }
         return retval;
+    }
+
+    public static String trim(String s) {
+        if (s == null) return null;
+        return s.trim();
     }
 }

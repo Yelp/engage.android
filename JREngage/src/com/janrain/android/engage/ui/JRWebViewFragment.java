@@ -41,7 +41,6 @@ import android.support.v4.app.FragmentManager;
 import android.webkit.ConsoleMessage;
 import android.widget.FrameLayout;
 import android.os.Handler;
-import android.os.StrictMode;
 import com.janrain.android.engage.utils.ThreadUtils;
 import org.json.JSONException;
 
@@ -353,7 +352,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     private boolean isMobileEndpointUrl(String url) {
         if (mSession == null) return false;
-        final String endpointUrl = mSession.getBaseUrl() + "/signin/device";
+        final String endpointUrl = mSession.getRpBaseUrl() + "/signin/device";
         return ((!TextUtils.isEmpty(url)) && (url.startsWith(endpointUrl)));
     }
 

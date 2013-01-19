@@ -652,7 +652,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
             final String jsonEncodedUrlsMap = jss.toString();
             String urlEncodedJson = AndroidUtils.urlEncode(jsonEncodedUrlsMap);
             final String getUrlsUrl =
-                    session.getBaseUrl() + "/openid/get_urls?"
+                    session.getRpBaseUrl() + "/openid/get_urls?"
                     + "urls=" + urlEncodedJson
                     + "&app_name=" + session.getUrlEncodedAppName()
                     + "&device=android";

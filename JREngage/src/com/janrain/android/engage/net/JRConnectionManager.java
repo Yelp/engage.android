@@ -136,7 +136,8 @@ public class JRConnectionManager {
 
         if (Looper.myLooper() != null) {
             // operate asynchronously, post a message back to the thread later
-            ThreadUtils.executeInBg(new AsyncHttpClient.HttpExecutor(new Handler(), connectionData));
+            ThreadUtils.executeInBg(new AsyncHttpClient.HttpExecutor(new Handler(),
+                    connectionData));
         } else {
             // operate synchronously
             new AsyncHttpClient.HttpExecutor(null, connectionData).run();

@@ -35,9 +35,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
@@ -216,7 +214,8 @@ public class JRAuthenticatedUser implements Serializable {
             public void run() {
                 try {
                     getApplicationContext().deleteFile("userpic~" + getCachedProfilePicKey());
-                } catch (ProfilePicMissingException ignore) {}
+                } catch (ProfilePicMissingException ignore) {
+                }
             }
         });
     }

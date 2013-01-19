@@ -209,11 +209,11 @@ public class JREngage {
                 public void run() {
                     sInstance.mSession = JRSession.getInstance(appId, tokenUrl, sInstance.mJrsd);
 
-                    // any use of the library be guarded by blockOnInitialization, which checks this ivar,
+                    // any use of the library is guarded by blockOnInitialization, which checks this ivar,
                     // acquires this lock and waits
                     synchronized (JREngage.class) {
                         sInitalizationComplete = true;
-                        sInstance.notifyAll();
+                        JREngage.class.notifyAll();
                     }
                 }
             });

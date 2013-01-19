@@ -96,8 +96,6 @@ public final class CollectionUtils {
         return retList;
     }
 
-    public static int[] test() { return new int[] {1};}
-
     /**
      * Maps a function f onto the values of a array array. Returns a new array with with the result.
      * @param array

@@ -54,25 +54,6 @@ public final class IOUtils {
 	 * @param in
 	 * 		The input stream to read the contents of.
 	 *
-	 * @return
-	 * 		A byte array representing the full contents of the stream, null if stream is null or
-	 * 		operation failed.
-	 */
-	public static byte[] readFromStream(InputStream in) {
-		try {
-			return  readFromStream(in, false);
-		} catch (IOException ignore) {
-			// will never happen because we're sending 'false', but need for compilation
-            throw new RuntimeException("unexpected IOException");
-		}
-	}
-
-	/**
-	 * Reads the entire contents of the specified stream to a byte array.
-	 *
-	 * @param in
-	 * 		The input stream to read the contents of.
-	 *
 	 * @param shouldThrowOnError
 	 *		Flag indicating whether or not the user wants to handle exceptions that are thrown
 	 *		during this operation.

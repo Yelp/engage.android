@@ -68,6 +68,7 @@ import android.webkit.ConsoleMessage;
 import com.janrain.android.engage.JREngage;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -260,6 +261,18 @@ public class AndroidUtils {
         }
 
         editor.commit();
+    }
+
+    public static String readAsset(Context c, String fileName) {
+        try {
+            InputStream is = c.getAssets().open(fileName);
+            byte[] buffer = new byte[is.available()];
+            //noinspection ResultOfMethodCallIgnored
+            is.read(buffer); // buffer is exactly the right size, a guarantee of asset files
+            return new String(buffer);
+        } catch (IOException ignore) {
+        }
+        return null;
     }
 
     //public static int getScreenWidth() {

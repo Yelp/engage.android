@@ -39,22 +39,22 @@ import static com.janrain.android.engage.utils.AndroidUtils.SharedPreferenceEdit
 
 /**
  * @internal
- * @class Prefs
+ * @class PrefUtils
  * Utility class used for managing preferences in the Android global shared preferences.
  */
-public final class Prefs {
+public final class PrefUtils {
     public static final String KEY_JR_USER_INPUT = "jr_pref_user_input.";
     public static final String KEY_JR_FORCE_REAUTH = "jr_pref_force_reauth.";
     public static final String KEY_JR_HIDE_POWERED_BY = "jr_hide_powered_by";
     public static final String KEY_JR_CONFIGURATION_ETAG = "jr_configuration_etag";
     public static final String KEY_JR_LAST_USED_AUTH_PROVIDER = "jr_last_used_auth_provider";
     public static final String KEY_JR_LAST_USED_SHARING_PROVIDER = "jr_last_used_social_provider";
-    public static final String KEY_JR_BASE_URL = "jr_base_url";
+    public static final String KEY_JR_RP_BASE_URL = "jr_base_url";
     public static final String KEY_JR_ENGAGE_LIBRARY_VERSION = "jr_engage_library_version";
     public static final String KEY_JR_USER_COMMENT = "jr_user_comment";
     public static final String KEY_JR_USER_COMMENT_TIME = "jr_user_comment_time";
 
-    private Prefs() {}
+    private PrefUtils() {}
 
     /**
      * Wrapper for getting shared preference string value by key.
