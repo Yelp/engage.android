@@ -99,7 +99,9 @@ import com.janrain.android.engage.utils.ThreadUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @brief
@@ -141,8 +143,8 @@ public class JREngage {
     private Context mApplicationContext;
     private Activity mActivityContext;
     private JRSession mSession;
-    private final List<JREngageDelegate> mDelegates = new ArrayList<JREngageDelegate>();
-    private final List<ConfigFinishListener> mConfigFinishListeners = new ArrayList<ConfigFinishListener>();
+    private final Set<JREngageDelegate> mDelegates = new HashSet<JREngageDelegate>();
+    private final Set<ConfigFinishListener> mConfigFinishListeners = new HashSet<ConfigFinishListener>();
 
     private JREngage(Context context,
                      JREngageDelegate delegate) {
@@ -157,6 +159,10 @@ public class JREngage {
         //    }
         //}
     }
+
+    // LOCKS: There are two mutexes used from this class, the first is on the class object /
+    // static synchronized. The first lock is used to block any SDK calls until JRSession is initialized.
+    // The second lock is on the singleton instance, it is used to manage changes to the delegates set.
 
 /**
  * @name Get the JREngage Instance
@@ -382,6 +388,15 @@ public class JREngage {
     public void setTokenUrl(String newTokenUrl) {
         JREngage.logd(TAG, "[setTokenUrl]");
         mSession.setTokenUrl(newTokenUrl);
+    }
+
+    /**
+     * Get the currently configured token URL
+     * @return the currently configured token URL
+     */
+    public String getTokenUrl() {
+        JREngage.logd(TAG, "[getTokenUrl");
+        return mSession.getTokenUrl();
     }
 
 /*@}*/

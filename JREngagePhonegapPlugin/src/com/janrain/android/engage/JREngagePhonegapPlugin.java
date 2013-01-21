@@ -63,7 +63,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage;
 
-
 import android.widget.Toast;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
@@ -78,21 +77,25 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.janrain.android.engage.JREngageError.AuthenticationError;
 import static com.janrain.android.engage.JREngageError.ConfigurationError;
+import static com.janrain.android.engage.JREngageError.SocialPublishingError;
+import static org.apache.cordova.api.PluginResult.Status;
 
 public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDelegate {
-    private static String TAG = "[JREngagePhonegapPlugin]";
+    private static final String TAG = JREngagePhonegapPlugin.class.getSimpleName();
+
     private JREngage mJREngage;
+    private JRDictionary mAuthResponse;
+    private JRDictionary mSharingResponse;
+    private ArrayList<JRDictionary> mAuthBlobsDuringSharing;
+    private ArrayList<JRDictionary> mShareBlobsDuringSharing;
 
-    private JRDictionary mFullAuthenticationResponse     = null;
-    private JRDictionary mFullSharingResponse            = null;
-    private ArrayList<JRDictionary> mAuthenticationBlobs = null;
-    private ArrayList<JRDictionary> mShareBlobs          = null;
-
-    private boolean mWeAreSharing = false;
-    static int instantiationCount = 0;
+    private boolean mSharingMode;
     private CallbackContext mCallback;
+    private String mCurrentCmd;
 
+    private static int instantiationCount = 0;
     {
         if (instantiationCount > 0) {
             JREngage.logd(TAG, "More than one instance, instantiation count: " + instantiationCount);
@@ -101,9 +104,17 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     }
 
     @Override
-    public boolean execute(final String cmd, final JSONArray args,
-                                        final CallbackContext callback) {
+    public boolean execute(final String cmd, final JSONArray args, final CallbackContext callback) {
+        if (mCallback != null) {
+            callback.sendPluginResult(buildJsonFailureResult(-1, "Error processing " + cmd + ", can't " +
+                    "execute multiple JREngagePhonegapPlugin commands concurrently. Currently executing: " +
+                    mCurrentCmd + " for callback ID: " + mCallback.getCallbackId()));
+            return false;
+        }
+
         mCallback = callback;
+        mCurrentCmd = cmd;
+
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 try {
@@ -114,15 +125,21 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
                         String tokenUrl = args.get(1) == JSONObject.NULL ? null : args.getString(1);
                         initializeJREngage(appId, tokenUrl);
                     } else if (cmd.equals("showAuthenticationDialog")) {
+                        mJREngage.addDelegate(JREngagePhonegapPlugin.this);
                         showAuthenticationDialog();
                     } else if (cmd.equals("showSharingDialog")) {
+                        mAuthBlobsDuringSharing = new ArrayList<JRDictionary>();
+                        mShareBlobsDuringSharing = new ArrayList<JRDictionary>();
+                        mSharingResponse = new JRDictionary();
+                        mJREngage.addDelegate(JREngagePhonegapPlugin.this);
                         showSharingDialog(args.getString(0));
                     } else { // TODO: Test these errors and verify that the single quotes are fine
-                        postResultAndResetState(new PluginResult(PluginResult.Status.INVALID_ACTION,
+                        postResultAndResetState(new PluginResult(Status.INVALID_ACTION,
                                 buildFailureString(-1, "Unknown action: " + cmd)));
                     }
                 } catch (JSONException e) {
-                    postResultAndResetState(buildJsonFailureResult(-1, "Error parsing arguments for " + cmd));
+                    postResultAndResetState(buildJsonFailureResult(-1, "Error parsing arguments for " +
+                            cmd + ": " + e.getLocalizedMessage()));
                 }
             }
         });
@@ -130,46 +147,37 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
         return true;
     }
 
-    private void saveTheAuthenticationBlobForLater() {
-        if (mAuthenticationBlobs == null) 
-            mAuthenticationBlobs = new ArrayList<JRDictionary>();
-
-        mAuthenticationBlobs.add(mFullAuthenticationResponse);
-        mFullAuthenticationResponse = null;
-    }
-
-    private void resetPluginState() {
-        mWeAreSharing               = false;
-        mFullAuthenticationResponse = null;
-        mFullSharingResponse        = null;
-        mAuthenticationBlobs        = null;
-        mShareBlobs                 = null;
-    }
-
     private void postResultAndResetState(PluginResult result) {
-        resetPluginState();
-        mCallback.sendPluginResult(result);
+        mSharingMode = false;
+        mAuthResponse = null;
+        mSharingResponse = null;
+        mAuthBlobsDuringSharing = null;
+        mShareBlobsDuringSharing = null;
+        mJREngage.removeDelegate(this);
+        if (mCallback != null) mCallback.sendPluginResult(result);
+        mCallback = null;
+        mCurrentCmd = null;
     }
 
     private PluginResult buildSuccessResult(JRDictionary successDictionary) {
         String message = successDictionary.toJson();
 
         JREngage.logd("[buildSuccessResult]", message);
-        return new PluginResult(PluginResult.Status.OK, message);
+        return new PluginResult(Status.OK, message);
     }
 
     private PluginResult buildJsonFailureResult(int code, String message) {
-        return new PluginResult(PluginResult.Status.JSON_EXCEPTION, buildFailureString(code, message));
+        return new PluginResult(Status.JSON_EXCEPTION, buildFailureString(code, message));
     }
 
     private PluginResult buildFailureResult(JREngageError error) {
         return buildFailureResult(error.getCode(), error.getMessage());
     }
-    
+
     private PluginResult buildFailureResult(int code, String message) {
-        return new PluginResult(PluginResult.Status.ERROR, buildFailureString(code, message));
+        return new PluginResult(Status.ERROR, buildFailureString(code, message));
     }
-    
+
     private String buildFailureString(int code, String message) {
         JRDictionary errorDictionary = new JRDictionary();
         errorDictionary.put("code", code);
@@ -183,7 +191,7 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
         Toast myToast = Toast.makeText(cordova.getActivity(), message, Toast.LENGTH_SHORT);
         myToast.show();
 
-        postResultAndResetState(new PluginResult(PluginResult.Status.OK, message));
+        postResultAndResetState(new PluginResult(Status.OK, message));
     }
 
     private void initializeJREngage(String appId, String tokenUrl) {
@@ -194,14 +202,14 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
         }
 
         try {
-            mJREngage = JREngage.initInstance(cordova.getActivity(), appId, tokenUrl, this);
+            mJREngage = JREngage.initInstance(cordova.getActivity(), appId, tokenUrl, null);
         } catch (IllegalArgumentException e) {
             postResultAndResetState(buildFailureResult(ConfigurationError.GENERIC_CONFIGURATION_ERROR,
-                    "There was an error initializing JREngage: returned JREngage object was null"));
+                    e.getLocalizedMessage()));
             return;
         }
 
-        postResultAndResetState(new PluginResult(PluginResult.Status.OK,
+        postResultAndResetState(new PluginResult(Status.OK,
                 "{'stat':'ok','message':'Initializing JREngage...'}"));
     }
 
@@ -210,11 +218,11 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     }
 
     private void showSharingDialog(String activityString) {
-        mWeAreSharing = true;
+        mSharingMode = true;
 
         if (activityString == null || activityString.equals("")) {
-            postResultAndResetState(buildFailureResult(JREngageError.SocialPublishingError.ACTIVITY_NULL,
-                    "Activity object is required and cannot be null"));
+            postResultAndResetState(buildFailureResult(SocialPublishingError.ACTIVITY_NULL,
+                    "Activity object is required"));
             return;
         }
 
@@ -222,15 +230,15 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
         try {
             activity = new JRActivityObject(JRDictionary.fromJsonString(activityString));
         } catch (JSONException e) {
-            postResultAndResetState(buildJsonFailureResult(JREngageError.SocialPublishingError.BAD_ACTIVITY_JSON,
-                    "The JSON passed was not a valid activity object"));
+            postResultAndResetState(buildJsonFailureResult(SocialPublishingError.BAD_ACTIVITY_JSON,
+                    "The JSON passed was not a valid activity object: " + e.getLocalizedMessage()));
             return;
         } catch (IllegalArgumentException ignore) {
-            postResultAndResetState(buildJsonFailureResult(JREngageError.SocialPublishingError.BAD_ACTIVITY_JSON,
-                    "The JSON passed was not a valid activity object"));
+            postResultAndResetState(buildJsonFailureResult(SocialPublishingError.BAD_ACTIVITY_JSON,
+                    "The JSON passed was not a valid activity object: " + ignore.getLocalizedMessage()));
             return;
         }
-        
+
         mJREngage.showSocialPublishingDialog(cordova.getActivity(), activity);
     }
 
@@ -243,23 +251,24 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     // TODO: Test this when sharing
     public void jrAuthenticationDidNotComplete() {
         JREngage.logd(TAG, "[jrAuthenticationDidNotComplete] User Canceled");
-        postResultAndResetState(buildFailureResult(JREngageError.AuthenticationError.AUTHENTICATION_CANCELED,
+        postResultAndResetState(buildFailureResult(AuthenticationError.AUTHENTICATION_CANCELED,
                 "User canceled authentication"));
     }
 
     public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
         JREngage.logd(TAG, "[jrAuthenticationDidFailWithError] " + error);
         // TODO: Test this on Android (auth fails as well as sharing fails)
-        if (!mWeAreSharing)
+        if (!mSharingMode)
             postResultAndResetState(buildFailureResult(error));
     }
 
     public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl,
-                                                                   JREngageError error,
-                                                                   String provider) {
+                                                      JREngageError error,
+                                                      String provider) {
         Log.e(TAG, "[jrAuthenticationCallToTokenUrlDidFail] " + error);
-        if (!mWeAreSharing)
+        if (!mSharingMode) {
             postResultAndResetState(buildFailureResult(error));
+        }
     }
 
     public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
@@ -267,29 +276,39 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
 
         auth_info.remove("stat");
 
-        mFullAuthenticationResponse = new JRDictionary();
-        mFullAuthenticationResponse.put("auth_info", auth_info);
-        mFullAuthenticationResponse.put("provider", provider);
+        mAuthResponse = new JRDictionary();
+        mAuthResponse.put("auth_info", auth_info);
+        mAuthResponse.put("provider", provider);
+        if (mJREngage.getTokenUrl() == null) populateAndMaybePostAuthResponse(null, null);
+    }
+
+    private void populateAndMaybePostAuthResponse(String tokenUrl, String tokenUrlPayload) {
+        mAuthResponse.put("tokenUrl", tokenUrl);
+        mAuthResponse.put("tokenUrlPayload", tokenUrlPayload);
+        mAuthResponse.put("stat", "ok");
+
+        if (mSharingMode) {
+            if (mAuthBlobsDuringSharing == null) mAuthBlobsDuringSharing = new ArrayList<JRDictionary>();
+
+            mAuthBlobsDuringSharing.add(mAuthResponse);
+            mAuthResponse = null;
+        } else {
+            postResultAndResetState(buildSuccessResult(mAuthResponse));
+        }
     }
 
     public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
-                                                              HttpResponseHeaders response,
-                                                              String tokenUrlPayload,
-                                                              String provider) {
+                                                 HttpResponseHeaders response,
+                                                 String tokenUrlPayload,
+                                                 String provider) {
         JREngage.logd(TAG, "[jrAuthenticationDidReachTokenUrl]");
 
-        mFullAuthenticationResponse.put("tokenUrl", tokenUrl);
-        mFullAuthenticationResponse.put("tokenUrlPayload", tokenUrlPayload);
-        mFullAuthenticationResponse.put("stat", "ok");
-
-        if (mWeAreSharing) saveTheAuthenticationBlobForLater();
-        else postResultAndResetState(buildSuccessResult(mFullAuthenticationResponse));
+        populateAndMaybePostAuthResponse(tokenUrl, tokenUrlPayload);
     }
-
 
     public void jrSocialDidNotCompletePublishing() {
         JREngage.logd(TAG, "[jrSocialDidNotCompletePublishing] User Canceled");
-        postResultAndResetState(buildFailureResult(JREngageError.SocialPublishingError.CANCELED_ERROR,
+        postResultAndResetState(buildFailureResult(SocialPublishingError.CANCELED_ERROR,
                 "User canceled authentication"));
     }
 
@@ -304,9 +323,7 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
         shareBlob.put("code", error.getCode());
         shareBlob.put("message", error.getMessage());
 
-        if (mShareBlobs == null) mShareBlobs = new ArrayList<JRDictionary>();
-
-        mShareBlobs.add(shareBlob);
+        mShareBlobsDuringSharing.add(shareBlob);
     }
 
     public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
@@ -316,24 +333,16 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
         shareBlob.put("provider", provider);
         shareBlob.put("stat", "ok");
 
-        if (mShareBlobs == null)
-            mShareBlobs = new ArrayList<JRDictionary>();
-
-        mShareBlobs.add(shareBlob);
+        mShareBlobsDuringSharing.add(shareBlob);
     }
 
     public void jrSocialDidCompletePublishing() {
         JREngage.logd(TAG, "[jrSocialDidCompletePublishing]");
-        if (mFullSharingResponse == null)
-            mFullSharingResponse = new JRDictionary();
 
-        if (mAuthenticationBlobs != null)
-            mFullSharingResponse.put("signIns", mAuthenticationBlobs);
+        mSharingResponse.put("signIns", mAuthBlobsDuringSharing);
+        mSharingResponse.put("shares", mShareBlobsDuringSharing);
 
-        if (mShareBlobs != null)
-            mFullSharingResponse.put("shares", mShareBlobs);
-
-        postResultAndResetState(buildSuccessResult(mFullSharingResponse));
+        postResultAndResetState(buildSuccessResult(mSharingResponse));
     }
 }
 

@@ -156,8 +156,8 @@ public class JRSession implements JRConnectionManagerDelegate {
         JREngage.logd(TAG, "[initialize] initializing instance.");
 
         // for configurability to test against e.g. staging
-        mEngageBaseUrl =
-                StringUtils.trim(AndroidUtils.readAsset(getApplicationContext(), "engage_base_url.txt"));
+        String t = StringUtils.trim(AndroidUtils.readAsset(getApplicationContext(), "engage_base_url.txt"));
+        if (t != null) mEngageBaseUrl = t;
 
         mDelegates = new ArrayList<JRSessionDelegate>();
 		mDelegates.add(delegate);
@@ -1109,5 +1109,9 @@ public class JRSession implements JRConnectionManagerDelegate {
 
     /* package */ String getEngageBaseUrl() {
         return mEngageBaseUrl;
+    }
+
+    public String getTokenUrl() {
+        return mTokenUrl;
     }
 }
