@@ -1,0 +1,5 @@
+v3.1.0:
+ - First release with release notes
+ - Updates PhoneGap plugin to compatibility with Cordova 2.3.0
+ - Internal cleanup
+
