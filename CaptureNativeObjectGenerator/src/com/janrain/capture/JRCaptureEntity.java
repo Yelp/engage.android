@@ -65,18 +65,20 @@ public abstract class JRCaptureEntity {
 
     protected static JRCaptureEntity inflate(String name, JSONObject jo) {
         try {
-            Class c = Class.forName(JRCapture.classNameFor(Generator.GENERATED_OBJECT_PACKAGE + "." + name));
+            Class c = Class.forName(Generator.GENERATED_OBJECT_PACKAGE + "." + JRCapture.classNameFor(name));
             JRCaptureEntity retval = (JRCaptureEntity) c.newInstance();
             Iterator keys = jo.keys();
             while (keys.hasNext()) {
                 String key = (String) keys.next();
                 Object val = jo.get(key);
-                Field f = c.getField(JRCapture.snakeToCamel(key));
+
+                Field f = c.getDeclaredField(JRCapture.snakeToCamel(key));
+                f.setAccessible(true);
                 if (JSONObject.NULL.equals(val)) {
                     f.set(retval, null);
                 } else if (val instanceof JSONObject) {
                     f.set(retval, inflate(key, (JSONObject) val));
-                } if (val instanceof JSONArray) {
+                } else if (val instanceof JSONArray) {
                     JRCapturePlural plural = (JRCapturePlural) f.getType().newInstance();
                     f.set(retval, plural);
                     JSONArray ja = (JSONArray) val;

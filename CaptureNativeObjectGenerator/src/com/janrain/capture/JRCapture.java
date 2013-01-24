@@ -63,15 +63,19 @@ public class JRCapture {
             }));
 
     public static JRCaptureEntity getEntity() throws IOException, JSONException {
-        URLConnection entityConn = new URL("https://" + JRCaptureConfiguration.CAPTURE_DOMAIN + "/?" +
+        URLConnection entityConn = new URL("https://" + JRCaptureConfiguration.CAPTURE_DOMAIN + "/entity?" +
                 "type_name=" + JRCaptureConfiguration.ENTITY_TYPE_NAME +
                 "&client_id=" + JRCaptureConfiguration.CLIENT_ID +
                 "&client_secret=" + JRCaptureConfiguration.CLIENT_SECRET +
-                "&id=1"
+                "&id=159"
         ).openConnection();
         entityConn.connect();
         JSONObject jo = new JSONObject(new JSONTokener(entityConn.getInputStream()));
-        return JRCaptureEntity.inflate(jo);
+        if ("ok".equals(jo.optString("stat"))) {
+            return JRCaptureEntity.inflate((JSONObject) jo.get("result"));
+        } else {
+            return null;
+        }
     }
 
     public static void main(String[] args) throws IOException, JSONException {
