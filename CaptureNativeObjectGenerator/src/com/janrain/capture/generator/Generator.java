@@ -32,8 +32,8 @@
 
 package com.janrain.capture.generator;
 
+import com.janrain.capture.CaptureStringUtils;
 import com.janrain.capture.JRCaptureConfiguration;
-import com.janrain.capture.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,8 +87,8 @@ public class Generator {
         log("Object: " + entityName);
 
         String className = "plural".equals(jo.optString("type")) ?
-                StringUtils.classNameFor(depluralize(entityName))
-                : StringUtils.classNameFor(entityName);
+                CaptureStringUtils.classNameFor(depluralize(entityName))
+                : CaptureStringUtils.classNameFor(entityName);
         JSONArray attrDefs = jo.getJSONArray("attr_defs");
 
         ST st = ST_GROUP.getInstanceOf("entity");
@@ -134,7 +134,7 @@ public class Generator {
             } else if (attrType.equals("json")) {
                 stAttr.javaType = "String";
             } else if (attrType.equals("object")) {
-                stAttr.javaType = StringUtils.classNameFor(attrName);
+                stAttr.javaType = CaptureStringUtils.classNameFor(attrName);
                 writeCaptureClasses(attrName, attr);
             } else if (attrType.equals("password")) {
                 stAttr.javaType = "String";
@@ -147,7 +147,7 @@ public class Generator {
             } else if (attrType.equals("password-bcrypt")) {
                 stAttr.javaType = "String";
             } else if (attrType.equals("plural")) {
-                stAttr.javaType = "JRCapturePlural<" + StringUtils.classNameFor(depluralize(attrName)) + ">";
+                stAttr.javaType = "JRCapturePlural<" + CaptureStringUtils.classNameFor(depluralize(attrName)) + ">";
                 writeCaptureClasses(attrName, attr);
             } else if (attrType.equals("string")) {
                 stAttr.javaType = "String";
@@ -225,8 +225,8 @@ public class Generator {
             this.description = description;
             this.readOnly = readOnly;
 
-            this.javaFieldName = StringUtils.snakeToCamel(captureFieldName);
-            this.javaAccessorName = StringUtils.upcaseFirst(this.javaFieldName);
+            this.javaFieldName = CaptureStringUtils.snakeToCamel(captureFieldName);
+            this.javaAccessorName = CaptureStringUtils.upcaseFirst(this.javaFieldName);
         }
     }
 

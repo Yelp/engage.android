@@ -36,7 +36,7 @@ package com.janrain.capture;
  * Created with IntelliJ IDEA. User: nathan Date: 1/24/13 Time: 1:47 PM To change this template use File |
  * Settings | File Templates.
  */
-public class StringUtils {
+public class CaptureStringUtils {
     public static String classNameFor(String name) {
         return "JRCapture" + upcaseFirst(snakeToCamel(name));
     }

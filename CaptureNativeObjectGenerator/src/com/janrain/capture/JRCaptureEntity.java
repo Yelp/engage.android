@@ -60,19 +60,20 @@ public abstract class JRCaptureEntity {
     }
 
     protected static JRCaptureEntity inflate(JSONObject jo) {
-        return inflate(StringUtils.classNameFor(JRCaptureConfiguration.ENTITY_TYPE_NAME), jo);
+        return inflate(CaptureStringUtils.classNameFor(JRCaptureConfiguration.ENTITY_TYPE_NAME), jo);
     }
 
-    protected static JRCaptureEntity inflate(String name, JSONObject jo) {
+    protected static JRCaptureEntity inflate(String entityTypeName, JSONObject jo) {
         try {
-            Class c = Class.forName(Generator.GENERATED_OBJECT_PACKAGE + "." + StringUtils.classNameFor(name));
+            Class c = Class.forName(Generator.GENERATED_OBJECT_PACKAGE + "." +
+                    CaptureStringUtils.classNameFor(entityTypeName));
             JRCaptureEntity retval = (JRCaptureEntity) c.newInstance();
             Iterator keys = jo.keys();
             while (keys.hasNext()) {
                 String key = (String) keys.next();
                 Object val = jo.get(key);
 
-                Field f = c.getDeclaredField(StringUtils.snakeToCamel(key));
+                Field f = c.getDeclaredField(CaptureStringUtils.snakeToCamel(key));
                 f.setAccessible(true);
                 if (JSONObject.NULL.equals(val)) {
                     f.set(retval, null);
@@ -90,7 +91,7 @@ public abstract class JRCaptureEntity {
 
             return retval;
         } catch (ClassNotFoundException e) {
-            Generator.log("Class not found for: " + name);
+            Generator.log("Class not found for: " + entityTypeName);
         } catch (JSONException e) {
             Generator.log("Unexpected value not found for key: " + e);
         } catch (InstantiationException e) {
