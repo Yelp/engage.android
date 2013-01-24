@@ -62,8 +62,8 @@ import com.janrain.android.engage.session.JRSession;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import static com.janrain.android.engage.utils.AndroidUtils.ActionBarSetDisplayHomeAsUpEnabled;
-import static com.janrain.android.engage.utils.AndroidUtils.ActivityGetActionBar;
+import static com.janrain.android.engage.utils.AndroidUtils.actionBarSetDisplayHomeAsUpEnabled;
+import static com.janrain.android.engage.utils.AndroidUtils.activityGetActionBar;
 
 /**
  * @internal
@@ -163,7 +163,7 @@ public abstract class JRUiFragment extends Fragment {
 
         if (getActivity() instanceof JRFragmentHostActivity) {
             if (getCustomTitle() != null) getActivity().setTitle(getCustomTitle());
-            ActionBarSetDisplayHomeAsUpEnabled(ActivityGetActionBar(getActivity()), true);
+            actionBarSetDisplayHomeAsUpEnabled(activityGetActionBar(getActivity()), true);
         }
     }
 

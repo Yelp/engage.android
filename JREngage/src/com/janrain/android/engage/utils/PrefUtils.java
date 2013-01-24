@@ -35,7 +35,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import com.janrain.android.engage.JREngage;
 
-import static com.janrain.android.engage.utils.AndroidUtils.SharedPreferenceEditorApplyOrCommit;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * @internal
@@ -90,19 +91,19 @@ public final class PrefUtils {
     }
 
     public static void putString(String key, String value) {
-        SharedPreferenceEditorApplyOrCommit(getEditor().putString(key, value));
+        sharedPreferenceEditorApplyOrCommit(getEditor().putString(key, value));
     }
 
     public static void putBoolean(String key, boolean value) {
-        SharedPreferenceEditorApplyOrCommit(getEditor().putBoolean(key, value));
+        sharedPreferenceEditorApplyOrCommit(getEditor().putBoolean(key, value));
     }
 
     public static void putInt(String key, int value) {
-        SharedPreferenceEditorApplyOrCommit(getEditor().putInt(key, value));
+        sharedPreferenceEditorApplyOrCommit(getEditor().putInt(key, value));
     }
 
     public static void putLong(String key, long value) {
-        SharedPreferenceEditorApplyOrCommit(getEditor().putLong(key, value));
+        sharedPreferenceEditorApplyOrCommit(getEditor().putLong(key, value));
     }
 
     public static long getLong(String key, int defaultValue) {
@@ -118,6 +119,17 @@ public final class PrefUtils {
     }
 
     public static void remove(String key) {
-        SharedPreferenceEditorApplyOrCommit(getEditor().remove(key));
+        sharedPreferenceEditorApplyOrCommit(getEditor().remove(key));
+    }
+
+    private static void sharedPreferenceEditorApplyOrCommit(SharedPreferences.Editor editor) {
+        try {
+            editor.getClass().getMethod("apply").invoke(editor);
+        } catch (NoSuchMethodException ignore) {
+        } catch (InvocationTargetException ignore) {
+        } catch (IllegalAccessException ignore) {
+        }
+
+        editor.commit();
     }
 }

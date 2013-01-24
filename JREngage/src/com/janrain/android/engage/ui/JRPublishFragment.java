@@ -87,7 +87,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.janrain.android.engage.utils.AndroidUtils.ColorDrawableGetColor;
+import static com.janrain.android.engage.utils.AndroidUtils.colorDrawableGetColor;
 import static com.janrain.android.engage.utils.AndroidUtils.scaleDipToPixels;
 
 /**
@@ -223,10 +223,10 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 windowBackgroundDrawable.setState(new int[]{});
                 Drawable activeWindowBackgroundDrawable = windowBackgroundDrawable.getCurrent();
                 if (activeWindowBackgroundDrawable instanceof ColorDrawable) {
-                    colorBackground = ColorDrawableGetColor((ColorDrawable) activeWindowBackgroundDrawable);
+                    colorBackground = colorDrawableGetColor((ColorDrawable) activeWindowBackgroundDrawable);
                 }
             } else if (windowBackgroundDrawable instanceof ColorDrawable) {
-                colorBackground = ColorDrawableGetColor((ColorDrawable) windowBackgroundDrawable);
+                colorBackground = colorDrawableGetColor((ColorDrawable) windowBackgroundDrawable);
             } else if (windowBackgroundDrawable instanceof NinePatchDrawable) {
                 Bitmap renderedNinePatch = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
                 windowBackgroundDrawable.setBounds(0, 0, 99, 99);

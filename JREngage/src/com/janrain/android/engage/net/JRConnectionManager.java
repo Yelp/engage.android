@@ -34,7 +34,7 @@ package com.janrain.android.engage.net;
 import android.os.Handler;
 import android.os.Looper;
 import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.utils.AndroidUtils;
+import com.janrain.android.engage.utils.ApacheSetFromMap;
 import com.janrain.android.engage.utils.ThreadUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
@@ -128,7 +128,7 @@ public class JRConnectionManager {
         synchronized (sDelegateConnections) {
             Set<ConnectionData> s = sDelegateConnections.get(delegate);
             if (s == null) {
-                s = new AndroidUtils.SetFromMap<ConnectionData>(new WeakHashMap<ConnectionData, Boolean>());
+                s = new ApacheSetFromMap<ConnectionData>(new WeakHashMap<ConnectionData, Boolean>());
                 sDelegateConnections.put(delegate, s);
             }
             s.add(connectionData);

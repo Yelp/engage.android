@@ -168,20 +168,20 @@ public class AndroidUtils {
                 Configuration.ORIENTATION_LANDSCAPE;
     }
     
-    public static void setFinishOnTouchOutside(Activity activity, boolean finish) {
+    public static void activitySetFinishOnTouchOutside(Activity activity, boolean finish) {
         try {
-            Method m = activity.getClass().getMethod("setFinishOnTouchOutside", boolean.class);
+            Method m = activity.getClass().getMethod("activitySetFinishOnTouchOutside", boolean.class);
             m.invoke(activity, finish);
         } catch (NoSuchMethodException e) {
-            Log.e(TAG, "[setFinishOnTouchOutside]", e);
+            Log.e(TAG, "[activitySetFinishOnTouchOutside]", e);
         } catch (InvocationTargetException e) {
-            Log.e(TAG, "[setFinishOnTouchOutside]", e);
+            Log.e(TAG, "[activitySetFinishOnTouchOutside]", e);
         } catch (IllegalAccessException e) {
-            Log.e(TAG, "[setFinishOnTouchOutside]", e);
+            Log.e(TAG, "[activitySetFinishOnTouchOutside]", e);
         }
     }
 
-    public static Object ActivityGetActionBar(Activity a) {
+    public static Object activityGetActionBar(Activity a) {
         try {
             Method getActionBar = a.getClass().getMethod("getActionBar");
             return getActionBar.invoke(a);
@@ -193,7 +193,7 @@ public class AndroidUtils {
         return null;
     }
 
-    public static void ActionBarSetDisplayHomeAsUpEnabled(Object actionBar, boolean arg) {
+    public static void actionBarSetDisplayHomeAsUpEnabled(Object actionBar, boolean arg) {
         if (actionBar == null) return;
 
         try {
@@ -237,7 +237,7 @@ public class AndroidUtils {
         }
     }
 
-    public static String getConsoleMessageMessage(ConsoleMessage consoleMessage) {
+    public static String consoleMessageGetMessage(ConsoleMessage consoleMessage) {
         try {
             Method message = consoleMessage.getClass().getMethod("message");
             return (String) message.invoke(consoleMessage);
@@ -247,20 +247,8 @@ public class AndroidUtils {
         } catch (IllegalAccessException ignore) {
         }
 
-        Log.e(TAG, "[getConsoleMessageMessage] unexpected reflection exception");
+        Log.e(TAG, "[consoleMessageGetMessage] unexpected reflection exception");
         return null;
-    }
-
-    public static void SharedPreferenceEditorApplyOrCommit(SharedPreferences.Editor editor) {
-        try {
-            Method SharedPrefsApply = editor.getClass().getMethod("apply");
-            SharedPrefsApply.invoke(editor);
-        } catch (NoSuchMethodException ignore) {
-        } catch (InvocationTargetException ignore) {
-        } catch (IllegalAccessException ignore) {
-        }
-
-        editor.commit();
     }
 
     public static String readAsset(Context c, String fileName) {
@@ -281,98 +269,7 @@ public class AndroidUtils {
     //    metrics.get
     //}
 
-    /* XXX horrible hack importing the API 9 implementation for compatibility: */
-    /*  This license is for the following class only:
-     *  Licensed to the Apache Software Foundation (ASF) under one or more
-     *  contributor license agreements.  See the NOTICE file distributed with
-     *  this work for additional information regarding copyright ownership.
-     *  The ASF licenses this file to You under the Apache License, Version 2.0
-     *  (the "License"); you may not use this file except in compliance with
-     *  the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     *  Unless required by applicable law or agreed to in writing, software
-     *  distributed under the License is distributed on an "AS IS" BASIS,
-     *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     *  See the License for the specific language governing permissions and
-     *  limitations under the License.
-     */
-    public static class SetFromMap<E> extends AbstractSet<E> implements Serializable {
-        private Map<E, Boolean> m;
-
-        private transient Set<E> backingSet;
-
-        public SetFromMap(final Map<E, Boolean> map) {
-            m = map;
-            backingSet = map.keySet();
-        }
-
-        @Override public boolean equals(Object object) {
-            return backingSet.equals(object);
-        }
-
-        @Override public int hashCode() {
-            return backingSet.hashCode();
-        }
-
-        @Override public boolean add(E object) {
-            return m.put(object, Boolean.TRUE) == null;
-        }
-
-        @Override public void clear() {
-            m.clear();
-        }
-
-        @Override public String toString() {
-            return backingSet.toString();
-        }
-
-        @Override public boolean contains(Object object) {
-            return backingSet.contains(object);
-        }
-        @Override public boolean containsAll(Collection<?> collection) {
-            return backingSet.containsAll(collection);
-        }
-
-        @Override public boolean isEmpty() {
-            return m.isEmpty();
-        }
-
-        @Override public boolean remove(Object object) {
-            return m.remove(object) != null;
-        }
-
-        @Override public boolean retainAll(Collection<?> collection) {
-            return backingSet.retainAll(collection);
-        }
-
-        @Override public Object[] toArray() {
-            return backingSet.toArray();
-        }
-
-        @Override
-        public <T> T[] toArray(T[] contents) {
-            return backingSet.toArray(contents);
-        }
-
-        @Override public Iterator<E> iterator() {
-            return backingSet.iterator();
-        }
-
-        @Override public int size() {
-            return m.size();
-        }
-
-        @SuppressWarnings("unchecked")
-        private void readObject(ObjectInputStream stream)
-                throws IOException, ClassNotFoundException {
-            stream.defaultReadObject();
-            backingSet = m.keySet();
-        }
-    }
-
-    public static int ColorDrawableGetColor(ColorDrawable d) {
+    public static int colorDrawableGetColor(ColorDrawable d) {
         try {
             Method getColor = d.getClass().getMethod("getColor");
             return (Integer) getColor.invoke(d);
@@ -383,7 +280,8 @@ public class AndroidUtils {
         }
 
         // For some reason the following doesn't work on Android 15, but the above does, and the below
-        // works for Android <= 10, so the function works but is a dirty hack.
+        // works for Android <= 10, so the function as a whole works but is a dirty hack.
+
         Bitmap b = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
         d.draw(new Canvas(b));
         return b.getPixel(0, 0);

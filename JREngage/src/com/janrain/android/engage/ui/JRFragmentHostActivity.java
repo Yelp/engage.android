@@ -32,18 +32,14 @@
 package com.janrain.android.engage.ui;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -120,7 +116,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
         mUiFragment.onFragmentHostActivityCreate(this, session);
 
         if (shouldBeDialog()) {
-            AndroidUtils.setFinishOnTouchOutside(this, true);
+            AndroidUtils.activitySetFinishOnTouchOutside(this, true);
 
             if (shouldBePhoneSizedDialog()) {
                 getTheme().applyStyle(R.style.jr_dialog_phone_sized, true);
@@ -240,7 +236,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
     /**
      * @internal
-     * Intercepts finish calls triggered by setFinishOnTouchOutside by detecting whether a result has been
+     * Intercepts finish calls triggered by activitySetFinishOnTouchOutside by detecting whether a result has been
      * specified yet.
      */
     @Override

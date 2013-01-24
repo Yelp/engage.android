@@ -574,7 +574,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-            JREngage.logd(TAG, "[console] message: '" + AndroidUtils.getConsoleMessageMessage(consoleMessage)
+            JREngage.logd(TAG, "[console] message: '" + AndroidUtils.consoleMessageGetMessage(consoleMessage)
                     + "'");
             return true;
         }

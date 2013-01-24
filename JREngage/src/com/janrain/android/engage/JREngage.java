@@ -137,7 +137,7 @@ public class JREngage {
      */
     public static Boolean sLoggingEnabled;
 
-    private static boolean sInitalizationComplete = false;
+    private static boolean sInitializationComplete = false;
     private static JREngage sInstance;
 
     private Context mApplicationContext;
@@ -146,8 +146,7 @@ public class JREngage {
     private final Set<JREngageDelegate> mDelegates = new HashSet<JREngageDelegate>();
     private final Set<ConfigFinishListener> mConfigFinishListeners = new HashSet<ConfigFinishListener>();
 
-    private JREngage(Context context,
-                     JREngageDelegate delegate) {
+    private JREngage(Context context, JREngageDelegate delegate) {
         mApplicationContext = context.getApplicationContext();
         if (context instanceof Activity) mActivityContext = (Activity) context;
         if (delegate != null && !mDelegates.contains(delegate)) mDelegates.add(delegate);
@@ -218,7 +217,7 @@ public class JREngage {
                     // any use of the library is guarded by blockOnInitialization, which checks this ivar,
                     // acquires this lock and waits
                     synchronized (JREngage.class) {
-                        sInitalizationComplete = true;
+                        sInitializationComplete = true;
                         JREngage.class.notifyAll();
                     }
                 }
@@ -278,7 +277,7 @@ public class JREngage {
      * @hide
      */
     public synchronized static void blockOnInitialization() {
-        if (sInitalizationComplete) return;
+        if (sInitializationComplete) return;
 
         try {
             JREngage.class.wait();
