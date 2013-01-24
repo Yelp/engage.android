@@ -41,7 +41,7 @@ import java.lang.reflect.Field;
 import java.util.Iterator;
 
 public abstract class JRCaptureEntity {
-    protected long id;
+    protected Long id;
 
     /**
      * Synchronize changes on this Capture entity or sub-entity with the Capture API daemon.

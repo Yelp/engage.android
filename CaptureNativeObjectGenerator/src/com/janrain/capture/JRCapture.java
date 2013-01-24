@@ -32,7 +32,6 @@
 
 package com.janrain.capture;
 
-import com.janrain.capture.gen.User;
 import com.janrain.capture.generator.Generator;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,7 +89,7 @@ public class JRCapture {
     }
 
     public static String classNameFor(String name) {
-        return upcaseFirst(snakeToCamel(name));
+        return "JRCapture" + upcaseFirst(snakeToCamel(name));
     }
 
     public static String upcaseFirst(String camelName) {

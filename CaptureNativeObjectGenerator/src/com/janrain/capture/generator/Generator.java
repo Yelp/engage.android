@@ -57,11 +57,15 @@ public class Generator {
             join(GENERATED_OBJECT_PACKAGE.split("\\."), "/") + "/");
     private static final String ST_DIRECTORY = "CaptureNativeObjectGenerator/templates/";
     private static final STGroupFile ST_GROUP = new STGroupFile(ST_DIRECTORY + "entity.stg");
-    private static final List<String> READONLY_ATTRIBUTES = new ArrayList<String>(Arrays.asList(new String[] {
-            "id", "uuid", "created", "lastUpdated", "parent_id", "profiles"
-    }));
+    private static final List<String> READONLY_ATTRIBUTES =
+            Arrays.asList("id", "uuid", "created", "lastUpdated", "parent_id", "profiles");
 
     public static void main(String[] args) throws JSONException, IOException {
+        OUT_DIRECTORY.mkdirs();
+        writeCaptureClasses(JRCaptureConfiguration.ENTITY_TYPE_NAME, fetchSchema());
+    }
+
+    private static JSONObject fetchSchema() throws IOException, JSONException {
         URLConnection schemaConn = new URL("https://" + JRCaptureConfiguration.CAPTURE_DOMAIN + "/entityType?" +
                 "type_name=" + JRCaptureConfiguration.ENTITY_TYPE_NAME +
                 "&client_id=" + JRCaptureConfiguration.CLIENT_ID +
@@ -70,21 +74,21 @@ public class Generator {
         schemaConn.connect();
         JSONObject jo = new JSONObject(new JSONTokener(schemaConn.getInputStream()));
 
-        OUT_DIRECTORY.mkdirs();
-        walkSchema(JRCaptureConfiguration.ENTITY_TYPE_NAME, jo.getJSONObject("schema"));
+        return jo.getJSONObject("schema");
     }
 
-    private static void walkSchema(String entityName, JSONObject jo)
+    private static void writeCaptureClasses(String entityName, JSONObject jo)
             throws JSONException, IOException {
         log("Object: " + entityName);
 
-        ST st = ST_GROUP.getInstanceOf("entity");
-        st.add("package", GENERATED_OBJECT_PACKAGE);
         String className = "plural".equals(jo.optString("type")) ?
                 JRCapture.classNameFor(JRCapture.depluralize(entityName))
                 : JRCapture.classNameFor(entityName);
-        st.add("className", className);
         JSONArray attrDefs = jo.getJSONArray("attr_defs");
+
+        ST st = ST_GROUP.getInstanceOf("entity");
+        st.add("package", GENERATED_OBJECT_PACKAGE);
+        st.add("className", className);
 
         for (int i = 0; i < attrDefs.length(); i++) {
             JSONObject attr = attrDefs.getJSONObject(i);
@@ -103,7 +107,7 @@ public class Generator {
             // required, unicode-printable, unique, alphabetic, alphanumeric, unicode-letters, email-address
             // locally-unique
 
-            CaptureStAttr stAttr = new CaptureStAttr(null, attrName, attrType, features, constraints, length,
+            CaptureStringTemplateAttr stAttr = new CaptureStringTemplateAttr(null, attrName, attrType, features, constraints, length,
                     caseSensitive, description, READONLY_ATTRIBUTES.contains(attrName));
             if (attrName.equals("id")) stAttr.inheritedField = true;
 
@@ -125,7 +129,7 @@ public class Generator {
                 stAttr.javaType = "String";
             } else if (attrType.equals("object")) {
                 stAttr.javaType = JRCapture.classNameFor(attrName);
-                walkSchema(attrName, attr);
+                writeCaptureClasses(attrName, attr);
             } else if (attrType.equals("password")) {
                 stAttr.javaType = "String";
             } else if (attrType.equals("password")) {
@@ -138,7 +142,7 @@ public class Generator {
                 stAttr.javaType = "String";
             } else if (attrType.equals("plural")) {
                 stAttr.javaType = "JRCapturePlural<" + JRCapture.classNameFor(JRCapture.depluralize(attrName)) + ">";
-                walkSchema(attrName, attr);
+                writeCaptureClasses(attrName, attr);
             } else if (attrType.equals("string")) {
                 stAttr.javaType = "String";
             } else if (attrType.equals("uuid")) {
@@ -174,7 +178,7 @@ public class Generator {
         System.out.flush();
     }
 
-    public static class CaptureStAttr {
+    public static class CaptureStringTemplateAttr {
         public String javaType;
         public String captureFieldName;
         public String captureType;
@@ -189,15 +193,15 @@ public class Generator {
         public String javaFieldName;
         public String javaAccessorName; // e.g. javaFieldName with head up-cased
 
-        CaptureStAttr(String javaType,
-                      String captureFieldName,
-                      String captureType,
-                      Object features,
-                      Object constraints,
-                      Integer length,
-                      Boolean caseSensitive,
-                      String description,
-                      boolean readOnly) {
+        CaptureStringTemplateAttr(String javaType,
+                                  String captureFieldName,
+                                  String captureType,
+                                  Object features,
+                                  Object constraints,
+                                  Integer length,
+                                  Boolean caseSensitive,
+                                  String description,
+                                  boolean readOnly) {
             this.javaType = javaType;
             this.captureFieldName = captureFieldName;
             this.captureType = captureType;
@@ -211,16 +215,6 @@ public class Generator {
             this.javaFieldName = JRCapture.snakeToCamel(captureFieldName);
             this.javaAccessorName = JRCapture.upcaseFirst(this.javaFieldName);
         }
-    }
-
-    private static String jsonObjectKeysToString(JSONObject jo) {
-        return join(asList(jo.keys()), ",");
-    }
-
-    private static List asList(Iterator iterator) {
-        List l = new ArrayList();
-        while (iterator.hasNext()) l.add(iterator.next());
-        return l;
     }
 
     private static String join(String[] a, String separator) {
