@@ -1,165 +1,429 @@
-/*
-       Licensed to the Apache Software Foundation (ASF) under one
-       or more contributor license agreements.  See the NOTICE file
-       distributed with this work for additional information
-       regarding copyright ownership.  The ASF licenses this file
-       to you under the Apache License, Version 2.0 (the
-       "License"); you may not use this file except in compliance
-       with the License.  You may obtain a copy of the License at
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ Copyright (c) 2012, Janrain, Inc.
 
-         http://www.apache.org/licenses/LICENSE-2.0
+ All rights reserved.
 
-       Unless required by applicable law or agreed to in writing,
-       software distributed under the License is distributed on an
-       "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-       KIND, either express or implied.  See the License for the
-       specific language governing permissions and limitations
-       under the License.
-*/
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
 
-var deviceInfo = function() {
-    document.getElementById("platform").innerHTML = device.platform;
-    document.getElementById("version").innerHTML = device.version;
-    document.getElementById("uuid").innerHTML = device.uuid;
-    document.getElementById("name").innerHTML = device.name;
-    document.getElementById("width").innerHTML = screen.width;
-    document.getElementById("height").innerHTML = screen.height;
-    document.getElementById("colorDepth").innerHTML = screen.colorDepth;
-};
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation and/or
+   other materials provided with the distribution.
+ * Neither the name of the Janrain, Inc. nor the names of its
+   contributors may be used to endorse or promote products derived from this
+   software without specific prior written permission.
 
-var getLocation = function() {
-    var suc = function(p) {
-        alert(p.coords.latitude + " " + p.coords.longitude);
-    };
-    var locFail = function() {
-    };
-    navigator.geolocation.getCurrentPosition(suc, locFail);
-};
 
-var beep = function() {
-    navigator.notification.beep(2);
-};
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-var vibrate = function() {
-    navigator.notification.vibrate(0);
-};
+ File:   main.js
+ Author: Lilli Szafranski - lilli@janrain.com, lillialexis@gmail.com
+ Date:   Wednesday, January 4th, 2012
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-function roundNumber(num) {
-    var dec = 3;
-    var result = Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
-    return result;
+var jrEngage;
+function testJREngagePlugin()
+{
+    jrEngage.print
+    (
+        "Hello World", //"Hello World }]%20",
+
+        function(result)
+        {
+            alert("Success: " + result);
+        },
+
+        function(error)
+        {
+            alert("Error: " + error);
+        }
+    );
 }
 
-var accelerationWatch = null;
-
-function updateAcceleration(a) {
-    document.getElementById('x').innerHTML = roundNumber(a.x);
-    document.getElementById('y').innerHTML = roundNumber(a.y);
-    document.getElementById('z').innerHTML = roundNumber(a.z);
+function onBodyLoad()
+{
+    document.addEventListener("deviceready", onDeviceReady, false);
 }
 
-var toggleAccel = function() {
-    if (accelerationWatch !== null) {
-        navigator.accelerometer.clearWatch(accelerationWatch);
-        updateAcceleration({
-            x : "",
-            y : "",
-            z : ""
-        });
-        accelerationWatch = null;
+function onDeviceReady()
+{
+    jrEngage = window.plugins.jrEngagePlugin;
+
+    var appId    = "appcfamhnpkagijaeinl";
+    var tokenUrl = "http://jrauthenticate.appspot.com/login";
+
+    jrEngage.initialize(
+        appId,
+        tokenUrl,
+
+        function(result)
+        {
+           console.log(result);
+        },
+
+        function(error)
+        {
+           console.log(error);
+        }
+    );
+}
+
+function moveLogo(upOrDown)
+{
+    var logo = document.getElementById("logo");
+
+    if (upOrDown == "up") {
+        logo.style.marginTop = "40px";
+    } else { /* if (upOrDown == "down") */
+        logo.style.marginTop = "100px";
+    }
+}
+
+function makeSectionVisible(sectionId, visible)
+{
+    var section = document.getElementById(sectionId);
+
+    if (visible) {
+        section.style.display = "block";
     } else {
-        var options = {};
-        options.frequency = 1000;
-        accelerationWatch = navigator.accelerometer.watchAcceleration(
-                updateAcceleration, function(ex) {
-                    alert("accel fail (" + ex.name + ": " + ex.message + ")");
-                }, options);
-    }
-};
-
-var preventBehavior = function(e) {
-    e.preventDefault();
-};
-
-function dump_pic(data) {
-    var viewport = document.getElementById('viewport');
-    console.log(data);
-    viewport.style.display = "";
-    viewport.style.position = "absolute";
-    viewport.style.top = "10px";
-    viewport.style.left = "10px";
-    document.getElementById("test_img").src = data;
-}
-
-function fail(msg) {
-    alert(msg);
-}
-
-function show_pic() {
-    navigator.camera.getPicture(dump_pic, fail, {
-        quality : 50
-    });
-}
-
-function close() {
-    var viewport = document.getElementById('viewport');
-    viewport.style.position = "relative";
-    viewport.style.display = "none";
-}
-
-function contacts_success(contacts) {
-    alert(contacts.length
-            + ' contacts returned.'
-            + (contacts[2] && contacts[2].name ? (' Third contact is ' + contacts[2].name.formatted)
-                    : ''));
-}
-
-function get_contacts() {
-    var obj = new ContactFindOptions();
-    obj.filter = "";
-    obj.multiple = true;
-    navigator.contacts.find(
-            [ "displayName", "name" ], contacts_success,
-            fail, obj);
-}
-
-function check_network() {
-    var networkState = navigator.network.connection.type;
-
-    var states = {};
-    states[Connection.UNKNOWN]  = 'Unknown connection';
-    states[Connection.ETHERNET] = 'Ethernet connection';
-    states[Connection.WIFI]     = 'WiFi connection';
-    states[Connection.CELL_2G]  = 'Cell 2G connection';
-    states[Connection.CELL_3G]  = 'Cell 3G connection';
-    states[Connection.CELL_4G]  = 'Cell 4G connection';
-    states[Connection.NONE]     = 'No network connection';
-
-    confirm('Connection type:\n ' + states[networkState]);
-}
-
-var watchID = null;
-
-function updateHeading(h) {
-    document.getElementById('h').innerHTML = h.magneticHeading;
-}
-
-function toggleCompass() {
-    if (watchID !== null) {
-        navigator.compass.clearWatch(watchID);
-        watchID = null;
-        updateHeading({ magneticHeading : "Off"});
-    } else {        
-        var options = { frequency: 1000 };
-        watchID = navigator.compass.watchHeading(updateHeading, function(e) {
-            alert('Compass Error: ' + e.code);
-        }, options);
+        section.style.display = "none";
     }
 }
 
-function init() {
-    // the next line makes it impossible to see Contacts on the HTC Evo since it
-    // doesn't have a scroll button
-    // document.addEventListener("touchmove", preventBehavior, false);
-    document.addEventListener("deviceready", deviceInfo, true);
+function removeTheChildren(sectionId) {
+    var section = document.getElementById(sectionId);
+
+    for (var i = 0; i < 3; i++) {
+        var table   = section.children[i];
+        var numRows = table.rows.length;
+
+        for (var j = numRows - 1; j > 0; j--) {
+            table.deleteRow(j);
+        }
+    }
+}
+
+function addValueToRowInTable(value, table, baseClassAttr, indentationClassAttr)
+{
+    var row      = document.createElement("tr");
+    var cell     = document.createElement("td");
+    var textNode = document.createTextNode(value);
+
+    if (baseClassAttr) {
+        row.className += baseClassAttr;
+    }
+
+    if (indentationClassAttr) {
+        cell.className += indentationClassAttr;
+    }
+
+    if (baseClassAttr != "keyRow") {
+        var div = document.createElement("div");
+        div.className += "ellipsize";
+
+        var nobr = document.createElement("nobr");
+
+        nobr.appendChild(textNode);
+        div.appendChild(nobr);
+
+        cell.appendChild(div);
+    } else {
+        cell.appendChild(textNode);
+    }
+
+    row.appendChild(cell);
+    table.appendChild(row);
+}
+
+function updateAuthTables(resultDictionary)
+{
+    addValueToRowInTable(resultDictionary.provider, document.getElementById("providerTable"), "singleRow", "levelOne");
+    addValueToRowInTable(resultDictionary.tokenUrl, document.getElementById("tokenUrlTable"), "singleRow", "levelOne");
+
+    var profile = resultDictionary.auth_info.profile;
+
+    console.log(profile);
+
+    var profileTable = document.getElementById("profileTable");
+
+    for (var key in profile) {
+        if (profile.hasOwnProperty(key)) {
+
+            addValueToRowInTable(key, profileTable, "keyRow", "levelOne");
+
+         /* Yeah, yeah, should be recursive, but for now the auth_info profile
+            is only ever two levels deep */
+            if (profile[key] && typeof profile[key] === 'object') {
+                var subobject = profile[key];
+                for (var subkey in subobject) {
+                    if (subobject.hasOwnProperty(subkey)) {
+                        addValueToRowInTable(subkey, profileTable, "keyRow", "levelTwo");
+                        addValueToRowInTable(subobject[subkey], profileTable, "valueRow", "levelTwo");
+                    }
+                }
+            } else {
+                addValueToRowInTable(profile[key], profileTable, "valueRow", "levelOne");
+            }
+        }
+    }
+
+    moveLogo("up");
+    makeSectionVisible("authTables", true);
+}
+
+function updateShareTables(resultDictionary)
+{
+    var signins = resultDictionary.signIns;
+    var shares  = resultDictionary.shares;
+
+    if (signins) {
+        makeSectionVisible("signInsTable", true);
+
+        for (var i = 0; i < signins.length; i++) {
+            var provider = signins[i].provider;
+            var profile = signins[i].auth_info.profile;
+            var name;
+
+            if (profile.displayName) name = profile.displayName;
+            else if (profile.name.formatted) name = profile.name.formatted;
+            else if (profile.name.givenName) name = profile.name.givenName;
+            else name = profile.identifier;
+
+            addValueToRowInTable(provider, document.getElementById("signInsTable"), "valueRow", "levelOne");
+            addValueToRowInTable(name, document.getElementById("signInsTable"), "keyRow", "levelOne");
+        }
+    } else {
+        makeSectionVisible("signInsTable", false);
+    }
+
+    var numGoodShares = 0;
+    var numBadShares  = 0;
+
+    if (shares) {
+        for (i = 0; i < shares.length; i++) {
+            var share = shares[i];
+
+            if (share.stat == "ok") {
+                addValueToRowInTable("Activity Shared On", document.getElementById("goodSharesTable"), "valueRow", "levelOne");
+                addValueToRowInTable(share.provider, document.getElementById("goodSharesTable"), "keyRow", "levelOne");
+
+                numGoodShares++;
+            } else { /* if (share.stat == "fail") */
+                addValueToRowInTable("Activity Failed On", document.getElementById("badSharesTable"), "valueRow", "levelOne");
+                addValueToRowInTable(share.provider, document.getElementById("badSharesTable"), "keyRow", "levelOne");
+
+                addValueToRowInTable("Reason", document.getElementById("badSharesTable"), "valueRow", "levelOne");
+                addValueToRowInTable(share.message, document.getElementById("badSharesTable"), "keyRow", "levelOne");
+
+                numBadShares++;
+            }
+        }
+    }
+
+    if (numGoodShares) makeSectionVisible("goodSharesTable", true);
+    else makeSectionVisible("goodSharesTable", false);
+
+    if (numBadShares) makeSectionVisible("badSharesTable", true);
+    else makeSectionVisible("badSharesTable", false);
+
+    moveLogo("up");
+    makeSectionVisible("shareTables", true);
+}
+
+function handleAuthenticationResult(resultDictionary)
+{
+    // TODO: Check the stat to make sure it's ok
+    // TODO: Do something with the payload
+    // var stat    = resultDictionary.stat;
+    // var payload = resultDictionary.payload;
+
+    updateAuthTables(resultDictionary);
+}
+
+function handleSharingResult(resultDictionary)
+{
+    updateShareTables(resultDictionary);
+}
+
+function configurationError(code, message)
+{
+    alert("There was a problem configuring the JREngage library.\n" + message);
+}
+
+function authenticationError(code, message)
+{
+    alert("There was a problem authenticating.\n" + message);
+}
+
+function sharingError(code, message)
+{
+    alert("There was a problem sharing.\n" + message);
+}
+
+function handleAuthenticationError(errorDictionary)
+{
+    var code    = errorDictionary.code;
+    var message = errorDictionary.message;
+
+    if (code == jrEngage.JRUrlError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRDataParsingError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRJsonError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRConfigurationInformationError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRSessionDataFinishGetProvidersError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRDialogShowingError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRProviderNotConfiguredError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRMissingAppIdError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRGenericConfigurationError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRAuthenticationFailedError) {
+        authenticationError(code, message);
+    } else if (code == jrEngage.JRAuthenticationTokenUrlFailedError) {
+        authenticationError(code, message);
+    } else if (code == jrEngage.JRAuthenticationCanceled) {
+        /* Do nothing in this case */
+    } else {
+        authenticationError(code, message);
+    }
+}
+
+function handleSharingError(errorDictionary)
+{
+    var code    = errorDictionary.code;
+    var message = errorDictionary.message;
+
+    if (code == jrEngage.JRUrlError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRDataParsingError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRJsonError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRConfigurationInformationError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRSessionDataFinishGetProvidersError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRDialogShowingError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRProviderNotConfiguredError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRMissingAppIdError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRGenericConfigurationError) {
+        configurationError(code, message);
+    } else if (code == jrEngage.JRPublishCanceledError) {
+        /* Do nothing in this case */
+    } else {
+        sharingError(code, message);
+    }
+}
+
+function cleanTheUI()
+{
+    removeTheChildren("authTables");
+    removeTheChildren("shareTables");
+    makeSectionVisible("authTables", false);
+    makeSectionVisible("shareTables", false);
+    moveLogo("down");
+}
+
+function showAuthenticationDialog()
+{
+    cleanTheUI();
+
+    jrEngage.showAuthentication(
+        function(result)
+        {
+            var resultDictionary = JSON.parse(result);
+
+            console.log(result);
+
+            handleAuthenticationResult(resultDictionary);
+        },
+
+        function(error)
+        {
+            var errorDictionary = JSON.parse(error);
+
+            console.log(error);
+
+            handleAuthenticationError(errorDictionary);
+        }
+    );
+}
+
+function showSharingDialog()
+{
+    cleanTheUI();
+
+    var activity =
+        '{\
+            "action":"is sharing a link",\
+            "url":"http://www.google.com/doodles/burning-man-festival",\
+            "resourceTitle":"Google\'s first Doodle",\
+            "resourceDescription":"This is Google\'s very first Doodle, the one that started them all.",\
+            "actionLinks":\
+            [\
+                {"text":"Google","href":"http://google.com"}\
+            ],\
+            "media":\
+            [\
+                {\
+                    "type":"image",\
+                    "src":"http://www.google.com/logos/1998/googleburn.jpg",\
+                    "href":"http://www.google.com/doodles/burning-man-festival"\
+                }\
+            ],\
+            "email":\
+            {\
+                "subject":"subject text",\
+                "messageBody":"body text",\
+                "isHtml":"NO",\
+                "urls":["http://google.com","http://janrain.com"]\
+            },\
+            "sms":\
+            {\
+                "message":"",\
+                "urls":["http://google.com","http://janrain.com"]\
+            }\
+        }';
+
+    jrEngage.showSharing(
+        activity,
+        function(result)
+        {
+            var resultDictionary = JSON.parse(result);
+
+            console.log(result);
+
+            handleSharingResult(resultDictionary);
+        },
+
+        function(error)
+        {
+            var errorDictionary = JSON.parse(error);
+
+            console.log(error);
+
+            handleSharingError(errorDictionary);
+        }
+
+    );
 }
