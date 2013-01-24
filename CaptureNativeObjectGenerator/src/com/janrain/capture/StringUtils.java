@@ -1,6 +1,6 @@
 /*
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *  Copyright (c) 2012, Janrain, Inc.
+ *  Copyright (c) 2013, Janrain, Inc.
  *
  *  All rights reserved.
  *
@@ -32,31 +32,26 @@
 
 package com.janrain.capture;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
-
-public class JRCapture {
-    public static JRCaptureEntity getEntity(int id) throws IOException, JSONException {
-        URLConnection entityConn = new URL("https://" + JRCaptureConfiguration.CAPTURE_DOMAIN + "/entity?" +
-                "type_name=" + JRCaptureConfiguration.ENTITY_TYPE_NAME +
-                "&client_id=" + JRCaptureConfiguration.CLIENT_ID +
-                "&client_secret=" + JRCaptureConfiguration.CLIENT_SECRET +
-                "&id=" + id).openConnection();
-        entityConn.connect();
-        JSONObject jo = new JSONObject(new JSONTokener(entityConn.getInputStream()));
-        if ("ok".equals(jo.optString("stat"))) {
-            return JRCaptureEntity.inflate((JSONObject) jo.get("result"));
-        } else {
-            throw new IOException("failed to get entity, bad JSON response: " + jo);
-        }
+/**
+ * Created with IntelliJ IDEA. User: nathan Date: 1/24/13 Time: 1:47 PM To change this template use File |
+ * Settings | File Templates.
+ */
+public class StringUtils {
+    public static String classNameFor(String name) {
+        return "JRCapture" + upcaseFirst(snakeToCamel(name));
     }
 
-    public static void main(String[] args) throws IOException, JSONException {
-        JRCaptureEntity e = getEntity(159);
+    public static String upcaseFirst(String camelName) {
+        return camelName.substring(0, 1).toUpperCase() + camelName.substring(1);
+    }
+
+    public static String snakeToCamel(String snakeName) {
+        String[] namePieces = snakeName.split("_");
+        for (int i = 1; i < namePieces.length; i++) {
+            namePieces[i] = namePieces[i].substring(0, 1).toUpperCase() + namePieces[i].substring(1);
+        }
+        String retval = "";
+        for (String s : namePieces) retval += s;
+        return retval;
     }
 }

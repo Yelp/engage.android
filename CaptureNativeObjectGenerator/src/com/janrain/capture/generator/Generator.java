@@ -32,23 +32,23 @@
 
 package com.janrain.capture.generator;
 
-import com.janrain.capture.JRCapture;
 import com.janrain.capture.JRCaptureConfiguration;
+import com.janrain.capture.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import org.stringtemplate.v4.*;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STErrorListener;
+import org.stringtemplate.v4.STGroupFile;
 import org.stringtemplate.v4.misc.STMessage;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 public class Generator {
@@ -59,6 +59,12 @@ public class Generator {
     private static final STGroupFile ST_GROUP = new STGroupFile(ST_DIRECTORY + "entity.stg");
     private static final List<String> READONLY_ATTRIBUTES =
             Arrays.asList("id", "uuid", "created", "lastUpdated", "parent_id", "profiles");
+    private static final List<String> DEPLURALIZATION_LIST = Arrays.asList(
+            "accounts", "account", "profiles", "profile", "addresses", "address", "friends", "friend",
+            "photos", "photo", "emails", "email", "games", "game", "opponents", "opponent",
+            "organizations", "organization", "phoneNumbers", "phoneNumber", "securityQuestions",
+            "securityQuestion", "tags", "tag", "urls", "url", "relationships", "relationship",
+            "ims", "im", "mice", "mouse", "mices", "mouse");
 
     public static void main(String[] args) throws JSONException, IOException {
         OUT_DIRECTORY.mkdirs();
@@ -69,8 +75,7 @@ public class Generator {
         URLConnection schemaConn = new URL("https://" + JRCaptureConfiguration.CAPTURE_DOMAIN + "/entityType?" +
                 "type_name=" + JRCaptureConfiguration.ENTITY_TYPE_NAME +
                 "&client_id=" + JRCaptureConfiguration.CLIENT_ID +
-                "&client_secret=" + JRCaptureConfiguration.CLIENT_SECRET
-        ).openConnection();
+                "&client_secret=" + JRCaptureConfiguration.CLIENT_SECRET).openConnection();
         schemaConn.connect();
         JSONObject jo = new JSONObject(new JSONTokener(schemaConn.getInputStream()));
 
@@ -82,8 +87,8 @@ public class Generator {
         log("Object: " + entityName);
 
         String className = "plural".equals(jo.optString("type")) ?
-                JRCapture.classNameFor(JRCapture.depluralize(entityName))
-                : JRCapture.classNameFor(entityName);
+                StringUtils.classNameFor(depluralize(entityName))
+                : StringUtils.classNameFor(entityName);
         JSONArray attrDefs = jo.getJSONArray("attr_defs");
 
         ST st = ST_GROUP.getInstanceOf("entity");
@@ -107,8 +112,9 @@ public class Generator {
             // required, unicode-printable, unique, alphabetic, alphanumeric, unicode-letters, email-address
             // locally-unique
 
-            CaptureStringTemplateAttr stAttr = new CaptureStringTemplateAttr(null, attrName, attrType, features, constraints, length,
-                    caseSensitive, description, READONLY_ATTRIBUTES.contains(attrName));
+            CaptureStringTemplateAttr stAttr = new CaptureStringTemplateAttr(null, attrName, attrType,
+                    features, constraints, length, caseSensitive, description,
+                    READONLY_ATTRIBUTES.contains(attrName));
             if (attrName.equals("id")) stAttr.inheritedField = true;
 
             if (attrType.equals("boolean")) {
@@ -128,7 +134,7 @@ public class Generator {
             } else if (attrType.equals("json")) {
                 stAttr.javaType = "String";
             } else if (attrType.equals("object")) {
-                stAttr.javaType = JRCapture.classNameFor(attrName);
+                stAttr.javaType = StringUtils.classNameFor(attrName);
                 writeCaptureClasses(attrName, attr);
             } else if (attrType.equals("password")) {
                 stAttr.javaType = "String";
@@ -141,7 +147,7 @@ public class Generator {
             } else if (attrType.equals("password-bcrypt")) {
                 stAttr.javaType = "String";
             } else if (attrType.equals("plural")) {
-                stAttr.javaType = "JRCapturePlural<" + JRCapture.classNameFor(JRCapture.depluralize(attrName)) + ">";
+                stAttr.javaType = "JRCapturePlural<" + StringUtils.classNameFor(depluralize(attrName)) + ">";
                 writeCaptureClasses(attrName, attr);
             } else if (attrType.equals("string")) {
                 stAttr.javaType = "String";
@@ -178,6 +184,13 @@ public class Generator {
         System.out.flush();
     }
 
+    private static String depluralize(String plural) {
+        int i;
+        if ((i = DEPLURALIZATION_LIST.indexOf(plural)) >= 0) return DEPLURALIZATION_LIST.get(i + 1);
+        log("Couldn't depluralize: " + plural);
+        return plural;
+    }
+
     public static class CaptureStringTemplateAttr {
         public String javaType;
         public String captureFieldName;
@@ -212,8 +225,8 @@ public class Generator {
             this.description = description;
             this.readOnly = readOnly;
 
-            this.javaFieldName = JRCapture.snakeToCamel(captureFieldName);
-            this.javaAccessorName = JRCapture.upcaseFirst(this.javaFieldName);
+            this.javaFieldName = StringUtils.snakeToCamel(captureFieldName);
+            this.javaAccessorName = StringUtils.upcaseFirst(this.javaFieldName);
         }
     }
 
