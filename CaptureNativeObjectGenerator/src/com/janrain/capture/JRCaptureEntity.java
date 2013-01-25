@@ -128,4 +128,46 @@ public abstract class JRCaptureEntity {
             throw e;
         }
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        Field[] fields = getClass().getDeclaredFields();
+        try {
+            boolean firstField = true;
+            for (Field f : fields) {
+                if (!firstField) sb.append(",");
+                firstField = false;
+
+                f.setAccessible(true);
+                sb.append("\"");
+                sb.append(f.getName());
+                sb.append("\":");
+                Object value = f.get(this);
+                if (value == null) {
+                    sb.append("null");
+                } else if (value instanceof String) {
+                    sb.append("\"").append(value).append("\"");
+                } else if (JRCapturePlural.class.isAssignableFrom(f.getType())) {
+                    JRCapturePlural p = (JRCapturePlural) value;
+                    sb.append("[");
+                    boolean firstElement = true;
+                    for (Object e : p) {
+                        if (!firstElement) sb.append(",");
+                        sb.append(e.toString());
+                        if (firstElement) firstElement = false;
+                    }
+                    sb.append("]");
+                } else if (JRCaptureEntity.class.isAssignableFrom(f.getType())) {
+                    sb.append(value.toString());
+                } else {
+                    sb.append(value.toString());
+                }
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        sb.append("}");
+        return sb.toString();
+    }
 }
