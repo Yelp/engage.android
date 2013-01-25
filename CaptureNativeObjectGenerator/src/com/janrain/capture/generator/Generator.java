@@ -126,7 +126,7 @@ public class Generator {
             } else if (attrType.equals("decimal")) {
                 stAttr.javaType = "Number";
             } else if (attrType.equals("id")) {
-                stAttr.javaType = "long";
+                stAttr.javaType = "Long";
             } else if (attrType.equals("integer")) {
                 stAttr.javaType = "Integer";
             } else if (attrType.equals("ipAddress")) {
@@ -137,15 +137,13 @@ public class Generator {
                 stAttr.javaType = CaptureStringUtils.classNameFor(attrName);
                 writeCaptureClasses(attrName, attr);
             } else if (attrType.equals("password")) {
-                stAttr.javaType = "String";
-            } else if (attrType.equals("password")) {
-                stAttr.javaType = "String";
+                stAttr.javaType = "JRCapturePassword.Generic";
             } else if (attrType.equals("password-crypt-sha256")) {
-                stAttr.javaType = "String";
+                stAttr.javaType = "JRCapturePassword.Sha256";
             } else if (attrType.equals("password-md5")) {
-                stAttr.javaType = "String";
+                stAttr.javaType = "JRCapturePassword.Md5";
             } else if (attrType.equals("password-bcrypt")) {
-                stAttr.javaType = "String";
+                stAttr.javaType = "JRCapturePassword.Bcrypt";
             } else if (attrType.equals("plural")) {
                 stAttr.javaType = "JRCapturePlural<" + CaptureStringUtils.classNameFor(depluralize(attrName)) + ">";
                 writeCaptureClasses(attrName, attr);

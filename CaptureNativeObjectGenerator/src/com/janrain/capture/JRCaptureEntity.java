@@ -60,7 +60,7 @@ public abstract class JRCaptureEntity {
     }
 
     protected static JRCaptureEntity inflate(JSONObject jo) {
-        return inflate(CaptureStringUtils.classNameFor(JRCaptureConfiguration.ENTITY_TYPE_NAME), jo);
+        return inflate(JRCaptureConfiguration.ENTITY_TYPE_NAME, jo);
     }
 
     protected static JRCaptureEntity inflate(String entityTypeName, JSONObject jo) {
@@ -73,9 +73,13 @@ public abstract class JRCaptureEntity {
                 String key = (String) keys.next();
                 Object val = jo.get(key);
 
-                Field f = c.getDeclaredField(CaptureStringUtils.snakeToCamel(key));
+                Field f = recursiveGetDeclaredField(c, key);
                 f.setAccessible(true);
-                if (JSONObject.NULL.equals(val)) {
+                if (JRCapturePassword.class.isAssignableFrom(f.getType())) {
+                    f.set(retval, f.getType().newInstance());
+                    Field f_ = f.getType().getField("password");
+                    f_.set(f.get(retval), val.toString());
+                } else if (JSONObject.NULL.equals(val)) {
                     f.set(retval, null);
                 } else if (val instanceof JSONObject) {
                     f.set(retval, inflate(key, (JSONObject) val));
@@ -83,9 +87,17 @@ public abstract class JRCaptureEntity {
                     JRCapturePlural plural = (JRCapturePlural) f.getType().newInstance();
                     f.set(retval, plural);
                     JSONArray ja = (JSONArray) val;
-                    //for (int i = 0; i < ja.length(); i++) plural.add()
-                } else {
-                    f.set(retval, val);
+                    for (int i = 0; i < ja.length(); i++) plural.add(inflate(key, (JSONObject) ja.get(i)));
+                } else if (String.class.isAssignableFrom(f.getType())) {
+                    f.set(retval, jo.getString(key));
+                } else if (Boolean.class.isAssignableFrom(f.getType())) {
+                    f.set(retval, jo.getBoolean(key));
+                } else if (Double.class.isAssignableFrom(f.getType())) {
+                    f.set(retval, jo.getDouble(key));
+                } else if (Integer.class.isAssignableFrom(f.getType())) {
+                    f.set(retval, jo.getInt(key));
+                } else if (Long.class.isAssignableFrom(f.getType())) {
+                    f.set(retval, jo.getLong(key));
                 }
             }
 
@@ -103,5 +115,15 @@ public abstract class JRCaptureEntity {
         }
 
         return null;
+    }
+
+    private static Field recursiveGetDeclaredField(Class c, String key) throws NoSuchFieldException {
+        try {
+            return c.getDeclaredField(CaptureStringUtils.snakeToCamel(key));
+        } catch (NoSuchFieldException e) {
+            Class c_ = c.getSuperclass();
+            if (c_ != null) return recursiveGetDeclaredField(c_, key);
+            throw e;
+        }
     }
 }
