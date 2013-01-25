@@ -37,6 +37,9 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -48,8 +51,11 @@ public class JRCapture {
                 "&client_secret=" + JRCaptureConfiguration.CLIENT_SECRET +
                 "&id=" + id).openConnection();
         entityConn.connect();
-        JSONObject jo = new JSONObject(new JSONTokener(entityConn.getInputStream()));
+
+        String response = CaptureStringUtils.readFully(entityConn.getInputStream());
+        JSONObject jo = new JSONObject(new JSONTokener(response));
         if ("ok".equals(jo.optString("stat"))) {
+            CaptureStringUtils.log("response: " + response);
             return JRCaptureEntity.inflate((JSONObject) jo.get("result"));
         } else {
             throw new IOException("failed to get entity, bad JSON response: " + jo);

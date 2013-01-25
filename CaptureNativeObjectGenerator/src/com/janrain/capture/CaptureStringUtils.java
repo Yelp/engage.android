@@ -32,6 +32,11 @@
 
 package com.janrain.capture;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
 
@@ -86,5 +91,34 @@ public class CaptureStringUtils {
         for (Object e : l) sb.append(e).append(separator);
         sb.delete(sb.length() - separator.length(), sb.length());
         return sb.toString();
+    }
+
+    public static String readFully(InputStream is) {
+        try {
+            return new String(readFromStream(is, false));
+        } catch (IOException ignore) {
+            throw new RuntimeException(ignore);
+        }
+    }
+
+    public static byte[] readFromStream(InputStream in, boolean shouldThrowOnError) throws IOException {
+        if (in != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try {
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = in.read(buffer)) != -1) baos.write(buffer, 0, len);
+                return baos.toByteArray();
+            } catch (IOException e) {
+                log("[readFromStream] problem reading from input stream: " + e.getLocalizedMessage());
+                if (shouldThrowOnError) throw e;
+            } finally {
+                baos.close();
+            }
+        } else {
+            log("[readFromStream] unexpected null InputStream");
+        }
+
+        return null;
     }
 }

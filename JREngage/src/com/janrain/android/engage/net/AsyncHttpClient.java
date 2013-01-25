@@ -86,7 +86,8 @@ import java.util.zip.GZIPInputStream;
  **/
 public final class AsyncHttpClient {
     private static final String TAG = AsyncHttpClient.class.getSimpleName();
-    private static final String USER_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
+    private static final String USER_AGENT =
+            "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
     private static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
     private static final String ENCODING_GZIP = "gzip";
 
@@ -209,9 +210,7 @@ public final class AsyncHttpClient {
                     }
                 }
 
-                if (mRequest.isAborted()) {
-                    throw new AbortedRequestException();
-                }
+                if (mRequest.isAborted()) throw new AbortedRequestException();
 
                 /* Fetching the status code allows the response interceptor to have a chance to un-gzip the
                  * entity before we fetch it. */
@@ -220,8 +219,10 @@ public final class AsyncHttpClient {
                 HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response, mRequest);
 
                 HttpEntity entity = response.getEntity();
-                byte[] data = entity == null? new byte[0] : IOUtils.readFromStream(entity.getContent(), true);
-                String dataString = new String(data);
+                byte[] data = entity == null ?
+                        new byte[0] :
+                        IOUtils.readFromStream(entity.getContent(), true);
+                String dataString = new String(data); // Android defaults to UTF-8
                 if (entity != null) entity.consumeContent();
 
                 AsyncHttpResponse ahr;
