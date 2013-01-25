@@ -133,16 +133,11 @@ public abstract class JRCaptureEntity {
         try {
             boolean firstField = true;
             for (Field f : fields) {
-                if (!firstField) {
-                    sb.append(",");
-                } else {
-                    firstField = false;
-                }
+                if (!firstField) sb.append(",");
+                firstField = false;
 
                 f.setAccessible(true);
-                sb.append("\"");
-                sb.append(f.getName());
-                sb.append("\":");
+                sb.append("\"").append(f.getName()).append("\":");
                 Object value = f.get(this);
                 if (value == null) {
                     sb.append("null");
