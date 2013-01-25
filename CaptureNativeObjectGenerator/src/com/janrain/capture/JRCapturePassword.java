@@ -43,6 +43,10 @@ public abstract class JRCapturePassword {
     public static class Md5 extends JRCapturePassword {}
     public static class Sha256 extends JRCapturePassword {}
 
+    public String toJsonString() {
+        return toString();
+    }
+
     public String toString() {
         return password;
     }

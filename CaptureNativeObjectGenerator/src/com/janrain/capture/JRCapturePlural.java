@@ -37,7 +37,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class JRCapturePlural<T> implements Set<T> {
+public final class JRCapturePlural<T> implements Set<T> {
     private final HashSet<T> hashSet = new HashSet<T>();
 
     public Object[] toArray() {
@@ -49,7 +49,7 @@ public class JRCapturePlural<T> implements Set<T> {
     }
 
     public boolean add(T t) {
-        return false;
+        return hashSet.add(t);
     }
 
     public boolean containsAll(Collection<?> objects) {
@@ -57,7 +57,7 @@ public class JRCapturePlural<T> implements Set<T> {
     }
 
     public boolean addAll(Collection<? extends T> ts) {
-        return false;
+        return hashSet.addAll(ts);
     }
 
     public boolean retainAll(Collection<?> objects) {

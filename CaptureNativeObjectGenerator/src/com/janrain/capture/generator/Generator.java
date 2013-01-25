@@ -66,8 +66,8 @@ public class Generator {
     }
 
     private static JSONObject fetchSchema() throws IOException, JSONException {
-        URLConnection schemaConn = new URL("https://" + JRCaptureConfiguration.CAPTURE_DOMAIN + "/entityType?" +
-                "type_name=" + JRCaptureConfiguration.ENTITY_TYPE_NAME +
+        URLConnection schemaConn = new URL("https://" + JRCaptureConfiguration.CAPTURE_DOMAIN +
+                "/entityType?type_name=" + JRCaptureConfiguration.ENTITY_TYPE_NAME +
                 "&client_id=" + JRCaptureConfiguration.CLIENT_ID +
                 "&client_secret=" + JRCaptureConfiguration.CLIENT_SECRET).openConnection();
         schemaConn.connect();
@@ -81,8 +81,9 @@ public class Generator {
         CaptureStringUtils.log("Object: " + entityName);
 
         String className = "plural".equals(jo.optString("type")) ?
-                CaptureStringUtils.classNameFor(CaptureStringUtils.depluralize(entityName))
-                : CaptureStringUtils.classNameFor(entityName);
+                CaptureStringUtils.javaEntityTypeNameForCaptureAttrName(CaptureStringUtils.depluralize(
+                        entityName))
+                : CaptureStringUtils.javaEntityTypeNameForCaptureAttrName(entityName);
         JSONArray attrDefs = jo.getJSONArray("attr_defs");
 
         ST st = ST_GROUP.getInstanceOf("entity");
@@ -94,6 +95,7 @@ public class Generator {
             // attr can have
             // description, name, type, case-sensitive, length, features, constraints, attr_defs
             String attrType = attr.getString("type");
+            // valid attr names begin with a letter and are composed of chars in set [a-zA-Z0-9_]
             String attrName = attr.getString("name");
             String description = attr.optString("description");
             Boolean caseSensitive = attr.has("case-sensitive") ? attr.getBoolean("case-sensitive") : null;
@@ -109,7 +111,6 @@ public class Generator {
             CaptureStringTemplateAttr stAttr = new CaptureStringTemplateAttr(null, attrName, attrType,
                     features, constraints, length, caseSensitive, description,
                     READONLY_ATTRIBUTES.contains(attrName));
-            if (attrName.equals("id")) stAttr.inheritedField = true;
 
             if (attrType.equals("boolean")) {
                 stAttr.javaType = "Boolean";
@@ -128,7 +129,7 @@ public class Generator {
             } else if (attrType.equals("json")) {
                 stAttr.javaType = "String";
             } else if (attrType.equals("object")) {
-                stAttr.javaType = CaptureStringUtils.classNameFor(attrName);
+                stAttr.javaType = CaptureStringUtils.javaEntityTypeNameForCaptureAttrName(attrName);
                 writeCaptureClasses(attrName, attr);
             } else if (attrType.equals("password")) {
                 stAttr.javaType = "JRCapturePassword.Generic";
@@ -139,8 +140,10 @@ public class Generator {
             } else if (attrType.equals("password-bcrypt")) {
                 stAttr.javaType = "JRCapturePassword.Bcrypt";
             } else if (attrType.equals("plural")) {
-                stAttr.javaType = "JRCapturePlural<" + CaptureStringUtils.classNameFor(CaptureStringUtils.depluralize(
-                        attrName)) + ">";
+                stAttr.javaType = "JRCapturePlural<"
+                        + CaptureStringUtils.javaEntityTypeNameForCaptureAttrName(
+                        CaptureStringUtils.depluralize(
+                                attrName)) + ">";
                 writeCaptureClasses(attrName, attr);
             } else if (attrType.equals("string")) {
                 stAttr.javaType = "String";

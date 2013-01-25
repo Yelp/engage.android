@@ -1,6 +1,6 @@
 fieldDeclaration(attr) ::= <<
 <if(!attr.inheritedField)>
-private <attr.javaType> <attr.javaFieldName>; // <attr.captureType> <attr.features> <attr.constraints>
+private <attr.javaType> <attr.captureFieldName>; // <attr.captureType> <attr.features> <attr.constraints>
 <endif>
 >>
 
@@ -15,7 +15,7 @@ getterSetterDeclaration(attr) ::= <<
  * Unless the returned value is a JRCaptureEntity or a JRCapturePlural, the returned value is immutable.
  */
 public <attr.javaType> get<attr.javaAccessorName>() {
-    return <attr.javaFieldName>;
+    return <attr.captureFieldName>;
 }
 <if(!attr.readOnly)>
 
@@ -27,7 +27,7 @@ public <attr.javaType> get<attr.javaAccessorName>() {
  * Capture constraints: <attr.constraints>
  */
 public void set<attr.javaAccessorName>(<attr.javaType> value) {
-    this.<attr.javaFieldName> = value;
+    this.<attr.captureFieldName> = value;
 }
 
 <endif>

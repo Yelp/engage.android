@@ -41,8 +41,6 @@ import java.lang.reflect.Field;
 import java.util.Iterator;
 
 public abstract class JRCaptureEntity {
-    protected Long id;
-
     /**
      * Synchronize changes on this Capture entity or sub-entity with the Capture API daemon.
      * This both updates the server with local changes and updates the local data with the latest server
@@ -59,20 +57,21 @@ public abstract class JRCaptureEntity {
     }
 
     /*package*/ static JRCaptureEntity inflate(JSONObject jo) {
-        return inflate(JRCaptureConfiguration.ENTITY_TYPE_NAME, jo);
+        String entityTypeName = JRCaptureConfiguration.ENTITY_TYPE_NAME;
+        String javaEntityTypeName = CaptureStringUtils.javaEntityTypeNameForCaptureAttrName(entityTypeName);
+        return inflate(javaEntityTypeName, jo);
     }
 
-    /*package*/ static JRCaptureEntity inflate(String entityTypeName, JSONObject jo) {
+    /*package*/ static JRCaptureEntity inflate(String javaTypeName, JSONObject jo) {
         try {
-            Class c = Class.forName(Generator.GENERATED_OBJECT_PACKAGE + "." +
-                    CaptureStringUtils.classNameFor(entityTypeName));
+            Class c = Class.forName(Generator.GENERATED_OBJECT_PACKAGE + "." + javaTypeName);
             JRCaptureEntity retval = (JRCaptureEntity) c.newInstance();
             Iterator keys = jo.keys();
             while (keys.hasNext()) {
                 String key = (String) keys.next();
                 Object val = jo.get(key);
 
-                Field f = recursiveGetDeclaredField(c, key);
+                Field f = c.getDeclaredField(key);
                 f.setAccessible(true);
                 if (JRCapturePassword.class.isAssignableFrom(f.getType())) {
                     // passwords are an edge case, they can either be raw strings or json objects
@@ -82,13 +81,16 @@ public abstract class JRCaptureEntity {
                 } else if (JSONObject.NULL.equals(val)) {
                     f.set(retval, null);
                 } else if (val instanceof JSONObject) {
-                    f.set(retval, inflate(key, (JSONObject) val));
+                    String typeName = CaptureStringUtils.javaEntityTypeNameForCaptureAttrName(key);
+                    f.set(retval, inflate(typeName, (JSONObject) val));
                 } else if (val instanceof JSONArray) {
-                    JRCapturePlural plural = (JRCapturePlural) f.getType().newInstance();
+                    JRCapturePlural plural = new JRCapturePlural();
                     f.set(retval, plural);
+                    String depluralize = CaptureStringUtils.depluralize(key);
+                    String typeName = CaptureStringUtils.javaEntityTypeNameForCaptureAttrName(depluralize);
                     JSONArray ja = (JSONArray) val;
                     for (int i = 0; i < ja.length(); i++) {
-                        plural.add(inflate(CaptureStringUtils.depluralize(key), (JSONObject) ja.get(i)));
+                        plural.add(inflate(typeName, (JSONObject) ja.get(i)));
                     }
                 } else if (String.class.isAssignableFrom(f.getType())) {
                     f.set(retval, jo.getString(key));
@@ -105,39 +107,37 @@ public abstract class JRCaptureEntity {
 
             return retval;
         } catch (ClassNotFoundException e) {
-            CaptureStringUtils.log("Class not found for: " + entityTypeName + " " + e.getLocalizedMessage());
+            CaptureStringUtils.log("Class not found for: " + javaTypeName + " " + e.getLocalizedMessage());
         } catch (JSONException e) {
-            CaptureStringUtils.log("Unexpected value not found for key: " + e);
+            CaptureStringUtils.log("Unexpected value not found for key: " + e.getLocalizedMessage());
         } catch (InstantiationException e) {
-            CaptureStringUtils.log("Unexpected instantiation exception: " + e);
+            CaptureStringUtils.log("Unexpected instantiation exception: " + e.getLocalizedMessage());
         } catch (IllegalAccessException e) {
-            CaptureStringUtils.log("Unexpected illegal access exception: " + e);
+            CaptureStringUtils.log("Unexpected illegal access exception: " + e.getLocalizedMessage());
         } catch (NoSuchFieldException e) {
-            CaptureStringUtils.log("Unexpected no such field exception: " + e);
+            CaptureStringUtils.log("Unexpected no such field exception: " + e.getLocalizedMessage());
         }
 
         return null;
     }
 
-    private static Field recursiveGetDeclaredField(Class c, String key) throws NoSuchFieldException {
-        try {
-            return c.getDeclaredField(CaptureStringUtils.snakeToCamel(key));
-        } catch (NoSuchFieldException e) {
-            Class c_ = c.getSuperclass();
-            if (c_ != null) return recursiveGetDeclaredField(c_, key);
-            throw e;
-        }
+    public String toString() {
+        return toJsonString();
     }
 
-    public String toString() {
+    public String toJsonString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
+
         Field[] fields = getClass().getDeclaredFields();
         try {
             boolean firstField = true;
             for (Field f : fields) {
-                if (!firstField) sb.append(",");
-                firstField = false;
+                if (!firstField) {
+                    sb.append(",");
+                } else {
+                    firstField = false;
+                }
 
                 f.setAccessible(true);
                 sb.append("\"");
@@ -148,19 +148,20 @@ public abstract class JRCaptureEntity {
                     sb.append("null");
                 } else if (value instanceof String) {
                     sb.append("\"").append(value).append("\"");
-                } else if (JRCapturePlural.class.isAssignableFrom(f.getType())) {
+                } else if (value instanceof JRCapturePlural) {
                     JRCapturePlural p = (JRCapturePlural) value;
                     sb.append("[");
                     boolean firstElement = true;
                     for (Object e : p) {
                         if (!firstElement) sb.append(",");
+                        firstElement = false;
                         sb.append(e.toString());
-                        if (firstElement) firstElement = false;
                     }
                     sb.append("]");
-                } else if (JRCaptureEntity.class.isAssignableFrom(f.getType())) {
-                    sb.append(value.toString());
+                } else if (value instanceof JRCaptureEntity) {
+                    sb.append(((JRCaptureEntity) value).toJsonString());
                 } else {
+                    // TODO not sure if all "primitives" will toString properly
                     sb.append(value.toString());
                 }
             }

@@ -52,7 +52,7 @@ public class CaptureStringUtils {
             "securityQuestion", "tags", "tag", "urls", "url", "relationships", "relationship",
             "ims", "im", "mice", "mouse", "mices", "mouse");
 
-    public static String classNameFor(String name) {
+    public static String javaEntityTypeNameForCaptureAttrName(String name) {
         return "JRCapture" + upcaseFirst(snakeToCamel(name));
     }
 
