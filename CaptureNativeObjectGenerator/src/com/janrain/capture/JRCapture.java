@@ -58,5 +58,6 @@ public class JRCapture {
 
     public static void main(String[] args) throws IOException, JSONException {
         JRCaptureEntity e = getEntity(159);
+        CaptureStringUtils.log(e.toString());
     }
 }

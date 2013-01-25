@@ -32,11 +32,21 @@
 
 package com.janrain.capture;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA. User: nathan Date: 1/24/13 Time: 1:47 PM To change this template use File |
  * Settings | File Templates.
  */
 public class CaptureStringUtils {
+    private static final List<String> DEPLURALIZATION_LIST = Arrays.asList(
+            "accounts", "account", "profiles", "profile", "addresses", "address", "friends", "friend",
+            "photos", "photo", "emails", "email", "games", "game", "opponents", "opponent",
+            "organizations", "organization", "phoneNumbers", "phoneNumber", "securityQuestions",
+            "securityQuestion", "tags", "tag", "urls", "url", "relationships", "relationship",
+            "ims", "im", "mice", "mouse", "mices", "mouse");
+
     public static String classNameFor(String name) {
         return "JRCapture" + upcaseFirst(snakeToCamel(name));
     }
@@ -53,5 +63,28 @@ public class CaptureStringUtils {
         String retval = "";
         for (String s : namePieces) retval += s;
         return retval;
+    }
+
+    public static String depluralize(String plural) {
+        int i;
+        if ((i = DEPLURALIZATION_LIST.indexOf(plural)) >= 0) return DEPLURALIZATION_LIST.get(i + 1);
+        log("Couldn't depluralize: " + plural);
+        return plural;
+    }
+
+    public static void log(Object o) {
+        System.out.println(o);
+        System.out.flush();
+    }
+
+    public static String join(String[] a, String separator) {
+        return join(Arrays.asList(a), separator);
+    }
+
+    private static String join(List l, String separator) {
+        StringBuilder sb = new StringBuilder();
+        for (Object e : l) sb.append(e).append(separator);
+        sb.delete(sb.length() - separator.length(), sb.length());
+        return sb.toString();
     }
 }

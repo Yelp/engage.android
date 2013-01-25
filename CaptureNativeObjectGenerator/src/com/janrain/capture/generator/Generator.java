@@ -54,17 +54,11 @@ import java.util.List;
 public class Generator {
     public static final String GENERATED_OBJECT_PACKAGE = "com.janrain.capture.gen";
     private static final File OUT_DIRECTORY = new File("CaptureNativeObjectGenerator/out/" +
-            join(GENERATED_OBJECT_PACKAGE.split("\\."), "/") + "/");
+            CaptureStringUtils.join(GENERATED_OBJECT_PACKAGE.split("\\."), "/") + "/");
     private static final String ST_DIRECTORY = "CaptureNativeObjectGenerator/templates/";
     private static final STGroupFile ST_GROUP = new STGroupFile(ST_DIRECTORY + "entity.stg");
     private static final List<String> READONLY_ATTRIBUTES =
             Arrays.asList("id", "uuid", "created", "lastUpdated", "parent_id", "profiles");
-    private static final List<String> DEPLURALIZATION_LIST = Arrays.asList(
-            "accounts", "account", "profiles", "profile", "addresses", "address", "friends", "friend",
-            "photos", "photo", "emails", "email", "games", "game", "opponents", "opponent",
-            "organizations", "organization", "phoneNumbers", "phoneNumber", "securityQuestions",
-            "securityQuestion", "tags", "tag", "urls", "url", "relationships", "relationship",
-            "ims", "im", "mice", "mouse", "mices", "mouse");
 
     public static void main(String[] args) throws JSONException, IOException {
         OUT_DIRECTORY.mkdirs();
@@ -84,10 +78,10 @@ public class Generator {
 
     private static void writeCaptureClasses(String entityName, JSONObject jo)
             throws JSONException, IOException {
-        log("Object: " + entityName);
+        CaptureStringUtils.log("Object: " + entityName);
 
         String className = "plural".equals(jo.optString("type")) ?
-                CaptureStringUtils.classNameFor(depluralize(entityName))
+                CaptureStringUtils.classNameFor(CaptureStringUtils.depluralize(entityName))
                 : CaptureStringUtils.classNameFor(entityName);
         JSONArray attrDefs = jo.getJSONArray("attr_defs");
 
@@ -145,14 +139,15 @@ public class Generator {
             } else if (attrType.equals("password-bcrypt")) {
                 stAttr.javaType = "JRCapturePassword.Bcrypt";
             } else if (attrType.equals("plural")) {
-                stAttr.javaType = "JRCapturePlural<" + CaptureStringUtils.classNameFor(depluralize(attrName)) + ">";
+                stAttr.javaType = "JRCapturePlural<" + CaptureStringUtils.classNameFor(CaptureStringUtils.depluralize(
+                        attrName)) + ">";
                 writeCaptureClasses(attrName, attr);
             } else if (attrType.equals("string")) {
                 stAttr.javaType = "String";
             } else if (attrType.equals("uuid")) {
                 stAttr.javaType = "String";
             } else {
-                log("unrecognized type: " + attrType);
+                CaptureStringUtils.log("unrecognized type: " + attrType);
                 continue;
             }
             st.add("attrs", stAttr);
@@ -175,18 +170,6 @@ public class Generator {
                 throw new RuntimeException(stMessage.toString());
             }
         });
-    }
-
-    public static void log(Object o) {
-        System.out.println(o);
-        System.out.flush();
-    }
-
-    private static String depluralize(String plural) {
-        int i;
-        if ((i = DEPLURALIZATION_LIST.indexOf(plural)) >= 0) return DEPLURALIZATION_LIST.get(i + 1);
-        log("Couldn't depluralize: " + plural);
-        return plural;
     }
 
     public static class CaptureStringTemplateAttr {
@@ -226,16 +209,5 @@ public class Generator {
             this.javaFieldName = CaptureStringUtils.snakeToCamel(captureFieldName);
             this.javaAccessorName = CaptureStringUtils.upcaseFirst(this.javaFieldName);
         }
-    }
-
-    private static String join(String[] a, String separator) {
-        return join(Arrays.asList(a), separator);
-    }
-
-    private static String join(List l, String separator) {
-        StringBuilder sb = new StringBuilder();
-        for (Object e : l) sb.append(e).append(separator);
-        sb.delete(sb.length() - separator.length(), sb.length());
-        return sb.toString();
     }
 }

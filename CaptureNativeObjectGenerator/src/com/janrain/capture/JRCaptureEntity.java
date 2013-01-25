@@ -49,8 +49,7 @@ public abstract class JRCaptureEntity {
      * data.
      * @param listener A listener for success / failure callbacks. May be null.
      */
-    public void synchronize(SyncListener listener) {
-
+    public final void synchronize(SyncListener listener) {
     }
 
     public static interface SyncListener {
@@ -59,11 +58,11 @@ public abstract class JRCaptureEntity {
         public void onFailure();
     }
 
-    protected static JRCaptureEntity inflate(JSONObject jo) {
+    /*package*/ static JRCaptureEntity inflate(JSONObject jo) {
         return inflate(JRCaptureConfiguration.ENTITY_TYPE_NAME, jo);
     }
 
-    protected static JRCaptureEntity inflate(String entityTypeName, JSONObject jo) {
+    /*package*/ static JRCaptureEntity inflate(String entityTypeName, JSONObject jo) {
         try {
             Class c = Class.forName(Generator.GENERATED_OBJECT_PACKAGE + "." +
                     CaptureStringUtils.classNameFor(entityTypeName));
@@ -76,6 +75,7 @@ public abstract class JRCaptureEntity {
                 Field f = recursiveGetDeclaredField(c, key);
                 f.setAccessible(true);
                 if (JRCapturePassword.class.isAssignableFrom(f.getType())) {
+                    // passwords are an edge case, they can either be raw strings or json objects
                     f.set(retval, f.getType().newInstance());
                     Field f_ = f.getType().getField("password");
                     f_.set(f.get(retval), val.toString());
@@ -87,7 +87,9 @@ public abstract class JRCaptureEntity {
                     JRCapturePlural plural = (JRCapturePlural) f.getType().newInstance();
                     f.set(retval, plural);
                     JSONArray ja = (JSONArray) val;
-                    for (int i = 0; i < ja.length(); i++) plural.add(inflate(key, (JSONObject) ja.get(i)));
+                    for (int i = 0; i < ja.length(); i++) {
+                        plural.add(inflate(CaptureStringUtils.depluralize(key), (JSONObject) ja.get(i)));
+                    }
                 } else if (String.class.isAssignableFrom(f.getType())) {
                     f.set(retval, jo.getString(key));
                 } else if (Boolean.class.isAssignableFrom(f.getType())) {
@@ -103,15 +105,15 @@ public abstract class JRCaptureEntity {
 
             return retval;
         } catch (ClassNotFoundException e) {
-            Generator.log("Class not found for: " + entityTypeName);
+            CaptureStringUtils.log("Class not found for: " + entityTypeName + " " + e.getLocalizedMessage());
         } catch (JSONException e) {
-            Generator.log("Unexpected value not found for key: " + e);
+            CaptureStringUtils.log("Unexpected value not found for key: " + e);
         } catch (InstantiationException e) {
-            Generator.log("Unexpected instantiation exception: " + e);
+            CaptureStringUtils.log("Unexpected instantiation exception: " + e);
         } catch (IllegalAccessException e) {
-            Generator.log("Unexpected illegal access exception: " + e);
+            CaptureStringUtils.log("Unexpected illegal access exception: " + e);
         } catch (NoSuchFieldException e) {
-            Generator.log("Unexpected no such field exception: " + e);
+            CaptureStringUtils.log("Unexpected no such field exception: " + e);
         }
 
         return null;
