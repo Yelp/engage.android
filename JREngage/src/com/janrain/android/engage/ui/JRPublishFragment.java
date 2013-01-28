@@ -79,7 +79,7 @@ import com.janrain.android.engage.types.JRMediaObject;
 import com.janrain.android.engage.types.JRSmsObject;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.CollectionUtils;
-import com.janrain.android.engage.utils.Prefs;
+import com.janrain.android.engage.utils.PrefUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -87,7 +87,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.janrain.android.engage.utils.AndroidUtils.ColorDrawableGetColor;
+import static com.janrain.android.engage.utils.AndroidUtils.colorDrawableGetColor;
 import static com.janrain.android.engage.utils.AndroidUtils.scaleDipToPixels;
 
 /**
@@ -223,10 +223,10 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
                 windowBackgroundDrawable.setState(new int[]{});
                 Drawable activeWindowBackgroundDrawable = windowBackgroundDrawable.getCurrent();
                 if (activeWindowBackgroundDrawable instanceof ColorDrawable) {
-                    colorBackground = ColorDrawableGetColor((ColorDrawable) activeWindowBackgroundDrawable);
+                    colorBackground = colorDrawableGetColor((ColorDrawable) activeWindowBackgroundDrawable);
                 }
             } else if (windowBackgroundDrawable instanceof ColorDrawable) {
-                colorBackground = ColorDrawableGetColor((ColorDrawable) windowBackgroundDrawable);
+                colorBackground = colorDrawableGetColor((ColorDrawable) windowBackgroundDrawable);
             } else if (windowBackgroundDrawable instanceof NinePatchDrawable) {
                 Bitmap renderedNinePatch = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
                 windowBackgroundDrawable.setBounds(0, 0, 99, 99);
@@ -506,8 +506,8 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     public void onDestroyView() {
         if (mSession != null && getView() != null) {
             if (mUserCommentView != null && !mProvidersThatHaveAlreadyShared.values().contains(true)) {
-                Prefs.putString(Prefs.KEY_JR_USER_COMMENT, mUserCommentView.getText().toString());
-                Prefs.putLong(Prefs.KEY_JR_USER_COMMENT_TIME, new Date().getTime());
+                PrefUtils.putString(PrefUtils.KEY_JR_USER_COMMENT, mUserCommentView.getText().toString());
+                PrefUtils.putLong(PrefUtils.KEY_JR_USER_COMMENT_TIME, new Date().getTime());
             }
 
             dismissProgressDialog();
@@ -539,9 +539,9 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
     private void loadViewPropertiesWithActivityObject() {
         /* This sets up pieces of the UI before the provider configuration information
          * has been loaded */
-        String savedComment = Prefs.getString(Prefs.KEY_JR_USER_COMMENT, "");
+        String savedComment = PrefUtils.getString(PrefUtils.KEY_JR_USER_COMMENT, "");
         long curTime = new Date().getTime();
-        long commentTime = Prefs.getLong(Prefs.KEY_JR_USER_COMMENT_TIME, 0);
+        long commentTime = PrefUtils.getLong(PrefUtils.KEY_JR_USER_COMMENT_TIME, 0);
         if ((!"".equals(savedComment)) && ((curTime - commentTime) < 1000*60*60*24*7)) { /* one week */
             mUserCommentView.setText(savedComment);
         } else {
@@ -1188,7 +1188,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
             dismissProgressDialog();
             showActivityAsShared(true);
-            Prefs.remove(Prefs.KEY_JR_USER_COMMENT);
+            PrefUtils.remove(PrefUtils.KEY_JR_USER_COMMENT);
 
             //mWeAreCurrentlyPostingSomething = false;
             mWeHaveJustAuthenticated = false;

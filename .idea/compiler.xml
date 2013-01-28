@@ -9,6 +9,7 @@
       <directory url="file://$PROJECT_DIR$/QuickShare/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/QuickSignIn/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/SimpleDemo/gen" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/PhonegapSample-2.3.0/gen" includeSubdirectories="true" />
     </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>

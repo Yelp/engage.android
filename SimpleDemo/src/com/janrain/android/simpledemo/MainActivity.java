@@ -47,6 +47,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.ui.JRCustomInterfaceConfiguration;
 import com.janrain.android.engage.ui.JRCustomInterfaceView;
 import com.janrain.android.engage.JREngage;
@@ -59,24 +60,14 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.types.JREmailObject;
 import com.janrain.android.engage.types.JRImageMediaObject;
 import com.janrain.android.engage.types.JRSmsObject;
+import com.janrain.android.engage.utils.AndroidUtils;
+import com.janrain.android.engage.utils.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public class MainActivity extends FragmentActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-
-    private String readAsset(String fileName) {
-        try {
-            InputStream is = getAssets().open(fileName);
-            byte[] buffer = new byte[is.available()];
-            //noinspection ResultOfMethodCallIgnored
-            is.read(buffer); // buffer is exactly the right size, a guarantee of asset files
-            return new String(buffer);
-        } catch (IOException e) {
-            return null;
-        }
-    }
 
     private JREngage mEngage;
     private JRActivityObject mActivity;
@@ -132,28 +123,10 @@ public class MainActivity extends FragmentActivity {
 
         testAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //mEngage.setEnabledAuthenticationProviders(new String[]{"facebook"});
                 Log.d(TAG, "testAuth onClick");
                 mEngage.showAuthenticationDialog(MainActivity.this, CustomUi.class);
-                //mEngage.showAuthenticationDialog(MainActivity.this);
             }
         });
-        //testAuth.setOnLongClickListener(new View.OnLongClickListener() {
-        //    public boolean onLongClick(View v) {
-        //        if (findViewById(R.id.jr_signin_fragment) != null) {
-        //            mEngage.showSocialSignInFragment(
-        //                    MainActivity.this,
-        //                    com.janrain.android.engage.R.id.jr_publish_fragment,
-        //                    false,
-        //                    null,
-        //                    null,
-        //                    null,
-        //                    null);
-        //        }
-        //
-        //        return true;
-        //    }
-        //});
 
         Button testShare = (Button) findViewById(R.id.btn_test_pub);
         testShare.setOnClickListener(new View.OnClickListener() {
@@ -181,8 +154,6 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        //mActionLink = Prefs.getString(ACTION_LINK_KEY, "http://www.janrain.com/feed/blogs");
-        //shareUrlEdit.setText(mActionLink);
         shareUrlEdit.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -192,7 +163,7 @@ public class MainActivity extends FragmentActivity {
 
             public void afterTextChanged(Editable s) {
                 mActionLink = s.toString();
-//                Prefs.putString(ACTION_LINK_KEY, mActionLink);
+//                PrefUtils.putString(ACTION_LINK_KEY, mActionLink);
             }
         });
         
@@ -255,20 +226,15 @@ public class MainActivity extends FragmentActivity {
     }
 
     private boolean initEngage() {
-        String engageAppId = null;
-        String engageTokenUrl = null;
-        try {
-            engageAppId = readAsset("app_id.txt").trim();
-            engageTokenUrl = readAsset("token_url.txt").trim();
-        } catch (NullPointerException e) {
-            // Only check for app ID, token URL is optional
-            if (engageAppId == null) {
-                new AlertDialog.Builder(this).setTitle("Configuration error")
-                        .setMessage("You need to create assets/app_id.txt, then recompile and reinstall.")
-                        .create().show();
-                return false;
-            }
+        String engageAppId = StringUtils.trim(AndroidUtils.readAsset(this, "app_id.txt"));
+        if (engageAppId == null) {
+            new AlertDialog.Builder(this).setTitle("Configuration error")
+                    .setMessage("You need to create assets/app_id.txt, then recompile and reinstall.")
+                    .create().show();
+            return false;
         }
+
+        String engageTokenUrl = StringUtils.trim(AndroidUtils.readAsset(this, "token_url.txt"));
 
         mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, mJREngageDelegate);
         return mEngage != null;

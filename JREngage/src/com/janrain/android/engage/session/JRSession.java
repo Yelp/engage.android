@@ -42,7 +42,6 @@ import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.JREngageError.ConfigurationError;
 import com.janrain.android.engage.JREngageError.ErrorType;
 import com.janrain.android.engage.JREngageError.SocialPublishingError;
-import com.janrain.android.engage.JREnvironment;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -52,7 +51,7 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.Archiver;
 import com.janrain.android.engage.utils.CollectionUtils;
-import com.janrain.android.engage.utils.Prefs;
+import com.janrain.android.engage.utils.PrefUtils;
 import com.janrain.android.engage.utils.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -70,17 +69,13 @@ import java.util.Map;
 public class JRSession implements JRConnectionManagerDelegate {
     private static final String TAG = JRSession.class.getSimpleName();
 
-    private static final JREnvironment ENVIRONMENT = JREnvironment.PRODUCTION;
-    //private static final JREnvironment ENVIRONMENT = JREnvironment.TESTING;
-    //private static final JREnvironment ENVIRONMENT = JREnvironment.STAGING;
-    //private static final JREnvironment ENVIRONMENT = JREnvironment.LILLI;
-    //private static final JREnvironment ENVIRONMENT = JREnvironment.NATHAN;
-
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
     private static final String ARCHIVE_AUTH_PROVIDERS = "authProviders";
     private static final String ARCHIVE_SHARING_PROVIDERS = "sharingProviders";
     private static final String ARCHIVE_AUTH_USERS_BY_PROVIDER = "jrAuthenticatedUsersByProvider";
 
+    private static final String RPXNOW_BASE_URL = "https://rpxnow.com";
+    private static String mEngageBaseUrl = RPXNOW_BASE_URL;
     private static final String UNFORMATTED_CONFIG_URL =
             "%s/openid/mobile_config_and_baseurl?appId=%s&device=android&app_name=%s&version=%s";
     private static final String TAG_GET_CONFIGURATION = "getConfiguration";
@@ -111,7 +106,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 	private JRActivityObject mActivity;
 	private String mTokenUrl;
 	private String mAppId;
-    private String mBaseUrl;
+    private String mRpBaseUrl;
     private String mUrlEncodedAppName;
 
     private boolean mConfigDone = false;
@@ -132,9 +127,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         return sInstance;
 	}
 
-	public static JRSession getInstance(String appId,
-                                            String tokenUrl,
-                                            JRSessionDelegate delegate) {
+    public static JRSession getInstance(String appId, String tokenUrl, JRSessionDelegate delegate) {
         if (sInstance != null) {
             if (sInstance.isUiShowing()) {
                 Log.e(TAG, "Cannot reinitialize JREngage while its UI is showing");
@@ -147,10 +140,10 @@ public class JRSession implements JRConnectionManagerDelegate {
             sInstance = new JRSession(appId, tokenUrl, delegate);
         }
 
-		return sInstance;
-	}
+        return sInstance;
+    }
 
-	private JRSession(String appId, String tokenUrl, JRSessionDelegate delegate) {
+    private JRSession(String appId, String tokenUrl, JRSessionDelegate delegate) {
         initialize(appId, tokenUrl, delegate);
     }
 
@@ -160,7 +153,11 @@ public class JRSession implements JRConnectionManagerDelegate {
     private void initialize(String appId, String tokenUrl, JRSessionDelegate delegate) {
         JREngage.logd(TAG, "[initialize] initializing instance.");
 
-		mDelegates = new ArrayList<JRSessionDelegate>();
+        // for configurability to test against e.g. staging
+        String t = StringUtils.trim(AndroidUtils.readAsset(getApplicationContext(), "engage_base_url.txt"));
+        if (t != null) mEngageBaseUrl = t;
+
+        mDelegates = new ArrayList<JRSessionDelegate>();
 		mDelegates.add(delegate);
 
 		mAppId = appId;
@@ -174,15 +171,16 @@ public class JRSession implements JRConnectionManagerDelegate {
                 AndroidUtils.urlEncode(getApplicationContext().getString(R.string.jr_git_describe));
 
         try {
-            if (!mUrlEncodedLibraryVersion.equals(Prefs.getString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, ""))) {
+            if (!mUrlEncodedLibraryVersion.equals(PrefUtils.getString(PrefUtils.KEY_JR_ENGAGE_LIBRARY_VERSION,
+                    ""))) {
                 // If the library versions don't match start with fresh state in order to break out of
                 // any invalid state.
                 throw new Archiver.LoadException("New library version with old serialized state");
             }
 
             /* load the last used auth and social providers */
-            mReturningSharingProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_SHARING_PROVIDER, "");
-            mReturningAuthProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_AUTH_PROVIDER, "");
+            mReturningSharingProvider = PrefUtils.getString(PrefUtils.KEY_JR_LAST_USED_SHARING_PROVIDER, "");
+            mReturningAuthProvider = PrefUtils.getString(PrefUtils.KEY_JR_LAST_USED_AUTH_PROVIDER, "");
 
             /* Load the library state from disk */
             mAuthenticatedUsersByProvider = Archiver.load(ARCHIVE_AUTH_USERS_BY_PROVIDER);
@@ -207,15 +205,15 @@ public class JRSession implements JRConnectionManagerDelegate {
             }
             JREngage.logd(TAG, "sharing providers: [" + TextUtils.join(",", mSharingProviders) + "]");
 
-            /* Load the base url */
-            mBaseUrl = Prefs.getString(Prefs.KEY_JR_BASE_URL, "");
+            /* Load the RP's base url */
+            mRpBaseUrl = PrefUtils.getString(PrefUtils.KEY_JR_RP_BASE_URL, "");
 
             /* Figure out of we're suppose to hide the powered by line */
-            mHidePoweredBy = Prefs.getBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, false);
+            mHidePoweredBy = PrefUtils.getBoolean(PrefUtils.KEY_JR_HIDE_POWERED_BY, false);
 
             /* If the configuration for this RP has changed, the etag will have changed, and we need
              * to update our current configuration information. */
-            mOldEtag = Prefs.getString(Prefs.KEY_JR_CONFIGURATION_ETAG, "");
+            mOldEtag = PrefUtils.getString(PrefUtils.KEY_JR_CONFIGURATION_ETAG, "");
             //throw new Archiver.LoadException(null);
         } catch (Archiver.LoadException e) {
             Log.w(TAG, "LoadException loading serialized configuration, initializing from empty state. " +
@@ -233,26 +231,22 @@ public class JRSession implements JRConnectionManagerDelegate {
             Archiver.delete(ARCHIVE_AUTH_PROVIDERS);
             mSharingProviders = new ArrayList<String>();
             Archiver.delete(ARCHIVE_SHARING_PROVIDERS);
-            mBaseUrl = "";
-            Prefs.remove(Prefs.KEY_JR_BASE_URL);
+            mRpBaseUrl = "";
+            PrefUtils.remove(PrefUtils.KEY_JR_RP_BASE_URL);
             mHidePoweredBy = true;
-            Prefs.remove(Prefs.KEY_JR_HIDE_POWERED_BY);
+            PrefUtils.remove(PrefUtils.KEY_JR_HIDE_POWERED_BY);
             mOldEtag = "";
-            Prefs.remove(Prefs.KEY_JR_CONFIGURATION_ETAG);
+            PrefUtils.remove(PrefUtils.KEY_JR_CONFIGURATION_ETAG);
             
             // Note that these values are not removed from the Prefs, they can't result in invalid state
             // (The library is accepting of values not belonging to the set of enabled providers.)
-            mReturningAuthProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_AUTH_PROVIDER, null);
-            mReturningSharingProvider = Prefs.getString(Prefs.KEY_JR_LAST_USED_SHARING_PROVIDER, null);
+            mReturningAuthProvider = PrefUtils.getString(PrefUtils.KEY_JR_LAST_USED_AUTH_PROVIDER, null);
+            mReturningSharingProvider = PrefUtils.getString(PrefUtils.KEY_JR_LAST_USED_SHARING_PROVIDER, null);
             //mConfigDone = false;
         }
 
         mError = startGetConfiguration();
 	}
-
-    private String getString(int resourceId) {
-        return getApplicationContext().getString(resourceId);
-    }
 
     public JREngageError getError() {
         return mError;
@@ -349,7 +343,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 
         mReturningAuthProvider = returningAuthProvider;
-        Prefs.putString(Prefs.KEY_JR_LAST_USED_AUTH_PROVIDER, returningAuthProvider);
+        PrefUtils.putString(PrefUtils.KEY_JR_LAST_USED_AUTH_PROVIDER, returningAuthProvider);
     }
 
     public String getReturningSharingProvider() {
@@ -363,11 +357,11 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 
         mReturningSharingProvider = returningSharingProvider;
-        Prefs.putString(Prefs.KEY_JR_LAST_USED_SHARING_PROVIDER, returningSharingProvider);
+        PrefUtils.putString(PrefUtils.KEY_JR_LAST_USED_SHARING_PROVIDER, returningSharingProvider);
     }
 
-    public String getBaseUrl() {
-        return mBaseUrl;
+    public String getRpBaseUrl() {
+        return mRpBaseUrl;
     }
 
     public boolean getHidePoweredBy() {
@@ -601,7 +595,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 
     private JREngageError startGetConfiguration() {
         String urlString = String.format(UNFORMATTED_CONFIG_URL,
-                ENVIRONMENT.getServerUrl(),
+                mEngageBaseUrl,
                 mAppId,
                 mUrlEncodedAppName,
                 mUrlEncodedLibraryVersion);
@@ -637,8 +631,8 @@ public class JRSession implements JRConnectionManagerDelegate {
                     jsonEx);
         }
 
-        mBaseUrl = StringUtils.chomp(jsonDict.getAsString("baseurl", ""), "/");
-        Prefs.putString(Prefs.KEY_JR_BASE_URL, mBaseUrl);
+        mRpBaseUrl = StringUtils.chomp(jsonDict.getAsString("baseurl", ""), "/");
+        PrefUtils.putString(PrefUtils.KEY_JR_RP_BASE_URL, mRpBaseUrl);
 
         mAllProviders = new HashMap<String, JRProvider>();
         JRDictionary providerInfo = jsonDict.getAsDictionary("provider_info");
@@ -653,15 +647,15 @@ public class JRSession implements JRConnectionManagerDelegate {
         Archiver.asyncSave(ARCHIVE_SHARING_PROVIDERS, mSharingProviders);
 
         mHidePoweredBy = jsonDict.getAsBoolean("hide_tagline", false);
-        Prefs.putBoolean(Prefs.KEY_JR_HIDE_POWERED_BY, mHidePoweredBy);
+        PrefUtils.putBoolean(PrefUtils.KEY_JR_HIDE_POWERED_BY, mHidePoweredBy);
 
         /* Ensures that the returning auth and sharing providers,
          * if set, are members of the configured set of providers. */
         setReturningAuthProvider(mReturningAuthProvider);
         setReturningSharingProvider(mReturningSharingProvider);
 
-        Prefs.putString(Prefs.KEY_JR_CONFIGURATION_ETAG, mNewEtag);
-        Prefs.putString(Prefs.KEY_JR_ENGAGE_LIBRARY_VERSION, mUrlEncodedLibraryVersion);
+        PrefUtils.putString(PrefUtils.KEY_JR_CONFIGURATION_ETAG, mNewEtag);
+        PrefUtils.putString(PrefUtils.KEY_JR_ENGAGE_LIBRARY_VERSION, mUrlEncodedLibraryVersion);
 
         mError = null;
         triggerConfigDidFinish();
@@ -695,7 +689,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     private String getWelcomeMessageFromCookieString() {
         JREngage.logd(TAG, "[getWelcomeMessageFromCookieString]");
 
-        String cookies = CookieManager.getInstance().getCookie(getBaseUrl());
+        String cookies = CookieManager.getInstance().getCookie(getRpBaseUrl());
         String cookieString = cookies.replaceAll(".*welcome_info=([^;]*).*", "$1");
 
         if (!TextUtils.isEmpty(cookieString)) {
@@ -741,7 +735,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 
         fullStartUrl = String.format("%s%s?%s%sdevice=android&extended=true",
-                mBaseUrl,
+                mRpBaseUrl,
                 mCurrentlyAuthenticatingProvider.getStartAuthenticationUrl(),
                 oid,
                 (forceReauth ? "force_reauth=true&" : "")
@@ -841,7 +835,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         body.append("&device=").append("android");
         body.append("&appId=").append(mAppId);
 
-        String url = ENVIRONMENT.getServerUrl() + "/social/record_activity";
+        String url = mEngageBaseUrl + "/social/record_activity";
 
         JREngage.logd(TAG, "[notifyEmailSmsShare]: " + url + " data: " + body.toString());
 
@@ -889,7 +883,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         body.append("&device=android");
         body.append("&app_name=").append(mUrlEncodedAppName);
 
-        String url = ENVIRONMENT.getServerUrl() + "/api/v2/activity";
+        String url = mEngageBaseUrl + "/api/v2/activity";
 
         JREngage.logd(TAG, "[shareActivityForUser]: " + url + " data: " + body);
 
@@ -921,7 +915,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         body.append("&device=android");
         body.append("&app_name=").append(mUrlEncodedAppName);
 
-        String url = ENVIRONMENT.getServerUrl() + "/api/v2/set_status";
+        String url = mEngageBaseUrl + "/api/v2/set_status";
 
         JREngage.logd(TAG, "[setStatusForUser]: " + url + " data: " + body.toString());
 
@@ -972,9 +966,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 
         if (!TextUtils.isEmpty(mTokenUrl)) {
-            makeCallToTokenUrl(mTokenUrl,
-                               authInfoToken,
-                               mCurrentlyAuthenticatingProvider.getName());
+            makeCallToTokenUrl(mTokenUrl, authInfoToken, mCurrentlyAuthenticatingProvider.getName());
         }
 
         mCurrentlyAuthenticatingProvider.setForceReauth(false);
@@ -1075,10 +1067,6 @@ public class JRSession implements JRConnectionManagerDelegate {
         return mConfigDone;
     }
 
-    public static JREnvironment getEnvironment() {
-        return ENVIRONMENT;
-    }
-
     public String getUrlEncodedAppName() {
         return mUrlEncodedAppName;
     }
@@ -1115,5 +1103,13 @@ public class JRSession implements JRConnectionManagerDelegate {
 
     private Context getApplicationContext() {
         return JREngage.getApplicationContext();
+    }
+
+    /* package */ String getEngageBaseUrl() {
+        return mEngageBaseUrl;
+    }
+
+    public String getTokenUrl() {
+        return mTokenUrl;
     }
 }

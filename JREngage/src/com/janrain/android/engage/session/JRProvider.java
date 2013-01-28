@@ -37,14 +37,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.R;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
-import com.janrain.android.engage.utils.Prefs;
+import com.janrain.android.engage.utils.PrefUtils;
 import com.janrain.android.engage.utils.ThreadUtils;
 
 import java.io.FileNotFoundException;
@@ -239,7 +238,7 @@ public class JRProvider implements Serializable {
     public void setForceReauth(boolean forceReauth) {
         this.mForceReauth = forceReauth;
 
-        Prefs.putBoolean(Prefs.KEY_JR_FORCE_REAUTH + this.mName, this.mForceReauth);
+        PrefUtils.putBoolean(PrefUtils.KEY_JR_FORCE_REAUTH + this.mName, this.mForceReauth);
     }
 
     public String getUserInput() {
@@ -247,11 +246,11 @@ public class JRProvider implements Serializable {
     }
 
     public void setUserInput(String userInput) {
-        JREngage.logd(TAG, "[prov] user input: [" + Prefs.KEY_JR_USER_INPUT + mName + "]");
+        JREngage.logd(TAG, "[prov] user input: [" + PrefUtils.KEY_JR_USER_INPUT + mName + "]");
 
         mUserInput = userInput;
 
-        Prefs.putString(Prefs.KEY_JR_USER_INPUT + this.mName, this.mUserInput);
+        PrefUtils.putString(PrefUtils.KEY_JR_USER_INPUT + this.mName, this.mUserInput);
     }
 
     private Drawable getDrawable(Context c,
@@ -347,11 +346,12 @@ public class JRProvider implements Serializable {
 
                     try {
                         JREngage.logd(TAG, "Downloading icon: " + iconFileName);
-                        URL url = new URL(JRSession.getEnvironment().getServerUrl()
+                        // This is the only point outside of JRSession that touches Engage. Maybe move this
+                        // there?
+                        URL url = new URL(JRSession.getInstance().getEngageBaseUrl()
                                 + "/cdn/images/mobile_icons/android/" + iconFileName);
                         InputStream is = url.openStream();
-                        fos = c.openFileOutput("providericon~" + iconFileName,
-                                Context.MODE_PRIVATE);
+                        fos = c.openFileOutput("providericon~" + iconFileName, Context.MODE_PRIVATE);
 
                         byte buffer[] = new byte[1000];
                         int code;
@@ -366,7 +366,8 @@ public class JRProvider implements Serializable {
                         if (fos != null) {
                             try {
                                 fos.close();
-                            } catch (IOException ignore) {}
+                            } catch (IOException ignore) {
+                            }
                         }
                     }
                 }
@@ -376,10 +377,10 @@ public class JRProvider implements Serializable {
     }
 
     public void loadDynamicVariables() {
-        JREngage.logd("JRProvider", "[prov] user input: " + Prefs.KEY_JR_USER_INPUT + mName );
+        JREngage.logd("JRProvider", "[prov] user input: " + PrefUtils.KEY_JR_USER_INPUT + mName );
 
-    	mUserInput = Prefs.getString(Prefs.KEY_JR_USER_INPUT + mName, "");
-    	mForceReauth = Prefs.getBoolean(Prefs.KEY_JR_FORCE_REAUTH + mName, false);
+    	mUserInput = PrefUtils.getString(PrefUtils.KEY_JR_USER_INPUT + mName, "");
+    	mForceReauth = PrefUtils.getBoolean(PrefUtils.KEY_JR_FORCE_REAUTH + mName, false);
     }
 
     public String toString() {

@@ -41,6 +41,8 @@ import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import java.io.Serializable;
 
 /**
+ * @brief Super type for all activity media objects.
+ *
  * @class JRMediaObject
  * Super class for JRImageMediaObject, JRFlashMediaObject, and JRMp3MediaObject -- the media objects that
  * are shareable in JRActivityObjects. Do not subclass this object, instead instantiate one of the supplied

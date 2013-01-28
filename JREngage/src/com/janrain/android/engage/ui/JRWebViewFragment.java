@@ -41,7 +41,6 @@ import android.support.v4.app.FragmentManager;
 import android.webkit.ConsoleMessage;
 import android.widget.FrameLayout;
 import android.os.Handler;
-import android.os.StrictMode;
 import com.janrain.android.engage.utils.ThreadUtils;
 import org.json.JSONException;
 
@@ -353,7 +352,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     private boolean isMobileEndpointUrl(String url) {
         if (mSession == null) return false;
-        final String endpointUrl = mSession.getBaseUrl() + "/signin/device";
+        final String endpointUrl = mSession.getRpBaseUrl() + "/signin/device";
         return ((!TextUtils.isEmpty(url)) && (url.startsWith(endpointUrl)));
     }
 
@@ -428,7 +427,10 @@ public class JRWebViewFragment extends JRUiFragment {
             /* Intercept and sink mailto links because the webview auto-linkifies example email addresses
              * in the Google and Yahoo login pages and it's too easy to fat finger them :(
              */
-            return Uri.parse(url).getScheme().equals("mailto");
+            if (Uri.parse(url).getScheme().equals("mailto")) return true;
+
+            // Same for any scheme besides HTTP or HTTPS, e.g. market://
+            return !(Uri.parse(url).getScheme().equals("http") || Uri.parse(url).getScheme().equals("https"));
         }
 
         @Override
@@ -572,7 +574,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-            JREngage.logd(TAG, "[console] message: '" + AndroidUtils.getConsoleMessageMessage(consoleMessage)
+            JREngage.logd(TAG, "[console] message: '" + AndroidUtils.consoleMessageGetMessage(consoleMessage)
                     + "'");
             return true;
         }
@@ -616,6 +618,7 @@ public class JRWebViewFragment extends JRUiFragment {
         }
 
         JRDictionary resultDictionary = payloadDictionary.getAsDictionary("rpx_result");
+        // TODO null guard here
         final String result = resultDictionary.getAsString("stat");
         if ("ok".equals(result)) {
             // TODO back button is no longer disabled because of the switch from modal dialog
@@ -714,11 +717,12 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     /**
+     * @internal
      * This class serves to respond to the MEU connection and delegates the result to the real fragment.
      * This is necessary because the real fragment can be destroyed and recreated if it's  in an Activity
      * which is destroyed and recreated because it cannot setRetainInstance(true) because it may be added to
      * the back stack.
-      */
+     */
     public static class RetainFragment extends Fragment {
         private static final String TAG  = RetainFragment.class.getSimpleName();
         JRWebViewFragment mTarget;

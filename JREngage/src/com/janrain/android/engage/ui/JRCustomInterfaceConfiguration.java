@@ -39,7 +39,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The abstract superclass of classes which define Engage library UI configuration customizations.
+ * @brief The abstract superclass of classes which define Engage library UI configuration customizations.
  *
  * Extend this class and implement a public default constructor.  In that constructor assign values to the
  * fields you wish to use in your custom UI configuration.
