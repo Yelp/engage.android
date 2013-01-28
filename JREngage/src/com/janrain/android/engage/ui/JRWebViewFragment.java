@@ -274,7 +274,8 @@ public class JRWebViewFragment extends JRUiFragment {
     public void onDestroy() {
         super.onDestroy();
 
-        mWebView.destroy();
+        // guard against NPEs as in onStop()
+        if (mWebView != null) mWebView.destroy();
 
         if (mRetain != null) JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
     }
