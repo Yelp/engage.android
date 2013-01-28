@@ -1,3 +1,5 @@
+v3.1.2:
+ - Bug fix (NPE guard in JRWebViewFragment#onDestroy)
 v3.1.1:
  - Updated Phonegap sample
 v3.1.0:
