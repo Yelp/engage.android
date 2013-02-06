@@ -47,13 +47,7 @@ public abstract class JRCaptureEntity {
      * data.
      * @param listener A listener for success / failure callbacks. May be null.
      */
-    public final void synchronize(SyncListener listener) {
-    }
-
-    public static interface SyncListener {
-        public void onSuccess();
-
-        public void onFailure();
+    public final void synchronize(JRCapture.SyncListener listener) {
     }
 
     /*package*/ static JRCaptureEntity inflate(JSONObject jo) {
@@ -157,6 +151,7 @@ public abstract class JRCaptureEntity {
                     sb.append(((JRCaptureEntity) value).toJsonString());
                 } else {
                     // TODO not sure if all "primitives" will toString properly
+                    // likely broken for Doubles which are NaN or infinities
                     sb.append(value.toString());
                 }
             }

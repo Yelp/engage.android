@@ -33,7 +33,8 @@
 package com.janrain.capture;
 
 public class JRCaptureConfiguration {
-    public static final String ENTITY_TYPE_NAME = "user";
+    public static final String ENTITY_TYPE_NAME = "test_user1";
+    //public static final String ENTITY_TYPE_NAME = "user";
     public static final String CAPTURE_DOMAIN = "mobile.dev.janraincapture.com";
     public static final String CLIENT_ID = "zc7tx83fqy68mper69mxbt5dfvd7c2jh";
     public static final String CLIENT_SECRET = "aqkcrjcf8ceexc5gfvw47fpazjfysyct";

@@ -37,14 +37,11 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
 
 public class JRCapture {
-    public static JRCaptureEntity getEntity(int id) throws IOException, JSONException {
+    public static JSONObject getEntity(int id) throws IOException, JSONException {
         URLConnection entityConn = new URL("https://" + JRCaptureConfiguration.CAPTURE_DOMAIN + "/entity?" +
                 "type_name=" + JRCaptureConfiguration.ENTITY_TYPE_NAME +
                 "&client_id=" + JRCaptureConfiguration.CLIENT_ID +
@@ -53,17 +50,29 @@ public class JRCapture {
         entityConn.connect();
 
         String response = CaptureStringUtils.readFully(entityConn.getInputStream());
+
         JSONObject jo = new JSONObject(new JSONTokener(response));
         if ("ok".equals(jo.optString("stat"))) {
-            CaptureStringUtils.log("response: " + response);
-            return JRCaptureEntity.inflate((JSONObject) jo.get("result"));
+            //CaptureStringUtils.log("response: " + response);
+            return jo.getJSONObject("result");
         } else {
             throw new IOException("failed to get entity, bad JSON response: " + jo);
         }
     }
 
     public static void main(String[] args) throws IOException, JSONException {
-        JRCaptureEntity e = getEntity(159);
-        CaptureStringUtils.log(e.toString());
+        //JRCaptureEntity.inflate(getEntity(159)) ;
+        JRCaptureRecord record = new JRCaptureRecord(getEntity(680));
+        CaptureStringUtils.log(record.toString(2));
+
+        record.put("email", "nathan+androidtest@janrain.com");
+
+        record.shallowDiff();
+    }
+
+    public static interface SyncListener {
+        public void onSuccess();
+
+        public void onFailure();
     }
 }
