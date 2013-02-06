@@ -40,6 +40,8 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import static com.janrain.capture.CaptureJsonUtils.makeSortedSetFromIterator;
+
 public class JRCaptureRecord extends JSONObject {
     JSONObject original;
 
@@ -56,8 +58,10 @@ public class JRCaptureRecord extends JSONObject {
     }
 
     void shallowDiff() {
-        SortedSet<String> origKeys = CaptureJsonUtils.sortedSetFromIterator((Iterator<String>) original.keys());
-        SortedSet<String> currentKeys = CaptureJsonUtils.sortedSetFromIterator((Iterator<String>) keys());
+        CaptureJsonUtils.deepArraySort(this);
+
+        SortedSet<String> origKeys = makeSortedSetFromIterator((Iterator<String>) original.keys());
+        SortedSet<String> currentKeys = makeSortedSetFromIterator((Iterator<String>) keys());
 
         TreeSet<String> temp = new TreeSet<String>(currentKeys);
         temp.removeAll(origKeys);

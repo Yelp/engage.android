@@ -61,11 +61,13 @@ public class JRCapture {
     }
 
     public static void main(String[] args) throws IOException, JSONException {
-        //JRCaptureEntity.inflate(getEntity(159)) ;
+        //JRCaptureEntity.inflate(getEntity(159)); // for entity type "user"
         JRCaptureRecord record = new JRCaptureRecord(getEntity(680));
         CaptureStringUtils.log(record.toString(2));
 
         record.put("email", "nathan+androidtest@janrain.com");
+
+        //CaptureJsonUtils.deepArrayOrderRandomizer(record);
 
         record.shallowDiff();
     }

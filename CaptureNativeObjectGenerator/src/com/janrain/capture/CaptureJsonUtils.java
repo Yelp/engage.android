@@ -130,8 +130,8 @@ public class CaptureJsonUtils {
     }
 
     public static int jsonObjectCompareTo(JSONObject this_, JSONObject other) {
-        SortedSet<String> this_Keys = sortedSetFromIterator((Iterator<String>) this_.keys());
-        SortedSet<String> otherKeys = sortedSetFromIterator((Iterator<String>) other.keys());
+        SortedSet<String> this_Keys = makeSortedSetFromIterator((Iterator<String>) this_.keys());
+        SortedSet<String> otherKeys = makeSortedSetFromIterator((Iterator<String>) other.keys());
 
         SortedSet<String> temp = new TreeSet<String>(this_Keys);
         temp.addAll(otherKeys);
@@ -194,7 +194,7 @@ public class CaptureJsonUtils {
     //    return temp.toArray(new String[temp.size()]);
     //}
 
-    public static <T> SortedSet<T> sortedSetFromIterator(Iterator<T> i) {
+    public static <T> SortedSet<T> makeSortedSetFromIterator(Iterator<T> i) {
         SortedSet<T> retval = new TreeSet<T>();
         while (i.hasNext()) retval.add(i.next());
         return retval;
@@ -263,7 +263,55 @@ public class CaptureJsonUtils {
             String key = keys.next();
             try {
                 Object val = original.get(key);
-                if (val instanceof JSONArray) deepArraySort(((JSONArray) val));
+                if (val instanceof JSONArray) {
+                    deepArraySort(((JSONArray) val));
+                } else if (val instanceof JSONObject) {
+                    deepArraySort(((JSONObject) val));
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException("Unexpected", e);
+            }
+        }
+    }
+
+    public static void deepArrayOrderRandomizer(JSONArray original) {
+        for (int i=0; i < original.length(); i++) {
+            try {
+                Object val = original.get(i);
+                if (val instanceof  JSONObject) {
+                    deepArrayOrderRandomizer(((JSONObject) val));
+                } else if (val instanceof JSONArray) {
+                    deepArrayOrderRandomizer(((JSONArray) val));
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException("Unexpected", e);
+            }
+        }
+
+        for (int i = 0; i < original.length(); i++) {
+            int j = ((int) (Math.random() * original.length())) % original.length();
+            Object iVal = null;
+            try {
+                iVal = original.get(i);
+                original.put(i, original.get(j));
+                original.put(j, iVal);
+            } catch (JSONException e) {
+                throw new RuntimeException("Unexpected", e);
+            }
+        }
+    }
+
+    public static void deepArrayOrderRandomizer(JSONObject original) {
+        Iterator<String> keys = original.keys();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            try {
+                Object val = original.get(key);
+                if (val instanceof JSONArray) {
+                    deepArrayOrderRandomizer(((JSONArray) val));
+                } else if (val instanceof JSONObject) {
+                    deepArrayOrderRandomizer(((JSONObject) val));
+                }
             } catch (JSONException e) {
                 throw new RuntimeException("Unexpected", e);
             }
