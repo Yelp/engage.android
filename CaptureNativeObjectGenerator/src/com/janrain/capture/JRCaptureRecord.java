@@ -57,53 +57,6 @@ public class JRCaptureRecord extends JSONObject {
         }
     }
 
-    void shallowDiff() {
-        CaptureJsonUtils.deepArraySort(this);
-
-        SortedSet<String> origKeys = makeSortedSetFromIterator((Iterator<String>) original.keys());
-        SortedSet<String> currentKeys = makeSortedSetFromIterator((Iterator<String>) keys());
-
-        TreeSet<String> temp = new TreeSet<String>(currentKeys);
-        temp.removeAll(origKeys);
-        SortedSet<String> newKeys = temp;
-
-        temp = new TreeSet<String>(origKeys);
-        temp.removeAll(currentKeys);
-        SortedSet<String> removedKeys = temp;
-
-        temp = new TreeSet<String>(origKeys);
-        temp.removeAll(removedKeys);
-
-        SortedSet<String> intersection = temp;
-
-        SortedSet<String> changedKeys = new TreeSet<String>();
-        for (String k : intersection) {
-            try {
-                // todo, what if types mismatch between curVal and corresponding val from original?
-                Object curVal = get(k);
-                Object oldVal = original.get(k);
-
-                if (curVal instanceof JSONObject) {
-                    if (CaptureJsonUtils.jsonObjectCompareTo((JSONObject) curVal, oldVal) != 0) {
-                        changedKeys.add(k);
-                    }
-                } else if (curVal instanceof JSONArray) {
-                    if (CaptureJsonUtils.jsonArrayCompareTo((JSONArray) curVal, oldVal) != 0) {
-                        changedKeys.add(k);
-                    }
-                } else if (!curVal.equals(oldVal)) {
-                    // catches String, Boolean, Integer, Long, Double
-                    changedKeys.add(k);
-                }
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected JSONException", e);
-            }
-        }
-
-        CaptureStringUtils.log("newKeys: " + newKeys.toString() + " removedKeys: " + removedKeys.toString() +
-                " changedKeys: " + changedKeys.toString());
-    }
-
     public final void synchronize(JRCapture.SyncListener listener) {
     }
 }

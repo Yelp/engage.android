@@ -40,21 +40,14 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-/**
- * Created with IntelliJ IDEA. User: nathan Date: 2/5/13 Time: 6:18 PM To change this template use File |
- * Settings | File Templates.
- */
 public class CaptureJsonUtils {
     public static int jsonArrayCompareTo(JSONArray this_, Object other) {
         if (other instanceof JSONArray) {
             return jsonArrayCompareTo(this_, (JSONArray) other);
-        } else if (other == null) {
-            return 1;
         } else return this_.getClass().getName().compareTo(other.getClass().getName());
     }
 
     public static int jsonArrayCompareTo(JSONArray this_, JSONArray otherArray) {
-        if (otherArray == null) return 1;
         for (int index = 0; index < this_.length(); index++) {
             Object thisValue;
             try {
@@ -76,47 +69,56 @@ public class CaptureJsonUtils {
             if (comparison != 0) return comparison;
         }
 
+        if (otherArray.length() > this_.length()) return -1;
+
         return 0;
     }
 
-    private static int compareJsonVals(Object thisValue, Object otherVal) {
+    /**
+     * Compares two values of types found in the set of possible types for JSON values
+     * Uses a standard ordering of such values where:
+     *  If the types are mismatched the values are compared by type class name string
+     *  If the types are primitives of matching type their values are compared with compareTo
+     *  If the types are JSONObject their fields are sorted by key and compared. The first non zero
+     *    comparison is the return value, if all fields have a zero comparison then so do the JSONObjects
+     *  If the types are JSONArray their elements are compared in order and the first non zero comparison
+     *    is the comparison of the JSONArrays
+     *  If the values are both JSONObject.NULL this method returns 0
+     *  nulls are illegal
+     *
+     *  Note that number types aren't compared if their types are unequal, e.g. 1.0 the Double does not
+     *  equal 1 the integer.
+     *
+     * @param thisVal
+     * @param otherVal
+     * @return 0 if they are equal
+     */
+    public static int compareJsonVals(Object thisVal, Object otherVal) {
         Integer comparison = null;
-        if (thisValue instanceof JSONArray) {
-            comparison = jsonArrayCompareTo((JSONArray) thisValue, otherVal);
-        } else if (thisValue instanceof JSONObject) {
-            comparison = jsonObjectCompareTo((JSONObject) thisValue, otherVal);
-        } else if (thisValue instanceof Double) {
-            if (otherVal instanceof Double) {
-                comparison = ((Double) thisValue).compareTo((Double) otherVal);
-            }
-        } else if (thisValue instanceof Long) {
-            if (otherVal instanceof Long) {
-                comparison = ((Long) thisValue).compareTo((Long) otherVal);
-            }
-        } else if (thisValue instanceof Integer) {
-            if (otherVal instanceof Integer) {
-                comparison = ((Integer) thisValue).compareTo((Integer) otherVal);
-            }
-        } else if (thisValue instanceof Byte) {
-            if (otherVal instanceof Byte) {
-                comparison = ((Byte) thisValue).compareTo((Byte) otherVal);
-            }
-        } else if (thisValue instanceof Boolean) {
-            if (otherVal instanceof Boolean) {
-                comparison = ((Boolean) thisValue).compareTo((Boolean) otherVal);
-            }
-        } else if (thisValue instanceof String) {
-            if (otherVal instanceof String) {
-                comparison = ((String) thisValue).compareTo((String) otherVal);
-            }
-        } else if (thisValue.equals(JSONObject.NULL)) {
+        if (thisVal instanceof JSONArray) {
+            comparison = jsonArrayCompareTo((JSONArray) thisVal, otherVal);
+        } else if (thisVal instanceof JSONObject) {
+            comparison = jsonObjectCompareTo((JSONObject) thisVal, otherVal);
+        } else if (thisVal instanceof Double) {
+            if (otherVal instanceof Double) comparison = ((Double) thisVal).compareTo((Double) otherVal);
+        } else if (thisVal instanceof Long) {
+            if (otherVal instanceof Long) comparison = ((Long) thisVal).compareTo((Long) otherVal);
+        } else if (thisVal instanceof Integer) {
+            if (otherVal instanceof Integer) comparison = ((Integer) thisVal).compareTo((Integer) otherVal);
+        } else if (thisVal instanceof Byte) {
+            if (otherVal instanceof Byte) comparison = ((Byte) thisVal).compareTo((Byte) otherVal);
+        } else if (thisVal instanceof Boolean) {
+            if (otherVal instanceof Boolean) comparison = ((Boolean) thisVal).compareTo((Boolean) otherVal);
+        } else if (thisVal instanceof String) {
+            if (otherVal instanceof String) comparison = ((String) thisVal).compareTo((String) otherVal);
+        } else if (thisVal.equals(JSONObject.NULL)) {
             if (otherVal.equals(JSONObject.NULL)) comparison = 0;
         } else {
-            throw new RuntimeException("Unexpected type in compareTo for: " + thisValue);
+            throw new RuntimeException("Unexpected type in compareTo for: " + thisVal);
         }
 
         if (comparison == null) {
-            comparison = thisValue.getClass().getName().compareTo(otherVal.getClass().getName());
+            comparison = thisVal.getClass().getName().compareTo(otherVal.getClass().getName());
         }
         return comparison;
     }
@@ -186,13 +188,6 @@ public class CaptureJsonUtils {
             }
         }
     }
-
-    // this is not generic because of type erasure and array covariance
-    //public static String[] iteratorAsArray(Iterator<String> names) {
-    //    ArrayList<String> temp = new ArrayList<String>();
-    //    while (names.hasNext()) temp.add(names.next());
-    //    return temp.toArray(new String[temp.size()]);
-    //}
 
     public static <T> SortedSet<T> makeSortedSetFromIterator(Iterator<T> i) {
         SortedSet<T> retval = new TreeSet<T>();
@@ -316,5 +311,42 @@ public class CaptureJsonUtils {
                 throw new RuntimeException("Unexpected", e);
             }
         }
+    }
+
+    public static ApidChangeSet deepDiff(JSONObject original, JSONObject current) {
+        deepArraySort(current);
+
+        SortedSet<String> origKeys = makeSortedSetFromIterator((Iterator<String>) original.keys());
+        SortedSet<String> currentKeys = makeSortedSetFromIterator((Iterator<String>) current.keys());
+
+        TreeSet<String> temp = new TreeSet<String>(currentKeys);
+        temp.removeAll(origKeys);
+        SortedSet<String> newKeys = temp;
+
+        temp = new TreeSet<String>(origKeys);
+        temp.removeAll(currentKeys);
+        SortedSet<String> removedKeys = temp;
+
+        temp = new TreeSet<String>(origKeys);
+        temp.removeAll(removedKeys);
+
+        SortedSet<String> intersection = temp;
+
+        SortedSet<String> changedKeys = new TreeSet<String>();
+        for (String k : intersection) {
+            try {
+                // todo, what if types mismatch between curVal and corresponding val from original?
+                Object curVal = current.get(k);
+                Object oldVal = original.get(k);
+
+                if (CaptureJsonUtils.compareJsonVals(curVal, oldVal) != 0) changedKeys.add(k);
+            } catch (JSONException e) {
+                throw new RuntimeException("Unexpected JSONException", e);
+            }
+        }
+
+        CaptureStringUtils.log("newKeys: " + newKeys.toString() + " removedKeys: " + removedKeys.toString() +
+                " changedKeys: " + changedKeys.toString());
+        // new leaf (illegal?), changed leaf, removed leaf (illegal?), new branch, removed branch, that's it?
     }
 }
