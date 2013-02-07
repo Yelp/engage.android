@@ -39,6 +39,7 @@ import org.json.JSONTokener;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Set;
 
 public class JRCapture {
     public static JSONObject getEntity(int id) throws IOException, JSONException {
@@ -67,9 +68,46 @@ public class JRCapture {
 
         record.put("email", "nathan+androidtest@janrain.com");
 
-        //CaptureJsonUtils.deepArrayOrderRandomizer(record);
+        //CaptureJsonUtils.deeplyRandomizeArrayElementOrder(record);
 
-        record.shallowDiff();
+        Set<ApidChange> changes = null;
+        try {
+            changes = record.getApidChangeSet();
+        } catch (InvalidApidChangeException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        CaptureStringUtils.log("changes: " + changes.toString());
+    }
+
+    public static class InvalidApidChangeException extends Exception {
+        public InvalidApidChangeException(String description) {
+            super(description);
+        }
+    }
+
+    /*package*/ abstract static class ApidChange {
+        /*package*/ String attrPath;
+        /*package*/ Object newVal;
+    }
+
+    /*package*/ static class ApidUpdate extends ApidChange {
+        /*package*/ ApidUpdate(Object newVal, String attrPath) {
+            this.newVal = newVal;
+            this.attrPath = attrPath;
+        }
+    }
+
+    /*package*/ static class ApidReplace extends ApidChange {
+        ApidReplace(Object newVal, String attrPath) {
+            this.newVal = newVal;
+            this.attrPath = attrPath;
+        }
+    }
+
+    /*package*/ static class ApidDelete extends ApidChange {
+        ApidDelete(String attrPath) {
+            this.attrPath = attrPath;
+        }
     }
 
     public static interface SyncListener {

@@ -32,15 +32,10 @@
 
 package com.janrain.capture;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import static com.janrain.capture.CaptureJsonUtils.makeSortedSetFromIterator;
+import java.util.Set;
 
 public class JRCaptureRecord extends JSONObject {
     JSONObject original;
@@ -57,6 +52,13 @@ public class JRCaptureRecord extends JSONObject {
         }
     }
 
-    public final void synchronize(JRCapture.SyncListener listener) {
+    public final void synchronize(JRCapture.SyncListener listener)
+            throws JRCapture.InvalidApidChangeException {
+        Set<JRCapture.ApidChange> changeSet = getApidChangeSet();
+    }
+
+    public Set<JRCapture.ApidChange> getApidChangeSet() throws JRCapture.InvalidApidChangeException {
+        CaptureJsonUtils.deepArraySort(this);
+        return CaptureJsonUtils.deepDiff(original, this);
     }
 }

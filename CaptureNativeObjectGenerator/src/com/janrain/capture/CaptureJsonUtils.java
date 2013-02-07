@@ -36,7 +36,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -126,8 +129,6 @@ public class CaptureJsonUtils {
     public static int jsonObjectCompareTo(JSONObject this_, Object other) {
         if (other instanceof JSONObject) {
             return jsonObjectCompareTo(this_, (JSONObject) other);
-        } else if (other == null) {
-            return 1;
         } else return this_.getClass().getName().compareTo(other.getClass().getName());
     }
 
@@ -274,7 +275,7 @@ public class CaptureJsonUtils {
             try {
                 Object val = original.get(i);
                 if (val instanceof  JSONObject) {
-                    deepArrayOrderRandomizer(((JSONObject) val));
+                    deeplyRandomizeArrayElementOrder(((JSONObject) val));
                 } else if (val instanceof JSONArray) {
                     deepArrayOrderRandomizer(((JSONArray) val));
                 }
@@ -296,7 +297,7 @@ public class CaptureJsonUtils {
         }
     }
 
-    public static void deepArrayOrderRandomizer(JSONObject original) {
+    public static void deeplyRandomizeArrayElementOrder(JSONObject original) {
         Iterator<String> keys = original.keys();
         while (keys.hasNext()) {
             String key = keys.next();
@@ -305,7 +306,7 @@ public class CaptureJsonUtils {
                 if (val instanceof JSONArray) {
                     deepArrayOrderRandomizer(((JSONArray) val));
                 } else if (val instanceof JSONObject) {
-                    deepArrayOrderRandomizer(((JSONObject) val));
+                    deeplyRandomizeArrayElementOrder(((JSONObject) val));
                 }
             } catch (JSONException e) {
                 throw new RuntimeException("Unexpected", e);
@@ -313,9 +314,169 @@ public class CaptureJsonUtils {
         }
     }
 
-    public static ApidChangeSet deepDiff(JSONObject original, JSONObject current) {
-        deepArraySort(current);
+    /**
+     * Takes two JSONObjects, performs a deep deef, returning the result as a set of ApidChange instances
+     * Assumes both JSON object hierarchies has sorted arrays
+     * @param original
+     * @param current
+     * @return
+     * @throws JRCapture.InvalidApidChangeException
+     */
+    public static Set<JRCapture.ApidChange> deepDiff(JSONObject original, JSONObject current)
+            throws JRCapture.InvalidApidChangeException {
+        return deepDiff(original, current, "/");
+    }
 
+    /**
+     * @param original
+     * @param current
+     * @param relativePath has no trailing slash in the case of plurals
+     * @return
+     * @throws JRCapture.InvalidApidChangeException
+     */
+    private static Set<JRCapture.ApidChange> deepDiff(JSONArray original, JSONArray current,
+                                                      String relativePath)
+            throws JRCapture.InvalidApidChangeException {
+        Set<JRCapture.ApidChange> changeSet = new HashSet<JRCapture.ApidChange>();
+        String arrayAttrName = getLastPathElement(relativePath);
+        relativePath = relativePath.substring(0, relativePath.length() - arrayAttrName.length());
+
+        sortPlurEltsById(original);
+        sortPlurEltsById(current);
+
+        int originalIndex = 0, currentIndex = 0;
+
+        while (currentIndex < current.length()) {
+            Integer currentId = getIdForPlurEltAtIndex(current, currentIndex);
+            final Object currentElt;
+            try {
+                currentElt = current.get(currentIndex);
+            } catch (JSONException e) {
+                throw new RuntimeException("Unexpected", e);
+            }
+
+            if (originalIndex >= original.length()) {
+                if (currentId != null) {
+                    throw new JRCapture.InvalidApidChangeException("Cannot assign ID to new plural elements");
+                }
+
+                changeSet.add(new JRCapture.ApidUpdate(currentElt, relativePath + "#" + currentId));
+            } else if (currentId == null) {
+                // new element?
+                JSONArray wrapperA;
+                JSONObject wrapperO;
+                try {
+                    wrapperA = new JSONArray(new Object[]{currentElt});
+                    wrapperO = new JSONObject(new HashMap<String,JSONArray>().put(arrayAttrName, wrapperA));
+                } catch (JSONException e) {
+                    throw new RuntimeException("Unexpected", e);
+                }
+                changeSet.add(new JRCapture.ApidUpdate(wrapperO, relativePath));
+            } else {
+                // update to existing id
+                Integer originalId = null;
+                while (originalIndex < original.length()) {
+                    originalId = getIdForPlurEltAtIndex(original, originalIndex);
+                    if (currentId <= originalId) break;
+                    originalIndex++;
+                }
+
+                if (currentId.equals(originalId)) {
+                    JSONObject originalElt;
+                    try {
+                        originalElt = (JSONObject) original.get(originalIndex);
+                    } catch (JSONException e) {
+                        throw new RuntimeException("Unexpected", e);
+                    }
+                    changeSet.addAll(deepDiff(originalElt, (JSONObject) currentElt,
+                            relativePath + "/" + arrayAttrName + "#" + currentId));
+                } else {
+                    throw new JRCapture.InvalidApidChangeException("Cannot assign ID to new plural elements");
+                }
+            }
+        }
+
+        return changeSet;
+    }
+
+    private static void sortPlurEltsById(JSONArray original, int start, int len) {
+        if (len <= 1) return;
+
+        int halfLen = len / 2;
+        int left = start;
+        int right = start + halfLen;
+
+        sortPlurEltsById(original, left, halfLen);
+        sortPlurEltsById(original, right, len - halfLen);
+
+        Object[] temp = new Object[len];
+        int tempIndex = 0;
+
+        while (left < start + halfLen || right < start + len) {
+            Object leftVal = original.opt(left);
+            Object rightVal = original.opt(right);
+            Integer leftId = getIdForPlurEltAtIndex(original, left);
+            Integer rightId = getIdForPlurEltAtIndex(original, right);
+            if (left < start + halfLen && right < start + len) {
+                boolean bothIdsNull = leftId == null && rightId == null;
+                leftId = leftId == null ? 0 : leftId;
+                rightId = rightId == null ? 0 : rightId;
+                if (bothIdsNull && compareJsonVals(leftVal, rightVal) < 0 || leftId < rightId) {
+                    temp[tempIndex++] = leftVal;
+                    left++;
+                } else  {
+                    temp[tempIndex++] = rightVal;
+                    right++;
+                }
+            } else if (left < start + halfLen) {
+                temp[tempIndex++] = leftVal;
+                left++;
+            } else {
+                temp[tempIndex++] = rightVal;
+                right++;
+            }
+        }
+
+        for (int i=0; i < temp.length; i++)
+            try {
+                original.put(start + i, temp[i]);
+            } catch (JSONException e) {
+                throw new RuntimeException("Unexpected", e);
+            }
+    }
+
+    private static void sortPlurEltsById(JSONArray original) {
+        sortPlurEltsById(original, 0, original.length());
+    }
+
+    private static String getLastPathElement(String relativePath) {
+        String[] pathComponents = relativePath.split("/");
+        if (pathComponents.length == 0) return null;
+        String[] newPathComponents = new String[pathComponents.length - 1];
+        System.arraycopy(pathComponents, 0, newPathComponents, 0, newPathComponents.length);
+        return CaptureStringUtils.join(newPathComponents, "/");
+    }
+
+    private static Integer getIdForPlurEltAtIndex(JSONArray array, int index) {
+        try {
+            Object o = array.get(index);
+            if (o instanceof JSONObject) return ((Integer) ((JSONObject) o).opt("id"));
+        } catch (JSONException e) {
+            throw new RuntimeException("Unexpected", e);
+        }
+        return null;
+    }
+
+    /**
+     * @param original
+     * @param current
+     * @param relativePath with a trailing slash
+     * @return
+     * @throws JRCapture.InvalidApidChangeException
+     */
+    private static Set<JRCapture.ApidChange> deepDiff(JSONObject original, JSONObject current,
+                                                      String relativePath)
+            throws JRCapture.InvalidApidChangeException {
         SortedSet<String> origKeys = makeSortedSetFromIterator((Iterator<String>) original.keys());
         SortedSet<String> currentKeys = makeSortedSetFromIterator((Iterator<String>) current.keys());
 
@@ -345,8 +506,59 @@ public class CaptureJsonUtils {
             }
         }
 
+        Set<JRCapture.ApidChange> changeSet = new HashSet<JRCapture.ApidChange>();
+        for (String k : intersection) {
+            try {
+                Object curVal = current.get(k);
+                Object oldVal = original.get(k);
+                if (curVal instanceof JSONObject && oldVal instanceof JSONObject) {
+                    changeSet.addAll(deepDiff(((JSONObject) oldVal), ((JSONObject) curVal),
+                            relativePath + k + "/"));
+                } else if (curVal instanceof JSONArray && oldVal instanceof JSONArray) {
+                    changeSet.addAll(deepDiff(((JSONArray) oldVal), ((JSONArray) curVal), relativePath + k));
+                } else if (curVal instanceof String && oldVal instanceof String) {
+                    maybeAddUpdate(relativePath + k, changeSet, curVal, oldVal);
+                } else if (curVal instanceof Boolean && oldVal instanceof Boolean) {
+                    maybeAddUpdate(relativePath + k, changeSet, curVal, oldVal);
+                } else if (curVal instanceof Double && oldVal instanceof Double) {
+                    maybeAddUpdate(relativePath + k, changeSet, curVal, oldVal);
+                } else if (curVal instanceof Integer && oldVal instanceof Integer) {
+                    maybeAddUpdate(relativePath + k, changeSet, curVal, oldVal);
+                } else if (curVal instanceof Long && oldVal instanceof Long) {
+                    maybeAddUpdate(relativePath + k, changeSet, curVal, oldVal);
+                } else if (curVal.equals(JSONObject.NULL)) {
+                    maybeAddUpdate(relativePath + k, changeSet, curVal, oldVal);
+                } else {
+                    throw new JRCapture.InvalidApidChangeException("Unexpected type(s). Old type: " +
+                            oldVal.getClass().getSimpleName() + " New type: " +
+                            curVal.getClass().getSimpleName());
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException("Unexpected: ", e);
+            }
+        }
+
         CaptureStringUtils.log("newKeys: " + newKeys.toString() + " removedKeys: " + removedKeys.toString() +
                 " changedKeys: " + changedKeys.toString());
+
+        if (newKeys.size() > 0) {
+            throw new JRCapture.InvalidApidChangeException("Can't add new keys to JSONObjects");
+        }
         // new leaf (illegal?), changed leaf, removed leaf (illegal?), new branch, removed branch, that's it?
+
+        if (newKeys.size() > 0 || removedKeys.size() > 0) {
+            throw new JRCapture.InvalidApidChangeException("Cannot introduce or delete leaf objects. New " +
+                    "keys: " + newKeys.toString() + " Removed keys: " + removedKeys.toString());
+        }
+
+        return changeSet;
+    }
+
+    private static void maybeAddUpdate(String relativePath,
+                                       Set<JRCapture.ApidChange> changeSet,
+                                       Object curVal, Object oldVal) {
+        if (compareJsonVals(curVal, oldVal) != 0) {
+            changeSet.add(new JRCapture.ApidUpdate(curVal, relativePath));
+        }
     }
 }
