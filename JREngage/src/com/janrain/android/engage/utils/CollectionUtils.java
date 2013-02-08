@@ -97,24 +97,23 @@ public final class CollectionUtils {
     }
 
     /**
-     * Maps a function f onto the values of a array array. Returns a new array with with the result.
+     * Maps a function f onto the values of a array array. Returns a new array of the same type
+     * with with the result.
      * @param array
      *      A array onto which to apply f to the values of
      * @param f
      *      A function mapped onto the values of array
-     * @param <L>
-     *      The left hand side type of f
-     * @param <R>
-     *      The right hand side type of f
+     * @param <T>
+     *      The right and left hand side type of f
      * @return
-     *      A new array[L] with the result
+     *      A new T[] with the result
      */
     @SuppressWarnings("unchecked")
-    public static <L, R> L[] map(R[] array, Function<L, R> f) {
-        L[] retArray = (L[]) newInstance(array.getClass().getComponentType(), array.length);
+    public static <T> T[] map(T[] array, Function<T, T> f) {
+        T[] retArray = (T[]) newInstance(array.getClass().getComponentType(), array.length);
 
         int i = 0;
-        for (R e : array) retArray[i++] = (f.operate(e));
+        for (T e : array) retArray[i++] = (f.operate(e));
 
         return retArray;
     }

@@ -63,7 +63,7 @@ public class JRCapture {
 
     public static void main(String[] args) throws IOException, JSONException {
         //JRCaptureEntity.inflate(getEntity(159)); // for entity type "user"
-        JRCaptureRecord record = new JRCaptureRecord(getEntity(680));
+        JRCaptureRecord record = new JRCaptureRecord(getEntity(14474));
         CaptureStringUtils.log(record.toString(2));
 
         record.put("email", "nathan+androidtest@janrain.com");
@@ -73,10 +73,10 @@ public class JRCapture {
         Set<ApidChange> changes = null;
         try {
             changes = record.getApidChangeSet();
+            CaptureStringUtils.log("changes: " + changes.toString());
         } catch (InvalidApidChangeException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
-        CaptureStringUtils.log("changes: " + changes.toString());
     }
 
     public static class InvalidApidChangeException extends Exception {
@@ -88,6 +88,11 @@ public class JRCapture {
     /*package*/ abstract static class ApidChange {
         /*package*/ String attrPath;
         /*package*/ Object newVal;
+
+        @Override
+        public String toString() {
+            return "<" + getClass().getSimpleName() + " attrPath: " + attrPath + " newVal: " + newVal + ">";
+        }
     }
 
     /*package*/ static class ApidUpdate extends ApidChange {

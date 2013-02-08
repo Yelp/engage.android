@@ -39,6 +39,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -330,23 +331,54 @@ public class CaptureJsonUtils {
     /**
      * @param original
      * @param current
-     * @param relativePath has no trailing slash in the case of plurals
+     * @param arrayAttrPath has no trailing slash
      * @return
      * @throws JRCapture.InvalidApidChangeException
      */
     private static Set<JRCapture.ApidChange> deepDiff(JSONArray original, JSONArray current,
-                                                      String relativePath)
+                                                      String arrayAttrPath)
+            throws JRCapture.InvalidApidChangeException {
+        if (hasIds(original)) {
+            return deepDiffArrayWithIds(original, current, arrayAttrPath);
+        } else {
+            // original array must've been from a JSON blob
+            deepArraySort(original);
+            deepArraySort(current);
+            Set<JRCapture.ApidChange> changeSet = new HashSet<JRCapture.ApidChange>();
+            if (compareJsonVals(original, current) != 0) {
+                changeSet.add(new JRCapture.ApidUpdate(current, arrayAttrPath));
+            }
+            return changeSet;
+        }
+    }
+
+    private static boolean hasIds(JSONArray original) {
+        for (int i=0; i < original.length(); i++) {
+            try {
+                Object o = original.get(i);
+                if (o instanceof JSONObject) {
+                    Object maybeId = ((JSONObject) o).opt("id");
+                    if (maybeId instanceof Integer || maybeId instanceof Long) return true;
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException("Unexpected", e);
+            }
+        }
+        return false;
+    }
+
+    private static Set<JRCapture.ApidChange> deepDiffArrayWithIds(JSONArray original, JSONArray current,
+                                                      String arrayAttrPath)
             throws JRCapture.InvalidApidChangeException {
         Set<JRCapture.ApidChange> changeSet = new HashSet<JRCapture.ApidChange>();
-        String arrayAttrName = getLastPathElement(relativePath);
-        relativePath = relativePath.substring(0, relativePath.length() - arrayAttrName.length());
+        String arrayAttrName = getLastPathElement(arrayAttrPath);
+        String relativePath = arrayAttrPath.substring(0, arrayAttrPath.length() - arrayAttrName.length());
 
         sortPlurEltsById(original);
         sortPlurEltsById(current);
 
-        int originalIndex = 0, currentIndex = 0;
-
-        while (currentIndex < current.length()) {
+        int originalIndex = 0;
+        for (int currentIndex = 0; currentIndex < current.length(); currentIndex++) {
             Integer currentId = getIdForPlurEltAtIndex(current, currentIndex);
             final Object currentElt;
             try {
@@ -355,19 +387,14 @@ public class CaptureJsonUtils {
                 throw new RuntimeException("Unexpected", e);
             }
 
-            if (originalIndex >= original.length()) {
-                if (currentId != null) {
-                    throw new JRCapture.InvalidApidChangeException("Cannot assign ID to new plural elements");
-                }
-
-                changeSet.add(new JRCapture.ApidUpdate(currentElt, relativePath + "#" + currentId));
-            } else if (currentId == null) {
-                // new element?
+            if (currentId == null) {
+                // new element
                 JSONArray wrapperA;
                 JSONObject wrapperO;
                 try {
                     wrapperA = new JSONArray(new Object[]{currentElt});
-                    wrapperO = new JSONObject(new HashMap<String,JSONArray>().put(arrayAttrName, wrapperA));
+                    wrapperO = new JSONObject(((Map) new HashMap<String, JSONArray>().put(arrayAttrName,
+                            wrapperA)));
                 } catch (JSONException e) {
                     throw new RuntimeException("Unexpected", e);
                 }
@@ -375,16 +402,17 @@ public class CaptureJsonUtils {
             } else {
                 // update to existing id
                 Integer originalId = null;
-                while (originalIndex < original.length()) {
+                while (originalIndex < original.length()) { // try to find a matching id in original
                     originalId = getIdForPlurEltAtIndex(original, originalIndex);
                     if (currentId <= originalId) break;
+                    changeSet.add(new JRCapture.ApidDelete(relativePath + "#" + originalId));
                     originalIndex++;
                 }
 
                 if (currentId.equals(originalId)) {
                     JSONObject originalElt;
                     try {
-                        originalElt = (JSONObject) original.get(originalIndex);
+                        originalElt = (JSONObject) original.get(originalIndex++);
                     } catch (JSONException e) {
                         throw new RuntimeException("Unexpected", e);
                     }
@@ -394,6 +422,11 @@ public class CaptureJsonUtils {
                     throw new JRCapture.InvalidApidChangeException("Cannot assign ID to new plural elements");
                 }
             }
+        }
+
+        while (originalIndex < original.length()) {
+            Integer idForPlurEltAtIndex = getIdForPlurEltAtIndex(original, originalIndex);
+            changeSet.add(new JRCapture.ApidDelete(relativePath + "#" + idForPlurEltAtIndex));
         }
 
         return changeSet;
@@ -452,9 +485,7 @@ public class CaptureJsonUtils {
     private static String getLastPathElement(String relativePath) {
         String[] pathComponents = relativePath.split("/");
         if (pathComponents.length == 0) return null;
-        String[] newPathComponents = new String[pathComponents.length - 1];
-        System.arraycopy(pathComponents, 0, newPathComponents, 0, newPathComponents.length);
-        return CaptureStringUtils.join(newPathComponents, "/");
+        return pathComponents[pathComponents.length - 1];
     }
 
     private static Integer getIdForPlurEltAtIndex(JSONArray array, int index) {
@@ -538,8 +569,8 @@ public class CaptureJsonUtils {
             }
         }
 
-        CaptureStringUtils.log("newKeys: " + newKeys.toString() + " removedKeys: " + removedKeys.toString() +
-                " changedKeys: " + changedKeys.toString());
+        //CaptureStringUtils.log("newKeys: " + newKeys.toString() + " removedKeys: " + removedKeys.toString() +
+        //        " changedKeys: " + changedKeys.toString());
 
         if (newKeys.size() > 0) {
             throw new JRCapture.InvalidApidChangeException("Can't add new keys to JSONObjects");

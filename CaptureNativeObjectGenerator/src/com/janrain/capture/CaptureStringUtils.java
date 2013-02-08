@@ -78,8 +78,10 @@ public class CaptureStringUtils {
     }
 
     public static void log(Object o) {
-        System.out.println(o);
-        System.out.flush();
+        synchronized (System.out) {
+            System.out.println(o);
+            System.out.flush();
+        }
     }
 
     public static String join(String[] a, String separator) {
