@@ -70,10 +70,8 @@ public class JRCapture {
 
         //CaptureJsonUtils.deeplyRandomizeArrayElementOrder(record);
 
-        Set<ApidChange> changes = null;
         try {
-            changes = record.getApidChangeSet();
-            CaptureStringUtils.log("changes: " + changes.toString());
+            record.synchronize(null);
         } catch (InvalidApidChangeException e) {
             e.printStackTrace();
         }
@@ -99,6 +97,11 @@ public class JRCapture {
         /*package*/ ApidUpdate(Object newVal, String attrPath) {
             this.newVal = newVal;
             this.attrPath = attrPath;
+        }
+
+        public ApidUpdate collapseWith(ApidUpdate update) {
+            return new ApidUpdate(CaptureJsonUtils.collapseJsonObjects((JSONObject) newVal,
+                    (JSONObject) update.newVal), attrPath);
         }
     }
 

@@ -592,4 +592,30 @@ public class CaptureJsonUtils {
             changeSet.add(new JRCapture.ApidUpdate(curVal, relativePath));
         }
     }
+
+    public static JSONObject collapseJsonObjects(JSONObject left, JSONObject right) {
+        JSONObject retVal = new JSONObject();
+        Set<String> unionKeys = makeSortedSetFromIterator((Iterator<String>) left);
+        unionKeys.addAll(makeSortedSetFromIterator(right.keys()));
+
+        try {
+            for (String k : unionKeys) {
+                if (left.has(k)) {
+                    retVal.put(k, new JSONObject(left.get(k).toString()));
+                    if (right.has(k)) {
+                        JSONObject smushedObject = (JSONObject) retVal.get(k);
+                        JSONObject rightHalf = (JSONObject) right.get(k);
+                        Set<String> rightHalfKeys = makeSortedSetFromIterator(rightHalf.keys());
+                        for (String k_ : rightHalfKeys) smushedObject.put(k_, rightHalf.get(k_));
+                    }
+                } else {
+                    retVal.put(k, new JSONObject(right.get(k).toString()));
+                }
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Unexpected", e);
+        }
+
+        return retVal;
+    }
 }
