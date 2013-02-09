@@ -32,6 +32,7 @@
 
 package com.janrain.capture;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -67,6 +68,8 @@ public class JRCapture {
         CaptureStringUtils.log(record.toString(2));
 
         record.put("email", "nathan+androidtest@janrain.com");
+        ((JSONArray) record.opt("pinapinapL1Plural")).put(new JSONObject("{\"string1\":\"poit\"}"));
+        ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string1", "narf");
 
         //CaptureJsonUtils.deeplyRandomizeArrayElementOrder(record);
 

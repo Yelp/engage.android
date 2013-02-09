@@ -120,7 +120,9 @@ public class JRCaptureRecord extends JSONObject {
         String subObjectPath = update.attrPath.replaceFirst(parent, "");
         String[] flattenedObjectPaths = subObjectPath.split("/");
         Object newVal = update.newVal;
-        for (String s : flattenedObjectPaths) {
+        for (int i = flattenedObjectPaths.length - 1; i >= 0; i--) {
+            String s = flattenedObjectPaths[i];
+            // wrong wrapping in wrong order
             JSONObject wrapper = new JSONObject();
             try {
                 wrapper.put(s, newVal);
