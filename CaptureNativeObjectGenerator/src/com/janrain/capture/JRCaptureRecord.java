@@ -60,8 +60,6 @@ public class JRCaptureRecord extends JSONObject {
             throws JRCapture.InvalidApidChangeException {
         Set<JRCapture.ApidChange> changeSet = getApidChangeSet();
         CaptureStringUtils.log(changeSet);
-        Set<JRCapture.ApidChange> changeSet_ = collapseApidChanges(changeSet);
-        CaptureStringUtils.log(changeSet_);
     }
 
     private static Set<JRCapture.ApidChange> collapseApidChanges(Set<JRCapture.ApidChange> changeSet) {
@@ -141,6 +139,6 @@ public class JRCaptureRecord extends JSONObject {
 
     public Set<JRCapture.ApidChange> getApidChangeSet() throws JRCapture.InvalidApidChangeException {
         CaptureJsonUtils.deepArraySort(this);
-        return CaptureJsonUtils.compileChangeSet(original, this);
+        return collapseApidChanges(CaptureJsonUtils.compileChangeSet(original, this));
     }
 }

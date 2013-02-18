@@ -36,6 +36,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -423,7 +424,7 @@ public class CaptureJsonUtils {
         }
 
         while (originalIndex < original.length()) {
-            Integer idForPlurEltAtIndex = getIdForPlurEltAtIndex(original, originalIndex);
+            Integer idForPlurEltAtIndex = getIdForPlurEltAtIndex(original, originalIndex++);
             changeSet.add(new JRCapture.ApidDelete(relativePath + "#" + idForPlurEltAtIndex));
         }
 
@@ -446,9 +447,9 @@ public class CaptureJsonUtils {
         while (left < start + halfLen || right < start + len) {
             Object leftVal = original.opt(left);
             Object rightVal = original.opt(right);
-            Integer leftId = getIdForPlurEltAtIndex(original, left);
-            Integer rightId = getIdForPlurEltAtIndex(original, right);
             if (left < start + halfLen && right < start + len) {
+                Integer leftId = getIdForPlurEltAtIndex(original, left);
+                Integer rightId = getIdForPlurEltAtIndex(original, right);
                 boolean bothIdsNull = leftId == null && rightId == null;
                 leftId = leftId == null ? 0 : leftId;
                 rightId = rightId == null ? 0 : rightId;
@@ -566,9 +567,6 @@ public class CaptureJsonUtils {
             }
         }
 
-        //CaptureStringUtils.log("newKeys: " + newKeys.toString() + " removedKeys: " + removedKeys.toString() +
-        //        " changedKeys: " + changedKeys.toString());
-
         if (newKeys.size() > 0) {
             throw new JRCapture.InvalidApidChangeException("Can't add new keys to JSONObjects");
         }
@@ -589,8 +587,7 @@ public class CaptureJsonUtils {
                 curVal.getClass().getSimpleName());
     }
 
-    private static void maybeAddUpdate(String relativePath,
-                                       Set<JRCapture.ApidChange> changeSet,
+    private static void maybeAddUpdate(String relativePath, Set<JRCapture.ApidChange> changeSet,
                                        Object curVal, Object oldVal)
             throws JRCapture.InvalidApidChangeException {
         if (!JSONObject.NULL.equals(oldVal) && !oldVal.getClass().isAssignableFrom(curVal.getClass())) {
@@ -603,37 +600,35 @@ public class CaptureJsonUtils {
     }
 
     public static JSONObject collapseJsonObjects(JSONObject left, JSONObject right) {
-        JSONObject retVal = new JSONObject();
-        Set<String> unionKeys = makeSortedSetFromIterator(left.keys());
-        unionKeys.addAll(makeSortedSetFromIterator(right.keys()));
-
         try {
-            for (String k : unionKeys) {
-                if (left.has(k)) {
-                    retVal.put(k, copyJsonVal(left.get(k)));
-                    if (right.has(k)) {
-                        JSONObject smushedObject = (JSONObject) retVal.get(k);
-                        JSONObject rightHalf = (JSONObject) right.get(k);
-                        Set<String> rightHalfKeys = makeSortedSetFromIterator(rightHalf.keys());
-                        for (String k_ : rightHalfKeys) {
-                            if (smushedObject.has(k_)) {
-                                smushedObject.put(k_, collapseJsonObjects(((JSONObject) rightHalf.get(k_)),
-                                        ((JSONObject) smushedObject.get(k_))));
-                            } else {
-                                // this could be a lot cleaner if this method accepted null args
-                                smushedObject.put(k_, rightHalf.get(k_));
-                            }
-                        }
-                    }
-                } else {
-                    retVal.put(k, copyJsonVal(right.get(k)));
-                }
+            if (left == null) return (JSONObject) copyJsonVal(right);
+            JSONObject retVal = (JSONObject) copyJsonVal(left);
+            if (right == null) return retVal;
+
+            for (String key : makeSortedSetFromIterator((Iterator<String>) right.keys())) {
+                Object rightVal = right.get(key);
+                Object leftVal = retVal.opt(key);
+                if (leftVal == null) retVal.put(key, copyJsonVal(rightVal));
+                if (leftVal instanceof JSONObject) retVal.put(key, collapseJsonObjects(((JSONObject) leftVal),
+                        (JSONObject) rightVal));
+                if (leftVal instanceof JSONArray) jsonArrayAddAll(((JSONArray) leftVal),
+                        (JSONArray) rightVal);
             }
+
+            return retVal;
         } catch (JSONException e) {
             throw new RuntimeException("Unexpected", e);
         }
+    }
 
-        return retVal;
+    private static void jsonArrayAddAll(JSONArray thisArray, JSONArray otherArray) {
+        for (int i = 0; i < otherArray.length(); i++) {
+            try {
+                thisArray.put(otherArray.get(i));
+            } catch (JSONException e) {
+                throw new RuntimeException("Unexpected", e);
+            }
+        }
     }
 
     private static Object copyJsonVal(Object o) throws JSONException {
@@ -642,7 +637,7 @@ public class CaptureJsonUtils {
         } else if (o instanceof JSONArray) {
             return new JSONArray(o.toString());
         } else {
-            //everything else is immutable
+            //everything else is^H^H had better be immutable
             return o;
         }
     }

@@ -67,12 +67,21 @@ public class JRCapture {
         JRCaptureRecord record = new JRCaptureRecord(getEntity(14474));
         CaptureStringUtils.log(record.toString(2));
 
-        record.put("email", "nathan+androidtest@janrain.com");
-        ((JSONArray) record.opt("pinapinapL1Plural")).put(new JSONObject("{\"string1\":\"poit\"}"));
-        ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string1", "narf");
-        ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string2", "zot");
+        for (int i = 0; i < 100; i++) {
+            CaptureJsonUtils.deeplyRandomizeArrayElementOrder(record);
+            record.put("email", "nathan+androidtest@janrain.com");
+            ((JSONArray) record.opt("pinapinapL1Plural")).put(0, new JSONObject("{\"string1\":\"poit\"}"));
+            ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string1", "narf");
+            ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string2", "zot");
+            CaptureJsonUtils.deeplyRandomizeArrayElementOrder(record);
 
-        //CaptureJsonUtils.deeplyRandomizeArrayElementOrder(record);
+            try {
+                Set<JRCapture.ApidChange> changeSet = record.getApidChangeSet();
+                CaptureStringUtils.log(changeSet.toString().hashCode());
+            } catch (InvalidApidChangeException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         try {
             record.synchronize(null);
