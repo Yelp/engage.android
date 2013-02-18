@@ -65,11 +65,11 @@ public class JRCaptureRecord extends JSONObject {
         CaptureStringUtils.log(changeSet_);
     }
 
-    private Set<JRCapture.ApidChange> collapseApidChanges(Set<JRCapture.ApidChange> changeSet) {
+    private static Set<JRCapture.ApidChange> collapseApidChanges(Set<JRCapture.ApidChange> changeSet) {
         HashMap<String, Set<JRCapture.ApidUpdate>> subentityUpdateBuckets =
                 new HashMap<String, Set<JRCapture.ApidUpdate>>();
 
-        Set<JRCapture.ApidChange> changeSet_ = new HashSet<JRCapture.ApidChange>();
+        Set<JRCapture.ApidChange> collapsedChangeSet = new HashSet<JRCapture.ApidChange>();
         for (JRCapture.ApidChange change : changeSet) {
             if (change instanceof JRCapture.ApidUpdate) {
                 String parent = findClosestParentSubentity(change);
@@ -77,25 +77,24 @@ public class JRCaptureRecord extends JSONObject {
                         rewriteUpdateForParent((JRCapture.ApidUpdate) change, parent);
                 Set<JRCapture.ApidUpdate> bucket = subentityUpdateBuckets.get(parent);
                 if (bucket == null) {
-                    bucket = new HashSet<JRCapture.ApidUpdate>();
-                    subentityUpdateBuckets.put(parent, bucket);
+                    subentityUpdateBuckets.put(parent, bucket = new HashSet<JRCapture.ApidUpdate>());
                 }
                 bucket.add(rewritten);
             } else if (change instanceof JRCapture.ApidReplace) {
-                changeSet_.add(change);
+                collapsedChangeSet.add(change);
             } else if (change instanceof JRCapture.ApidDelete) {
-                changeSet_.add(change);
+                collapsedChangeSet.add(change);
             }
         }
 
-        changeSet_.addAll(collapseApidUpdateBuckets(subentityUpdateBuckets));
+        collapsedChangeSet.addAll(collapseApidUpdateBuckets(subentityUpdateBuckets));
 
-        return changeSet_;
+        return collapsedChangeSet;
     }
 
-    private Set<? extends JRCapture.ApidChange> collapseApidUpdateBuckets(
+    private static Set<? extends JRCapture.ApidChange> collapseApidUpdateBuckets(
             Map<String, Set<JRCapture.ApidUpdate>> subentityUpdateBuckets) {
-        Set<JRCapture.ApidChange> changeSet = new HashSet<JRCapture.ApidChange>();
+        Set<JRCapture.ApidChange> collapsedApidUpdates = new HashSet<JRCapture.ApidChange>();
         for (String subentity : subentityUpdateBuckets.keySet()) {
             JRCapture.ApidUpdate collapsedUpdate = null;
             for (JRCapture.ApidUpdate update : subentityUpdateBuckets.get(subentity)) {
@@ -107,22 +106,22 @@ public class JRCaptureRecord extends JSONObject {
             }
 
             if (collapsedUpdate != null) {
-                changeSet.add(collapsedUpdate);
+                collapsedApidUpdates.add(collapsedUpdate);
             } else {
                 throw new RuntimeException("Unexpected null collapsed update");
             }
         }
 
-        return changeSet;
+        return collapsedApidUpdates;
     }
 
-    private JRCapture.ApidUpdate rewriteUpdateForParent(JRCapture.ApidUpdate update, String parent) {
+    private static JRCapture.ApidUpdate rewriteUpdateForParent(JRCapture.ApidUpdate update, String parent) {
         String subObjectPath = update.attrPath.replaceFirst(parent, "");
         String[] flattenedObjectPaths = subObjectPath.split("/");
         Object newVal = update.newVal;
         for (int i = flattenedObjectPaths.length - 1; i >= 0; i--) {
             String s = flattenedObjectPaths[i];
-            // wrong wrapping in wrong order
+            if (s.equals("")) continue; // ignore bad~ path components from .split
             JSONObject wrapper = new JSONObject();
             try {
                 wrapper.put(s, newVal);
@@ -134,7 +133,7 @@ public class JRCaptureRecord extends JSONObject {
         return new JRCapture.ApidUpdate(newVal, parent);
     }
 
-    private String findClosestParentSubentity(JRCapture.ApidChange change) {
+    private static String findClosestParentSubentity(JRCapture.ApidChange change) {
         int n = change.attrPath.lastIndexOf("#");
         if (n == -1) return "/";
         String number = Pattern.compile("#([0-9])*").matcher(change.attrPath.substring(n)).group();

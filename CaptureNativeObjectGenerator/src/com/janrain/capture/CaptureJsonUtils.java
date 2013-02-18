@@ -36,10 +36,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -271,14 +269,14 @@ public class CaptureJsonUtils {
         }
     }
 
-    public static void deepArrayOrderRandomizer(JSONArray original) {
+    public static void deeplyRandomizeArrayElementOrder(JSONArray original) {
         for (int i=0; i < original.length(); i++) {
             try {
                 Object val = original.get(i);
                 if (val instanceof  JSONObject) {
                     deeplyRandomizeArrayElementOrder(((JSONObject) val));
                 } else if (val instanceof JSONArray) {
-                    deepArrayOrderRandomizer(((JSONArray) val));
+                    deeplyRandomizeArrayElementOrder(((JSONArray) val));
                 }
             } catch (JSONException e) {
                 throw new RuntimeException("Unexpected", e);
@@ -287,9 +285,8 @@ public class CaptureJsonUtils {
 
         for (int i = 0; i < original.length(); i++) {
             int j = ((int) (Math.random() * original.length())) % original.length();
-            Object iVal = null;
             try {
-                iVal = original.get(i);
+                Object iVal = original.get(i);
                 original.put(i, original.get(j));
                 original.put(j, iVal);
             } catch (JSONException e) {
@@ -305,7 +302,7 @@ public class CaptureJsonUtils {
             try {
                 Object val = original.get(key);
                 if (val instanceof JSONArray) {
-                    deepArrayOrderRandomizer(((JSONArray) val));
+                    deeplyRandomizeArrayElementOrder(((JSONArray) val));
                 } else if (val instanceof JSONObject) {
                     deeplyRandomizeArrayElementOrder(((JSONObject) val));
                 }
@@ -393,8 +390,8 @@ public class CaptureJsonUtils {
                 JSONObject wrapperO;
                 try {
                     wrapperA = new JSONArray(new Object[]{currentElt});
-                    wrapperO = new JSONObject(((Map) new HashMap<String, JSONArray>().put(arrayAttrName,
-                            wrapperA)));
+                    wrapperO = new JSONObject();
+                    wrapperO.put(arrayAttrName, wrapperA);
                 } catch (JSONException e) {
                     throw new RuntimeException("Unexpected", e);
                 }

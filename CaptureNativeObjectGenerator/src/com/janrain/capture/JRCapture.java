@@ -70,6 +70,7 @@ public class JRCapture {
         record.put("email", "nathan+androidtest@janrain.com");
         ((JSONArray) record.opt("pinapinapL1Plural")).put(new JSONObject("{\"string1\":\"poit\"}"));
         ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string1", "narf");
+        ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string2", "zot");
 
         //CaptureJsonUtils.deeplyRandomizeArrayElementOrder(record);
 
@@ -103,6 +104,7 @@ public class JRCapture {
         }
 
         public ApidUpdate collapseWith(ApidUpdate update) {
+            assert update.attrPath.equals(attrPath);
             return new ApidUpdate(CaptureJsonUtils.collapseJsonObjects((JSONObject) newVal,
                     (JSONObject) update.newVal), attrPath);
         }
