@@ -320,9 +320,9 @@ public class CaptureJsonUtils {
      * @return
      * @throws JRCapture.InvalidApidChangeException
      */
-    public static Set<JRCapture.ApidChange> deepDiff(JSONObject original, JSONObject current)
+    public static Set<JRCapture.ApidChange> compileChangeSet(JSONObject original, JSONObject current)
             throws JRCapture.InvalidApidChangeException {
-        return deepDiff(original, current, "/");
+        return compileChangeSet(original, current, "/");
     }
 
     /**
@@ -332,11 +332,11 @@ public class CaptureJsonUtils {
      * @return
      * @throws JRCapture.InvalidApidChangeException
      */
-    private static Set<JRCapture.ApidChange> deepDiff(JSONArray original, JSONArray current,
-                                                      String arrayAttrPath)
+    private static Set<JRCapture.ApidChange> compileChangeSet(JSONArray original, JSONArray current,
+                                                              String arrayAttrPath)
             throws JRCapture.InvalidApidChangeException {
         if (hasIds(original)) {
-            return deepDiffArrayWithIds(original, current, arrayAttrPath);
+            return compileChangeSetForArrayWithIds(original, current, arrayAttrPath);
         } else {
             // original array must've been from a JSON blob
             deepArraySort(original);
@@ -364,8 +364,9 @@ public class CaptureJsonUtils {
         return false;
     }
 
-    private static Set<JRCapture.ApidChange> deepDiffArrayWithIds(JSONArray original, JSONArray current,
-                                                      String arrayAttrPath)
+    private static Set<JRCapture.ApidChange> compileChangeSetForArrayWithIds(JSONArray original,
+                                                                             JSONArray current,
+                                                                             String arrayAttrPath)
             throws JRCapture.InvalidApidChangeException {
         Set<JRCapture.ApidChange> changeSet = new HashSet<JRCapture.ApidChange>();
         String arrayAttrName = getLastPathElement(arrayAttrPath);
@@ -413,7 +414,7 @@ public class CaptureJsonUtils {
                     } catch (JSONException e) {
                         throw new RuntimeException("Unexpected", e);
                     }
-                    changeSet.addAll(deepDiff(originalElt, (JSONObject) currentElt,
+                    changeSet.addAll(compileChangeSet(originalElt, (JSONObject) currentElt,
                             relativePath + "/" + arrayAttrName + "#" + currentId));
                 } else {
                     throw new JRCapture.InvalidApidChangeException("Cannot assign ID to new plural elements");
@@ -502,8 +503,8 @@ public class CaptureJsonUtils {
      * @return
      * @throws JRCapture.InvalidApidChangeException
      */
-    private static Set<JRCapture.ApidChange> deepDiff(JSONObject original, JSONObject current,
-                                                      String relativePath)
+    private static Set<JRCapture.ApidChange> compileChangeSet(JSONObject original, JSONObject current,
+                                                              String relativePath)
             throws JRCapture.InvalidApidChangeException {
         SortedSet<String> origKeys = makeSortedSetFromIterator((Iterator<String>) original.keys());
         SortedSet<String> currentKeys = makeSortedSetFromIterator((Iterator<String>) current.keys());
@@ -540,10 +541,11 @@ public class CaptureJsonUtils {
                 Object curVal = current.get(k);
                 Object oldVal = original.get(k);
                 if (curVal instanceof JSONObject && oldVal instanceof JSONObject) {
-                    changeSet.addAll(deepDiff(((JSONObject) oldVal), ((JSONObject) curVal),
+                    changeSet.addAll(compileChangeSet(((JSONObject) oldVal), ((JSONObject) curVal),
                             relativePath + k + "/"));
                 } else if (curVal instanceof JSONArray && oldVal instanceof JSONArray) {
-                    changeSet.addAll(deepDiff(((JSONArray) oldVal), ((JSONArray) curVal), relativePath + k));
+                    changeSet.addAll(compileChangeSet(((JSONArray) oldVal), ((JSONArray) curVal),
+                            relativePath + k));
                 } else if (curVal instanceof String) {
                     maybeAddUpdate(relativePath + k, changeSet, curVal, oldVal);
                 } else if (curVal instanceof Boolean) {

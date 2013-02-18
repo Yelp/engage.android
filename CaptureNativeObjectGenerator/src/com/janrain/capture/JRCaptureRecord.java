@@ -35,7 +35,6 @@ package com.janrain.capture;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -142,6 +141,6 @@ public class JRCaptureRecord extends JSONObject {
 
     public Set<JRCapture.ApidChange> getApidChangeSet() throws JRCapture.InvalidApidChangeException {
         CaptureJsonUtils.deepArraySort(this);
-        return CaptureJsonUtils.deepDiff(original, this);
+        return CaptureJsonUtils.compileChangeSet(original, this);
     }
 }
