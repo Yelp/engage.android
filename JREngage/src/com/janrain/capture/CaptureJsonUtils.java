@@ -36,6 +36,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -382,7 +383,7 @@ public class CaptureJsonUtils {
                 JSONArray wrapperA;
                 JSONObject wrapperO;
                 try {
-                    wrapperA = new JSONArray(new Object[]{currentElt});
+                    wrapperA = new JSONArray(Arrays.asList(new Object[]{currentElt}));
                     wrapperO = new JSONObject();
                     wrapperO.put(arrayAttrName, wrapperA);
                 } catch (JSONException e) {

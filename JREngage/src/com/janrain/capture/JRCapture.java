@@ -40,7 +40,6 @@ import org.json.JSONTokener;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Set;
 
 public class JRCapture {
     public static JSONObject getEntity(int id) throws IOException, JSONException {
@@ -72,13 +71,6 @@ public class JRCapture {
         ((JSONArray) record.opt("pinapinapL1Plural")).put(new JSONObject("{\"string1\":\"poit\"}"));
         ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string1", "narf");
         ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string2", "zot");
-
-        try {
-            Set<JRCapture.ApidChange> changeSet = record.getApidChangeSet();
-            CaptureStringUtils.log(changeSet.toString());
-        } catch (InvalidApidChangeException e) {
-            throw new RuntimeException(e);
-        }
 
         try {
             record.synchronize(null);

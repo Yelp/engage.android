@@ -35,8 +35,10 @@ package com.janrain.capture;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -59,7 +61,25 @@ public class JRCaptureRecord extends JSONObject {
     public final void synchronize(JRCapture.SyncListener listener)
             throws JRCapture.InvalidApidChangeException {
         Set<JRCapture.ApidChange> changeSet = getApidChangeSet();
-        CaptureStringUtils.log(changeSet);
+        List<JRCapture.ApidChange> changeList = new ArrayList<JRCapture.ApidChange>();
+        changeList.addAll(changeSet);
+
+
+
+
+        //create list of next changes
+        //start update of first change with callback with list of next changes
+        // callback starts next change with itself as handler
+        // last update fires listener
+        // errors fire listener earlier
+
+        // move these packages into janrain
+        // delete the generator and generated stuff
+        // add params to initinstance or something to init capture settings
+        // plumb tokenURL to capture
+        // plumb handler to construct this
+        // add method for trad sign-in
+
     }
 
     private static Set<JRCapture.ApidChange> collapseApidChanges(Set<JRCapture.ApidChange> changeSet) {

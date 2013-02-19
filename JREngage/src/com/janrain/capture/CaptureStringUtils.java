@@ -32,22 +32,52 @@
 
 package com.janrain.capture;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * Created with IntelliJ IDEA. User: nathan Date: 1/24/13 Time: 3:27 PM To change this template use File |
+ * Created with IntelliJ IDEA. User: nathan Date: 1/24/13 Time: 1:47 PM To change this template use File |
  * Settings | File Templates.
  */
-public abstract class JRCapturePassword {
-    public String password; // JSON val of crypto struct or raw password
-    public static class Generic extends JRCapturePassword {}
-    public static class Bcrypt extends JRCapturePassword {}
-    public static class Md5 extends JRCapturePassword {}
-    public static class Sha256 extends JRCapturePassword {}
-
-    public String toJsonString() {
-        return toString();
+public class CaptureStringUtils {
+    public static void log(Object o) {
+        synchronized (System.out) {
+            System.out.println(o);
+            System.out.flush();
+        }
     }
 
-    public String toString() {
-        return password;
+    public static String readFully(InputStream is) {
+        try {
+            return new String(readFromStream(is, false));
+        } catch (IOException ignore) {
+            throw new RuntimeException(ignore);
+        }
+    }
+
+    public static byte[] readFromStream(InputStream in, boolean shouldThrowOnError) throws IOException {
+        if (in != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try {
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = in.read(buffer)) != -1) baos.write(buffer, 0, len);
+                return baos.toByteArray();
+            } catch (IOException e) {
+                log("[readFromStream] problem reading from input stream: " + e.getLocalizedMessage());
+                if (shouldThrowOnError) throw e;
+            } finally {
+                baos.close();
+            }
+        } else {
+            log("[readFromStream] unexpected null InputStream");
+        }
+
+        return null;
     }
 }
