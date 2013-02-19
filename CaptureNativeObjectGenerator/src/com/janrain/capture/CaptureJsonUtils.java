@@ -36,7 +36,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -90,10 +89,10 @@ public class CaptureJsonUtils {
      *  nulls are illegal
      *
      *  Note that number types aren't compared if their types are unequal, e.g. 1.0 the Double does not
-     *  equal 1 the integer.
+     *  equal 1 the Integer.
      *
-     * @param thisVal
-     * @param otherVal
+     * @param thisVal one JSON value
+     * @param otherVal another JSON value
      * @return 0 if they are equal
      */
     public static int compareJsonVals(Object thisVal, Object otherVal) {
@@ -196,143 +195,137 @@ public class CaptureJsonUtils {
         return retval;
     }
 
-    public static void deepArraySort(JSONArray original) {
-        for (int i=0; i < original.length(); i++) {
-            try {
-                Object val = original.get(i);
-                if (val instanceof  JSONObject) {
-                    deepArraySort(((JSONObject) val));
-                } else if (val instanceof JSONArray) {
-                    deepArraySort(((JSONArray) val));
-                }
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected", e);
-            }
-        }
+    //public static void deepArraySort(JSONArray original) {
+    //    for (int i=0; i < original.length(); i++) {
+    //        try {
+    //            Object val = original.get(i);
+    //            if (val instanceof  JSONObject) {
+    //                deepArraySort(((JSONObject) val));
+    //            } else if (val instanceof JSONArray) {
+    //                deepArraySort(((JSONArray) val));
+    //            }
+    //        } catch (JSONException e) {
+    //            throw new RuntimeException("Unexpected", e);
+    //        }
+    //    }
+    //
+    //    try {
+    //        mergeSort(original, 0, original.length());
+    //    } catch (JSONException e) {
+    //        throw new RuntimeException("Unexpected", e);
+    //    }
+    //}
 
-        try {
-            mergeSort(original, 0, original.length());
-        } catch (JSONException e) {
-            throw new RuntimeException("Unexpected", e);
-        }
-    }
+    //private static void mergeSort(JSONArray original, int start, int len) throws JSONException {
+    //    if (len <= 1) return;
+    //
+    //    int halfLen = len / 2;
+    //    int left = start;
+    //    int right = start + halfLen;
+    //
+    //    mergeSort(original, left, halfLen);
+    //    mergeSort(original, right, len - halfLen);
+    //
+    //    Object[] temp = new Object[len];
+    //    int tempIndex = 0;
+    //
+    //    while (left < start + halfLen || right < start + len) {
+    //        Object leftVal = original.opt(left);
+    //        Object rightVal = original.opt(right);
+    //        if (left < start + halfLen && right < start + len) {
+    //            if (compareJsonVals(leftVal, rightVal) < 0) {
+    //                temp[tempIndex++] = leftVal;
+    //                left++;
+    //            } else  {
+    //                temp[tempIndex++] = rightVal;
+    //                right++;
+    //            }
+    //        } else if (left < start + halfLen) {
+    //            temp[tempIndex++] = leftVal;
+    //            left++;
+    //        } else {
+    //            temp[tempIndex++] = rightVal;
+    //            right++;
+    //        }
+    //    }
+    //
+    //    for (int i=0; i < temp.length; i++) original.put(start + i, temp[i]);
+    //}
 
-    private static void mergeSort(JSONArray original, int start, int len) throws JSONException {
-        if (len <= 1) return;
+    //public static void deepArraySort(JSONObject original) {
+    //    Iterator<String> keys = original.keys();
+    //    while (keys.hasNext()) {
+    //        String key = keys.next();
+    //        try {
+    //            Object val = original.get(key);
+    //            if (val instanceof JSONArray) {
+    //                deepArraySort(((JSONArray) val));
+    //            } else if (val instanceof JSONObject) {
+    //                deepArraySort(((JSONObject) val));
+    //            }
+    //        } catch (JSONException e) {
+    //            throw new RuntimeException("Unexpected", e);
+    //        }
+    //    }
+    //}
 
-        int halfLen = len / 2;
-        int left = start;
-        int right = start + halfLen;
+    //public static void deeplyRandomizeArrayElementOrder(JSONArray original) {
+    //    for (int i=0; i < original.length(); i++) {
+    //        try {
+    //            Object val = original.get(i);
+    //            if (val instanceof  JSONObject) {
+    //                deeplyRandomizeArrayElementOrder(((JSONObject) val));
+    //            } else if (val instanceof JSONArray) {
+    //                deeplyRandomizeArrayElementOrder(((JSONArray) val));
+    //            }
+    //        } catch (JSONException e) {
+    //            throw new RuntimeException("Unexpected", e);
+    //        }
+    //    }
+    //
+    //    for (int i = 0; i < original.length(); i++) {
+    //        int j = ((int) (Math.random() * original.length())) % original.length();
+    //        try {
+    //            Object iVal = original.get(i);
+    //            original.put(i, original.get(j));
+    //            original.put(j, iVal);
+    //        } catch (JSONException e) {
+    //            throw new RuntimeException("Unexpected", e);
+    //        }
+    //    }
+    //}
 
-        mergeSort(original, left, halfLen);
-        mergeSort(original, right, len - halfLen);
-
-        Object[] temp = new Object[len];
-        int tempIndex = 0;
-
-        while (left < start + halfLen || right < start + len) {
-            Object leftVal = original.opt(left);
-            Object rightVal = original.opt(right);
-            if (left < start + halfLen && right < start + len) {
-                if (compareJsonVals(leftVal, rightVal) < 0) {
-                    temp[tempIndex++] = leftVal;
-                    left++;
-                } else  {
-                    temp[tempIndex++] = rightVal;
-                    right++;
-                }
-            } else if (left < start + halfLen) {
-                temp[tempIndex++] = leftVal;
-                left++;
-            } else {
-                temp[tempIndex++] = rightVal;
-                right++;
-            }
-        }
-
-        for (int i=0; i < temp.length; i++) original.put(start + i, temp[i]);
-    }
-
-    public static void deepArraySort(JSONObject original) {
-        Iterator<String> keys = original.keys();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            try {
-                Object val = original.get(key);
-                if (val instanceof JSONArray) {
-                    deepArraySort(((JSONArray) val));
-                } else if (val instanceof JSONObject) {
-                    deepArraySort(((JSONObject) val));
-                }
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected", e);
-            }
-        }
-    }
-
-    public static void deeplyRandomizeArrayElementOrder(JSONArray original) {
-        for (int i=0; i < original.length(); i++) {
-            try {
-                Object val = original.get(i);
-                if (val instanceof  JSONObject) {
-                    deeplyRandomizeArrayElementOrder(((JSONObject) val));
-                } else if (val instanceof JSONArray) {
-                    deeplyRandomizeArrayElementOrder(((JSONArray) val));
-                }
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected", e);
-            }
-        }
-
-        for (int i = 0; i < original.length(); i++) {
-            int j = ((int) (Math.random() * original.length())) % original.length();
-            try {
-                Object iVal = original.get(i);
-                original.put(i, original.get(j));
-                original.put(j, iVal);
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected", e);
-            }
-        }
-    }
-
-    public static void deeplyRandomizeArrayElementOrder(JSONObject original) {
-        Iterator<String> keys = original.keys();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            try {
-                Object val = original.get(key);
-                if (val instanceof JSONArray) {
-                    deeplyRandomizeArrayElementOrder(((JSONArray) val));
-                } else if (val instanceof JSONObject) {
-                    deeplyRandomizeArrayElementOrder(((JSONObject) val));
-                }
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected", e);
-            }
-        }
-    }
+    //public static void deeplyRandomizeArrayElementOrder(JSONObject original) {
+    //    Iterator<String> keys = original.keys();
+    //    while (keys.hasNext()) {
+    //        String key = keys.next();
+    //        try {
+    //            Object val = original.get(key);
+    //            if (val instanceof JSONArray) {
+    //                deeplyRandomizeArrayElementOrder(((JSONArray) val));
+    //            } else if (val instanceof JSONObject) {
+    //                deeplyRandomizeArrayElementOrder(((JSONObject) val));
+    //            }
+    //        } catch (JSONException e) {
+    //            throw new RuntimeException("Unexpected", e);
+    //        }
+    //    }
+    //}
 
     /**
-     * Takes two JSONObjects, performs a deep deef, returning the result as a set of ApidChange instances
-     * Assumes both JSON object hierarchies has sorted arrays
-     * @param original
-     * @param current
-     * @return
+     * Takes two JSONObjects, performs a deep diff, returning the result as a set of ApidChanges
+     * @param original the original copy of the record
+     * @param current the current copy
+     * @return A set of ApidChanges to effect the diff
      * @throws JRCapture.InvalidApidChangeException
+     *  If value types mismatch between original and current
+     *  If ids are assigned to new plural elements
      */
     public static Set<JRCapture.ApidChange> compileChangeSet(JSONObject original, JSONObject current)
             throws JRCapture.InvalidApidChangeException {
         return compileChangeSet(original, current, "/");
     }
 
-    /**
-     * @param original
-     * @param current
-     * @param arrayAttrPath has no trailing slash
-     * @return
-     * @throws JRCapture.InvalidApidChangeException
-     */
     private static Set<JRCapture.ApidChange> compileChangeSet(JSONArray original, JSONArray current,
                                                               String arrayAttrPath)
             throws JRCapture.InvalidApidChangeException {
@@ -340,8 +333,6 @@ public class CaptureJsonUtils {
             return compileChangeSetForArrayWithIds(original, current, arrayAttrPath);
         } else {
             // original array must've been from a JSON blob
-            deepArraySort(original);
-            deepArraySort(current);
             Set<JRCapture.ApidChange> changeSet = new HashSet<JRCapture.ApidChange>();
             if (compareJsonVals(original, current) != 0) {
                 changeSet.add(new JRCapture.ApidUpdate(current, arrayAttrPath));
@@ -373,15 +364,15 @@ public class CaptureJsonUtils {
         String arrayAttrName = getLastPathElement(arrayAttrPath);
         String relativePath = arrayAttrPath.substring(0, arrayAttrPath.length() - arrayAttrName.length());
 
-        sortPlurEltsById(original);
-        sortPlurEltsById(current);
+        JSONArray sortedOriginal = sortPlurEltsById(original);
+        JSONArray sortedCurrent = sortPlurEltsById(current);
 
         int originalIndex = 0;
-        for (int currentIndex = 0; currentIndex < current.length(); currentIndex++) {
-            Integer currentId = getIdForPlurEltAtIndex(current, currentIndex);
+        for (int currentIndex = 0; currentIndex < sortedCurrent.length(); currentIndex++) {
+            Integer currentId = getIdForPlurEltAtIndex(sortedCurrent, currentIndex);
             final Object currentElt;
             try {
-                currentElt = current.get(currentIndex);
+                currentElt = sortedCurrent.get(currentIndex);
             } catch (JSONException e) {
                 throw new RuntimeException("Unexpected", e);
             }
@@ -401,8 +392,8 @@ public class CaptureJsonUtils {
             } else {
                 // update to existing id
                 Integer originalId = null;
-                while (originalIndex < original.length()) { // try to find a matching id in original
-                    originalId = getIdForPlurEltAtIndex(original, originalIndex);
+                while (originalIndex < sortedOriginal.length()) { // try to find a matching id in original
+                    originalId = getIdForPlurEltAtIndex(sortedOriginal, originalIndex);
                     if (currentId <= originalId) break;
                     changeSet.add(new JRCapture.ApidDelete(relativePath + "#" + originalId));
                     originalIndex++;
@@ -411,7 +402,7 @@ public class CaptureJsonUtils {
                 if (currentId.equals(originalId)) {
                     JSONObject originalElt;
                     try {
-                        originalElt = (JSONObject) original.get(originalIndex++);
+                        originalElt = (JSONObject) sortedOriginal.get(originalIndex++);
                     } catch (JSONException e) {
                         throw new RuntimeException("Unexpected", e);
                     }
@@ -423,23 +414,23 @@ public class CaptureJsonUtils {
             }
         }
 
-        while (originalIndex < original.length()) {
-            Integer idForPlurEltAtIndex = getIdForPlurEltAtIndex(original, originalIndex++);
+        while (originalIndex < sortedOriginal.length()) {
+            Integer idForPlurEltAtIndex = getIdForPlurEltAtIndex(sortedOriginal, originalIndex++);
             changeSet.add(new JRCapture.ApidDelete(relativePath + "#" + idForPlurEltAtIndex));
         }
 
         return changeSet;
     }
 
-    private static void sortPlurEltsById(JSONArray original, int start, int len) {
+    private static void inPlaceSortByEltIds(JSONArray original, int start, int len) {
         if (len <= 1) return;
 
         int halfLen = len / 2;
         int left = start;
         int right = start + halfLen;
 
-        sortPlurEltsById(original, left, halfLen);
-        sortPlurEltsById(original, right, len - halfLen);
+        inPlaceSortByEltIds(original, left, halfLen);
+        inPlaceSortByEltIds(original, right, len - halfLen);
 
         Object[] temp = new Object[len];
         int tempIndex = 0;
@@ -477,8 +468,14 @@ public class CaptureJsonUtils {
             }
     }
 
-    private static void sortPlurEltsById(JSONArray original) {
-        sortPlurEltsById(original, 0, original.length());
+    private static JSONArray sortPlurEltsById(JSONArray original) {
+        try {
+            JSONArray copy = (JSONArray) copyJsonVal(original);
+            inPlaceSortByEltIds(copy, 0, original.length());
+            return copy;
+        } catch (JSONException e) {
+            throw new RuntimeException("Unexpected", e);
+        }
     }
 
     private static String getLastPathElement(String relativePath) {
@@ -497,13 +494,6 @@ public class CaptureJsonUtils {
         return null;
     }
 
-    /**
-     * @param original
-     * @param current
-     * @param relativePath with a trailing slash
-     * @return
-     * @throws JRCapture.InvalidApidChangeException
-     */
     private static Set<JRCapture.ApidChange> compileChangeSet(JSONObject original, JSONObject current,
                                                               String relativePath)
             throws JRCapture.InvalidApidChangeException {
@@ -568,13 +558,14 @@ public class CaptureJsonUtils {
         }
 
         if (newKeys.size() > 0) {
-            throw new JRCapture.InvalidApidChangeException("Can't add new keys to JSONObjects");
+            throw new JRCapture.InvalidApidChangeException("Can't add new keys to JSONObjects. New keys: " +
+                    newKeys.toString());
         }
         // new leaf (illegal?), changed leaf, removed leaf (illegal?), new branch, removed branch, that's it?
 
-        if (newKeys.size() > 0 || removedKeys.size() > 0) {
-            throw new JRCapture.InvalidApidChangeException("Cannot introduce or delete leaf objects. New " +
-                    "keys: " + newKeys.toString() + " Removed keys: " + removedKeys.toString());
+        if (removedKeys.size() > 0) {
+            throw new JRCapture.InvalidApidChangeException("Cannot delete keys from JSONObjects. Removed " +
+                    "keys: " + removedKeys.toString());
         }
 
         return changeSet;
@@ -587,6 +578,14 @@ public class CaptureJsonUtils {
                 curVal.getClass().getSimpleName());
     }
 
+    /**
+     * Adds an update to changeSet if curval.compareTo(oldVal) != 0
+     * @param relativePath the relative path for the update
+     * @param changeSet the change set to maybe add to
+     * @param curVal a value
+     * @param oldVal another value
+     * @throws JRCapture.InvalidApidChangeException
+     */
     private static void maybeAddUpdate(String relativePath, Set<JRCapture.ApidChange> changeSet,
                                        Object curVal, Object oldVal)
             throws JRCapture.InvalidApidChangeException {
@@ -599,6 +598,16 @@ public class CaptureJsonUtils {
         }
     }
 
+    /**
+     * Zippers up the left and right params into a return JSONObject. All subobjects are merged by key.
+     * Arrays are concatenated. If keys are duplicated across both left and right then the value from left
+     * is taken and the value from right is discarded.
+     *
+     * e.g.: {'a':1, 'c':[2]} collapsed with {'b':null, 'c':[1]} yields {'a':1, 'b':null, 'c':[2,1]}
+     * @param left an object
+     * @param right another object
+     * @return the merged contents of left and right
+     */
     public static JSONObject collapseJsonObjects(JSONObject left, JSONObject right) {
         try {
             if (left == null) return (JSONObject) copyJsonVal(right);
@@ -621,7 +630,12 @@ public class CaptureJsonUtils {
         }
     }
 
-    private static void jsonArrayAddAll(JSONArray thisArray, JSONArray otherArray) {
+    /**
+     * Adds everything in otherArray to thisArray
+     * @param thisArray an array to add elements to
+     * @param otherArray an array with elements to be added
+     */
+    public static void jsonArrayAddAll(JSONArray thisArray, JSONArray otherArray) {
         for (int i = 0; i < otherArray.length(); i++) {
             try {
                 thisArray.put(otherArray.get(i));
@@ -631,14 +645,20 @@ public class CaptureJsonUtils {
         }
     }
 
-    private static Object copyJsonVal(Object o) throws JSONException {
-        if (o instanceof JSONObject) {
-            return new JSONObject(o.toString());
-        } else if (o instanceof JSONArray) {
-            return new JSONArray(o.toString());
+    /**
+     * Copies a JSON value
+     * @param val a JSON value
+     * @return a copy of val
+     * @throws JSONException
+     */
+    public static Object copyJsonVal(Object val) throws JSONException {
+        if (val instanceof JSONObject) {
+            return new JSONObject(val.toString());
+        } else if (val instanceof JSONArray) {
+            return new JSONArray(val.toString());
         } else {
             //everything else is^H^H had better be immutable
-            return o;
+            return val;
         }
     }
 }

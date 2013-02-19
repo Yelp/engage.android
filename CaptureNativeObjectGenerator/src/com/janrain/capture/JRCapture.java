@@ -67,20 +67,17 @@ public class JRCapture {
         JRCaptureRecord record = new JRCaptureRecord(getEntity(14474));
         CaptureStringUtils.log(record.toString(2));
 
-        for (int i = 0; i < 100; i++) {
-            CaptureJsonUtils.deeplyRandomizeArrayElementOrder(record);
-            record.put("email", "nathan+androidtest@janrain.com");
-            ((JSONArray) record.opt("pinapinapL1Plural")).put(0, new JSONObject("{\"string1\":\"poit\"}"));
-            ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string1", "narf");
-            ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string2", "zot");
-            CaptureJsonUtils.deeplyRandomizeArrayElementOrder(record);
+        //CaptureJsonUtils.deeplyRandomizeArrayElementOrder(record);
+        record.put("email", "nathan+androidtest@janrain.com");
+        ((JSONArray) record.opt("pinapinapL1Plural")).put(new JSONObject("{\"string1\":\"poit\"}"));
+        ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string1", "narf");
+        ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string2", "zot");
 
-            try {
-                Set<JRCapture.ApidChange> changeSet = record.getApidChangeSet();
-                CaptureStringUtils.log(changeSet.toString().hashCode());
-            } catch (InvalidApidChangeException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            Set<JRCapture.ApidChange> changeSet = record.getApidChangeSet();
+            CaptureStringUtils.log(changeSet.toString());
+        } catch (InvalidApidChangeException e) {
+            throw new RuntimeException(e);
         }
 
         try {
@@ -103,6 +100,17 @@ public class JRCapture {
         @Override
         public String toString() {
             return "<" + getClass().getSimpleName() + " attrPath: " + attrPath + " newVal: " + newVal + ">";
+        }
+
+        @Override
+        public int hashCode() {
+            return toString().hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this instanceof ApidUpdate) return super.equals(obj);
+            return toString().equals(obj.toString()) && obj instanceof ApidChange;
         }
     }
 

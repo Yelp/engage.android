@@ -49,7 +49,7 @@ public class JRCaptureRecord extends JSONObject {
 
         try {
             original = new JSONObject(jo.toString());
-            CaptureJsonUtils.deepArraySort(original);
+            //CaptureJsonUtils.deepArraySort(original);
             CaptureJsonUtils.deepCopy(original, this);
         } catch (JSONException e) {
             throw new RuntimeException("Unexpected JSONException", e);
@@ -138,7 +138,7 @@ public class JRCaptureRecord extends JSONObject {
     }
 
     public Set<JRCapture.ApidChange> getApidChangeSet() throws JRCapture.InvalidApidChangeException {
-        CaptureJsonUtils.deepArraySort(this);
+        //CaptureJsonUtils.deepArraySort(this);
         return collapseApidChanges(CaptureJsonUtils.compileChangeSet(original, this));
     }
 }
