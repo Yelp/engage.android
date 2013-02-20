@@ -52,9 +52,10 @@ public class CaptureJsonUtils {
     /**
      * ContentHandlerFactory suitable for use with URLConnection
      * Handles application/json content-types
-     * Uses JSONTokener.nextValue() to parse them
+     * Uses JSONTokener.nextValue() to parse them. If it fails to parse the response is assumed to be UTF and
+     * is returned as a String.
      */
-    public static class JsonContentHandlerFactory implements ContentHandlerFactory {
+    public static final ContentHandlerFactory JSON_CONTENT_HANDLER_FACTORY = new ContentHandlerFactory() {
         public ContentHandler createContentHandler(String contentType) {
             if (contentType.toLowerCase().equals("application/json")) {
                 return new ContentHandler() {
@@ -71,7 +72,7 @@ public class CaptureJsonUtils {
             }
             return null;
         }
-    }
+    };
 
     private static int jsonArrayCompareTo(JSONArray this_, Object other) {
         if (other instanceof JSONArray) {

@@ -52,10 +52,12 @@ import java.util.regex.Pattern;
 
 import static android.text.TextUtils.join;
 import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
+import static com.janrain.capture.CaptureStringUtils.readFully;
 
 public class JRCapture {
     public static final String ENTITY_TYPE_NAME = "test_user1";
     public static final String CAPTURE_DOMAIN = "mobile.dev.janraincapture.com";
+    //public static final String CAPTURE_DOMAIN = "test-multi.janraincapture.com";
     public static final String CLIENT_ID = "zc7tx83fqy68mper69mxbt5dfvd7c2jh";
     public static final String CLIENT_SECRET = "aqkcrjcf8ceexc5gfvw47fpazjfysyct";
 
@@ -69,7 +71,7 @@ public class JRCapture {
             "access_token=6vxjc6xg88g2q5ht").openConnection();
         entityConn.connect();
 
-        String response = CaptureStringUtils.readFully(entityConn.getInputStream());
+        String response = readFully(entityConn.getInputStream());
 
         JSONObject jo = new JSONObject(new JSONTokener(response));
         if ("ok".equals(jo.optString("stat"))) {
@@ -86,25 +88,26 @@ public class JRCapture {
         JREngage.logd("JRCapture", record.toString(2));
 
         //CaptureJsonUtils.deeplyRandomizeArrayElementOrder(record);
-        record.put("email", "nathan+androidtest2@janrain.com");
-        ((JSONArray) record.opt("pinapinapL1Plural")).put(new JSONObject("{\"string1\":\"poit\"}"));
-        ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string1", "zot");
-        ((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string2", "narf");
+        //record.put("email", "nathan+androidtest2@janrain.com");
+        //((JSONArray) record.opt("pinapinapL1Plural")).put(new JSONObject("{\"string1\":\"poit\"}"));
+        //((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string1", "zot");
+        //((JSONObject) ((JSONObject) record.opt("oinoL1Object")).opt("oinoL2Object")).put("string2", "narf");
 
-        try {
-            record.accessToken = "6vxjc6xg88g2q5ht";
-            record.synchronize(new SyncListener() {
-                public void onSuccess() {
-                    JREngage.logd("JRCapture", "success");
-                }
+        record.refreshAccessToken();
 
-                public void onFailure(Object e) {
-                    JREngage.logd("JRCapture", ("failure: " + e));
-                }
-            });
-        } catch (InvalidApidChangeException e) {
-            e.printStackTrace();
-        }
+        //try {
+        //    record.synchronize(new RequestCallback() {
+        //        public void onSuccess() {
+        //            JREngage.logd("JRCapture", "success");
+        //        }
+        //
+        //        public void onFailure(Object e) {
+        //            JREngage.logd("JRCapture", ("failure: " + e));
+        //        }
+        //    });
+        //} catch (InvalidApidChangeException e) {
+        //    e.printStackTrace();
+        //}
     }
 
     public static class InvalidApidChangeException extends Exception {
@@ -143,22 +146,26 @@ public class JRCapture {
         public abstract URL getUrlFor();
 
         public void writeConnectionBody(URLConnection urlConnection, String accessToken) throws IOException {
-            OutputStream outputStream = urlConnection.getOutputStream();
-
             Set<Pair<String, String>> bodyParams = getBodyParams();
             bodyParams.add(new Pair<String, String>("access_token", accessToken));
-            Collection<String> paramPairs = CollectionUtils.map(bodyParams,
-                    new CollectionUtils.Function<String, Pair<String, String>>() {
-                        public String operate(Pair<String, String> val) {
-                            return val.first.concat("=").concat(urlEncode(val.second));
-                        }
-                    });
 
-            String body = join("&", paramPairs);
-            outputStream.write(body.getBytes("UTF-8"));
+            writePostParams(urlConnection, bodyParams);
         }
 
         /*package*/ abstract Set<Pair<String, String>> getBodyParams();
+    }
+
+    /*package*/ static void writePostParams(URLConnection urlConnection,
+                                        Set<Pair<String, String>> bodyParams) throws IOException {
+        Collection<String> paramPairs = CollectionUtils.map(bodyParams,
+                new CollectionUtils.Function<String, Pair<String, String>>() {
+                    public String operate(Pair<String, String> val) {
+                        return val.first.concat("=").concat(urlEncode(val.second));
+                    }
+                });
+
+        String body = join("&", paramPairs);
+        urlConnection.getOutputStream().write(body.getBytes("UTF-8"));
     }
 
     /*package*/ static class ApidUpdate extends ApidChange {
@@ -237,7 +244,7 @@ public class JRCapture {
         }
     }
 
-    public static interface SyncListener {
+    public static interface RequestCallback {
         public void onSuccess();
 
         public void onFailure(Object e);

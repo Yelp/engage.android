@@ -32,24 +32,43 @@
 
 package com.janrain.capture;
 
+import android.util.Base64;
+import android.util.Pair;
 import com.janrain.android.engage.JREngage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLConnection;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
-import static android.text.TextUtils.join;
+import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
 
 public class JRCaptureRecord extends JSONObject {
+    private static final SimpleDateFormat CAPTURE_SIGNATURE_DATE_FORMAT =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    static {
+        CAPTURE_SIGNATURE_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
     private JSONObject original;
-    String accessToken;
+    private String accessToken;
     private String refreshSecret;
 
     public JRCaptureRecord(JSONObject jo) {
@@ -57,21 +76,71 @@ public class JRCaptureRecord extends JSONObject {
 
         try {
             original = new JSONObject(jo.toString());
-            //CaptureJsonUtils.deepArraySort(original);
             CaptureJsonUtils.deepCopy(original, this);
         } catch (JSONException e) {
             throw new RuntimeException("Unexpected JSONException", e);
         }
     }
 
-    public final void synchronize(final JRCapture.SyncListener listener)
+    public final void refreshAccessToken(JRCapture.RequestCallback callback) {
+        accessToken = "6bunfwu42h2rwgbq";
+        refreshSecret = "a";
+        String domain = "test-multi.janraincapture.com";
+
+        try {
+            URL url = new URL("https://" + domain + "/access/getAccessToken");
+            URLConnection connection = url.openConnection();
+            connection.setDoOutput(true);
+            String date = CAPTURE_SIGNATURE_DATE_FORMAT.format(new Date());
+            Set<Pair<String, String>> params = new HashSet<Pair<String, String>>();
+            params.add(new Pair<String, String>("application_id", "fvbamf9kkkad3gnd9qyb4ggw6w"));
+            params.add(new Pair<String, String>("access_token", accessToken));
+            params.add(new Pair<String, String>("Signature", urlEncode(makeHash(date))));
+            params.add(new Pair<String, String>("Date", urlEncode(date)));
+            JRCapture.writePostParams(connection, params);
+            connection.getOutputStream().close();
+            Object response = connection.getContent();
+            if (response instanceof JSONObject && "ok".equals(((JSONObject) response).opt("stat"))) {
+                accessToken = (String) ((JSONObject) response).opt("access_token");
+            } else {
+                JREngage.logd("JRCapture", response.toString());
+                callback.onFailure(response);
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Unexpected", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Unexpected", e);
+        }
+    }
+
+    private String makeHash(String date) {
+        String stringToSign = date + "\n" + accessToken + "\n";
+
+        byte[] hash;
+        try {
+            Mac mac = Mac.getInstance("HmacSHA1");
+            SecretKeySpec secret = new SecretKeySpec(refreshSecret.getBytes("UTF-8"), mac.getAlgorithm());
+            mac.init(secret);
+            hash = mac.doFinal(stringToSign.getBytes("UTF-8"));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Unexpected", e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Unexpected", e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException("Unexpected", e);
+        }
+
+        return Base64.encodeToString(hash, Base64.DEFAULT);
+    }
+
+    public final void synchronize(final JRCapture.RequestCallback callback)
             throws JRCapture.InvalidApidChangeException {
         Set<JRCapture.ApidChange> changeSet = getApidChangeSet();
         List<JRCapture.ApidChange> changeList = new ArrayList<JRCapture.ApidChange>();
         changeList.addAll(changeSet);
-        URLConnection.setContentHandlerFactory(new CaptureJsonUtils.JsonContentHandlerFactory());
+        URLConnection.setContentHandlerFactory(CaptureJsonUtils.JSON_CONTENT_HANDLER_FACTORY);
 
-        fireNextChange(changeList, listener);
+        fireNextChange(changeList, callback);
 
         // add params to initinstance or something to init capture settings
         // plumb tokenURL to capture
@@ -79,9 +148,9 @@ public class JRCaptureRecord extends JSONObject {
         // add method for trad sign-in
     }
 
-    private void fireNextChange(List<JRCapture.ApidChange> changeList, JRCapture.SyncListener listener) {
+    private void fireNextChange(List<JRCapture.ApidChange> changeList, JRCapture.RequestCallback callback) {
         if (changeList.size() == 0) {
-            listener.onSuccess();
+            callback.onSuccess();
             return;
         }
 
@@ -96,12 +165,12 @@ public class JRCaptureRecord extends JSONObject {
                 JREngage.logd("JRCapture", change.toString());
                 JREngage.logd("JRCapture", ((JSONObject) content).toString(2));
                 List<JRCapture.ApidChange> tail = changeList.subList(1, changeList.size());
-                fireNextChange(tail, listener);
+                fireNextChange(tail, callback);
             } else {
-                listener.onFailure(content);
+                callback.onFailure(content);
             }
         } catch (IOException e) {
-            listener.onFailure(e);
+            callback.onFailure(e);
         } catch (JSONException e) {
             throw new RuntimeException("unexpected");
         }
@@ -175,7 +244,7 @@ public class JRCaptureRecord extends JSONObject {
         return new JRCapture.ApidUpdate(newVal, parent);
     }
 
-    public Set<JRCapture.ApidChange> getApidChangeSet() throws JRCapture.InvalidApidChangeException {
+    private Set<JRCapture.ApidChange> getApidChangeSet() throws JRCapture.InvalidApidChangeException {
         //CaptureJsonUtils.deepArraySort(this);
         return collapseApidChanges(CaptureJsonUtils.compileChangeSet(original, this));
     }
