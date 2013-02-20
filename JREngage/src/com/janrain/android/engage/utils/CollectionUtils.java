@@ -32,6 +32,7 @@
 package com.janrain.android.engage.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,21 @@ public final class CollectionUtils {
         for (R e : list) retList.add(f.operate(e));
 
         return retList;
+    }
+
+    public static <L, R> Collection<L> map(Collection<R> collection, Function<L, R> f) {
+        Collection<L> retCollection;
+        try {
+            retCollection = collection.getClass().newInstance();
+        } catch (InstantiationException ignore) {
+            retCollection = new ArrayList<L>();
+        } catch (IllegalAccessException ignore) {
+            retCollection = new ArrayList<L>();
+        }
+
+        for (R e : collection) retCollection.add(f.operate(e));
+
+        return retCollection;
     }
 
     /**

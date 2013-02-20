@@ -35,7 +35,12 @@ package com.janrain.capture;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
+import java.io.IOException;
+import java.net.ContentHandler;
+import java.net.ContentHandlerFactory;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -44,13 +49,37 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class CaptureJsonUtils {
-    public static int jsonArrayCompareTo(JSONArray this_, Object other) {
+    /**
+     * ContentHandlerFactory suitable for use with URLConnection
+     * Handles application/json content-types
+     * Uses JSONTokener.nextValue() to parse them
+     */
+    public static class JsonContentHandlerFactory implements ContentHandlerFactory {
+        public ContentHandler createContentHandler(String contentType) {
+            if (contentType.toLowerCase().equals("application/json")) {
+                return new ContentHandler() {
+                    @Override
+                    public Object getContent(URLConnection uConn) throws IOException {
+                        String json = CaptureStringUtils.readFully(uConn.getInputStream());
+                        try {
+                            return new JSONTokener(json).nextValue();
+                        } catch (JSONException ignore) {
+                            return json;
+                        }
+                    }
+                };
+            }
+            return null;
+        }
+    }
+
+    private static int jsonArrayCompareTo(JSONArray this_, Object other) {
         if (other instanceof JSONArray) {
             return jsonArrayCompareTo(this_, (JSONArray) other);
         } else return this_.getClass().getName().compareTo(other.getClass().getName());
     }
 
-    public static int jsonArrayCompareTo(JSONArray this_, JSONArray otherArray) {
+    private static int jsonArrayCompareTo(JSONArray this_, JSONArray otherArray) {
         for (int index = 0; index < this_.length(); index++) {
             Object thisValue;
             try {
@@ -126,13 +155,13 @@ public class CaptureJsonUtils {
         return comparison;
     }
 
-    public static int jsonObjectCompareTo(JSONObject this_, Object other) {
+    private static int jsonObjectCompareTo(JSONObject this_, Object other) {
         if (other instanceof JSONObject) {
             return jsonObjectCompareTo(this_, (JSONObject) other);
         } else return this_.getClass().getName().compareTo(other.getClass().getName());
     }
 
-    public static int jsonObjectCompareTo(JSONObject this_, JSONObject other) {
+    private static int jsonObjectCompareTo(JSONObject this_, JSONObject other) {
         SortedSet<String> this_Keys = makeSortedSetFromIterator((Iterator<String>) this_.keys());
         SortedSet<String> otherKeys = makeSortedSetFromIterator((Iterator<String>) other.keys());
 
@@ -162,6 +191,7 @@ public class CaptureJsonUtils {
     }
 
     /**
+     * Copies source into dest.
      * @param source JSONObject to deep copy, assumed to be acyclic
      * @param dest JSONObject to deep copy source into, assumed to be empty
      */
@@ -190,6 +220,12 @@ public class CaptureJsonUtils {
         }
     }
 
+    /**
+     * Returns a SortedSet&lt;T> with all the elements available from i
+     * @param i an iterator to pull elements from
+     * @param <T> The type of the elements
+     * @return a SortedSet of the elements
+     */
     public static <T> SortedSet<T> makeSortedSetFromIterator(Iterator<T> i) {
         SortedSet<T> retval = new TreeSet<T>();
         while (i.hasNext()) retval.add(i.next());
@@ -342,10 +378,15 @@ public class CaptureJsonUtils {
         }
     }
 
-    private static boolean hasIds(JSONArray original) {
-        for (int i=0; i < original.length(); i++) {
+    /**
+     * Inspects a JSONArray for Capture plural element IDs
+     * @param array the array to inspect
+     * @return true if the array has elements which are objects which have attributes of name "id"
+     */
+    public static boolean hasIds(JSONArray array) {
+        for (int i=0; i < array.length(); i++) {
             try {
-                Object o = original.get(i);
+                Object o = array.get(i);
                 if (o instanceof JSONObject) {
                     Object maybeId = ((JSONObject) o).opt("id");
                     if (maybeId instanceof Integer || maybeId instanceof Long) return true;
@@ -580,7 +621,7 @@ public class CaptureJsonUtils {
     }
 
     /**
-     * Adds an update to changeSet if curval.compareTo(oldVal) != 0
+     * Adds an update to changeSet if curVal.compareTo(oldVal) != 0
      * @param relativePath the relative path for the update
      * @param changeSet the change set to maybe add to
      * @param curVal a value
@@ -600,7 +641,7 @@ public class CaptureJsonUtils {
     }
 
     /**
-     * Zippers up the left and right params into a return JSONObject. All subobjects are merged by key.
+     * Zippers up the left and right params into a returned JSONObject. All sub-objects are merged by key.
      * Arrays are concatenated. If keys are duplicated across both left and right then the value from left
      * is taken and the value from right is discarded.
      *
@@ -632,14 +673,14 @@ public class CaptureJsonUtils {
     }
 
     /**
-     * Adds everything in otherArray to thisArray
-     * @param thisArray an array to add elements to
-     * @param otherArray an array with elements to be added
+     * An addAll variant for JSONArrays
+     * @param destArray an array to add elements to
+     * @param sourceArray an array with elements to be added
      */
-    public static void jsonArrayAddAll(JSONArray thisArray, JSONArray otherArray) {
-        for (int i = 0; i < otherArray.length(); i++) {
+    public static void jsonArrayAddAll(JSONArray destArray, JSONArray sourceArray) {
+        for (int i = 0; i < sourceArray.length(); i++) {
             try {
-                thisArray.put(otherArray.get(i));
+                destArray.put(sourceArray.get(i));
             } catch (JSONException e) {
                 throw new RuntimeException("Unexpected", e);
             }

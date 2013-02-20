@@ -32,19 +32,25 @@
 
 package com.janrain.capture;
 
+import com.janrain.android.engage.JREngage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
+
+import static android.text.TextUtils.join;
 
 public class JRCaptureRecord extends JSONObject {
-    JSONObject original;
+    private JSONObject original;
+    String accessToken;
+    private String refreshSecret;
 
     public JRCaptureRecord(JSONObject jo) {
         super();
@@ -58,38 +64,57 @@ public class JRCaptureRecord extends JSONObject {
         }
     }
 
-    public final void synchronize(JRCapture.SyncListener listener)
+    public final void synchronize(final JRCapture.SyncListener listener)
             throws JRCapture.InvalidApidChangeException {
         Set<JRCapture.ApidChange> changeSet = getApidChangeSet();
         List<JRCapture.ApidChange> changeList = new ArrayList<JRCapture.ApidChange>();
         changeList.addAll(changeSet);
+        URLConnection.setContentHandlerFactory(new CaptureJsonUtils.JsonContentHandlerFactory());
 
+        fireNextChange(changeList, listener);
 
-
-
-        //create list of next changes
-        //start update of first change with callback with list of next changes
-        // callback starts next change with itself as handler
-        // last update fires listener
-        // errors fire listener earlier
-
-        // move these packages into janrain
-        // delete the generator and generated stuff
         // add params to initinstance or something to init capture settings
         // plumb tokenURL to capture
         // plumb handler to construct this
         // add method for trad sign-in
-
     }
 
-    private static Set<JRCapture.ApidChange> collapseApidChanges(Set<JRCapture.ApidChange> changeSet) {
+    private void fireNextChange(List<JRCapture.ApidChange> changeList, JRCapture.SyncListener listener) {
+        if (changeList.size() == 0) {
+            listener.onSuccess();
+            return;
+        }
+
+        JRCapture.ApidChange change = changeList.get(0);
+        try {
+            URLConnection urlConnection = change.getUrlFor().openConnection();
+            urlConnection.setDoOutput(true);
+            change.writeConnectionBody(urlConnection, accessToken);
+            urlConnection.getOutputStream().close();
+            Object content = urlConnection.getContent();
+            if (content instanceof JSONObject && ((JSONObject) content).opt("stat").equals("ok")) {
+                JREngage.logd("JRCapture", change.toString());
+                JREngage.logd("JRCapture", ((JSONObject) content).toString(2));
+                List<JRCapture.ApidChange> tail = changeList.subList(1, changeList.size());
+                fireNextChange(tail, listener);
+            } else {
+                listener.onFailure(content);
+            }
+        } catch (IOException e) {
+            listener.onFailure(e);
+        } catch (JSONException e) {
+            throw new RuntimeException("unexpected");
+        }
+    }
+
+    private Set<JRCapture.ApidChange> collapseApidChanges(Set<JRCapture.ApidChange> changeSet) {
         HashMap<String, Set<JRCapture.ApidUpdate>> subentityUpdateBuckets =
                 new HashMap<String, Set<JRCapture.ApidUpdate>>();
 
         Set<JRCapture.ApidChange> collapsedChangeSet = new HashSet<JRCapture.ApidChange>();
         for (JRCapture.ApidChange change : changeSet) {
             if (change instanceof JRCapture.ApidUpdate) {
-                String parent = findClosestParentSubentity(change);
+                String parent = change.findClosestParentSubentity();
                 JRCapture.ApidUpdate rewritten =
                         rewriteUpdateForParent((JRCapture.ApidUpdate) change, parent);
                 Set<JRCapture.ApidUpdate> bucket = subentityUpdateBuckets.get(parent);
@@ -148,13 +173,6 @@ public class JRCaptureRecord extends JSONObject {
             newVal = wrapper;
         }
         return new JRCapture.ApidUpdate(newVal, parent);
-    }
-
-    private static String findClosestParentSubentity(JRCapture.ApidChange change) {
-        int n = change.attrPath.lastIndexOf("#");
-        if (n == -1) return "/";
-        String number = Pattern.compile("#([0-9])*").matcher(change.attrPath.substring(n)).group();
-        return change.attrPath.substring(0, n) + number;
     }
 
     public Set<JRCapture.ApidChange> getApidChangeSet() throws JRCapture.InvalidApidChangeException {
