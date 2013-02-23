@@ -30,40 +30,52 @@
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
 
-package com.janrain.android.simpledemo;
+package com.janrain.android.capture;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.os.Bundle;
+import android.util.Pair;
 import com.janrain.android.Jump;
-import com.janrain.android.capture.JRCapture;
-import org.json.JSONException;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Set;
+import java.util.regex.Pattern;
 
-/**
- * Created with IntelliJ IDEA. User: nathan Date: 2/19/13 Time: 6:20 PM To change this template use File |
- * Settings | File Templates.
- */
-public class TestActivity extends Activity {
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+/*package*/ abstract class ApidChange {
+    /*package*/ String attrPath;
+    /*package*/ Object newVal;
 
-        Jump.init(this, "appcfamhnpkagijaeinl", "mobile.dev.janraincapture.com",
-                "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6");
-        Jump.showSignInDialog(this, new Jump.SignInResultHandler(){
-            public void onSuccess() {
-                AlertDialog.Builder b = new AlertDialog.Builder(TestActivity.this);
-                b.setMessage("success");
-                b.show();
-            }
-
-            public void onFailure(Object error) {
-                AlertDialog.Builder b = new AlertDialog.Builder(TestActivity.this);
-                b.setMessage("error:" + error);
-                b.show();
-            }
-        });
+    /*package*/ String findClosestParentSubentity() {
+        int n = attrPath.lastIndexOf("#");
+        if (n == -1) return "/";
+        String number = Pattern.compile("#([0-9])*").matcher(attrPath.substring(n)).group();
+        return attrPath.substring(0, n) + number;
     }
+
+    @Override
+    public String toString() {
+        return "<" + getClass().getSimpleName() + " attrPath: " + attrPath + " newVal: " + newVal + ">";
+    }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this instanceof ApidUpdate) return super.equals(obj);
+        return toString().equals(obj.toString()) && obj instanceof ApidChange;
+    }
+
+    /*package*/ abstract URL getUrlFor();
+
+    /*package*/ void writeConnectionBody(URLConnection urlConnection, String accessToken) throws IOException {
+        Set<Pair<String, String>> bodyParams = getBodyParams();
+        bodyParams.add(new Pair<String, String>("access_token", accessToken));
+
+        JRCapture.writePostParams(urlConnection, bodyParams);
+    }
+
+    /*package*/ abstract Set<Pair<String, String>> getBodyParams();
 }

@@ -30,10 +30,11 @@
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
 
-package com.janrain.capture;
+package com.janrain.android.capture;
 
 import android.util.Base64;
 import android.util.Pair;
+import com.janrain.android.Jump;
 import com.janrain.android.engage.JREngage;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,7 +83,7 @@ public class JRCaptureRecord extends JSONObject {
         }
     }
 
-    public final void refreshAccessToken(JRCapture.RequestCallback callback) {
+    public void refreshAccessToken(JRCapture.RequestCallback callback) {
         accessToken = "6bunfwu42h2rwgbq";
         refreshSecret = "a";
         String domain = "test-multi.janraincapture.com";
@@ -99,12 +100,13 @@ public class JRCaptureRecord extends JSONObject {
             params.add(new Pair<String, String>("Date", urlEncode(date)));
             JRCapture.writePostParams(connection, params);
             connection.getOutputStream().close();
-            Object response = connection.getContent();
+            Object response = CaptureJsonUtils.urlConnectionGetJsonContent(connection);
             if (response instanceof JSONObject && "ok".equals(((JSONObject) response).opt("stat"))) {
                 accessToken = (String) ((JSONObject) response).opt("access_token");
+                if (callback != null) callback.onSuccess();
             } else {
                 JREngage.logd("JRCapture", response.toString());
-                callback.onFailure(response);
+                if (callback != null) callback.onFailure(response);
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException("Unexpected", e);
@@ -133,12 +135,11 @@ public class JRCaptureRecord extends JSONObject {
         return Base64.encodeToString(hash, Base64.DEFAULT);
     }
 
-    public final void synchronize(final JRCapture.RequestCallback callback)
+    public void synchronize(final JRCapture.RequestCallback callback)
             throws JRCapture.InvalidApidChangeException {
-        Set<JRCapture.ApidChange> changeSet = getApidChangeSet();
-        List<JRCapture.ApidChange> changeList = new ArrayList<JRCapture.ApidChange>();
+        Set<ApidChange> changeSet = getApidChangeSet();
+        List<ApidChange> changeList = new ArrayList<ApidChange>();
         changeList.addAll(changeSet);
-        URLConnection.setContentHandlerFactory(CaptureJsonUtils.JSON_CONTENT_HANDLER_FACTORY);
 
         fireNextChange(changeList, callback);
 
@@ -148,52 +149,52 @@ public class JRCaptureRecord extends JSONObject {
         // add method for trad sign-in
     }
 
-    private void fireNextChange(List<JRCapture.ApidChange> changeList, JRCapture.RequestCallback callback) {
+    private void fireNextChange(List<ApidChange> changeList, JRCapture.RequestCallback callback) {
         if (changeList.size() == 0) {
-            callback.onSuccess();
+            if (callback != null) callback.onSuccess();
             return;
         }
 
-        JRCapture.ApidChange change = changeList.get(0);
+        ApidChange change = changeList.get(0);
         try {
             URLConnection urlConnection = change.getUrlFor().openConnection();
             urlConnection.setDoOutput(true);
             change.writeConnectionBody(urlConnection, accessToken);
             urlConnection.getOutputStream().close();
-            Object content = urlConnection.getContent();
+            Object content = CaptureJsonUtils.urlConnectionGetJsonContent(urlConnection);
             if (content instanceof JSONObject && ((JSONObject) content).opt("stat").equals("ok")) {
                 JREngage.logd("JRCapture", change.toString());
                 JREngage.logd("JRCapture", ((JSONObject) content).toString(2));
-                List<JRCapture.ApidChange> tail = changeList.subList(1, changeList.size());
+                List<ApidChange> tail = changeList.subList(1, changeList.size());
                 fireNextChange(tail, callback);
             } else {
-                callback.onFailure(content);
+                if (callback != null) callback.onFailure(content);
             }
         } catch (IOException e) {
-            callback.onFailure(e);
+            if (callback != null) callback.onFailure(e);
         } catch (JSONException e) {
             throw new RuntimeException("unexpected");
         }
     }
 
-    private Set<JRCapture.ApidChange> collapseApidChanges(Set<JRCapture.ApidChange> changeSet) {
-        HashMap<String, Set<JRCapture.ApidUpdate>> subentityUpdateBuckets =
-                new HashMap<String, Set<JRCapture.ApidUpdate>>();
+    private Set<ApidChange> collapseApidChanges(Set<ApidChange> changeSet) {
+        HashMap<String, Set<ApidUpdate>> subentityUpdateBuckets =
+                new HashMap<String, Set<ApidUpdate>>();
 
-        Set<JRCapture.ApidChange> collapsedChangeSet = new HashSet<JRCapture.ApidChange>();
-        for (JRCapture.ApidChange change : changeSet) {
-            if (change instanceof JRCapture.ApidUpdate) {
+        Set<ApidChange> collapsedChangeSet = new HashSet<ApidChange>();
+        for (ApidChange change : changeSet) {
+            if (change instanceof ApidUpdate) {
                 String parent = change.findClosestParentSubentity();
-                JRCapture.ApidUpdate rewritten =
-                        rewriteUpdateForParent((JRCapture.ApidUpdate) change, parent);
-                Set<JRCapture.ApidUpdate> bucket = subentityUpdateBuckets.get(parent);
+                ApidUpdate rewritten =
+                        rewriteUpdateForParent((ApidUpdate) change, parent);
+                Set<ApidUpdate> bucket = subentityUpdateBuckets.get(parent);
                 if (bucket == null) {
-                    subentityUpdateBuckets.put(parent, bucket = new HashSet<JRCapture.ApidUpdate>());
+                    subentityUpdateBuckets.put(parent, bucket = new HashSet<ApidUpdate>());
                 }
                 bucket.add(rewritten);
-            } else if (change instanceof JRCapture.ApidReplace) {
+            } else if (change instanceof ApidReplace) {
                 collapsedChangeSet.add(change);
-            } else if (change instanceof JRCapture.ApidDelete) {
+            } else if (change instanceof ApidDelete) {
                 collapsedChangeSet.add(change);
             }
         }
@@ -203,14 +204,14 @@ public class JRCaptureRecord extends JSONObject {
         return collapsedChangeSet;
     }
 
-    private static Set<? extends JRCapture.ApidChange> collapseApidUpdateBuckets(
-            Map<String, Set<JRCapture.ApidUpdate>> subentityUpdateBuckets) {
-        Set<JRCapture.ApidChange> collapsedApidUpdates = new HashSet<JRCapture.ApidChange>();
+    private static Set<? extends ApidChange> collapseApidUpdateBuckets(
+            Map<String, Set<ApidUpdate>> subentityUpdateBuckets) {
+        Set<ApidChange> collapsedApidUpdates = new HashSet<ApidChange>();
         for (String subentity : subentityUpdateBuckets.keySet()) {
-            JRCapture.ApidUpdate collapsedUpdate = null;
-            for (JRCapture.ApidUpdate update : subentityUpdateBuckets.get(subentity)) {
+            ApidUpdate collapsedUpdate = null;
+            for (ApidUpdate update : subentityUpdateBuckets.get(subentity)) {
                 if (collapsedUpdate == null) {
-                    collapsedUpdate = new JRCapture.ApidUpdate(update.newVal, update.attrPath);
+                    collapsedUpdate = new ApidUpdate(update.newVal, update.attrPath);
                 } else {
                     collapsedUpdate = collapsedUpdate.collapseWith(update);
                 }
@@ -226,7 +227,7 @@ public class JRCaptureRecord extends JSONObject {
         return collapsedApidUpdates;
     }
 
-    private static JRCapture.ApidUpdate rewriteUpdateForParent(JRCapture.ApidUpdate update, String parent) {
+    private static ApidUpdate rewriteUpdateForParent(ApidUpdate update, String parent) {
         String subObjectPath = update.attrPath.replaceFirst(parent, "");
         String[] flattenedObjectPaths = subObjectPath.split("/");
         Object newVal = update.newVal;
@@ -241,10 +242,10 @@ public class JRCaptureRecord extends JSONObject {
             }
             newVal = wrapper;
         }
-        return new JRCapture.ApidUpdate(newVal, parent);
+        return new ApidUpdate(newVal, parent);
     }
 
-    private Set<JRCapture.ApidChange> getApidChangeSet() throws JRCapture.InvalidApidChangeException {
+    private Set<ApidChange> getApidChangeSet() throws JRCapture.InvalidApidChangeException {
         //CaptureJsonUtils.deepArraySort(this);
         return collapseApidChanges(CaptureJsonUtils.compileChangeSet(original, this));
     }

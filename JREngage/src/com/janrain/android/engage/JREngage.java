@@ -1137,6 +1137,19 @@ public class JREngage {
     public static void logd(String tag, String msg) {
         if (sLoggingEnabled == null || sLoggingEnabled) Log.d(tag, msg);
     }
+
+    public static void logd(String msg) {
+        if (!(sLoggingEnabled == null || sLoggingEnabled)) return;
+        String method;
+        try {
+            throw new Exception();
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            StackTraceElement stackTraceElement = e.getStackTrace()[1];
+            method = stackTraceElement.getMethodName() + ":" + stackTraceElement.getLineNumber();
+        }
+        Log.d("[" + method + "]", msg);
+    }
 }
 
 /**

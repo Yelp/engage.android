@@ -30,40 +30,46 @@
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
 
-package com.janrain.android.simpledemo;
+package com.janrain.android.capture;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.os.Bundle;
-import com.janrain.android.Jump;
-import com.janrain.android.capture.JRCapture;
-import org.json.JSONException;
+import com.janrain.android.engage.JREngage;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * Created with IntelliJ IDEA. User: nathan Date: 2/19/13 Time: 6:20 PM To change this template use File |
+ * Created with IntelliJ IDEA. User: nathan Date: 1/24/13 Time: 1:47 PM To change this template use File |
  * Settings | File Templates.
  */
-public class TestActivity extends Activity {
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+public class CaptureStringUtils {
+    public static String readFully(InputStream is) {
+        try {
+            return new String(readFromStream(is, false));
+        } catch (IOException ignore) {
+            throw new RuntimeException(ignore);
+        }
+    }
 
-        Jump.init(this, "appcfamhnpkagijaeinl", "mobile.dev.janraincapture.com",
-                "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6");
-        Jump.showSignInDialog(this, new Jump.SignInResultHandler(){
-            public void onSuccess() {
-                AlertDialog.Builder b = new AlertDialog.Builder(TestActivity.this);
-                b.setMessage("success");
-                b.show();
+    public static byte[] readFromStream(InputStream in, boolean shouldThrowOnError) throws IOException {
+        if (in != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try {
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = in.read(buffer)) != -1) baos.write(buffer, 0, len);
+                return baos.toByteArray();
+            } catch (IOException e) {
+                JREngage.logd("JRCapture",
+                        ("[readFromStream] problem reading from input stream: " + e.getLocalizedMessage()));
+                if (shouldThrowOnError) throw e;
+            } finally {
+                baos.close();
             }
+        } else {
+            JREngage.logd("JRCapture", "[readFromStream] unexpected null InputStream");
+        }
 
-            public void onFailure(Object error) {
-                AlertDialog.Builder b = new AlertDialog.Builder(TestActivity.this);
-                b.setMessage("error:" + error);
-                b.show();
-            }
-        });
+        return null;
     }
 }

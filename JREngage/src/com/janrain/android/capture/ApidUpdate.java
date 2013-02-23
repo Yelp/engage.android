@@ -30,46 +30,43 @@
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
 
-package com.janrain.capture;
+package com.janrain.android.capture;
 
-import com.janrain.android.engage.JREngage;
+import android.util.Pair;
+import com.janrain.android.Jump;
+import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * Created with IntelliJ IDEA. User: nathan Date: 1/24/13 Time: 1:47 PM To change this template use File |
- * Settings | File Templates.
- */
-public class CaptureStringUtils {
-    public static String readFully(InputStream is) {
+/*package*/ class ApidUpdate extends ApidChange {
+    /*package*/ ApidUpdate(Object newVal, String attrPath) {
+        this.newVal = newVal;
+        this.attrPath = attrPath;
+    }
+
+    /*package*/ ApidUpdate collapseWith(ApidUpdate update) {
+        assert update.attrPath.equals(attrPath);
+        return new ApidUpdate(CaptureJsonUtils.collapseJsonObjects((JSONObject) newVal,
+                (JSONObject) update.newVal), attrPath);
+    }
+
+    @Override
+    /*package*/ URL getUrlFor() {
         try {
-            return new String(readFromStream(is, false));
-        } catch (IOException ignore) {
-            throw new RuntimeException(ignore);
+            return new URL("https://" + Jump.getCaptureDomain() + "/entity.update");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Unexpected", e);
         }
     }
 
-    public static byte[] readFromStream(InputStream in, boolean shouldThrowOnError) throws IOException {
-        if (in != null) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            try {
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = in.read(buffer)) != -1) baos.write(buffer, 0, len);
-                return baos.toByteArray();
-            } catch (IOException e) {
-                JREngage.logd("JRCapture",
-                        ("[readFromStream] problem reading from input stream: " + e.getLocalizedMessage()));
-                if (shouldThrowOnError) throw e;
-            } finally {
-                baos.close();
-            }
-        } else {
-            JREngage.logd("JRCapture", "[readFromStream] unexpected null InputStream");
-        }
-
-        return null;
+    @Override
+    /*package*/ Set<Pair<String, String>> getBodyParams() {
+        Set<Pair<String, String>> params = new HashSet<Pair<String, String>>();
+        params.add(new Pair<String, String>("value", newVal.toString()));
+        if (!attrPath.equals("/")) params.add(new Pair<String, String>("attribute_name", attrPath));
+        return params;
     }
 }

@@ -30,8 +30,10 @@
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
 
-package com.janrain.capture;
+package com.janrain.android.capture;
 
+import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.utils.CollectionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,30 +51,23 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class CaptureJsonUtils {
-    /**
-     * ContentHandlerFactory suitable for use with URLConnection
-     * Handles application/json content-types
-     * Uses JSONTokener.nextValue() to parse them. If it fails to parse the response is assumed to be UTF and
-     * is returned as a String.
-     */
-    public static final ContentHandlerFactory JSON_CONTENT_HANDLER_FACTORY = new ContentHandlerFactory() {
-        public ContentHandler createContentHandler(String contentType) {
-            if (contentType.toLowerCase().equals("application/json")) {
-                return new ContentHandler() {
-                    @Override
-                    public Object getContent(URLConnection uConn) throws IOException {
-                        String json = CaptureStringUtils.readFully(uConn.getInputStream());
-                        try {
-                            return new JSONTokener(json).nextValue();
-                        } catch (JSONException ignore) {
-                            return json;
-                        }
-                    }
-                };
+    public static Object urlConnectionGetJsonContent(URLConnection uConn) {
+        String json = null;
+        try {
+            if (uConn.getContentType().toLowerCase().equals("application/json")) {
+                json = CaptureStringUtils.readFully(uConn.getInputStream());
+                return new JSONTokener(json).nextValue();
             }
+            JREngage.logd("content type: " + uConn.getContentType());
+            JREngage.logd(CaptureStringUtils.readFully(uConn.getInputStream()));
             return null;
+        } catch (IOException e) {
+            JREngage.logd(e.toString());
+            return null;
+        } catch (JSONException ignore) {
+            return json;
         }
-    };
+    }
 
     private static int jsonArrayCompareTo(JSONArray this_, Object other) {
         if (other instanceof JSONArray) {
@@ -163,8 +158,8 @@ public class CaptureJsonUtils {
     }
 
     private static int jsonObjectCompareTo(JSONObject this_, JSONObject other) {
-        SortedSet<String> this_Keys = makeSortedSetFromIterator((Iterator<String>) this_.keys());
-        SortedSet<String> otherKeys = makeSortedSetFromIterator((Iterator<String>) other.keys());
+        SortedSet<String> this_Keys = CollectionUtils.makeSortedSetFromIterator((Iterator<String>) this_.keys());
+        SortedSet<String> otherKeys = CollectionUtils.makeSortedSetFromIterator((Iterator<String>) other.keys());
 
         SortedSet<String> temp = new TreeSet<String>(this_Keys);
         temp.addAll(otherKeys);
@@ -219,18 +214,6 @@ public class CaptureJsonUtils {
                 throw new RuntimeException("Unexpected", e);
             }
         }
-    }
-
-    /**
-     * Returns a SortedSet&lt;T> with all the elements available from i
-     * @param i an iterator to pull elements from
-     * @param <T> The type of the elements
-     * @return a SortedSet of the elements
-     */
-    public static <T> SortedSet<T> makeSortedSetFromIterator(Iterator<T> i) {
-        SortedSet<T> retval = new TreeSet<T>();
-        while (i.hasNext()) retval.add(i.next());
-        return retval;
     }
 
     //public static void deepArraySort(JSONArray original) {
@@ -359,21 +342,21 @@ public class CaptureJsonUtils {
      *  If value types mismatch between original and current
      *  If ids are assigned to new plural elements
      */
-    public static Set<JRCapture.ApidChange> compileChangeSet(JSONObject original, JSONObject current)
+    public static Set<ApidChange> compileChangeSet(JSONObject original, JSONObject current)
             throws JRCapture.InvalidApidChangeException {
         return compileChangeSet(original, current, "/");
     }
 
-    private static Set<JRCapture.ApidChange> compileChangeSet(JSONArray original, JSONArray current,
+    private static Set<ApidChange> compileChangeSet(JSONArray original, JSONArray current,
                                                               String arrayAttrPath)
             throws JRCapture.InvalidApidChangeException {
         if (hasIds(original)) {
             return compileChangeSetForArrayWithIds(original, current, arrayAttrPath);
         } else {
             // original array must've been from a JSON blob
-            Set<JRCapture.ApidChange> changeSet = new HashSet<JRCapture.ApidChange>();
+            Set<ApidChange> changeSet = new HashSet<ApidChange>();
             if (compareJsonVals(original, current) != 0) {
-                changeSet.add(new JRCapture.ApidUpdate(current, arrayAttrPath));
+                changeSet.add(new ApidUpdate(current, arrayAttrPath));
             }
             return changeSet;
         }
@@ -399,11 +382,11 @@ public class CaptureJsonUtils {
         return false;
     }
 
-    private static Set<JRCapture.ApidChange> compileChangeSetForArrayWithIds(JSONArray original,
+    private static Set<ApidChange> compileChangeSetForArrayWithIds(JSONArray original,
                                                                              JSONArray current,
                                                                              String arrayAttrPath)
             throws JRCapture.InvalidApidChangeException {
-        Set<JRCapture.ApidChange> changeSet = new HashSet<JRCapture.ApidChange>();
+        Set<ApidChange> changeSet = new HashSet<ApidChange>();
         String arrayAttrName = getLastPathElement(arrayAttrPath);
         String relativePath = arrayAttrPath.substring(0, arrayAttrPath.length() - arrayAttrName.length());
 
@@ -431,14 +414,14 @@ public class CaptureJsonUtils {
                 } catch (JSONException e) {
                     throw new RuntimeException("Unexpected", e);
                 }
-                changeSet.add(new JRCapture.ApidUpdate(wrapperO, relativePath));
+                changeSet.add(new ApidUpdate(wrapperO, relativePath));
             } else {
                 // update to existing id
                 Integer originalId = null;
                 while (originalIndex < sortedOriginal.length()) { // try to find a matching id in original
                     originalId = getIdForPlurEltAtIndex(sortedOriginal, originalIndex);
                     if (currentId <= originalId) break;
-                    changeSet.add(new JRCapture.ApidDelete(relativePath + "#" + originalId));
+                    changeSet.add(new ApidDelete(relativePath + "#" + originalId));
                     originalIndex++;
                 }
 
@@ -459,7 +442,7 @@ public class CaptureJsonUtils {
 
         while (originalIndex < sortedOriginal.length()) {
             Integer idForPlurEltAtIndex = getIdForPlurEltAtIndex(sortedOriginal, originalIndex++);
-            changeSet.add(new JRCapture.ApidDelete(relativePath + "#" + idForPlurEltAtIndex));
+            changeSet.add(new ApidDelete(relativePath + "#" + idForPlurEltAtIndex));
         }
 
         return changeSet;
@@ -537,11 +520,11 @@ public class CaptureJsonUtils {
         return null;
     }
 
-    private static Set<JRCapture.ApidChange> compileChangeSet(JSONObject original, JSONObject current,
+    private static Set<ApidChange> compileChangeSet(JSONObject original, JSONObject current,
                                                               String relativePath)
             throws JRCapture.InvalidApidChangeException {
-        SortedSet<String> origKeys = makeSortedSetFromIterator((Iterator<String>) original.keys());
-        SortedSet<String> currentKeys = makeSortedSetFromIterator((Iterator<String>) current.keys());
+        SortedSet<String> origKeys = CollectionUtils.makeSortedSetFromIterator((Iterator<String>) original.keys());
+        SortedSet<String> currentKeys = CollectionUtils.makeSortedSetFromIterator((Iterator<String>) current.keys());
 
         TreeSet<String> temp = new TreeSet<String>(currentKeys);
         temp.removeAll(origKeys);
@@ -569,7 +552,7 @@ public class CaptureJsonUtils {
             }
         }
 
-        Set<JRCapture.ApidChange> changeSet = new HashSet<JRCapture.ApidChange>();
+        Set<ApidChange> changeSet = new HashSet<ApidChange>();
         for (String k : intersection) {
             try {
                 Object curVal = current.get(k);
@@ -629,7 +612,7 @@ public class CaptureJsonUtils {
      * @param oldVal another value
      * @throws JRCapture.InvalidApidChangeException
      */
-    private static void maybeAddUpdate(String relativePath, Set<JRCapture.ApidChange> changeSet,
+    private static void maybeAddUpdate(String relativePath, Set<ApidChange> changeSet,
                                        Object curVal, Object oldVal)
             throws JRCapture.InvalidApidChangeException {
         if (!JSONObject.NULL.equals(oldVal) && !oldVal.getClass().isAssignableFrom(curVal.getClass())) {
@@ -637,7 +620,7 @@ public class CaptureJsonUtils {
         }
 
         if (compareJsonVals(curVal, oldVal) != 0) {
-            changeSet.add(new JRCapture.ApidUpdate(curVal, relativePath));
+            changeSet.add(new ApidUpdate(curVal, relativePath));
         }
     }
 
@@ -657,7 +640,7 @@ public class CaptureJsonUtils {
             JSONObject retVal = (JSONObject) copyJsonVal(left);
             if (right == null) return retVal;
 
-            for (String key : makeSortedSetFromIterator((Iterator<String>) right.keys())) {
+            for (String key : CollectionUtils.makeSortedSetFromIterator((Iterator<String>) right.keys())) {
                 Object rightVal = right.get(key);
                 Object leftVal = retVal.opt(key);
                 if (leftVal == null) retVal.put(key, copyJsonVal(rightVal));

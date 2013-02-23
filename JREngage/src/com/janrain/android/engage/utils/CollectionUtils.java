@@ -34,8 +34,11 @@ package com.janrain.android.engage.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static java.lang.reflect.Array.newInstance;
 
@@ -47,6 +50,18 @@ import static java.lang.reflect.Array.newInstance;
 public final class CollectionUtils {
     public static boolean isEmpty(List<?> list) {
         return ((list == null) || (list.size() < 1));
+    }
+
+    /**
+     * Returns a SortedSet&lt;T> with all the elements available from i
+     * @param i an iterator to pull elements from
+     * @param <T> The type of the elements
+     * @return a SortedSet of the elements
+     */
+    public static <T> SortedSet<T> makeSortedSetFromIterator(Iterator<T> i) {
+        SortedSet<T> retval = new TreeSet<T>();
+        while (i.hasNext()) retval.add(i.next());
+        return retval;
     }
 
     public static interface Function<L, R> {

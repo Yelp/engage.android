@@ -235,4 +235,46 @@ public interface JREngageDelegate {
      **/
     void jrSocialPublishJRActivityDidFail(JRActivityObject activity, JREngageError error, String provider);
 /*@}*/
+
+    /**
+     * An empty implementation suitable for subclassing and selective method implementation.
+     */
+    abstract class SimpleJREngageDelegate implements JREngageDelegate {
+        public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
+        }
+
+        public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
+                                                     HttpResponseHeaders response,
+                                                     String tokenUrlPayload,
+                                                     String provider) {
+        }
+
+        public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
+        }
+
+        public void jrSocialDidCompletePublishing() {
+        }
+
+        public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
+        }
+
+        public void jrAuthenticationDidNotComplete() {
+        }
+
+        public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
+        }
+
+        public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl,
+                                                          JREngageError error,
+                                                          String provider) {
+        }
+
+        public void jrSocialDidNotCompletePublishing() {
+        }
+
+        public void jrSocialPublishJRActivityDidFail(JRActivityObject activity,
+                                                     JREngageError error,
+                                                     String provider) {
+        }
+    }
 }

@@ -30,40 +30,34 @@
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
 
-package com.janrain.android.simpledemo;
+package com.janrain.android.capture;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.os.Bundle;
+import android.util.Pair;
 import com.janrain.android.Jump;
-import com.janrain.android.capture.JRCapture;
-import org.json.JSONException;
 
-import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * Created with IntelliJ IDEA. User: nathan Date: 2/19/13 Time: 6:20 PM To change this template use File |
- * Settings | File Templates.
- */
-public class TestActivity extends Activity {
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+/*package*/ class ApidDelete extends ApidChange {
+    /*package*/ ApidDelete(String attrPath) {
+        this.attrPath = attrPath;
+    }
 
-        Jump.init(this, "appcfamhnpkagijaeinl", "mobile.dev.janraincapture.com",
-                "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6");
-        Jump.showSignInDialog(this, new Jump.SignInResultHandler(){
-            public void onSuccess() {
-                AlertDialog.Builder b = new AlertDialog.Builder(TestActivity.this);
-                b.setMessage("success");
-                b.show();
-            }
+    /*package*/ URL getUrlFor() {
+        try {
+            return new URL("https://" + Jump.getCaptureDomain() + "/entity.delete");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Unexpected", e);
+        }
+    }
 
-            public void onFailure(Object error) {
-                AlertDialog.Builder b = new AlertDialog.Builder(TestActivity.this);
-                b.setMessage("error:" + error);
-                b.show();
-            }
-        });
+    @Override
+    /*package*/ Set<Pair<String, String>> getBodyParams() {
+        Set<Pair<String, String>> params = new HashSet<Pair<String, String>>();
+        if (attrPath.equals("/")) throw new RuntimeException("Unexpected root attrPath in: " + this);
+        params.add(new Pair<String, String>("attribute_name", attrPath));
+        return params;
     }
 }
