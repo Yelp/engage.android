@@ -33,23 +33,13 @@ package com.janrain.android;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Pair;
-import com.janrain.android.capture.CaptureJsonUtils;
-import com.janrain.android.capture.Connection;
 import com.janrain.android.capture.JRCapture;
 import com.janrain.android.capture.JRCaptureRecord;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
-import com.janrain.android.engage.net.JRConnectionManager;
-import com.janrain.android.engage.net.JRConnectionManagerDelegate;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRDictionary;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Jump {
     private enum State {
@@ -153,7 +143,7 @@ public class Jump {
             }
         });
 
-        state.jrEngage.showAuthenticationDialog(fromActivity, tradSignInUi);
+        //state.jrEngage.showAuthenticationDialog(fromActivity, tradSignInUi);
     }
 
     public enum TraditionalSignInType { EMAIL, USERNAME }

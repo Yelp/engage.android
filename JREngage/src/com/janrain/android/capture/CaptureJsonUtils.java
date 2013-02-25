@@ -41,9 +41,6 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.IOException;
-import java.net.ContentHandler;
-import java.net.ContentHandlerFactory;
-import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;

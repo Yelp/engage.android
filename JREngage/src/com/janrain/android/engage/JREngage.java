@@ -96,7 +96,6 @@ import com.janrain.android.engage.ui.JRFragmentHostActivity;
 import com.janrain.android.engage.ui.JRPublishFragment;
 import com.janrain.android.engage.ui.JRUiFragment;
 import com.janrain.android.engage.utils.ThreadUtils;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;

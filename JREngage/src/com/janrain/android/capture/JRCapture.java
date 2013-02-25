@@ -45,7 +45,6 @@ import org.json.JSONTokener;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collection;
@@ -53,8 +52,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static android.text.TextUtils.join;
-import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
 import static com.janrain.android.capture.CaptureStringUtils.readFully;
+import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
 
 public class JRCapture {
     private static JSONObject getEntity(int id) throws IOException, JSONException {

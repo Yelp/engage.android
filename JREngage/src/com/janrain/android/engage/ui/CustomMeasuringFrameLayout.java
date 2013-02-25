@@ -35,7 +35,6 @@ package com.janrain.android.engage.ui;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.FrameLayout;
 import com.janrain.android.engage.utils.AndroidUtils;
 

@@ -33,11 +33,8 @@
 package com.janrain.android.capture;
 
 import android.util.Pair;
-import com.janrain.android.Jump;
 
-import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Set;
 import java.util.regex.Pattern;
 

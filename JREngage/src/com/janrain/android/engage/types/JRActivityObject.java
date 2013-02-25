@@ -34,9 +34,9 @@ package com.janrain.android.engage.types;
 import android.text.TextUtils;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.utils.AndroidUtils;
 import org.json.JSONException;
@@ -49,8 +49,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.janrain.android.engage.utils.CollectionUtils.map;
 import static com.janrain.android.engage.utils.CollectionUtils.Function;
+import static com.janrain.android.engage.utils.CollectionUtils.map;
 
 /*
  * @file

@@ -45,7 +45,6 @@ import android.graphics.drawable.NinePatchDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.widget.Button;
 import com.janrain.android.engage.R;
 import org.xmlpull.v1.XmlPullParser;

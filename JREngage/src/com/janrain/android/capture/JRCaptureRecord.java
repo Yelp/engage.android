@@ -36,7 +36,6 @@ import android.content.Context;
 import android.util.Base64;
 import android.util.Pair;
 import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.net.JRConnectionManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,8 +56,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-
-import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
 
 public class JRCaptureRecord extends JSONObject {
     private static final SimpleDateFormat CAPTURE_SIGNATURE_DATE_FORMAT;

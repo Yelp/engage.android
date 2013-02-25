@@ -36,7 +36,6 @@ import android.preference.PreferenceManager;
 import com.janrain.android.engage.JREngage;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * @internal
