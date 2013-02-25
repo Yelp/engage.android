@@ -78,7 +78,7 @@ public abstract class JRMediaObject implements Serializable, JRJsonifiable {
 
                             if (bitmap != null) tal.onThumbnailAvailable(bitmap);
                         }
-                    }, null);
+                    }, null, null, null);
         }
     }
 

@@ -87,7 +87,8 @@ import java.util.zip.GZIPInputStream;
 public final class AsyncHttpClient {
     private static final String TAG = AsyncHttpClient.class.getSimpleName();
     private static final String USER_AGENT =
-            "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
+            "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 " +
+                    "(KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
     private static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
     private static final String ENCODING_GZIP = "gzip";
 
@@ -102,17 +103,15 @@ public final class AsyncHttpClient {
 		private Handler mHandler;
         private DefaultHttpClient mHttpClient;
         private HttpUriRequest mRequest;
-        private JRConnectionManager.ConnectionData mConnectionData;
+        private JRConnectionManager.ManagedConnection mManagedConnection;
 
-        private HttpExecutor() {}
-
-        public HttpExecutor(Handler handler, JRConnectionManager.ConnectionData connectionData) {
-            mConnectionData = connectionData;
-            mUrl = connectionData.getRequestUrl();
-            mHeaders = connectionData.getRequestHeaders();
-            mPostData = connectionData.getPostData();
+        public HttpExecutor(Handler handler, JRConnectionManager.ManagedConnection managedConnection) {
+            mManagedConnection = managedConnection;
+            mUrl = managedConnection.getRequestUrl();
+            mHeaders = managedConnection.getRequestHeaders();
+            mPostData = managedConnection.getPostData();
             mHandler = handler;
-            mRequest = connectionData.getHttpRequest();
+            mRequest = managedConnection.getHttpRequest();
         }
 
         private void setupHttpClient() {
@@ -180,17 +179,8 @@ public final class AsyncHttpClient {
             setupHttpClient();
 
             JRConnectionManager.HttpCallbackWrapper callBack =
-                    new JRConnectionManager.HttpCallbackWrapper(mConnectionData);
+                    new JRConnectionManager.HttpCallbackWrapper(mManagedConnection);
             try {
-//                if (!mUrl.contains("mobile_config_and_baseurl") && !mUrl.contains("appspot.com")) {
-//                    JREngage.getApplicationContext().runOnUiThread(new Runnable() {
-//                        public void run() {
-//                            Toast.makeText(JREngage.getApplicationContext(), "MEU load started", Toast.LENGTH_LONG).show();
-//                        }
-//                    });
-//                }
-//                try { Thread.sleep(10000); } catch (InterruptedException ignore) {}
-
                 InetAddress ia = InetAddress.getByName(mRequest.getURI().getHost());
                 JREngage.logd(TAG, "Connecting to: " + ia.getHostAddress());
 
@@ -222,7 +212,7 @@ public final class AsyncHttpClient {
                 byte[] data = entity == null ?
                         new byte[0] :
                         IOUtils.readFromStream(entity.getContent(), true);
-                String dataString = new String(data); // Android defaults to UTF-8
+                String dataString = new String(data);
                 if (entity != null) entity.consumeContent();
 
                 AsyncHttpResponse ahr;
@@ -257,16 +247,16 @@ public final class AsyncHttpClient {
                     ahr = new AsyncHttpResponse(mUrl, new Exception(message));
                 }
 
-                mConnectionData.setResponse(ahr);
+                mManagedConnection.setResponse(ahr);
                 invokeCallback(callBack);
             } catch (IOException e) {
                 Log.e(TAG, this.toString());
                 Log.e(TAG, "[run] Problem executing HTTP request. (" + e +")", e);
-                mConnectionData.setResponse(new AsyncHttpResponse(mUrl, e));
+                mManagedConnection.setResponse(new AsyncHttpResponse(mUrl, e));
                 invokeCallback(callBack);
             } catch (AbortedRequestException e) {
                 Log.e(TAG, "[run] Aborted request: " + mUrl);
-                mConnectionData.setResponse(new AsyncHttpResponse(mUrl, null));
+                mManagedConnection.setResponse(new AsyncHttpResponse(mUrl, null));
                 invokeCallback(callBack);
             }
 		}
@@ -299,7 +289,7 @@ public final class AsyncHttpClient {
         private HttpResponseHeaders mHeaders;
         private byte[] mPayload;
         private Exception mException;
-        private JRConnectionManager.ConnectionData mConnectionData;
+        private JRConnectionManager.ManagedConnection mManagedConnection;
 
         /**
          * Creates a "success" instance of this object.
@@ -404,14 +394,6 @@ public final class AsyncHttpClient {
          */
         public boolean hasException() {
             return (mException != null);
-        }
-
-        public JRConnectionManager.ConnectionData getConnectionData() {
-            return mConnectionData;
-        }
-
-        public void setConnectionData(JRConnectionManager.ConnectionData cd) {
-            mConnectionData = cd;
         }
     }
 }

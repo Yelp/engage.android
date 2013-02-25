@@ -70,12 +70,12 @@ import java.util.regex.Pattern;
 
     /*package*/ abstract URL getUrlFor();
 
-    /*package*/ void writeConnectionBody(URLConnection urlConnection, String accessToken) throws IOException {
-        Set<Pair<String, String>> bodyParams = getBodyParams();
-        bodyParams.add(new Pair<String, String>("access_token", accessToken));
-
-        JRCapture.writePostParams(urlConnection, bodyParams);
-    }
+    ///*package*/ void writeConnectionBody(URLConnection urlConnection, String accessToken) throws IOException {
+    //    Set<Pair<String, String>> bodyParams = getBodyParams();
+    //    bodyParams.add(new Pair<String, String>("access_token", accessToken));
+    //
+    //    JRCapture.writePostParams(urlConnection, bodyParams);
+    //}
 
     /*package*/ abstract Set<Pair<String, String>> getBodyParams();
 }

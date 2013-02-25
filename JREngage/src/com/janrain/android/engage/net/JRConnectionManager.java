@@ -66,25 +66,9 @@ public class JRConnectionManager {
 	}
 
     /**
-     * Creates a managed HTTP GET connection.
-     *
-     * @param requestUrl
-     *      The URL to be executed. May not be null.
-     *
-     * @param delegate
-     *      The delegate (listener) class instance. May be null.
-     * @param tag
-     *      Optional tag for the connection, later passed to the delegate for the purpose of distinguishing
-     *      multiple connections handled by a single delegate.
-     */
-	public static void createConnection(String requestUrl,
-                                        JRConnectionManagerDelegate delegate,
-                                        Object tag) {
-        createConnection(requestUrl, delegate, tag, null);
-	}
-
-    /**
-     * Creates a managed HTTP GET connection.
+     * Creates a managed HTTP connection. If called from the UI thread (or any thread with a Looper) then
+     * all IO is performed on a background thread, callbacks are posted back to the Looper thread. Otherwise
+     * IO and callbacks are performed synchronously.
      *
      * @param requestUrl
      *      The URL to be executed. May not be null.
@@ -94,108 +78,73 @@ public class JRConnectionManager {
      * @param tag
      *      Optional tag for the connection, later passed to the delegate for the purpose of distinguishing
      *      multiple connections handled by a single delegate.
-     * @param requestHeaders
-     *      Optional list of HTTP headers to add to the request.
+     * @param requestHeaders extra custom HTTP headers
+     * @param postData if non-null will perform a POST, if null a GET
      *
      */
     public static void createConnection(String requestUrl,
                                         JRConnectionManagerDelegate delegate,
                                         Object tag,
-                                        List<NameValuePair> requestHeaders) {
+                                        List<NameValuePair> requestHeaders, byte[] postData) {
         if (requestHeaders == null) requestHeaders = new ArrayList<NameValuePair>();
 
-        ConnectionData connectionData = new ConnectionData(delegate, tag);
-        connectionData.mRequestUrl = requestUrl;
-        connectionData.mRequestHeaders = requestHeaders;
+        ManagedConnection managedConnection = new ManagedConnection(delegate, tag);
+        managedConnection.mRequestUrl = requestUrl;
+        managedConnection.mPostData = postData;
+        managedConnection.mRequestHeaders = requestHeaders;
 
-        trackAndStartConnection(delegate, connectionData);
+        trackAndStartConnection(delegate, managedConnection);
     }
 
     private static void trackAndStartConnection(JRConnectionManagerDelegate delegate,
-                                                ConnectionData connectionData) {
+                                                ManagedConnection managedConnection) {
         HttpUriRequest request;
-        if (connectionData.mPostData != null) {
-            request = new HttpPost(connectionData.mRequestUrl);
-            ((HttpPost) request).setEntity(new ByteArrayEntity(connectionData.mPostData));
+        if (managedConnection.mPostData != null) {
+            request = new HttpPost(managedConnection.mRequestUrl);
+            ((HttpPost) request).setEntity(new ByteArrayEntity(managedConnection.mPostData));
             request.addHeader("Content-Type", "application/x-www-form-urlencoded");
             request.addHeader("Content-Language", "en-US");
         } else {
-            request = new HttpGet(connectionData.mRequestUrl);
+            request = new HttpGet(managedConnection.mRequestUrl);
         }
 
-        connectionData.mHttpRequest = request;
+        managedConnection.mHttpRequest = request;
 
         synchronized (sDelegateConnections) {
-            Set<ConnectionData> s = sDelegateConnections.get(delegate);
-            if (s == null) {
-                s = new ApacheSetFromMap<ConnectionData>(new WeakHashMap<ConnectionData, Boolean>());
-                sDelegateConnections.put(delegate, s);
+            Set<ManagedConnection> connections = sDelegateConnections.get(delegate);
+            if (connections == null) {
+                connections = new ApacheSetFromMap<ManagedConnection>(
+                        new WeakHashMap<ManagedConnection, Boolean>());
+                sDelegateConnections.put(delegate, connections);
             }
-            s.add(connectionData);
+            connections.add(managedConnection);
         }
 
         if (Looper.myLooper() != null) {
             // operate asynchronously, post a message back to the thread later
             ThreadUtils.executeInBg(new AsyncHttpClient.HttpExecutor(new Handler(),
-                    connectionData));
+                    managedConnection));
         } else {
             // operate synchronously
-            new AsyncHttpClient.HttpExecutor(null, connectionData).run();
+            new AsyncHttpClient.HttpExecutor(null, managedConnection).run();
         }
 
-        JREngage.logd(TAG, "[executeHttpRequest] invoked");
+        JREngage.logd();
     }
 
-    // I think this map can only be operated on by the UI thread but I'm not sure :(
-    // ... so I've wrapped it in Collections.synchronizedMap
-    private static final Map<JRConnectionManagerDelegate, Set<ConnectionData>> sDelegateConnections =
-            Collections.synchronizedMap(new WeakHashMap<JRConnectionManagerDelegate, Set<ConnectionData>>());
+    // createConnection can be called from a BG thread so this is wrapped in a synced map for thread
+    // safety
+    private static final Map<JRConnectionManagerDelegate, Set<ManagedConnection>> sDelegateConnections =
+            Collections.synchronizedMap(new WeakHashMap<JRConnectionManagerDelegate, Set<ManagedConnection>>());
     
     public static void stopConnectionsForDelegate(JRConnectionManagerDelegate delegate) {
         synchronized (sDelegateConnections) {
-            Set<ConnectionData> s = sDelegateConnections.get(delegate);
-            if (s != null) {
-                for (ConnectionData c : s) {
-                    c.mDelegate = null;
-//                    c.mHttpRequest.abort();
-                }
-            }
+            Set<ManagedConnection> connections = sDelegateConnections.get(delegate);
+            if (connections != null) for (ManagedConnection c : connections) c.mDelegate = null;
         }
     }
 
-    /**
-     * Creates a managed HTTP POST connection.
-     *
-     * @param requestUrl
-     *      The URL to be executed. May not be null.
-     * @param delegate
-     *      The delegate (listener) class instance. May be null. Callback methods will be invoked on the UI
-     *      thread.
-     * @param tag
-     *      Optional tag for the connection, later passed to the delegate for the purpose of distinguishing
-     *      multiple connections handled by a single delegate.
-     * @param requestHeaders
-     *      Optional list of HTTP headers to add to the request.
-     * @param postData
-     *      Optional data to post.
-     */
-    public static void createConnection(String requestUrl,
-                                        JRConnectionManagerDelegate delegate,
-                                        Object tag,
-                                        List<NameValuePair> requestHeaders,
-                                        byte[] postData) {
-        if (postData == null) postData = new byte[0];
-        if (requestHeaders == null) requestHeaders = new ArrayList<NameValuePair>();
-
-        ConnectionData connectionData = new ConnectionData(delegate, tag);
-        connectionData.mRequestUrl = requestUrl;
-        connectionData.mPostData = postData;
-        connectionData.mRequestHeaders = requestHeaders;
-
-        trackAndStartConnection(delegate, connectionData);
-    }
-
-    public static class ConnectionData {
+    /*package*/ static class ManagedConnection {
         private HttpUriRequest mHttpRequest;
         private Object mTag;
         private JRConnectionManagerDelegate mDelegate;
@@ -204,8 +153,8 @@ public class JRConnectionManager {
         private List<NameValuePair> mRequestHeaders;
         private AsyncHttpClient.AsyncHttpResponse mResponse;
 
-        public ConnectionData(JRConnectionManagerDelegate delegate,
-                              Object tag) {
+        public ManagedConnection(JRConnectionManagerDelegate delegate,
+                                 Object tag) {
             mDelegate = delegate;
             mTag = tag;
         }
@@ -231,28 +180,28 @@ public class JRConnectionManager {
         }
     }
 
-    public static class HttpCallbackWrapper implements Runnable {
-        private ConnectionData mConnectionData;
+    /*package*/ static class HttpCallbackWrapper implements Runnable {
+        private ManagedConnection mManagedConnection;
 
-        public HttpCallbackWrapper(ConnectionData cd) {
-            mConnectionData = cd;
+        public HttpCallbackWrapper(ManagedConnection cd) {
+            mManagedConnection = cd;
         }
 
         public void run() {
-            AsyncHttpClient.AsyncHttpResponse response = mConnectionData.mResponse;
+            AsyncHttpClient.AsyncHttpResponse response = mManagedConnection.mResponse;
             String requestUrl = response.getUrl();
-            JRConnectionManagerDelegate delegate = mConnectionData.mDelegate;
+            JRConnectionManagerDelegate delegate = mManagedConnection.mDelegate;
 
-            if (delegate == null || mConnectionData.mHttpRequest.isAborted()) return;
+            if (delegate == null || mManagedConnection.mHttpRequest.isAborted()) return;
 
             if (response.hasException()) {
-                delegate.connectionDidFail(response.getException(), requestUrl, mConnectionData.mTag);
+                delegate.connectionDidFail(response.getException(), requestUrl, mManagedConnection.mTag);
             } else {
                 delegate.connectionDidFinishLoading(
                         response.getHeaders(),
                         response.getPayload(),
                         requestUrl,
-                        mConnectionData.mTag);
+                        mManagedConnection.mTag);
             }
         }
     }

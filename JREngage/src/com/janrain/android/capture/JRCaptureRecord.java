@@ -32,25 +32,25 @@
 
 package com.janrain.android.capture;
 
+import android.content.Context;
 import android.util.Base64;
 import android.util.Pair;
-import com.janrain.android.Jump;
 import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.net.JRConnectionManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -61,16 +61,19 @@ import java.util.TimeZone;
 import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
 
 public class JRCaptureRecord extends JSONObject {
-    private static final SimpleDateFormat CAPTURE_SIGNATURE_DATE_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat CAPTURE_SIGNATURE_DATE_FORMAT;
+    public static final String JR_CAPTURE_SIGNED_IN_USER_FILENAME = "jr_capture_signed_in_user";
 
     static {
+        CAPTURE_SIGNATURE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         CAPTURE_SIGNATURE_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     private JSONObject original;
     private String accessToken;
     private String refreshSecret;
+
+    private JRCaptureRecord(){}
 
     public JRCaptureRecord(JSONObject jo) {
         super();
@@ -83,37 +86,80 @@ public class JRCaptureRecord extends JSONObject {
         }
     }
 
-    public void refreshAccessToken(JRCapture.RequestCallback callback) {
-        accessToken = "6bunfwu42h2rwgbq";
-        refreshSecret = "a";
-        String domain = "test-multi.janraincapture.com";
-
+    public static JRCaptureRecord loadFromDisk(Context applicationContext) {
+        String fileContents = null;
         try {
-            URL url = new URL("https://" + domain + "/access/getAccessToken");
-            URLConnection connection = url.openConnection();
-            connection.setDoOutput(true);
-            String date = CAPTURE_SIGNATURE_DATE_FORMAT.format(new Date());
-            Set<Pair<String, String>> params = new HashSet<Pair<String, String>>();
-            params.add(new Pair<String, String>("application_id", "fvbamf9kkkad3gnd9qyb4ggw6w"));
-            params.add(new Pair<String, String>("access_token", accessToken));
-            params.add(new Pair<String, String>("Signature", urlEncode(makeHash(date))));
-            params.add(new Pair<String, String>("Date", urlEncode(date)));
-            JRCapture.writePostParams(connection, params);
-            connection.getOutputStream().close();
-            Object response = CaptureJsonUtils.urlConnectionGetJsonContent(connection);
-            if (response instanceof JSONObject && "ok".equals(((JSONObject) response).opt("stat"))) {
-                accessToken = (String) ((JSONObject) response).opt("access_token");
-                if (callback != null) callback.onSuccess();
-            } else {
-                JREngage.logd("JRCapture", response.toString());
-                if (callback != null) callback.onFailure(response);
-            }
-        } catch (MalformedURLException e) {
+            FileInputStream fis = applicationContext.openFileInput(JR_CAPTURE_SIGNED_IN_USER_FILENAME);
+            fileContents = CaptureStringUtils.readFully(fis);
+            JSONObject serializedVersion = new JSONObject(fileContents);
+            JRCaptureRecord loadedRecord = new JRCaptureRecord();
+            loadedRecord.original = serializedVersion.getJSONObject("original");
+            loadedRecord.accessToken = serializedVersion.getString("accessToken");
+            loadedRecord.refreshSecret = serializedVersion.getString("refreshSecret");
+            CaptureJsonUtils.deepCopy(serializedVersion.getJSONObject("this"), loadedRecord);
+            fis.close();
+        } catch (FileNotFoundException ignore) {
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Unexpected", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Unexpected", e);
+        } catch (JSONException ignore) {
+            JREngage.logd("Bad JRCaptureRecord file contents:\n" + fileContents, ignore);
+            // Will happen on badly formed file
+        }
+        return null;
+    }
+
+    public void saveToDisk(Context applicationContext) {
+        try {
+            FileOutputStream fos = applicationContext.openFileOutput(JR_CAPTURE_SIGNED_IN_USER_FILENAME, 0);
+            JSONObject serializedVersion = new JSONObject();
+            serializedVersion.put("original", original);
+            serializedVersion.put("accessToken", accessToken);
+            serializedVersion.put("refreshSecret", refreshSecret);
+            serializedVersion.put("this", this);
+            fos.write(serializedVersion.toString().getBytes("UTF-8"));
+            fos.close();
+        } catch (JSONException e) {
+            throw new RuntimeException("Unexpected", e);
+        } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Unexpected", e);
         } catch (IOException e) {
             throw new RuntimeException("Unexpected", e);
         }
     }
+
+    //public void refreshAccessToken(JRCapture.RequestCallback callback) {
+    //    accessToken = "6bunfwu42h2rwgbq";
+    //    refreshSecret = "a";
+    //    String domain = "test-multi.janraincapture.com";
+    //
+    //    try {
+    //        URL url = new URL("https://" + domain + "/access/getAccessToken");
+    //        URLConnection connection = url.openConnection();
+    //        connection.setDoOutput(true);
+    //        String date = CAPTURE_SIGNATURE_DATE_FORMAT.format(new Date());
+    //        Set<Pair<String, String>> params = new HashSet<Pair<String, String>>();
+    //        params.add(new Pair<String, String>("application_id", "fvbamf9kkkad3gnd9qyb4ggw6w"));
+    //        params.add(new Pair<String, String>("access_token", accessToken));
+    //        params.add(new Pair<String, String>("Signature", urlEncode(makeHash(date))));
+    //        params.add(new Pair<String, String>("Date", urlEncode(date)));
+    //        JRCapture.writePostParams(connection, params);
+    //        connection.getOutputStream().close();
+    //        Object response = CaptureJsonUtils.urlConnectionGetJsonContent(connection);
+    //        if (response instanceof JSONObject && "ok".equals(((JSONObject) response).opt("stat"))) {
+    //            accessToken = (String) ((JSONObject) response).opt("access_token");
+    //            if (callback != null) callback.onSuccess();
+    //        } else {
+    //            JREngage.logd("JRCapture", response.toString());
+    //            if (callback != null) callback.onFailure(response);
+    //        }
+    //    } catch (MalformedURLException e) {
+    //        throw new RuntimeException("Unexpected", e);
+    //    } catch (IOException e) {
+    //        throw new RuntimeException("Unexpected", e);
+    //    }
+    //}
 
     private String makeHash(String date) {
         String stringToSign = date + "\n" + accessToken + "\n";
@@ -149,32 +195,36 @@ public class JRCaptureRecord extends JSONObject {
         // add method for trad sign-in
     }
 
-    private void fireNextChange(List<ApidChange> changeList, JRCapture.RequestCallback callback) {
+    private void fireNextChange(final List<ApidChange> changeList, final JRCapture.RequestCallback callback) {
         if (changeList.size() == 0) {
             if (callback != null) callback.onSuccess();
             return;
         }
 
-        ApidChange change = changeList.get(0);
-        try {
-            URLConnection urlConnection = change.getUrlFor().openConnection();
-            urlConnection.setDoOutput(true);
-            change.writeConnectionBody(urlConnection, accessToken);
-            urlConnection.getOutputStream().close();
-            Object content = CaptureJsonUtils.urlConnectionGetJsonContent(urlConnection);
-            if (content instanceof JSONObject && ((JSONObject) content).opt("stat").equals("ok")) {
-                JREngage.logd("JRCapture", change.toString());
-                JREngage.logd("JRCapture", ((JSONObject) content).toString(2));
-                List<ApidChange> tail = changeList.subList(1, changeList.size());
-                fireNextChange(tail, callback);
-            } else {
-                if (callback != null) callback.onFailure(content);
+        final ApidChange change = changeList.get(0);
+        Set<Pair<String, String>> params = new HashSet<Pair<String, String>>(change.getBodyParams());
+        params.add(new Pair<String, String>("access_token", accessToken));
+
+        JRCapture.FetchCallback jsonCallback = new JRCapture.FetchCallback() {
+            public void run(Object content) {
+                if (content instanceof JSONObject && ((JSONObject) content).opt("stat").equals("ok")) {
+                    JREngage.logd("JRCapture", change.toString());
+                    try {
+                        JREngage.logd("JRCapture", ((JSONObject) content).toString(2));
+                    } catch (JSONException e) {
+                        throw new RuntimeException("Unexpected", e);
+                    }
+                    List<ApidChange> tail = changeList.subList(1, changeList.size());
+                    fireNextChange(tail, callback);
+                } else {
+                    if (callback != null) callback.onFailure(content);
+                }
             }
-        } catch (IOException e) {
-            if (callback != null) callback.onFailure(e);
-        } catch (JSONException e) {
-            throw new RuntimeException("unexpected");
-        }
+        };
+
+        Connection connection = new Connection(change.getUrlFor().toString());
+        connection.setBodyParams(params);
+        connection.fetchResponseMaybeJson(jsonCallback);
     }
 
     private Set<ApidChange> collapseApidChanges(Set<ApidChange> changeSet) {

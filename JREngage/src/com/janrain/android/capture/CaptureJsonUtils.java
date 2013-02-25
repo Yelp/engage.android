@@ -33,6 +33,7 @@
 package com.janrain.android.capture;
 
 import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.utils.CollectionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,15 +52,16 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class CaptureJsonUtils {
-    public static Object urlConnectionGetJsonContent(URLConnection uConn) {
+    public static Object connectionManagerGetJsonContent(HttpResponseHeaders headers,
+                                                         byte[] payload) {
         String json = null;
         try {
-            if (uConn.getContentType().toLowerCase().equals("application/json")) {
-                json = CaptureStringUtils.readFully(uConn.getInputStream());
+            json = new String(payload, "UTF-8");
+            if (headers.getContentType().toLowerCase().equals("application/json")) {
                 return new JSONTokener(json).nextValue();
             }
-            JREngage.logd("content type: " + uConn.getContentType());
-            JREngage.logd(CaptureStringUtils.readFully(uConn.getInputStream()));
+            JREngage.logd("unrecognized content type: " + headers.getContentType());
+            JREngage.logd(json);
             return null;
         } catch (IOException e) {
             JREngage.logd(e.toString());
@@ -68,6 +70,24 @@ public class CaptureJsonUtils {
             return json;
         }
     }
+
+    //public static Object urlConnectionGetJsonContent(URLConnection uConn) {
+    //    String json = null;
+    //    try {
+    //        if (uConn.getContentType().toLowerCase().equals("application/json")) {
+    //            json = CaptureStringUtils.readFully(uConn.getInputStream());
+    //            return new JSONTokener(json).nextValue();
+    //        }
+    //        JREngage.logd("content type: " + uConn.getContentType());
+    //        JREngage.logd(CaptureStringUtils.readFully(uConn.getInputStream()));
+    //        return null;
+    //    } catch (IOException e) {
+    //        JREngage.logd(e.toString());
+    //        return null;
+    //    } catch (JSONException ignore) {
+    //        return json;
+    //    }
+    //}
 
     private static int jsonArrayCompareTo(JSONArray this_, Object other) {
         if (other instanceof JSONArray) {

@@ -35,20 +35,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Pair;
 import com.janrain.android.capture.CaptureJsonUtils;
+import com.janrain.android.capture.Connection;
 import com.janrain.android.capture.JRCapture;
 import com.janrain.android.capture.JRCaptureRecord;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
+import com.janrain.android.engage.net.JRConnectionManager;
+import com.janrain.android.engage.net.JRConnectionManagerDelegate;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRDictionary;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,7 +55,7 @@ public class Jump {
     private enum State {
         STATE();
 
-        private JRCaptureRecord loggedInUser;
+        private JRCaptureRecord signedInUser;
         private JREngage jrEngage;
         private String captureDomain;
         private String captureClientId;
@@ -84,6 +83,17 @@ public class Jump {
         return state.captureDomain;
     }
 
+    public static String getCaptureClientId() {
+        return state.captureClientId;
+    }
+
+    public static JRCaptureRecord getSignedInUser() {
+        if (state.signedInUser == null && JREngage.getApplicationContext() != null) {
+            state.signedInUser = JRCaptureRecord.loadFromDisk(JREngage.getApplicationContext());
+        }
+        return state.signedInUser;
+    }
+
     public static void showSignInDialog(Activity fromActivity, final SignInResultHandler handler) {
         if (state.jrEngage == null || state.captureDomain == null) {
             handler.onFailure(SignInResultHandler.FailureReasons.jumpNotInitialized);
@@ -101,31 +111,30 @@ public class Jump {
                  * token
                  * attributeUpdates
                  * thin_registration
+                 * flow_name
                  */
                 String authInfoToken = auth_info.getAsString("token");
 
-                Connection c = new Connection("https://" + state.captureDomain + "/oauth/auth_native");
-                c.setParams("client_id", state.captureClientId,
-                        "locale", "en-US",
-                        "response_type", "token",
-                        "redirect_uri", "http://none",
-                        "token", authInfoToken,
-                        "thin_registration", "true");
-                JSONObject response = c.fetchResponseAsJson();
-                if (response == null) {
-                    handler.onFailure(SignInResultHandler.FailureReasons.invalidApiResponse);
-                    return;
-                }
-                if ("ok".equals(response.opt("stat"))) {
-                    Object user = response.opt("capture_user");
-                    if (user instanceof JSONObject) {
-                        state.loggedInUser = new JRCaptureRecord(((JSONObject) user));
-                    } else {
-                        handler.onFailure(SignInResultHandler.FailureReasons.invalidApiResponse);
+                JRCapture.performSocialSignIn(authInfoToken, new JRCapture.FetchJsonCallback() {
+                    public void run(JSONObject response) {
+                        if (response == null) {
+                            handler.onFailure(Jump.SignInResultHandler.FailureReasons.invalidApiResponse);
+                            return;
+                        }
+                        if ("ok".equals(response.opt("stat"))) {
+                            Object user = response.opt("capture_user");
+                            if (user instanceof JSONObject) {
+                                state.signedInUser = new JRCaptureRecord(((JSONObject) user));
+                                handler.onSuccess();
+                            } else {
+                                handler.onFailure(SignInResultHandler.FailureReasons.invalidApiResponse);
+                            }
+                        } else {
+                            handler.onFailure(response);
+                        }
                     }
-                } else {
-                    handler.onFailure(response);
-                }
+                });
+
             }
 
             @Override
@@ -144,7 +153,19 @@ public class Jump {
             }
         });
 
-        state.jrEngage.showAuthenticationDialog(fromActivity);
+        state.jrEngage.showAuthenticationDialog(fromActivity, tradSignInUi);
+    }
+
+    public enum TraditionalSignInType { EMAIL, USERNAME }
+
+    public void performTraditionalSignIn(String username, String password, TraditionalSignInType type,
+                                         SignInResultHandler handler) {
+        if (state.jrEngage == null || state.captureDomain == null) {
+            handler.onFailure(SignInResultHandler.FailureReasons.jumpNotInitialized);
+            return;
+        }
+
+        String url = "https://" + state.captureDomain + "/oauth/auth_native_traditional";
     }
 
     public interface SignInResultHandler {
@@ -154,41 +175,5 @@ public class Jump {
 
         void onSuccess();
         void onFailure(Object error);
-    }
-}
-
-/*package*/ class Connection {
-    String url;
-    Set<Pair<String,String>> params = new HashSet<Pair<String, String>>();
-
-    public Connection(String url) {
-        this.url = url;
-    }
-
-    public void setParams(String... params) {
-        for (int i=0; i<params.length-1; i+=2) {
-            this.params.add(new Pair<String, String>(params[i], params[i+1]));
-        }
-    }
-
-    public JSONObject fetchResponseAsJson() {
-        HttpURLConnection c = null;
-        try {
-            c = (HttpURLConnection) new URL(url).openConnection();
-            c.setDoOutput(true);
-            JRCapture.writePostParams(c, params);
-            Object response = CaptureJsonUtils.urlConnectionGetJsonContent(c);
-            if (response instanceof JSONObject) return (JSONObject) response;
-            JREngage.logd("response: " + response);
-            return null;
-        } catch (MalformedURLException e) {
-            JREngage.logd(e.toString());
-            return null;
-        } catch (IOException e) {
-            JREngage.logd(e.toString());
-            return null;
-        } finally {
-            if (c != null) c.disconnect();
-        }
     }
 }

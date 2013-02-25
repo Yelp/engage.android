@@ -35,12 +35,16 @@ package com.janrain.android.capture;
 import android.util.Pair;
 import com.janrain.android.Jump;
 import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.net.JRConnectionManager;
+import com.janrain.android.engage.net.JRConnectionManagerDelegate;
+import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.utils.CollectionUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -102,8 +106,7 @@ public class JRCapture {
         //}
     }
 
-    /*package*/ public static void writePostParams(URLConnection urlConnection,
-                                                   Set<Pair<String, String>> bodyParams) throws IOException {
+    /*package*/ public static byte[] bodyParamsGetBytes(Set<Pair<String, String>> bodyParams) {
         Collection<String> paramPairs = CollectionUtils.map(bodyParams,
                 new CollectionUtils.Function<String, Pair<String, String>>() {
                     public String operate(Pair<String, String> val) {
@@ -112,8 +115,17 @@ public class JRCapture {
                 });
 
         String body = join("&", paramPairs);
-        urlConnection.getOutputStream().write(body.getBytes("UTF-8"));
+        try {
+            return body.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Unexpected", e);
+        }
     }
+
+    //public static void writePostParams(URLConnection connection, Set<Pair<String, String>> params)
+    //        throws IOException {
+    //    connection.getOutputStream().write(bodyParamsGetBytes(params));
+    //}
 
     public static class InvalidApidChangeException extends Exception {
         public InvalidApidChangeException(String description) {
@@ -125,5 +137,79 @@ public class JRCapture {
         public void onSuccess();
 
         public void onFailure(Object e);
+    }
+
+    public static void performSocialSignIn(String authInfoToken, final FetchJsonCallback handler) {
+        Connection c = new Connection("https://" + Jump.getCaptureDomain() + "/oauth/auth_native");
+        c.setBodyParams("client_id", Jump.getCaptureClientId(),
+                "locale", "en-US",
+                "response_type", "token",
+                "redirect_uri", "http://none",
+                "token", authInfoToken,
+                "thin_registration", "true");
+        c.fetchResponseAsJson(handler);
+    }
+
+    public interface FetchJsonCallback {
+        void run(JSONObject jsonObject);
+    }
+
+    public interface FetchCallback {
+        void run(Object response);
+    }
+}
+
+/*package*/ class Connection {
+    /*package*/ String url;
+    /*package*/ Set<Pair<String,String>> bodyParams = new HashSet<Pair<String, String>>();
+
+    /*package*/ Connection(String url) {
+        this.url = url;
+    }
+
+    /*package*/ void setBodyParams(String... bodyParams) {
+        for (int i=0; i< bodyParams.length-1; i+=2) {
+            this.bodyParams.add(new Pair<String, String>(bodyParams[i], bodyParams[i + 1]));
+        }
+    }
+
+    /*package*/ void setBodyParams(Set<Pair<String, String>> params) {
+        bodyParams.addAll(params);
+    }
+
+    /*package*/ void fetchResponseMaybeJson(final JRCapture.FetchCallback callback) {
+        byte[] postData = JRCapture.bodyParamsGetBytes(bodyParams);
+
+        JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate connectionCallback =
+                new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
+                    @Override
+                    public void connectionDidFinishLoading(HttpResponseHeaders headers,
+                                                           byte[] payload,
+                                                           String requestUrl,
+                                                           Object tag) {
+                        Object response = CaptureJsonUtils.connectionManagerGetJsonContent(headers, payload);
+                        callback.run(response);
+                    }
+
+                    @Override
+                    public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
+                        JREngage.logd("failed request: " + requestUrl, ex);
+                        callback.run(null);
+                    }
+                };
+        JRConnectionManager.createConnection(url, connectionCallback, null, null, postData);
+    }
+
+    /*package*/ void fetchResponseAsJson(final JRCapture.FetchJsonCallback callback) {
+        fetchResponseMaybeJson(new JRCapture.FetchCallback() {
+            public void run(Object response) {
+                if (response instanceof JSONObject) {
+                    callback.run(((JSONObject) response));
+                } else {
+                    JREngage.logd("bad response: " + response);
+                    callback.run(null);
+                }
+            }
+        });
     }
 }

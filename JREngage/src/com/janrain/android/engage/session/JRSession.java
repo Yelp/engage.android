@@ -606,7 +606,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         List<NameValuePair> headerList = new ArrayList<NameValuePair>();
         headerList.add(eTagHeader);
 
-        JRConnectionManager.createConnection(urlString, this, TAG_GET_CONFIGURATION, headerList);
+        JRConnectionManager.createConnection(urlString, this, TAG_GET_CONFIGURATION, headerList, null);
 
         return null;
     }
