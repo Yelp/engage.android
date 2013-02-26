@@ -683,6 +683,8 @@ public class JREngage {
         }
     }
 
+
+
     /**
      * @internal
      * @hide
@@ -1160,6 +1162,26 @@ public class JREngage {
 
     public static void logd() {
         logd("");
+    }
+
+    public static void loge(String msg) {
+        loge(msg, null);
+    }
+
+    public static void loge(String msg, Throwable t) {
+        String method;
+        try {
+            throw new Exception();
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            StackTraceElement stackTraceElement = e.getStackTrace()[1];
+            method = stackTraceElement.getMethodName() + ":" + stackTraceElement.getLineNumber();
+        }
+        if (t != null) {
+            Log.e("[" + method + "]", msg, t);
+        } else {
+            Log.e("[" + method + "]", msg);
+        }
     }
 }
 

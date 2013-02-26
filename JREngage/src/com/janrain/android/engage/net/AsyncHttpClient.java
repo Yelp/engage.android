@@ -63,9 +63,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.ProtocolException;
+import org.apache.http.client.RedirectHandler;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultRedirectHandler;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -74,6 +77,7 @@ import org.apache.http.protocol.HttpContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -118,11 +122,6 @@ public final class AsyncHttpClient {
             HttpParams connectionParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(connectionParams, 30000); // thirty seconds
             HttpConnectionParams.setSoTimeout(connectionParams, 30000);
-            setupGoogleInflater(connectionParams);
-        }
-
-        // From the Google IO app:
-        private void setupGoogleInflater(HttpParams connectionParams) {
             mHttpClient = new DefaultHttpClient(connectionParams);
             mHttpClient.addRequestInterceptor(new HttpRequestInterceptor() {
                 public void process(HttpRequest request, HttpContext context) {
@@ -147,6 +146,16 @@ public final class AsyncHttpClient {
                             }
                         }
                     }
+                }
+            });
+
+            mHttpClient.setRedirectHandler(new DefaultRedirectHandler() {
+                @Override
+                public boolean isRedirectRequested(HttpResponse response, HttpContext context) {
+                    if (super.isRedirectRequested(response, context)) {
+                        JREngage.loge("error: ignoring redirect");
+                    }
+                    return false;
                 }
             });
         }

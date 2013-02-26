@@ -142,7 +142,7 @@ public class JRCapture {
         String url = "https://" + Jump.getCaptureDomain() + "/oauth/auth_native_traditional";
         Connection connection = new Connection(url);
         connection.addAllToParams("client_id", Jump.getCaptureClientId(),
-                "locale", "en-US",
+                "locale", "en_US",
                 "response_type", "token",
                 "redirect_uri", "http://android.library",
                 "email", username,
@@ -182,7 +182,7 @@ public class JRCapture {
 
         Connection c = new Connection("https://" + Jump.getCaptureDomain() + "/oauth/auth_native");
         c.addAllToParams("client_id", Jump.getCaptureClientId(),
-                "locale", "en-US",
+                "locale", "en_US",
                 "response_type", "token",
                 "redirect_uri", "http://android-library",
                 "token", authInfoToken,
@@ -215,7 +215,7 @@ public class JRCapture {
             this.params.add(new Pair<String, String>(params[i], params[i + 1]));
         }
 
-        if (params.length % 2 == 1) JREngage.logd("error: odd number of param strings");
+        if (params.length % 2 == 1) JREngage.loge("error: odd number of param strings");
     }
 
     /*package*/ void addAllToParams(Set<Pair<String, String>> params) {
@@ -236,7 +236,7 @@ public class JRCapture {
 
                     @Override
                     public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
-                        JREngage.logd("failed request: " + requestUrl, ex);
+                        JREngage.loge("failed request: " + requestUrl, ex);
                         callback.run(null);
                     }
                 };
@@ -257,7 +257,7 @@ public class JRCapture {
                 if (response instanceof JSONObject) {
                     callback.run(((JSONObject) response));
                 } else {
-                    JREngage.logd("bad response: " + response);
+                    JREngage.loge("bad response: " + response);
                     callback.run(null);
                 }
             }

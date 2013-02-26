@@ -50,7 +50,7 @@ public class TestActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Jump.init(this, "appcfamhnpkagijaeinl", "mobile.dev.janraincapture.com",
+        Jump.init(this, "appcfamhnpkagijaeinl", "mobile-dev.janraincapture.com",
                 "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6");
         Jump.showSignInDialog(this, new Jump.SignInResultHandler(){
             public void onSuccess() {
