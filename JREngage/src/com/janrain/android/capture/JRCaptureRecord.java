@@ -220,7 +220,7 @@ public class JRCaptureRecord extends JSONObject {
         };
 
         Connection connection = new Connection(change.getUrlFor().toString());
-        connection.setBodyParams(params);
+        connection.addAllToParams(params);
         connection.fetchResponseMaybeJson(jsonCallback);
     }
 

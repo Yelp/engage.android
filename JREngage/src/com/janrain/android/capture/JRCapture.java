@@ -105,7 +105,15 @@ public class JRCapture {
         //}
     }
 
-    /*package*/ public static byte[] bodyParamsGetBytes(Set<Pair<String, String>> bodyParams) {
+    /*package*/ public static byte[] paramsGetBytes(Set<Pair<String, String>> bodyParams) {
+        try {
+            return paramsToString(bodyParams).getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Unexpected", e);
+        }
+    }
+
+    /*package*/ static String paramsToString(Set<Pair<String, String>> bodyParams) {
         Collection<String> paramPairs = CollectionUtils.map(bodyParams,
                 new CollectionUtils.Function<String, Pair<String, String>>() {
                     public String operate(Pair<String, String> val) {
@@ -113,12 +121,7 @@ public class JRCapture {
                     }
                 });
 
-        String body = join("&", paramPairs);
-        try {
-            return body.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Unexpected", e);
-        }
+        return join("&", paramPairs);
     }
 
     public static JRConnectionManagerDelegate performTraditionalSignIn(String username,
@@ -138,7 +141,7 @@ public class JRCapture {
 
         String url = "https://" + Jump.getCaptureDomain() + "/oauth/auth_native_traditional";
         Connection connection = new Connection(url);
-        connection.setBodyParams("client_id", Jump.getCaptureClientId(),
+        connection.addAllToParams("client_id", Jump.getCaptureClientId(),
                 "locale", "en-US",
                 "response_type", "token",
                 "redirect_uri", "http://android.library",
@@ -150,7 +153,7 @@ public class JRCapture {
 
     //public static void writePostParams(URLConnection connection, Set<Pair<String, String>> params)
     //        throws IOException {
-    //    connection.getOutputStream().write(bodyParamsGetBytes(params));
+    //    connection.getOutputStream().write(paramsGetBytes(params));
     //}
 
     public static class InvalidApidChangeException extends Exception {
@@ -178,7 +181,7 @@ public class JRCapture {
          */
 
         Connection c = new Connection("https://" + Jump.getCaptureDomain() + "/oauth/auth_native");
-        c.setBodyParams("client_id", Jump.getCaptureClientId(),
+        c.addAllToParams("client_id", Jump.getCaptureClientId(),
                 "locale", "en-US",
                 "response_type", "token",
                 "redirect_uri", "http://android-library",
@@ -198,25 +201,28 @@ public class JRCapture {
 
 /*package*/ class Connection {
     /*package*/ String url;
-    /*package*/ Set<Pair<String,String>> bodyParams = new HashSet<Pair<String, String>>();
+    /*package*/ Set<Pair<String,String>> params = new HashSet<Pair<String, String>>();
+    /*package*/ Method method = Method.POST;
+
+    enum Method {POST, GET}
 
     /*package*/ Connection(String url) {
         this.url = url;
     }
 
-    /*package*/ void setBodyParams(String... bodyParams) {
-        for (int i=0; i< bodyParams.length-1; i+=2) {
-            this.bodyParams.add(new Pair<String, String>(bodyParams[i], bodyParams[i + 1]));
+    /*package*/ void addAllToParams(String... params) {
+        for (int i = 0; i < params.length - 1; i += 2) {
+            this.params.add(new Pair<String, String>(params[i], params[i + 1]));
         }
+
+        if (params.length % 2 == 1) JREngage.logd("error: odd number of param strings");
     }
 
-    /*package*/ void setBodyParams(Set<Pair<String, String>> params) {
-        bodyParams.addAll(params);
+    /*package*/ void addAllToParams(Set<Pair<String, String>> params) {
+        this.params.addAll(params);
     }
 
     /*package*/ JRConnectionManagerDelegate fetchResponseMaybeJson(final JRCapture.FetchCallback callback) {
-        byte[] postData = JRCapture.bodyParamsGetBytes(bodyParams);
-
         JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate connectionCallback =
                 new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
                     @Override
@@ -234,7 +240,14 @@ public class JRCapture {
                         callback.run(null);
                     }
                 };
-        JRConnectionManager.createConnection(url, connectionCallback, null, null, postData);
+
+        if (method == Method.POST) {
+            byte[] postData = JRCapture.paramsGetBytes(params);
+            JRConnectionManager.createConnection(url, connectionCallback, null, null, postData);
+        } else {
+            String urlWithParms = url + "?" + JRCapture.paramsToString(params);
+            JRConnectionManager.createConnection(urlWithParms, connectionCallback, null, null, null);
+        }
         return connectionCallback;
     }
 

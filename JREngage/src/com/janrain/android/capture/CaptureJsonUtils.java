@@ -48,6 +48,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import static com.janrain.android.engage.utils.CollectionUtils.makeSortedSetFromIterator;
+
 public class CaptureJsonUtils {
     public static Object connectionManagerGetJsonContent(HttpResponseHeaders headers,
                                                          byte[] payload) {
@@ -124,12 +126,14 @@ public class CaptureJsonUtils {
      * Uses a standard ordering of such values where:
      *  If the types are mismatched the values are compared by type class name string
      *  If the types are primitives of matching type their values are compared with compareTo
-     *  If the types are JSONObject their fields are sorted by key and compared. The first non zero
-     *    comparison is the return value, if all fields have a zero comparison then so do the JSONObjects
+     *  If the types are JSONObject their fields are iterated over by the union of the key set and compared
+     *    recursively. The first non zero comparison is the return value, or zero is returned if all fields
+     *    are equal
      *  If the types are JSONArray their elements are compared in order and the first non zero comparison
-     *    is the comparison of the JSONArrays
+     *    is returned, or zero if all fields are equal
      *  If the values are both JSONObject.NULL this method returns 0
-     *  nulls are illegal
+     *
+     *  Null arguments are not supported.
      *
      *  Note that number types aren't compared if their types are unequal, e.g. 1.0 the Double does not
      *  equal 1 the Integer.
@@ -175,8 +179,8 @@ public class CaptureJsonUtils {
     }
 
     private static int jsonObjectCompareTo(JSONObject this_, JSONObject other) {
-        SortedSet<String> this_Keys = CollectionUtils.makeSortedSetFromIterator((Iterator<String>) this_.keys());
-        SortedSet<String> otherKeys = CollectionUtils.makeSortedSetFromIterator((Iterator<String>) other.keys());
+        SortedSet<String> this_Keys = makeSortedSetFromIterator((Iterator<String>) this_.keys());
+        SortedSet<String> otherKeys = makeSortedSetFromIterator((Iterator<String>) other.keys());
 
         SortedSet<String> temp = new TreeSet<String>(this_Keys);
         temp.addAll(otherKeys);
@@ -215,7 +219,7 @@ public class CaptureJsonUtils {
         Iterator<String> keys = source.keys();
         while (keys.hasNext()) {
             String key = keys.next();
-            // copy each key by hand, copying mutable types, not copying immutable types :(
+            // copy each key by hand, copying mutable types, not copying immutable types
             try {
                 Object val = source.get(key);
                 Object val_;
@@ -351,12 +355,15 @@ public class CaptureJsonUtils {
     //}
 
     /**
-     * Takes two JSONObjects, performs a deep diff, returning the result as a set of ApidChanges
+     * Takes two JSONObjects representing Capture records, performs a deep 'diff', returning the result as a
+     * set of ApidChanges to convert the original into the current.
+     *
      * @param original the original copy of the record
-     * @param current the current copy
+     * @param current the current version of the record
      * @return A set of ApidChanges to effect the diff
      * @throws JRCapture.InvalidApidChangeException
-     *  If value types mismatch between original and current
+     *  If JSON value types mismatch between original and current (I.e. if current is updated in a way that
+     *      is not supported by the record schema)
      *  If ids are assigned to new plural elements
      */
     public static Set<ApidChange> compileChangeSet(JSONObject original, JSONObject current)
@@ -540,8 +547,8 @@ public class CaptureJsonUtils {
     private static Set<ApidChange> compileChangeSet(JSONObject original, JSONObject current,
                                                               String relativePath)
             throws JRCapture.InvalidApidChangeException {
-        SortedSet<String> origKeys = CollectionUtils.makeSortedSetFromIterator((Iterator<String>) original.keys());
-        SortedSet<String> currentKeys = CollectionUtils.makeSortedSetFromIterator((Iterator<String>) current.keys());
+        SortedSet<String> origKeys = makeSortedSetFromIterator((Iterator<String>) original.keys());
+        SortedSet<String> currentKeys = makeSortedSetFromIterator((Iterator<String>) current.keys());
 
         TreeSet<String> temp = new TreeSet<String>(currentKeys);
         temp.removeAll(origKeys);
@@ -604,7 +611,6 @@ public class CaptureJsonUtils {
             throw new JRCapture.InvalidApidChangeException("Can't add new keys to JSONObjects. New keys: " +
                     newKeys.toString());
         }
-        // new leaf (illegal?), changed leaf, removed leaf (illegal?), new branch, removed branch, that's it?
 
         if (removedKeys.size() > 0) {
             throw new JRCapture.InvalidApidChangeException("Cannot delete keys from JSONObjects. Removed " +
@@ -642,8 +648,10 @@ public class CaptureJsonUtils {
     }
 
     /**
-     * Zippers up the left and right params into a returned JSONObject. All sub-objects are merged by key.
-     * Arrays are concatenated. If keys are duplicated across both left and right then the value from left
+     * "Zippers" up the left and right params, merging fields by key names.
+     * Array fields are concatenated. (Left, then right)
+     * Object fields are recursively merged.
+     * If primitive fields are contained in both left and right then the value from left
      * is taken and the value from right is discarded.
      *
      * e.g.: {'a':1, 'c':[2]} collapsed with {'b':null, 'c':[1]} yields {'a':1, 'b':null, 'c':[2,1]}
@@ -654,10 +662,12 @@ public class CaptureJsonUtils {
     public static JSONObject collapseJsonObjects(JSONObject left, JSONObject right) {
         try {
             if (left == null) return (JSONObject) copyJsonVal(right);
+            // copy left
             JSONObject retVal = (JSONObject) copyJsonVal(left);
             if (right == null) return retVal;
 
-            for (String key : CollectionUtils.makeSortedSetFromIterator((Iterator<String>) right.keys())) {
+            // merge every field from right into the copy
+            for (String key : makeSortedSetFromIterator((Iterator<String>) right.keys())) {
                 Object rightVal = right.get(key);
                 Object leftVal = retVal.opt(key);
                 if (leftVal == null) retVal.put(key, copyJsonVal(rightVal));
@@ -674,7 +684,7 @@ public class CaptureJsonUtils {
     }
 
     /**
-     * An addAll variant for JSONArrays
+     * An addAll variant for JSONArray
      * @param destArray an array to add elements to
      * @param sourceArray an array with elements to be added
      */
