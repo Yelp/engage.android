@@ -149,15 +149,15 @@ public final class AsyncHttpClient {
                 }
             });
 
-            mHttpClient.setRedirectHandler(new DefaultRedirectHandler() {
-                @Override
-                public boolean isRedirectRequested(HttpResponse response, HttpContext context) {
-                    if (super.isRedirectRequested(response, context)) {
-                        JREngage.loge("error: ignoring redirect");
-                    }
-                    return false;
-                }
-            });
+            //mHttpClient.setRedirectHandler(new DefaultRedirectHandler() {
+            //    @Override
+            //    public boolean isRedirectRequested(HttpResponse response, HttpContext context) {
+            //        if (super.isRedirectRequested(response, context)) {
+            //            JREngage.loge("error: ignoring redirect");
+            //        }
+            //        return false;
+            //    }
+            //});
         }
 
         /**

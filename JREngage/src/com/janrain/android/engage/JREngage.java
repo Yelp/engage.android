@@ -1139,14 +1139,14 @@ public class JREngage {
         if (sLoggingEnabled == null || sLoggingEnabled) Log.d(tag, msg);
     }
 
-    public static void logd(String msg, Throwable t) {
+    private static void logd(String msg, Throwable t, int stackDepth) {
         if (!(sLoggingEnabled == null || sLoggingEnabled)) return;
         String method;
         try {
             throw new Exception();
         } catch (Exception e) {
             e.fillInStackTrace();
-            StackTraceElement stackTraceElement = e.getStackTrace()[1];
+            StackTraceElement stackTraceElement = e.getStackTrace()[stackDepth];
             method = stackTraceElement.getMethodName() + ":" + stackTraceElement.getLineNumber();
         }
         if (t != null) {
@@ -1156,25 +1156,29 @@ public class JREngage {
         }
     }
 
+    public static void logd(String msg, Throwable t) {
+        logd(msg, t, 2);
+    }
+
     public static void logd(String msg) {
-        logd(msg, (Throwable) null);
+        logd(msg, (Throwable) null, 2);
     }
 
     public static void logd() {
-        logd("");
+        logd("", null, 2);
     }
 
     public static void loge(String msg) {
-        loge(msg, null);
+        loge(msg, null, 2);
     }
 
-    public static void loge(String msg, Throwable t) {
+    private static void loge(String msg, Throwable t, int stackDepth) {
         String method;
         try {
             throw new Exception();
         } catch (Exception e) {
             e.fillInStackTrace();
-            StackTraceElement stackTraceElement = e.getStackTrace()[1];
+            StackTraceElement stackTraceElement = e.getStackTrace()[stackDepth];
             method = stackTraceElement.getMethodName() + ":" + stackTraceElement.getLineNumber();
         }
         if (t != null) {
