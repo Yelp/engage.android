@@ -621,14 +621,13 @@ public class JREngage {
             mSession.setSkipLandingPage(skipReturningUserLandingPage);
         }
 
-        if (mSession.getProviderByName(provider) == null && !mSession.isConfigDone()) {
+        if (provider != null && mSession.getProviderByName(provider) == null && !mSession.isConfigDone()) {
             final ProgressDialog pd = new ProgressDialog(fromActivity);
             pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             pd.setIndeterminate(true);
             pd.setCancelable(false);
             pd.show();
 
-            // TODO add progress dialog customization
             // Fix up the progress dialog's appearance
             View message = pd.findViewById(android.R.id.message);
             if (message != null) message.setVisibility(View.GONE);
@@ -640,12 +639,12 @@ public class JREngage {
                 public void configDidFinish() {
                     mConfigFinishListeners.remove(this);
                     checkSessionDataError();
-                    showDirectProviderFlowInternal(fromActivity, provider, uiCustomization);
+                    showAuthFlowInternal(fromActivity, provider, uiCustomization);
                     pd.dismiss();
                 }
             });
         } else {
-            showDirectProviderFlowInternal(fromActivity, provider, uiCustomization);
+            showAuthFlowInternal(fromActivity, provider, uiCustomization);
         }
     }
 
@@ -696,9 +695,9 @@ public class JREngage {
      * @internal
      * @hide
      */
-    private void showDirectProviderFlowInternal(final Activity fromActivity,
-                                                final String providerName,
-                                                final Class<? extends JRCustomInterface> uiCustomization) {
+    private void showAuthFlowInternal(final Activity fromActivity,
+                                      final String providerName,
+                                      final Class<? extends JRCustomInterface> uiCustomization) {
         Intent i;
         JRProvider provider = mSession.getProviderByName(providerName);
         if (provider != null) {

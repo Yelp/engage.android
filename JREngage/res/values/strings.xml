@@ -73,4 +73,10 @@
     <string name="jr_problem_sharing">There was a problem while sharing.</string>
     <string name="jr_welcome_back_message">Welcome back</string>
 
+    <!-- JRCaptureSignInView strings -->
+    <string name="jr_capture_signin_view_button_title">Sign in</string>
+    <string name="jr_capture_signin_view_password_hint">Password</string>
+    <string name="jr_capture_signin_view_username_hint">Email</string>
+    <string name="jr_capture_trad_signin_bad_password">Invalid username / password</string>
+
 </resources>

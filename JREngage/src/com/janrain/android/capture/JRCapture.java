@@ -121,6 +121,33 @@ public class JRCapture {
         }
     }
 
+    public static JRConnectionManagerDelegate performTraditionalSignIn(String username,
+                                                                       String password,
+                                                                       Jump.TraditionalSignInType type,
+                                                                       final FetchJsonCallback handler) {
+        /**
+         * client_id
+         * locale
+         * response_type
+         * redirect_uri
+         * an email address param
+         * a password param
+         * form
+         * attributeUpdates
+         */
+
+        String url = "https://" + Jump.getCaptureDomain() + "/oauth/auth_native_traditional";
+        Connection connection = new Connection(url);
+        connection.setBodyParams("client_id", Jump.getCaptureClientId(),
+                "locale", "en-US",
+                "response_type", "token",
+                "redirect_uri", "http://android.library",
+                "email", username,
+                "password", password,
+                "form", "signin");
+        return connection.fetchResponseAsJson(handler);
+    }
+
     //public static void writePostParams(URLConnection connection, Set<Pair<String, String>> params)
     //        throws IOException {
     //    connection.getOutputStream().write(bodyParamsGetBytes(params));
@@ -139,11 +166,22 @@ public class JRCapture {
     }
 
     public static void performSocialSignIn(String authInfoToken, final FetchJsonCallback handler) {
+        /***
+         * client_id
+         * locale
+         * response_type
+         * redirect_uri
+         * token
+         * attributeUpdates
+         * thin_registration
+         * flow_name
+         */
+
         Connection c = new Connection("https://" + Jump.getCaptureDomain() + "/oauth/auth_native");
         c.setBodyParams("client_id", Jump.getCaptureClientId(),
                 "locale", "en-US",
                 "response_type", "token",
-                "redirect_uri", "http://none",
+                "redirect_uri", "http://android-library",
                 "token", authInfoToken,
                 "thin_registration", "true");
         c.fetchResponseAsJson(handler);
@@ -176,7 +214,7 @@ public class JRCapture {
         bodyParams.addAll(params);
     }
 
-    /*package*/ void fetchResponseMaybeJson(final JRCapture.FetchCallback callback) {
+    /*package*/ JRConnectionManagerDelegate fetchResponseMaybeJson(final JRCapture.FetchCallback callback) {
         byte[] postData = JRCapture.bodyParamsGetBytes(bodyParams);
 
         JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate connectionCallback =
@@ -197,10 +235,11 @@ public class JRCapture {
                     }
                 };
         JRConnectionManager.createConnection(url, connectionCallback, null, null, postData);
+        return connectionCallback;
     }
 
-    /*package*/ void fetchResponseAsJson(final JRCapture.FetchJsonCallback callback) {
-        fetchResponseMaybeJson(new JRCapture.FetchCallback() {
+    /*package*/ JRConnectionManagerDelegate fetchResponseAsJson(final JRCapture.FetchJsonCallback callback) {
+        return fetchResponseMaybeJson(new JRCapture.FetchCallback() {
             public void run(Object response) {
                 if (response instanceof JSONObject) {
                     callback.run(((JSONObject) response));
