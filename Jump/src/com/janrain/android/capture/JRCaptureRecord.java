@@ -72,6 +72,10 @@ public class JRCaptureRecord extends JSONObject {
 
     private JRCaptureRecord(){}
 
+    /**
+     *
+     * @param jo
+     */
     public JRCaptureRecord(JSONObject jo) {
         super();
 
@@ -83,6 +87,11 @@ public class JRCaptureRecord extends JSONObject {
         }
     }
 
+    /**
+     *
+     * @param applicationContext
+     * @return
+     */
     public static JRCaptureRecord loadFromDisk(Context applicationContext) {
         String fileContents = null;
         try {
@@ -107,6 +116,10 @@ public class JRCaptureRecord extends JSONObject {
         return null;
     }
 
+    /**
+     *
+     * @param applicationContext
+     */
     public void saveToDisk(Context applicationContext) {
         try {
             FileOutputStream fos = applicationContext.openFileOutput(JR_CAPTURE_SIGNED_IN_USER_FILENAME, 0);
@@ -139,7 +152,7 @@ public class JRCaptureRecord extends JSONObject {
     //        Set<Pair<String, String>> params = new HashSet<Pair<String, String>>();
     //        params.add(new Pair<String, String>("application_id", "fvbamf9kkkad3gnd9qyb4ggw6w"));
     //        params.add(new Pair<String, String>("access_token", accessToken));
-    //        params.add(new Pair<String, String>("Signature", urlEncode(makeHash(date))));
+    //        params.add(new Pair<String, String>("Signature", urlEncode(getRefreshSignature(date))));
     //        params.add(new Pair<String, String>("Date", urlEncode(date)));
     //        JRCapture.writePostParams(connection, params);
     //        connection.getOutputStream().close();
@@ -158,26 +171,31 @@ public class JRCaptureRecord extends JSONObject {
     //    }
     //}
 
-    private String makeHash(String date) {
-        String stringToSign = date + "\n" + accessToken + "\n";
+    //private String getRefreshSignature(String date) {
+    //    String stringToSign = date + "\n" + accessToken + "\n";
+    //
+    //    byte[] hash;
+    //    try {
+    //        Mac mac = Mac.getInstance("HmacSHA1");
+    //        SecretKeySpec secret = new SecretKeySpec(refreshSecret.getBytes("UTF-8"), mac.getAlgorithm());
+    //        mac.init(secret);
+    //        hash = mac.doFinal(stringToSign.getBytes("UTF-8"));
+    //    } catch (NoSuchAlgorithmException e) {
+    //        throw new RuntimeException("Unexpected", e);
+    //    } catch (UnsupportedEncodingException e) {
+    //        throw new RuntimeException("Unexpected", e);
+    //    } catch (InvalidKeyException e) {
+    //        throw new RuntimeException("Unexpected", e);
+    //    }
+    //
+    //    return Base64.encodeToString(hash, Base64.DEFAULT);
+    //}
 
-        byte[] hash;
-        try {
-            Mac mac = Mac.getInstance("HmacSHA1");
-            SecretKeySpec secret = new SecretKeySpec(refreshSecret.getBytes("UTF-8"), mac.getAlgorithm());
-            mac.init(secret);
-            hash = mac.doFinal(stringToSign.getBytes("UTF-8"));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Unexpected", e);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Unexpected", e);
-        } catch (InvalidKeyException e) {
-            throw new RuntimeException("Unexpected", e);
-        }
-
-        return Base64.encodeToString(hash, Base64.DEFAULT);
-    }
-
+    /**
+     *
+     * @param callback
+     * @throws JRCapture.InvalidApidChangeException
+     */
     public void synchronize(final JRCapture.RequestCallback callback)
             throws JRCapture.InvalidApidChangeException {
         Set<ApidChange> changeSet = getApidChangeSet();

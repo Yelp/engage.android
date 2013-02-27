@@ -50,6 +50,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.janrain.android.Jump;
+import com.janrain.android.capture.JRCapture;
 import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.ui.JRCustomInterfaceConfiguration;
 import com.janrain.android.engage.ui.JRCustomInterfaceView;
@@ -65,6 +66,7 @@ import com.janrain.android.engage.types.JRImageMediaObject;
 import com.janrain.android.engage.types.JRSmsObject;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.StringUtils;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,6 +88,21 @@ public class MainActivity extends FragmentActivity {
         testAuth.setText("Test Capture Auth");
         testAuth.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
         linearLayout.addView(testAuth);
+
+        Button dumpRecord = new Button(this);
+        dumpRecord.setText("Dump Record to Log");
+        dumpRecord.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+        linearLayout.addView(dumpRecord);
+
+        Button touchRecord = new Button(this);
+        touchRecord.setText("Edit About Me Attribute");
+        touchRecord.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+        linearLayout.addView(touchRecord);
+
+        Button syncRecord = new Button(this);
+        syncRecord.setText("Sync Record");
+        syncRecord.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+        linearLayout.addView(syncRecord);
 
         setContentView(linearLayout);
 
@@ -109,6 +126,61 @@ public class MainActivity extends FragmentActivity {
                         b.show();
                     }
                 });
+            }
+        });
+
+        dumpRecord.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try {
+                    JREngage.logd(Jump.getSignedInUser().toString(2));
+                } catch (JSONException e) {
+                    throw new RuntimeException("Unexpected", e);
+                }
+            }
+        });
+
+        touchRecord.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+
+                alert.setTitle("About Me");
+                alert.setMessage(Jump.getSignedInUser().optString("aboutMe"));
+
+                final EditText input = new EditText(MainActivity.this);
+                alert.setView(input);
+
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        try {
+                            Jump.getSignedInUser().put("aboutMe", input.getText());
+                        } catch (JSONException e) {
+                            throw new RuntimeException("Unexpected", e);
+                        }
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", null);
+                alert.show();
+            }
+        });
+
+        syncRecord.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try {
+                    Jump.getSignedInUser().synchronize(new JRCapture.RequestCallback() {
+                        public void onSuccess() {
+                            Toast.makeText(MainActivity.this, "Record updated", Toast.LENGTH_LONG).show();
+                        }
+
+                        public void onFailure(Object e) {
+                            Toast.makeText(MainActivity.this, "Record update failed, error logged",
+                                    Toast.LENGTH_LONG).show();
+                            JREngage.loge(e.toString());
+                        }
+                    });
+                } catch (JRCapture.InvalidApidChangeException e) {
+                    throw new RuntimeException("Unexpected", e);
+                }
             }
         });
     }
