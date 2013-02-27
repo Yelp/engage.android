@@ -418,7 +418,9 @@ public class JRSession implements JRConnectionManagerDelegate {
                             dictionary.getAsString(USERDATA_PROVIDER_NAME_KEY));
                 }
             } else if (dictionary.getAsString(USERDATA_ACTION_KEY).equals(USERDATA_ACTION_SHARE_ACTIVITY)) {
-                /* set status uses this same connection handler. */
+                // set status uses this same connection handler.
+                // TODO expired device tokens are 400ing now and hitting this flow control path triggering
+                // the raw API error's display to the end-user
                 Log.e(TAG, "[connectionDidFail] sharing activity failed: " + ex);
                 JREngageError error = new JREngageError(
                         "Error: " + ex.getLocalizedMessage(),

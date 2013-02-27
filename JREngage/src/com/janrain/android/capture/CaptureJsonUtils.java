@@ -56,7 +56,7 @@ public class CaptureJsonUtils {
         String json = null;
         try {
             json = new String(payload, "UTF-8");
-            if (headers.getContentType().toLowerCase().equals("application/json")) {
+            if (headers.getContentType().toLowerCase().startsWith("application/json")) {
                 return new JSONTokener(json).nextValue();
             }
             JREngage.logd("unrecognized content type: " + headers.getContentType());

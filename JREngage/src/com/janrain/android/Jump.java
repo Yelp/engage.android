@@ -118,8 +118,9 @@ public class Jump {
             public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
                 String authInfoToken = auth_info.getAsString("token");
 
-                JRCapture.performSocialSignIn(authInfoToken, new JRCapture.FetchJsonCallback() {
-                    public void run(JSONObject response) {
+                //JRCapture.performSocialSignIn(authInfoToken, new JRCapture.FetchJsonCallback() {
+                JRCapture.performLegacySocialSignIn(authInfoToken, new JRCapture.FetchJsonCallback() {
+                        public void run(JSONObject response) {
                         if (response == null) {
                             fireHandlerOnFailure(FailureReasons.invalidApiResponse);
                             return;
@@ -139,7 +140,6 @@ public class Jump {
                         }
                     }
                 });
-
             }
 
             @Override
@@ -176,9 +176,8 @@ public class Jump {
 
     }
 
-    private static class TradSignInUi extends JRCustomInterfaceConfiguration {
-        @Override
-        public void onProviderListViewCreate(ListView providerListView) {
+    public static class TradSignInUi extends JRCustomInterfaceConfiguration {
+        public TradSignInUi() {
             this.mProviderListHeader = new JRCustomInterfaceView() {
                 @Override
                 public View onCreateView(Context context,
@@ -209,8 +208,9 @@ public class Jump {
                                         }
                                     });
                             final JRConnectionManagerDelegate d =
-                                    JRCapture.performTraditionalSignIn(userName.getText().toString(),
-                                            password.getText().toString(),
+                                    //JRCapture.performTraditionalSignIn(userName.getText().toString(),
+                                    JRCapture.performLegacyTraditionalSignIn(userName.getText().toString(),
+                                                    password.getText().toString(),
                                             TraditionalSignInType.EMAIL, handler);
                             showProgressIndicator(true, new DialogInterface.OnCancelListener() {
                                 public void onCancel(DialogInterface dialog) {

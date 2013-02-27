@@ -77,7 +77,7 @@ public class JRCapture {
         }
     }
 
-    public static void main(String[] args) throws IOException, JSONException {
+    //public static void main(String[] args) throws IOException, JSONException {
         //JRCaptureEntity.inflate(getEntity(159)); // for entity type "user"
         //JRCaptureRecord record = new JRCaptureRecord(getEntity(14474));
         //JREngage.logd("JRCapture", record.toString(2));
@@ -103,7 +103,7 @@ public class JRCapture {
         //} catch (InvalidApidChangeException e) {
         //    e.printStackTrace();
         //}
-    }
+    //}
 
     /*package*/ public static byte[] paramsGetBytes(Set<Pair<String, String>> bodyParams) {
         try {
@@ -151,6 +151,20 @@ public class JRCapture {
         return connection.fetchResponseAsJson(handler);
     }
 
+    public static JRConnectionManagerDelegate performLegacyTraditionalSignIn(String username,
+                                                                             String password,
+                                                                             Jump.TraditionalSignInType type,
+                                                                             final FetchJsonCallback handler) {
+
+        String url = "https://" + Jump.getCaptureDomain() + "/oauth/mobile_signin_username_password";
+        Connection connection = new Connection(url);
+        connection.addAllToParams("client_id", Jump.getCaptureClientId(),
+                "redirect_uri", "http://android.library",
+                "email", username,
+                "password", password);
+        return connection.fetchResponseAsJson(handler);
+    }
+
     //public static void writePostParams(URLConnection connection, Set<Pair<String, String>> params)
     //        throws IOException {
     //    connection.getOutputStream().write(paramsGetBytes(params));
@@ -187,6 +201,20 @@ public class JRCapture {
                 "redirect_uri", "http://android-library",
                 "token", authInfoToken,
                 "thin_registration", "true");
+        c.fetchResponseAsJson(handler);
+    }
+
+    public static void performLegacySocialSignIn(String authInfoToken, final FetchJsonCallback handler) {
+        /***
+         *     return [NSString stringWithFormat:@"%@/oauth/mobile_signin?client_id=%@&redirect_uri=%@/cmeu%@",
+                 captureDataInstance.captureUIBaseUrl, captureDataInstance.clientId,
+                 captureDataInstance.captureUIBaseUrl, bpChannelParam];
+         */
+
+        Connection c = new Connection("https://" + Jump.getCaptureDomain() + "/oauth/mobile_signin");
+        c.addAllToParams("client_id", Jump.getCaptureClientId());
+        c.addAllToParams("redirect_uri", "http://android-library");
+        c.addAllToParams("token", authInfoToken);
         c.fetchResponseAsJson(handler);
     }
 

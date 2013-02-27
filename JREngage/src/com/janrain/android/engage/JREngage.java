@@ -1141,18 +1141,10 @@ public class JREngage {
 
     private static void logd(String msg, Throwable t, int stackDepth) {
         if (!(sLoggingEnabled == null || sLoggingEnabled)) return;
-        String method;
-        try {
-            throw new Exception();
-        } catch (Exception e) {
-            e.fillInStackTrace();
-            StackTraceElement stackTraceElement = e.getStackTrace()[stackDepth];
-            method = stackTraceElement.getMethodName() + ":" + stackTraceElement.getLineNumber();
-        }
         if (t != null) {
-            Log.d("[" + method + "]", msg, t);
+            Log.d("[" + getLogTag(stackDepth) + "]", msg, t);
         } else {
-            Log.d("[" + method + "]", msg);
+            Log.d("[" + getLogTag(stackDepth) + "]", msg);
         }
     }
 
@@ -1172,20 +1164,29 @@ public class JREngage {
         loge(msg, null, 2);
     }
 
+    public static void loge(String msg, Throwable t) {
+        loge(msg, t, 2);
+    }
+
     private static void loge(String msg, Throwable t, int stackDepth) {
+        if (t != null) {
+            Log.e("[" + getLogTag(stackDepth) + "]", msg, t);
+        } else {
+            Log.e("[" + getLogTag(stackDepth) + "]", msg);
+        }
+    }
+
+    private static String getLogTag(int stackDepth) {
         String method;
         try {
             throw new Exception();
         } catch (Exception e) {
             e.fillInStackTrace();
-            StackTraceElement stackTraceElement = e.getStackTrace()[stackDepth];
-            method = stackTraceElement.getMethodName() + ":" + stackTraceElement.getLineNumber();
+            StackTraceElement stackTraceElement = e.getStackTrace()[stackDepth + 1];
+            method = stackTraceElement.getClassName() + "." + stackTraceElement.getMethodName() + ":"
+                    + stackTraceElement.getLineNumber();
         }
-        if (t != null) {
-            Log.e("[" + method + "]", msg, t);
-        } else {
-            Log.e("[" + method + "]", msg);
-        }
+        return method;
     }
 }
 
