@@ -55,6 +55,8 @@ import org.json.JSONObject;
 
 
 import static com.janrain.android.Jump.SignInResultHandler.FailureReasons;
+import static com.janrain.android.R.string.jr_capture_trad_signin_bad_password;
+import static com.janrain.android.R.string.jr_dialog_dismiss;
 
 public class Jump {
     private enum State {
@@ -194,8 +196,8 @@ public class Jump {
                                         public void onFailure(Object error) {
                                             dismissProgressIndicator();
                                             AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
-                                            //b.setNeutralButton(jr_dialog_dismiss, null);
-                                            //b.setMessage(jr_capture_trad_signin_bad_password);
+                                            b.setNeutralButton(jr_dialog_dismiss, null);
+                                            b.setMessage(jr_capture_trad_signin_bad_password);
                                             b.show();
                                         }
                                     });
