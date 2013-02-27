@@ -85,6 +85,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import com.janrain.android.R;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSession;
@@ -102,6 +103,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static com.janrain.android.R.string.jr_git_describe;
 
 /**
  * @brief
@@ -203,7 +206,7 @@ public class JREngage {
             throw new IllegalArgumentException("appId parameter cannot be null.");
         }
 
-        logd(TAG, "[initInstance] git resource '" + context.getString(R.string.jr_git_describe) +
+        logd(TAG, "[initInstance] git resource '" + context.getString(jr_git_describe) +
                 "' activity '" + context + "' appId '" + appId + "' tokenUrl '" + tokenUrl + "'");
 
         if (sInstance == null) {

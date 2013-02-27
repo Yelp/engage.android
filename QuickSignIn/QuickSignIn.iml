@@ -37,7 +37,7 @@
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="JREngage" />
+    <orderEntry type="module" module-name="Jump" />
     <orderEntry type="inheritedJdk" />
   </component>
 </module>

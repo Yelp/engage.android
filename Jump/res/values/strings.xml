@@ -5,21 +5,21 @@
     <!-- The right side of the n was being clipped, hence this work around backslash kludge -->
     <string name="jr_powered_by">Powered by Janrain \</string>
 
-    <string name="jr_progress_loading">Loading. Please wait...</string>
-    <string name="jr_progress_sharing">Sharing. Please wait...</string>
+    <string name="jr_progress_loading">Loading. Please wait…</string>
+    <string name="jr_progress_sharing">Sharing. Please wait…</string>
     <string name="jr_dialog_ok">OK</string>
+    <string name="jr_dialog_dismiss">Dismiss</string>
 
     <!-- - About menu/dialog strings. -->
     <string name="jr_about_menu_item">About Janrain Engage</string>
     <string name="jr_about_title">Janrain Engage for Android Library</string>
     <string name="jr_about_URL">www.janrain.com</string>
-    <string name="jr_about_button_ok">OK</string>
 
     <!-- - JRProviderList strings. -->
-    <string name="jr_provider_list_title">Sign in with...</string>
+    <string name="jr_provider_list_title">Sign in with…</string>
     <string name="jr_provider_list_empty">No configured sign-in providers</string>
     <string name="jr_provider_unknown">Unknown provider</string>
-    <string name="jr_provider_sign_in_with">Sign in with...</string>
+    <string name="jr_provider_sign_in_with">Sign in with…</string>
 
     <!-- - JRLanding strings. -->
     <string name="jr_landing_bad_user_input">Invalid Input</string>

@@ -39,7 +39,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.R;
+import com.janrain.android.R;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;

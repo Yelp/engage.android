@@ -40,7 +40,7 @@ import android.graphics.drawable.StateListDrawable;
 import android.text.TextUtils;
 import android.util.Log;
 import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.R;
+import com.janrain.android.R;
 import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.engage.utils.AndroidUtils;
 import com.janrain.android.engage.utils.PrefUtils;

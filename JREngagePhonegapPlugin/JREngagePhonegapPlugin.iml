@@ -38,7 +38,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="JREngage" />
+    <orderEntry type="module" module-name="Jump" />
     <orderEntry type="library" name="cordova-2.3.0" level="project" />
   </component>
 </module>

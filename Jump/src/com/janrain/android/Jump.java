@@ -41,27 +41,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Toast;
 import com.janrain.android.capture.JRCapture;
 import com.janrain.android.capture.JRCaptureRecord;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
-import com.janrain.android.engage.R;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.ui.JRCustomInterface;
 import com.janrain.android.engage.ui.JRCustomInterfaceConfiguration;
 import com.janrain.android.engage.ui.JRCustomInterfaceView;
 import org.json.JSONObject;
 
-import java.lang.ref.Reference;
 
 import static com.janrain.android.Jump.SignInResultHandler.FailureReasons;
-import static com.janrain.android.engage.R.string.jr_capture_trad_signin_bad_password;
 
 public class Jump {
     private enum State {
@@ -74,7 +67,6 @@ public class Jump {
         private SignInResultHandler signInHandler;
     }
 
-    private static final String TAG = Jump.class.getSimpleName();
     private static final State state = State.STATE;
 
     public static void init(Context context, String engageAppId, String captureDomain,
@@ -202,8 +194,8 @@ public class Jump {
                                         public void onFailure(Object error) {
                                             dismissProgressIndicator();
                                             AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
-
-                                            b.setMessage(getString(jr_capture_trad_signin_bad_password));
+                                            //b.setNeutralButton(jr_dialog_dismiss, null);
+                                            //b.setMessage(jr_capture_trad_signin_bad_password);
                                             b.show();
                                         }
                                     });

@@ -46,7 +46,7 @@ import android.graphics.drawable.StateListDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.Button;
-import com.janrain.android.engage.R;
+import com.janrain.android.R;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 

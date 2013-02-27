@@ -48,7 +48,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.R;
+import com.janrain.android.R;
 import com.janrain.android.engage.session.JRAuthenticatedUser;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.utils.AndroidUtils;

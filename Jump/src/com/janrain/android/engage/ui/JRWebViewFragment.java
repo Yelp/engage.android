@@ -61,7 +61,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
-import com.janrain.android.engage.R;
+import com.janrain.android.R;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;

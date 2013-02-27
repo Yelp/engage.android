@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.janrain.android.engage">
+          package="com.janrain.android">
 
     <!--According to Xav Ducrochet nothing from the Library Project's manifest *except* the package
         is respected by the Android SDK.  He recommends that the activities contained in a

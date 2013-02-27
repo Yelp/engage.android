@@ -56,12 +56,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.R;
+import com.janrain.android.R;
 import com.janrain.android.engage.session.JRSession;
 
 import java.io.Serializable;
 import java.util.HashMap;
 
+import static com.janrain.android.R.string.jr_dialog_ok;
 import static com.janrain.android.engage.utils.AndroidUtils.actionBarSetDisplayHomeAsUpEnabled;
 import static com.janrain.android.engage.utils.AndroidUtils.activityGetActionBar;
 
@@ -402,7 +403,7 @@ public abstract class JRUiFragment extends Fragment {
 
     private AlertDialog createAboutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setPositiveButton(R.string.jr_about_button_ok, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(jr_dialog_ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
             }

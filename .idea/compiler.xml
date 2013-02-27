@@ -3,7 +3,7 @@
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
     <excludeFromCompile>
-      <directory url="file://$PROJECT_DIR$/JREngage/gen" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/Jump/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/JREngagePhonegapPlugin/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/PhonegapSample/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/QuickShare/gen" includeSubdirectories="true" />

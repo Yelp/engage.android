@@ -46,6 +46,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.janrain.android.Jump;
@@ -68,6 +69,9 @@ import com.janrain.android.engage.utils.StringUtils;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 public class MainActivity extends FragmentActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -75,15 +79,15 @@ public class MainActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //enableStrictMode();
-        setContentView(R.layout.main);
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
 
-        Button testAuth = (Button) findViewById(R.id.btn_test_auth);
-        EditText shareUrlEdit = (EditText) findViewById(R.id.share_url);
-        Button testDirectAuth = (Button) findViewById(R.id.btn_test_specific_provider);
-        Button testBetaShare = (Button) findViewById(R.id.btn_test_beta_direct_share);
-        shareUrlEdit.setVisibility(View.GONE);
-        testDirectAuth.setVisibility(View.GONE);
-        testBetaShare.setVisibility(View.GONE);
+        Button testAuth = new Button(this);
+        testAuth.setText("Test Capture Auth");
+        testAuth.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+        linearLayout.addView(testAuth);
+
+        setContentView(linearLayout);
 
         Jump.init(this, "appcfamhnpkagijaeinl", "mobile-dev.janraincapture.com",
                 "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6");

@@ -41,7 +41,7 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module" module-name="JREngage" />
+    <orderEntry type="module" module-name="Jump" />
   </component>
 </module>
 
