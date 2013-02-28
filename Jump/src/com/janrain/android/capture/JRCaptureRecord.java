@@ -314,4 +314,8 @@ public class JRCaptureRecord extends JSONObject {
         //CaptureJsonUtils.deepArraySort(this);
         return collapseApidChanges(CaptureJsonUtils.compileChangeSet(original, this));
     }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 }

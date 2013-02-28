@@ -51,6 +51,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.janrain.android.Jump;
 import com.janrain.android.capture.JRCapture;
+import com.janrain.android.capture.JRCaptureRecord;
 import com.janrain.android.engage.session.JRSession;
 import com.janrain.android.engage.ui.JRCustomInterfaceConfiguration;
 import com.janrain.android.engage.ui.JRCustomInterfaceView;
@@ -75,14 +76,13 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class MainActivity extends FragmentActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //enableStrictMode();
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
 
         Button testAuth = new Button(this);
         testAuth.setText("Test Capture Auth");
@@ -131,16 +131,17 @@ public class MainActivity extends FragmentActivity {
 
         dumpRecord.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                try {
-                    JREngage.logd(Jump.getSignedInUser().toString(2));
-                } catch (JSONException e) {
-                    throw new RuntimeException("Unexpected", e);
-                }
+                JREngage.logd(String.valueOf(Jump.getSignedInUser()));
             }
         });
 
         touchRecord.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                if (Jump.getSignedInUser() == null) {
+                    Toast.makeText(MainActivity.this, "Can't edit without record instance.",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
                 AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
 
                 alert.setTitle("About Me");
@@ -152,7 +153,7 @@ public class MainActivity extends FragmentActivity {
                 alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         try {
-                            Jump.getSignedInUser().put("aboutMe", input.getText());
+                            Jump.getSignedInUser().put("aboutMe", input.getText().toString());
                         } catch (JSONException e) {
                             throw new RuntimeException("Unexpected", e);
                         }
@@ -167,6 +168,12 @@ public class MainActivity extends FragmentActivity {
         syncRecord.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
+                    if (Jump.getSignedInUser() == null) {
+                        Toast.makeText(MainActivity.this, "Can't sync without record instance.",
+                                Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                     Jump.getSignedInUser().synchronize(new JRCapture.RequestCallback() {
                         public void onSuccess() {
                             Toast.makeText(MainActivity.this, "Record updated", Toast.LENGTH_LONG).show();
@@ -184,6 +191,21 @@ public class MainActivity extends FragmentActivity {
             }
         });
     }
+
+    // Currently broken:
+    //@Override
+    //protected void onStart() {
+    //    super.onStart();
+    //
+    //    Jump.maybeLoadUserFromDisk(this);
+    //}
+    //
+    //@Override
+    //protected void onStop() {
+    //    super.onStop();
+    //
+    //    Jump.maybeSaveUserToDisk(this);
+    //}
 
     private static void enableStrictMode() {
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

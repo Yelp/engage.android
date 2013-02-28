@@ -113,25 +113,13 @@ public class Jump {
                 String authInfoToken = auth_info.getAsString("token");
 
                 //JRCapture.performSocialSignIn(authInfoToken, new JRCapture.FetchJsonCallback() {
-                JRCapture.performLegacySocialSignIn(authInfoToken, new JRCapture.FetchJsonCallback() {
-                        public void run(JSONObject response) {
-                        if (response == null) {
-                            fireHandlerOnFailure(FailureReasons.invalidApiResponse);
-                            return;
-                        }
-                        if ("ok".equals(response.opt("stat"))) {
-                            Object user = response.opt("capture_user");
-                            if (user instanceof JSONObject) {
-                                if (handler != null) {
-                                    state.signedInUser = new JRCaptureRecord(((JSONObject) user));
-                                    fireHandlerOnSuccess();
-                                }
-                            } else {
-                                fireHandlerOnFailure(FailureReasons.invalidApiResponse);
-                            }
-                        } else {
-                            fireHandlerOnFailure(response);
-                        }
+                JRCapture.performLegacySocialSignIn(authInfoToken, new SignInResponseHandler() {
+                    public void onSuccess() {
+                        fireHandlerOnSuccess();
+                    }
+
+                    public void onFailure(Object error) {
+                        fireHandlerOnFailure(error);
                     }
                 });
             }
@@ -185,22 +173,21 @@ public class Jump {
 
                     signIn.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
-                            final TradSignInHandler handler = 
-                                    new TradSignInHandler(new SignInResultHandler() {
-                                        public void onSuccess() {
-                                            fireHandlerOnSuccess();
-                                            dismissProgressIndicator();
-                                            finishJrSignin();
-                                        }
+                            final SignInResponseHandler handler = new SignInResponseHandler() {
+                                public void onSuccess() {
+                                    fireHandlerOnSuccess();
+                                    dismissProgressIndicator();
+                                    finishJrSignin();
+                                }
 
-                                        public void onFailure(Object error) {
-                                            dismissProgressIndicator();
-                                            AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
-                                            b.setNeutralButton(jr_dialog_dismiss, null);
-                                            b.setMessage(jr_capture_trad_signin_bad_password);
-                                            b.show();
-                                        }
-                                    });
+                                public void onFailure(Object error) {
+                                    dismissProgressIndicator();
+                                    AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
+                                    b.setNeutralButton(jr_dialog_dismiss, null);
+                                    b.setMessage(jr_capture_trad_signin_bad_password);
+                                    b.show();
+                                }
+                            };
                             final JRConnectionManagerDelegate d =
                                     //JRCapture.performTraditionalSignIn(userName.getText().toString(),
                                     JRCapture.performLegacyTraditionalSignIn(userName.getText().toString(),
@@ -220,45 +207,55 @@ public class Jump {
         }
     }
 
-    private static class TradSignInHandler implements JRCapture.FetchJsonCallback {
+    private static abstract class SignInResponseHandler implements JRCapture.FetchJsonCallback {
         private boolean canceled = false;
-        private SignInResultHandler handler;
-
-        private TradSignInHandler(SignInResultHandler handler) {
-            this.handler = handler;
-        }
 
         public void run(JSONObject response) {
             if (canceled) return;
             if (response == null) {
-                handler.onFailure(FailureReasons.invalidApiResponse);
+                onFailure(FailureReasons.invalidApiResponse);
                 return;
             }
             if ("ok".equals(response.opt("stat"))) {
                 Object user = response.opt("capture_user");
                 if (user instanceof JSONObject) {
                     state.signedInUser = new JRCaptureRecord(((JSONObject) user));
-                    handler.onSuccess();
+                    state.signedInUser.setAccessToken(response.optString("access_token"));
+                    //state.signedInUser.setRefreshSecret(asldkfjalkdfj)
+                    onSuccess();
                 } else {
-                    handler.onFailure(FailureReasons.invalidApiResponse);
+                    onFailure(FailureReasons.invalidApiResponse);
                 }
             } else {
-                handler.onFailure(response);
+                onFailure(response);
             }
         }
+
+        public abstract void onSuccess();
+        public abstract void onFailure(Object error);
     }
 
     public enum TraditionalSignInType { EMAIL, USERNAME }
 
     public static void performTraditionalSignIn(String username, String password,
                                                 TraditionalSignInType type,
-                                                SignInResultHandler handler) {
+                                                final SignInResultHandler handler) {
         if (state.jrEngage == null || state.captureDomain == null) {
             handler.onFailure(FailureReasons.jumpNotInitialized);
             return;
         }
 
-        JRCapture.performTraditionalSignIn(username, password, type, new TradSignInHandler(handler));
+        JRCapture.performTraditionalSignIn(username, password, type, new SignInResponseHandler() {
+            @Override
+            public void onSuccess() {
+                handler.onSuccess();
+            }
+
+            @Override
+            public void onFailure(Object error) {
+                handler.onFailure(error);
+            }
+        });
     }
 
     public interface SignInResultHandler {
@@ -268,5 +265,13 @@ public class Jump {
 
         void onSuccess();
         void onFailure(Object error);
+    }
+
+    public static void maybeLoadUserFromDisk(Context context) {
+        state.signedInUser = JRCaptureRecord.loadFromDisk(context);
+    }
+
+    public static void maybeSaveUserToDisk(Context context) {
+        if (state.signedInUser != null) state.signedInUser.saveToDisk(context);
     }
 }

@@ -127,7 +127,7 @@ public class JRCapture {
     public static JRConnectionManagerDelegate performTraditionalSignIn(String username,
                                                                        String password,
                                                                        Jump.TraditionalSignInType type,
-                                                                       final FetchJsonCallback handler) {
+                                                                       FetchJsonCallback handler) {
         /**
          * client_id
          * locale
@@ -154,8 +154,7 @@ public class JRCapture {
     public static JRConnectionManagerDelegate performLegacyTraditionalSignIn(String username,
                                                                              String password,
                                                                              Jump.TraditionalSignInType type,
-                                                                             final FetchJsonCallback handler) {
-
+                                                                             FetchJsonCallback handler) {
         String url = "https://" + Jump.getCaptureDomain() + "/oauth/mobile_signin_username_password";
         Connection connection = new Connection(url);
         connection.addAllToParams("client_id", Jump.getCaptureClientId(),
@@ -205,12 +204,6 @@ public class JRCapture {
     }
 
     public static void performLegacySocialSignIn(String authInfoToken, final FetchJsonCallback handler) {
-        /***
-         *     return [NSString stringWithFormat:@"%@/oauth/mobile_signin?client_id=%@&redirect_uri=%@/cmeu%@",
-                 captureDataInstance.captureUIBaseUrl, captureDataInstance.clientId,
-                 captureDataInstance.captureUIBaseUrl, bpChannelParam];
-         */
-
         Connection c = new Connection("https://" + Jump.getCaptureDomain() + "/oauth/mobile_signin");
         c.addAllToParams("client_id", Jump.getCaptureClientId());
         c.addAllToParams("redirect_uri", "http://android-library");
