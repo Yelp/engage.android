@@ -41,9 +41,11 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -595,5 +597,19 @@ public class CaptureJsonUtils {
             //everything else is^H^H had better be immutable
             return val;
         }
+    }
+
+    public static List<Object> jsonArrayToList(JSONArray array) {
+        List<Object> retval = new ArrayList<Object>();
+
+        for (int i = 0; i < array.length(); i++) {
+            try {
+                retval.add(array.get(i));
+            } catch (JSONException e) {
+                throw new RuntimeException("Unexpected", e);
+            }
+        }
+
+        return retval;
     }
 }
