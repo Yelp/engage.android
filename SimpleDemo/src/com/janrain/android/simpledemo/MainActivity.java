@@ -107,11 +107,11 @@ public class MainActivity extends FragmentActivity {
         setContentView(linearLayout);
 
         Jump.init(this, "appcfamhnpkagijaeinl", "mobile-dev.janraincapture.com",
-                "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6");
+                "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6", Jump.TraditionalSignInType.EMAIL);
 
         testAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Jump.showSignInDialog(MainActivity.this, new Jump.SignInResultHandler(){
+                Jump.showSignInDialog(MainActivity.this, null, new Jump.SignInResultHandler(){
                     public void onSuccess() {
                         AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
                         b.setMessage("success");
