@@ -148,6 +148,10 @@ public class Jump {
         state.jrEngage.showAuthenticationDialog(fromActivity, TradSignInUi.class);
     }
 
+    /**
+     * Signs the signed-in user out, and removes their record from disk.
+     * @param applicationContext
+     */
     public static void signOutCaptureUser(Context applicationContext) {
         state.signedInUser = null;
         JRCaptureRecord.deleteFromDisk(applicationContext);
@@ -219,7 +223,14 @@ public class Jump {
 
     public enum TraditionalSignInType { EMAIL, USERNAME }
 
-    public static void performTraditionalSignIn(String username, String password,
+    /**
+     * Headless API for Capture traditional account sign-in
+     * @param signInName the end user's user name or email address
+     * @param password the end user's password
+     * @param type the type of name in signInName
+     * @param handler your callback handler, invoked upon completion in the UI thread
+     */
+    public static void performTraditionalSignIn(String signInName, String password,
                                                 TraditionalSignInType type,
                                                 final SignInResultHandler handler) {
         if (state.jrEngage == null || state.captureDomain == null) {
@@ -227,7 +238,7 @@ public class Jump {
             return;
         }
 
-        JRCapture.performTraditionalSignIn(username, password, type, new SignInResponseHandler() {
+        JRCapture.performTraditionalSignIn(signInName, password, type, new SignInResponseHandler() {
             @Override
             public void onSuccess(JRCaptureRecord record) {
                 state.signedInUser = record;
@@ -246,14 +257,30 @@ public class Jump {
             invalidApiResponse, jumpNotInitialized, AuthenticationCanceledByUser
         }
 
+        /**
+         * Called when Capture sign-in has succeeded
+         */
         void onSuccess();
+
+        /**
+         * Called when Capture sign-in has failed.
+         * @param error
+         */
         void onFailure(Object error);
     }
 
+    /**
+     * To be called from Application#onCreate()
+     * @param context the application context, used to interact with the disk
+     */
     public static void maybeLoadUserFromDisk(Context context) {
         state.signedInUser = JRCaptureRecord.loadFromDisk(context);
     }
 
+    /**
+     * To be called from Activity#onPause
+     * @param context the application context, used to interact with the disk
+     */
     public static void maybeSaveUserToDisk(Context context) {
         if (state.signedInUser != null) state.signedInUser.saveToDisk(context);
     }
