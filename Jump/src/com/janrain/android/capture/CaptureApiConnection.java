@@ -113,8 +113,8 @@ import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
             byte[] postData = paramsGetBytes(params);
             JRConnectionManager.createConnection(url, connectionCallback, null, null, postData);
         } else {
-            String urlWithParms = url + "?" + paramsToString(params);
-            JRConnectionManager.createConnection(urlWithParms, connectionCallback, null, null, null);
+            String urlWithParams = url + "?" + paramsToString(params);
+            JRConnectionManager.createConnection(urlWithParams, connectionCallback, null, null, null);
         }
         return connectionCallback;
     }

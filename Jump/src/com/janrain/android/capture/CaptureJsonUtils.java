@@ -297,13 +297,13 @@ public class CaptureJsonUtils {
                 // new element
                 JSONArray wrapperA;
                 JSONObject wrapperO;
-                try {
-                    wrapperA = new JSONArray(Arrays.asList(new Object[]{currentElt}));
-                    wrapperO = new JSONObject();
-                    wrapperO.put(arrayAttrName, wrapperA);
-                } catch (JSONException e) {
-                    throw new RuntimeException("Unexpected", e);
-                }
+                //try {
+                wrapperA = new JSONArray(Arrays.asList(new Object[]{currentElt}));
+                wrapperO = new JSONObject();
+                jsonObjectUnsafePut(wrapperO, arrayAttrName, wrapperA);
+                //} catch (JSONException e) {
+                //    throw new RuntimeException("Unexpected", e);
+                //}
                 changeSet.add(new ApidUpdate(wrapperO, relativePath));
             } else {
                 // update to existing id
@@ -336,6 +336,22 @@ public class CaptureJsonUtils {
         }
 
         return changeSet;
+    }
+
+    /**
+     * An unsafe variant of JSONObject.put
+     * @param this_ a JSONObject into which to put name and value
+     * @param name the name of the
+     * @param value must be a JSON value
+     * @throws RuntimeException if this_.put(name, value) throws a JSONException
+     */
+    public static void jsonObjectUnsafePut(JSONObject this_, String name, Object value)
+            throws RuntimeException {
+        try {
+            this_.put(name, value);
+        } catch (JSONException e) {
+            throw new RuntimeException("Unexpected", e);
+        }
     }
 
     private static void inPlaceSortByEltIds(JSONArray original, int start, int len) {
