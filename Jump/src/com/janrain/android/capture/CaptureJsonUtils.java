@@ -141,8 +141,9 @@ public class CaptureJsonUtils {
      * @param thisVal one JSON value
      * @param otherVal another JSON value
      * @return 0 if they are equal
+     * @throws IllegalArgumentException if either argument is not a JSON value
      */
-    public static int compareJsonVals(Object thisVal, Object otherVal) {
+    public static int compareJsonVals(Object thisVal, Object otherVal) throws IllegalArgumentException {
         Integer comparison = null;
         if (thisVal instanceof JSONArray) {
             comparison = jsonArrayCompareTo((JSONArray) thisVal, otherVal);
@@ -163,7 +164,7 @@ public class CaptureJsonUtils {
         } else if (thisVal.equals(JSONObject.NULL)) {
             if (otherVal.equals(JSONObject.NULL)) comparison = 0;
         } else {
-            throw new RuntimeException("Unexpected type in compareTo for: " + thisVal);
+            throw new IllegalArgumentException("Unexpected type in compareTo for: " + thisVal);
         }
 
         if (comparison == null) {
@@ -392,7 +393,7 @@ public class CaptureJsonUtils {
      * @return true if the array has elements which are objects which have attributes of name "id"
      */
     public static boolean hasIds(JSONArray array) {
-        for (int i=0; i < array.length(); i++) {
+        for (int i = 0; i < array.length(); i++) {
             try {
                 Object o = array.get(i);
                 if (o instanceof JSONObject) {
@@ -407,8 +408,8 @@ public class CaptureJsonUtils {
     }
 
     private static Set<ApidChange> compileChangeSetForArrayWithIds(JSONArray original,
-                                                                             JSONArray current,
-                                                                             String arrayAttrPath)
+                                                                   JSONArray current,
+                                                                   String arrayAttrPath)
             throws JRCapture.InvalidApidChangeException {
         Set<ApidChange> changeSet = new HashSet<ApidChange>();
         String arrayAttrName = getLastPathElement(arrayAttrPath);
@@ -420,7 +421,7 @@ public class CaptureJsonUtils {
         int originalIndex = 0;
         for (int currentIndex = 0; currentIndex < sortedCurrent.length(); currentIndex++) {
             Integer currentId = getIdForPlurEltAtIndex(sortedCurrent, currentIndex);
-            final Object currentElt;
+            Object currentElt;
             try {
                 currentElt = sortedCurrent.get(currentIndex);
             } catch (JSONException e) {
@@ -536,8 +537,8 @@ public class CaptureJsonUtils {
 
     private static Integer getIdForPlurEltAtIndex(JSONArray array, int index) {
         try {
-            Object o = array.get(index);
-            if (o instanceof JSONObject) return ((Integer) ((JSONObject) o).opt("id"));
+            Object element = array.get(index);
+            if (element instanceof JSONObject) return (Integer) ((JSONObject) element).opt("id");
         } catch (JSONException e) {
             throw new RuntimeException("Unexpected", e);
         }
@@ -545,7 +546,7 @@ public class CaptureJsonUtils {
     }
 
     private static Set<ApidChange> compileChangeSet(JSONObject original, JSONObject current,
-                                                              String relativePath)
+                                                    String relativePath)
             throws JRCapture.InvalidApidChangeException {
         SortedSet<String> origKeys = makeSortedSetFromIterator((Iterator<String>) original.keys());
         SortedSet<String> currentKeys = makeSortedSetFromIterator((Iterator<String>) current.keys());

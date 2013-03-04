@@ -57,6 +57,7 @@ import org.json.JSONObject;
 import static com.janrain.android.Jump.SignInResultHandler.FailureReasons;
 import static com.janrain.android.R.string.jr_capture_trad_signin_bad_password;
 import static com.janrain.android.R.string.jr_dialog_dismiss;
+import static com.janrain.android.capture.JRCapture.SignInResponseHandler;
 
 public class Jump {
     private enum State {
@@ -70,6 +71,8 @@ public class Jump {
     }
 
     private static final State state = State.STATE;
+
+    private Jump() {}
 
     public static void init(Context context, String engageAppId, String captureDomain,
                             String captureClientId) {
@@ -114,7 +117,8 @@ public class Jump {
 
                 //JRCapture.performSocialSignIn(authInfoToken, new JRCapture.FetchJsonCallback() {
                 JRCapture.performLegacySocialSignIn(authInfoToken, new SignInResponseHandler() {
-                    public void onSuccess() {
+                    public void onSuccess(JRCaptureRecord record) {
+                        state.signedInUser = record;
                         fireHandlerOnSuccess();
                     }
 
@@ -142,6 +146,11 @@ public class Jump {
 
         state.signInHandler = handler;
         state.jrEngage.showAuthenticationDialog(fromActivity, TradSignInUi.class);
+    }
+
+    public static void signOutCaptureUser(Context applicationContext) {
+        state.signedInUser = null;
+        JRCaptureRecord.deleteFromDisk(applicationContext);
     }
 
     private static void fireHandlerOnFailure(Object failureParam) {
@@ -174,7 +183,8 @@ public class Jump {
                     signIn.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             final SignInResponseHandler handler = new SignInResponseHandler() {
-                                public void onSuccess() {
+                                public void onSuccess(JRCaptureRecord record) {
+                                    state.signedInUser = record;
                                     fireHandlerOnSuccess();
                                     dismissProgressIndicator();
                                     finishJrSignin();
@@ -195,7 +205,7 @@ public class Jump {
                                             TraditionalSignInType.EMAIL, handler);
                             showProgressIndicator(true, new DialogInterface.OnCancelListener() {
                                 public void onCancel(DialogInterface dialog) {
-                                    handler.canceled = true;
+                                    handler.cancel();
                                     JRConnectionManager.stopConnectionsForDelegate(d);
                                 }
                             });
@@ -205,34 +215,6 @@ public class Jump {
                 }
             };
         }
-    }
-
-    private static abstract class SignInResponseHandler implements JRCapture.FetchJsonCallback {
-        private boolean canceled = false;
-
-        public void run(JSONObject response) {
-            if (canceled) return;
-            if (response == null) {
-                onFailure(FailureReasons.invalidApiResponse);
-                return;
-            }
-            if ("ok".equals(response.opt("stat"))) {
-                Object user = response.opt("capture_user");
-                if (user instanceof JSONObject) {
-                    state.signedInUser = new JRCaptureRecord(((JSONObject) user));
-                    state.signedInUser.setAccessToken(response.optString("access_token"));
-                    //state.signedInUser.setRefreshSecret(asldkfjalkdfj)
-                    onSuccess();
-                } else {
-                    onFailure(FailureReasons.invalidApiResponse);
-                }
-            } else {
-                onFailure(response);
-            }
-        }
-
-        public abstract void onSuccess();
-        public abstract void onFailure(Object error);
     }
 
     public enum TraditionalSignInType { EMAIL, USERNAME }
@@ -247,7 +229,8 @@ public class Jump {
 
         JRCapture.performTraditionalSignIn(username, password, type, new SignInResponseHandler() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(JRCaptureRecord record) {
+                state.signedInUser = record;
                 handler.onSuccess();
             }
 

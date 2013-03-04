@@ -192,20 +192,11 @@ public class MainActivity extends FragmentActivity {
         });
     }
 
-    // Currently broken:
-    //@Override
-    //protected void onStart() {
-    //    super.onStart();
-    //
-    //    Jump.maybeLoadUserFromDisk(this);
-    //}
-    //
-    //@Override
-    //protected void onStop() {
-    //    super.onStop();
-    //
-    //    Jump.maybeSaveUserToDisk(this);
-    //}
+    @Override
+    protected void onPause() {
+        Jump.maybeSaveUserToDisk(this);
+        super.onPause();
+    }
 
     private static void enableStrictMode() {
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

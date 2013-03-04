@@ -42,6 +42,7 @@ import java.util.Set;
 
 /*package*/ class ApidDelete extends ApidChange {
     /*package*/ ApidDelete(String attrPath) {
+        if (attrPath.equals("/")) throw new RuntimeException("Unexpected root attrPath in: " + this);
         this.attrPath = attrPath;
     }
 
@@ -56,7 +57,6 @@ import java.util.Set;
     @Override
     /*package*/ Set<Pair<String, String>> getBodyParams() {
         Set<Pair<String, String>> params = new HashSet<Pair<String, String>>();
-        if (attrPath.equals("/")) throw new RuntimeException("Unexpected root attrPath in: " + this);
         params.add(new Pair<String, String>("attribute_name", attrPath));
         return params;
     }

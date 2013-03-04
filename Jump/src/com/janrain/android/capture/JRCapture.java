@@ -52,10 +52,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static android.text.TextUtils.join;
+import static com.janrain.android.Jump.SignInResultHandler.FailureReasons.invalidApiResponse;
 import static com.janrain.android.capture.CaptureStringUtils.readFully;
 import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
 
 public class JRCapture {
+    private JRCapture() {}
+
     private static JSONObject getEntity(int id) throws IOException, JSONException {
         //URLConnection entityConn = new URL("https://" + CAPTURE_DOMAIN + "/entity?" +
         //        "type_name=" + ENTITY_TYPE_NAME +
@@ -209,6 +212,36 @@ public class JRCapture {
         c.addAllToParams("redirect_uri", "http://android-library");
         c.addAllToParams("token", authInfoToken);
         c.fetchResponseAsJson(handler);
+    }
+
+    public static abstract class SignInResponseHandler implements FetchJsonCallback {
+        private boolean canceled = false;
+
+        public void cancel() {
+            canceled = true;
+        }
+
+        public void run(JSONObject response) {
+            if (canceled) return;
+            if (response == null) {
+                onFailure(invalidApiResponse);
+            } else if ("ok".equals(response.opt("stat"))) {
+                Object user = response.opt("capture_user");
+                if (user instanceof JSONObject) {
+                    JRCaptureRecord record = new JRCaptureRecord(((JSONObject) user));
+                    record.accessToken = response.optString("access_token");
+                    //record.setRefreshSecret(asldkfjalkdfj)
+                    onSuccess(record);
+                } else {
+                    onFailure(invalidApiResponse);
+                }
+            } else {
+                onFailure(response);
+            }
+        }
+
+        public abstract void onSuccess(JRCaptureRecord record);
+        public abstract void onFailure(Object error);
     }
 
     public interface FetchJsonCallback {

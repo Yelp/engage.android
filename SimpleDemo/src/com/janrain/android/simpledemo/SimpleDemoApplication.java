@@ -1,6 +1,6 @@
 /*
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *  Copyright (c) 2012, Janrain, Inc.
+ *  Copyright (c) 2013, Janrain, Inc.
  *
  *  All rights reserved.
  *
@@ -30,37 +30,20 @@
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
 
-package com.janrain.android.engage.utils;
+package com.janrain.android.simpledemo;
 
-import android.os.Looper;
+import android.app.Application;
+import com.janrain.android.Jump;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+/**
+ * Created with IntelliJ IDEA. User: nathan Date: 3/1/13 Time: 9:43 AM To change this template use File |
+ * Settings | File Templates.
+ */
+public class SimpleDemoApplication extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-public class ThreadUtils {
-    private static ThreadPoolExecutor sExecutor;
-    static {
-        sExecutor = new ThreadPoolExecutor(0, 10, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10));
-
-        // wrap the thread pool's thread factory in a thing that badges the names of its threads with a
-        // prefix so that they can be identified while debugg
-        final ThreadFactory originalFactory = sExecutor.getThreadFactory();
-        sExecutor.setThreadFactory(new ThreadFactory() {
-            public Thread newThread(Runnable runnable) {
-                Thread t = originalFactory.newThread(runnable);
-                t.setName("JREngage-ThreadUtils~" + t.getName());
-                return t;
-            }
-        });
-    }
-
-    public static void executeInBg(Runnable r) {
-        if (Looper.myLooper() == null) {
-            r.run();
-        } else {
-            sExecutor.execute(r);
-        }
+        Jump.maybeLoadUserFromDisk(this);
     }
 }
