@@ -51,56 +51,57 @@ import com.janrain.android.engage.ui.JRCustomInterfaceView;
 import static com.janrain.android.R.string.jr_capture_trad_signin_bad_password;
 import static com.janrain.android.R.string.jr_dialog_dismiss;
 
-/**
-* Created with IntelliJ IDEA. User: nathan Date: 3/4/13 Time: 1:46 PM To change this template use File |
-* Settings | File Templates.
-*/
 public class TradSignInUi extends JRCustomInterfaceConfiguration {
     public TradSignInUi() {
-        this.mProviderListHeader = new JRCustomInterfaceView() {
-            @Override
-            public View onCreateView(Context context,
-                                     LayoutInflater inflater,
-                                     ViewGroup container,
-                                     Bundle savedInstanceState) {
-                View v = inflater.inflate(R.layout.jr_capture_trad_signin, container, false);
-                final EditText userName = (EditText) v.findViewById(R.id.username_edit);
-                final EditText password = (EditText) v.findViewById(R.id.password_edit);
-                Button signIn = (Button) v.findViewById(R.id.custom_signin_button);
+        this.mProviderListHeader = new TradSignInView();
+    }
 
-                signIn.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        final JRCapture.SignInResponseHandler handler = new JRCapture.SignInResponseHandler() {
-                            public void onSuccess(JRCaptureRecord record) {
-                                Jump.state.signedInUser = record;
-                                Jump.fireHandlerOnSuccess();
-                                dismissProgressIndicator();
-                                finishJrSignin();
-                            }
+    private static class TradSignInView extends JRCustomInterfaceView {
+        private EditText userName, password;
 
-                            public void onFailure(Object error) {
-                                dismissProgressIndicator();
-                                AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
-                                b.setNeutralButton(jr_dialog_dismiss, null);
-                                b.setMessage(jr_capture_trad_signin_bad_password);
-                                b.show();
-                            }
-                        };
-                        final JRConnectionManagerDelegate d =
-                                //JRCapture.performTraditionalSignIn(userName.getText().toString(),
-                                JRCapture.performLegacyTraditionalSignIn(userName.getText().toString(),
-                                                password.getText().toString(),
-                                        Jump.state.traditionalSignInType, handler);
-                        showProgressIndicator(true, new DialogInterface.OnCancelListener() {
-                            public void onCancel(DialogInterface dialog) {
-                                handler.cancel();
-                                JRConnectionManager.stopConnectionsForDelegate(d);
-                            }
-                        });
+        @Override
+        public View onCreateView(Context context,
+                                 LayoutInflater inflater,
+                                 ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View v = inflater.inflate(R.layout.jr_capture_trad_signin, container, false);
+            userName = (EditText) v.findViewById(R.id.username_edit);
+            password = (EditText) v.findViewById(R.id.password_edit);
+
+            v.findViewById(R.id.custom_signin_button).setOnClickListener(new SignInButtonHandler());
+            return v;
+        }
+
+        private class SignInButtonHandler implements View.OnClickListener {
+            public void onClick(View v) {
+                final JRCapture.SignInResponseHandler handler = new JRCapture.SignInResponseHandler() {
+                    public void onSuccess(JRCaptureRecord record) {
+                        Jump.state.signedInUser = record;
+                        Jump.fireHandlerOnSuccess();
+                        dismissProgressIndicator();
+                        finishJrSignin();
+                    }
+
+                    public void onFailure(Object error) {
+                        dismissProgressIndicator();
+                        AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
+                        b.setNeutralButton(jr_dialog_dismiss, null);
+                        b.setMessage(jr_capture_trad_signin_bad_password);
+                        b.show();
+                    }
+                };
+                final JRConnectionManagerDelegate d =
+                        //JRCapture.performTraditionalSignIn(userName.getText().toString(),
+                        JRCapture.performLegacyTraditionalSignIn(userName.getText().toString(),
+                                password.getText().toString(),
+                                Jump.state.traditionalSignInType, handler);
+                showProgressIndicator(true, new DialogInterface.OnCancelListener() {
+                    public void onCancel(DialogInterface dialog) {
+                        handler.cancel();
+                        JRConnectionManager.stopConnectionsForDelegate(d);
                     }
                 });
-                return v;
             }
-        };
+        }
     }
 }

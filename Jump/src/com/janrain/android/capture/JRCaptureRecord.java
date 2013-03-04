@@ -71,16 +71,17 @@ public class JRCaptureRecord extends JSONObject {
     }
 
     private JSONObject original;
+
     /*package*/ String accessToken;
     /*package*/ String refreshSecret;
 
     private JRCaptureRecord(){}
 
     /**
-     * Createds a new JRCaptureRecord model from a JSON representation of the record
-     * @param jo
+     * Instantiates a new JRCaptureRecord model from a JSON representation of the record
+     * @param jo a JSON representation of a Capture record, e.g. as from the response to oauth/auth_native
      */
-    public JRCaptureRecord(JSONObject jo) {
+    /*package*/ JRCaptureRecord(JSONObject jo, String accessToken, String refreshSecret) {
         super();
 
         try {
@@ -93,8 +94,8 @@ public class JRCaptureRecord extends JSONObject {
 
     /**
      * Loads a Capture user from a well-known filename on disk.
-     * @param applicationContext
-     * @return
+     * @param applicationContext the context from which to interact with the disk
+     * @return the loaded record, or null
      */
     public static JRCaptureRecord loadFromDisk(Context applicationContext) {
         String fileContents = null;
@@ -161,7 +162,7 @@ public class JRCaptureRecord extends JSONObject {
         //String domain = "test-multi.janraincapture.com";
         String domain = Jump.getCaptureDomain();
 
-        Connection c = new Connection("https://" + domain + "/access/getAccessToken");
+        CaptureApiConnection c = new CaptureApiConnection("https://" + domain + "/access/getAccessToken");
         String date = CAPTURE_SIGNATURE_DATE_FORMAT.format(new Date());
         Set<Pair<String, String>> params = new HashSet<Pair<String, String>>();
         //params.add(new Pair<String, String>("application_id", "fvbamf9kkkad3gnd9qyb4ggw6w"));
@@ -248,7 +249,7 @@ public class JRCaptureRecord extends JSONObject {
             }
         };
 
-        Connection connection = new Connection(change.getUrlFor().toString());
+        CaptureApiConnection connection = new CaptureApiConnection(change.getUrlFor().toString());
         connection.addAllToParams(params);
         connection.fetchResponseMaybeJson(jsonCallback);
     }
