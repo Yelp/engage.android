@@ -49,4 +49,10 @@ public class CaptureStringUtils {
             throw new RuntimeException(e);
         }
     }
+
+    /*package*/ static String getLastPathElement(String relativePath) {
+        String[] pathComponents = relativePath.split("/");
+        if (pathComponents.length == 0) return null;
+        return pathComponents[pathComponents.length - 1];
+    }
 }

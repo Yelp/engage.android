@@ -38,7 +38,9 @@ import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.utils.CollectionUtils;
 import com.janrain.android.utils.LogUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
@@ -47,6 +49,7 @@ import java.util.Set;
 
 import static android.text.TextUtils.join;
 import static com.janrain.android.utils.AndroidUtils.urlEncode;
+import static com.janrain.android.utils.LogUtils.throwDebugException;
 
 /*package*/ class CaptureApiConnection {
     /*package*/ String url;
@@ -70,6 +73,24 @@ import static com.janrain.android.utils.AndroidUtils.urlEncode;
                 });
 
         return join("&", paramPairs);
+    }
+
+    public static Object connectionManagerGetJsonContent(HttpResponseHeaders headers, byte[] payload) {
+        String json = null;
+        try {
+            json = new String(payload, "UTF-8");
+            if (headers.getContentType().toLowerCase().startsWith("application/json")) {
+                return new JSONTokener(json).nextValue();
+            }
+            LogUtils.logd("unrecognized content type: " + headers.getContentType());
+            LogUtils.logd(json);
+            return json;
+        } catch (JSONException ignore) {
+            return json;
+        } catch (UnsupportedEncodingException e) {
+            throwDebugException(new RuntimeException(e));
+            return json;
+        }
     }
 
     enum Method {POST, GET}
@@ -98,7 +119,7 @@ import static com.janrain.android.utils.AndroidUtils.urlEncode;
                                                            byte[] payload,
                                                            String requestUrl,
                                                            Object tag) {
-                        Object response = CaptureJsonUtils.connectionManagerGetJsonContent(headers, payload);
+                        Object response = connectionManagerGetJsonContent(headers, payload);
                         callback.run(response);
                     }
 

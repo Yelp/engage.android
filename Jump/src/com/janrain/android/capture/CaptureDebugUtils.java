@@ -34,6 +34,7 @@ package com.janrain.android.capture;
 
 import android.util.Pair;
 import com.janrain.android.Jump;
+import com.janrain.android.utils.JsonUtils;
 import com.janrain.android.utils.LogUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -159,7 +160,7 @@ public class CaptureDebugUtils {
             Object leftVal = original.opt(left);
             Object rightVal = original.opt(right);
             if (left < start + halfLen && right < start + len) {
-                if (CaptureJsonUtils.compareJsonVals(leftVal, rightVal) < 0) {
+                if (JsonUtils.compareJsonVals(leftVal, rightVal) < 0) {
                     temp[tempIndex++] = leftVal;
                     left++;
                 } else  {

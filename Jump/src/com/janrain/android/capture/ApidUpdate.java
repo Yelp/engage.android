@@ -34,6 +34,7 @@ package com.janrain.android.capture;
 
 import android.util.Pair;
 import com.janrain.android.Jump;
+import com.janrain.android.utils.JsonUtils;
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
@@ -49,7 +50,7 @@ import java.util.Set;
 
     /*package*/ ApidUpdate collapseWith(ApidUpdate update) {
         assert update.attrPath.equals(attrPath);
-        return new ApidUpdate(CaptureJsonUtils.collapseJsonObjects((JSONObject) newVal,
+        return new ApidUpdate(JsonUtils.collapseJsonObjects((JSONObject) newVal,
                 (JSONObject) update.newVal), attrPath);
     }
 

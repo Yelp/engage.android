@@ -36,6 +36,7 @@ import android.content.Context;
 import android.util.Base64;
 import android.util.Pair;
 import com.janrain.android.Jump;
+import com.janrain.android.utils.JsonUtils;
 import com.janrain.android.utils.LogUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,7 +60,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
-import static com.janrain.android.capture.CaptureJsonUtils.copyJsonVal;
+import static com.janrain.android.utils.JsonUtils.copyJsonVal;
 import static com.janrain.android.utils.AndroidUtils.urlEncode;
 import static com.janrain.android.utils.LogUtils.throwDebugException;
 
@@ -87,7 +88,7 @@ public class JRCaptureRecord extends JSONObject {
         super();
 
         original = (JSONObject) copyJsonVal(jo);
-        CaptureJsonUtils.deepCopy(original, this);
+        JsonUtils.deepCopy(original, this);
     }
 
     /**
@@ -105,7 +106,7 @@ public class JRCaptureRecord extends JSONObject {
             loadedRecord.original = serializedVersion.getJSONObject("original");
             loadedRecord.accessToken = serializedVersion.getString("accessToken");
             loadedRecord.refreshSecret = serializedVersion.getString("refreshSecret");
-            CaptureJsonUtils.deepCopy(serializedVersion.getJSONObject("this"), loadedRecord);
+            JsonUtils.deepCopy(serializedVersion.getJSONObject("this"), loadedRecord);
             fis.close();
         } catch (FileNotFoundException ignore) {
         } catch (UnsupportedEncodingException e) {
