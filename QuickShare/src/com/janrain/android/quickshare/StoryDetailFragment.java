@@ -41,7 +41,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
 import com.janrain.android.engage.types.JRActivityObject;
-import com.janrain.android.engage.utils.AndroidUtils;
+import com.janrain.android.utils.AndroidUtils;
 
 public class StoryDetailFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = StoryDetailFragment.class.getSimpleName();

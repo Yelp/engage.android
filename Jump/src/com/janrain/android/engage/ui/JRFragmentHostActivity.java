@@ -43,10 +43,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.R;
 import com.janrain.android.engage.session.JRSession;
-import com.janrain.android.engage.utils.AndroidUtils;
+import com.janrain.android.utils.AndroidUtils;
+import com.janrain.android.utils.LogUtils;
 
 public class JRFragmentHostActivity extends FragmentActivity {
     private static final String TAG = JRFragmentHostActivity.class.getSimpleName();
@@ -76,7 +76,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        JREngage.logd(TAG, "[onCreate]: " + getFragmentId());
+        LogUtils.logd(TAG, "[onCreate]: " + getFragmentId());
 
         JRSession session = JRSession.getInstance();
 
@@ -192,7 +192,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        JREngage.logd(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
+        LogUtils.logd(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         /* Sometimes this activity starts an activity by proxy for its fragment, in that case we
          * delegate the result to the fragment here.
@@ -250,7 +250,7 @@ public class JRFragmentHostActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        JREngage.logd(TAG, "onBackPressed");
+        LogUtils.logd(TAG, "onBackPressed");
 
         mUiFragment.onBackPressed();
     }

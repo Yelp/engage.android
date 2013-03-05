@@ -33,12 +33,12 @@ package com.janrain.android.engage.types;
 
 import android.text.TextUtils;
 import android.util.Log;
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRSession;
-import com.janrain.android.engage.utils.AndroidUtils;
+import com.janrain.android.utils.AndroidUtils;
+import com.janrain.android.utils.LogUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
@@ -49,8 +49,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.janrain.android.engage.utils.CollectionUtils.Function;
-import static com.janrain.android.engage.utils.CollectionUtils.map;
+import static com.janrain.android.utils.CollectionUtils.Function;
+import static com.janrain.android.utils.CollectionUtils.map;
 
 /*
  * @file
@@ -329,7 +329,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
         if (action == null) throw new IllegalArgumentException("illegal null action");
         if (url == null) url = "";
 
-        JREngage.logd(TAG, "created with action: " + action + " url: " + url);
+        LogUtils.logd(TAG, "created with action: " + action + " url: " + url);
         mAction = action;
         mUrl = url;
     }
@@ -669,7 +669,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
                     String payloadString = new String(payload);
 
                     try {
-                        JREngage.logd(TAG, "fetchShortenedURLs connectionDidFinishLoading: " + payloadString);
+                        LogUtils.logd(TAG, "fetchShortenedURLs connectionDidFinishLoading: " + payloadString);
                         JSONObject jso = (JSONObject) (new JSONTokener(payloadString)).nextValue();
                         jso = jso.getJSONObject("urls");
                         JSONObject jsonActivityUrls = jso.getJSONObject(JRSession.USERDATA_ACTIVITY_KEY);

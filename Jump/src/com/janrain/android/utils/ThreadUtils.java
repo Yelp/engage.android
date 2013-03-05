@@ -30,7 +30,7 @@
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
 
-package com.janrain.android.engage.utils;
+package com.janrain.android.utils;
 
 import android.os.Looper;
 

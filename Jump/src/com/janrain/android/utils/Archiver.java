@@ -29,7 +29,7 @@
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
-package com.janrain.android.engage.utils;
+package com.janrain.android.utils;
 
 import android.content.Context;
 import android.text.TextUtils;

@@ -44,8 +44,8 @@ import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.utils.AndroidUtils;
-import com.janrain.android.engage.utils.ThreadUtils;
+import com.janrain.android.utils.AndroidUtils;
+import com.janrain.android.utils.ThreadUtils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

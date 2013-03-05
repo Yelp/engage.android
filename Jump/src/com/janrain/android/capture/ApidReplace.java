@@ -42,6 +42,7 @@ import java.util.Set;
 
 /*package*/ class ApidReplace extends ApidChange {
     /*package*/ ApidReplace(Object newVal, String attrPath) {
+        if (attrPath.equals("/")) throw new IllegalArgumentException("Unexpected root attrPath in: " + this);
         this.newVal = newVal;
         this.attrPath = attrPath;
     }
@@ -58,7 +59,6 @@ import java.util.Set;
     /*package*/ Set<Pair<String, String>> getBodyParams() {
         Set<Pair<String, String>> params = new HashSet<Pair<String, String>>();
         params.add(new Pair<String, String>("value", newVal.toString()));
-        if (attrPath.equals("/")) throw new RuntimeException("Unexpected root attrPath in: " + this);
         params.add(new Pair<String, String>("attribute_name", attrPath));
         return params;
     }

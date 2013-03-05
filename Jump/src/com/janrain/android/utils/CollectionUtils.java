@@ -29,7 +29,7 @@
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
-package com.janrain.android.engage.utils;
+package com.janrain.android.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -48,24 +49,51 @@ import static java.lang.reflect.Array.newInstance;
  * @class CollectionUtils
  **/
 public final class CollectionUtils {
+    /**
+     * Loosey goosey variant of emptiness checking
+     * @param list a list or null
+     * @return true if there are no elements in list
+     */
     public static boolean isEmpty(List<?> list) {
         return ((list == null) || (list.size() < 1));
     }
 
     /**
-     * Returns a SortedSet&lt;T> with all the elements available from i
+     * Constructs a SortedSet&lt;T> with all the elements available from i
      * @param i an iterator to pull elements from
      * @param <T> The type of the elements
      * @return a SortedSet of the elements
      */
-    public static <T> SortedSet<T> makeSortedSetFromIterator(Iterator<T> i) {
+    public static <T> SortedSet<T> sortedSetFromIterator(Iterator<T> i) {
         SortedSet<T> retval = new TreeSet<T>();
         while (i.hasNext()) retval.add(i.next());
         return retval;
     }
 
+    /**
+     * Constructs the sorted union of two sets
+     * @param a
+     * @param b
+     * @return the sorted union
+     */
+    public static <T> SortedSet<T> sortedUnion(Set<T> a, Set<T> b) {
+        SortedSet<T> retVal = new TreeSet<T>(a);
+        retVal.addAll(b);
+        return retVal;
+    }
+
+    /**
+     * A first-class function stand-in
+     * @param <L> the return type of the function
+     * @param <R> the parameter type of the function
+     */
     public static interface Function<L, R> {
-        L operate(R val);
+        /**
+         * The function's implementation
+         * @param arg
+         * @return the function's evaluation on arg
+         */
+        L operate(R arg);
     }
 
     /**
@@ -112,6 +140,17 @@ public final class CollectionUtils {
         return retList;
     }
 
+    /**
+     * Attempts to construct a new collection of the same class as collection with elements as f mapped onto
+     * collection. If that class cannot be instantiated via Class#newInstance() then an ArrayList is
+     * constructed to hold the return value
+     *
+     * @param collection the collection to map f onto
+     * @param f a Function to map onto collection
+     * @param <L> the generic type of the constructed collection
+     * @param <R> the generic type of collection
+     * @return the newly constructed collection
+     */
     public static <L, R> Collection<L> map(Collection<R> collection, Function<L, R> f) {
         Collection<L> retCollection;
         try {

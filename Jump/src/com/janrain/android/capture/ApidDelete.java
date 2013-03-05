@@ -42,7 +42,7 @@ import java.util.Set;
 
 /*package*/ class ApidDelete extends ApidChange {
     /*package*/ ApidDelete(String attrPath) {
-        if (attrPath.equals("/")) throw new RuntimeException("Unexpected root attrPath in: " + this);
+        if (attrPath.equals("/")) throw new IllegalArgumentException("Unexpected root attrPath in: " + this);
         this.attrPath = attrPath;
     }
 

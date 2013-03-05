@@ -16,7 +16,7 @@
  */
 
 /* Horrible hack duplicating the API 9 implementation for compatibility: */
-package com.janrain.android.engage.utils;
+package com.janrain.android.utils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;

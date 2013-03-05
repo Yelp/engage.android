@@ -34,7 +34,7 @@ package com.janrain.android.capture;
 
 import android.util.Pair;
 import com.janrain.android.Jump;
-import com.janrain.android.engage.JREngage;
+import com.janrain.android.utils.LogUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,7 +78,7 @@ public class CaptureDebugUtils {
     public static void main(String[] args) throws IOException, JSONException {
         //JRCaptureEntity.inflate(getEntity(159)); // for entity type "user"
         JRCaptureRecord record = new JRCaptureRecord(getEntity(14474), null, null);
-        JREngage.logd("JRCapture", record.toString(2));
+        LogUtils.logd("JRCapture", record.toString(2));
 
         deeplyRandomizeArrayElementOrder(record);
         record.put("email", "nathan+androidtest2@janrain.com");
@@ -91,11 +91,11 @@ public class CaptureDebugUtils {
         try {
             record.synchronize(new JRCapture.RequestCallback() {
                 public void onSuccess() {
-                    JREngage.logd("JRCapture", "success");
+                    LogUtils.logd("JRCapture", "success");
                 }
 
                 public void onFailure(Object e) {
-                    JREngage.logd("JRCapture", ("failure: " + e));
+                    LogUtils.logd("JRCapture", ("failure: " + e));
                 }
             });
         } catch (JRCapture.InvalidApidChangeException e) {
@@ -110,11 +110,11 @@ public class CaptureDebugUtils {
                 json = CaptureStringUtils.readFully(uConn.getInputStream());
                 return new JSONTokener(json).nextValue();
             }
-            JREngage.logd("content type: " + uConn.getContentType());
-            JREngage.logd(CaptureStringUtils.readFully(uConn.getInputStream()));
+            LogUtils.logd("content type: " + uConn.getContentType());
+            LogUtils.logd(CaptureStringUtils.readFully(uConn.getInputStream()));
             return null;
         } catch (IOException e) {
-            JREngage.logd(e.toString());
+            LogUtils.logd(e.toString());
             return null;
         } catch (JSONException ignore) {
             return json;

@@ -51,9 +51,9 @@ package com.janrain.android.engage.net;
 
 import android.os.Handler;
 import android.util.Log;
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.utils.IOUtils;
+import com.janrain.android.utils.IOUtils;
+import com.janrain.android.utils.LogUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -63,12 +63,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.ProtocolException;
-import org.apache.http.client.RedirectHandler;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.DefaultRedirectHandler;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -77,7 +74,6 @@ import org.apache.http.protocol.HttpContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -183,7 +179,7 @@ public final class AsyncHttpClient {
         }
 
 		public void run() {
-			JREngage.logd(TAG, "[run] BEGIN, URL: " + mUrl);
+			LogUtils.logd(TAG, "[run] BEGIN, URL: " + mUrl);
 
             setupHttpClient();
 
@@ -191,7 +187,7 @@ public final class AsyncHttpClient {
                     new JRConnectionManager.HttpCallbackWrapper(mManagedConnection);
             try {
                 InetAddress ia = InetAddress.getByName(mRequest.getURI().getHost());
-                JREngage.logd(TAG, "Connecting to: " + ia.getHostAddress());
+                LogUtils.logd(TAG, "Connecting to: " + ia.getHostAddress());
 
                 mRequest.addHeader("User-Agent", USER_AGENT);
                 if (mHeaders == null) mHeaders = new ArrayList<NameValuePair>();
@@ -227,19 +223,19 @@ public final class AsyncHttpClient {
                 AsyncHttpResponse ahr;
                 switch (response.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
-                    JREngage.logd(TAG, "[run] HTTP_OK");
-                    JREngage.logd(TAG, "[run] headers: " + headers.toString());
-                    JREngage.logd(TAG, "[run] data for " + mUrl + ": " +
+                    LogUtils.logd(TAG, "[run] HTTP_OK");
+                    LogUtils.logd(TAG, "[run] headers: " + headers.toString());
+                    LogUtils.logd(TAG, "[run] data for " + mUrl + ": " +
                             dataString.substring(0, Math.min(dataString.length(), 600)));
                     ahr = new AsyncHttpResponse(mUrl, headers, data);
                     break;
                 case HttpStatus.SC_NOT_MODIFIED:
-                    JREngage.logd(TAG, "[run] HTTP_NOT_MODIFIED");
+                    LogUtils.logd(TAG, "[run] HTTP_NOT_MODIFIED");
                     ahr = new AsyncHttpResponse(mUrl, headers, data);
                     break;
                 case HttpStatus.SC_CREATED:
                     // Response from the Engage trail creation and maybe URL shortening calls
-                    JREngage.logd(TAG, "[run] HTTP_CREATED");
+                    LogUtils.logd(TAG, "[run] HTTP_CREATED");
                     ahr = new AsyncHttpResponse(mUrl, headers, data);
                     break;
                 default:

@@ -48,10 +48,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.R;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.session.JRSession;
+import com.janrain.android.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -197,7 +197,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        JREngage.logd(TAG, "[onCreateView]");
+        LogUtils.logd(TAG, "[onCreateView]");
         if (mSession == null) return null;
         View inflatedLayout = inflater.inflate(R.layout.jr_provider_listview, container, false);
 
@@ -277,7 +277,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        JREngage.logd(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
+        LogUtils.logd(TAG, "requestCode: " + requestCode + " resultCode: " + resultCode);
         switch (requestCode) {
             case JRUiFragment.REQUEST_LANDING:
                 switch (resultCode) {
@@ -334,7 +334,7 @@ public class JRProviderListFragment extends JRUiFragment {
 
     private void doSessionPoll() {
         ++mTimerCount;
-        JREngage.logd(TAG, "[doSessionPoll] timer count: " + mTimerCount);
+        LogUtils.logd(TAG, "[doSessionPoll] timer count: " + mTimerCount);
 
         if (mTimerCount > TIMER_MAX_ITERATIONS) {
             mTimer.cancel();
@@ -346,9 +346,9 @@ public class JRProviderListFragment extends JRUiFragment {
                 mProviderList = providers;
                 getActivity().runOnUiThread(mProvidersLoadedRunner);
                 mTimer.cancel();
-                JREngage.logd(TAG, "[doSessionPoll] providers found, timer cancelled...");
+                LogUtils.logd(TAG, "[doSessionPoll] providers found, timer cancelled...");
             } else {
-                JREngage.logd(TAG, "[doSessionPoll] no providers yet, will retry soon...");
+                LogUtils.logd(TAG, "[doSessionPoll] no providers yet, will retry soon...");
             }
         }
     }

@@ -42,9 +42,10 @@ import android.util.Log;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.R;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.utils.AndroidUtils;
-import com.janrain.android.engage.utils.PrefUtils;
-import com.janrain.android.engage.utils.ThreadUtils;
+import com.janrain.android.utils.AndroidUtils;
+import com.janrain.android.utils.LogUtils;
+import com.janrain.android.utils.PrefUtils;
+import com.janrain.android.utils.ThreadUtils;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -246,7 +247,7 @@ public class JRProvider implements Serializable {
     }
 
     public void setUserInput(String userInput) {
-        JREngage.logd(TAG, "[prov] user input: [" + PrefUtils.KEY_JR_USER_INPUT + mName + "]");
+        LogUtils.logd(TAG, "[prov] user input: [" + PrefUtils.KEY_JR_USER_INPUT + mName + "]");
 
         mUserInput = userInput;
 
@@ -325,7 +326,7 @@ public class JRProvider implements Serializable {
 
     @SuppressWarnings({"unchecked"})
     private void downloadIcons(final Context c) {
-        JREngage.logd(TAG, "downloadIcons: " + mName);
+        LogUtils.logd(TAG, "downloadIcons: " + mName);
 
         synchronized (this) {
             if (mCurrentlyDownloading) return;
@@ -345,7 +346,7 @@ public class JRProvider implements Serializable {
                     if (Arrays.asList(c.fileList()).contains("providericon~" + iconFileName)) continue;
 
                     try {
-                        JREngage.logd(TAG, "Downloading icon: " + iconFileName);
+                        LogUtils.logd(TAG, "Downloading icon: " + iconFileName);
                         // This is the only point outside of JRSession that touches Engage. Maybe move this
                         // there?
                         URL url = new URL(JRSession.getInstance().getEngageBaseUrl()
@@ -359,9 +360,9 @@ public class JRProvider implements Serializable {
 
                         fos.close();
                     } catch (MalformedURLException e) {
-                        JREngage.logd(TAG, e.toString(), e);
+                        LogUtils.logd(TAG, e.toString(), e);
                     } catch (IOException e) {
-                        JREngage.logd(TAG, e.toString(), e);
+                        LogUtils.logd(TAG, e.toString(), e);
                     } finally {
                         if (fos != null) {
                             try {
@@ -377,7 +378,7 @@ public class JRProvider implements Serializable {
     }
 
     public void loadDynamicVariables() {
-        JREngage.logd("JRProvider", "[prov] user input: " + PrefUtils.KEY_JR_USER_INPUT + mName );
+        LogUtils.logd("JRProvider", "[prov] user input: " + PrefUtils.KEY_JR_USER_INPUT + mName);
 
     	mUserInput = PrefUtils.getString(PrefUtils.KEY_JR_USER_INPUT + mName, "");
     	mForceReauth = PrefUtils.getBoolean(PrefUtils.KEY_JR_FORCE_REAUTH + mName, false);

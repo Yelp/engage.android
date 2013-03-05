@@ -32,26 +32,13 @@
 
 package com.janrain.android.capture;
 
-import android.util.Pair;
 import com.janrain.android.Jump;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
-import com.janrain.android.engage.utils.CollectionUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Collection;
-import java.util.Set;
 
 import static android.text.TextUtils.join;
 import static com.janrain.android.Jump.SignInResultHandler.FailureReasons.invalidApiResponse;
 import static com.janrain.android.Jump.TraditionalSignInType.EMAIL;
-import static com.janrain.android.capture.CaptureStringUtils.readFully;
-import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
 
 public class JRCapture {
     private JRCapture() {}

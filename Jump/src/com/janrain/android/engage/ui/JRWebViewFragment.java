@@ -59,7 +59,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.R;
 import com.janrain.android.engage.net.JRConnectionManager;
@@ -67,8 +66,9 @@ import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.utils.AndroidUtils;
-import com.janrain.android.engage.utils.ThreadUtils;
+import com.janrain.android.utils.AndroidUtils;
+import com.janrain.android.utils.LogUtils;
+import com.janrain.android.utils.ThreadUtils;
 import org.json.JSONException;
 
 import java.net.URL;
@@ -110,7 +110,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        JREngage.logd(TAG, "[onCreateView]");
+        LogUtils.logd(TAG, "[onCreateView]");
         if (mSession == null) return null;
         //StrictMode.ThreadPolicy tp = StrictMode.getThreadPolicy();
         //StrictMode.allowThreadDiskReads();
@@ -189,7 +189,7 @@ public class JRWebViewFragment extends JRUiFragment {
             //String weinreUrl = "http://10.0.1.109:8080/target/target-script-min.js#anonymous";
             //mWebView.loadUrl("javascript:weinreUrl = '" + weinreUrl + "';");
 
-            JREngage.logd(TAG, "returning from onActivityCreated early due to beta share widget flow mode");
+            LogUtils.logd(TAG, "returning from onActivityCreated early due to beta share widget flow mode");
             return;
         }
 
@@ -340,7 +340,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     @Override
     /*package*/ void tryToFinishFragment() {
-        JREngage.logd(TAG, "[tryToFinishFragment]");
+        LogUtils.logd(TAG, "[tryToFinishFragment]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
         } else {
@@ -375,7 +375,7 @@ public class JRWebViewFragment extends JRUiFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getTitle().toString().equals(getString(R.string.jr_menu_item_refresh))) {
-            JREngage.logd(TAG, "refreshing WebView");
+            LogUtils.logd(TAG, "refreshing WebView");
             mWebView.reload();
             return true;
         }
@@ -388,7 +388,7 @@ public class JRWebViewFragment extends JRUiFragment {
         showProgressSpinner();
 
         String urlToLoad = url + "&auth_info=true";
-        JREngage.logd(TAG, "[loadMobileEndpointUrl] loading URL: " + urlToLoad);
+        LogUtils.logd(TAG, "[loadMobileEndpointUrl] loading URL: " + urlToLoad);
 
         JRConnectionManager.createConnection(urlToLoad, mRetain.mConnectionDelegate, null, null, null);
     }
@@ -400,7 +400,7 @@ public class JRWebViewFragment extends JRUiFragment {
                                     String contentDisposition,
                                     String mimetype,
                                     long contentLength) {
-            JREngage.logd(TAG, "[onDownloadStart] URL: " + url + " | mimetype: " + mimetype
+            LogUtils.logd(TAG, "[onDownloadStart] URL: " + url + " | mimetype: " + mimetype
                     + " | length: " + contentLength);
 
             if (isMobileEndpointUrl(url)) loadMobileEndpointUrl(url);
@@ -416,7 +416,7 @@ public class JRWebViewFragment extends JRUiFragment {
             // redirects involved.
             // Another bug documents that this method isn't called on a form submission via POST
             // http://code.google.com/p/android/issues/detail?id=9122
-            JREngage.logd(TAG, "[shouldOverrideUrlLoading]: " + view + ", " + url);
+            LogUtils.logd(TAG, "[shouldOverrideUrlLoading]: " + view + ", " + url);
 
             if (isMobileEndpointUrl(url)) {
                 loadMobileEndpointUrl(url);
@@ -434,11 +434,11 @@ public class JRWebViewFragment extends JRUiFragment {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            JREngage.logd(TAG, "[onPageStarted] url: " + url);
+            LogUtils.logd(TAG, "[onPageStarted] url: " + url);
 
             /* Check for mobile endpoint URL. */
             if (isMobileEndpointUrl(url)) {
-                JREngage.logd(TAG, "[onPageStarted] looks like JR mobile endpoint URL");
+                LogUtils.logd(TAG, "[onPageStarted] looks like JR mobile endpoint URL");
                 loadMobileEndpointUrl(url);
                 view.stopLoading();
                 view.loadUrl("about:blank");
@@ -461,13 +461,13 @@ public class JRWebViewFragment extends JRUiFragment {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            JREngage.logd(TAG, "[onPageFinished] URL: " + url);
+            LogUtils.logd(TAG, "[onPageFinished] URL: " + url);
             mCurrentlyLoadingUrl = null;
 
             hideProgressSpinner();
 
             if (mProvider == null) {
-                JREngage.logd(TAG, "returning from onPageFinished early due to beta share widget flow " +
+                LogUtils.logd(TAG, "returning from onPageFinished early due to beta share widget flow " +
                         "mode");
                 return;
             }
@@ -492,7 +492,7 @@ public class JRWebViewFragment extends JRUiFragment {
             hideProgressSpinner();
 
             if (mProvider == null) {
-                JREngage.logd(TAG, "returning from onReceivedError early due to beta share widget flow " +
+                LogUtils.logd(TAG, "returning from onReceivedError early due to beta share widget flow " +
                         "mode");
                 return;
             }
@@ -528,7 +528,7 @@ public class JRWebViewFragment extends JRUiFragment {
                                       boolean isDialog,
                                       boolean isUserGesture,
                                       Message resultMsg) {
-            JREngage.logd(TAG, "[onCreateWindow] " + view);
+            LogUtils.logd(TAG, "[onCreateWindow] " + view);
 
             WebView newWebView = new WebView(getActivity());
 
@@ -562,7 +562,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
         @Override
         public void onCloseWindow(WebView window) {
-            JREngage.logd(TAG, "[onCloseWindow]: " + window);
+            LogUtils.logd(TAG, "[onCloseWindow]: " + window);
             if (window != mWebView) {
                 // TODO fix hardcoding of FB here
                 mWebView.loadUrl("javascript:janrain.engage.share.loginPopupCallback('facebook');");
@@ -573,7 +573,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-            JREngage.logd(TAG, "[console] message: '" + AndroidUtils.consoleMessageGetMessage(consoleMessage)
+            LogUtils.logd(TAG, "[console] message: '" + AndroidUtils.consoleMessageGetMessage(consoleMessage)
                     + "'");
             return true;
         }
@@ -581,7 +581,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     @Override
     /*package*/ void onBackPressed() {
-        JREngage.logd(TAG, "[onBackPressed]");
+        LogUtils.logd(TAG, "[onBackPressed]");
         if (mRetain != null) JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
         doAuthRestart();
     }
@@ -595,7 +595,7 @@ public class JRWebViewFragment extends JRUiFragment {
                                            String requestUrl,
                                            Object tag) {
         String payloadString = new String(payload);
-        JREngage.logd(TAG, "[connectionDidFinishLoading] tag: " + tag + " | payload: " + payloadString);
+        LogUtils.logd(TAG, "[connectionDidFinishLoading] tag: " + tag + " | payload: " + payloadString);
 
         hideProgressSpinner();
 
@@ -685,7 +685,7 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     private void doAuthRestart() {
-        JREngage.logd(TAG, "[doAuthRestart]");
+        LogUtils.logd(TAG, "[doAuthRestart]");
         if (isSpecificProviderFlow() && mProvider != null && !mProvider.requiresInput()) {
             mSession.triggerAuthenticationDidCancel();
             finishFragmentWithResult(RESULT_RESTART);
@@ -696,7 +696,7 @@ public class JRWebViewFragment extends JRUiFragment {
     }
 
     private void connectionDidFail(Exception ex, String requestUrl, Object tag) {
-        JREngage.logd(TAG, "[connectionDidFail] userdata: " + tag, ex);
+        LogUtils.logd(TAG, "[connectionDidFail] userdata: " + tag, ex);
 
         if (hasView()) {
             // This is intended to not run if the user pressed the back button after the MEU started
@@ -764,7 +764,7 @@ public class JRWebViewFragment extends JRUiFragment {
                                                    byte[] payload,
                                                    String requestUrl,
                                                    Object tag) {
-                JREngage.logd(TAG, "[connectionDidFinishLoading]");
+                LogUtils.logd(TAG, "[connectionDidFinishLoading]");
                 mDeferredCdflH = headers;
                 mDeferredCdflBa = payload;
                 mDeferredCdflS = requestUrl;
@@ -774,7 +774,7 @@ public class JRWebViewFragment extends JRUiFragment {
             }
 
             public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
-                JREngage.logd(TAG, "[connectionDidFail]");
+                LogUtils.logd(TAG, "[connectionDidFail]");
                 mDeferredCdfE = ex;
                 mDeferredCdfS = requestUrl;
                 mDeferredCdfO = tag;

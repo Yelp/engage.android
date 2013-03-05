@@ -39,7 +39,7 @@ package com.janrain.android.engage.types;
 import android.text.TextUtils;
 import android.util.Log;
 import com.janrain.android.engage.session.JRProvider;
-import com.janrain.android.engage.utils.StringUtils;
+import com.janrain.android.utils.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

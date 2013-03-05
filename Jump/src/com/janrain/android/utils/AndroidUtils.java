@@ -48,7 +48,7 @@
 */
 
 
-package com.janrain.android.engage.utils;
+package com.janrain.android.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -277,5 +277,13 @@ public class AndroidUtils {
         Bitmap b = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
         d.draw(new Canvas(b));
         return b.getPixel(0, 0);
+    }
+
+    /**
+     * @param context a Context for this application
+     * @return true if this application was compiled as debuggable
+     */
+    public static boolean applicationIsDebuggable(Context context) {
+        return 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
     }
 }

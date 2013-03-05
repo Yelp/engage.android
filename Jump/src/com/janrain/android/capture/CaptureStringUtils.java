@@ -32,11 +32,10 @@
 
 package com.janrain.android.capture;
 
-import com.janrain.android.engage.JREngage;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import static com.janrain.android.utils.IOUtils.readFromStream;
 
 /**
  * Created with IntelliJ IDEA. User: nathan Date: 1/24/13 Time: 1:47 PM To change this template use File |
@@ -46,30 +45,8 @@ public class CaptureStringUtils {
     public static String readFully(InputStream is) {
         try {
             return new String(readFromStream(is, false));
-        } catch (IOException ignore) {
-            throw new RuntimeException(ignore);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-    }
-
-    public static byte[] readFromStream(InputStream in, boolean shouldThrowOnError) throws IOException {
-        if (in != null) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            try {
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = in.read(buffer)) != -1) baos.write(buffer, 0, len);
-                return baos.toByteArray();
-            } catch (IOException e) {
-                JREngage.logd("JRCapture",
-                        ("[readFromStream] problem reading from input stream: " + e.getLocalizedMessage()));
-                if (shouldThrowOnError) throw e;
-            } finally {
-                baos.close();
-            }
-        } else {
-            JREngage.logd("JRCapture", "[readFromStream] unexpected null InputStream");
-        }
-
-        return null;
     }
 }

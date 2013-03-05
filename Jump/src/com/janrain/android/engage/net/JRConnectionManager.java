@@ -33,9 +33,9 @@ package com.janrain.android.engage.net;
 
 import android.os.Handler;
 import android.os.Looper;
-import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.utils.ApacheSetFromMap;
-import com.janrain.android.engage.utils.ThreadUtils;
+import com.janrain.android.utils.ApacheSetFromMap;
+import com.janrain.android.utils.LogUtils;
+import com.janrain.android.utils.ThreadUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -129,7 +129,7 @@ public class JRConnectionManager {
             new AsyncHttpClient.HttpExecutor(null, managedConnection).run();
         }
 
-        JREngage.logd();
+        LogUtils.logd();
     }
 
     // createConnection can be called from a BG thread so this is wrapped in a synced map for thread

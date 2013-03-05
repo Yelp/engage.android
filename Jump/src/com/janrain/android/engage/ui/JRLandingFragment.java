@@ -47,11 +47,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.R;
 import com.janrain.android.engage.session.JRAuthenticatedUser;
 import com.janrain.android.engage.session.JRProvider;
-import com.janrain.android.engage.utils.AndroidUtils;
+import com.janrain.android.utils.AndroidUtils;
+import com.janrain.android.utils.LogUtils;
 
 /**
  * @internal
@@ -69,7 +69,7 @@ public class JRLandingFragment extends JRUiFragment {
 
     private View.OnClickListener mButtonListener = new View.OnClickListener() {
         public void onClick(View view) {
-            JREngage.logd(TAG, "[onClick] handled");
+            LogUtils.logd(TAG, "[onClick] handled");
 
             if (view.equals(mSignInButton)) {
                 onSignInClick();
@@ -130,7 +130,7 @@ public class JRLandingFragment extends JRUiFragment {
         }
 
         if (mProvider.requiresInput()) {
-            JREngage.logd(TAG, "[prepareUserInterface] current provider requires input");
+            LogUtils.logd(TAG, "[prepareUserInterface] current provider requires input");
             configureButtonVisibility(true); // one button UI
 
             mWelcomeLabel.setVisibility(View.GONE);
@@ -140,7 +140,7 @@ public class JRLandingFragment extends JRUiFragment {
             mUserInput.setHint(mProvider.getUserInputHint());
         } else { // doesn't require input
             configureButtonVisibility(false); // = two button UI -> Switch Accounts is showing
-            JREngage.logd(TAG, "[prepareUserInterface] current provider doesn't require input");
+            LogUtils.logd(TAG, "[prepareUserInterface] current provider doesn't require input");
 
             mUserInput.setVisibility(View.GONE);
 
@@ -178,7 +178,7 @@ public class JRLandingFragment extends JRUiFragment {
     }
 
     private void onSwitchAccountsClick() {
-        JREngage.logd(TAG, "[onSwitchAccountsClick]");
+        LogUtils.logd(TAG, "[onSwitchAccountsClick]");
 
         mSession.getCurrentlyAuthenticatingProvider().setForceReauth(true);
         mSession.setReturningAuthProvider("");
@@ -244,7 +244,7 @@ public class JRLandingFragment extends JRUiFragment {
 
     @Override
     /*package*/ void tryToFinishFragment() {
-        JREngage.logd(TAG, "[tryToFinishFragment]");
+        LogUtils.logd(TAG, "[tryToFinishFragment]");
         if (mIsAlertShowing) {
             mIsFinishPending = true;
         } else {
@@ -277,7 +277,7 @@ public class JRLandingFragment extends JRUiFragment {
 
     @Override
     /*package*/ void onBackPressed() {
-        JREngage.logd(TAG, "[onBackPressed]");
+        LogUtils.logd(TAG, "[onBackPressed]");
 
         if (mSession == null) {
             finishFragmentWithResult(RESULT_RESTART);

@@ -33,11 +33,11 @@
 package com.janrain.android.capture;
 
 import android.util.Pair;
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.net.JRConnectionManager;
 import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.utils.CollectionUtils;
+import com.janrain.android.utils.CollectionUtils;
+import com.janrain.android.utils.LogUtils;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -46,7 +46,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static android.text.TextUtils.join;
-import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
+import static com.janrain.android.utils.AndroidUtils.urlEncode;
 
 /*package*/ class CaptureApiConnection {
     /*package*/ String url;
@@ -83,7 +83,7 @@ import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
             this.params.add(new Pair<String, String>(params[i], params[i + 1]));
         }
 
-        if (params.length % 2 == 1) JREngage.loge("error: odd number of param strings");
+        if (params.length % 2 == 1) LogUtils.loge("error: odd number of param strings");
     }
 
     /*package*/ void addAllToParams(Set<Pair<String, String>> params) {
@@ -104,7 +104,7 @@ import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
 
                     @Override
                     public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
-                        JREngage.loge("failed request: " + requestUrl, ex);
+                        LogUtils.loge("failed request: " + requestUrl, ex);
                         callback.run(null);
                     }
                 };
@@ -125,7 +125,7 @@ import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
                 if (response instanceof JSONObject) {
                     callback.run(((JSONObject) response));
                 } else {
-                    JREngage.loge("bad response: " + response);
+                    LogUtils.loge("bad response: " + response);
                     callback.run(null);
                 }
             }

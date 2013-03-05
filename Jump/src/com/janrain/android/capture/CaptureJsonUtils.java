@@ -32,8 +32,8 @@
 
 package com.janrain.android.capture;
 
-import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
+import com.janrain.android.utils.LogUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,9 +50,12 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import static com.janrain.android.capture.JRCapture.InvalidApidChangeException;
-import static com.janrain.android.engage.utils.CollectionUtils.makeSortedSetFromIterator;
+import static com.janrain.android.utils.CollectionUtils.sortedSetFromIterator;
+import static com.janrain.android.utils.CollectionUtils.sortedUnion;
 
 public class CaptureJsonUtils {
+    private CaptureJsonUtils() {}
+
     public static Object connectionManagerGetJsonContent(HttpResponseHeaders headers,
                                                          byte[] payload) {
         String json = null;
@@ -61,11 +64,11 @@ public class CaptureJsonUtils {
             if (headers.getContentType().toLowerCase().startsWith("application/json")) {
                 return new JSONTokener(json).nextValue();
             }
-            JREngage.logd("unrecognized content type: " + headers.getContentType());
-            JREngage.logd(json);
+            LogUtils.logd("unrecognized content type: " + headers.getContentType());
+            LogUtils.logd(json);
             return null;
         } catch (IOException e) {
-            JREngage.logd(e.toString());
+            LogUtils.logd(e.toString());
             return null;
         } catch (JSONException ignore) {
             return json;
@@ -75,25 +78,17 @@ public class CaptureJsonUtils {
     private static int jsonArrayCompareTo(JSONArray this_, Object other) {
         if (other instanceof JSONArray) {
             return jsonArrayCompareTo(this_, (JSONArray) other);
-        } else return this_.getClass().getName().compareTo(other.getClass().getName());
+        } else {
+            return this_.getClass().getName().compareTo(other.getClass().getName());
+        }
     }
 
     private static int jsonArrayCompareTo(JSONArray this_, JSONArray otherArray) {
         for (int index = 0; index < this_.length(); index++) {
-            Object thisValue;
-            try {
-                thisValue = this_.get(index);
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected", e);
-            }
+            Object thisValue = this_.opt(index);
 
-            Object otherVal;
-            try {
-                otherVal = otherArray.get(index);
-            } catch (JSONException e) {
-                // out of bounds
-                return 1;
-            }
+            Object otherVal = otherArray.opt(index);
+            if (otherVal == null) return 1;
 
             int comparison = compareJsonVals(thisValue, otherVal);
 
@@ -160,32 +155,22 @@ public class CaptureJsonUtils {
     private static int jsonObjectCompareTo(JSONObject this_, Object other) {
         if (other instanceof JSONObject) {
             return jsonObjectCompareTo(this_, (JSONObject) other);
-        } else return this_.getClass().getName().compareTo(other.getClass().getName());
+        } else {
+            return this_.getClass().getName().compareTo(other.getClass().getName());
+        }
     }
 
     private static int jsonObjectCompareTo(JSONObject this_, JSONObject other) {
-        SortedSet<String> this_Keys = makeSortedSetFromIterator((Iterator<String>) this_.keys());
-        SortedSet<String> otherKeys = makeSortedSetFromIterator((Iterator<String>) other.keys());
+        SortedSet<String> this_Keys = sortedSetFromIterator((Iterator<String>) this_.keys());
+        SortedSet<String> otherKeys = sortedSetFromIterator((Iterator<String>) other.keys());
 
-        SortedSet<String> temp = new TreeSet<String>(this_Keys);
-        temp.addAll(otherKeys);
-        SortedSet<String> union = temp;
+        SortedSet<String> unionKeys = sortedUnion(this_Keys, otherKeys);
 
-        for (String k : union) {
-            Object this_Val, otherVal;
-            try {
-                this_Val = this_.get(k);
-            } catch (JSONException e) {
-                return -1;
-            }
+        for (String k : unionKeys) {
+            if (this_.opt(k) == null) return -1;
+            if (other.opt(k) == null) return 1;
 
-            try {
-                otherVal = other.get(k);
-            } catch (JSONException e) {
-                return 1;
-            }
-
-            int comparison = compareJsonVals(this_Val, otherVal);
+            int comparison = compareJsonVals(this_.opt(k), other.opt(k));
             if (comparison != 0) return comparison;
         }
 
@@ -198,27 +183,19 @@ public class CaptureJsonUtils {
      * @param dest JSONObject to deep copy source into, assumed to be empty
      */
     public static void deepCopy(JSONObject source, JSONObject dest) {
-        // poor type safety here is fallout of JSONObject not having a copy constructor or supporting
-        // clone
-
-        Iterator<String> keys = source.keys();
-        while (keys.hasNext()) {
-            String key = keys.next();
+        SortedSet<String> keys = sortedSetFromIterator((Iterator<String>) source.keys());
+        for (String key : keys) {
             // copy each key by hand, copying mutable types, not copying immutable types
-            try {
-                Object val = source.get(key);
-                Object val_;
-                if (val instanceof JSONArray) {
-                    val_ = new JSONArray(val.toString());
-                } else if (val instanceof JSONObject) {
-                    val_ = new JSONObject(val.toString());
-                } else {
-                    val_ = val;
-                }
-                dest.put(key, val_);
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected", e);
+            Object val = source.opt(key);
+            Object val_;
+            if (val instanceof JSONArray) {
+                val_ = copyJsonVal(val);
+            } else if (val instanceof JSONObject) {
+                val_ = copyJsonVal(val);
+            } else {
+                val_ = val;
             }
+            jsonObjectUnsafePut(dest, key, val_);
         }
     }
 
@@ -260,15 +237,10 @@ public class CaptureJsonUtils {
      * @return true if the array has elements which are objects which have attributes of name "id"
      */
     public static boolean hasIds(JSONArray array) {
-        for (int i = 0; i < array.length(); i++) {
-            try {
-                Object o = array.get(i);
-                if (o instanceof JSONObject) {
-                    Object maybeId = ((JSONObject) o).opt("id");
-                    if (maybeId instanceof Integer || maybeId instanceof Long) return true;
-                }
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected", e);
+        for (Object o : jsonArrayToList(array)) {
+            if (o instanceof JSONObject) {
+                Object maybeId = ((JSONObject) o).opt("id");
+                if (maybeId instanceof Integer || maybeId instanceof Long) return true;
             }
         }
         return false;
@@ -288,25 +260,14 @@ public class CaptureJsonUtils {
         int originalIndex = 0;
         for (int currentIndex = 0; currentIndex < sortedCurrent.length(); currentIndex++) {
             Integer currentId = getIdForPlurEltAtIndex(sortedCurrent, currentIndex);
-            Object currentElt;
-            try {
-                currentElt = sortedCurrent.get(currentIndex);
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected", e);
-            }
+            Object currentElt = sortedCurrent.opt(currentIndex);
 
             if (currentId == null) {
                 // new element
-                JSONArray wrapperA;
-                JSONObject wrapperO;
-                //try {
-                wrapperA = new JSONArray(Arrays.asList(new Object[]{currentElt}));
-                wrapperO = new JSONObject();
-                jsonObjectUnsafePut(wrapperO, arrayAttrName, wrapperA);
-                //} catch (JSONException e) {
-                //    throw new RuntimeException("Unexpected", e);
-                //}
-                changeSet.add(new ApidUpdate(wrapperO, relativePath));
+                JSONArray wrapperArray = new JSONArray(Arrays.asList(new Object[]{currentElt}));
+                JSONObject wrapperObject = new JSONObject();
+                jsonObjectUnsafePut(wrapperObject, arrayAttrName, wrapperArray);
+                changeSet.add(new ApidUpdate(wrapperObject, relativePath));
             } else {
                 // update to existing id
                 Integer originalId = null;
@@ -319,11 +280,7 @@ public class CaptureJsonUtils {
 
                 if (currentId.equals(originalId)) {
                     JSONObject originalElt;
-                    try {
-                        originalElt = (JSONObject) sortedOriginal.get(originalIndex++);
-                    } catch (JSONException e) {
-                        throw new RuntimeException("Unexpected", e);
-                    }
+                    originalElt = (JSONObject) sortedOriginal.opt(originalIndex++);
                     changeSet.addAll(compileChangeSet(originalElt, (JSONObject) currentElt,
                             relativePath + "/" + arrayAttrName + "#" + currentId));
                 } else {
@@ -352,7 +309,7 @@ public class CaptureJsonUtils {
         try {
             this_.put(name, value);
         } catch (JSONException e) {
-            throw new RuntimeException("Unexpected", e);
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -394,22 +351,28 @@ public class CaptureJsonUtils {
             }
         }
 
-        for (int i=0; i < temp.length; i++)
-            try {
-                original.put(start + i, temp[i]);
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected", e);
-            }
+        for (int i=0; i < temp.length; i++) jsonArrayUnsafePut(original, start + i, temp[i]);
+    }
+
+    /**
+     * An unsafe variant of JSONArray#put(int, Object) which throws an exception if the former would
+     * @param original a JSONArray to put the element into
+     * @param i the index at which to put the element
+     * @param o the element
+     */
+    private static void jsonArrayUnsafePut(JSONArray original, int i, Object o)
+            throws IllegalArgumentException {
+        try {
+            original.put(i, o);
+        } catch (JSONException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     private static JSONArray sortPlurEltsById(JSONArray original) {
-        try {
-            JSONArray copy = (JSONArray) copyJsonVal(original);
-            inPlaceSortByEltIds(copy, 0, original.length());
-            return copy;
-        } catch (JSONException e) {
-            throw new RuntimeException("Unexpected", e);
-        }
+        JSONArray copy = (JSONArray) copyJsonVal(original);
+        inPlaceSortByEltIds(copy, 0, original.length());
+        return copy;
     }
 
     private static String getLastPathElement(String relativePath) {
@@ -419,20 +382,16 @@ public class CaptureJsonUtils {
     }
 
     private static Integer getIdForPlurEltAtIndex(JSONArray array, int index) {
-        try {
-            Object element = array.get(index);
-            if (element instanceof JSONObject) return (Integer) ((JSONObject) element).opt("id");
-        } catch (JSONException e) {
-            throw new RuntimeException("Unexpected", e);
-        }
+        Object element = array.opt(index);
+        if (element instanceof JSONObject) return (Integer) ((JSONObject) element).opt("id");
         return null;
     }
 
     private static Set<ApidChange> compileChangeSet(JSONObject original, JSONObject current,
                                                     String relativePath)
             throws InvalidApidChangeException {
-        SortedSet<String> originalKeys = makeSortedSetFromIterator((Iterator<String>) original.keys());
-        SortedSet<String> currentKeys = makeSortedSetFromIterator((Iterator<String>) current.keys());
+        SortedSet<String> originalKeys = sortedSetFromIterator((Iterator<String>) original.keys());
+        SortedSet<String> currentKeys = sortedSetFromIterator((Iterator<String>) current.keys());
 
         SortedSet<String> newKeys = new TreeSet<String>(currentKeys);
         newKeys.removeAll(originalKeys);
@@ -489,8 +448,7 @@ public class CaptureJsonUtils {
 
     private static InvalidApidChangeException createInvalidTypeException(Object curVal, Object oldVal) {
         return new InvalidApidChangeException("Unexpected type(s). Old type: " +
-                oldVal.getClass().getSimpleName() + " New type: " +
-                curVal.getClass().getSimpleName());
+                oldVal.getClass().getSimpleName() + " New type: " + curVal.getClass().getSimpleName());
     }
 
     /**
@@ -506,27 +464,26 @@ public class CaptureJsonUtils {
      * @return the merged contents of left and right
      */
     public static JSONObject collapseJsonObjects(JSONObject left, JSONObject right) {
-        try {
-            if (left == null) return (JSONObject) copyJsonVal(right);
-            // copy left
-            JSONObject retVal = (JSONObject) copyJsonVal(left);
-            if (right == null) return retVal;
+        if (left == null) return (JSONObject) copyJsonVal(right);
 
-            // merge every field from right into the copy
-            for (String key : makeSortedSetFromIterator((Iterator<String>) right.keys())) {
-                Object rightVal = right.get(key);
-                Object leftVal = retVal.opt(key);
-                if (leftVal == null) retVal.put(key, copyJsonVal(rightVal));
-                if (leftVal instanceof JSONObject) retVal.put(key, collapseJsonObjects(((JSONObject) leftVal),
-                        (JSONObject) rightVal));
-                if (leftVal instanceof JSONArray) jsonArrayAddAll(((JSONArray) leftVal),
-                        (JSONArray) rightVal);
+        JSONObject retVal = (JSONObject) copyJsonVal(left);
+        if (right == null) return retVal;
+
+        // merge every field from right into the copy
+        for (String key : sortedSetFromIterator((Iterator<String>) right.keys())) {
+            Object rightVal = right.opt(key);
+            Object leftVal = retVal.opt(key);
+            if (leftVal == null) jsonObjectUnsafePut(retVal, key, copyJsonVal(rightVal));
+            if (leftVal instanceof JSONObject) {
+                JSONObject value = collapseJsonObjects(((JSONObject) leftVal), (JSONObject) rightVal);
+                jsonObjectUnsafePut(retVal, key, value);
             }
 
-            return retVal;
-        } catch (JSONException e) {
-            throw new RuntimeException("Unexpected", e);
+            if (leftVal instanceof JSONArray) jsonArrayAddAll(((JSONArray) leftVal),
+                    (JSONArray) rightVal);
         }
+
+        return retVal;
     }
 
     /**
@@ -535,42 +492,34 @@ public class CaptureJsonUtils {
      * @param sourceArray an array with elements to be added
      */
     public static void jsonArrayAddAll(JSONArray destArray, JSONArray sourceArray) {
-        for (int i = 0; i < sourceArray.length(); i++) {
-            try {
-                destArray.put(sourceArray.get(i));
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected", e);
-            }
-        }
+        for (int i = 0; i < sourceArray.length(); i++) destArray.put(sourceArray.opt(i));
     }
 
     /**
-     * Copies a JSON value
+     * Copies a JSON value if the value is mutable, or returns the same value if immutable
      * @param val a JSON value
      * @return a copy of val
-     * @throws JSONException
+     * @throws IllegalArgumentException if val was not a JSON value, and could not be copied
      */
-    public static Object copyJsonVal(Object val) throws JSONException {
-        if (val instanceof JSONObject) {
-            return new JSONObject(val.toString());
-        } else if (val instanceof JSONArray) {
-            return new JSONArray(val.toString());
-        } else {
-            //everything else is^H^H had better be immutable
-            return val;
+    public static Object copyJsonVal(Object val) throws IllegalArgumentException {
+        try {
+            if (val instanceof JSONObject) {
+                return new JSONObject(val.toString());
+            } else if (val instanceof JSONArray) {
+                return new JSONArray(val.toString());
+            } else {
+                //everything else is^H^H had better be immutable
+                return val;
+            }
+        } catch (JSONException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 
     public static List<Object> jsonArrayToList(JSONArray array) {
         List<Object> retval = new ArrayList<Object>();
 
-        for (int i = 0; i < array.length(); i++) {
-            try {
-                retval.add(array.get(i));
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected", e);
-            }
-        }
+        for (int i = 0; i < array.length(); i++) retval.add(array.opt(i));
 
         return retval;
     }

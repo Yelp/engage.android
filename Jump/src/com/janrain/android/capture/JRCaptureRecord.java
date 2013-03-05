@@ -36,7 +36,7 @@ import android.content.Context;
 import android.util.Base64;
 import android.util.Pair;
 import com.janrain.android.Jump;
-import com.janrain.android.engage.JREngage;
+import com.janrain.android.utils.LogUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,7 +59,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
-import static com.janrain.android.engage.utils.AndroidUtils.urlEncode;
+import static com.janrain.android.capture.CaptureJsonUtils.copyJsonVal;
+import static com.janrain.android.utils.AndroidUtils.urlEncode;
+import static com.janrain.android.utils.LogUtils.throwDebugException;
 
 public class JRCaptureRecord extends JSONObject {
     private static final SimpleDateFormat CAPTURE_SIGNATURE_DATE_FORMAT;
@@ -84,12 +86,8 @@ public class JRCaptureRecord extends JSONObject {
     /*package*/ JRCaptureRecord(JSONObject jo, String accessToken, String refreshSecret) {
         super();
 
-        try {
-            original = new JSONObject(jo.toString());
-            CaptureJsonUtils.deepCopy(original, this);
-        } catch (JSONException e) {
-            throw new RuntimeException("Unexpected JSONException", e);
-        }
+        original = (JSONObject) copyJsonVal(jo);
+        CaptureJsonUtils.deepCopy(original, this);
     }
 
     /**
@@ -113,17 +111,17 @@ public class JRCaptureRecord extends JSONObject {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Unexpected", e);
         } catch (IOException e) {
-            throw new RuntimeException("Unexpected", e);
+            throwDebugException(new RuntimeException("Unexpected", e));
         } catch (JSONException ignore) {
-            JREngage.logd("Bad JRCaptureRecord file contents:\n" + fileContents, ignore);
+            LogUtils.logd("Bad JRCaptureRecord file contents:\n" + fileContents, ignore);
             // Will happen on corrupted file
         }
         return null;
     }
 
     /**
-     * Saes the Capture record to a well-known private file on disk.
-     * @param applicationContext
+     * Saves the Capture record to a well-known private file on disk.
+     * @param applicationContext the context to use to write to disk
      */
     public void saveToDisk(Context applicationContext) {
         try {
@@ -176,7 +174,7 @@ public class JRCaptureRecord extends JSONObject {
                     accessToken = (String) ((JSONObject) response).opt("access_token");
                     if (callback != null) callback.onSuccess();
                 } else {
-                    JREngage.logd("JRCapture", response.toString());
+                    LogUtils.logd("JRCapture", response.toString());
                     if (callback != null) callback.onFailure(response);
                 }
             }
@@ -236,9 +234,9 @@ public class JRCaptureRecord extends JSONObject {
         JRCapture.FetchCallback jsonCallback = new JRCapture.FetchCallback() {
             public void run(Object content) {
                 if (content instanceof JSONObject && ((JSONObject) content).opt("stat").equals("ok")) {
-                    JREngage.logd("JRCapture", change.toString());
+                    LogUtils.logd("JRCapture", change.toString());
                     try {
-                        JREngage.logd("JRCapture", ((JSONObject) content).toString(2));
+                        LogUtils.logd("JRCapture", ((JSONObject) content).toString(2));
                     } catch (JSONException e) {
                         throw new RuntimeException("Unexpected", e);
                     }
