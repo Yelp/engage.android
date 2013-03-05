@@ -39,6 +39,7 @@ import org.json.JSONObject;
 import static android.text.TextUtils.join;
 import static com.janrain.android.Jump.SignInResultHandler.FailureReasons.invalidApiResponse;
 import static com.janrain.android.Jump.TraditionalSignInType.EMAIL;
+import static com.janrain.android.Jump.getCaptureDomain;
 
 public class JRCapture {
     private JRCapture() {}
@@ -58,7 +59,7 @@ public class JRCapture {
          * attributeUpdates
          */
         String signInNameAttrName = type == EMAIL ? "email" : "username";
-        String url = "https://" + Jump.getCaptureDomain() + "/oauth/auth_native_traditional";
+        String url = "https://" + getCaptureDomain() + "/oauth/auth_native_traditional";
         CaptureApiConnection connection = new CaptureApiConnection(url);
         connection.addAllToParams("client_id", Jump.getCaptureClientId(),
                 "locale", "en_US",
@@ -74,7 +75,7 @@ public class JRCapture {
                                                                              String password,
                                                                              Jump.TraditionalSignInType type,
                                                                              FetchJsonCallback handler) {
-        String url = "https://" + Jump.getCaptureDomain() + "/oauth/mobile_signin_username_password";
+        String url = "https://" + getCaptureDomain() + "/oauth/mobile_signin_username_password";
         CaptureApiConnection connection = new CaptureApiConnection(url);
         connection.addAllToParams("client_id", Jump.getCaptureClientId(),
                 "redirect_uri", "http://android.library",
@@ -89,10 +90,10 @@ public class JRCapture {
         }
     }
 
-    public static interface RequestCallback {
+    public static interface CaptureApiRequestCallback {
         public void onSuccess();
 
-        public void onFailure(Object e);
+        public void onFailure(CaptureApiError e);
     }
 
     public static void performSocialSignIn(String authInfoToken, final FetchJsonCallback handler) {
@@ -107,7 +108,8 @@ public class JRCapture {
          * flow_name
          */
 
-        CaptureApiConnection c = new CaptureApiConnection("https://" + Jump.getCaptureDomain() + "/oauth/auth_native");
+        CaptureApiConnection c =
+                new CaptureApiConnection("https://" + getCaptureDomain() + "/oauth/auth_native");
         c.addAllToParams("client_id", Jump.getCaptureClientId(),
                 "locale", "en_US",
                 "response_type", "token",
@@ -118,7 +120,8 @@ public class JRCapture {
     }
 
     public static void performLegacySocialSignIn(String authInfoToken, final FetchJsonCallback handler) {
-        CaptureApiConnection c = new CaptureApiConnection("https://" + Jump.getCaptureDomain() + "/oauth/mobile_signin");
+        CaptureApiConnection c =
+                new CaptureApiConnection("https://" + getCaptureDomain() + "/oauth/mobile_signin");
         c.addAllToParams("client_id", Jump.getCaptureClientId());
         c.addAllToParams("redirect_uri", "http://android-library");
         c.addAllToParams("token", authInfoToken);

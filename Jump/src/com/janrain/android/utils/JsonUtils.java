@@ -43,6 +43,7 @@ import java.util.SortedSet;
 
 import static com.janrain.android.utils.CollectionUtils.sortedSetFromIterator;
 import static com.janrain.android.utils.CollectionUtils.sortedUnion;
+import static com.janrain.android.utils.LogUtils.throwDebugException;
 
 public class JsonUtils {
     /**
@@ -288,5 +289,20 @@ public class JsonUtils {
         }
 
         return 0;
+    }
+
+    /**
+     * I don't even.
+     * @param content
+     * @param i
+     * @return
+     */
+    public static String unsafeJsonObjectToString(JSONObject content, int i) {
+        try {
+            return content.toString(i);
+        } catch (JSONException e) {
+            throwDebugException(new IllegalArgumentException(e));
+            return null;
+        }
     }
 }

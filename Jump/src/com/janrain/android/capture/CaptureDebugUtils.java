@@ -90,7 +90,7 @@ public class CaptureDebugUtils {
         record.refreshAccessToken(null);
 
         try {
-            record.synchronize(new JRCapture.RequestCallback() {
+            record.synchronize(new JRCapture.CaptureApiRequestCallback() {
                 public void onSuccess() {
                     LogUtils.logd("JRCapture", "success");
                 }

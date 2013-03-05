@@ -149,7 +149,7 @@ public class MainActivity extends FragmentActivity {
                         return;
                     }
 
-                    Jump.getSignedInUser().synchronize(new JRCapture.RequestCallback() {
+                    Jump.getSignedInUser().synchronize(new JRCapture.CaptureApiRequestCallback() {
                         public void onSuccess() {
                             Toast.makeText(MainActivity.this, "Record updated", Toast.LENGTH_LONG).show();
                         }

@@ -60,17 +60,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import static com.janrain.android.capture.JRCapture.CaptureApiRequestCallback;
+import static com.janrain.android.capture.JRCapture.FetchCallback;
+import static com.janrain.android.capture.JRCapture.FetchJsonCallback;
+import static com.janrain.android.capture.JRCapture.InvalidApidChangeException;
 import static com.janrain.android.utils.JsonUtils.copyJsonVal;
 import static com.janrain.android.utils.AndroidUtils.urlEncode;
+import static com.janrain.android.utils.JsonUtils.unsafeJsonObjectToString;
 import static com.janrain.android.utils.LogUtils.throwDebugException;
 
 public class JRCaptureRecord extends JSONObject {
-    private static final SimpleDateFormat CAPTURE_SIGNATURE_DATE_FORMAT;
+    private static final SimpleDateFormat CAPTURE_API_SIGNATURE_DATE_FORMAT;
     private static final String JR_CAPTURE_SIGNED_IN_USER_FILENAME = "jr_capture_signed_in_user";
 
     static {
-        CAPTURE_SIGNATURE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        CAPTURE_SIGNATURE_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+        CAPTURE_API_SIGNATURE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        CAPTURE_API_SIGNATURE_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     private JSONObject original;
@@ -110,11 +115,12 @@ public class JRCaptureRecord extends JSONObject {
             fis.close();
         } catch (FileNotFoundException ignore) {
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Unexpected", e);
+            throwDebugException(new RuntimeException("Unexpected", e));
+            return null;
         } catch (IOException e) {
             throwDebugException(new RuntimeException("Unexpected", e));
         } catch (JSONException ignore) {
-            LogUtils.logd("Bad JRCaptureRecord file contents:\n" + fileContents, ignore);
+            LogUtils.loge("Bad JRCaptureRecord file contents:\n" + fileContents, ignore);
             // Will happen on corrupted file
         }
         return null;
@@ -153,37 +159,41 @@ public class JRCaptureRecord extends JSONObject {
 
     /**
      * Uses this record's refresh secret to refresh its access token
-     * @param callback
+     * @param callback your handler, invoked upon completion
      */
-    public void refreshAccessToken(final JRCapture.RequestCallback callback) {
+    public void refreshAccessToken(final CaptureApiRequestCallback callback) {
         //accessToken = "6bunfwu42h2rwgbq";
         //refreshSecret = "a";
         //String domain = "test-multi.janraincapture.com";
         String domain = Jump.getCaptureDomain();
 
         CaptureApiConnection c = new CaptureApiConnection("https://" + domain + "/access/getAccessToken");
-        String date = CAPTURE_SIGNATURE_DATE_FORMAT.format(new Date());
+        String date = CAPTURE_API_SIGNATURE_DATE_FORMAT.format(new Date());
         Set<Pair<String, String>> params = new HashSet<Pair<String, String>>();
         //params.add(new Pair<String, String>("application_id", "fvbamf9kkkad3gnd9qyb4ggw6w"));
         params.add(new Pair<String, String>("access_token", accessToken));
         params.add(new Pair<String, String>("Signature", urlEncode(getRefreshSignature(date))));
         params.add(new Pair<String, String>("Date", urlEncode(date)));
         c.addAllToParams(params);
-        c.fetchResponseMaybeJson(new JRCapture.FetchCallback() {
-            public void run(Object response) {
-                if (response instanceof JSONObject && "ok".equals(((JSONObject) response).opt("stat"))) {
-                    accessToken = (String) ((JSONObject) response).opt("access_token");
+        c.fetchResponseAsJson(new FetchJsonCallback() {
+            public void run(JSONObject response) {
+                if (response == null) {
+                    if (callback != null) callback.onFailure(CaptureApiError.INVALID_API_RESPONSE);
+                    return;
+                }
+
+                if ("ok".equals(response.opt("stat"))) {
+                    accessToken = (String) response.opt("access_token");
                     if (callback != null) callback.onSuccess();
                 } else {
-                    LogUtils.logd("JRCapture", response.toString());
-                    if (callback != null) callback.onFailure(response);
+                    new CaptureApiError(response);
                 }
             }
         });
     }
 
     private String getRefreshSignature(String date) {
-        String stringToSign = date + "\n" + accessToken + "\n";
+        String stringToSign = "refresh_access_token\n" + date + "\n" + accessToken + "\n";
 
         byte[] hash;
         try {
@@ -206,10 +216,10 @@ public class JRCaptureRecord extends JSONObject {
      * Synchronizes the Capture record with the Capture service
      * Note that this sends any local changes to the service, but does not retrieve updates from the service.
      * @param callback
-     * @throws JRCapture.InvalidApidChangeException
+     * @throws InvalidApidChangeException
      */
-    public void synchronize(final JRCapture.RequestCallback callback)
-            throws JRCapture.InvalidApidChangeException {
+    public void synchronize(final CaptureApiRequestCallback callback)
+            throws InvalidApidChangeException {
         Set<ApidChange> changeSet = getApidChangeSet();
         List<ApidChange> changeList = new ArrayList<ApidChange>();
         changeList.addAll(changeSet);
@@ -222,7 +232,7 @@ public class JRCaptureRecord extends JSONObject {
         // add method for trad sign-in
     }
 
-    private void fireNextChange(final List<ApidChange> changeList, final JRCapture.RequestCallback callback) {
+    private void fireNextChange(final List<ApidChange> changeList, final CaptureApiRequestCallback callback) {
         if (changeList.size() == 0) {
             if (callback != null) callback.onSuccess();
             return;
@@ -232,30 +242,25 @@ public class JRCaptureRecord extends JSONObject {
         Set<Pair<String, String>> params = new HashSet<Pair<String, String>>(change.getBodyParams());
         params.add(new Pair<String, String>("access_token", accessToken));
 
-        JRCapture.FetchCallback jsonCallback = new JRCapture.FetchCallback() {
-            public void run(Object content) {
-                if (content instanceof JSONObject && ((JSONObject) content).opt("stat").equals("ok")) {
+        JRCapture.FetchJsonCallback jsonCallback = new FetchJsonCallback() {
+            public void run(JSONObject content) {
+                if (content.opt("stat").equals("ok")) {
                     LogUtils.logd("JRCapture", change.toString());
-                    try {
-                        LogUtils.logd("JRCapture", ((JSONObject) content).toString(2));
-                    } catch (JSONException e) {
-                        throw new RuntimeException("Unexpected", e);
-                    }
+                    LogUtils.logd("JRCapture", unsafeJsonObjectToString(content, 2));
                     fireNextChange(changeList.subList(1, changeList.size()), callback);
                 } else {
-                    if (callback != null) callback.onFailure(content);
+                    if (callback != null) callback.onFailure(new CaptureApiError(content));
                 }
             }
         };
 
         CaptureApiConnection connection = new CaptureApiConnection(change.getUrlFor().toString());
         connection.addAllToParams(params);
-        connection.fetchResponseMaybeJson(jsonCallback);
+        connection.fetchResponseAsJson(jsonCallback);
     }
 
     private Set<ApidChange> collapseApidChanges(Set<ApidChange> changeSet) {
-        HashMap<String, Set<ApidUpdate>> subentityUpdateBuckets =
-                new HashMap<String, Set<ApidUpdate>>();
+        HashMap<String, Set<ApidUpdate>> subentityUpdateBuckets = new HashMap<String, Set<ApidUpdate>>();
 
         Set<ApidChange> collapsedChangeSet = new HashSet<ApidChange>();
         for (ApidChange change : changeSet) {
@@ -321,7 +326,7 @@ public class JRCaptureRecord extends JSONObject {
         return new ApidUpdate(newVal, parent);
     }
 
-    private Set<ApidChange> getApidChangeSet() throws JRCapture.InvalidApidChangeException {
+    private Set<ApidChange> getApidChangeSet() throws InvalidApidChangeException {
         return collapseApidChanges(CaptureJsonUtils.compileChangeSet(original, this));
     }
 }
