@@ -34,7 +34,6 @@ package com.janrain.android.capture;
 
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.utils.CollectionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +49,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import static com.janrain.android.capture.JRCapture.InvalidApidChangeException;
 import static com.janrain.android.engage.utils.CollectionUtils.makeSortedSetFromIterator;
 
 public class CaptureJsonUtils {
@@ -229,19 +229,19 @@ public class CaptureJsonUtils {
      * @param original the original copy of the record
      * @param current the current version of the record
      * @return A set of ApidChanges to effect the diff
-     * @throws JRCapture.InvalidApidChangeException
+     * @throws InvalidApidChangeException
      *  If JSON value types mismatch between original and current (I.e. if current is updated in a way that
      *      is not supported by the record schema)
      *  If ids are assigned to new plural elements
      */
     public static Set<ApidChange> compileChangeSet(JSONObject original, JSONObject current)
-            throws JRCapture.InvalidApidChangeException {
+            throws InvalidApidChangeException {
         return compileChangeSet(original, current, "/");
     }
 
     private static Set<ApidChange> compileChangeSet(JSONArray original, JSONArray current,
                                                               String arrayAttrPath)
-            throws JRCapture.InvalidApidChangeException {
+            throws InvalidApidChangeException {
         if (hasIds(original)) {
             return compileChangeSetForArrayWithIds(original, current, arrayAttrPath);
         } else {
@@ -277,7 +277,7 @@ public class CaptureJsonUtils {
     private static Set<ApidChange> compileChangeSetForArrayWithIds(JSONArray original,
                                                                    JSONArray current,
                                                                    String arrayAttrPath)
-            throws JRCapture.InvalidApidChangeException {
+            throws InvalidApidChangeException {
         Set<ApidChange> changeSet = new HashSet<ApidChange>();
         String arrayAttrName = getLastPathElement(arrayAttrPath);
         String relativePath = arrayAttrPath.substring(0, arrayAttrPath.length() - arrayAttrName.length());
@@ -327,7 +327,7 @@ public class CaptureJsonUtils {
                     changeSet.addAll(compileChangeSet(originalElt, (JSONObject) currentElt,
                             relativePath + "/" + arrayAttrName + "#" + currentId));
                 } else {
-                    throw new JRCapture.InvalidApidChangeException("Cannot assign ID to new plural elements");
+                    throw new InvalidApidChangeException("Cannot assign ID to new plural elements");
                 }
             }
         }
@@ -430,105 +430,67 @@ public class CaptureJsonUtils {
 
     private static Set<ApidChange> compileChangeSet(JSONObject original, JSONObject current,
                                                     String relativePath)
-            throws JRCapture.InvalidApidChangeException {
-        SortedSet<String> origKeys = makeSortedSetFromIterator((Iterator<String>) original.keys());
+            throws InvalidApidChangeException {
+        SortedSet<String> originalKeys = makeSortedSetFromIterator((Iterator<String>) original.keys());
         SortedSet<String> currentKeys = makeSortedSetFromIterator((Iterator<String>) current.keys());
 
-        TreeSet<String> temp = new TreeSet<String>(currentKeys);
-        temp.removeAll(origKeys);
-        SortedSet<String> newKeys = temp;
+        SortedSet<String> newKeys = new TreeSet<String>(currentKeys);
+        newKeys.removeAll(originalKeys);
 
-        temp = new TreeSet<String>(origKeys);
-        temp.removeAll(currentKeys);
-        SortedSet<String> removedKeys = temp;
-
-        temp = new TreeSet<String>(origKeys);
-        temp.removeAll(removedKeys);
-
-        SortedSet<String> intersection = temp;
-
-        SortedSet<String> changedKeys = new TreeSet<String>();
-        for (String k : intersection) {
-            try {
-                // todo, what if types mismatch between curVal and corresponding val from original?
-                Object curVal = current.get(k);
-                Object oldVal = original.get(k);
-
-                if (CaptureJsonUtils.compareJsonVals(curVal, oldVal) != 0) changedKeys.add(k);
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected JSONException", e);
-            }
-        }
-
-        Set<ApidChange> changeSet = new HashSet<ApidChange>();
-        for (String k : intersection) {
-            try {
-                Object curVal = current.get(k);
-                Object oldVal = original.get(k);
-                if (curVal instanceof JSONObject && oldVal instanceof JSONObject) {
-                    changeSet.addAll(compileChangeSet(((JSONObject) oldVal), ((JSONObject) curVal),
-                            relativePath + k + "/"));
-                } else if (curVal instanceof JSONArray && oldVal instanceof JSONArray) {
-                    changeSet.addAll(compileChangeSet(((JSONArray) oldVal), ((JSONArray) curVal),
-                            relativePath + k));
-                } else if (curVal instanceof String) {
-                    maybeAddUpdate(relativePath + k, changeSet, curVal, oldVal);
-                } else if (curVal instanceof Boolean) {
-                    maybeAddUpdate(relativePath + k, changeSet, curVal, oldVal);
-                } else if (curVal instanceof Double) {
-                    maybeAddUpdate(relativePath + k, changeSet, curVal, oldVal);
-                } else if (curVal instanceof Integer) {
-                    maybeAddUpdate(relativePath + k, changeSet, curVal, oldVal);
-                } else if (curVal instanceof Long) {
-                    maybeAddUpdate(relativePath + k, changeSet, curVal, oldVal);
-                } else if (curVal.equals(JSONObject.NULL)) {
-                    maybeAddUpdate(relativePath + k, changeSet, curVal, oldVal);
-                } else {
-                    throw createInvalidTypeException(curVal, oldVal);
-                }
-            } catch (JSONException e) {
-                throw new RuntimeException("Unexpected: ", e);
-            }
-        }
+        SortedSet<String> goneKeys = new TreeSet<String>(originalKeys);
+        goneKeys.removeAll(currentKeys);
 
         if (newKeys.size() > 0) {
-            throw new JRCapture.InvalidApidChangeException("Can't add new keys to JSONObjects. New keys: " +
+            throw new InvalidApidChangeException("Can't add new keys to JSONObjects. New keys: " +
                     newKeys.toString());
         }
 
-        if (removedKeys.size() > 0) {
-            throw new JRCapture.InvalidApidChangeException("Cannot delete keys from JSONObjects. Removed " +
-                    "keys: " + removedKeys.toString());
+        if (goneKeys.size() > 0) {
+            throw new InvalidApidChangeException("Cannot delete keys from JSONObjects. Removed " +
+                    "keys: " + goneKeys.toString());
+        }
+
+        SortedSet<String> intersectionKeys = new TreeSet<String>(originalKeys);
+        intersectionKeys.removeAll(goneKeys);
+
+        return compileChangeSet(original, current, relativePath, intersectionKeys);
+    }
+
+    private static Set<ApidChange> compileChangeSet(JSONObject original, JSONObject current,
+                                                    String relativePath, Set<String> forKeys)
+            throws InvalidApidChangeException {
+        Set<ApidChange> changeSet = new HashSet<ApidChange>();
+        for (String k : forKeys) {
+            Object curVal = current.opt(k);
+            Object oldVal = original.opt(k);
+            if (curVal instanceof JSONObject && oldVal instanceof JSONObject) {
+                changeSet.addAll(compileChangeSet(((JSONObject) oldVal), ((JSONObject) curVal),
+                        relativePath + k + "/"));
+            } else if (curVal instanceof JSONArray && oldVal instanceof JSONArray) {
+                changeSet.addAll(compileChangeSet(((JSONArray) oldVal), ((JSONArray) curVal),
+                        relativePath + k));
+            } else if (curVal instanceof String || curVal instanceof Boolean || curVal instanceof Double ||
+                    curVal instanceof Integer || curVal instanceof Long || curVal.equals(JSONObject.NULL)) {
+                if (!JSONObject.NULL.equals(oldVal) &&
+                        !oldVal.getClass().isAssignableFrom(curVal.getClass())) {
+                    throw createInvalidTypeException(curVal, oldVal);
+                }
+
+                if (compareJsonVals(curVal, oldVal) != 0) {
+                    changeSet.add(new ApidUpdate(curVal, relativePath + k));
+                }
+            } else {
+                throw createInvalidTypeException(curVal, oldVal);
+            }
         }
 
         return changeSet;
     }
 
-    private static JRCapture.InvalidApidChangeException createInvalidTypeException(Object curVal,
-                                                                                   Object oldVal) {
-        return new JRCapture.InvalidApidChangeException("Unexpected type(s). Old type: " +
+    private static InvalidApidChangeException createInvalidTypeException(Object curVal, Object oldVal) {
+        return new InvalidApidChangeException("Unexpected type(s). Old type: " +
                 oldVal.getClass().getSimpleName() + " New type: " +
                 curVal.getClass().getSimpleName());
-    }
-
-    /**
-     * Adds an update to changeSet if curVal.compareTo(oldVal) != 0
-     * @param relativePath the relative path for the update
-     * @param changeSet the change set to maybe add to
-     * @param curVal a value
-     * @param oldVal another value
-     * @throws JRCapture.InvalidApidChangeException
-     */
-    private static void maybeAddUpdate(String relativePath, Set<ApidChange> changeSet,
-                                       Object curVal, Object oldVal)
-            throws JRCapture.InvalidApidChangeException {
-        if (!JSONObject.NULL.equals(oldVal) && !oldVal.getClass().isAssignableFrom(curVal.getClass())) {
-            throw createInvalidTypeException(curVal, oldVal);
-        }
-
-        if (compareJsonVals(curVal, oldVal) != 0) {
-            changeSet.add(new ApidUpdate(curVal, relativePath));
-        }
     }
 
     /**
@@ -610,6 +572,12 @@ public class CaptureJsonUtils {
             }
         }
 
+        return retval;
+    }
+
+    public static JSONArray jsonArrayFromObjects(Object... objects) {
+        JSONArray retval = new JSONArray();
+        for (Object o : objects) retval.put(o);
         return retval;
     }
 }
