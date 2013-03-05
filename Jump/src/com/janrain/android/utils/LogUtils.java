@@ -97,7 +97,10 @@ public class LogUtils {
     }
 
     public static void throwDebugException(RuntimeException debugException) {
-
-        throw debugException;
+        if (AndroidUtils.isApplicationDebuggable(null)) {
+            throw debugException;
+        } else {
+            LogUtils.loge("Unexpected exception", debugException);
+        }
     }
 }

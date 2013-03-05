@@ -197,7 +197,7 @@ public class JREngage {
             throw new IllegalArgumentException("context parameter cannot be null.");
         }
 
-        if (sLoggingEnabled == null) sLoggingEnabled = AndroidUtils.applicationIsDebuggable(context);
+        if (sLoggingEnabled == null) sLoggingEnabled = AndroidUtils.isApplicationDebuggable(context);
 
         if (TextUtils.isEmpty(appId)) {
             Log.e(TAG, "[initialize] appId parameter cannot be null.");

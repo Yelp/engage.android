@@ -280,10 +280,16 @@ public class AndroidUtils {
     }
 
     /**
-     * @param context a Context for this application
-     * @return true if this application was compiled as debuggable
+     * @param context a Context for this application, or null to use a cached context if available
+     * @return true if this application was compiled as debuggable, false if not or if a Context was not
+     *         available to evaluate.
      */
-    public static boolean applicationIsDebuggable(Context context) {
-        return 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
+    public static boolean isApplicationDebuggable(Context context) {
+        if (context != null) {
+            return 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
+        } else {
+            context = JREngage.getApplicationContext();
+            return context != null && isApplicationDebuggable(context);
+        }
     }
 }
