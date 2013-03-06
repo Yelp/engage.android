@@ -71,7 +71,7 @@ import java.util.regex.Pattern;
     //    Set<Pair<String, String>> params = getBodyParams();
     //    params.add(new Pair<String, String>("access_token", accessToken));
     //
-    //    JRCapture.writePostParams(urlConnection, params);
+    //    Capture.writePostParams(urlConnection, params);
     //}
 
     /*package*/ abstract Set<Pair<String, String>> getBodyParams();

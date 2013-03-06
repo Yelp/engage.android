@@ -48,7 +48,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import static com.janrain.android.capture.CaptureStringUtils.readFully;
-import static com.janrain.android.capture.JRCapture.CaptureApiRequestCallback;
+import static com.janrain.android.capture.Capture.CaptureApiRequestCallback;
 
 public class CaptureDebugUtils {
     private static JSONObject getEntity(int id) throws IOException, JSONException {
@@ -79,8 +79,8 @@ public class CaptureDebugUtils {
 
     public static void main(String[] args) throws IOException, JSONException {
         //JRCaptureEntity.inflate(getEntity(159)); // for entity type "user"
-        JRCaptureRecord record = new JRCaptureRecord(getEntity(14474), null, null);
-        LogUtils.logd("JRCapture", record.toString(2));
+        CaptureRecord record = new CaptureRecord(getEntity(14474), null, null);
+        LogUtils.logd("Capture", record.toString(2));
 
         deeplyRandomizeArrayElementOrder(record);
         record.put("email", "nathan+androidtest2@janrain.com");
@@ -93,14 +93,14 @@ public class CaptureDebugUtils {
         try {
             record.synchronize(new CaptureApiRequestCallback() {
                 public void onSuccess() {
-                    LogUtils.logd("JRCapture", "success");
+                    LogUtils.logd("Capture", "success");
                 }
 
                 public void onFailure(CaptureApiError e) {
-                    LogUtils.logd("JRCapture", ("failure: " + e));
+                    LogUtils.logd("Capture", ("failure: " + e));
                 }
             });
-        } catch (JRCapture.InvalidApidChangeException e) {
+        } catch (Capture.InvalidApidChangeException e) {
             e.printStackTrace();
         }
     }

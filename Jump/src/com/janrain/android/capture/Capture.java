@@ -34,14 +34,13 @@ package com.janrain.android.capture;
 
 import org.json.JSONObject;
 
-import static com.janrain.android.Jump.SignInResultHandler.FailureReasons.invalidApiResponse;
 import static com.janrain.android.Jump.TraditionalSignInType;
 import static com.janrain.android.Jump.TraditionalSignInType.EMAIL;
 import static com.janrain.android.Jump.getCaptureClientId;
 import static com.janrain.android.Jump.getCaptureDomain;
 
-public class JRCapture {
-    private JRCapture() {}
+public class Capture {
+    private Capture() {}
 
     /**
      * @param username
@@ -195,7 +194,7 @@ public class JRCapture {
                 if (user instanceof JSONObject) {
                     String accessToken = response.optString("access_token");
                     //String refreshSecret = response.optString("refresh_secret");
-                    JRCaptureRecord record = new JRCaptureRecord(((JSONObject) user), accessToken, null);
+                    CaptureRecord record = new CaptureRecord(((JSONObject) user), accessToken, null);
                     onSuccess(record);
                 } else {
                     onFailure(CaptureApiError.INVALID_API_RESPONSE);
@@ -205,7 +204,7 @@ public class JRCapture {
             }
         }
 
-        public abstract void onSuccess(JRCaptureRecord record);
+        public abstract void onSuccess(CaptureRecord record);
         public abstract void onFailure(CaptureApiError error);
     }
 

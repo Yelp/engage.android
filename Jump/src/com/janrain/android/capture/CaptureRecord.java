@@ -60,16 +60,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
-import static com.janrain.android.capture.JRCapture.CaptureApiRequestCallback;
-import static com.janrain.android.capture.JRCapture.FetchCallback;
-import static com.janrain.android.capture.JRCapture.FetchJsonCallback;
-import static com.janrain.android.capture.JRCapture.InvalidApidChangeException;
+import static com.janrain.android.capture.Capture.CaptureApiRequestCallback;
+import static com.janrain.android.capture.Capture.FetchJsonCallback;
+import static com.janrain.android.capture.Capture.InvalidApidChangeException;
 import static com.janrain.android.utils.JsonUtils.copyJsonVal;
 import static com.janrain.android.utils.AndroidUtils.urlEncode;
 import static com.janrain.android.utils.JsonUtils.unsafeJsonObjectToString;
 import static com.janrain.android.utils.LogUtils.throwDebugException;
 
-public class JRCaptureRecord extends JSONObject {
+public class CaptureRecord extends JSONObject {
     private static final SimpleDateFormat CAPTURE_API_SIGNATURE_DATE_FORMAT;
     private static final String JR_CAPTURE_SIGNED_IN_USER_FILENAME = "jr_capture_signed_in_user";
 
@@ -83,13 +82,13 @@ public class JRCaptureRecord extends JSONObject {
     /*package*/ String accessToken;
     /*package*/ String refreshSecret;
 
-    private JRCaptureRecord(){}
+    private CaptureRecord(){}
 
     /**
-     * Instantiates a new JRCaptureRecord model from a JSON representation of the record
+     * Instantiates a new CaptureRecord model from a JSON representation of the record
      * @param jo a JSON representation of a Capture record, e.g. as from the response to oauth/auth_native
      */
-    /*package*/ JRCaptureRecord(JSONObject jo, String accessToken, String refreshSecret) {
+    /*package*/ CaptureRecord(JSONObject jo, String accessToken, String refreshSecret) {
         super();
 
         original = (JSONObject) copyJsonVal(jo);
@@ -101,13 +100,13 @@ public class JRCaptureRecord extends JSONObject {
      * @param applicationContext the context from which to interact with the disk
      * @return the loaded record, or null
      */
-    public static JRCaptureRecord loadFromDisk(Context applicationContext) {
+    public static CaptureRecord loadFromDisk(Context applicationContext) {
         String fileContents = null;
         try {
             FileInputStream fis = applicationContext.openFileInput(JR_CAPTURE_SIGNED_IN_USER_FILENAME);
             fileContents = CaptureStringUtils.readFully(fis);
             JSONObject serializedVersion = new JSONObject(fileContents);
-            JRCaptureRecord loadedRecord = new JRCaptureRecord();
+            CaptureRecord loadedRecord = new CaptureRecord();
             loadedRecord.original = serializedVersion.getJSONObject("original");
             loadedRecord.accessToken = serializedVersion.getString("accessToken");
             loadedRecord.refreshSecret = serializedVersion.getString("refreshSecret");
@@ -120,7 +119,7 @@ public class JRCaptureRecord extends JSONObject {
         } catch (IOException e) {
             throwDebugException(new RuntimeException("Unexpected", e));
         } catch (JSONException ignore) {
-            LogUtils.loge("Bad JRCaptureRecord file contents:\n" + fileContents, ignore);
+            LogUtils.loge("Bad CaptureRecord file contents:\n" + fileContents, ignore);
             // Will happen on corrupted file
         }
         return null;
@@ -242,11 +241,11 @@ public class JRCaptureRecord extends JSONObject {
         Set<Pair<String, String>> params = new HashSet<Pair<String, String>>(change.getBodyParams());
         params.add(new Pair<String, String>("access_token", accessToken));
 
-        JRCapture.FetchJsonCallback jsonCallback = new FetchJsonCallback() {
+        Capture.FetchJsonCallback jsonCallback = new FetchJsonCallback() {
             public void run(JSONObject content) {
                 if (content.opt("stat").equals("ok")) {
-                    LogUtils.logd("JRCapture", change.toString());
-                    LogUtils.logd("JRCapture", unsafeJsonObjectToString(content, 2));
+                    LogUtils.logd("Capture", change.toString());
+                    LogUtils.logd("Capture", unsafeJsonObjectToString(content, 2));
                     fireNextChange(changeList.subList(1, changeList.size()), callback);
                 } else {
                     if (callback != null) callback.onFailure(new CaptureApiError(content));

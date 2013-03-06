@@ -43,7 +43,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import static com.janrain.android.capture.JRCapture.InvalidApidChangeException;
+import static com.janrain.android.capture.Capture.InvalidApidChangeException;
 import static com.janrain.android.utils.CollectionUtils.sortedSetFromIterator;
 
 public class CaptureJsonUtils {

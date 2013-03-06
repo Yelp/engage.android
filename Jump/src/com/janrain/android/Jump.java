@@ -33,22 +33,25 @@ package com.janrain.android;
 
 import android.app.Activity;
 import android.content.Context;
+import com.janrain.android.capture.Capture;
 import com.janrain.android.capture.CaptureApiError;
-import com.janrain.android.capture.JRCapture;
-import com.janrain.android.capture.JRCaptureRecord;
+import com.janrain.android.capture.CaptureRecord;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.types.JRDictionary;
 
-
-import static com.janrain.android.Jump.SignInResultHandler.FailureReasons;
+import static com.janrain.android.Jump.SignInResultHandler.SignInError;
+import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.AUTHENTICATION_CANCELED_BY_USER;
+import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.CAPTURE_API_ERROR;
+import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.ENGAGE_ERROR;
+import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.JUMP_NOT_INITIALIZED;
 
 public class Jump {
     /*package*/ enum State {
         STATE;
 
-        /*package*/ JRCaptureRecord signedInUser;
+        /*package*/ CaptureRecord signedInUser;
         /*package*/ JREngage jrEngage;
         /*package*/ String captureDomain;
         /*package*/ String captureClientId;
@@ -103,9 +106,9 @@ public class Jump {
     /**
      * @return the currently signed-in user, or null
      */
-    public static JRCaptureRecord getSignedInUser() {
+    public static CaptureRecord getSignedInUser() {
         //if (state.signedInUser == null && JREngage.getApplicationContext() != null) {
-        //    state.signedInUser = JRCaptureRecord.loadFromDisk(JREngage.getApplicationContext());
+        //    state.signedInUser = CaptureRecord.loadFromDisk(JREngage.getApplicationContext());
         //}
         return state.signedInUser;
     }
@@ -121,7 +124,7 @@ public class Jump {
     public static void showSignInDialog(Activity fromActivity, String providerName,
                                         SignInResultHandler handler) {
         if (state.jrEngage == null || state.captureDomain == null) {
-            handler.onFailure(FailureReasons.jumpNotInitialized);
+            handler.onFailure(new SignInError(JUMP_NOT_INITIALIZED, null, null));
             return;
         }
 
@@ -130,32 +133,32 @@ public class Jump {
             public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
                 String authInfoToken = auth_info.getAsString("token");
 
-                //JRCapture.performSocialSignIn(authInfoToken, new JRCapture.FetchJsonCallback() {
-                JRCapture.performLegacySocialSignIn(authInfoToken, new JRCapture.SignInRequestHandler() {
-                    public void onSuccess(JRCaptureRecord record) {
+                //Capture.performSocialSignIn(authInfoToken, new Capture.FetchJsonCallback() {
+                Capture.performLegacySocialSignIn(authInfoToken, new Capture.SignInRequestHandler() {
+                    public void onSuccess(CaptureRecord record) {
                         state.signedInUser = record;
                         fireHandlerOnSuccess();
                     }
 
                     public void onFailure(CaptureApiError error) {
-                        fireHandlerOnFailure(error);
+                        fireHandlerOnFailure(new SignInError(CAPTURE_API_ERROR, error, null));
                     }
                 });
             }
 
             @Override
             public void jrAuthenticationDidNotComplete() {
-                fireHandlerOnFailure(FailureReasons.authenticationCanceledByUser);
+                fireHandlerOnFailure(new SignInError(AUTHENTICATION_CANCELED_BY_USER, null, null));
             }
 
             @Override
             public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-                fireHandlerOnFailure(error);
+                fireHandlerOnFailure(new SignInError(ENGAGE_ERROR, null, error));
             }
 
             @Override
             public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-                fireHandlerOnFailure(error);
+                fireHandlerOnFailure(new SignInError(ENGAGE_ERROR, null, error));
             }
         });
 
@@ -165,14 +168,14 @@ public class Jump {
 
     /**
      * Signs the signed-in user out, and removes their record from disk.
-     * @param applicationContext
+     * @param applicationContext the application context used to interact with the disk
      */
     public static void signOutCaptureUser(Context applicationContext) {
         state.signedInUser = null;
-        JRCaptureRecord.deleteFromDisk(applicationContext);
+        CaptureRecord.deleteFromDisk(applicationContext);
     }
 
-    /*package*/ static void fireHandlerOnFailure(Object failureParam) {
+    /*package*/ static void fireHandlerOnFailure(SignInError failureParam) {
         SignInResultHandler handler_ = state.signInHandler;
         state.signInHandler = null;
         if (handler_ != null) handler_.onFailure(failureParam);
@@ -198,40 +201,88 @@ public class Jump {
     public static void performTraditionalSignIn(String signInName, String password,
                                                 final SignInResultHandler handler) {
         if (state.jrEngage == null || state.captureDomain == null) {
-            handler.onFailure(FailureReasons.jumpNotInitialized);
+            handler.onFailure(new SignInError(JUMP_NOT_INITIALIZED, null, null));
             return;
         }
 
-        JRCapture.performTraditionalSignIn(signInName, password, state.traditionalSignInType,
-                new JRCapture.SignInRequestHandler() {
-            @Override
-            public void onSuccess(JRCaptureRecord record) {
-                state.signedInUser = record;
-                handler.onSuccess();
-            }
+        Capture.performTraditionalSignIn(signInName, password, state.traditionalSignInType,
+                new Capture.SignInRequestHandler() {
+                    @Override
+                    public void onSuccess(CaptureRecord record) {
+                        state.signedInUser = record;
+                        handler.onSuccess();
+                    }
 
-            @Override
-            public void onFailure(CaptureApiError error) {
-                handler.onFailure(error);
-            }
-        });
+                    @Override
+                    public void onFailure(CaptureApiError error) {
+                        handler.onFailure(new SignInError(CAPTURE_API_ERROR, error, null));
+                    }
+                });
     }
 
+    /**
+     * An interface to implement to receive callbacks notifying the completion of a sign-in flow.
+     */
     public interface SignInResultHandler {
-        public enum FailureReasons {
-            invalidApiResponse, jumpNotInitialized, authenticationCanceledByUser, invalidPassword
+        /**
+         * Errors that may be sent upon failure of the sign-in flow
+         */
+        public static class SignInError {
+            public enum FailureReason {
+                /**
+                 * A well formed response could not be retrieved from the Capture server
+                 */
+                INVALID_CAPTURE_API_RESPONSE,
+
+                /**
+                 * The Jump library has not been initialized
+                 */
+                JUMP_NOT_INITIALIZED,
+
+                /**
+                 * The user canceled sign-in the sign-in flow during authentication
+                 */
+                AUTHENTICATION_CANCELED_BY_USER,
+
+                /**
+                 * The password provided was invalid. Only generated by #performTraditionalSignIn(...)
+                 */
+                INVALID_PASSWORD,
+
+                /**
+                 * The sign-in failed with a well-formed Capture sign-in API error
+                 */
+                CAPTURE_API_ERROR,
+
+                /**
+                 * The sign-in failed with a JREngageError
+                 */
+                ENGAGE_ERROR
+            }
+
+            public final FailureReason reason;
+            public final CaptureApiError captureApiError;
+            public final JREngageError engageError;
+
+            /*package*/ SignInError(FailureReason reason, CaptureApiError captureApiError,
+                                    JREngageError engageError) {
+                this.reason = reason;
+                this.captureApiError = captureApiError;
+                this.engageError = engageError;
+            }
         }
 
         /**
-         * Called when Capture sign-in has succeeded
+         * Called when Capture sign-in has succeeded. At this point Jump.getCaptureUser will return the
+         * CaptureRecord instance for the user.
          */
         void onSuccess();
 
         /**
          * Called when Capture sign-in has failed.
-         * @param error
+         * @param error the error which caused the failure
          */
-        void onFailure(Object error);
+        void onFailure(SignInError error);
     }
 
     /**
@@ -239,7 +290,7 @@ public class Jump {
      * @param context the application context, used to interact with the disk
      */
     public static void maybeLoadUserFromDisk(Context context) {
-        state.signedInUser = JRCaptureRecord.loadFromDisk(context);
+        state.signedInUser = CaptureRecord.loadFromDisk(context);
     }
 
     /**

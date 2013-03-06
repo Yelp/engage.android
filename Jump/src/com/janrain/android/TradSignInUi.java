@@ -42,8 +42,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import com.janrain.android.capture.CaptureApiConnection;
 import com.janrain.android.capture.CaptureApiError;
-import com.janrain.android.capture.JRCapture;
-import com.janrain.android.capture.JRCaptureRecord;
+import com.janrain.android.capture.CaptureRecord;
+import com.janrain.android.capture.Capture;
 import com.janrain.android.engage.ui.JRCustomInterfaceConfiguration;
 import com.janrain.android.engage.ui.JRCustomInterfaceView;
 import com.janrain.android.utils.LogUtils;
@@ -75,8 +75,8 @@ public class TradSignInUi extends JRCustomInterfaceConfiguration {
 
         private class SignInButtonHandler implements View.OnClickListener {
             public void onClick(View v) {
-                final JRCapture.SignInRequestHandler handler = new JRCapture.SignInRequestHandler() {
-                    public void onSuccess(JRCaptureRecord record) {
+                final Capture.SignInRequestHandler handler = new Capture.SignInRequestHandler() {
+                    public void onSuccess(CaptureRecord record) {
                         Jump.state.signedInUser = record;
                         Jump.fireHandlerOnSuccess();
                         dismissProgressIndicator();
@@ -98,8 +98,8 @@ public class TradSignInUi extends JRCustomInterfaceConfiguration {
                     }
                 };
                 final CaptureApiConnection d =
-                        //JRCapture.performTraditionalSignIn(userName.getText().toString(),
-                        JRCapture.performLegacyTraditionalSignIn(userName.getText().toString(),
+                        //Capture.performTraditionalSignIn(userName.getText().toString(),
+                        Capture.performLegacyTraditionalSignIn(userName.getText().toString(),
                                 password.getText().toString(),
                                 Jump.state.traditionalSignInType, handler);
                 showProgressIndicator(true, new DialogInterface.OnCancelListener() {

@@ -48,7 +48,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static android.text.TextUtils.join;
-import static com.janrain.android.capture.JRCapture.FetchCallback;
+import static com.janrain.android.capture.Capture.FetchCallback;
 import static com.janrain.android.utils.AndroidUtils.urlEncode;
 import static com.janrain.android.utils.LogUtils.throwDebugException;
 
@@ -150,7 +150,7 @@ public class CaptureApiConnection {
         connectionManagerDelegate = connectionCallback;
     }
 
-    /*package*/ void fetchResponseAsJson(final JRCapture.FetchJsonCallback callback) {
+    /*package*/ void fetchResponseAsJson(final Capture.FetchJsonCallback callback) {
         fetchResponseMaybeJson(new FetchCallback() {
             public void run(Object response) {
                 if (response instanceof JSONObject) {

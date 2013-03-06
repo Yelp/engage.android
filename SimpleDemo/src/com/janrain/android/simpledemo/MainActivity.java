@@ -44,13 +44,13 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.janrain.android.Jump;
 import com.janrain.android.capture.CaptureApiError;
-import com.janrain.android.capture.JRCapture;
+import com.janrain.android.capture.Capture;
 import com.janrain.android.utils.LogUtils;
 import org.json.JSONException;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.janrain.android.capture.JRCapture.CaptureApiRequestCallback;
+import static com.janrain.android.capture.Capture.CaptureApiRequestCallback;
 
 public class MainActivity extends FragmentActivity {
     @Override
@@ -162,7 +162,7 @@ public class MainActivity extends FragmentActivity {
                             LogUtils.loge(e.toString());
                         }
                     });
-                } catch (JRCapture.InvalidApidChangeException e) {
+                } catch (Capture.InvalidApidChangeException e) {
                     throw new RuntimeException("Unexpected", e);
                 }
             }
