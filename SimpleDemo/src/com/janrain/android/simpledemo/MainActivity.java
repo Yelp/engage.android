@@ -43,12 +43,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.janrain.android.Jump;
+import com.janrain.android.capture.CaptureApiError;
 import com.janrain.android.capture.JRCapture;
 import com.janrain.android.utils.LogUtils;
 import org.json.JSONException;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static com.janrain.android.capture.JRCapture.CaptureApiRequestCallback;
 
 public class MainActivity extends FragmentActivity {
     @Override
@@ -149,12 +151,12 @@ public class MainActivity extends FragmentActivity {
                         return;
                     }
 
-                    Jump.getSignedInUser().synchronize(new JRCapture.CaptureApiRequestCallback() {
+                    Jump.getSignedInUser().synchronize(new CaptureApiRequestCallback() {
                         public void onSuccess() {
                             Toast.makeText(MainActivity.this, "Record updated", Toast.LENGTH_LONG).show();
                         }
 
-                        public void onFailure(Object e) {
+                        public void onFailure(CaptureApiError e) {
                             Toast.makeText(MainActivity.this, "Record update failed, error logged",
                                     Toast.LENGTH_LONG).show();
                             LogUtils.loge(e.toString());
@@ -185,7 +187,7 @@ public class MainActivity extends FragmentActivity {
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                 .detectAll()
                 .detectLeakedSqlLiteObjects()
-                .detectLeakedClosableObjects()
+                //.detectLeakedClosableObjects()
                 .penaltyLog()
                 .penaltyDeath()
                 .build());

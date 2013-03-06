@@ -48,13 +48,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static android.text.TextUtils.join;
+import static com.janrain.android.capture.JRCapture.FetchCallback;
 import static com.janrain.android.utils.AndroidUtils.urlEncode;
 import static com.janrain.android.utils.LogUtils.throwDebugException;
 
-/*package*/ class CaptureApiConnection {
+public class CaptureApiConnection {
     /*package*/ String url;
     /*package*/ Set<Pair<String,String>> params = new HashSet<Pair<String, String>>();
     /*package*/ Method method = Method.POST;
+    private JRConnectionManagerDelegate connectionManagerDelegate;
 
     /*package*/ static byte[] paramsGetBytes(Set<Pair<String, String>> bodyParams) {
         try {
@@ -93,6 +95,13 @@ import static com.janrain.android.utils.LogUtils.throwDebugException;
         }
     }
 
+    /**
+     *
+     */
+    public void stopConnection() {
+        JRConnectionManager.stopConnectionsForDelegate(connectionManagerDelegate);
+    }
+
     enum Method {POST, GET}
 
     /*package*/ CaptureApiConnection(String url) {
@@ -111,7 +120,7 @@ import static com.janrain.android.utils.LogUtils.throwDebugException;
         this.params.addAll(params);
     }
 
-    /*package*/ JRConnectionManagerDelegate fetchResponseMaybeJson(final JRCapture.FetchCallback callback) {
+    /*package*/ void fetchResponseMaybeJson(final FetchCallback callback) {
         JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate connectionCallback =
                 new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
                     @Override
@@ -137,11 +146,12 @@ import static com.janrain.android.utils.LogUtils.throwDebugException;
             String urlWithParams = url + "?" + paramsToString(params);
             JRConnectionManager.createConnection(urlWithParams, connectionCallback, null, null, null);
         }
-        return connectionCallback;
+
+        connectionManagerDelegate = connectionCallback;
     }
 
-    /*package*/ JRConnectionManagerDelegate fetchResponseAsJson(final JRCapture.FetchJsonCallback callback) {
-        return fetchResponseMaybeJson(new JRCapture.FetchCallback() {
+    /*package*/ void fetchResponseAsJson(final JRCapture.FetchJsonCallback callback) {
+        fetchResponseMaybeJson(new FetchCallback() {
             public void run(Object response) {
                 if (response instanceof JSONObject) {
                     callback.run(((JSONObject) response));

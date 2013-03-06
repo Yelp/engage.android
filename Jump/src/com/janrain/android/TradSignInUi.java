@@ -39,16 +39,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
+import com.janrain.android.capture.CaptureApiConnection;
+import com.janrain.android.capture.CaptureApiError;
 import com.janrain.android.capture.JRCapture;
 import com.janrain.android.capture.JRCaptureRecord;
-import com.janrain.android.engage.net.JRConnectionManager;
-import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.ui.JRCustomInterfaceConfiguration;
 import com.janrain.android.engage.ui.JRCustomInterfaceView;
+import com.janrain.android.utils.LogUtils;
 
 import static com.janrain.android.R.string.jr_capture_trad_signin_bad_password;
+import static com.janrain.android.R.string.jr_capture_trad_signin_unrecognized_error;
 import static com.janrain.android.R.string.jr_dialog_dismiss;
 
 public class TradSignInUi extends JRCustomInterfaceConfiguration {
@@ -74,7 +75,7 @@ public class TradSignInUi extends JRCustomInterfaceConfiguration {
 
         private class SignInButtonHandler implements View.OnClickListener {
             public void onClick(View v) {
-                final JRCapture.SignInResponseHandler handler = new JRCapture.SignInResponseHandler() {
+                final JRCapture.SignInRequestHandler handler = new JRCapture.SignInRequestHandler() {
                     public void onSuccess(JRCaptureRecord record) {
                         Jump.state.signedInUser = record;
                         Jump.fireHandlerOnSuccess();
@@ -82,15 +83,21 @@ public class TradSignInUi extends JRCustomInterfaceConfiguration {
                         finishJrSignin();
                     }
 
-                    public void onFailure(Object error) {
+                    public void onFailure(CaptureApiError error) {
                         dismissProgressIndicator();
                         AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
                         b.setNeutralButton(jr_dialog_dismiss, null);
-                        b.setMessage(jr_capture_trad_signin_bad_password);
+                        boolean badPassword = false;
+                        if (badPassword) {
+                            b.setMessage(jr_capture_trad_signin_bad_password);
+                        } else {
+                            b.setMessage(jr_capture_trad_signin_unrecognized_error);
+                            LogUtils.loge(error.toString());
+                        }
                         b.show();
                     }
                 };
-                final JRConnectionManagerDelegate d =
+                final CaptureApiConnection d =
                         //JRCapture.performTraditionalSignIn(userName.getText().toString(),
                         JRCapture.performLegacyTraditionalSignIn(userName.getText().toString(),
                                 password.getText().toString(),
@@ -98,7 +105,7 @@ public class TradSignInUi extends JRCustomInterfaceConfiguration {
                 showProgressIndicator(true, new DialogInterface.OnCancelListener() {
                     public void onCancel(DialogInterface dialog) {
                         handler.cancel();
-                        JRConnectionManager.stopConnectionsForDelegate(d);
+                        d.stopConnection();
                     }
                 });
             }

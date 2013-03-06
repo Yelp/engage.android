@@ -48,6 +48,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import static com.janrain.android.capture.CaptureStringUtils.readFully;
+import static com.janrain.android.capture.JRCapture.CaptureApiRequestCallback;
 
 public class CaptureDebugUtils {
     private static JSONObject getEntity(int id) throws IOException, JSONException {
@@ -90,12 +91,12 @@ public class CaptureDebugUtils {
         record.refreshAccessToken(null);
 
         try {
-            record.synchronize(new JRCapture.CaptureApiRequestCallback() {
+            record.synchronize(new CaptureApiRequestCallback() {
                 public void onSuccess() {
                     LogUtils.logd("JRCapture", "success");
                 }
 
-                public void onFailure(Object e) {
+                public void onFailure(CaptureApiError e) {
                     LogUtils.logd("JRCapture", ("failure: " + e));
                 }
             });

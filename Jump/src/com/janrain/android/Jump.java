@@ -33,6 +33,7 @@ package com.janrain.android;
 
 import android.app.Activity;
 import android.content.Context;
+import com.janrain.android.capture.CaptureApiError;
 import com.janrain.android.capture.JRCapture;
 import com.janrain.android.capture.JRCaptureRecord;
 import com.janrain.android.engage.JREngage;
@@ -42,7 +43,6 @@ import com.janrain.android.engage.types.JRDictionary;
 
 
 import static com.janrain.android.Jump.SignInResultHandler.FailureReasons;
-import static com.janrain.android.capture.JRCapture.SignInResponseHandler;
 
 public class Jump {
     /*package*/ enum State {
@@ -131,13 +131,13 @@ public class Jump {
                 String authInfoToken = auth_info.getAsString("token");
 
                 //JRCapture.performSocialSignIn(authInfoToken, new JRCapture.FetchJsonCallback() {
-                JRCapture.performLegacySocialSignIn(authInfoToken, new SignInResponseHandler() {
+                JRCapture.performLegacySocialSignIn(authInfoToken, new JRCapture.SignInRequestHandler() {
                     public void onSuccess(JRCaptureRecord record) {
                         state.signedInUser = record;
                         fireHandlerOnSuccess();
                     }
 
-                    public void onFailure(Object error) {
+                    public void onFailure(CaptureApiError error) {
                         fireHandlerOnFailure(error);
                     }
                 });
@@ -145,7 +145,7 @@ public class Jump {
 
             @Override
             public void jrAuthenticationDidNotComplete() {
-                fireHandlerOnFailure(FailureReasons.AuthenticationCanceledByUser);
+                fireHandlerOnFailure(FailureReasons.authenticationCanceledByUser);
             }
 
             @Override
@@ -203,7 +203,7 @@ public class Jump {
         }
 
         JRCapture.performTraditionalSignIn(signInName, password, state.traditionalSignInType,
-                new SignInResponseHandler() {
+                new JRCapture.SignInRequestHandler() {
             @Override
             public void onSuccess(JRCaptureRecord record) {
                 state.signedInUser = record;
@@ -211,7 +211,7 @@ public class Jump {
             }
 
             @Override
-            public void onFailure(Object error) {
+            public void onFailure(CaptureApiError error) {
                 handler.onFailure(error);
             }
         });
@@ -219,7 +219,7 @@ public class Jump {
 
     public interface SignInResultHandler {
         public enum FailureReasons {
-            invalidApiResponse, jumpNotInitialized, AuthenticationCanceledByUser
+            invalidApiResponse, jumpNotInitialized, authenticationCanceledByUser, invalidPassword
         }
 
         /**

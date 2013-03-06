@@ -32,22 +32,28 @@
 
 package com.janrain.android.capture;
 
-import com.janrain.android.Jump;
-import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import org.json.JSONObject;
 
-import static android.text.TextUtils.join;
 import static com.janrain.android.Jump.SignInResultHandler.FailureReasons.invalidApiResponse;
+import static com.janrain.android.Jump.TraditionalSignInType;
 import static com.janrain.android.Jump.TraditionalSignInType.EMAIL;
+import static com.janrain.android.Jump.getCaptureClientId;
 import static com.janrain.android.Jump.getCaptureDomain;
 
 public class JRCapture {
     private JRCapture() {}
 
-    public static JRConnectionManagerDelegate performTraditionalSignIn(String username,
-                                                                       String password,
-                                                                       Jump.TraditionalSignInType type,
-                                                                       FetchJsonCallback handler) {
+    /**
+     * @param username
+     * @param password
+     * @param type
+     * @param handler
+     * @return
+     */
+    public static CaptureApiConnection performTraditionalSignIn(String username,
+                                                                String password,
+                                                                TraditionalSignInType type,
+                                                                SignInRequestHandler handler) {
         /**
          * client_id
          * locale
@@ -61,42 +67,76 @@ public class JRCapture {
         String signInNameAttrName = type == EMAIL ? "email" : "username";
         String url = "https://" + getCaptureDomain() + "/oauth/auth_native_traditional";
         CaptureApiConnection connection = new CaptureApiConnection(url);
-        connection.addAllToParams("client_id", Jump.getCaptureClientId(),
+        connection.addAllToParams("client_id", getCaptureClientId(),
                 "locale", "en_US",
                 "response_type", "token",
                 "redirect_uri", "http://android.library",
                 signInNameAttrName, username,
                 "password", password,
                 "form", "signin");
-        return connection.fetchResponseAsJson(handler);
+        connection.fetchResponseAsJson(handler);
+        return connection;
     }
 
-    public static JRConnectionManagerDelegate performLegacyTraditionalSignIn(String username,
+    /**
+     *
+     * @param username
+     * @param password
+     * @param type
+     * @param handler
+     * @return
+     */
+    public static CaptureApiConnection performLegacyTraditionalSignIn(String username,
                                                                              String password,
-                                                                             Jump.TraditionalSignInType type,
-                                                                             FetchJsonCallback handler) {
+                                                                             TraditionalSignInType type,
+                                                                             SignInRequestHandler handler) {
         String url = "https://" + getCaptureDomain() + "/oauth/mobile_signin_username_password";
         CaptureApiConnection connection = new CaptureApiConnection(url);
-        connection.addAllToParams("client_id", Jump.getCaptureClientId(),
+        String signInNameAttrName = type == EMAIL ? "email" : "username";
+        connection.addAllToParams("client_id", getCaptureClientId(),
                 "redirect_uri", "http://android.library",
-                "email", username,
+                signInNameAttrName, username,
                 "password", password);
-        return connection.fetchResponseAsJson(handler);
+        connection.fetchResponseAsJson(handler);
+        return connection;
     }
 
+    /**
+     *
+     */
     public static class InvalidApidChangeException extends Exception {
+        /**
+         *
+         * @param description
+         */
         public InvalidApidChangeException(String description) {
             super(description);
         }
     }
 
+    /**
+     *
+     */
     public static interface CaptureApiRequestCallback {
+        /**
+         *
+         */
         public void onSuccess();
 
+        /**
+         *
+         * @param e
+         */
         public void onFailure(CaptureApiError e);
     }
 
-    public static void performSocialSignIn(String authInfoToken, final FetchJsonCallback handler) {
+    /**
+     *
+     * @param authInfoToken
+     * @param handler
+     */
+    public static CaptureApiConnection performSocialSignIn(String authInfoToken,
+                                                           final SignInRequestHandler handler) {
         /***
          * client_id
          * locale
@@ -110,35 +150,46 @@ public class JRCapture {
 
         CaptureApiConnection c =
                 new CaptureApiConnection("https://" + getCaptureDomain() + "/oauth/auth_native");
-        c.addAllToParams("client_id", Jump.getCaptureClientId(),
+        c.addAllToParams("client_id", getCaptureClientId(),
                 "locale", "en_US",
                 "response_type", "token",
                 "redirect_uri", "http://android-library",
                 "token", authInfoToken,
                 "thin_registration", "true");
         c.fetchResponseAsJson(handler);
+        return c;
     }
 
-    public static void performLegacySocialSignIn(String authInfoToken, final FetchJsonCallback handler) {
+    /**
+     *
+     * @param authInfoToken
+     * @param handler
+     */
+    public static CaptureApiConnection performLegacySocialSignIn(String authInfoToken,
+                                                                 final SignInRequestHandler handler) {
         CaptureApiConnection c =
                 new CaptureApiConnection("https://" + getCaptureDomain() + "/oauth/mobile_signin");
-        c.addAllToParams("client_id", Jump.getCaptureClientId());
+        c.addAllToParams("client_id", getCaptureClientId());
         c.addAllToParams("redirect_uri", "http://android-library");
         c.addAllToParams("token", authInfoToken);
         c.fetchResponseAsJson(handler);
+        return c;
     }
 
-    public static abstract class SignInResponseHandler implements FetchJsonCallback {
+    /**
+     *
+     */
+    public static abstract class SignInRequestHandler implements FetchJsonCallback {
         private boolean canceled = false;
 
         public void cancel() {
             canceled = true;
         }
 
-        public void run(JSONObject response) {
+        public final void run(JSONObject response) {
             if (canceled) return;
             if (response == null) {
-                onFailure(invalidApiResponse);
+                onFailure(CaptureApiError.INVALID_API_RESPONSE);
             } else if ("ok".equals(response.opt("stat"))) {
                 Object user = response.opt("capture_user");
                 if (user instanceof JSONObject) {
@@ -147,21 +198,27 @@ public class JRCapture {
                     JRCaptureRecord record = new JRCaptureRecord(((JSONObject) user), accessToken, null);
                     onSuccess(record);
                 } else {
-                    onFailure(invalidApiResponse);
+                    onFailure(CaptureApiError.INVALID_API_RESPONSE);
                 }
             } else {
-                onFailure(response);
+                onFailure(new CaptureApiError(response));
             }
         }
 
         public abstract void onSuccess(JRCaptureRecord record);
-        public abstract void onFailure(Object error);
+        public abstract void onFailure(CaptureApiError error);
     }
 
+    /**
+     *
+     */
     public interface FetchJsonCallback {
         void run(JSONObject jsonObject);
     }
 
+    /**
+     *
+     */
     public interface FetchCallback {
         void run(Object response);
     }

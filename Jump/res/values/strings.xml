@@ -78,5 +78,6 @@
     <string name="jr_capture_signin_view_password_hint">Password</string>
     <string name="jr_capture_signin_view_username_hint">Email</string>
     <string name="jr_capture_trad_signin_bad_password">Invalid username / password</string>
+    <string name="jr_capture_trad_signin_unrecognized_error">Sorry, there was an error signing in</string>
 
 </resources>

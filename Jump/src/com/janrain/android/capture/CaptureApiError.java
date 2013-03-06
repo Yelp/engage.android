@@ -58,6 +58,9 @@ public class CaptureApiError {
      */
     JSONObject raw_response;
 
+    /**
+     * Used to indicate an API response that could not be parsed
+     */
     public static final CaptureApiError INVALID_API_RESPONSE = new CaptureApiError();
 
     private CaptureApiError() {}
@@ -71,5 +74,9 @@ public class CaptureApiError {
 
     public boolean isInvalidApiResponse() {
         return this == INVALID_API_RESPONSE;
+    }
+
+    public String toString() {
+        return "<CaptureApiError code: " + code + " error: " + error + " description: " + error_description;
     }
 }
