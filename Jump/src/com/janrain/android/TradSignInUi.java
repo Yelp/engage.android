@@ -87,7 +87,7 @@ public class TradSignInUi extends JRCustomInterfaceConfiguration {
                         dismissProgressIndicator();
                         AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
                         b.setNeutralButton(jr_dialog_dismiss, null);
-                        boolean badPassword = false;
+                        boolean badPassword = error.isInvalidPassword();
                         if (badPassword) {
                             b.setMessage(jr_capture_trad_signin_bad_password);
                         } else {

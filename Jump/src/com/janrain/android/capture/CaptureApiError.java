@@ -79,4 +79,9 @@ public class CaptureApiError {
     public String toString() {
         return "<CaptureApiError code: " + code + " error: " + error + " description: " + error_description;
     }
+
+    public boolean isInvalidPassword() {
+        if (error.equals("bad username/password combo")) return true; // legacy username/password endpoint
+        return false;
+    }
 }

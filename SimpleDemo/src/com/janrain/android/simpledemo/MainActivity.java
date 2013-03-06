@@ -96,7 +96,7 @@ public class MainActivity extends FragmentActivity {
                         b.show();
                     }
 
-                    public void onFailure(Object error) {
+                    public void onFailure(SignInError error) {
                         AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
                         b.setMessage("error:" + error);
                         b.setNeutralButton("Dismiss", null);

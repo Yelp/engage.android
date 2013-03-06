@@ -270,6 +270,11 @@ public class Jump {
                 this.captureApiError = captureApiError;
                 this.engageError = engageError;
             }
+
+            public String toString() {
+                return "<" + super.toString() + " reason: " + reason + " captureApiError: " + captureApiError
+                        + " engageError: " + engageError + ">";
+            }
         }
 
         /**
