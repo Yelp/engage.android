@@ -55,8 +55,12 @@ import java.util.WeakHashMap;
  * @class JRConnectionManager
  **/
 public class JRConnectionManager {
-    private static final String TAG = JRConnectionManager.class.getSimpleName();
 	private static JRConnectionManager sInstance;
+
+    // createConnection can be called from a BG thread so this is wrapped in a synced map for thread
+    // safety
+    private static final Map<JRConnectionManagerDelegate, Set<ManagedConnection>> sDelegateConnections =
+            Collections.synchronizedMap(new WeakHashMap<JRConnectionManagerDelegate, Set<ManagedConnection>>());
 
     private JRConnectionManager() {}
 
@@ -80,8 +84,7 @@ public class JRConnectionManager {
  *      multiple connections handled by a single delegate.
      * @param requestHeaders extra custom HTTP headers
      * @param postData if non-null will perform a POST, if null a GET
-     * @param followRedirects
-     *
+     * @param followRedirects true to follow HTTP 302 redirects, necessary for Facebook profile pics
      */
     public static void createConnection(String requestUrl,
                                         JRConnectionManagerDelegate delegate,
@@ -133,11 +136,6 @@ public class JRConnectionManager {
         LogUtils.logd();
     }
 
-    // createConnection can be called from a BG thread so this is wrapped in a synced map for thread
-    // safety
-    private static final Map<JRConnectionManagerDelegate, Set<ManagedConnection>> sDelegateConnections =
-            Collections.synchronizedMap(new WeakHashMap<JRConnectionManagerDelegate, Set<ManagedConnection>>());
-    
     public static void stopConnectionsForDelegate(JRConnectionManagerDelegate delegate) {
         synchronized (sDelegateConnections) {
             Set<ManagedConnection> connections = sDelegateConnections.get(delegate);
@@ -169,53 +167,50 @@ public class JRConnectionManager {
             mFollowRedirects = followRedirects;
         }
 
-        public String getRequestUrl() {
+        /*package*/ String getRequestUrl() {
             return mRequestUrl;
         }
 
-        public byte[] getPostData() {
+        /*package*/ byte[] getPostData() {
             return mPostData;
         }
 
-        public List<NameValuePair> getRequestHeaders() {
+        /*package*/ List<NameValuePair> getRequestHeaders() {
             return mRequestHeaders;
         }
 
-        public HttpUriRequest getHttpRequest() {
+        /*package*/ HttpUriRequest getHttpRequest() {
             return mHttpRequest;
         }
 
-        public boolean getFollowRedirects() {
+        /*package*/ boolean getFollowRedirects() {
             return mFollowRedirects;
         }
 
-        public void setResponse(AsyncHttpClient.AsyncHttpResponse response) {
+        /*package*/ void setResponse(AsyncHttpClient.AsyncHttpResponse response) {
             mResponse = response;
         }
     }
 
-    /*package*/ static class HttpCallbackWrapper implements Runnable {
-        private ManagedConnection mManagedConnection;
+    /*package*/ static class HttpCallback implements Runnable {
+        private final ManagedConnection mConn;
 
-        public HttpCallbackWrapper(ManagedConnection cd) {
-            mManagedConnection = cd;
+        /*package*/ HttpCallback(ManagedConnection cd) {
+            mConn = cd;
         }
 
         public void run() {
-            AsyncHttpClient.AsyncHttpResponse response = mManagedConnection.mResponse;
-            String requestUrl = response.getUrl();
-            JRConnectionManagerDelegate delegate = mManagedConnection.mDelegate;
+            if (mConn.mDelegate == null || mConn.mHttpRequest.isAborted()) return;
 
-            if (delegate == null || mManagedConnection.mHttpRequest.isAborted()) return;
-
-            if (response.hasException()) {
-                delegate.connectionDidFail(response.getException(), requestUrl, mManagedConnection.mTag);
+            if (mConn.mResponse.hasException()) {
+                mConn.mDelegate.connectionDidFail(mConn.mResponse.getException(),
+                        mConn.mRequestUrl,
+                        mConn.mTag);
             } else {
-                delegate.connectionDidFinishLoading(
-                        response.getHeaders(),
-                        response.getPayload(),
-                        requestUrl,
-                        mManagedConnection.mTag);
+                mConn.mDelegate.connectionDidFinishLoading(mConn.mResponse.getHeaders(),
+                        mConn.mResponse.getPayload(),
+                        mConn.mRequestUrl,
+                        mConn.mTag);
             }
         }
     }

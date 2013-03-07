@@ -62,7 +62,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultRedirectHandler;
@@ -85,7 +84,7 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
  * @class AsyncHttpClient
  * Utility class which performs HTTP operations asynchronously.
  **/
-public final class AsyncHttpClient {
+/*package*/ class AsyncHttpClient {
     private static final String USER_AGENT =
             "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 " +
                     "(KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
@@ -94,12 +93,12 @@ public final class AsyncHttpClient {
 
     private AsyncHttpClient() {}
 
-	public static class HttpExecutor implements Runnable {
+    /*package*/ static class HttpExecutor implements Runnable {
 		final private Handler mHandler;
         final private ManagedConnection mConn;
         final private DefaultHttpClient mHttpClient;
 
-        public HttpExecutor(Handler handler, ManagedConnection managedConnection) {
+        /*package*/ HttpExecutor(Handler handler, ManagedConnection managedConnection) {
             mConn = managedConnection;
             mHandler = handler;
             mHttpClient = setupHttpClient();
@@ -185,8 +184,8 @@ public final class AsyncHttpClient {
 
             setupHttpClient();
 
-            JRConnectionManager.HttpCallbackWrapper callBack =
-                    new JRConnectionManager.HttpCallbackWrapper(mConn);
+            JRConnectionManager.HttpCallback callBack =
+                    new JRConnectionManager.HttpCallback(mConn);
             try {
                 InetAddress ia = InetAddress.getByName(mConn.getHttpRequest().getURI().getHost());
                 LogUtils.logd("Connecting to: " + ia.getHostAddress());
@@ -270,7 +269,7 @@ public final class AsyncHttpClient {
             }
 		}
 
-        private void invokeCallback(JRConnectionManager.HttpCallbackWrapper callBack) {
+        private void invokeCallback(JRConnectionManager.HttpCallback callBack) {
             if (mHandler != null) {
                 mHandler.post(callBack);
             } else {
@@ -294,7 +293,7 @@ public final class AsyncHttpClient {
      * Wraps the possible data returned from a full asynchronous HTTP request.  This object will
      * contain either headers and data (if successful) or an Exception object (if failed).
      */
-    public static class AsyncHttpResponse {
+    /*package*/ static class AsyncHttpResponse {
         final private HttpResponseHeaders mHeaders;
         final private byte[] mPayload;
         final private Exception mException;
@@ -320,7 +319,7 @@ public final class AsyncHttpClient {
          * @return
          *      The URL that this HTTP response (or error) corresponds to.
          */
-        public String getUrl() {
+        /*package*/ String getUrl() {
             return mManagedConnection.getRequestUrl();
         }
 
@@ -331,7 +330,7 @@ public final class AsyncHttpClient {
          * 		The HttpResponseHeaders object synthesized from the HTTP response if
          * 		the operation was successful, null otherwise.
          */
-        public HttpResponseHeaders getHeaders() {
+        /*package*/ HttpResponseHeaders getHeaders() {
             return mHeaders;
         }
 
@@ -342,7 +341,7 @@ public final class AsyncHttpClient {
          * 		The byte array containing the data (payload) from the HTTP response if
          * 		the operation was successful, null otherwise.
          */
-        public byte[] getPayload() {
+        /*package*/ byte[] getPayload() {
             return mPayload;
         }
 
@@ -353,7 +352,7 @@ public final class AsyncHttpClient {
          * 		The Exception that occurred as a result of the asynchronous HTTP request if
          * 		the operation failed, null otherwise.
          */
-        public Exception getException() {
+        /*package*/ Exception getException() {
             return mException;
         }
 
@@ -363,7 +362,7 @@ public final class AsyncHttpClient {
          * @return
          * 		<code>true</code> if the headers object is valid, <code>false</code> otherwise.
          */
-        public boolean hasHeaders() {
+        /*package*/ boolean hasHeaders() {
             return (mHeaders != null);
         }
 
@@ -373,7 +372,7 @@ public final class AsyncHttpClient {
          * @return
          * 		<code>true</code> if the payload array is valid, <code>false</code> otherwise.
          */
-        public boolean hasPayload() {
+        /*package*/ boolean hasPayload() {
             return (mPayload != null);
         }
 
@@ -383,7 +382,7 @@ public final class AsyncHttpClient {
          * @return
          * 		<code>true</code> if the exception object is valid, <code>false</code> otherwise.
          */
-        public boolean hasException() {
+        /*package*/ boolean hasException() {
             return (mException != null);
         }
     }
