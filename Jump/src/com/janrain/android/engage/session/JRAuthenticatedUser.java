@@ -204,7 +204,7 @@ public class JRAuthenticatedUser implements Serializable {
                                 }
                             }
                         }
-                    }, null, null, null);
+                    }, null, null, null, true);
         }
     }
 

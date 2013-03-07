@@ -141,10 +141,10 @@ public class CaptureApiConnection {
 
         if (method == Method.POST) {
             byte[] postData = paramsGetBytes(params);
-            JRConnectionManager.createConnection(url, connectionCallback, null, null, postData);
+            JRConnectionManager.createConnection(url, connectionCallback, null, null, postData, false);
         } else {
             String urlWithParams = url + "?" + paramsToString(params);
-            JRConnectionManager.createConnection(urlWithParams, connectionCallback, null, null, null);
+            JRConnectionManager.createConnection(urlWithParams, connectionCallback, null, null, null, false);
         }
 
         connectionManagerDelegate = connectionCallback;

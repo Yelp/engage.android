@@ -712,7 +712,7 @@ public class JRActivityObject implements Serializable, JRJsonifiable {
             };
 
             // Invoke the network call
-            JRConnectionManager.createConnection(getUrlsUrl, jrcmd, null, null, null);
+            JRConnectionManager.createConnection(getUrlsUrl, jrcmd, null, null, null, false);
 
             // If the activity resource URL is empty invoke the callback immediately
             if (TextUtils.isEmpty(getUrl())) {

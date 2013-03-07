@@ -390,7 +390,7 @@ public class JRWebViewFragment extends JRUiFragment {
         String urlToLoad = url + "&auth_info=true";
         LogUtils.logd(TAG, "[loadMobileEndpointUrl] loading URL: " + urlToLoad);
 
-        JRConnectionManager.createConnection(urlToLoad, mRetain.mConnectionDelegate, null, null, null);
+        JRConnectionManager.createConnection(urlToLoad, mRetain.mConnectionDelegate, null, null, null, false);
     }
 
     private DownloadListener mWebViewDownloadListener = new DownloadListener() {

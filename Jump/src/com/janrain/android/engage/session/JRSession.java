@@ -609,7 +609,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         List<NameValuePair> headerList = new ArrayList<NameValuePair>();
         headerList.add(eTagHeader);
 
-        JRConnectionManager.createConnection(urlString, this, TAG_GET_CONFIGURATION, headerList, null);
+        JRConnectionManager.createConnection(urlString, this, TAG_GET_CONFIGURATION, headerList, null, false);
 
         return null;
     }
@@ -858,7 +858,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             }
         };
 
-        JRConnectionManager.createConnection(url, jrcmd, null, null, body.toString().getBytes());
+        JRConnectionManager.createConnection(url, jrcmd, null, null, body.toString().getBytes(), false);
     }
 
     public void shareActivityForUser(JRAuthenticatedUser user) {
@@ -895,7 +895,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         tag.put(USERDATA_ACTION_KEY, USERDATA_ACTION_SHARE_ACTIVITY);
         tag.put(USERDATA_ACTIVITY_KEY, mActivity);
         tag.put(USERDATA_PROVIDER_NAME_KEY, mCurrentlyPublishingProvider.getName());
-        JRConnectionManager.createConnection(url, this, tag, null, body.toString().getBytes());
+        JRConnectionManager.createConnection(url, this, tag, null, body.toString().getBytes(), false);
 
         LogUtils.logd(TAG, "[shareActivityForUser] connection started for url: " + url);
     }
@@ -928,7 +928,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         tag.put(USERDATA_ACTION_KEY, USERDATA_ACTION_SHARE_ACTIVITY);
         tag.put(USERDATA_ACTIVITY_KEY, mActivity);
         tag.put(USERDATA_PROVIDER_NAME_KEY, mCurrentlyPublishingProvider.getName());
-        JRConnectionManager.createConnection(url, this, tag, null, body.toString().getBytes());
+        JRConnectionManager.createConnection(url, this, tag, null, body.toString().getBytes(), false);
 
         LogUtils.logd(TAG, "[setStatusForUser] connection started for url: " + url);
     }
@@ -945,7 +945,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         tag.put(USERDATA_TOKEN_URL_KEY, tokenUrl);
         tag.put(USERDATA_PROVIDER_NAME_KEY, providerName);
 
-        JRConnectionManager.createConnection(tokenUrl, this, tag, null, postData);
+        JRConnectionManager.createConnection(tokenUrl, this, tag, null, postData, false);
     }
 
     public void triggerAuthenticationDidCompleteWithPayload(JRDictionary rpx_result) {

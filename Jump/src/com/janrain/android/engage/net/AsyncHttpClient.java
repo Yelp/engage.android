@@ -50,7 +50,6 @@
 package com.janrain.android.engage.net;
 
 import android.os.Handler;
-import android.util.Log;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.utils.IOUtils;
 import com.janrain.android.utils.LogUtils;
@@ -63,9 +62,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.HttpClient;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultRedirectHandler;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -74,9 +74,10 @@ import org.apache.http.protocol.HttpContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.zip.GZIPInputStream;
+
+import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnection;
+import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromResponse;
 
 /**
  * @internal
@@ -85,7 +86,6 @@ import java.util.zip.GZIPInputStream;
  * Utility class which performs HTTP operations asynchronously.
  **/
 public final class AsyncHttpClient {
-    private static final String TAG = AsyncHttpClient.class.getSimpleName();
     private static final String USER_AGENT =
             "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 " +
                     "(KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
@@ -95,31 +95,31 @@ public final class AsyncHttpClient {
     private AsyncHttpClient() {}
 
 	public static class HttpExecutor implements Runnable {
-		private static final String TAG = HttpExecutor.class.getSimpleName();
+		final private Handler mHandler;
+        final private ManagedConnection mConn;
+        final private DefaultHttpClient mHttpClient;
 
-        private String mUrl;
-        private List<NameValuePair> mHeaders;
-        private byte[] mPostData;
-		private Handler mHandler;
-        private DefaultHttpClient mHttpClient;
-        private HttpUriRequest mRequest;
-        private JRConnectionManager.ManagedConnection mManagedConnection;
-
-        public HttpExecutor(Handler handler, JRConnectionManager.ManagedConnection managedConnection) {
-            mManagedConnection = managedConnection;
-            mUrl = managedConnection.getRequestUrl();
-            mHeaders = managedConnection.getRequestHeaders();
-            mPostData = managedConnection.getPostData();
+        public HttpExecutor(Handler handler, ManagedConnection managedConnection) {
+            mConn = managedConnection;
             mHandler = handler;
-            mRequest = managedConnection.getHttpRequest();
+            mHttpClient = setupHttpClient();
         }
 
-        private void setupHttpClient() {
+        private DefaultHttpClient setupHttpClient() {
             HttpParams connectionParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(connectionParams, 30000); // thirty seconds
             HttpConnectionParams.setSoTimeout(connectionParams, 30000);
-            mHttpClient = new DefaultHttpClient(connectionParams);
-            mHttpClient.addRequestInterceptor(new HttpRequestInterceptor() {
+            DefaultHttpClient client = new DefaultHttpClient(connectionParams);
+
+            evolveGzipEncoding(client);
+
+            if (!mConn.getFollowRedirects()) disableRedirects(client);
+
+            return client;
+        }
+
+        private static void evolveGzipEncoding(DefaultHttpClient client) {
+            client.addRequestInterceptor(new HttpRequestInterceptor() {
                 public void process(HttpRequest request, HttpContext context) {
                     // Add header to accept gzip content
                     if (!request.containsHeader(HEADER_ACCEPT_ENCODING)) {
@@ -128,7 +128,7 @@ public final class AsyncHttpClient {
                 }
             });
 
-            mHttpClient.addResponseInterceptor(new HttpResponseInterceptor() {
+            client.addResponseInterceptor(new HttpResponseInterceptor() {
                 public void process(HttpResponse response, HttpContext context) {
                     // Inflate any responses compressed with gzip
                     final HttpEntity entity = response.getEntity();
@@ -144,16 +144,18 @@ public final class AsyncHttpClient {
                     }
                 }
             });
+        }
 
-            //mHttpClient.setRedirectHandler(new DefaultRedirectHandler() {
-            //    @Override
-            //    public boolean isRedirectRequested(HttpResponse response, HttpContext context) {
-            //        if (super.isRedirectRequested(response, context)) {
-            //            JREngage.loge("error: ignoring redirect");
-            //        }
-            //        return false;
-            //    }
-            //});
+        private static void disableRedirects(DefaultHttpClient client) {
+            client.setRedirectHandler(new DefaultRedirectHandler() {
+                @Override
+                public boolean isRedirectRequested(HttpResponse response, HttpContext context) {
+                    if (super.isRedirectRequested(response, context)) {
+                        LogUtils.loge("error: ignoring redirect");
+                    }
+                    return false;
+                }
+            });
         }
 
         /**
@@ -179,39 +181,40 @@ public final class AsyncHttpClient {
         }
 
 		public void run() {
-			LogUtils.logd(TAG, "[run] BEGIN, URL: " + mUrl);
+			LogUtils.logd("[run] BEGIN, URL: " + mConn.getRequestUrl());
 
             setupHttpClient();
 
             JRConnectionManager.HttpCallbackWrapper callBack =
-                    new JRConnectionManager.HttpCallbackWrapper(mManagedConnection);
+                    new JRConnectionManager.HttpCallbackWrapper(mConn);
             try {
-                InetAddress ia = InetAddress.getByName(mRequest.getURI().getHost());
-                LogUtils.logd(TAG, "Connecting to: " + ia.getHostAddress());
+                InetAddress ia = InetAddress.getByName(mConn.getHttpRequest().getURI().getHost());
+                LogUtils.logd("Connecting to: " + ia.getHostAddress());
 
-                mRequest.addHeader("User-Agent", USER_AGENT);
-                if (mHeaders == null) mHeaders = new ArrayList<NameValuePair>();
-                for (NameValuePair header : mHeaders) mRequest.addHeader(header.getName(), header.getValue());
+                mConn.getHttpRequest().addHeader("User-Agent", USER_AGENT);
+                for (NameValuePair header : mConn.getRequestHeaders()) {
+                    mConn.getHttpRequest().addHeader(header.getName(), header.getValue());
+                }
 
                 HttpResponse response;
                 try {
-                    response = mHttpClient.execute(mRequest);
+                    response = mHttpClient.execute(mConn.getHttpRequest());
                 } catch (IOException e) {
                     // XXX Mediocre way to match exceptions from aborted requests:
-                    if (mRequest.isAborted() && e.getMessage().contains("abort")) {
+                    if (mConn.getHttpRequest().isAborted() && e.getMessage().contains("abort")) {
                         throw new AbortedRequestException();
                     } else {
                         throw e;
                     }
                 }
 
-                if (mRequest.isAborted()) throw new AbortedRequestException();
+                if (mConn.getHttpRequest().isAborted()) throw new AbortedRequestException();
 
                 /* Fetching the status code allows the response interceptor to have a chance to un-gzip the
                  * entity before we fetch it. */
                 response.getStatusLine().getStatusCode();
 
-                HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response, mRequest);
+                HttpResponseHeaders headers = fromResponse(response, mConn.getHttpRequest());
 
                 HttpEntity entity = response.getEntity();
                 byte[] data = entity == null ?
@@ -223,45 +226,46 @@ public final class AsyncHttpClient {
                 AsyncHttpResponse ahr;
                 switch (response.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
-                    LogUtils.logd(TAG, "[run] HTTP_OK");
-                    LogUtils.logd(TAG, "[run] headers: " + headers.toString());
-                    LogUtils.logd(TAG, "[run] data for " + mUrl + ": " +
+                    LogUtils.logd("[run] HTTP_OK");
+                    LogUtils.logd("[run] headers: " + headers.toString());
+                    LogUtils.logd("[run] data for " + mConn.getRequestUrl() + ": " +
                             dataString.substring(0, Math.min(dataString.length(), 600)));
-                    ahr = new AsyncHttpResponse(mUrl, headers, data);
+                    ahr = new AsyncHttpResponse(mConn, headers, data);
                     break;
                 case HttpStatus.SC_NOT_MODIFIED:
-                    LogUtils.logd(TAG, "[run] HTTP_NOT_MODIFIED");
-                    ahr = new AsyncHttpResponse(mUrl, headers, data);
+                    LogUtils.logd("[run] HTTP_NOT_MODIFIED");
+                    ahr = new AsyncHttpResponse(mConn, headers, data);
                     break;
                 case HttpStatus.SC_CREATED:
                     // Response from the Engage trail creation and maybe URL shortening calls
-                    LogUtils.logd(TAG, "[run] HTTP_CREATED");
-                    ahr = new AsyncHttpResponse(mUrl, headers, data);
+                    LogUtils.logd("[run] HTTP_CREATED");
+                    ahr = new AsyncHttpResponse(mConn, headers, data);
                     break;
                 default:
                     // This shouldn't be globbed together, but instead be structured
                     // to allow the error handler to make meaningful use of the web
                     // servers response (contained in String r)
-                    String message = "[run] Unexpected HTTP response for " + mUrl + " :  [responseCode: "
+                    String message = "[run] Unexpected HTTP response for "
+                            + mConn.getRequestUrl() + " :  [responseCode: "
                             + response.getStatusLine().getStatusCode() + " | reasonPhrase: "
                             + response.getStatusLine().getReasonPhrase() + " | entity: "
                             + dataString;
 
-                    Log.e(TAG, message);
+                    LogUtils.loge(message);
 
-                    ahr = new AsyncHttpResponse(mUrl, new Exception(message));
+                    ahr = new AsyncHttpResponse(mConn, new Exception(message));
                 }
 
-                mManagedConnection.setResponse(ahr);
+                mConn.setResponse(ahr);
                 invokeCallback(callBack);
             } catch (IOException e) {
-                Log.e(TAG, this.toString());
-                Log.e(TAG, "[run] Problem executing HTTP request. (" + e +")", e);
-                mManagedConnection.setResponse(new AsyncHttpResponse(mUrl, e));
+                LogUtils.loge(this.toString());
+                LogUtils.loge("[run] Problem executing HTTP request. (" + e + ")", e);
+                mConn.setResponse(new AsyncHttpResponse(mConn, e));
                 invokeCallback(callBack);
             } catch (AbortedRequestException e) {
-                Log.e(TAG, "[run] Aborted request: " + mUrl);
-                mManagedConnection.setResponse(new AsyncHttpResponse(mUrl, null));
+                LogUtils.loge("[run] Aborted request: " + mConn.getRequestUrl());
+                mConn.setResponse(new AsyncHttpResponse(mConn, null));
                 invokeCallback(callBack);
             }
 		}
@@ -275,8 +279,9 @@ public final class AsyncHttpClient {
         }
 
         public String toString() {
-            if (mPostData == null) mPostData = new byte[0];
-            return "url: " + mUrl + "\nheaders: " + mHeaders + "\npostData: " + new String(mPostData);
+            String postData = mConn.getPostData() == null ? "null" : new String(mConn.getPostData());
+            return "url: " + mConn.getRequestUrl() + "\nheaders: " + mConn.getRequestHeaders()
+                    + "\npostData: " + postData;
         }
 
         private static class AbortedRequestException extends Exception {}
@@ -290,39 +295,20 @@ public final class AsyncHttpClient {
      * contain either headers and data (if successful) or an Exception object (if failed).
      */
     public static class AsyncHttpResponse {
-        private String mUrl;
-        private HttpResponseHeaders mHeaders;
-        private byte[] mPayload;
-        private Exception mException;
-        private JRConnectionManager.ManagedConnection mManagedConnection;
+        final private HttpResponseHeaders mHeaders;
+        final private byte[] mPayload;
+        final private Exception mException;
+        final private ManagedConnection mManagedConnection;
 
-        /**
-         * Creates a "success" instance of this object.
-         *
-         * @param url
-         *      The URL that this response corresponds to.
-         * @param headers
-         *      The response headers resulting from the HTTP operation.
-         * @param payload
-         *      The data resulting from the HTTP operation.
-         */
-        public AsyncHttpResponse(String url, HttpResponseHeaders headers, byte[] payload) {
-            mUrl = url;
+        private AsyncHttpResponse(ManagedConnection conn, HttpResponseHeaders headers, byte[] payload) {
+            mManagedConnection = conn;
             mHeaders = headers;
             mPayload = payload;
             mException = null;
         }
 
-        /**
-         * Creates a "failure" instance of this object.
-         *
-         * @param url
-         *      The URL that this response corresponds to.
-         * @param exception
-         *      The exception that occurred during this HTTP operation.
-         */
-        public AsyncHttpResponse(String url, Exception exception) {
-            mUrl = url;
+        private AsyncHttpResponse(ManagedConnection conn, Exception exception) {
+            mManagedConnection = conn;
             mHeaders = null;
             mPayload = null;
             mException = exception;
@@ -335,7 +321,7 @@ public final class AsyncHttpClient {
          *      The URL that this HTTP response (or error) corresponds to.
          */
         public String getUrl() {
-            return mUrl;
+            return mManagedConnection.getRequestUrl();
         }
 
         /**

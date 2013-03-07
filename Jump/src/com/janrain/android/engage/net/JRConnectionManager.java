@@ -76,22 +76,23 @@ public class JRConnectionManager {
      *      The delegate (listener) class instance. May be null. Callback methods will be invoked on the UI
      *      thread.
      * @param tag
-     *      Optional tag for the connection, later passed to the delegate for the purpose of distinguishing
-     *      multiple connections handled by a single delegate.
+ *      Optional tag for the connection, later passed to the delegate for the purpose of distinguishing
+ *      multiple connections handled by a single delegate.
      * @param requestHeaders extra custom HTTP headers
      * @param postData if non-null will perform a POST, if null a GET
+     * @param followRedirects
      *
      */
     public static void createConnection(String requestUrl,
                                         JRConnectionManagerDelegate delegate,
                                         Object tag,
-                                        List<NameValuePair> requestHeaders, byte[] postData) {
+                                        List<NameValuePair> requestHeaders,
+                                        byte[] postData,
+                                        boolean followRedirects) {
         if (requestHeaders == null) requestHeaders = new ArrayList<NameValuePair>();
 
-        ManagedConnection managedConnection = new ManagedConnection(delegate, tag);
-        managedConnection.mRequestUrl = requestUrl;
-        managedConnection.mPostData = postData;
-        managedConnection.mRequestHeaders = requestHeaders;
+        ManagedConnection managedConnection =
+                new ManagedConnection(delegate, tag, requestUrl, postData, requestHeaders, followRedirects);
 
         trackAndStartConnection(delegate, managedConnection);
     }
@@ -145,18 +146,27 @@ public class JRConnectionManager {
     }
 
     /*package*/ static class ManagedConnection {
+        final private Object mTag;
+        final private String mRequestUrl;
+        final private byte[] mPostData;
+        final private List<NameValuePair> mRequestHeaders;
+        final private boolean mFollowRedirects;
+
         private HttpUriRequest mHttpRequest;
-        private Object mTag;
-        private JRConnectionManagerDelegate mDelegate;
-        private String mRequestUrl;
-        private byte[] mPostData;
-        private List<NameValuePair> mRequestHeaders;
         private AsyncHttpClient.AsyncHttpResponse mResponse;
+        private JRConnectionManagerDelegate mDelegate;
 
         public ManagedConnection(JRConnectionManagerDelegate delegate,
-                                 Object tag) {
+                                 Object tag,
+                                 String requestUrl,
+                                 byte[] postData,
+                                 List<NameValuePair> requestHeaders, boolean followRedirects) {
             mDelegate = delegate;
             mTag = tag;
+            mRequestHeaders = requestHeaders == null ? new ArrayList<NameValuePair>() : requestHeaders;
+            mRequestUrl = requestUrl;
+            mPostData = postData;
+            mFollowRedirects = followRedirects;
         }
 
         public String getRequestUrl() {
@@ -173,6 +183,10 @@ public class JRConnectionManager {
 
         public HttpUriRequest getHttpRequest() {
             return mHttpRequest;
+        }
+
+        public boolean getFollowRedirects() {
+            return mFollowRedirects;
         }
 
         public void setResponse(AsyncHttpClient.AsyncHttpResponse response) {

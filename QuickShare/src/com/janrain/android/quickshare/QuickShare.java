@@ -217,7 +217,7 @@ public class QuickShare extends Application {
                     public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
                         mListener.asyncFeedReadFailed(ex);
                     }
-                }, null, null, null);
+                }, null, null, null, false);
     }
 
     @SuppressWarnings("unchecked")
