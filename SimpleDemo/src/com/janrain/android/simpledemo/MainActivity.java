@@ -61,30 +61,21 @@ public class MainActivity extends FragmentActivity {
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
-        Button testAuth = new Button(this);
-        testAuth.setText("Test Capture Auth");
-        testAuth.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
-        linearLayout.addView(testAuth);
-
-        Button dumpRecord = new Button(this);
-        dumpRecord.setText("Dump Record to Log");
-        dumpRecord.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
-        linearLayout.addView(dumpRecord);
-
-        Button touchRecord = new Button(this);
-        touchRecord.setText("Edit About Me Attribute");
-        touchRecord.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
-        linearLayout.addView(touchRecord);
-
-        Button syncRecord = new Button(this);
-        syncRecord.setText("Sync Record");
-        syncRecord.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
-        linearLayout.addView(syncRecord);
+        Button testAuth = makeButton(linearLayout, "Test Capture Auth");
+        Button dumpRecord = makeButton(linearLayout, "Dump Record to Log");
+        Button touchRecord = makeButton(linearLayout, "Edit About Me Attribute");
+        Button syncRecord = makeButton(linearLayout, "Sync Record");
+        //Button refreshAccesstoken = makeButton(linearLayout, "Refresh Access Token");
 
         setContentView(linearLayout);
 
-        Jump.init(this, "appcfamhnpkagijaeinl", "mobile-dev.janraincapture.com",
-                "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6", Jump.TraditionalSignInType.EMAIL);
+        // normal dev
+        //Jump.init(this, "appcfamhnpkagijaeinl", "mobile-dev.janraincapture.com",
+        //        "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6", Jump.TraditionalSignInType.EMAIL);
+
+        // capture testing/staging
+        Jump.init(this, "appcfamhnpkagijaeinl", "mobile-testing.janraincapture.com",
+                "atasaz59p8cyecmbzmcwkbthsyq3wrxh", Jump.TraditionalSignInType.EMAIL);
 
         testAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -167,6 +158,14 @@ public class MainActivity extends FragmentActivity {
                 }
             }
         });
+    }
+
+    private Button makeButton(LinearLayout linearLayout, String label) {
+        Button button = new Button(this);
+        button.setText(label);
+        button.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+        linearLayout.addView(button);
+        return button;
     }
 
     @Override

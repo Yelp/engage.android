@@ -93,6 +93,8 @@ public class CaptureRecord extends JSONObject {
 
         original = (JSONObject) copyJsonVal(jo);
         JsonUtils.deepCopy(original, this);
+        this.accessToken = accessToken;
+        this.refreshSecret = refreshSecret;
     }
 
     /**
@@ -150,7 +152,7 @@ public class CaptureRecord extends JSONObject {
 
     /**
      * Deletes the record saved to disk
-     * @param applicationContext
+     * @param applicationContext the context with which to delete the saved record
      */
     public static void deleteFromDisk(Context applicationContext) {
         applicationContext.deleteFile(JR_CAPTURE_SIGNED_IN_USER_FILENAME);
@@ -214,7 +216,7 @@ public class CaptureRecord extends JSONObject {
     /**
      * Synchronizes the Capture record with the Capture service
      * Note that this sends any local changes to the service, but does not retrieve updates from the service.
-     * @param callback
+     * @param callback your callback handler
      * @throws InvalidApidChangeException
      */
     public void synchronize(final CaptureApiRequestCallback callback)
@@ -223,6 +225,7 @@ public class CaptureRecord extends JSONObject {
         List<ApidChange> changeList = new ArrayList<ApidChange>();
         changeList.addAll(changeSet);
 
+        if (accessToken == null) throwDebugException(new IllegalStateException());
         fireNextChange(changeList, callback);
 
         // add params to initinstance or something to init capture settings
