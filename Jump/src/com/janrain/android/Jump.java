@@ -133,8 +133,8 @@ public class Jump {
             public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
                 String authInfoToken = auth_info.getAsString("token");
 
-                //Capture.performSocialSignIn(authInfoToken, new Capture.FetchJsonCallback() {
-                Capture.performLegacySocialSignIn(authInfoToken, new Capture.SignInRequestHandler() {
+                Capture.performSocialSignIn(authInfoToken, new Capture.SignInRequestHandler() {
+                //Capture.performLegacySocialSignIn(authInfoToken, new Capture.SignInRequestHandler() {
                     public void onSuccess(CaptureRecord record) {
                         state.signedInUser = record;
                         fireHandlerOnSuccess();

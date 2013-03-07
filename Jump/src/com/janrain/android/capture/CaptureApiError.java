@@ -63,7 +63,10 @@ public class CaptureApiError {
      */
     public static final CaptureApiError INVALID_API_RESPONSE = new CaptureApiError();
 
-    private CaptureApiError() {}
+    private CaptureApiError() {
+        error = "INVALID_API_RESPONSE";
+        code = -1;
+    }
 
     public CaptureApiError(JSONObject response) {
         code = response.optInt("code");
@@ -77,10 +80,12 @@ public class CaptureApiError {
     }
 
     public String toString() {
-        return "<CaptureApiError code: " + code + " error: " + error + " description: " + error_description;
+        return "<CaptureApiError code: " + code + " error: " + error + " description: " + error_description
+                + ">";
     }
 
     public boolean isInvalidPassword() {
+        if (isInvalidApiResponse()) return false;
         if (error.equals("bad username/password combo")) return true; // legacy username/password endpoint
         return false;
     }

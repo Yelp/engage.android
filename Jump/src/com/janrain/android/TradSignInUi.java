@@ -87,8 +87,7 @@ public class TradSignInUi extends JRCustomInterfaceConfiguration {
                         dismissProgressIndicator();
                         AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
                         b.setNeutralButton(jr_dialog_dismiss, null);
-                        boolean badPassword = error.isInvalidPassword();
-                        if (badPassword) {
+                        if (error.isInvalidPassword()) {
                             b.setMessage(jr_capture_trad_signin_bad_password);
                         } else {
                             b.setMessage(jr_capture_trad_signin_unrecognized_error);
@@ -98,8 +97,8 @@ public class TradSignInUi extends JRCustomInterfaceConfiguration {
                     }
                 };
                 final CaptureApiConnection d =
-                        //Capture.performTraditionalSignIn(userName.getText().toString(),
-                        Capture.performLegacyTraditionalSignIn(userName.getText().toString(),
+                        Capture.performTraditionalSignIn(userName.getText().toString(),
+                                //Capture.performLegacyTraditionalSignIn(userName.getText().toString(),
                                 password.getText().toString(),
                                 Jump.state.traditionalSignInType, handler);
                 showProgressIndicator(true, new DialogInterface.OnCancelListener() {
