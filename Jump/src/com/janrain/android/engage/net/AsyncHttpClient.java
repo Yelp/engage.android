@@ -62,6 +62,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultRedirectHandler;
@@ -73,6 +75,7 @@ import org.apache.http.protocol.HttpContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
 
 import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnection;
@@ -184,8 +187,7 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
 
             setupHttpClient();
 
-            JRConnectionManager.HttpCallback callBack =
-                    new JRConnectionManager.HttpCallback(mConn);
+            JRConnectionManager.HttpCallback callBack = new JRConnectionManager.HttpCallback(mConn);
             try {
                 InetAddress ia = InetAddress.getByName(mConn.getHttpRequest().getURI().getHost());
                 LogUtils.logd("Connecting to: " + ia.getHostAddress());
@@ -193,6 +195,13 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
                 mConn.getHttpRequest().addHeader("User-Agent", USER_AGENT);
                 for (NameValuePair header : mConn.getRequestHeaders()) {
                     mConn.getHttpRequest().addHeader(header.getName(), header.getValue());
+                }
+
+                LogUtils.logd("Headers: " + Arrays.asList(mConn.getHttpRequest().getAllHeaders()).toString());
+                if (mConn.getHttpRequest() instanceof HttpPost) {
+                    HttpEntity entity = ((HttpPost) mConn.getHttpRequest()).getEntity();
+                    String postBody = new String(IOUtils.readFromStream(entity.getContent(), false));
+                    LogUtils.logd("POST: " + postBody);
                 }
 
                 HttpResponse response;

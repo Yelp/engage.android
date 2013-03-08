@@ -53,8 +53,10 @@ public class Jump {
 
         /*package*/ CaptureRecord signedInUser;
         /*package*/ JREngage jrEngage;
-        /*package*/ String captureDomain;
         /*package*/ String captureClientId;
+        /*package*/ String captureDomain;
+        /*package*/ String captureLocale;
+        /*package*/ String captureFormName;
         /*package*/ SignInResultHandler signInHandler;
         /*package*/ TraditionalSignInType traditionalSignInType;
     }
@@ -71,14 +73,23 @@ public class Jump {
      * @param captureClientId The Capture API client ID for use with this mobile app.
      *                        Important: You should generate a separate API client for each mobile app.
      *                        DO NOT USE THE OWNER API CLIENT.
+     * @param captureLocale the name of the locale to use in the Capture flow
+     * @param captureFormName the name of the Capture sign-in form in the flow
      * @param traditionalSignInType The type of traditional sign-in i.e. username or email address based.
      */
-    public static void init(Context context, String engageAppId, String captureDomain,
-                            String captureClientId, TraditionalSignInType traditionalSignInType) {
+    public static void init(Context context,
+                            String engageAppId,
+                            String captureDomain,
+                            String captureClientId,
+                            String captureLocale,
+                            String captureFormName,
+                            TraditionalSignInType traditionalSignInType) {
         state.jrEngage = JREngage.initInstance(context.getApplicationContext(), engageAppId, null, null);
         state.captureDomain = captureDomain;
         state.captureClientId = captureClientId;
         state.traditionalSignInType = traditionalSignInType;
+        state.captureLocale = captureLocale;
+        state.captureFormName = captureFormName;
         //j.showAuthenticationDialog();
         //j.addDelegate(); remove
         //j.cancelAuthentication();
@@ -101,6 +112,20 @@ public class Jump {
      */
     public static String getCaptureClientId() {
         return state.captureClientId;
+    }
+
+    /**
+     * @return the configured Capture locale
+     */
+    public static String getCaptureLocale() {
+        return state.captureLocale;
+    }
+
+    /**
+     * @return the configured Capture sign-in form name
+     */
+    public static String getCaptureFormName() {
+        return state.captureFormName;
     }
 
     /**

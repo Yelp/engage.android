@@ -32,6 +32,7 @@
 
 package com.janrain.android.capture;
 
+import com.janrain.android.Jump;
 import org.json.JSONObject;
 
 import static com.janrain.android.Jump.TraditionalSignInType;
@@ -67,35 +68,12 @@ public class Capture {
         String url = "https://" + getCaptureDomain() + "/oauth/auth_native_traditional";
         CaptureApiConnection connection = new CaptureApiConnection(url);
         connection.addAllToParams("client_id", getCaptureClientId(),
-                "locale", "en_US",
+                "locale", Jump.getCaptureLocale(),
                 "response_type", "token",
                 "redirect_uri", "http://android.library",
                 signInNameAttrName, username,
                 "password", password,
-                "form", "signin");
-        connection.fetchResponseAsJson(handler);
-        return connection;
-    }
-
-    /**
-     *
-     * @param username
-     * @param password
-     * @param type
-     * @param handler
-     * @return
-     */
-    public static CaptureApiConnection performLegacyTraditionalSignIn(String username,
-                                                                             String password,
-                                                                             TraditionalSignInType type,
-                                                                             SignInRequestHandler handler) {
-        String url = "https://" + getCaptureDomain() + "/oauth/mobile_signin_username_password";
-        CaptureApiConnection connection = new CaptureApiConnection(url);
-        String signInNameAttrName = type == EMAIL ? "email" : "username";
-        connection.addAllToParams("client_id", getCaptureClientId(),
-                "redirect_uri", "http://android.library",
-                signInNameAttrName, username,
-                "password", password);
+                "form", Jump.getCaptureFormName());
         connection.fetchResponseAsJson(handler);
         return connection;
     }
@@ -150,27 +128,12 @@ public class Capture {
         CaptureApiConnection c =
                 new CaptureApiConnection("https://" + getCaptureDomain() + "/oauth/auth_native");
         c.addAllToParams("client_id", getCaptureClientId(),
-                "locale", "en_US",
+                "locale", Jump.getCaptureLocale(),
                 "response_type", "token",
                 "redirect_uri", "http://android-library",
                 "token", authInfoToken,
-                "thin_registration", "true");
-        c.fetchResponseAsJson(handler);
-        return c;
-    }
-
-    /**
-     *
-     * @param authInfoToken
-     * @param handler
-     */
-    public static CaptureApiConnection performLegacySocialSignIn(String authInfoToken,
-                                                                 final SignInRequestHandler handler) {
-        CaptureApiConnection c =
-                new CaptureApiConnection("https://" + getCaptureDomain() + "/oauth/mobile_signin");
-        c.addAllToParams("client_id", getCaptureClientId());
-        c.addAllToParams("redirect_uri", "http://android-library");
-        c.addAllToParams("token", authInfoToken);
+                "thin_registration", "true"
+        );
         c.fetchResponseAsJson(handler);
         return c;
     }
@@ -208,17 +171,11 @@ public class Capture {
         public abstract void onFailure(CaptureApiError error);
     }
 
-    /**
-     *
-     */
-    public interface FetchJsonCallback {
+    /*package*/ interface FetchJsonCallback {
         void run(JSONObject jsonObject);
     }
 
-    /**
-     *
-     */
-    public interface FetchCallback {
+    /*package*/ interface FetchCallback {
         void run(Object response);
     }
 }

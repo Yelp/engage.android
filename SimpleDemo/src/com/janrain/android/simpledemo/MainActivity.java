@@ -71,15 +71,15 @@ public class MainActivity extends FragmentActivity {
 
         // normal dev
         //Jump.init(this, "appcfamhnpkagijaeinl", "mobile-dev.janraincapture.com",
-        //        "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6", Jump.TraditionalSignInType.EMAIL);
+        //        "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6", "en-US", "signinForm", Jump.TraditionalSignInType.EMAIL);
 
-        // capture testing/staging
-        Jump.init(this, "appcfamhnpkagijaeinl", "mobile-testing.janraincapture.com",
-                "atasaz59p8cyecmbzmcwkbthsyq3wrxh", Jump.TraditionalSignInType.EMAIL);
+        //capture testing/staging
+        Jump.init(this, "appcfamhnpkagijaeinl", "mobile-testing-2.janraincapture.com",
+                "atasaz59p8cyecmbzmcwkbthsyq3wrxh", "en-US", "signinForm", Jump.TraditionalSignInType.EMAIL);
 
         testAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Jump.showSignInDialog(MainActivity.this, null, new Jump.SignInResultHandler(){
+                Jump.showSignInDialog(MainActivity.this, null, new Jump.SignInResultHandler() {
                     public void onSuccess() {
                         AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
                         b.setMessage("success");
