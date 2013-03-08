@@ -167,7 +167,16 @@ public class Capture {
             }
         }
 
+        /**
+         *
+         * @param record
+         */
         public abstract void onSuccess(CaptureRecord record);
+
+        /**
+         *
+         * @param error
+         */
         public abstract void onFailure(CaptureApiError error);
     }
 
