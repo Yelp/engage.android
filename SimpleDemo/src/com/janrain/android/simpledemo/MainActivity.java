@@ -131,6 +131,7 @@ public class MainActivity extends FragmentActivity {
                         new JRActivityObject("aslkdfj", "http://google.com"));
             }
         });
+        Button signOut = makeButton(linearLayout, "Sign Out");
         //Button refreshAccesstoken = makeButton(linearLayout, "Refresh Access Token");
 
         setContentView(linearLayout);
@@ -200,6 +201,12 @@ public class MainActivity extends FragmentActivity {
                 } catch (Capture.InvalidApidChangeException e) {
                     throw new RuntimeException("Unexpected", e);
                 }
+            }
+        });
+
+        signOut.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Jump.signOutCaptureUser(MainActivity.this);
             }
         });
     }
