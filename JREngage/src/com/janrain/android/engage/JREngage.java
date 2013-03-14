@@ -34,7 +34,7 @@ package com.janrain.android.engage;
 /**
  * @mainpage Janrain Engage Android
  *
- * <a href="http://rpxnow.com/docs/android">The
+ * <a href="http://developers.janrain.com/documentation/mobile-libraries/jump-for-android/engage-for-android-guide/">The
  * Janrain Engage for Android SDK</a> makes it easy to include third party authentication and
  * social publishing in your Android app.  This library includes the same key
  * features as Janrain Engage for the web, as well as additional features created specifically for
