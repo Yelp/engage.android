@@ -63,6 +63,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package com.janrain.android.engage;
 
+import android.text.TextUtils;
 import android.widget.Toast;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
@@ -279,13 +280,16 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
         mAuthResponse = new JRDictionary();
         mAuthResponse.put("auth_info", auth_info);
         mAuthResponse.put("provider", provider);
-        if (mJREngage.getTokenUrl() == null) populateAndMaybePostAuthResponse(null, null);
+        if (TextUtils.isEmpty(mJREngage.getTokenUrl())) populateAndMaybePostAuthResponse(null, null, null);
     }
 
-    private void populateAndMaybePostAuthResponse(String tokenUrl, String tokenUrlPayload) {
+    private void populateAndMaybePostAuthResponse(String tokenUrl,
+                                                  String tokenUrlPayload,
+                                                  HttpResponseHeaders headers) {
         mAuthResponse.put("tokenUrl", tokenUrl);
         mAuthResponse.put("tokenUrlPayload", tokenUrlPayload);
         mAuthResponse.put("stat", "ok");
+        if (headers != null) mAuthResponse.put("headers", headers.toJRDictionary());
 
         if (mSharingMode) {
             if (mAuthBlobsDuringSharing == null) mAuthBlobsDuringSharing = new ArrayList<JRDictionary>();
@@ -298,12 +302,12 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     }
 
     public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
-                                                 HttpResponseHeaders response,
+                                                 HttpResponseHeaders headers,
                                                  String tokenUrlPayload,
                                                  String provider) {
         JREngage.logd(TAG, "[jrAuthenticationDidReachTokenUrl]");
 
-        populateAndMaybePostAuthResponse(tokenUrl, tokenUrlPayload);
+        populateAndMaybePostAuthResponse(tokenUrl, tokenUrlPayload, headers);
     }
 
     public void jrSocialDidNotCompletePublishing() {

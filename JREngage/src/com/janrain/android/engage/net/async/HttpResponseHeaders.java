@@ -34,6 +34,7 @@
 package com.janrain.android.engage.net.async;
 
 import com.janrain.android.engage.JREngage;
+import com.janrain.android.engage.types.JRDictionary;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -280,5 +281,11 @@ public class HttpResponseHeaders {
         sb.append(" | ETag: ").append(mETag);
         sb.append(" ]");
         return sb.toString();
+    }
+
+    public JRDictionary toJRDictionary() {
+        JRDictionary retval = new JRDictionary();
+        for (Header h : mResponse.getAllHeaders()) retval.put(h.getName(), h.getValue());
+        return retval;
     }
 }
