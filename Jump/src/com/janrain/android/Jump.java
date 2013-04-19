@@ -188,7 +188,11 @@ public class Jump {
         });
 
         state.signInHandler = handler;
-        state.jrEngage.showAuthenticationDialog(fromActivity, TradSignInUi.class);
+        if (providerName != null) {
+            state.jrEngage.showAuthenticationDialog(fromActivity, providerName);
+        } else {
+            state.jrEngage.showAuthenticationDialog(fromActivity, TradSignInUi.class);
+        }
     }
 
     /**
