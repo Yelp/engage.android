@@ -33,6 +33,7 @@
 
 package com.janrain.android.engage.net.async;
 
+import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.utils.LogUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
