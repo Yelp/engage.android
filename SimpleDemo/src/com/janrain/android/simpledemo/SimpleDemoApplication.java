@@ -44,6 +44,6 @@ public class SimpleDemoApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        Jump.maybeLoadUserFromDisk(this);
+        Jump.loadFromDisk(this);
     }
 }

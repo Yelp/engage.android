@@ -1,22 +1,24 @@
 Use the Engage for Android library following these steps:
 
-1.  [Declare](documentation/mobile-libraries/jump-for-android/engage-for-android/#declare-and-import) the
-    library project dependency and add the required elements to your <tt>AndroidManifest.xml</tt> file.
-2.  [Initialize](documentation/mobile-libraries/jump-for-android/engage-for-android/#initialize) the library.
-3.  Begin authentication or sharing by calling one of the two <tt>show...Dialog methods</tt>. See:
+1.  [Declare](http://developers.janrain.com/documentation/mobile-libraries/jump-for-android/engage-for-android/#declare-and-import)
+    the library project dependency and add the required elements to your `AndroidManifest.xml` file.
+2.  [Initialize](http://developers.janrain.com/documentation/mobile-libraries/jump-for-android/engage-for-android/#initialize)
+    the library.
+3.  Begin authentication or sharing by calling one of the two `show...Dialog methods`. See:
 
-    *   [Social Sign-In](documentation/mobile-libraries/jump-for-android/engage-for-android/#social-sign-in)
-    *   [Social Sharing](documentation/mobile-libraries/jump-for-android/engage-for-android/#social-sharing)
+    *   [Social Sign-In](http://developers.janrain.com/documentation/mobile-libraries/jump-for-android/engage-for-android/#social-sign-in)
+    *   [Social Sharing](http://developers.janrain.com/documentation/mobile-libraries/jump-for-android/engage-for-android/#social-sharing)
 
-4.  You will also want to implement [Server-side Authentication](documentation/mobile-libraries/jump-for-android/engage-for-android/#server-side-authentication).
+4.  You will also want to implement [Server-side Authentication](http://developers.janrain.com/documentation/mobile-libraries/jump-for-android/engage-for-android/#server-side-authentication).
 
 To begin, sign in to Engage and configure the providers you wish to use for authentication or social sharing.
 You will also need your 20-character Application ID from the Engage Dashboard.
 
-## Declare and Import
+### Declare the JUMP Activities
 
-Copy from <tt>.../engage.android/JREngage/AndroidManifest.xml</tt>, and add the following highlighted XML
-elements* to your project’s <tt>AndroidManifest.xml</tt> file:
+Ensure the presence of the `android.permission.INTERNET` permission in your `<uses-permission>` element, and
+copy from `.../Jump/AndroidManifest.xml`, adding the following two `<activity>` XML elements, and to your
+project's `AndroidManifest.xml` file:
 
     <manifest xmlns:android="http://schemas.android.com/apk/res/android" ... >
 
@@ -29,24 +31,31 @@ elements* to your project’s <tt>AndroidManifest.xml</tt> file:
 
       ...
 
+
+        <!-- The following activities are for the Janrain Engage for Android library -->
+        <!-- This activity must have a dialog theme such as Theme.Holo.Dialog, or
+            Theme.Dialog, etc.
+
+            Using android:theme="@style/Theme.Janrain.Dialog" will result in Theme.Dialog on API 4-10 and
+            Theme.Holo.DialogWhenLarge.NoActionBar on API 11+
+        -->
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/jr_dialog"
+            android:theme="@style/Theme.Janrain.Dialog.Light"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
 
+        <!-- This activity must have a normal (non-dialog) theme such as Theme, Theme.Light, Theme.Holo, etc.
+
+            Using android:theme="@style/Theme.Janrain" or "@style/Theme.Janrain.Light" will result in
+            Theme (or Theme.Light) on API 4-10 and
+            Theme.Holo (or Theme.Holo.Light) on API 11+
+        -->
         <activity
             android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$Fullscreen"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/jr_fullscreen"
-            android:windowSoftInputMode="adjustResize|stateHidden"
-            />
-
-        <activity
-            android:name="com.janrain.android.engage.ui.JRFragmentHostActivity$FullscreenNoTitleBar"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/jr_fullscreen_no_title"
+            android:theme="@style/Theme.Janrain.Light"
             android:windowSoftInputMode="adjustResize|stateHidden"
             />
 
@@ -56,51 +65,50 @@ elements* to your project’s <tt>AndroidManifest.xml</tt> file:
 
     </manifest>
 
-_*The placement of the elements in the XML structure is important; the <tt>uses-permission</tt> element and
-the <tt>uses-sdk</tt> element must be placed as children of the manifest element, and the three
-<tt>activity</tt> elements must be children of the <tt>application</tt> element._
-
-If you wish to target a version of Android lower than 13 (which is 3.2) you may. To do so, change the
-<tt>android:targetSdkVersion</tt>, to your desired deployment target. _You must still build against API 13+
-even when targeting a lower API level._
+Note: If you wish to target a version of Android lower than 13 (which is 3.2) you may. To do so, change the
+`android:targetSdkVersion`, to your desired deployment target. _You must still build against API 13+
+even when targeting a lower API level._ The build SDK used when compiling your project is defined by your
+project's local.properties. `android list target` to get a list of targets available in your installation of
+the Android SDK. `android update project -p . -t target_name_or_target_installation_id` to update the build
+SDK for your project. (Note that this does *not* affect your project's `minSdkVersion` or `targetSdkVersion`.
 
 Import the following classes:
 
-[sourcecode lang="java"]import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.JREngageDelegate;
-import com.janrain.android.engage.JREngageError;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.types.JRActivityObject;
-import com.janrain.android.engage.types.JRDictionary;[/sourcecode]
+    import com.janrain.android.engage.JREngage;
+    import com.janrain.android.engage.JREngageDelegate;
+    import com.janrain.android.engage.JREngageError;
+    import com.janrain.android.engage.net.async.HttpResponseHeaders;
+    import com.janrain.android.engage.types.JRActivityObject;
+    import com.janrain.android.engage.types.JRDictionary;
 
 ## Initialize
 
-Interaction begins by calling the <tt>JREngage.initInstance</tt> method, which returns a <tt>JREngage</tt>
+Interaction begins by calling the `JREngage.initInstance` method, which returns a `JREngage`
 object:
 
-[sourcecode lang="objc"]private static final String ENGAGE_APP_ID = "";
-private static final String ENGAGE_TOKEN_URL = "";
-private JREngage mEngage;
-private JREngageDelegate mEngageDelegate = ...;
+    private static final String ENGAGE_APP_ID = "";
+    private static final String ENGAGE_TOKEN_URL = "";
+    private JREngage mEngage;
+    private JREngageDelegate mEngageDelegate = ...;
 
-...
+    ...
 
-mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);[/sourcecode]
+    mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);
 
 The [initInstance](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a469d808d2464c065bc16dedec7a2cc23)
-method takes four arguments, <tt>activity</tt>, <tt>appId</tt>, <tt>tokenUrl</tt>, and <tt>delegate</tt>:
+method takes four arguments, `activity`, `appId`, `tokenUrl`, and `delegate`:
 
-<tt>activity</tt> — (required) Your application’s Android <tt>Activity</tt> from which the Engage for Android
+`activity` — (required) Your application’s Android `Activity` from which the Engage for Android
 activities will be started.
-<tt>appId</tt> — (required) The Application ID of your Janrain Engage application (found on the Engage
+`appId` — (required) The Application ID of your Janrain Engage application (found on the Engage
 Dashboard).
-<tt>tokenUrl</tt> — (optional) The token URL to which authentication from your application posts.
-<tt>delegate</tt> — (optional) An implementation of the <tt>JREngageDelegate</tt> interface through which you
+`tokenUrl` — (optional) The token URL to which authentication from your application posts.
+`delegate` — (optional) An implementation of the `JREngageDelegate` interface through which you
 can receive responses and event information from the library.
 
 ## Social Sign-In
 
-Once the <tt>JREngage</tt> object has been initialized, your application can start user authentication by
+Once the `JREngage` object has been initialized, your application can start user authentication by
 calling the [showAuthenticationDialog](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a0de1aa16e951a1b62e2ef459b1596e83)
  method.
 `mEngage.showAuthenticationDialog();`
@@ -121,15 +129,15 @@ method of
 ### More
 
 *   For configuring your token URL to handle server-side authentication, please see the
-    [Server-side Authentication](documentation/mobile-libraries/jump-for-android/engage-for-android/#server-side-authentication)
+    [Server-side Authentication](http://developers.janrain.com/documentation/mobile-libraries/jump-for-android/engage-for-android/#server-side-authentication)
     below.
 *   For customizing the look and feel of the sign-in experience, please see the
-    [Custom UI for Android](/documentation/mobile-libraries/advanced-topics/custom-ui-for-android/ "Custom UI for Android").
+    [Custom UI for Android](/documentation/mobile-libraries/advanced-topics/custom-ui-for-android/).
 
 ## Social Sharing
 
 If you want to share an activity, first create an instance of the
-[<tt>JRActivityObject</tt>](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html):
+[`JRActivityObject`](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html):
 
     String activityText = "added JREngage to her Android application!";
     String activityLink = "http://janrain.com";
@@ -143,7 +151,7 @@ link is added:
           "https://market.android.com/details?id=com.janrain.android.quickshare");
 
 Then pass the activity to the
-[<tt>showSocialPublishingDialogWithActivity</tt>](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#aef1ecf0e43afeed0eb0a779c67eff285 "showSocialPublishingDialogWithActivity")
+[`showSocialPublishingDialogWithActivity`](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#aef1ecf0e43afeed0eb0a779c67eff285)
 method:
 
     mEngage.showSocialPublishingDialogWithActivity(jrActivity);
@@ -153,19 +161,19 @@ method:
 If you would like to access any of the extra features available in the Janrain Engage API, or if you would
 like to complete server-side authentication, do so by implementing a token URL as follows:
 
-1.  Create a server side HTTP or HTTPS endpoint (preferably HTTPS). This will be your <tt>auth_info</tt>
+1.  Create a server side HTTP or HTTPS endpoint (preferably HTTPS). This will be your `auth_info`
     token URL, and mobile devices running your mobile app will POST an Engage
-    <tt>[auth_info](/documentation/api/auth_info/ "auth_info")</tt> token to this endpoint, in exchange for an
+    `[auth_info](/documentation/api/auth_info/ "auth_info")` token to this endpoint, in exchange for an
     access token for your web service.
-2.  From the new endpoint, extract the token. It's POSTed in a parameter named <tt>token</tt>.
-3.  Call <tt>auth_info</tt>. Supply the token just received, and your application's 40-character Engage API
+2.  From the new endpoint, extract the token. It's POSTed in a parameter named `token`.
+3.  Call `auth_info`. Supply the token just received, and your application's 40-character Engage API
     key.
-4.  Process the profile data returned from <tt>[auth_info](/documentation/api/auth_info/ "auth_info")</tt>,
+4.  Process the profile data returned from `[auth_info](/documentation/api/auth_info/ "auth_info")`,
     and log your user into your web application. (The unique and secure key you should use to identify the
-    user is the <tt>identifier</tt> field of the <tt>profile</tt> node.) As necessary create and return
+    user is the `identifier` field of the `profile` node.) As necessary create and return
     access tokens or session cookies in your endpoint's response. Your mobile app will receive that response.
 
-For example, in Ruby on Rails, you might rely on the <tt>ActionController</tt> session and the cookie that
+For example, in Ruby on Rails, you might rely on the `ActionController` session and the cookie that
 it sets like so:
 
     # The following helper class is from the Engage sample code found at
@@ -187,33 +195,33 @@ it sets like so:
        session[:user_id] = user.id
     end
 
-If you're using the Rails <tt>ActionController</tt> session, you should set the cookie expiration to an
+If you're using the Rails `ActionController` session, you should set the cookie expiration to an
 appropriate value for a mobile device:
 
-[sourcecode lang="ruby"]# This initializer block is found in app/config/environment.rb
-  Rails::Initializer.run do |config|
-     config.action_controller.session[:session_expires] = 10.years.from_now
-  end[/sourcecode]
+    # This initializer block is found in app/config/environment.rb
+    Rails::Initializer.run do |config|
+      config.action_controller.session[:session_expires] = 10.years.from_now
+    end
 
 Then, make sure that you save the cookie in your mobile app; for example:
 
-[sourcecode lang="java"]org.apache.http.cookie.Cookie[] mSessionCookies;
+org.apache.http.cookie.Cookie[] mSessionCookies;
 
-public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
-                                             HttpResponseHeaders responseHeaders,
-                                             String tokenUrlPayload,
-                                             String provider) {
-    mSessionCookies = responseHeaders.getCookies();
-}[/sourcecode]
+    public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
+                                                 HttpResponseHeaders responseHeaders,
+                                                 String tokenUrlPayload,
+                                                 String provider) {
+        mSessionCookies = responseHeaders.getCookies();
+    }
 
-From your new <tt>auth_info</tt> token URL you can also access access other Engage features. For example, you
-could call <tt>[get_contacts](/documentation/api/get_contacts/ "get_contacts")</tt>* and use the contact list
+From your new `auth_info` token URL you can also access access other Engage features. For example, you
+could call `[get_contacts](/documentation/api/get_contacts/ "get_contacts")`* and use the contact list
 returned to find other users of your mobile app that this user may know.
 
 _* Some features are limited to Pro, Plus, or Enterprise customers only._
 
 To configure the library with your token URL, pass it to
-[<tt>initInstance</tt>](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a469d808d2464c065bc16dedec7a2cc23 "initInstance")
+[`initInstance`](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a469d808d2464c065bc16dedec7a2cc23)
 when initializing the library:
 
     private static final String ENGAGE_APP_ID = "";
@@ -226,7 +234,7 @@ when initializing the library:
     mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, mEngageDelegate);
 
 Alternatively, you can change the token URL at any time using the
-[<tt>setTokenUrl</tt>](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a9cae37926c51b92a0d934b65cd14829c "setTokenURL")
+[`setTokenUrl`](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a9cae37926c51b92a0d934b65cd14829c)
 method:
 
     JREngage mEngage;

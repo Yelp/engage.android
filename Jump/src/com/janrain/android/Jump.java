@@ -74,7 +74,7 @@ public class Jump {
      *                        Important: You should generate a separate API client for each mobile app.
      *                        DO NOT USE THE OWNER API CLIENT.
      * @param captureLocale the name of the locale to use in the Capture flow
-     * @param captureFormName the name of the Capture sign-in form in the flow
+     * @param captureSignInFormName the name of the Capture sign-in form in the flow
      * @param traditionalSignInType The type of traditional sign-in i.e. username or email address based.
      */
     public static void init(Context context,
@@ -82,14 +82,14 @@ public class Jump {
                             String captureDomain,
                             String captureClientId,
                             String captureLocale,
-                            String captureFormName,
+                            String captureSignInFormName,
                             TraditionalSignInType traditionalSignInType) {
         state.jrEngage = JREngage.initInstance(context.getApplicationContext(), engageAppId, null, null);
         state.captureDomain = captureDomain;
         state.captureClientId = captureClientId;
         state.traditionalSignInType = traditionalSignInType;
         state.captureLocale = captureLocale;
-        state.captureFormName = captureFormName;
+        state.captureFormName = captureSignInFormName;
         //j.showAuthenticationDialog();
         //j.addDelegate(); remove
         //j.cancelAuthentication();
@@ -319,7 +319,7 @@ public class Jump {
      * To be called from Application#onCreate()
      * @param context the application context, used to interact with the disk
      */
-    public static void maybeLoadUserFromDisk(Context context) {
+    public static void loadFromDisk(Context context) {
         state.signedInUser = CaptureRecord.loadFromDisk(context);
     }
 
@@ -327,7 +327,7 @@ public class Jump {
      * To be called from Activity#onPause
      * @param context the application context, used to interact with the disk
      */
-    public static void maybeSaveUserToDisk(Context context) {
+    public static void saveToDisk(Context context) {
         if (state.signedInUser != null) state.signedInUser.saveToDisk(context);
     }
 }

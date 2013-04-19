@@ -20,23 +20,46 @@ Notably missing:
 
 Use the JUMP for Android library by following these steps:
 
-1.  [Declare](documentation/mobile-libraries/jump-for-android/engage-for-android/#declare-and-import) the
+1.  [Declare](#declare-and-import) the
     library project dependency and add the required elements to your `AndroidManifest.xml` file.
-2.  [Initialize](documentation/mobile-libraries/jump-for-android/engage-for-android/#initialize) the library.
-3.  Begin sign-in or sharing by calling one of the two `show...Dialog methods`. See:
+2.  [Initialize](#initialize) the library.
+3.  Begin sign-in by calling Jump#showSignInDialog
 
-    *   [Social Sign-In](documentation/mobile-libraries/jump-for-android/engage-for-android/#social-sign-in)
-    *   [Social Sharing](documentation/mobile-libraries/jump-for-android/engage-for-android/#social-sharing)
+Before you begin integrating you will need an array of configuration details:
 
-4.  You will also want to implement [Server-side Authentication](documentation/mobile-libraries/jump-for-android/engage-for-android/#server-side-authentication).
+1. Sign in to the Engage Dashboard
+1.1. Configure the providers you wish to use for authentication ("Deployment" drop down menu -> "Engage for
+     Android").
+1.2. Retrieve your 20-character Application ID from the Engage Dashboard (In the right column of the "Home"
+     page on the dashboard.)
+2. Ask your deployment engineer or account manager for your Capture domain
+3. Sign in to the Capture dashboard and provision a new API client for your mobile app.
+3.1. Use the [set_features API](http://developers.janrain.com/documentation/api-methods/capture/clients/set_features/)
+     to add the "default_read_only" feature to your new API client.
+3.2. Use the Capture Dashboard to add a setting for your new API client called "login_client". Set it to true.
+4. Ask your deployment engineer or account manager which "flow" you should use.
+4.1. Set the default_flow_name and default_flow_version setting for your new API client. Ask your deployment
+     engineer or account manager for the appropriate values.
+5. Coordinate with your deployment engineer or account manager for the correct value for your "flow locale."
+   The commonly used value for US English is en-US.
+6. Ask your deployment engineer or account manager for the name of the sign-in form in your flow.
 
-To begin, sign in to Engage and configure the providers you wish to use for authentication or social sharing.
-You will also need your 20-character Application ID from the Engage Dashboard.
+Note: You _must_ create a new API client with the correct features and settings for proper operation of the
+JUMP for Android SDK.
 
 ## Declare and Import
 
-Copy from `.../engage.android/JREngage/AndroidManifest.xml`, and add the following highlighted XML
-elements* to your project’s `AndroidManifest.xml` file:
+### Declare the Android Library Project Dependency
+
+Using ant, from the directory of your project's AndroidManifest.xml:
+
+    android update project -p . -l ../path/to/Jump
+
+### Declare the JUMP Activities
+
+Ensure the presence of the `android.permission.INTERNET` permission in your `<uses-permission>` element, and
+copy from `.../Jump/AndroidManifest.xml`, adding the following two `<activity>` XML elements, and to your
+project's `AndroidManifest.xml` file:
 
     <manifest xmlns:android="http://schemas.android.com/apk/res/android" ... >
 
@@ -83,192 +106,120 @@ elements* to your project’s `AndroidManifest.xml` file:
 
     </manifest>
 
-_*The placement of the elements in the XML structure is important; the `uses-permission` element and
-the `uses-sdk` element must be placed as children of the manifest element, and the three
-`activity` elements must be children of the `application` element._
-
-If you wish to target a version of Android lower than 13 (which is 3.2) you may. To do so, change the
+Note: If you wish to target a version of Android lower than 13 (which is 3.2) you may. To do so, change the
 `android:targetSdkVersion`, to your desired deployment target. _You must still build against API 13+
-even when targeting a lower API level._
+even when targeting a lower API level._ The build SDK used when compiling your project is defined by your
+project's local.properties. `android list target` to get a list of targets available in your installation of
+the Android SDK. `android update project -p . -t target_name_or_target_installation_id` to update the build
+SDK for your project. (Note that this does *not* affect your project's `minSdkVersion` or `targetSdkVersion`.
+
+### Import the Library
 
 Import the following classes:
 
-[sourcecode lang="java"]import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.JREngageDelegate;
-import com.janrain.android.engage.JREngageError;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.types.JRActivityObject;
-import com.janrain.android.engage.types.JRDictionary;[/sourcecode]
+    import com.janrain.android.Jump;
+    import com.janrain.android.capture.CaptureApiError;
+    import com.janrain.android.capture.Capture;
 
 ## Initialize
 
-Interaction begins by calling the `JREngage.initInstance` method, which returns a `JREngage`
-object:
+Initialize the library by calling `Jump#init` method. For example:
 
-[sourcecode lang="objc"]private static final String ENGAGE_APP_ID = "";
-private static final String ENGAGE_TOKEN_URL = "";
-private JREngage mEngage;
-private JREngageDelegate mEngageDelegate = ...;
+    String engageAppId = "your Engage App ID";
+    String captureDomain = "your Capture domain";
+    String captureClientId = "your Capture Client ID";
+    String captureLocale = "your Capture flow locale";
+    String captureSignInFormName = "your Capture sign-in form's name";
+    Jump.TraditionalSignInType signInType = Jump.TraditionalSignInType.EMAIL; // or USERNAME
+    Jump.init(this, engageAppId, captureDomain, captureClientId, captureLocale, captureSignInFormName,
+            signInType);
 
-...
+## Start Sign-In
 
-mEngage = JREngage.initInstance(this, ENGAGE_APP_ID, ENGAGE_TOKEN_URL, this);[/sourcecode]
+Once the Jump library has been initialized, your application can start the sign-in flow by calling the
+sign-in dialog display method, `com.janrain.android.Jump#showSignInDialog`. You will need to define a
+callback handler which implements the `com.janrain.android.Jump.SignInResultHandler` interface. For example
+the SimpleDemo project does this:
 
-The [initInstance](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a469d808d2464c065bc16dedec7a2cc23)
-method takes four arguments, `activity`, `appId`, `tokenUrl`, and `delegate`:
+    Jump.showSignInDialog(MainActivity.this, null, new Jump.SignInResultHandler() {
+        public void onSuccess() {
+            AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
+            b.setMessage("success");
+            b.setNeutralButton("Dismiss", null);
+            b.show();
+        }
 
-`activity` — (required) Your application’s Android `Activity` from which the Engage for Android
-activities will be started.
-`appId` — (required) The Application ID of your Janrain Engage application (found on the Engage
-Dashboard).
-`tokenUrl` — (optional) The token URL to which authentication from your application posts.
-`delegate` — (optional) An implementation of the `JREngageDelegate` interface through which you
-can receive responses and event information from the library.
+        public void onFailure(SignInError error) {
+            AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
+            b.setMessage("error:" + error);
+            b.setNeutralButton("Dismiss", null);
+            b.show();
+        }
+    });
 
-## Social Sign-In
+## Read and Modify the Account Record
 
-Once the `JREngage` object has been initialized, your application can start user authentication by
-calling the [showAuthenticationDialog](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a0de1aa16e951a1b62e2ef459b1596e83)
- method.
-`mEngage.showAuthenticationDialog();`
+You can retrieve the signed-in Capture user's account record via `Jump.getSignedInUser()`. The record is
+an instance of `org.json.JSONObject`, with some additional methods defined by a subclass. You can read
+and write to the record via the `JSONObject` methods.
 
-To receive the user's basic profile data, implement the
-[jrAuthenticationDidSucceedForUser](http://janrain.github.com/jump.ios/gh_docs/capture/html/protocol_j_r_capture_signin_delegate-p.html#aa5dc2ae621394b1a97b55eb3fca6b2ef)
-method of
-[JREngageDelegate](http://janrain.github.com/engage.android/docs/html/interfacecom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage_delegate.html):
+For example, to read the aboutMe attribute in the record:
 
-    public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
-      JRDictionary profile = auth_info.getAsDictionary("profile");
-      String displayName = profile.getAsString("displayName");
-      String message = "Authentication successful for user: " + displayName));
+    Jump.getSignedInUser().optString("aboutMe")
 
-      Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+Any changes made to the record must still obey the
+entity type schema from Capture. So, e.g. you cannot add dynamic new attributes, but you can add additional
+elements to plurals in the schema.
+
+For example, to write the aboutMe attribute in the record:
+
+    Jump.getSignedInUser().put("aboutMe", "new value here");
+
+To push changes to the record to Capture call `com.janrain.android.capture.CaptureRecord#synchronize`.
+
+## Call the Load and Store Hooks
+
+When your Android application starts you must call `com.janrain.android.Jump#loadFromDisk`.
+
+For example, from the SimpleDemo Application object:
+
+    public class SimpleDemoApplication extends Application {
+        @Override
+        public void onCreate() {
+            super.onCreate();
+
+            Jump.loadFromDisk(this);
+        }
     }
 
-### More
+Whenever your Android application pauses you must call `com.janrain.android.Jump.saveToDisk`.
 
-*   For configuring your token URL to handle server-side authentication, please see the
-    [Server-side Authentication](documentation/mobile-libraries/jump-for-android/engage-for-android/#server-side-authentication)
-    below.
-*   For customizing the look and feel of the sign-in experience, please see the
-    [Custom UI for Android](/documentation/mobile-libraries/advanced-topics/custom-ui-for-android/ "Custom UI for Android").
+For example, from MainActivity in SimpleDemo:
 
-## Social Sharing
+    @Override
+    protected void onPause() {
+        Jump.saveToDisk(this);
+        super.onPause();
+    }
 
-If you want to share an activity, first create an instance of the
-[`JRActivityObject`](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1types_1_1_j_r_activity_object.html):
+## Sign the User Out
 
-    String activityText = "added JREngage to her Android application!";
-    String activityLink = "http://janrain.com";
+Call `com.janrain.android.Jump.signOutCaptureUser` to sign the user out.
 
-    JRActivityObject jrActivity = new JRActivityObject(activityText, activityLink);
+## Appearance Customization
 
-Enrich the activity to be shared by populating some of the optional fields. Here an exciting Facebook action
-link is added:
+### Creating Your Own User Interface
 
-    activityObject.addActionLink(new JRActionLink("Download the Quick Share demo!",
-          "https://market.android.com/details?id=com.janrain.android.quickshare");
+You can create your own traditional sign-in user interface and use
+`com.janrain.android.Jump.performTraditionalSignIn` to sign users in.
+`com.janrain.android.Jump.showSignInDialog` also takes a provider name parameter which, if supplied, will
+direct the library to begin the sign-in flow directly with that provider, skipping the stock list of
+sign-in providers user interface.
 
-Then pass the activity to the
-[`showSocialPublishingDialogWithActivity`](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#aef1ecf0e43afeed0eb0a779c67eff285 "showSocialPublishingDialogWithActivity")
-method:
+### Customizing the Stock User Interface
 
-    mEngage.showSocialPublishingDialogWithActivity(jrActivity);
+The JUMP for Android SDK has an API for appearance customization, and allows for customization through the
+Android Theme system as well.
 
-## Server-side Authentication
-
-If you would like to access any of the extra features available in the Janrain Engage API, or if you would
-like to complete server-side authentication, do so by implementing a token URL as follows:
-
-1.  Create a server side HTTP or HTTPS endpoint (preferably HTTPS). This will be your `auth_info`
-    token URL, and mobile devices running your mobile app will POST an Engage
-    `[auth_info](/documentation/api/auth_info/ "auth_info")` token to this endpoint, in exchange for an
-    access token for your web service.
-2.  From the new endpoint, extract the token. It's POSTed in a parameter named `token`.
-3.  Call `auth_info`. Supply the token just received, and your application's 40-character Engage API
-    key.
-4.  Process the profile data returned from `[auth_info](/documentation/api/auth_info/ "auth_info")`,
-    and log your user into your web application. (The unique and secure key you should use to identify the
-    user is the `identifier` field of the `profile` node.) As necessary create and return
-    access tokens or session cookies in your endpoint's response. Your mobile app will receive that response.
-
-For example, in Ruby on Rails, you might rely on the `ActionController` session and the cookie that
-it sets like so:
-
-    # The following helper class is from the Engage sample code found at
-    # https://github.com/janrain/Janrain-Sample-Code
-    ENGAGE = Rpx::RpxHelper.new("your_api_key_here",
-                                "http://rpxnow.com",
-                                "your_engage_app_realm_here") # e.g. mytestapp
-
-    # This is the Engage auth_info token URL -- the endpoint which spawns
-    # new mobile user sessions.
-    def mobileEngageSignIn
-       auth_info = ENGAGE.auth_info(params[:token])
-
-       identifier = auth_info['identifier']
-
-       user = User.find_or_create_by_engage_identifier(identifier)
-       # do other stuff, like populate the User record with the auth_info
-
-       session[:user_id] = user.id
-    end
-
-If you're using the Rails `ActionController` session, you should set the cookie expiration to an
-appropriate value for a mobile device:
-
-[sourcecode lang="ruby"]# This initializer block is found in app/config/environment.rb
-  Rails::Initializer.run do |config|
-     config.action_controller.session[:session_expires] = 10.years.from_now
-  end[/sourcecode]
-
-Then, make sure that you save the cookie in your mobile app; for example:
-
-[sourcecode lang="java"]org.apache.http.cookie.Cookie[] mSessionCookies;
-
-public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
-                                             HttpResponseHeaders responseHeaders,
-                                             String tokenUrlPayload,
-                                             String provider) {
-    mSessionCookies = responseHeaders.getCookies();
-}[/sourcecode]
-
-From your new `auth_info` token URL you can also access access other Engage features. For example, you
-could call `[get_contacts](/documentation/api/get_contacts/ "get_contacts")`* and use the contact list
-returned to find other users of your mobile app that this user may know.
-
-_* Some features are limited to Pro, Plus, or Enterprise customers only._
-
-To configure the library with your token URL, pass it to
-[`initInstance`](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a469d808d2464c065bc16dedec7a2cc23 "initInstance")
-when initializing the library:
-
-    private static final String ENGAGE_APP_ID = "";
-    private static final String ENGAGE_TOKEN_URL = "";
-    private JREngage mEngage;
-    private JREngageDelegate mEngageDelegate;
-
-    ...
-
-    mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, mEngageDelegate);
-
-Alternatively, you can change the token URL at any time using the
-[`setTokenUrl`](http://janrain.github.com/engage.android/docs/html/classcom_1_1janrain_1_1android_1_1engage_1_1_j_r_engage.html#a9cae37926c51b92a0d934b65cd14829c "setTokenURL")
-method:
-
-    JREngage mEngage;
-
-    ...
-
-    mEngage.setTokenUrl(newTokenUrl);
-
-You may configure the library with a null or empty token URL, and this authentication step will be skipped.
-
-Whether or not the library posts the token to the token URL, your Android application must not contain your
-Engage API key.
-
-### Next
-
-You may want to look at our [PhoneGap](/documentation/mobile-libraries/phonegapcordova/ "PhoneGap/Cordova")
-integration, or the [Advanced Topics](/documentation/mobile-libraries/advanced-topics/ "Advanced Topics")
-section.
+For customizing the look and feel of the sign-in experience, please see
+[Custom UI for Android](http://developers.janrain.com/documentation/mobile-libraries/advanced-topics/custom-ui-for-android/).
