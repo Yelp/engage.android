@@ -33,7 +33,7 @@ package com.janrain.android.quicksignin;
 
 import android.util.Log;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.utils.Archiver;
+import com.janrain.android.utils.Archiver;
 
 import java.text.DateFormat;
 import java.util.ArrayList;

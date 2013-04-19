@@ -60,8 +60,8 @@ import com.janrain.android.engage.net.JRConnectionManagerDelegate;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.utils.AndroidUtils;
-import com.janrain.android.engage.utils.Archiver;
+import com.janrain.android.utils.AndroidUtils;
+import com.janrain.android.utils.Archiver;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
@@ -217,7 +217,7 @@ public class QuickShare extends Application {
                     public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
                         mListener.asyncFeedReadFailed(ex);
                     }
-                }, null);
+                }, null, null, null, false);
     }
 
     @SuppressWarnings("unchecked")

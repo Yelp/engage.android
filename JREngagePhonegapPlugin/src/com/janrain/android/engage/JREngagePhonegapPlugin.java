@@ -68,6 +68,7 @@ import android.widget.Toast;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.utils.LogUtils;
 import org.apache.cordova.api.CallbackContext;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -99,7 +100,7 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     private static int instantiationCount = 0;
     {
         if (instantiationCount > 0) {
-            JREngage.logd(TAG, "More than one instance, instantiation count: " + instantiationCount);
+            LogUtils.logd(TAG, "More than one instance, instantiation count: " + instantiationCount);
         }
         instantiationCount++;
     }
@@ -163,7 +164,7 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     private PluginResult buildSuccessResult(JRDictionary successDictionary) {
         String message = successDictionary.toJson();
 
-        JREngage.logd("[buildSuccessResult]", message);
+        LogUtils.logd("[buildSuccessResult]", message);
         return new PluginResult(Status.OK, message);
     }
 
@@ -244,20 +245,20 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     }
 
     public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-        JREngage.logd(TAG, "[jrEngageDialogDidFailToShowWithError] " + error);
+        LogUtils.logd(TAG, "[jrEngageDialogDidFailToShowWithError] " + error);
         postResultAndResetState(buildFailureResult(error));
     }
 
     /* Happens on user backing out of authentication, so report user cancellation */
     // TODO: Test this when sharing
     public void jrAuthenticationDidNotComplete() {
-        JREngage.logd(TAG, "[jrAuthenticationDidNotComplete] User Canceled");
+        LogUtils.logd(TAG, "[jrAuthenticationDidNotComplete] User Canceled");
         postResultAndResetState(buildFailureResult(AuthenticationError.AUTHENTICATION_CANCELED,
                 "User canceled authentication"));
     }
 
     public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-        JREngage.logd(TAG, "[jrAuthenticationDidFailWithError] " + error);
+        LogUtils.logd(TAG, "[jrAuthenticationDidFailWithError] " + error);
         // TODO: Test this on Android (auth fails as well as sharing fails)
         if (!mSharingMode)
             postResultAndResetState(buildFailureResult(error));
@@ -273,7 +274,7 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     }
 
     public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
-        JREngage.logd(TAG, "[jrAuthenticationDidSucceedForUser]");
+        LogUtils.logd(TAG, "[jrAuthenticationDidSucceedForUser]");
 
         auth_info.remove("stat");
 
@@ -305,13 +306,13 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
                                                  HttpResponseHeaders headers,
                                                  String tokenUrlPayload,
                                                  String provider) {
-        JREngage.logd(TAG, "[jrAuthenticationDidReachTokenUrl]");
+        LogUtils.logd(TAG, "[jrAuthenticationDidReachTokenUrl]");
 
         populateAndMaybePostAuthResponse(tokenUrl, tokenUrlPayload, headers);
     }
 
     public void jrSocialDidNotCompletePublishing() {
-        JREngage.logd(TAG, "[jrSocialDidNotCompletePublishing] User Canceled");
+        LogUtils.logd(TAG, "[jrSocialDidNotCompletePublishing] User Canceled");
         postResultAndResetState(buildFailureResult(SocialPublishingError.CANCELED_ERROR,
                 "User canceled authentication"));
     }
@@ -319,7 +320,7 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     public void jrSocialPublishJRActivityDidFail(JRActivityObject activity,
                                                  JREngageError error,
                                                  String provider) {
-        JREngage.logd(TAG, "[jrSocialPublishJRActivityDidFail]");
+        LogUtils.logd(TAG, "[jrSocialPublishJRActivityDidFail]");
         JRDictionary shareBlob = new JRDictionary();
 
         shareBlob.put("provider", provider);
@@ -331,7 +332,7 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     }
 
     public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
-        JREngage.logd(TAG, "[jrSocialDidPublishJRActivity]");
+        LogUtils.logd(TAG, "[jrSocialDidPublishJRActivity]");
         JRDictionary shareBlob = new JRDictionary();
 
         shareBlob.put("provider", provider);
@@ -341,7 +342,7 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     }
 
     public void jrSocialDidCompletePublishing() {
-        JREngage.logd(TAG, "[jrSocialDidCompletePublishing]");
+        LogUtils.logd(TAG, "[jrSocialDidCompletePublishing]");
 
         mSharingResponse.put("signIns", mAuthBlobsDuringSharing);
         mSharingResponse.put("shares", mShareBlobsDuringSharing);
