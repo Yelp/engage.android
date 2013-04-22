@@ -34,13 +34,13 @@ Using tablet support:
 
 Getting Started:
 
-http://developers.janrain.com/documentation/mobile-libraries/jump-for-android/
+`Jump_Integration_Guide.md`
 
 Phonegap Plugin:
 
 http://developers.janrain.com/documentation/mobile-libraries/phonegapcordova/
 
-To report bugs or ask questions:
+Report bugs or ask questions:
 
 https://support.janrain.com/forums/20122381-android-library-q-a
 
