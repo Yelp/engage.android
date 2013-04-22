@@ -1,6 +1,11 @@
 Welcome to the Janrain Engage library for the Android platform.  This library is available
 open-source under a Berkeley license, as found in the LICENSE file.
 
+Updating from 3.x to 4.0:
+- 4.0 adds and focuses on Capture support, renames the library project / IDE metadata to "Jump"
+- See the developers integration guide, `Jump_Integration_Guide.md`
+- There's a new initializer signature
+
 Updating from 2.x to 3.0:
 - See the documentation on developers.janrain.com
 

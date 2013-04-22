@@ -4,7 +4,7 @@
 
 * Engage social sign-in (includes OpenID, and many OAuth identity providers, e.g. Google, Facebook, etc.)
 * Sign-in to Capture accounts
-** Either via Engage social sign-in or via traditional username/password sign-in
+    * Either via Engage social sign-in or via traditional username/password sign-in
 * Capture account record updates
 * Capture Account "thin" social registration -- automatic account creation for social sign-in users.
 
