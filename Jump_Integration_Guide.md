@@ -27,19 +27,20 @@ Use the JUMP for Android library by following these steps:
 
 Before you begin integrating you will need an array of configuration details:
 
-1. Sign in to the Engage Dashboard
+1. Sign in to your Engage Dashboard - https://rpxnow.com
     1. Configure the providers you wish to use for authentication ("Deployment" drop down menu -> "Engage for
        Android").
     2. Retrieve your 20-character Application ID from the Engage Dashboard (In the right column of the "Home"
        page on the dashboard.)
-2. Ask your deployment engineer or account manager for your Capture domain
+2. Ask your deployment engineer or account manager for your Capture domain.
 3. Sign in to the Capture dashboard and provision a new API client for your mobile app.
     1. Use the [set_features API](http://developers.janrain.com/documentation/api-methods/capture/clients/set_features/)
        to add the "default_read_only" feature to your new API client.
     2. Use the Capture Dashboard to add a setting for your new API client called "login_client". Set it to true.
-4. Ask your deployment engineer or account manager which "flow" you should use.
-    1. Set the default_flow_name and default_flow_version setting for your new API client. Ask your deployment
-       engineer or account manager for the appropriate values.
+4. Configure your flow settings:
+    1. Ask your deployment engineer or account manager which "flow" you should use.
+    2. Ask for the appropriate values for default_flow_name and default_flow_version.
+    3. Set those settings for your new API client.
 5. Coordinate with your deployment engineer or account manager for the correct value for your "flow locale."
    The commonly used value for US English is en-US.
 6. Ask your deployment engineer or account manager for the name of the sign-in form in your flow.
@@ -51,7 +52,7 @@ JUMP for Android SDK.
 
 ### Declare the Android Library Project Dependency
 
-Using ant, from the directory of your project's AndroidManifest.xml:
+Using the Android command line tool, from the directory of your project's AndroidManifest.xml:
 
     android update project -p . -l ../path/to/Jump
 
