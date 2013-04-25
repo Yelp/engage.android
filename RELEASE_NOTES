@@ -1,9 +1,10 @@
 v4.0.4:
  - Removes outdated project files
+ - Fixes major error in record deserialization
 v4.0.3:
  - Integration guide tweaks
 v4.0.2:
- - trivial README update
+ - README update
 v4.0.1:
  - Fixes guide formatting
 v4.0.0:
