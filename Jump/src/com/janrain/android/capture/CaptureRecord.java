@@ -111,7 +111,7 @@ public class CaptureRecord extends JSONObject {
             CaptureRecord loadedRecord = new CaptureRecord();
             loadedRecord.original = serializedVersion.getJSONObject("original");
             loadedRecord.accessToken = serializedVersion.getString("accessToken");
-            loadedRecord.refreshSecret = serializedVersion.getString("refreshSecret");
+            loadedRecord.refreshSecret = serializedVersion.optString("refreshSecret");
             JsonUtils.deepCopy(serializedVersion.getJSONObject("this"), loadedRecord);
             fis.close();
         } catch (FileNotFoundException ignore) {

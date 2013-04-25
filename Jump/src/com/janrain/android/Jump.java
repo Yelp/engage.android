@@ -47,6 +47,9 @@ import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureRe
 import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.ENGAGE_ERROR;
 import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.JUMP_NOT_INITIALIZED;
 
+/**
+ * See engage.android/Jump_Integration_Guide.md for a developer's integration guide.
+ */
 public class Jump {
     /*package*/ enum State {
         STATE;
@@ -71,8 +74,6 @@ public class Jump {
      * @param engageAppId The application ID of your Engage app, from the Engage Dashboard
      * @param captureDomain The domain of your Capture app, contact your deployment engineer for this
      * @param captureClientId The Capture API client ID for use with this mobile app.
-     *                        Important: You should generate a separate API client for each mobile app.
-     *                        DO NOT USE THE OWNER API CLIENT.
      * @param captureLocale the name of the locale to use in the Capture flow
      * @param captureSignInFormName the name of the Capture sign-in form in the flow
      * @param traditionalSignInType The type of traditional sign-in i.e. username or email address based.
