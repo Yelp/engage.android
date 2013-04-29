@@ -18,12 +18,10 @@ Notably missing:
 
 ## Usage
 
-Use the JUMP for Android library by following these steps:
-
-1.  [Declare](#declare-and-import) the
-    library project dependency and add the required elements to your `AndroidManifest.xml` file.
-2.  [Initialize](#initialize) the library.
-3.  Begin sign-in by calling Jump#showSignInDialog
+1. [Declare](#declare-and-import) the
+   library project dependency and add the required elements to your `AndroidManifest.xml` file.
+2. [Initialize](#initialize) the library.
+3. Begin sign-in by calling Jump#showSignInDialog
 
 Before you begin integrating you will need an array of configuration details:
 
@@ -35,8 +33,9 @@ Before you begin integrating you will need an array of configuration details:
 2. Ask your deployment engineer or account manager for your Capture domain.
 3. Sign in to the Capture dashboard and provision a new API client for your mobile app.
     1. Use the [set_features API](http://developers.janrain.com/documentation/api-methods/capture/clients/set_features/)
-       to add the "default_read_only" feature to your new API client.
-    2. Use the Capture Dashboard to add a setting for your new API client called "login_client". Set it to true.
+       to add the "login_client" feature to your new API client.
+    2. Use the [setAccessSchema API](http://developers.janrain.com/documentation/api-methods/capture/entitytype/setaccessschema/)
+       to set the subset of the schema you wish your mobile app to be able to update.
 4. Configure your flow settings:
     1. Ask your deployment engineer or account manager which "flow" you should use.
     2. Ask for the appropriate values for default_flow_name and default_flow_version.
@@ -45,8 +44,8 @@ Before you begin integrating you will need an array of configuration details:
    The commonly used value for US English is en-US.
 6. Ask your deployment engineer or account manager for the name of the sign-in form in your flow.
 
-Note: You _must_ create a new API client with the correct features and settings for proper operation of the
-JUMP for Android SDK.
+Note: You _must_ create a new API client with the correct feature for proper operation of the JUMP for
+Android SDK.
 
 ## Declare and Import
 
