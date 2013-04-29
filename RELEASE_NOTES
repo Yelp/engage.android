@@ -1,3 +1,6 @@
+v4.0.5:
+ - Fixed API client creation guide for login_client feature
+ - Updates demo to use production demo instance
 v4.0.4:
  - Removes outdated project files
  - Fixes major error in record deserialization
