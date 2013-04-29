@@ -70,18 +70,18 @@ public class MainActivity extends FragmentActivity {
         setContentView(linearLayout);
 
         // normal dev
-        //Jump.init(this, "appcfamhnpkagijaeinl", "mobile-dev.janraincapture.com",
-        //        "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6", "en-US", "signinForm", Jump.TraditionalSignInType.EMAIL);
+        Jump.init(this, "appcfamhnpkagijaeinl", "mobile-dev.janraincapture.com",
+                "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6", "en-US", "signinForm", Jump.TraditionalSignInType.EMAIL);
 
         //capture testing/staging
-        String engageAppId = "appcfamhnpkagijaeinl";
-        String captureDomain = "mobile-testing-2.janraincapture.com";
-        String captureClientId = "atasaz59p8cyecmbzmcwkbthsyq3wrxh";
-        String captureLocale = "en-US";
-        String captureSignInFormName = "signinForm";
-        Jump.TraditionalSignInType signInType = Jump.TraditionalSignInType.EMAIL;
-        Jump.init(this, engageAppId, captureDomain, captureClientId, captureLocale, captureSignInFormName,
-                signInType);
+        //String engageAppId = "appcfamhnpkagijaeinl";
+        //String captureDomain = "mobile-testing-2.janraincapture.com";
+        //String captureClientId = "atasaz59p8cyecmbzmcwkbthsyq3wrxh";
+        //String captureLocale = "en-US";
+        //String captureSignInFormName = "signinForm";
+        //Jump.TraditionalSignInType signInType = Jump.TraditionalSignInType.EMAIL;
+        //Jump.init(this, engageAppId, captureDomain, captureClientId, captureLocale, captureSignInFormName,
+        //        signInType);
 
         testAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
