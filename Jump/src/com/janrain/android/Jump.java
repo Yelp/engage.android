@@ -140,7 +140,13 @@ public class Jump {
     }
 
     /**
-     * Starts the Capture sign-in flow directly on a provider
+     * Starts the Capture sign-in flow.
+     *
+     * If the providerName parameter is not null and is a valid provider name string then authentication
+     * begins directly with that provider.
+     *
+     * If providerName is null than a list of available providers is displayed first.
+     * 
      * @param fromActivity the activity from which to start the dialog activity
      * @param providerName the name of the provider to show the sign-in flow for. May be null.
      *                     If null, a list of providers (and a traditional sign-in form) is displayed to the
