@@ -1,5 +1,18 @@
-Welcome to the Janrain Engage library for the Android platform.  This library is available
-open-source under a Berkeley license, as found in the LICENSE file.
+Welcome to the JUMP platform libary for Android.  This library is available open-source under a Berkeley
+license, as found in the LICENSE file.
+
+Getting Started:
+    Jump_Integration_Guide.md
+
+Phonegap Plugin:
+    http://developers.janrain.com/documentation/mobile-libraries/phonegapcordova/
+
+Report bugs or ask questions:
+    https://support.janrain.com/forums/20122381-android-library-q-a
+
+Old git repo: https://github.com/janrain/engage.android
+New git repo: https://github.com/janrain/jump.android
+(Both are exactly the same, for now.)
 
 Updating from 3.x to 4.0:
 - 4.0 adds and focuses on Capture support, renames the library project / IDE metadata to "Jump"
@@ -10,7 +23,6 @@ Updating from 2.x to 3.0:
 - See the documentation on developers.janrain.com
 
 Updating from 1.x to 2.0:
-
 - Replace the activity declarations in your AndroidManifest.xml with fresh copies from
   JREngage/AndroidManifest.xml
 - Update your Android target to Android 13 / Honeycomb 3.2 (still deployable to Android 4+ / Donut / 1.6)
@@ -31,16 +43,4 @@ Using tablet support:
   JREngage#createSocialPublishingFragment(...)
 - Embedded mode requires a host activity sub-classed from android.support.v4.app.FragmentActivity,
   android.app.FragmentActivity is incompatible.
-
-Getting Started:
-
-`Jump_Integration_Guide.md`
-
-Phonegap Plugin:
-
-http://developers.janrain.com/documentation/mobile-libraries/phonegapcordova/
-
-Report bugs or ask questions:
-
-https://support.janrain.com/forums/20122381-android-library-q-a
 
