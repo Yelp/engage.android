@@ -214,7 +214,11 @@ public class QuickShare extends Application {
                     }
 
                     @Override
-                    public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
+                    public void connectionDidFail(Exception ex,
+                                                  HttpResponseHeaders responseHeaders,
+                                                  byte[] payload,
+                                                  String requestUrl,
+                                                  Object tag) {
                         mListener.asyncFeedReadFailed(ex);
                     }
                 }, null, null, null, false);

@@ -39,50 +39,42 @@ import java.io.InputStream;
 
 /**
  * @internal
- *
  * @class IOUtils
- **/
+ */
 public final class IOUtils {
-	private static final String TAG = IOUtils.class.getSimpleName();
+    private static final String TAG = IOUtils.class.getSimpleName();
 
     private IOUtils() {
     }
 
-	/**
-	 * Reads the entire contents of the specified stream to a byte array.
-	 *
-	 * @param in
-	 * 		The input stream to read the contents of.
-	 *
-	 * @param shouldThrowOnError
-	 *		Flag indicating whether or not the user wants to handle exceptions that are thrown
-	 *		during this operation.
-	 *
-	 * @return
-	 * 		A byte array representing the full contents of the stream, null if stream is null.
-	 *
-	 * @throws IOException
-	 * 		If the user passed <code>true</code> for 'shouldThrowOnError' and an IOException has
-	 * 		occurred.
-	 */
-	public static byte[] readFromStream(InputStream in, boolean shouldThrowOnError) throws IOException {
-		if (in != null) {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			try {
-				byte[] buffer = new byte[1024];
-				int len;
-				while ((len = in.read(buffer)) != -1) baos.write(buffer, 0, len);
-				return baos.toByteArray();
-			} catch (IOException e) {
-				Log.e(TAG, "[readFromStream] problem reading from input stream.", e);
-				if (shouldThrowOnError) throw e;
-			} finally {
+    /**
+     * Reads the entire contents of the specified stream to a byte array.
+     *
+     * @param in                 The input stream to read the contents of.
+     * @param shouldThrowOnError Flag indicating whether or not the user wants to handle exceptions that are
+     *                           thrown during this operation.
+     * @return A byte array representing the full contents of the stream, null if stream is null.
+     * @throws IOException If the user passed <code>true</code> for 'shouldThrowOnError' and an IOException
+     *                     has occurred.
+     */
+    public static byte[] readFromStream(InputStream in, boolean shouldThrowOnError) throws IOException {
+        if (in != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try {
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = in.read(buffer)) != -1) baos.write(buffer, 0, len);
+                return baos.toByteArray();
+            } catch (IOException e) {
+                Log.e(TAG, "[readFromStream] problem reading from input stream.", e);
+                if (shouldThrowOnError) throw e;
+            } finally {
                 baos.close();
-			}
-		} else {
+            }
+        } else {
             Log.e(TAG, "[readFromStream] unexpected null InputStream");
         }
 
         return null;
-	}
+    }
 }

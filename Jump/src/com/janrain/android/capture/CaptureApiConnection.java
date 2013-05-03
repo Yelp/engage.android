@@ -133,8 +133,13 @@ public class CaptureApiConnection {
                     }
 
                     @Override
-                    public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
-                        LogUtils.loge("failed request: " + requestUrl, ex);
+                    public void connectionDidFail(Exception ex,
+                                                  HttpResponseHeaders responseHeaders,
+                                                  byte[] payload,
+                                                  String requestUrl,
+                                                  Object tag) {
+                        LogUtils.loge("failed request (" + responseHeaders.getResponseCode() + " ): " +
+                                requestUrl, ex);
                         callback.run(null);
                     }
                 };

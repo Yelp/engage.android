@@ -125,21 +125,21 @@ public class JRWebViewFragment extends JRUiFragment {
 
         // Shim some information about the OS version into the WebView for use by hax ala Yahoo:
         mWebView.addJavascriptInterface(new Object() {
-        			// These functions may be invoked via the javascript binding, but they are
-        			// never invoked from this Java code, so they will always generate compiler
-        			// warnings, so those warnings are suppressed safely.
+                    // These functions may be invoked via the javascript binding, but they are
+                    // never invoked from this Java code, so they will always generate compiler
+                    // warnings, so those warnings are suppressed safely.
                     @SuppressWarnings("unused")
-					String getAndroidIncremental() {
+                    String getAndroidIncremental() {
                         return Build.VERSION.INCREMENTAL;
                     }
 
                     @SuppressWarnings("unused")
-					String getAndroidRelease() {
+                    String getAndroidRelease() {
                         return Build.VERSION.RELEASE;
                     }
 
                     @SuppressWarnings("unused")
-					int getAndroidSdkInt() {
+                    int getAndroidSdkInt() {
                         return AndroidUtils.SDK_INT;
                     }
                 }, "jrengage_mobile");
@@ -773,7 +773,10 @@ public class JRWebViewFragment extends JRUiFragment {
                 maybeDispatchMessages();
             }
 
-            public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
+            public void connectionDidFail(Exception ex,
+                                          HttpResponseHeaders responseHeaders,
+                                          byte[] payload, String requestUrl,
+                                          Object tag) {
                 LogUtils.logd(TAG, "[connectionDidFail]");
                 mDeferredCdfE = ex;
                 mDeferredCdfS = requestUrl;

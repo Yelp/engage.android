@@ -71,6 +71,7 @@ public class HttpResponseHeaders {
     private String mETag;
     private HttpUriRequest mRequest;
     private HttpResponse mResponse;
+    private String mStatusLine;
 
     private HttpResponseHeaders() {
         mResponseCode = RESPONSE_CODE_INVALID;
@@ -93,6 +94,7 @@ public class HttpResponseHeaders {
         HttpResponseHeaders headers = new HttpResponseHeaders();
 
         headers.mResponseCode = response.getStatusLine().getStatusCode();
+        headers.mStatusLine = response.getStatusLine().toString();
         headers.mContentEncoding = getResponseHeaderFirstValue(response, HEADER_CONTENT_ENCODING);
         try {
             headers.mContentLength = Integer.parseInt(
@@ -287,5 +289,13 @@ public class HttpResponseHeaders {
         JRDictionary retval = new JRDictionary();
         for (Header h : mResponse.getAllHeaders()) retval.put(h.getName(), h.getValue());
         return retval;
+    }
+
+    /**
+     * The entire HTTP status line associated with the response associated with these headers
+     * @return the status line (e.g. HTTP/1.1 301 Moved Permanently)
+     */
+    public String getStatusLine() {
+        return mStatusLine;
     }
 }

@@ -55,7 +55,7 @@ import java.util.WeakHashMap;
  * @class JRConnectionManager
  **/
 public class JRConnectionManager {
-	private static JRConnectionManager sInstance;
+    private static JRConnectionManager sInstance;
 
     // createConnection can be called from a BG thread so this is wrapped in a synced map for thread
     // safety
@@ -65,9 +65,9 @@ public class JRConnectionManager {
     private JRConnectionManager() {}
 
     public static synchronized JRConnectionManager getInstance() {
-		if (sInstance == null) sInstance = new JRConnectionManager();
-		return sInstance;
-	}
+        if (sInstance == null) sInstance = new JRConnectionManager();
+        return sInstance;
+    }
 
     /**
      * Creates a managed HTTP connection. If called from the UI thread (or any thread with a Looper) then
@@ -80,8 +80,8 @@ public class JRConnectionManager {
      *      The delegate (listener) class instance. May be null. Callback methods will be invoked on the UI
      *      thread.
      * @param tag
- *      Optional tag for the connection, later passed to the delegate for the purpose of distinguishing
- *      multiple connections handled by a single delegate.
+     *      Optional tag for the connection, later passed to the delegate for the purpose of distinguishing
+     *      multiple connections handled by a single delegate.
      * @param requestHeaders extra custom HTTP headers
      * @param postData if non-null will perform a POST, if null a GET
      * @param followRedirects true to follow HTTP 302 redirects, necessary for Facebook profile pics
@@ -204,6 +204,8 @@ public class JRConnectionManager {
 
             if (mConn.mResponse.hasException()) {
                 mConn.mDelegate.connectionDidFail(mConn.mResponse.getException(),
+                        mConn.mResponse.getHeaders(),
+                        mConn.mResponse.getPayload(),
                         mConn.mRequestUrl,
                         mConn.mTag);
             } else {

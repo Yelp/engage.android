@@ -39,12 +39,15 @@ import com.janrain.android.engage.net.async.HttpResponseHeaders;
  * @interface JRConnectionManagerDelegate
  **/
 public interface JRConnectionManagerDelegate {
-	void connectionDidFinishLoading(HttpResponseHeaders headers,
+    void connectionDidFinishLoading(HttpResponseHeaders headers,
                                     byte[] payload,
                                     String requestUrl,
                                     Object tag);
 
-	void connectionDidFail(Exception ex, String requestUrl, Object tag);
+    void connectionDidFail(Exception ex,
+                           HttpResponseHeaders responseHeaders,
+                           byte[] payload, String requestUrl,
+                           Object tag);
 
     public abstract class SimpleJRConnectionManagerDelegate implements JRConnectionManagerDelegate {
         public void connectionDidFinishLoading(HttpResponseHeaders headers,
@@ -52,6 +55,9 @@ public interface JRConnectionManagerDelegate {
                                                String requestUrl,
                                                Object tag) {}
 
-        public void connectionDidFail(Exception ex, String requestUrl, Object tag) {}
+        public void connectionDidFail(Exception ex,
+                                      HttpResponseHeaders responseHeaders,
+                                      byte[] payload, String requestUrl,
+                                      Object tag) {}
     }
 }

@@ -64,15 +64,14 @@ import java.util.Map;
 
 /**
  * @internal
- *
  * @class JRProvider
- **/
+ */
 public class JRProvider implements Serializable {
-	public static final String KEY_FRIENDLY_NAME = "friendly_name";
-	public static final String KEY_INPUT_PROMPT = "input_prompt";
-	public static final String KEY_OPENID_IDENTIFIER = "openid_identifier";
-	public static final String KEY_URL = "url";
-	public static final String KEY_REQUIRES_INPUT = "requires_input";
+    public static final String KEY_FRIENDLY_NAME = "friendly_name";
+    public static final String KEY_INPUT_PROMPT = "input_prompt";
+    public static final String KEY_OPENID_IDENTIFIER = "openid_identifier";
+    public static final String KEY_URL = "url";
+    public static final String KEY_REQUIRES_INPUT = "requires_input";
     public static final String KEY_SOCIAL_SHARING_PROPERTIES = "social_sharing_properties";
     public static final String KEY_COOKIE_DOMAINS = "cookie_domains";
     public static final String KEY_ANDROID_WEBVIEW_OPTIONS = "android_webview_options";
@@ -84,38 +83,38 @@ public class JRProvider implements Serializable {
 
     // Suppressed because this inner class is not expected to be serialized
     @SuppressWarnings("serial")
-	private final static Map<String, Integer> provider_list_icon_resources =
-            new HashMap<String, Integer>(){
-                    {
-                        put("icon_bw_facebook", R.drawable.jr_icon_bw_facebook);
-                        put("icon_bw_linkedin", R.drawable.jr_icon_bw_linkedin);
-                        put("icon_bw_myspace", R.drawable.jr_icon_bw_myspace);
-                        put("icon_bw_twitter", R.drawable.jr_icon_bw_twitter);
-                        put("icon_bw_yahoo", R.drawable.jr_icon_bw_yahoo);
+    private final static Map<String, Integer> provider_list_icon_resources =
+            new HashMap<String, Integer>() {
+                {
+                    put("icon_bw_facebook", R.drawable.jr_icon_bw_facebook);
+                    put("icon_bw_linkedin", R.drawable.jr_icon_bw_linkedin);
+                    put("icon_bw_myspace", R.drawable.jr_icon_bw_myspace);
+                    put("icon_bw_twitter", R.drawable.jr_icon_bw_twitter);
+                    put("icon_bw_yahoo", R.drawable.jr_icon_bw_yahoo);
 
-                        put("icon_aol", R.drawable.jr_icon_aol);
-                        put("icon_blogger", R.drawable.jr_icon_blogger);
-                        put("icon_facebook", R.drawable.jr_icon_facebook);
-                        put("icon_flickr", R.drawable.jr_icon_flickr);
-                        put("icon_foursquare", R.drawable.jr_icon_foursquare);
-                        put("icon_google", R.drawable.jr_icon_google);
-                        put("icon_hyves", R.drawable.jr_icon_hyves);
-                        put("icon_linkedin", R.drawable.jr_icon_linkedin);
-                        put("icon_live_id", R.drawable.jr_icon_live_id);
-                        put("icon_livejournal", R.drawable.jr_icon_livejournal);
-                        put("icon_myopenid", R.drawable.jr_icon_myopenid);
-                        put("icon_myspace", R.drawable.jr_icon_myspace);
-                        put("icon_netlog", R.drawable.jr_icon_netlog);
-                        put("icon_openid", R.drawable.jr_icon_openid);
-                        put("icon_orkut", R.drawable.jr_icon_orkut);
-                        put("icon_paypal", R.drawable.jr_icon_paypal);
-                        put("icon_salesforce", R.drawable.jr_icon_salesforce);
-                        put("icon_twitter", R.drawable.jr_icon_twitter);
-                        put("icon_verisign", R.drawable.jr_icon_verisign);
-                        put("icon_vzn", R.drawable.jr_icon_vzn);
-                        put("icon_wordpress", R.drawable.jr_icon_wordpress);
-                        put("icon_yahoo", R.drawable.jr_icon_yahoo);
-                    }
+                    put("icon_aol", R.drawable.jr_icon_aol);
+                    put("icon_blogger", R.drawable.jr_icon_blogger);
+                    put("icon_facebook", R.drawable.jr_icon_facebook);
+                    put("icon_flickr", R.drawable.jr_icon_flickr);
+                    put("icon_foursquare", R.drawable.jr_icon_foursquare);
+                    put("icon_google", R.drawable.jr_icon_google);
+                    put("icon_hyves", R.drawable.jr_icon_hyves);
+                    put("icon_linkedin", R.drawable.jr_icon_linkedin);
+                    put("icon_live_id", R.drawable.jr_icon_live_id);
+                    put("icon_livejournal", R.drawable.jr_icon_livejournal);
+                    put("icon_myopenid", R.drawable.jr_icon_myopenid);
+                    put("icon_myspace", R.drawable.jr_icon_myspace);
+                    put("icon_netlog", R.drawable.jr_icon_netlog);
+                    put("icon_openid", R.drawable.jr_icon_openid);
+                    put("icon_orkut", R.drawable.jr_icon_orkut);
+                    put("icon_paypal", R.drawable.jr_icon_paypal);
+                    put("icon_salesforce", R.drawable.jr_icon_salesforce);
+                    put("icon_twitter", R.drawable.jr_icon_twitter);
+                    put("icon_verisign", R.drawable.jr_icon_verisign);
+                    put("icon_vzn", R.drawable.jr_icon_vzn);
+                    put("icon_wordpress", R.drawable.jr_icon_wordpress);
+                    put("icon_yahoo", R.drawable.jr_icon_yahoo);
+                }
             };
 
     private static Map<String, SoftReference<Drawable>> provider_logo_drawables =
@@ -123,31 +122,31 @@ public class JRProvider implements Serializable {
 
     // Suppressed because this inner class is not expected to be serialized
     @SuppressWarnings("serial")
-	private final static HashMap<String, Integer> provider_logo_resources =
-            new HashMap<String, Integer>(){
-                    {
-                        put("logo_aol", R.drawable.jr_logo_aol);
-                        put("logo_blogger", R.drawable.jr_logo_blogger);
-                        put("logo_facebook", R.drawable.jr_logo_facebook);
-                        put("logo_flickr", R.drawable.jr_logo_flickr);
-                        put("logo_foursquare", R.drawable.jr_logo_foursquare);
-                        put("logo_google", R.drawable.jr_logo_google);
-                        put("logo_hyves", R.drawable.jr_logo_hyves);
-                        put("logo_linkedin", R.drawable.jr_logo_linkedin);
-                        put("logo_live_id", R.drawable.jr_logo_live_id);
-                        put("logo_livejournal", R.drawable.jr_logo_livejournal);
-                        put("logo_myopenid", R.drawable.jr_logo_myopenid);
-                        put("logo_myspace", R.drawable.jr_logo_myspace);
-                        put("logo_netlog", R.drawable.jr_logo_netlog);
-                        put("logo_openid", R.drawable.jr_logo_openid);
-                        put("logo_orkut", R.drawable.jr_logo_orkut);
-                        put("logo_paypal", R.drawable.jr_logo_paypal);
-                        put("logo_salesforce", R.drawable.jr_logo_salesforce);
-                        put("logo_twitter", R.drawable.jr_logo_twitter);
-                        put("logo_verisign", R.drawable.jr_logo_verisign);
-                        put("logo_vzn", R.drawable.jr_logo_vzn);
-                        put("logo_yahoo", R.drawable.jr_logo_yahoo);
-                    }
+    private final static HashMap<String, Integer> provider_logo_resources =
+            new HashMap<String, Integer>() {
+                {
+                    put("logo_aol", R.drawable.jr_logo_aol);
+                    put("logo_blogger", R.drawable.jr_logo_blogger);
+                    put("logo_facebook", R.drawable.jr_logo_facebook);
+                    put("logo_flickr", R.drawable.jr_logo_flickr);
+                    put("logo_foursquare", R.drawable.jr_logo_foursquare);
+                    put("logo_google", R.drawable.jr_logo_google);
+                    put("logo_hyves", R.drawable.jr_logo_hyves);
+                    put("logo_linkedin", R.drawable.jr_logo_linkedin);
+                    put("logo_live_id", R.drawable.jr_logo_live_id);
+                    put("logo_livejournal", R.drawable.jr_logo_livejournal);
+                    put("logo_myopenid", R.drawable.jr_logo_myopenid);
+                    put("logo_myspace", R.drawable.jr_logo_myspace);
+                    put("logo_netlog", R.drawable.jr_logo_netlog);
+                    put("logo_openid", R.drawable.jr_logo_openid);
+                    put("logo_orkut", R.drawable.jr_logo_orkut);
+                    put("logo_paypal", R.drawable.jr_logo_paypal);
+                    put("logo_salesforce", R.drawable.jr_logo_salesforce);
+                    put("logo_twitter", R.drawable.jr_logo_twitter);
+                    put("logo_verisign", R.drawable.jr_logo_verisign);
+                    put("logo_vzn", R.drawable.jr_logo_vzn);
+                    put("logo_yahoo", R.drawable.jr_logo_yahoo);
+                }
             };
 
     private String mName;
@@ -191,8 +190,8 @@ public class JRProvider implements Serializable {
          if they aren't already there. */
         getProviderLogo(JREngage.getApplicationContext());
     }
-    
-    public List<String> getCookieDomains () { /* (readonly) */
+
+    public List<String> getCookieDomains() { /* (readonly) */
         return mCookieDomains;
     }
 
@@ -292,7 +291,8 @@ public class JRProvider implements Serializable {
             } else {
                 c.deleteFile(iconFileName);
             }
-        } catch (FileNotFoundException ignore) { }
+        } catch (FileNotFoundException ignore) {
+        }
 
         downloadIcons(c);
         return c.getResources().getDrawable(R.drawable.jr_icon_unknown);
@@ -334,9 +334,9 @@ public class JRProvider implements Serializable {
         }
 
         final String[] iconFileNames = {
-            "icon_" + mName + ".png",
-            "icon_bw_" + mName + ".png",
-            "logo_" + mName + ".png"
+                "icon_" + mName + ".png",
+                "icon_bw_" + mName + ".png",
+                "logo_" + mName + ".png"
         };
 
         ThreadUtils.executeInBg(new Runnable() {
@@ -380,8 +380,8 @@ public class JRProvider implements Serializable {
     public void loadDynamicVariables() {
         LogUtils.logd("JRProvider", "[prov] user input: " + PrefUtils.KEY_JR_USER_INPUT + mName);
 
-    	mUserInput = PrefUtils.getString(PrefUtils.KEY_JR_USER_INPUT + mName, "");
-    	mForceReauth = PrefUtils.getBoolean(PrefUtils.KEY_JR_FORCE_REAUTH + mName, false);
+        mUserInput = PrefUtils.getString(PrefUtils.KEY_JR_USER_INPUT + mName, "");
+        mForceReauth = PrefUtils.getBoolean(PrefUtils.KEY_JR_FORCE_REAUTH + mName, false);
     }
 
     public String toString() {
@@ -393,11 +393,10 @@ public class JRProvider implements Serializable {
     }
 
     /**
+     * @param lighter If true then return the blend of the providers color at 20% alpha over a white
+     *                background
+     * @return The color
      * @internal
-     * @param lighter
-     *  If true then return the blend of the providers color at 20% alpha over a white background
-     * @return
-     *  The color
      */
     public int getProviderColor(boolean lighter) {
         Exception error;
@@ -405,7 +404,7 @@ public class JRProvider implements Serializable {
             List colorList = (List) getSocialSharingProperties().get("color_values");
 
             int finalColor = 255; // Full alpha
-            for (int i=0; i<3; i++) {
+            for (int i = 0; i < 3; i++) {
                 finalColor <<= 8;
                 int newByte = (int) (((Double) colorList.get(i)) * 255.0);
                 if (lighter) newByte = (int) (newByte * 0.2d + 255 * 0.8d);

@@ -63,7 +63,6 @@ import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultRedirectHandler;
@@ -85,8 +84,7 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
  * @internal
  *
  * @class AsyncHttpClient
- * Utility class which performs HTTP operations asynchronously.
- **/
+ */
 /*package*/ class AsyncHttpClient {
     private static final String USER_AGENT =
             "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Droid Build/FRG22D) AppleWebKit/533.1 " +
@@ -97,7 +95,7 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
     private AsyncHttpClient() {}
 
     /*package*/ static class HttpExecutor implements Runnable {
-		final private Handler mHandler;
+        final private Handler mHandler;
         final private ManagedConnection mConn;
         final private DefaultHttpClient mHttpClient;
 
@@ -123,7 +121,6 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
         private static void evolveGzipEncoding(DefaultHttpClient client) {
             client.addRequestInterceptor(new HttpRequestInterceptor() {
                 public void process(HttpRequest request, HttpContext context) {
-                    // Add header to accept gzip content
                     if (!request.containsHeader(HEADER_ACCEPT_ENCODING)) {
                         request.addHeader(HEADER_ACCEPT_ENCODING, ENCODING_GZIP);
                     }
@@ -132,7 +129,6 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
 
             client.addResponseInterceptor(new HttpResponseInterceptor() {
                 public void process(HttpResponse response, HttpContext context) {
-                    // Inflate any responses compressed with gzip
                     final HttpEntity entity = response.getEntity();
                     if (entity == null) return;
                     final Header encoding = entity.getContentEncoding();
@@ -182,10 +178,8 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
             }
         }
 
-		public void run() {
-			LogUtils.logd("[run] BEGIN, URL: " + mConn.getRequestUrl());
-
-            setupHttpClient();
+        public void run() {
+            LogUtils.logd("[run] BEGIN, URL: " + mConn.getRequestUrl());
 
             JRConnectionManager.HttpCallback callBack = new JRConnectionManager.HttpCallback(mConn);
             try {
@@ -218,8 +212,8 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
 
                 if (mConn.getHttpRequest().isAborted()) throw new AbortedRequestException();
 
-                /* Fetching the status code allows the response interceptor to have a chance to un-gzip the
-                 * entity before we fetch it. */
+                // Fetching the status code allows the response interceptor to have a chance to un-gzip the
+                // entity before we fetch it.
                 response.getStatusLine().getStatusCode();
 
                 HttpResponseHeaders headers = fromResponse(response, mConn.getHttpRequest());
@@ -228,55 +222,44 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
                 byte[] data = entity == null ?
                         new byte[0] :
                         IOUtils.readFromStream(entity.getContent(), true);
-                String dataString = new String(data);
                 if (entity != null) entity.consumeContent();
 
                 AsyncHttpResponse ahr;
+                String statusLine = response.getStatusLine().toString();
                 switch (response.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
-                    LogUtils.logd("[run] HTTP_OK");
-                    LogUtils.logd("[run] headers: " + headers.toString());
-                    LogUtils.logd("[run] data for " + mConn.getRequestUrl() + ": " +
-                            dataString.substring(0, Math.min(dataString.length(), 600)));
-                    ahr = new AsyncHttpResponse(mConn, headers, data);
-                    break;
+                    // Normal success
                 case HttpStatus.SC_NOT_MODIFIED:
-                    LogUtils.logd("[run] HTTP_NOT_MODIFIED");
-                    ahr = new AsyncHttpResponse(mConn, headers, data);
-                    break;
+                    // From mobile_config_and_baseurl called with an Etag
                 case HttpStatus.SC_CREATED:
                     // Response from the Engage trail creation and maybe URL shortening calls
-                    LogUtils.logd("[run] HTTP_CREATED");
-                    ahr = new AsyncHttpResponse(mConn, headers, data);
+                case HttpStatus.SC_MOVED_TEMPORARILY:
+                    // for UPS-1390 - don't error on 302s from token URL
+                    LogUtils.logd(statusLine);
+                    ahr = new AsyncHttpResponse(mConn, null, headers, data);
                     break;
                 default:
-                    // This shouldn't be globbed together, but instead be structured
-                    // to allow the error handler to make meaningful use of the web
-                    // servers response (contained in String r)
-                    String message = "[run] Unexpected HTTP response for "
-                            + mConn.getRequestUrl() + " :  [responseCode: "
-                            + response.getStatusLine().getStatusCode() + " | reasonPhrase: "
-                            + response.getStatusLine().getReasonPhrase() + " | entity: "
-                            + dataString;
+                    // TODO This error case shouldn't glob the HTTP response pieces together, but instead
+                    // preserve and pass-along its structure to allow the error handler to make meaningful
+                    // use of the complete response
+                    LogUtils.loge(statusLine);
 
-                    LogUtils.loge(message);
-
-                    ahr = new AsyncHttpResponse(mConn, new Exception(message));
+                    ahr = new AsyncHttpResponse(mConn, new Exception(statusLine), headers, data);
                 }
 
                 mConn.setResponse(ahr);
                 invokeCallback(callBack);
             } catch (IOException e) {
                 LogUtils.loge(this.toString());
-                LogUtils.loge("[run] Problem executing HTTP request. (" + e + ")", e);
-                mConn.setResponse(new AsyncHttpResponse(mConn, e));
+                LogUtils.loge("Problem executing HTTP request.", e);
+                mConn.setResponse(new AsyncHttpResponse(mConn, e, null, null));
                 invokeCallback(callBack);
             } catch (AbortedRequestException e) {
-                LogUtils.loge("[run] Aborted request: " + mConn.getRequestUrl());
-                mConn.setResponse(new AsyncHttpResponse(mConn, null));
+                LogUtils.loge("Aborted request: " + mConn.getRequestUrl());
+                mConn.setResponse(new AsyncHttpResponse(mConn, null, null, null));
                 invokeCallback(callBack);
             }
-		}
+        }
 
         private void invokeCallback(JRConnectionManager.HttpCallback callBack) {
             if (mHandler != null) {
@@ -293,7 +276,7 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
         }
 
         private static class AbortedRequestException extends Exception {}
-	}
+    }
 
     /**
      * @internal
@@ -308,18 +291,14 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
         final private Exception mException;
         final private ManagedConnection mManagedConnection;
 
-        private AsyncHttpResponse(ManagedConnection conn, HttpResponseHeaders headers, byte[] payload) {
+        private AsyncHttpResponse(ManagedConnection conn,
+                                  Exception exception,
+                                  HttpResponseHeaders headers,
+                                  byte[] payload) {
             mManagedConnection = conn;
+            mException = exception;
             mHeaders = headers;
             mPayload = payload;
-            mException = null;
-        }
-
-        private AsyncHttpResponse(ManagedConnection conn, Exception exception) {
-            mManagedConnection = conn;
-            mHeaders = null;
-            mPayload = null;
-            mException = exception;
         }
 
         /**
@@ -336,8 +315,8 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
          * Gets the headers object.  If the operation failed, it will return null.
          *
          * @return
-         * 		The HttpResponseHeaders object synthesized from the HTTP response if
-         * 		the operation was successful, null otherwise.
+         *         The HttpResponseHeaders object synthesized from the HTTP response if
+         *         the operation was successful, null otherwise.
          */
         /*package*/ HttpResponseHeaders getHeaders() {
             return mHeaders;
@@ -347,8 +326,8 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
          * Gets the payload array.  If the operation failed, it will return null.
          *
          * @return
-         * 		The byte array containing the data (payload) from the HTTP response if
-         * 		the operation was successful, null otherwise.
+         *         The byte array containing the data (payload) from the HTTP response if
+         *         the operation was successful, null otherwise.
          */
         /*package*/ byte[] getPayload() {
             return mPayload;
@@ -358,8 +337,8 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
          * Gets the exception object.  If the operation succeeded, it will return null.
          *
          * @return
-         * 		The Exception that occurred as a result of the asynchronous HTTP request if
-         * 		the operation failed, null otherwise.
+         *         The Exception that occurred as a result of the asynchronous HTTP request if
+         *         the operation failed, null otherwise.
          */
         /*package*/ Exception getException() {
             return mException;
@@ -369,7 +348,7 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
          * Checks to see if the holder contains a valid (non-null) headers object.
          *
          * @return
-         * 		<code>true</code> if the headers object is valid, <code>false</code> otherwise.
+         *         <code>true</code> if the headers object is valid, <code>false</code> otherwise.
          */
         /*package*/ boolean hasHeaders() {
             return (mHeaders != null);
@@ -379,7 +358,7 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
          * Checks to see if the holder contains a valid (non-null) payload array.
          *
          * @return
-         * 		<code>true</code> if the payload array is valid, <code>false</code> otherwise.
+         *         <code>true</code> if the payload array is valid, <code>false</code> otherwise.
          */
         /*package*/ boolean hasPayload() {
             return (mPayload != null);
@@ -389,7 +368,7 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
          * Checks to see if the holder contains a valid (non-null) exception object.
          *
          * @return
-         * 		<code>true</code> if the exception object is valid, <code>false</code> otherwise.
+         *         <code>true</code> if the exception object is valid, <code>false</code> otherwise.
          */
         /*package*/ boolean hasException() {
             return (mException != null);

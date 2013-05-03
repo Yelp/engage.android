@@ -91,22 +91,22 @@ public class JRSession implements JRConnectionManagerDelegate {
 
     private List<JRSessionDelegate> mDelegates;
 
-	private JRProvider mCurrentlyAuthenticatingProvider;
+    private JRProvider mCurrentlyAuthenticatingProvider;
     private JRProvider mCurrentlyPublishingProvider;
 
     private String mReturningAuthProvider;
-	private String mReturningSharingProvider;
+    private String mReturningSharingProvider;
 
-	private Map<String, JRProvider> mAllProviders;
-	private List<String> mAuthProviders;
+    private Map<String, JRProvider> mAllProviders;
+    private List<String> mAuthProviders;
     private List<String> mEnabledAuthenticationProviders;
     private List<String> mEnabledSharingProviders;
-	private List<String> mSharingProviders;
-	private Map<String, JRAuthenticatedUser> mAuthenticatedUsersByProvider;
+    private List<String> mSharingProviders;
+    private Map<String, JRAuthenticatedUser> mAuthenticatedUsersByProvider;
 
-	private JRActivityObject mActivity;
-	private String mTokenUrl;
-	private String mAppId;
+    private JRActivityObject mActivity;
+    private String mTokenUrl;
+    private String mAppId;
     private String mRpBaseUrl;
     private String mUrlEncodedAppName;
 
@@ -118,7 +118,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     private String mUrlEncodedLibraryVersion;
 
     private boolean mHidePoweredBy;
-	private boolean mAlwaysForceReauth;
+    private boolean mAlwaysForceReauth;
     private boolean mSkipLandingPage;
     private int mUiShowingCount;
 
@@ -126,7 +126,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 
     public static JRSession getInstance() {
         return sInstance;
-	}
+    }
 
     public static JRSession getInstance(String appId, String tokenUrl, JRSessionDelegate delegate) {
         if (sInstance != null) {
@@ -159,10 +159,10 @@ public class JRSession implements JRConnectionManagerDelegate {
         if (t != null) mEngageBaseUrl = t;
 
         mDelegates = new ArrayList<JRSessionDelegate>();
-		mDelegates.add(delegate);
+        mDelegates.add(delegate);
 
-		mAppId = appId;
-		mTokenUrl = tokenUrl;
+        mAppId = appId;
+        mTokenUrl = tokenUrl;
 
         ApplicationInfo ai = AndroidUtils.getApplicationInfo();
         String appName = getApplicationContext().getPackageManager().getApplicationLabel(ai).toString();
@@ -248,7 +248,7 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 
         mError = startGetConfiguration();
-	}
+    }
 
     public JREngageError getError() {
         return mError;
@@ -385,7 +385,10 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
     }
 
-    public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
+    public void connectionDidFail(Exception ex,
+                                  HttpResponseHeaders responseHeaders,
+                                  byte[] payload, String requestUrl,
+                                  Object tag) {
         Log.e(TAG, "[connectionDidFail]");
 
         if (tag == null) {
@@ -436,7 +439,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                 }
             }
         }
-	}
+    }
 
     private void processShareActivityResponse(String payload, JRDictionary userDataTag) {
         String providerName = userDataTag.getAsString(USERDATA_PROVIDER_NAME_KEY);
@@ -575,7 +578,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                 Log.e(TAG, "unexpected userData found in ConnectionDidFinishLoading full");
             }
         }
-	}
+    }
 
     public void addDelegate(JRSessionDelegate delegate) {
         LogUtils.logd(TAG, "[addDelegate]");
@@ -853,7 +856,10 @@ public class JRSession implements JRConnectionManagerDelegate {
             }
 
             @Override
-            public void connectionDidFail(Exception ex, String requestUrl, Object tag) {
+            public void connectionDidFail(Exception ex,
+                                          HttpResponseHeaders responseHeaders,
+                                          byte[] payload, String requestUrl,
+                                          Object tag) {
                 Log.e(TAG, "[notifyEmailSmsShare]: failure", ex);
             }
         };

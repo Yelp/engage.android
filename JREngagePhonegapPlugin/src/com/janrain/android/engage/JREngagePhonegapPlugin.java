@@ -245,36 +245,33 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
     }
 
     public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-        LogUtils.logd(TAG, "[jrEngageDialogDidFailToShowWithError] " + error);
+        LogUtils.logd(error.toString());
         postResultAndResetState(buildFailureResult(error));
     }
 
     /* Happens on user backing out of authentication, so report user cancellation */
     // TODO: Test this when sharing
     public void jrAuthenticationDidNotComplete() {
-        LogUtils.logd(TAG, "[jrAuthenticationDidNotComplete] User Canceled");
+        LogUtils.logd("User Canceled");
         postResultAndResetState(buildFailureResult(AuthenticationError.AUTHENTICATION_CANCELED,
                 "User canceled authentication"));
     }
 
     public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-        LogUtils.logd(TAG, "[jrAuthenticationDidFailWithError] " + error);
+        LogUtils.logd(error.toString());
         // TODO: Test this on Android (auth fails as well as sharing fails)
-        if (!mSharingMode)
-            postResultAndResetState(buildFailureResult(error));
+        if (!mSharingMode) postResultAndResetState(buildFailureResult(error));
     }
 
     public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl,
                                                       JREngageError error,
                                                       String provider) {
-        Log.e(TAG, "[jrAuthenticationCallToTokenUrlDidFail] " + error);
-        if (!mSharingMode) {
-            postResultAndResetState(buildFailureResult(error));
-        }
+        LogUtils.loge(error.toString());
+        if (!mSharingMode) postResultAndResetState(buildFailureResult(error));
     }
 
     public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
-        LogUtils.logd(TAG, "[jrAuthenticationDidSucceedForUser]");
+        LogUtils.logd();
 
         auth_info.remove("stat");
 
@@ -290,7 +287,10 @@ public class JREngagePhonegapPlugin extends CordovaPlugin implements JREngageDel
         mAuthResponse.put("tokenUrl", tokenUrl);
         mAuthResponse.put("tokenUrlPayload", tokenUrlPayload);
         mAuthResponse.put("stat", "ok");
-        if (headers != null) mAuthResponse.put("headers", headers.toJRDictionary());
+        if (headers != null) {
+            mAuthResponse.put("headers", headers.toJRDictionary());
+            mAuthResponse.put("httpStatusLine", headers.getStatusLine());
+        }
 
         if (mSharingMode) {
             if (mAuthBlobsDuringSharing == null) mAuthBlobsDuringSharing = new ArrayList<JRDictionary>();

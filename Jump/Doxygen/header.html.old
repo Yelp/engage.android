@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html dir="ltr">
   <head>
-  	<meta charset="UTF-8" />
+      <meta charset="UTF-8" />
     <title>Janrain: User management platform for the social web</title>
     <!-- rpx version: 2010.38_rc3 -->
     <link href="https://ajax.googleapis.com/ajax/libs/yui/2.6.0/build/reset-fonts-grids/reset-fonts-grids.css" media="screen" rel="Stylesheet" type="text/css" />
@@ -11,9 +11,9 @@
     <link href="https://docj27ko03fnu.cloudfront.net/rel/css/9a9a0edca1d732418e860abdb78f0093.css" media="print" rel="stylesheet" type="text/css" />
 
     <link href="$relpath$tabs.css" rel="stylesheet" type="text/css"/>
-		<link href="$relpath$search/search.css" rel="stylesheet" type="text/css"/>
-		<script type="text/javaScript" src="$relpath$search/search.js"></script>
-		<link href="$relpath$customdoxygen.css" rel="stylesheet" type="text/css"/>
+        <link href="$relpath$search/search.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javaScript" src="$relpath$search/search.js"></script>
+        <link href="$relpath$customdoxygen.css" rel="stylesheet" type="text/css"/>
     
     <!--[if IE]>
 <style type="text/css">
@@ -23,7 +23,7 @@
   filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='https://rpx.uservoice.com/images/feedback_tab.png');
 }
 </style>
-		<![endif]-->
+        <![endif]-->
 
     <link href="https://docj27ko03fnu.cloudfront.net/rel/css/df4aac9d20cc30e525b565967703326c.css" media="screen" rel="stylesheet" type="text/css" />
 

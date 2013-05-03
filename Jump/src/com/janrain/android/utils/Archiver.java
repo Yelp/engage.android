@@ -43,10 +43,8 @@ import java.io.ObjectOutputStream;
 
 /**
  * @internal
- *
- * @class Archiver
- * Utility class used to archive/unarchive objects.  This implementation serializes
- * the object to a binary format and saves to the protected storage area (disk).
+ * @class Archiver Utility class used to archive/unarchive objects.  This implementation serializes the object
+ * to a binary format and saves to the protected storage area (disk).
  */
 public final class Archiver {
     private static final String TAG = Archiver.class.getSimpleName();
@@ -56,21 +54,16 @@ public final class Archiver {
     private static final String DICTIONARY_FILENAME_BASE_FORMAT = "dict" + DICTIONARY_FILENAME_SEPARATOR +
             "%s";
 
-    private Archiver() {}
+    private Archiver() {
+    }
 
     /**
      * Saves (archives) the specified object to the local (protected) file system.
      *
-     * @param name
-     * 		The name the object will be saved as on disk.  This parameter cannot be null.
-     *
-     * @param object
-     * 		The object to be saved.
-     *
-     * @throws
-     * 		IllegalArgumentException if the name parameter is null.
-     * @throws
-     *      IllegalStateException if JREngage.getContext() returns null.
+     * @param name   The name the object will be saved as on disk.  This parameter cannot be null.
+     * @param object The object to be saved.
+     * @throws IllegalArgumentException if the name parameter is null.
+     * @throws IllegalStateException    if JREngage.getContext() returns null.
      */
     public static void asyncSave(String name, Object object) {
         Context context = JREngage.getApplicationContext();
@@ -81,17 +74,10 @@ public final class Archiver {
     /**
      * Saves (archives) the specified object to the local (protected) file system.
      *
-     * @param name
-     * 		The name the object will be saved as on disk.  This parameter cannot be null.
-     *
-     * @param object
-     * 		The object to be saved.
-     *
-     * @param context
-     *      A context to access the filesystem from.
-     *
-     * @throws
-     * 		IllegalArgumentException if the name parameter is null.
+     * @param name    The name the object will be saved as on disk.  This parameter cannot be null.
+     * @param object  The object to be saved.
+     * @param context A context to access the filesystem from.
+     * @throws IllegalArgumentException if the name parameter is null.
      */
     public static void asyncSave(final String name, final Object object, final Context context) {
         if (TextUtils.isEmpty(name)) throw new IllegalArgumentException("name parameter cannot be null");
@@ -134,19 +120,13 @@ public final class Archiver {
     /**
      * Loads the specified object from the local (protected) file system.
      *
-     * @param name
-     * 		The name of the object to be loaded from disk.  This parameter cannot be null.
-     *
-     * @return
-     * 		The object if found and loaded, null otherwise.
-     *
-     * @throws
-     * 		IllegalArgumentException if the name parameter is null.
-     * @throws
-     *      IllegalStateException if JREngage.getContext() returns null.
-     * @throws
-     *      LoadException if there was any problem loading the object. (Including SUID mismatches, IO
-     *      exceptions, de-serialization exceptions, cosmic rays, et cetera.)
+     * @param name The name of the object to be loaded from disk.  This parameter cannot be null.
+     * @return The object if found and loaded, null otherwise.
+     * @throws IllegalArgumentException if the name parameter is null.
+     * @throws IllegalStateException    if JREngage.getContext() returns null.
+     * @throws LoadException            if there was any problem loading the object. (Including SUID
+     *                                  mismatches, IO exceptions, de-serialization exceptions, cosmic rays,
+     *                                  et cetera.)
      */
     public static <T> T load(String name) throws LoadException {
         Context context = JREngage.getApplicationContext();
@@ -159,22 +139,14 @@ public final class Archiver {
     /**
      * Loads (unarchives) the specified object from the local (protected) file system.
      *
-     * @param name
-     * 		The name of the object to be loaded from disk.  This parameter cannot be null.
-     *
-     * @param context
-     *      The Context used to access the file system.
-     *
-     * @return
-     * 		The object if found and loaded, null otherwise.
-     *
-     * @throws
-     * 		IllegalArgumentException if the name parameter is null.
-     * @throws
-     *      IllegalStateException if JREngage.getContext() returns null.
-     * @throws
-     *      LoadException if there was any problem loading the object. (Including SUID mismatches, IO
-     *      exceptions, de-serialization exceptions, cosmic rays, et cetera.)
+     * @param name    The name of the object to be loaded from disk.  This parameter cannot be null.
+     * @param context The Context used to access the file system.
+     * @return The object if found and loaded, null otherwise.
+     * @throws IllegalArgumentException if the name parameter is null.
+     * @throws IllegalStateException    if JREngage.getContext() returns null.
+     * @throws LoadException            if there was any problem loading the object. (Including SUID
+     *                                  mismatches, IO exceptions, de-serialization exceptions, cosmic rays,
+     *                                  et cetera.)
      */
     @SuppressWarnings("unchecked")
     public static <T> T load(String name, Context context) throws LoadException {
