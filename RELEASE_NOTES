@@ -1,3 +1,6 @@
+v4.0.7:
+ - No functional changes
+ - Adds Eclipse setup guide in Eclipse_Import_Guide.md
 v4.0.6:
  - Support for use with token URLs returning HTTP 302 response codes
 v4.0.5:
