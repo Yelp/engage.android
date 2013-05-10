@@ -45,13 +45,25 @@ up with bug fixes — just run `git pull`.
 `jrengage.jar` to your Eclipse project build path, you must declare the Android library project dependency
 as detailed.
 
-**Note:** If you are adding Jump for Android to a Phonegap project repeat steps 1-5 for the
-`.../jump.android/JREngagePhonegapPlugin` folder.
-
 **Note:** There can only be one version of `android-support-v4.jar` in the accumulated set of `Java Build
 Path` values for your workspace (although there may be more than one copy of the same version). If you have
 a conflict you will need to delete one of the versions from the libs subdirectory of either the Jump SDK or
 from your project.
+
+### Phonegap Integration
+
+1. If you are adding Jump for Android to a Phonegap project repeat steps 1-5 above for the
+   `.../jump.android/JREngagePhonegapPlugin` folder.
+2. Instead of adding an Android library dependency to `Jump` in step 10, add a library dependency to
+   `JREngagePhonegapPlugin`.
+3. Open the project properties for the JREngagePhonegapPlugin project
+4. Select `Java Build Path` in the left list.
+5. Select the `Libraries` tab.
+6. Click `Add JARs`.
+7. In `your_project/libs/`, select `cordova-2.3.0.jar`, then click `OK`.
+8. Add the `<activity>` tags as documented in Jump_Integration_Guide.md
+9. Add this to the `<plugins>` tag in `your_project/res/config.xml`:
+   `<plugin name="JREngagePlugin" value="com.janrain.android.engage.JREngagePhonegapPlugin"/>`
 
 Further Eclipse support is available through the
 [Engage for Android support forum](https://support.janrain.com/forums/20122381-android-library-q-a).
