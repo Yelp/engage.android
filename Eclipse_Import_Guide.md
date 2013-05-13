@@ -8,9 +8,9 @@ This Eclipse import guide will guide you through:
 
 You can either:
 
-*   Clone the Janrain Engage for Android library from GitHub:
-    `git clone git://github.com/janrain/engage.android.git`
-*   Or, [download an archive](http://github.com/janrain/engage.android/tags) of the library
+*   Clone the Janrain Jump for Android library from GitHub:
+    `git clone git://github.com/janrain/jump.android.git`
+*   Or, [download an archive](http://github.com/janrain/jump.android/tags) of the library
 
 **Note:** We recommend that you clone the GitHub repository, and checkout the `master` branch. The `master`
 is the stable branch with all the latest bug fixes. By using git to clone the repository, it's easy to keep
@@ -41,8 +41,8 @@ up with bug fixes — just run `git pull`.
     Eclipse may reset the Jump project build target to a lower level.
 19. Your project should now build and run.
 
-**Note:** Because the Engage for Android library provides Android resources it is not sufficient to add
-`jrengage.jar` to your Eclipse project build path, you must declare the Android library project dependency
+**Note:** Because the Jump for Android library provides Android resources it is not sufficient to add
+`jump.jar` to your Eclipse project build path, you must declare the Android library project dependency
 as detailed.
 
 **Note:** There can only be one version of `android-support-v4.jar` in the accumulated set of `Java Build
@@ -66,27 +66,27 @@ from your project.
    `<plugin name="JREngagePlugin" value="com.janrain.android.engage.JREngagePhonegapPlugin"/>`
 
 Further Eclipse support is available through the
-[Engage for Android support forum](https://support.janrain.com/forums/20122381-android-library-q-a).
+[Jump for Android support forum](https://support.janrain.com/forums/20122381-android-library-q-a).
 
 ## Troubleshooting Build and Runtime errors
 
 * `Error retrieving parent for item`:
 
-    engage.android/JREngage/res/values-v11/styles.xml:3: error: Error retrieving parent for item: No
+    jump.android/Jump/res/values-v11/styles.xml:3: error: Error retrieving parent for item: No
     resource found that matches the given name '@android:style/Theme.Holo.Light.DialogWhenLarge.NoActionBar'.
 
    Ensure that the project build SDK is Android API level 13 or higher. Note that this setting is different
    than the targeted API level. See the IDE setup instructions, or message us on the
-   [Engage for Android support forum](https://support.janrain.com/forums/20122381-android-library-q-a) for
+   [Jump for Android support forum](https://support.janrain.com/forums/20122381-android-library-q-a) for
    more help with this.
 
 * `package android.support.v4.app does not exist`
 
-    engage.android/JREngage/src/com/janrain/android/engage/ui/JRUiFragment.java
+    jump.android/Jump/src/com/janrain/android/engage/ui/JRUiFragment.java
     package android.support.v4.app does not exist
 
    Ensure that the "android-support-v4" library is defined in your IDE and that it references the
-   `engage.android/JREngage/libs/android-support-v4.jar` file.
+   `jump.android/Jump/libs/android-support-v4.jar` file.
 
 * `package com.janrain.android.engage.net.async does not exist`
 
