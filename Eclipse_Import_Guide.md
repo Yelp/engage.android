@@ -54,7 +54,7 @@ from your project.
 
 1. If you are adding Jump for Android to a Phonegap project repeat steps 1-5 above for the
    `.../jump.android/JREngagePhonegapPlugin` folder.
-2. Instead of adding an Android library dependency to `Jump` in step 10, add a library dependency to
+2. Instead of adding an Android library dependency to `Jump` in steps 9 and 10, add a library dependency to
    `JREngagePhonegapPlugin`.
 3. Open the project properties for the JREngagePhonegapPlugin project
 4. Select `Java Build Path` in the left list.
