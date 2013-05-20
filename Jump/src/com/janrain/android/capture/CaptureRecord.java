@@ -133,21 +133,27 @@ public class CaptureRecord extends JSONObject {
      * @param applicationContext the context to use to write to disk
      */
     public void saveToDisk(Context applicationContext) {
+        FileOutputStream fos = null;
         try {
-            FileOutputStream fos = applicationContext.openFileOutput(JR_CAPTURE_SIGNED_IN_USER_FILENAME, 0);
+            fos = applicationContext.openFileOutput(JR_CAPTURE_SIGNED_IN_USER_FILENAME, 0);
             JSONObject serializedVersion = new JSONObject();
             serializedVersion.put("original", original);
             serializedVersion.put("accessToken", accessToken);
             serializedVersion.put("refreshSecret", refreshSecret);
             serializedVersion.put("this", this);
             fos.write(serializedVersion.toString().getBytes("UTF-8"));
-            fos.close();
         } catch (JSONException e) {
-            throw new RuntimeException("Unexpected", e);
+            throwDebugException(new RuntimeException("Unexpected", e));
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Unexpected", e);
+            throwDebugException(new RuntimeException("Unexpected", e));
         } catch (IOException e) {
-            throw new RuntimeException("Unexpected", e);
+            throwDebugException(new RuntimeException("Unexpected", e));
+        } finally {
+            if (fos != null) try {
+                fos.close();
+            } catch (IOException e) {
+                throwDebugException(new RuntimeException("Unexpected", e));
+            }
         }
     }
 
