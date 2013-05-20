@@ -31,11 +31,14 @@ Before you begin integrating you will need an array of configuration details:
     2. Retrieve your 20-character Application ID from the Engage Dashboard (In the right column of the "Home"
        page on the dashboard.)
 2. Ask your deployment engineer or account manager for your Capture domain.
-3. Sign in to the Capture dashboard and provision a new API client for your mobile app.
-    1. Use the [set_features API](http://developers.janrain.com/documentation/api-methods/capture/clients/set_features/)
+3. Create a new Capture API client for you Android app:
+    1. Sign in to the Capture dashboard and provision a new API client for your mobile app.
+    2. Use the [set_features API](http://developers.janrain.com/documentation/api-methods/capture/clients/set_features/)
        to add the "login_client" feature to your new API client.
-    2. Use the [setAccessSchema API](http://developers.janrain.com/documentation/api-methods/capture/entitytype/setaccessschema/)
+    3. Use the [setAccessSchema API](http://developers.janrain.com/documentation/api-methods/capture/entitytype/setaccessschema/)
        to set the subset of the schema you wish your mobile app to be able to update.
+       **Warning** If you do not include the attributes your client will write to in the its write access
+       schema you will receive missing attribute errors when attempting to update attributes.
 4. Configure your flow settings:
     1. Ask your deployment engineer or account manager which "flow" you should use.
     2. Ask for the appropriate values for default_flow_name and default_flow_version.
@@ -44,7 +47,7 @@ Before you begin integrating you will need an array of configuration details:
    The commonly used value for US English is en-US.
 6. Ask your deployment engineer or account manager for the name of the sign-in form in your flow.
 
-Note: You _must_ create a new API client with the correct feature for proper operation of the JUMP for
+Note: You _must_ create a new API client with the correct login_client feature for operation of the JUMP for
 Android SDK.
 
 ## Declare and Import
@@ -223,3 +226,10 @@ Android Theme system as well.
 
 For customizing the look and feel of the sign-in experience, please see
 [Custom UI for Android](http://developers.janrain.com/documentation/mobile-libraries/advanced-topics/custom-ui-for-android/).
+
+## Troubleshooting
+
+`<CaptureApiError code: 223 error: unknown_attribute description: attribute does not exist: /your_attr_name>`
+
+Use [entityType.setAccessSchema](http://developers.janrain.com/documentation/api-methods/capture/entitytype/setaccessschema)
+to add write-access to this attribute to your native API client.
