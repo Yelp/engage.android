@@ -104,8 +104,9 @@ public class CaptureRecord extends JSONObject {
      */
     public static CaptureRecord loadFromDisk(Context applicationContext) {
         String fileContents = null;
+        FileInputStream fis = null;
         try {
-            FileInputStream fis = applicationContext.openFileInput(JR_CAPTURE_SIGNED_IN_USER_FILENAME);
+            fis = applicationContext.openFileInput(JR_CAPTURE_SIGNED_IN_USER_FILENAME);
             fileContents = CaptureStringUtils.readFully(fis);
             JSONObject serializedVersion = new JSONObject(fileContents);
             CaptureRecord loadedRecord = new CaptureRecord();
@@ -113,16 +114,16 @@ public class CaptureRecord extends JSONObject {
             loadedRecord.accessToken = serializedVersion.getString("accessToken");
             loadedRecord.refreshSecret = serializedVersion.optString("refreshSecret");
             JsonUtils.deepCopy(serializedVersion.getJSONObject("this"), loadedRecord);
-            fis.close();
+            return loadedRecord;
         } catch (FileNotFoundException ignore) {
-        } catch (UnsupportedEncodingException e) {
-            throwDebugException(new RuntimeException("Unexpected", e));
-            return null;
-        } catch (IOException e) {
-            throwDebugException(new RuntimeException("Unexpected", e));
         } catch (JSONException ignore) {
             LogUtils.loge("Bad CaptureRecord file contents:\n" + fileContents, ignore);
-            // Will happen on corrupted file
+        } finally {
+            if (fis != null) try {
+                fis.close();
+            } catch (IOException e) {
+                throwDebugException(new RuntimeException("Unexpected", e));
+            }
         }
         return null;
     }
@@ -219,19 +220,13 @@ public class CaptureRecord extends JSONObject {
      * @param callback your callback handler
      * @throws InvalidApidChangeException
      */
-    public void synchronize(final CaptureApiRequestCallback callback)
-            throws InvalidApidChangeException {
+    public void synchronize(final CaptureApiRequestCallback callback) throws InvalidApidChangeException {
         Set<ApidChange> changeSet = getApidChangeSet();
         List<ApidChange> changeList = new ArrayList<ApidChange>();
         changeList.addAll(changeSet);
 
         if (accessToken == null) throwDebugException(new IllegalStateException());
         fireNextChange(changeList, callback);
-
-        // add params to initinstance or something to init capture settings
-        // plumb tokenURL to capture
-        // plumb handler to construct this
-        // add method for trad sign-in
     }
 
     private void fireNextChange(final List<ApidChange> changeList, final CaptureApiRequestCallback callback) {
@@ -261,7 +256,7 @@ public class CaptureRecord extends JSONObject {
         connection.fetchResponseAsJson(jsonCallback);
     }
 
-    private Set<ApidChange> collapseApidChanges(Set<ApidChange> changeSet) {
+    private static Set<ApidChange> collapseApidChanges(Set<ApidChange> changeSet) {
         HashMap<String, Set<ApidUpdate>> subentityUpdateBuckets = new HashMap<String, Set<ApidUpdate>>();
 
         Set<ApidChange> collapsedChangeSet = new HashSet<ApidChange>();
