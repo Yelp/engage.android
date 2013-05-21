@@ -1,3 +1,6 @@
+v4.0.8:
+ - Fixes integration guide instructions regarding API clients
+ - Fixes JRCaptureUser#loadFromDisk to actually load the record from disk
 v4.0.7:
  - No functional changes
  - Adds Eclipse setup guide in Eclipse_Import_Guide.md
