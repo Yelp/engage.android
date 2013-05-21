@@ -617,6 +617,7 @@ public class JREngage {
                                          final Class<? extends JRCustomInterface> uiCustomization) {
         blockOnInitialization();
         if (checkSessionDataError()) return;
+        checkNullActivity(fromActivity);
 
         if (skipReturningUserLandingPage != null) {
             mSession.setSkipLandingPage(skipReturningUserLandingPage);
@@ -762,6 +763,7 @@ public class JREngage {
         LogUtils.logd(TAG, "[showSocialPublishingDialog]");
         /* If there was error configuring the library, sessionData.error will not be null. */
         if (checkSessionDataError()) return;
+        checkNullActivity(fromActivity);
         checkNullJRActivity(jrActivity);
         mSession.setJRActivity(jrActivity);
 
@@ -774,20 +776,10 @@ public class JREngage {
         fromActivity.startActivity(i);
     }
 
-    /**
-     * Launch the beta direct share widget
-     *
-     * @param fromActivity The Activity from which to show the sharing dialog
-     * @param jrActivity   The activity you wish to share
-     */
-    public void showBetaDirectShareDialog(Activity fromActivity,
-                                          JRActivityObject jrActivity) {
-        LogUtils.logd(TAG, "[showBetaDirectShareDialog]");
-        Intent i = JRFragmentHostActivity.createIntentForCurrentScreen(fromActivity, false);
-        i.putExtra(JRFragmentHostActivity.JR_FRAGMENT_ID, JRFragmentHostActivity.JR_WEBVIEW);
-        i.putExtra(JRUiFragment.JR_FRAGMENT_FLOW_MODE, JRUiFragment.JR_FRAGMENT_FLOW_BETA_DIRECT_SHARE);
-        i.putExtra(JRUiFragment.JR_ACTIVITY_JSON, jrActivity.toJRDictionary().toJson());
-        fromActivity.startActivity(i);
+    private void checkNullActivity(Activity fromActivity) {
+        if (fromActivity == null) LogUtils.throwDebugException(new RuntimeException("null fromActivity, " +
+                "did you initialize with an Application Context and call a deprecated signature of " +
+                "show*Dialog which does not take an Activity parameter?"));
     }
 
     /**

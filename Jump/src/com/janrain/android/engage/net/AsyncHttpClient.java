@@ -219,7 +219,7 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
                 HttpResponseHeaders headers = fromResponse(response, mConn.getHttpRequest());
 
                 HttpEntity entity = response.getEntity();
-                byte[] data = entity == null ?
+                byte[] responseBody = entity == null ?
                         new byte[0] :
                         IOUtils.readFromStream(entity.getContent(), true);
                 if (entity != null) entity.consumeContent();
@@ -236,15 +236,14 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
                 case HttpStatus.SC_MOVED_TEMPORARILY:
                     // for UPS-1390 - don't error on 302s from token URL
                     LogUtils.logd(statusLine);
-                    ahr = new AsyncHttpResponse(mConn, null, headers, data);
+                    ahr = new AsyncHttpResponse(mConn, null, headers, responseBody);
                     break;
                 default:
-                    // TODO This error case shouldn't glob the HTTP response pieces together, but instead
-                    // preserve and pass-along its structure to allow the error handler to make meaningful
-                    // use of the complete response
-                    LogUtils.loge(statusLine);
+                    String bodyStr = new String(responseBody);
+                    int bodySubStrLen = bodyStr.length() > 300 ? 300 : bodyStr.length();
+                    LogUtils.loge(statusLine + "\n" + bodyStr.substring(0, bodySubStrLen));
 
-                    ahr = new AsyncHttpResponse(mConn, new Exception(statusLine), headers, data);
+                    ahr = new AsyncHttpResponse(mConn, new Exception(statusLine), headers, responseBody);
                 }
 
                 mConn.setResponse(ahr);

@@ -385,12 +385,8 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
     }
 
-    public void connectionDidFail(Exception ex,
-                                  HttpResponseHeaders responseHeaders,
-                                  byte[] payload, String requestUrl,
-                                  Object tag) {
-        Log.e(TAG, "[connectionDidFail]");
-
+    public void connectionDidFail(Exception ex, HttpResponseHeaders responseHeaders, byte[] payload,
+                                  String requestUrl, Object tag) {
         if (tag == null) {
             Log.e(TAG, "[connectionDidFail] unexpected null userdata");
         } else if (tag instanceof String) {
@@ -407,8 +403,8 @@ public class JRSession implements JRConnectionManagerDelegate {
                         " with Exception: " + ex);
             }
         } else if (tag instanceof JRDictionary) {
-            JRDictionary dictionary = (JRDictionary) tag;
-            if (dictionary.getAsString(USERDATA_ACTION_KEY).equals(USERDATA_ACTION_CALL_TOKEN_URL)) {
+            JRDictionary tagAsDict = (JRDictionary) tag;
+            if (tagAsDict.getAsString(USERDATA_ACTION_KEY).equals(USERDATA_ACTION_CALL_TOKEN_URL)) {
                 Log.e(TAG, "[connectionDidFail] call to token url failed: " + ex);
                 JREngageError error = new JREngageError(
                         "Error: " + ex.getLocalizedMessage(),
@@ -417,26 +413,13 @@ public class JRSession implements JRConnectionManagerDelegate {
                         ex);
                 for (JRSessionDelegate delegate : getDelegatesCopy()) {
                     delegate.authenticationCallToTokenUrlDidFail(
-                            dictionary.getAsString(USERDATA_TOKEN_URL_KEY),
+                            tagAsDict.getAsString(USERDATA_TOKEN_URL_KEY),
                             error,
-                            dictionary.getAsString(USERDATA_PROVIDER_NAME_KEY));
+                            tagAsDict.getAsString(USERDATA_PROVIDER_NAME_KEY));
                 }
-            } else if (dictionary.getAsString(USERDATA_ACTION_KEY).equals(USERDATA_ACTION_SHARE_ACTIVITY)) {
+            } else if (tagAsDict.getAsString(USERDATA_ACTION_KEY).equals(USERDATA_ACTION_SHARE_ACTIVITY)) {
                 // set status uses this same connection handler.
-                // TODO expired device tokens are 400ing now and hitting this flow control path triggering
-                // the raw API error's display to the end-user
-                Log.e(TAG, "[connectionDidFail] sharing activity failed: " + ex);
-                JREngageError error = new JREngageError(
-                        "Error: " + ex.getLocalizedMessage(),
-                        SocialPublishingError.FAILED,
-                        "",
-                        ex);
-                for (JRSessionDelegate delegate : getDelegatesCopy()) {
-                    delegate.publishingJRActivityDidFail(
-                            (JRActivityObject) dictionary.get(USERDATA_ACTIVITY_KEY),
-                            error,
-                            dictionary.getAsString(USERDATA_PROVIDER_NAME_KEY));
-                }
+                processShareActivityResponse(new String(payload), tagAsDict);
             }
         }
     }
@@ -448,100 +431,104 @@ public class JRSession implements JRConnectionManagerDelegate {
         try {
             responseDict = JRDictionary.fromJsonString(payload);
         } catch (JSONException e) {
-            responseDict = null;
+            // No JSON response
+            setCurrentlyPublishingProvider(null);
+            triggerPublishingJRActivityDidFail(
+                    new JREngageError(payload, SocialPublishingError.FAILED, ErrorType.PUBLISH_FAILED),
+                    (JRActivityObject) userDataTag.get(USERDATA_ACTIVITY_KEY), providerName);
+            return;
         }
 
-        if (responseDict == null) {
-            setCurrentlyPublishingProvider(null);
-            for (JRSessionDelegate delegate : getDelegatesCopy()) {
-                delegate.publishingJRActivityDidFail(
-                        (JRActivityObject) userDataTag.get(USERDATA_ACTIVITY_KEY),
-                        new JREngageError(payload,
-                                SocialPublishingError.FAILED,
-                                ErrorType.PUBLISH_FAILED),
-                                providerName);
-            }
-        } else if (responseDict.containsKey("stat") && ("ok".equals(responseDict.get("stat")))) {
-            setReturningSharingProvider(getCurrentlyPublishingProvider().getName());
-            setCurrentlyPublishingProvider(null);
-            for (JRSessionDelegate delegate : getDelegatesCopy()) {
-                delegate.publishingJRActivityDidSucceed(mActivity, providerName);
-            }
-        } else {
+        if (!"ok".equals(responseDict.get("stat"))) {
+            // Bad or missing stat value
             setCurrentlyPublishingProvider(null);
             JRDictionary errorDict = responseDict.getAsDictionary("err");
             JREngageError publishError;
 
-            if (errorDict == null) {
+            if (errorDict != null) {
+                // report the error as found in the err dict
+                publishError = processShareActivityFailureResponse(errorDict);
+            } else {
+                // bad api response
                 publishError = new JREngageError(
                         getApplicationContext().getString(R.string.jr_problem_sharing),
                         SocialPublishingError.FAILED,
                         ErrorType.PUBLISH_FAILED);
-            } else {
-                int code = (errorDict.containsKey("code")) ? errorDict.getAsInt("code") : 1000;
-
-                String errorMessage = errorDict.getAsString("msg", "");
-
-                switch (code) {
-                    case 0: /* "Missing parameter: apiKey" */
-                        publishError = new JREngageError(
-                                errorMessage,
-                                SocialPublishingError.MISSING_API_KEY,
-                                ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
-                        break;
-                    case 4: /* "Facebook Error: Invalid OAuth 2.0 Access Token" */
-                        if (errorMessage.matches(".*nvalid ..uth.*") ||
-                                errorMessage.matches(".*session.*invalidated.*") ||
-                                errorMessage.matches(".*rror validating access token.*")) {
-                            publishError = new JREngageError(
-                                    errorMessage,
-                                    SocialPublishingError.INVALID_OAUTH_TOKEN,
-                                    ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
-                        } else if (errorMessage.matches(".*eed action request limit.*")) {
-                            publishError = new JREngageError(
-                                    errorMessage,
-                                    SocialPublishingError.FEED_ACTION_REQUEST_LIMIT,
-                                    ErrorType.PUBLISH_FAILED);
-                        } else {
-                            publishError = new JREngageError(
-                                    errorMessage,
-                                    SocialPublishingError.FAILED,
-                                    ErrorType.PUBLISH_FAILED);
-                        }
-                        break;
-                    case 100: // TODO LinkedIn character limit error
-                        publishError = new JREngageError(
-                                errorMessage,
-                                SocialPublishingError.LINKEDIN_CHARACTER_EXCEEDED,
-                                ErrorType.PUBLISH_INVALID_ACTIVITY);
-                        break;
-                    case 6:
-                        if (errorMessage.matches(".witter.*uplicate.*")) {
-                            publishError = new JREngageError(
-                                    errorMessage,
-                                    SocialPublishingError.DUPLICATE_TWITTER,
-                                    ErrorType.PUBLISH_INVALID_ACTIVITY);
-                        } else {
-                            publishError = new JREngageError(
-                                    errorMessage,
-                                    SocialPublishingError.FAILED,
-                                    ErrorType.PUBLISH_INVALID_ACTIVITY);
-                        }
-                        break;
-                    case 1000: /* Extracting code failed; Fall through. */
-                    default: // TODO Other errors (find them)
-                        publishError = new JREngageError(
-                                getApplicationContext().getString(R.string.jr_problem_sharing),
-                                SocialPublishingError.FAILED,
-                                ErrorType.PUBLISH_FAILED);
-                        break;
-                }
             }
 
             triggerPublishingJRActivityDidFail(publishError,
-                    (JRActivityObject) userDataTag.get(USERDATA_ACTIVITY_KEY),
-                    providerName);
+                    (JRActivityObject) userDataTag.get(USERDATA_ACTIVITY_KEY), providerName);
+            return;
         }
+
+        // No error
+        setReturningSharingProvider(getCurrentlyPublishingProvider().getName());
+        setCurrentlyPublishingProvider(null);
+        triggerPublishingJRActivityDidSucceed(mActivity, providerName);
+    }
+
+    private JREngageError processShareActivityFailureResponse(JRDictionary errorDict) {
+        JREngageError publishError;
+        int code = (errorDict.containsKey("code")) ? errorDict.getAsInt("code") : 1000;
+
+        String errorMessage = errorDict.getAsString("msg", "");
+
+        switch (code) {
+            case 0: /* "Missing parameter: apiKey" */
+                publishError = new JREngageError(
+                        errorMessage,
+                        SocialPublishingError.MISSING_API_KEY,
+                        ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
+                break;
+            case 4: /* "Facebook Error: Invalid OAuth 2.0 Access Token" */
+                if (errorMessage.matches(".*nvalid ..uth.*") ||
+                        errorMessage.matches(".*session.*invalidated.*") ||
+                        errorMessage.matches(".*rror validating access token.*")) {
+                    publishError = new JREngageError(
+                            errorMessage,
+                            SocialPublishingError.INVALID_OAUTH_TOKEN,
+                            ErrorType.PUBLISH_NEEDS_REAUTHENTICATION);
+                } else if (errorMessage.matches(".*eed action request limit.*")) {
+                    publishError = new JREngageError(
+                            errorMessage,
+                            SocialPublishingError.FEED_ACTION_REQUEST_LIMIT,
+                            ErrorType.PUBLISH_FAILED);
+                } else {
+                    publishError = new JREngageError(
+                            errorMessage,
+                            SocialPublishingError.FAILED,
+                            ErrorType.PUBLISH_FAILED);
+                }
+                break;
+            case 100: // TODO LinkedIn character limit error
+                publishError = new JREngageError(
+                        errorMessage,
+                        SocialPublishingError.LINKEDIN_CHARACTER_EXCEEDED,
+                        ErrorType.PUBLISH_INVALID_ACTIVITY);
+                break;
+            case 6:
+                if (errorMessage.matches(".witter.*uplicate.*")) {
+                    publishError = new JREngageError(
+                            errorMessage,
+                            SocialPublishingError.DUPLICATE_TWITTER,
+                            ErrorType.PUBLISH_INVALID_ACTIVITY);
+                } else {
+                    publishError = new JREngageError(
+                            errorMessage,
+                            SocialPublishingError.FAILED,
+                            ErrorType.PUBLISH_INVALID_ACTIVITY);
+                }
+                break;
+            case 1000: /* Extracting code failed; Fall through. */
+            default: // TODO Other errors (find them)
+                publishError = new JREngageError(
+                        getApplicationContext().getString(R.string.jr_problem_sharing),
+                        SocialPublishingError.FAILED,
+                        ErrorType.PUBLISH_FAILED);
+                break;
+        }
+
+        return publishError;
     }
 
     public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload,
@@ -1032,6 +1019,12 @@ public class JRSession implements JRConnectionManagerDelegate {
 
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.publishingJRActivityDidFail(activity, error, providerName);
+        }
+    }
+
+    private void triggerPublishingJRActivityDidSucceed(JRActivityObject mActivity, String providerName) {
+        for (JRSessionDelegate delegate : getDelegatesCopy()) {
+            delegate.publishingJRActivityDidSucceed(mActivity, providerName);
         }
     }
 
