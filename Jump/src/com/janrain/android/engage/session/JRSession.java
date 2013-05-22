@@ -607,22 +607,15 @@ public class JRSession implements JRConnectionManagerDelegate {
     private void finishGetConfiguration(String dataStr) {
         LogUtils.logd(TAG, "[finishGetConfiguration]");
 
-        JRDictionary jsonDict = null;
-        JSONException jsonEx = null;
+        JRDictionary jsonDict;
         try {
             jsonDict = JRDictionary.fromJsonString(dataStr);
         } catch (JSONException e) {
-            Log.e(TAG, "[finishGetConfiguration] json error: ", e);
-            jsonEx = e;
-        }
-
-        if (jsonDict == null) {
-            Log.e(TAG, "[finishGetConfiguration] failed.");
+            LogUtils.loge("[finishGetConfiguration] failed.");
             mError = new JREngageError(
                     getApplicationContext().getString(R.string.jr_getconfig_parse_error_message),
-                    ConfigurationError.JSON_ERROR,
-                    ErrorType.CONFIGURATION_FAILED,
-                    jsonEx);
+                    ConfigurationError.JSON_ERROR, ErrorType.CONFIGURATION_FAILED, e);
+            return;
         }
 
         mRpBaseUrl = StringUtils.chomp(jsonDict.getAsString("baseurl", ""), "/");

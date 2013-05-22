@@ -104,7 +104,7 @@ public final class JRDictionary extends HashMap<String, Object> {
      * Decodes the JSON string into a JRDictionary instance.
      *
      * @param json The JSON string to be decoded.
-     * @return A JRDictionary object representation of the JSON string
+     * @return A JRDictionary object representation of the JSON string, never null
      * @throws JSONException When the JSON couldn't be parsed.
      */
     public static JRDictionary fromJsonString(String json) throws JSONException {
@@ -193,7 +193,7 @@ public final class JRDictionary extends HashMap<String, Object> {
         if (jsonValue instanceof String) {
             return jsonValue;
         } else {
-            throw new RuntimeException("unexpected unjsonify token");
+            throw new RuntimeException("unexpected unjsonify class: " + jsonValue.getClass());
         }
     }
 

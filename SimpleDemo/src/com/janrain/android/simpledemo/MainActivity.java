@@ -59,8 +59,7 @@ public class MainActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Jump.init(this, "appcfamhnpkagijaeinl", "mobile-dev.janraincapture.com",
-                "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6", "en-US", "signinForm", Jump.TraditionalSignInType.EMAIL);
+        //elgfmldanecpmanecfok <- no pub_stream
 
         //capture testing/staging
         //String engageAppId = "appcfamhnpkagijaeinl";
@@ -69,8 +68,17 @@ public class MainActivity extends FragmentActivity {
         //String captureLocale = "en-US";
         //String captureSignInFormName = "signinForm";
         //Jump.TraditionalSignInType signInType = Jump.TraditionalSignInType.EMAIL;
-        //Jump.init(this, engageAppId, captureDomain, captureClientId, captureLocale, captureSignInFormName,
-        //        signInType);
+
+        //capture prod
+        String engageAppId = "appcfamhnpkagijaeinl";
+        String captureDomain = "mobile-dev.janraincapture.com";
+        String captureClientId = "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6";
+        String captureLocale = "en-US";
+        String captureSignInFormName = "signinForm";
+        Jump.TraditionalSignInType signInType = Jump.TraditionalSignInType.EMAIL;
+
+        Jump.init(this, engageAppId, captureDomain, captureClientId, captureLocale, captureSignInFormName,
+                signInType);
 
         //enableStrictMode();
         LinearLayout linearLayout = new LinearLayout(this);
