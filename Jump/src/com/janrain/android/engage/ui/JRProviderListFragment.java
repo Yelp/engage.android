@@ -262,6 +262,20 @@ public class JRProviderListFragment extends JRUiFragment {
 
     private ListView.OnItemClickListener itemClickListener = new ListView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            //
+            // XXX TL;DR: the choice of id as index is intentional, but only because the adapter is
+            // disorganized.
+            //
+            // position is the position of the view in the ListView
+            //
+            // id is the row ID of the item in the list, supplied by the adapter's superclass, which is an
+            //   ArrayAdapter, which uses the index in the array as the row ID
+            //
+            // The position is absolute, starting at zero, and counts all view types.
+            //
+            // The row ID is sometimes offset by one because the adapter inserts one view in front of the
+            //   superclass's views.
+            //
             JRProvider provider = mAdapter.getItem((int) id - (mSectionHeaderEnabled ? 1 : 0));
             mSession.setCurrentlyAuthenticatingProvider(provider);
 
