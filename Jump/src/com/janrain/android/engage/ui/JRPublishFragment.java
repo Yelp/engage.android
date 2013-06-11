@@ -943,7 +943,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
 
     private void signOutButtonHandler() {
         String provider = mSelectedProvider.getName();
-        mSession.forgetAuthenticatedUserForProvider(provider);
+        mSession.signOutUserForProvider(provider);
     }
 
     private void onUserSignOut() {
@@ -1241,7 +1241,7 @@ public class JRPublishFragment extends JRUiFragment implements TabHost.OnTabChan
              * view controller. */
             if (reauthenticate && !mWeHaveJustAuthenticated) {
                 LogUtils.logd(TAG, "reauthenticating user for sharing");
-                mSession.forgetAuthenticatedUserForProvider(provider);
+                mSession.signOutUserForProvider(provider);
                 authenticateUserForSharing();
 
                 return;

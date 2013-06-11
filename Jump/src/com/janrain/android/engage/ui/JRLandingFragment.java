@@ -52,6 +52,7 @@ import com.janrain.android.engage.session.JRAuthenticatedUser;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.utils.AndroidUtils;
 import com.janrain.android.utils.LogUtils;
+import com.janrain.android.utils.WebViewUtils;
 
 /**
  * @internal
@@ -180,7 +181,8 @@ public class JRLandingFragment extends JRUiFragment {
     private void onSwitchAccountsClick() {
         LogUtils.logd(TAG, "[onSwitchAccountsClick]");
 
-        mSession.getCurrentlyAuthenticatingProvider().setForceReauth(true);
+        //mSession.getCurrentlyAuthenticatingProvider().setForceReauth(true);
+        mSession.signOutUserForProvider(mSession.getCurrentlyAuthenticatingProvider().getName());
         mSession.setReturningAuthProvider("");
         mSession.triggerAuthenticationDidRestart();
         finishFragmentWithResult(RESULT_SWITCH_ACCOUNTS);

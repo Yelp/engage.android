@@ -36,7 +36,6 @@ import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.JREngageError.ConfigurationError;
@@ -62,10 +61,12 @@ import org.json.JSONException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.janrain.android.utils.LogUtils.throwDebugException;
+import static com.janrain.android.utils.WebViewUtils.deleteWebViewCookiesForDomains;
 
 public class JRSession implements JRConnectionManagerDelegate {
     private static final String TAG = JRSession.class.getSimpleName();
@@ -191,14 +192,14 @@ public class JRSession implements JRConnectionManagerDelegate {
             for (Object provider : mAllProviders.values()) ((JRProvider)provider).loadDynamicVariables();
 
             /* Load the list of auth providers */
-            mAuthProviders = (ArrayList<String>)Archiver.load(ARCHIVE_AUTH_PROVIDERS);
+            mAuthProviders = Archiver.load(ARCHIVE_AUTH_PROVIDERS);
             for (Object v : mAuthProviders) {
                 if (!(v instanceof  String)) throw new Archiver.LoadException("Non String in mAuthProviders");
             }
             LogUtils.logd(TAG, "auth providers: [" + TextUtils.join(",", mAuthProviders) + "]");
 
             /* Load the list of social providers */
-            mSharingProviders = (ArrayList<String>)Archiver.load(ARCHIVE_SHARING_PROVIDERS);
+            mSharingProviders = Archiver.load(ARCHIVE_SHARING_PROVIDERS);
             for (Object v : mSharingProviders) {
                 if (!(v instanceof  String)) {
                     throw new Archiver.LoadException("Non String in mSharingProviders");
@@ -716,9 +717,9 @@ public class JRSession implements JRConnectionManagerDelegate {
         String fullStartUrl;
 
         boolean forceReauth = mAlwaysForceReauth || mCurrentlyAuthenticatingProvider.getForceReauth();
-        if (getAuthenticatedUserForProvider(mCurrentlyAuthenticatingProvider) == null) forceReauth = true;
         if (forceReauth) {
-            deleteWebViewCookiesForDomains(mCurrentlyAuthenticatingProvider.getCookieDomains());
+            deleteWebViewCookiesForDomains(getApplicationContext(),
+                    mCurrentlyAuthenticatingProvider.getCookieDomains());
         }
 
         fullStartUrl = String.format("%s%s?%s%sdevice=android&extended=true",
@@ -728,33 +729,35 @@ public class JRSession implements JRConnectionManagerDelegate {
                 (forceReauth ? "force_reauth=true&" : "")
         );
 
-        LogUtils.logd(TAG, "[startUrlForCurrentlyAuthenticatingProvider] startUrl: " + fullStartUrl);
+        LogUtils.logd("startUrl: " + fullStartUrl);
 
         URL url = null;
         try {
             url = new URL(fullStartUrl);
         } catch (MalformedURLException e) {
-            Log.e(TAG, "[startUrlForCurrentlyAuthenticatingProvider] URL create failed for string: "
-                    + fullStartUrl);
+            throwDebugException(new RuntimeException("URL create failed for string: " + fullStartUrl, e));
         }
         return url;
     }
 
     public JRAuthenticatedUser getAuthenticatedUserForProvider(JRProvider provider) {
-        LogUtils.logd(TAG, "[getAuthenticatedUserForProvider]");
+        LogUtils.logd();
 
         return mAuthenticatedUsersByProvider.get(provider.getName());
     }
 
-    public void forgetAuthenticatedUserForProvider(String providerName) {
-        LogUtils.logd(TAG, "[forgetAuthenticatedUserForProvider]");
+    public void signOutUserForProvider(String providerName) {
+        LogUtils.logd();
 
+        if (mAllProviders == null) throwDebugException(new IllegalStateException());
         JRProvider provider = mAllProviders.get(providerName);
         if (provider == null) {
-            Log.e(TAG, "[forgetAuthenticatedUserForProvider] provider not found: " + providerName);
+            throwDebugException(new IllegalStateException("Unknown provider name:" + providerName));
         } else {
-            provider.setForceReauth(true);
+            deleteWebViewCookiesForDomains(getApplicationContext(), provider.getCookieDomains());
         }
+
+        if (mAuthenticatedUsersByProvider == null) throwDebugException(new IllegalStateException());
 
         if (mAuthenticatedUsersByProvider.containsKey(providerName)) {
             mAuthenticatedUsersByProvider.get(providerName).deleteCachedProfilePic();
@@ -764,52 +767,10 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
     }
 
-    public void forgetAllAuthenticatedUsers() {
-        LogUtils.logd(TAG, "[forgetAllAuthenticatedUsers]");
+    public void signOutAllAuthenticatedUsers() {
+        LogUtils.logd(TAG, "[signOutAllAuthenticatedUsers]");
 
-        for (String p : mAllProviders.keySet()) forgetAuthenticatedUserForProvider(p);
-    }
-
-    private void deleteWebViewCookiesForDomains(Collection<String> domains) {
-        for (String d : domains) {
-            deleteWebViewCookiesForDomain(d, false);
-            deleteWebViewCookiesForDomain(d, true);
-        }
-    }
-
-    private void deleteWebViewCookiesForDomain(String domain, boolean secure) {
-        CookieSyncManager csm = CookieSyncManager.createInstance(getApplicationContext());
-        CookieManager cm = CookieManager.getInstance();
-
-        /* http://code.google.com/p/android/issues/detail?id=19294 */
-        if (AndroidUtils.SDK_INT >= 11) {
-            // don't trim leading .s
-        } else {
-            /* Trim leading .s */
-            if (domain.startsWith(".")) domain = domain.substring(1);
-        }
-
-        /* Cookies are stored by domain, and are not different for different schemes (i.e. http vs
-         * https) (although they do have an optional 'secure' flag.) */
-        domain = "http" + (secure ? "s" : "") + "://" + domain;
-        String cookieGlob = cm.getCookie(domain);
-        if (cookieGlob != null) {
-            String[] cookies = cookieGlob.split(";");
-            for (String cookieTuple : cookies) {
-                String[] cookieParts = cookieTuple.split("=");
-
-                /* setCookie has changed a lot between different versions of Android with respect to
-                 * how it handles cookies like these, which are set in order to clear an existing
-                 * cookie.  This way of invoking it seems to work on all versions. */
-                cm.setCookie(domain, cookieParts[0] + "=;");
-
-                /* These calls have worked for some subset of the the set of all versions of
-                 * Android:
-                 * cm.setCookie(domain, cookieParts[0] + "=");
-                 * cm.setCookie(domain, cookieParts[0]); */
-            }
-            csm.sync();
-        }
+        for (String p : mAllProviders.keySet()) signOutUserForProvider(p);
     }
 
     public JRProvider getProviderByName(String name) {
@@ -966,8 +927,13 @@ public class JRSession implements JRConnectionManagerDelegate {
     public void triggerAuthenticationDidFail(JREngageError error) {
         LogUtils.logd(TAG, "[triggerAuthenticationDidFailWithError]");
 
+        if (mCurrentlyAuthenticatingProvider == null) {
+            throwDebugException(new RuntimeException("Unexpected state"));
+        }
+
         String providerName = mCurrentlyAuthenticatingProvider.getName();
-        mCurrentlyAuthenticatingProvider.setForceReauth(true);
+        //mCurrentlyAuthenticatingProvider.setForceReauth(true);
+        signOutUserForProvider(providerName);
 
         setCurrentlyAuthenticatingProvider(null);
         mReturningAuthProvider = null;
@@ -1089,13 +1055,13 @@ public class JRSession implements JRConnectionManagerDelegate {
         setReturningSharingProvider(mReturningSharingProvider);
     }
     
-    public List<String> getEnabledSharingProviders() {
-        if (mEnabledSharingProviders == null) {
-            return mSharingProviders;
-        } else {
-            return mEnabledSharingProviders;
-        }
-    }
+    //public List<String> getEnabledSharingProviders() {
+    //    if (mEnabledSharingProviders == null) {
+    //        return mSharingProviders;
+    //    } else {
+    //        return mEnabledSharingProviders;
+    //    }
+    //}
 
     private Context getApplicationContext() {
         return JREngage.getApplicationContext();

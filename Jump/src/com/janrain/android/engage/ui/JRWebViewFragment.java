@@ -69,10 +69,13 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.utils.AndroidUtils;
 import com.janrain.android.utils.LogUtils;
 import com.janrain.android.utils.ThreadUtils;
+import com.janrain.android.utils.WebViewUtils;
 import org.json.JSONException;
 
 import java.net.URL;
 import java.util.List;
+
+import static com.janrain.android.utils.WebViewUtils.deleteWebViewCookiesForDomains;
 
 /**
  * @internal
@@ -668,7 +671,8 @@ public class JRWebViewFragment extends JRUiFragment {
                 // TODO resource-ify
                 showAlertDialog("OpenID Error", "The URL you entered does not appear to be an OpenID");
             } else if ("canceled".equals(error)) {
-                mProvider.setForceReauth(true);
+                //mProvider.setForceReauth(true);
+                mSession.signOutUserForProvider(mSession.getCurrentlyAuthenticatingProvider().getName());
                 doAuthRestart();
             } else {
                 Log.e(TAG, "unrecognized error: " + error);
