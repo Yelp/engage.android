@@ -1,3 +1,5 @@
+v4.0.12:
+ - Fixes a build error due to a missing-from-source-control utils class
 v4.0.11:
  - Bug fix to throttle back overzealous force-reauth flags which were triggering 
    double-password-entry Facebook authentications
