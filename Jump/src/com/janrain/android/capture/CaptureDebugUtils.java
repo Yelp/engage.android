@@ -47,8 +47,8 @@ import java.net.URLConnection;
 import java.util.Iterator;
 import java.util.Set;
 
-import static com.janrain.android.capture.CaptureStringUtils.readFully;
 import static com.janrain.android.capture.Capture.CaptureApiRequestCallback;
+import static com.janrain.android.capture.CaptureStringUtils.readFully;
 
 public class CaptureDebugUtils {
     private static JSONObject getEntity(int id) throws IOException, JSONException {

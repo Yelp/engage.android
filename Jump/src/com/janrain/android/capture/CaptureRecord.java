@@ -63,8 +63,8 @@ import java.util.TimeZone;
 import static com.janrain.android.capture.Capture.CaptureApiRequestCallback;
 import static com.janrain.android.capture.Capture.FetchJsonCallback;
 import static com.janrain.android.capture.Capture.InvalidApidChangeException;
-import static com.janrain.android.utils.JsonUtils.copyJsonVal;
 import static com.janrain.android.utils.AndroidUtils.urlEncode;
+import static com.janrain.android.utils.JsonUtils.copyJsonVal;
 import static com.janrain.android.utils.JsonUtils.unsafeJsonObjectToString;
 import static com.janrain.android.utils.LogUtils.throwDebugException;
 

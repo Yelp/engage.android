@@ -4,13 +4,11 @@ This Eclipse import guide will guide you through:
 * [Adding the Library to Your Android Eclipse Project](#add-the-library-to-your-android-eclipse-project)
 * [Troubleshooting Build and Runtime Errors](#troubleshooting-build-and-runtime-errors)
 
-## Download the Library
+## Clone the SDK Repository
 
-You can either:
+Clone the Janrain Jump for Android library from GitHub:
 
-*   Clone the Janrain Jump for Android library from GitHub:
     `git clone git://github.com/janrain/jump.android.git`
-*   Or, [download an archive](http://github.com/janrain/jump.android/tags) of the library
 
 **Note:** We recommend that you clone the GitHub repository, and checkout the `master` branch. The `master`
 is the stable branch with all the latest bug fixes. By using git to clone the repository, it's easy to keep

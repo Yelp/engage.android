@@ -52,7 +52,6 @@ import com.janrain.android.engage.session.JRAuthenticatedUser;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.utils.AndroidUtils;
 import com.janrain.android.utils.LogUtils;
-import com.janrain.android.utils.WebViewUtils;
 
 /**
  * @internal
