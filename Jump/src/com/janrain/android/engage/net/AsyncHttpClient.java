@@ -195,7 +195,7 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
                 if (mConn.getHttpRequest() instanceof HttpPost) {
                     HttpEntity entity = ((HttpPost) mConn.getHttpRequest()).getEntity();
                     String postBody = new String(IOUtils.readFromStream(entity.getContent(), false));
-                    LogUtils.logd("POST: " + postBody);
+                    LogUtils.logd("POST to " + mConn.getRequestUrl() + ": " + postBody);
                 }
 
                 HttpResponse response;
@@ -226,6 +226,9 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
 
                 AsyncHttpResponse ahr;
                 String statusLine = response.getStatusLine().toString();
+                String bodyStr = new String(responseBody);
+                int bodySubStrLen = bodyStr.length() > 300 ? 300 : bodyStr.length();
+
                 switch (response.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
                     // Normal success
@@ -235,14 +238,11 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
                     // Response from the Engage trail creation and maybe URL shortening calls
                 case HttpStatus.SC_MOVED_TEMPORARILY:
                     // for UPS-1390 - don't error on 302s from token URL
-                    LogUtils.logd(statusLine);
+                    LogUtils.logd(statusLine + ": " + bodyStr.substring(0, bodySubStrLen));
                     ahr = new AsyncHttpResponse(mConn, null, headers, responseBody);
                     break;
                 default:
-                    String bodyStr = new String(responseBody);
-                    int bodySubStrLen = bodyStr.length() > 300 ? 300 : bodyStr.length();
                     LogUtils.loge(statusLine + "\n" + bodyStr.substring(0, bodySubStrLen));
-
                     ahr = new AsyncHttpResponse(mConn, new Exception(statusLine), headers, responseBody);
                 }
 

@@ -152,54 +152,83 @@ public class Jump {
      *                     If null, a list of providers (and a traditional sign-in form) is displayed to the
      *                     end-user.
      * @param handler your result handler, called upon completion on the UI thread
+     * @param mergeToken an Engage auth_info token retrieved from an EMAIL_ADDRESS_IN_USE Capture API error,
+     *                   or null for none.
      */
     public static void showSignInDialog(Activity fromActivity, String providerName,
-                                        SignInResultHandler handler) {
+                                        SignInResultHandler handler, final String mergeToken) {
         if (state.jrEngage == null || state.captureDomain == null) {
             handler.onFailure(new SignInError(JUMP_NOT_INITIALIZED, null, null));
             return;
         }
 
+        state.signInHandler = handler;
+        if ("capture".equals(providerName)) {
+            TradSignInUi.showStandAloneDialog(fromActivity, mergeToken);
+        } else {
+            showSocialSignInDialog(fromActivity, providerName, handler, mergeToken);
+        }
+    }
+
+    private static void showSocialSignInDialog(Activity fromActivity, String providerName,
+                                        SignInResultHandler handler, final String mergeToken) {
         state.jrEngage.addDelegate(new JREngageDelegate.SimpleJREngageDelegate() {
             @Override
             public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
                 String authInfoToken = auth_info.getAsString("token");
 
-                Capture.performSocialSignIn(authInfoToken, new Capture.SignInRequestHandler() {
-                //Capture.performLegacySocialSignIn(authInfoToken, new Capture.SignInRequestHandler() {
+                Capture.performSocialSignIn(authInfoToken, new Capture.SignInResultHandler() {
+                //Capture.performLegacySocialSignIn(authInfoToken, new Capture.SignInResultHandler() {
                     public void onSuccess(CaptureRecord record) {
                         state.signedInUser = record;
-                        fireHandlerOnSuccess();
+                        fireHandlerSuccess();
                     }
 
                     public void onFailure(CaptureApiError error) {
-                        fireHandlerOnFailure(new SignInError(CAPTURE_API_ERROR, error, null));
+                        fireHandlerFailure(new SignInError(CAPTURE_API_ERROR, error, null));
                     }
-                });
+                }, provider, mergeToken);
             }
 
             @Override
             public void jrAuthenticationDidNotComplete() {
-                fireHandlerOnFailure(new SignInError(AUTHENTICATION_CANCELED_BY_USER, null, null));
+                fireHandlerFailure(new SignInError(AUTHENTICATION_CANCELED_BY_USER, null, null));
             }
 
             @Override
             public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-                fireHandlerOnFailure(new SignInError(ENGAGE_ERROR, null, error));
+                fireHandlerFailure(new SignInError(ENGAGE_ERROR, null, error));
             }
 
             @Override
             public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-                fireHandlerOnFailure(new SignInError(ENGAGE_ERROR, null, error));
+                fireHandlerFailure(new SignInError(ENGAGE_ERROR, null, error));
+            }
+
+            private void fireHandlerFailure(SignInError err) {
+                state.jrEngage.removeDelegate(this);
+                Jump.fireHandlerOnFailure(err);
+            }
+
+            private void fireHandlerSuccess() {
+                state.jrEngage.removeDelegate(this);
+                Jump.fireHandlerOnSuccess();
             }
         });
 
-        state.signInHandler = handler;
         if (providerName != null) {
             state.jrEngage.showAuthenticationDialog(fromActivity, providerName);
         } else {
             state.jrEngage.showAuthenticationDialog(fromActivity, TradSignInUi.class);
         }
+    }
+
+    /**
+     * @deprecated
+     */
+    public static void showSignInDialog(Activity fromActivity, String providerName,
+                                        SignInResultHandler handler) {
+        showSignInDialog(fromActivity, providerName, handler, null);
     }
 
     /**
@@ -215,7 +244,6 @@ public class Jump {
         SignInResultHandler handler_ = state.signInHandler;
         state.signInHandler = null;
         if (handler_ != null) handler_.onFailure(failureParam);
-
     }
 
     // Package level because of use from TradSignInUi:
@@ -233,16 +261,18 @@ public class Jump {
      * @param signInName the end user's user name or email address
      * @param password the end user's password
      * @param handler your callback handler, invoked upon completion in the UI thread
+     * @param mergeToken an Engage auth_info token retrieved from an EMAIL_ADDRESS_IN_USE Capture API error,
+     *                   or null for none.
      */
     public static void performTraditionalSignIn(String signInName, String password,
-                                                final SignInResultHandler handler) {
+                                                final SignInResultHandler handler, final String mergeToken) {
         if (state.jrEngage == null || state.captureDomain == null) {
             handler.onFailure(new SignInError(JUMP_NOT_INITIALIZED, null, null));
             return;
         }
 
         Capture.performTraditionalSignIn(signInName, password, state.traditionalSignInType,
-                new Capture.SignInRequestHandler() {
+                new Capture.SignInResultHandler() {
                     @Override
                     public void onSuccess(CaptureRecord record) {
                         state.signedInUser = record;
@@ -253,7 +283,7 @@ public class Jump {
                     public void onFailure(CaptureApiError error) {
                         handler.onFailure(new SignInError(CAPTURE_API_ERROR, error, null));
                     }
-                });
+                }, mergeToken);
     }
 
     /**

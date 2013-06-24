@@ -32,14 +32,19 @@
 
 package com.janrain.android;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import com.janrain.android.capture.Capture;
 import com.janrain.android.capture.CaptureApiConnection;
 import com.janrain.android.capture.CaptureApiError;
@@ -47,18 +52,86 @@ import com.janrain.android.capture.CaptureRecord;
 import com.janrain.android.engage.ui.JRCustomInterfaceConfiguration;
 import com.janrain.android.engage.ui.JRCustomInterfaceView;
 import com.janrain.android.utils.LogUtils;
+import org.json.JSONArray;
 
+import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.AUTHENTICATION_CANCELED_BY_USER;
 import static com.janrain.android.R.string.jr_capture_trad_signin_bad_password;
 import static com.janrain.android.R.string.jr_capture_trad_signin_unrecognized_error;
 import static com.janrain.android.R.string.jr_dialog_dismiss;
 
 public class TradSignInUi extends JRCustomInterfaceConfiguration {
+
+    private static AlertDialog dialog;
+    private static Button signInButton;
+    private static Button cancelButton;
+    private static TradSignInView tradSignInView;
+    private static ProgressBar progress;
+
     public TradSignInUi() {
         this.mProviderListHeader = new TradSignInView();
     }
 
-    private static class TradSignInView extends JRCustomInterfaceView {
+    public static void showStandAloneDialog(Activity fromActivity, String mergeToken) {
+        LayoutInflater inflater = LayoutInflater.from(fromActivity);
+        tradSignInView = new TradSignInView();
+        tradSignInView.mergeToken = mergeToken;
+        final View signInView = tradSignInView.onCreateView(fromActivity, inflater, null, null);
+        signInView.findViewById(R.id.custom_signin_button).setVisibility(View.GONE);
+        progress = (ProgressBar) signInView.findViewById(R.id.trad_signin_progress);
+
+        dialog = new AlertDialog.Builder(fromActivity)
+                .setTitle(R.string.jr_capture_trad_signin_dialog_title)
+                .setView(signInView)
+                .setCancelable(false)
+                .setPositiveButton(R.string.jr_capture_signin_view_button_title, null)
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        dialog.setCanceledOnTouchOutside(false);
+
+        // http://stackoverflow.com/questions/2620444/how-to-prevent-a-dialog-from-closing-when-a-button-is-clicked
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            public void onShow(DialogInterface _) {
+                signInButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                signInButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        tradSignInView.onStandAloneClick();
+                    }
+                });
+                cancelButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Jump.fireHandlerOnFailure(new Jump.SignInResultHandler.SignInError(
+                                AUTHENTICATION_CANCELED_BY_USER, null, null));
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+        dialog.show();
+    }
+
+    private static void showStandAloneProgress() {
+        setInputViewsEnabled(false);
+        progress.setVisibility(View.VISIBLE);
+        dialog.setTitle(R.string.jr_capture_signin_view_signing_in);
+    }
+
+    private static void hideStandAloneProgress() {
+        setInputViewsEnabled(true);
+        progress.setVisibility(View.GONE);
+        dialog.setTitle(R.string.jr_capture_trad_signin_dialog_title);
+    }
+
+    private static void setInputViewsEnabled(boolean enabled) {
+        signInButton.setEnabled(enabled);
+        tradSignInView.userName.setEnabled(enabled);
+        tradSignInView.password.setEnabled(enabled);
+    }
+
+    private static class TradSignInView extends JRCustomInterfaceView implements View.OnClickListener {
         private EditText userName, password;
+        private String mergeToken;
+        private TextView messages;
 
         @Override
         public View onCreateView(Context context,
@@ -68,46 +141,79 @@ public class TradSignInUi extends JRCustomInterfaceConfiguration {
             View v = inflater.inflate(R.layout.jr_capture_trad_signin, container, false);
             userName = (EditText) v.findViewById(R.id.username_edit);
             password = (EditText) v.findViewById(R.id.password_edit);
+            messages = (TextView) v.findViewById(R.id.message_container);
 
-            v.findViewById(R.id.custom_signin_button).setOnClickListener(new SignInButtonHandler());
+            v.findViewById(R.id.custom_signin_button).setOnClickListener(this);
             return v;
         }
 
-        private class SignInButtonHandler implements View.OnClickListener {
-            public void onClick(View v) {
-                final Capture.SignInRequestHandler handler = new Capture.SignInRequestHandler() {
-                    public void onSuccess(CaptureRecord record) {
-                        Jump.state.signedInUser = record;
-                        Jump.fireHandlerOnSuccess();
-                        dismissProgressIndicator();
-                        finishJrSignin();
+        public void onClick(View v) {
+            final Capture.SignInResultHandler handler = new Capture.SignInResultHandler() {
+                public void onSuccess(CaptureRecord record) {
+                    Jump.state.signedInUser = record;
+                    Jump.fireHandlerOnSuccess();
+                    dismissProgressIndicator();
+                    finishJrSignin();
+                }
+
+                public void onFailure(CaptureApiError error) {
+                    dismissProgressIndicator();
+                    AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
+                    b.setNeutralButton(jr_dialog_dismiss, null);
+                    if (error.isInvalidPassword()) {
+                        b.setMessage(jr_capture_trad_signin_bad_password);
+                    } else {
+                        b.setMessage(jr_capture_trad_signin_unrecognized_error);
+                        LogUtils.loge(error.toString());
+                    }
+                    b.show();
+                }
+            };
+
+            final CaptureApiConnection connection = startSignIn(handler);
+
+            showProgressIndicator(true, new DialogInterface.OnCancelListener() {
+                public void onCancel(DialogInterface dialog) {
+                    handler.cancel();
+                    connection.stopConnection();
+                }
+            });
+        }
+
+        public void onStandAloneClick() {
+            final Capture.SignInResultHandler handler = new Capture.SignInResultHandler() {
+                public void onSuccess(CaptureRecord record) {
+                    Jump.state.signedInUser = record;
+                    Jump.fireHandlerOnSuccess();
+                    dialog.dismiss();
+                }
+
+                public void onFailure(CaptureApiError error) {
+                    if (error.raw_response.optJSONArray("messages") != null) {
+                        JSONArray jsonMessages = error.raw_response.optJSONArray("messages");
+                        String html = "";
+                        for (int i=0; i<jsonMessages.length(); i++) {
+                            html += "&#8226; " + jsonMessages.optString(i) + "<br/>\n";
+                        }
+                        messages.setText(Html.fromHtml(html));
+                    } else {
+                        messages.setText("Error: " + error);
                     }
 
-                    public void onFailure(CaptureApiError error) {
-                        dismissProgressIndicator();
-                        AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
-                        b.setNeutralButton(jr_dialog_dismiss, null);
-                        if (error.isInvalidPassword()) {
-                            b.setMessage(jr_capture_trad_signin_bad_password);
-                        } else {
-                            b.setMessage(jr_capture_trad_signin_unrecognized_error);
-                            LogUtils.loge(error.toString());
-                        }
-                        b.show();
-                    }
-                };
-                final CaptureApiConnection d =
-                        Capture.performTraditionalSignIn(userName.getText().toString(),
-                                //Capture.performLegacyTraditionalSignIn(userName.getText().toString(),
-                                password.getText().toString(),
-                                Jump.state.traditionalSignInType, handler);
-                showProgressIndicator(true, new DialogInterface.OnCancelListener() {
-                    public void onCancel(DialogInterface dialog) {
-                        handler.cancel();
-                        d.stopConnection();
-                    }
-                });
-            }
+                    LogUtils.loge(error.toString());
+                    hideStandAloneProgress();
+                }
+            };
+
+            messages.setText("");
+            final CaptureApiConnection connection = startSignIn(handler);
+            showStandAloneProgress();
+        }
+
+        private CaptureApiConnection startSignIn(Capture.SignInResultHandler handler) {
+            return Capture.performTraditionalSignIn(userName.getText().toString(),
+                    password.getText().toString(),
+                    Jump.state.traditionalSignInType, handler, mergeToken);
         }
     }
 }

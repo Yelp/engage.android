@@ -52,9 +52,51 @@ import org.json.JSONException;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static com.janrain.android.Jump.SignInResultHandler.SignInError;
 import static com.janrain.android.capture.Capture.CaptureApiRequestCallback;
 
 public class MainActivity extends FragmentActivity {
+    private final Jump.SignInResultHandler signInResultHandler = new Jump.SignInResultHandler() {
+        public void onSuccess() {
+            AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
+            b.setMessage("success");
+            b.setNeutralButton("Dismiss", null);
+            b.show();
+        }
+
+        public void onFailure(SignInError error) {
+            if (error.reason == SignInError.FailureReason.CAPTURE_API_ERROR &&
+                    error.captureApiError.isMergeFlowError()) {
+                handleMergeFlow(error);
+            } else {
+                AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
+                b.setMessage("Sign-in failure:" + error);
+                b.setNeutralButton("Dismiss", null);
+                b.show();
+            }
+        }
+    };
+
+    private void handleMergeFlow(SignInError error) {
+        final String mergeToken = error.captureApiError.getMergeToken();
+        final String existingProvider = error.captureApiError.getExistingAccountIdentityProvider();
+        AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
+        b.setTitle("Email Address Conflict");
+        b.setCancelable(false);
+        b.setMessage("The " + error.captureApiError.getConflictingIdentityProvider() + " account that you " +
+                "signed in with has the same email address as an existing user. Sign in with " +
+                existingProvider + " to continue.");
+        b.setPositiveButton("Merge", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Jump.showSignInDialog(MainActivity.this, existingProvider, signInResultHandler, mergeToken);
+            }
+        });
+        b.setNegativeButton("Cancel", null);
+        AlertDialog alertDialog = b.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.show();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,20 +104,20 @@ public class MainActivity extends FragmentActivity {
         //elgfmldanecpmanecfok <- no pub_stream
 
         //capture testing/staging
-        //String engageAppId = "appcfamhnpkagijaeinl";
-        //String captureDomain = "mobile-testing-2.janraincapture.com";
-        //String captureClientId = "atasaz59p8cyecmbzmcwkbthsyq3wrxh";
-        //String captureLocale = "en-US";
-        //String captureSignInFormName = "signinForm";
-        //Jump.TraditionalSignInType signInType = Jump.TraditionalSignInType.EMAIL;
-
-        //capture prod
         String engageAppId = "appcfamhnpkagijaeinl";
-        String captureDomain = "mobile-dev.janraincapture.com";
-        String captureClientId = "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6";
+        String captureDomain = "mobile-testing.janraincapture.com";
+        String captureClientId = "atasaz59p8cyecmbzmcwkbthsyq3wrxh";
         String captureLocale = "en-US";
         String captureSignInFormName = "signinForm";
         Jump.TraditionalSignInType signInType = Jump.TraditionalSignInType.EMAIL;
+
+        //capture prod
+        //String engageAppId = "appcfamhnpkagijaeinl";
+        //String captureDomain = "mobile-dev.janraincapture.com";
+        //String captureClientId = "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6";
+        //String captureLocale = "en-US";
+        //String captureSignInFormName = "signinForm";
+        //Jump.TraditionalSignInType signInType = Jump.TraditionalSignInType.EMAIL;
 
         Jump.init(this, engageAppId, captureDomain, captureClientId, captureLocale, captureSignInFormName,
                 signInType);
@@ -101,21 +143,7 @@ public class MainActivity extends FragmentActivity {
 
         testAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Jump.showSignInDialog(MainActivity.this, null, new Jump.SignInResultHandler() {
-                    public void onSuccess() {
-                        AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
-                        b.setMessage("success");
-                        b.setNeutralButton("Dismiss", null);
-                        b.show();
-                    }
-
-                    public void onFailure(SignInError error) {
-                        AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
-                        b.setMessage("error:" + error);
-                        b.setNeutralButton("Dismiss", null);
-                        b.show();
-                    }
-                });
+                Jump.showSignInDialog(MainActivity.this, null, signInResultHandler, null);
             }
         });
 

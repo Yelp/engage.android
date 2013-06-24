@@ -38,41 +38,56 @@ import org.json.JSONObject;
  * http://developers.janrain.com/documentation/capture/restful_api/
  */
 public class CaptureApiError {
-    /**
-     *
-     */
-    int code;
+    public static final int EMAIL_ADDRESS_IN_USE = 380;
+    private String engageToken;
+    private String conflictingIdentityProvider;
 
     /**
-     *
+     * The Capture error code. See http://developers.janrain.com/documentation/capture/restful_api/
      */
-    String error;
+    public final int code;
 
     /**
-     *
+     * The error string which is 1:1 associate with the code
      */
-    String error_description;
+    public final String error;
 
     /**
-     *
+     * A description of this instance of the error, which can vary for a single given code.
      */
-    JSONObject raw_response;
+    public final String error_description;
 
     /**
-     * Used to indicate an API response that could not be parsed
+     * The raw JSON response
+     */
+    public final JSONObject raw_response;
+
+    /**
+     * Indicates an API response that could not be parsed. Has no meaningful fields values.
      */
     public static final CaptureApiError INVALID_API_RESPONSE = new CaptureApiError();
 
     private CaptureApiError() {
         error = "INVALID_API_RESPONSE";
         code = -1;
+        error_description = null;
+        raw_response = null;
     }
 
-    public CaptureApiError(JSONObject response) {
+    /**
+     * Construct an error object from a JSON response
+     * @param response the JSON response
+     * @param engageToken the Engage auth_info token in the request precipitating this error, if any
+     * @param conflictingProvider for merge errors, the identity provider in the request precipitating this
+     *                            error.
+     */
+    /*package*/ CaptureApiError(JSONObject response, String engageToken, String conflictingProvider) {
         code = response.optInt("code");
         error = response.optString("error");
         error_description = response.optString("error_description");
         raw_response = response;
+        this.engageToken = engageToken;
+        this.conflictingIdentityProvider = conflictingProvider;
     }
 
     public boolean isInvalidApiResponse() {
@@ -88,5 +103,25 @@ public class CaptureApiError {
         if (isInvalidApiResponse()) return false;
         if (error.equals("bad username/password combo")) return true; // legacy username/password endpoint
         return false;
+    }
+
+    /**
+     * True if this object is an error representing a merge-flow is required to continue signing in.
+     * @return whether a merge-account-flow is required.
+     */
+    public boolean isMergeFlowError() {
+        return code == EMAIL_ADDRESS_IN_USE;
+    }
+
+    public String getMergeToken() {
+        return engageToken;
+    }
+
+    public String getExistingAccountIdentityProvider() {
+        return raw_response.optString("existing_provider");
+    }
+
+    public String getConflictingIdentityProvider() {
+        return conflictingIdentityProvider;
     }
 }

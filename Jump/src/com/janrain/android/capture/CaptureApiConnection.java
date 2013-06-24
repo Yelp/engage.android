@@ -95,11 +95,12 @@ public class CaptureApiConnection {
         }
     }
 
-    /**
-     *
-     */
     public void stopConnection() {
         JRConnectionManager.stopConnectionsForDelegate(connectionManagerDelegate);
+    }
+
+    /*package*/ void maybeAddParam(String key, String value) {
+        if (key != null && value != null) params.add(new Pair<String, String>(key, value));
     }
 
     enum Method {POST, GET}
@@ -110,7 +111,13 @@ public class CaptureApiConnection {
 
     /*package*/ void addAllToParams(String... params) {
         for (int i = 0; i < params.length - 1; i += 2) {
-            this.params.add(new Pair<String, String>(params[i], params[i + 1]));
+            String key = params[i];
+            String value = params[i + 1];
+            if (value != null) {
+                this.params.add(new Pair<String, String>(key, value));
+            } else {
+                throwDebugException(new RuntimeException("null value in params"));
+            }
         }
 
         if (params.length % 2 == 1) LogUtils.loge("error: odd number of param strings");

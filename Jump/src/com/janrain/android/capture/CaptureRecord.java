@@ -194,7 +194,7 @@ public class CaptureRecord extends JSONObject {
                     accessToken = (String) response.opt("access_token");
                     if (callback != null) callback.onSuccess();
                 } else {
-                    new CaptureApiError(response);
+                    new CaptureApiError(response, null, null);
                 }
             }
         });
@@ -252,7 +252,7 @@ public class CaptureRecord extends JSONObject {
                     LogUtils.logd("Capture", unsafeJsonObjectToString(content, 2));
                     fireNextChange(changeList.subList(1, changeList.size()), callback);
                 } else {
-                    if (callback != null) callback.onFailure(new CaptureApiError(content));
+                    if (callback != null) callback.onFailure(new CaptureApiError(content, null, null));
                 }
             }
         };
