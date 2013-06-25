@@ -52,7 +52,6 @@ import org.json.JSONException;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.janrain.android.Jump.SignInResultHandler.SignInError;
 import static com.janrain.android.capture.Capture.CaptureApiRequestCallback;
 
 public class MainActivity extends FragmentActivity {
@@ -67,7 +66,19 @@ public class MainActivity extends FragmentActivity {
         public void onFailure(SignInError error) {
             if (error.reason == SignInError.FailureReason.CAPTURE_API_ERROR &&
                     error.captureApiError.isMergeFlowError()) {
-                handleMergeFlow(error);
+                // The default merge-flow handler. Merge behavior may also be implemented by API for more
+                // control over the user experience.
+                // You can implement your own merge-flow user interface by calling
+                // Jump.showSignInDialog or Jump.performTraditionalSignIn directly, and passing in the
+                // merge-token and existing-provider-name retrieved from the error.
+                //
+                // String mergeToken = error.captureApiError.getMergeToken();
+                // String existingProvider = error.captureApiError.getExistingAccountIdentityProvider()
+                //
+                // (An existing-provider-name of "capture" indicates a conflict with a traditional-sign-in
+                // account.)
+
+                Jump.startDefaultMergeFlowUi(MainActivity.this, error, signInResultHandler);
             } else {
                 AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
                 b.setMessage("Sign-in failure:" + error);
@@ -76,26 +87,6 @@ public class MainActivity extends FragmentActivity {
             }
         }
     };
-
-    private void handleMergeFlow(SignInError error) {
-        final String mergeToken = error.captureApiError.getMergeToken();
-        final String existingProvider = error.captureApiError.getExistingAccountIdentityProvider();
-        AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
-        b.setTitle("Email Address Conflict");
-        b.setCancelable(false);
-        b.setMessage("The " + error.captureApiError.getConflictingIdentityProvider() + " account that you " +
-                "signed in with has the same email address as an existing user. Sign in with " +
-                existingProvider + " to continue.");
-        b.setPositiveButton("Merge", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Jump.showSignInDialog(MainActivity.this, existingProvider, signInResultHandler, mergeToken);
-            }
-        });
-        b.setNegativeButton("Cancel", null);
-        AlertDialog alertDialog = b.create();
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.show();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

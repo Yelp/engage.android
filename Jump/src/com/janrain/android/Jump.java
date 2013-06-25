@@ -32,13 +32,16 @@
 package com.janrain.android;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import com.janrain.android.capture.Capture;
 import com.janrain.android.capture.CaptureApiError;
 import com.janrain.android.capture.CaptureRecord;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
+import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.types.JRDictionary;
 
 import static com.janrain.android.Jump.SignInResultHandler.SignInError;
@@ -166,12 +169,12 @@ public class Jump {
         if ("capture".equals(providerName)) {
             TradSignInUi.showStandAloneDialog(fromActivity, mergeToken);
         } else {
-            showSocialSignInDialog(fromActivity, providerName, handler, mergeToken);
+            showSocialSignInDialog(fromActivity, providerName, mergeToken);
         }
     }
 
     private static void showSocialSignInDialog(Activity fromActivity, String providerName,
-                                        SignInResultHandler handler, final String mergeToken) {
+                                               final String mergeToken) {
         state.jrEngage.addDelegate(new JREngageDelegate.SimpleJREngageDelegate() {
             @Override
             public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
@@ -370,5 +373,51 @@ public class Jump {
      */
     public static void saveToDisk(Context context) {
         if (state.signedInUser != null) state.signedInUser.saveToDisk(context);
+    }
+
+    /**
+     * The default merge-flow handler. Provides a baseline implementation of the merge-account flow UI
+     *
+     * @param fromActivity the Activity from which to launch subsequent Activities and Dialogs.
+     * @param error the error received by your
+     * @param signInResultHandler your sign-in result handler.
+     */
+    public static void startDefaultMergeFlowUi(final Activity fromActivity,
+                                               SignInError error,
+                                               final SignInResultHandler signInResultHandler) {
+        final String mergeToken = error.captureApiError.getMergeToken();
+
+        final String existingProvider = error.captureApiError.getExistingAccountIdentityProvider();
+        String conflictingIdentityProvider = error.captureApiError.getConflictingIdentityProvider();
+        String conflictingIdpNameLocalized = JRProvider.getLocalizedName(conflictingIdentityProvider);
+        String existingIdpNameLocalized = JRProvider.getLocalizedName(conflictingIdentityProvider);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(fromActivity)
+                .setTitle(fromActivity.getString(R.string.jr_merge_flow_default_dialog_title))
+                .setCancelable(false)
+                .setMessage(fromActivity.getString(R.string.jr_merge_flow_default_dialog_message,
+                        conflictingIdpNameLocalized,
+                        existingIdpNameLocalized))
+                .setPositiveButton(fromActivity.getString(R.string.jr_merge_flow_default_merge_button),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // When existingProvider == "capture" you can also call ...
+                                //
+                                //     Jump.performTraditionalSignIn(String signInName, String password,
+                                //         final SignInResultHandler handler, final String mergeToken);
+                                //
+                                // ... instead of showSignInDialog if you wish to present a traditional
+                                // sign-in dialog yourself.
+                                Jump.showSignInDialog(fromActivity,
+                                        existingProvider,
+                                        signInResultHandler,
+                                        mergeToken);
+                            }
+                        })
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.show();
     }
 }

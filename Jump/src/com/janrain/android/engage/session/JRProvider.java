@@ -423,4 +423,11 @@ public class JRProvider implements Serializable {
         Log.e(TAG, "Error parsing provider color: ", error);
         return getResources().getColor(R.color.jr_janrain_darkblue_lightened);
     }
+
+    public static String getLocalizedName(String conflictingIdentityProvider) {
+        if (conflictingIdentityProvider.equals("capture")) {
+            return JREngage.getApplicationContext().getString(R.string.jr_traditional_account_name);
+        }
+        return JRSession.getInstance().getProviderByName(conflictingIdentityProvider).getFriendlyName();
+    }
 }
