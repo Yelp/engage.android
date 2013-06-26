@@ -62,6 +62,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.janrain.android.utils.LogUtils.throwDebugException;
+
 /**
  * @internal
  * @class JRProvider
@@ -186,44 +188,43 @@ public class JRProvider implements Serializable {
             mUserInputDescriptor = "";
         }
 
-        /* We call this function in the constructor to preemptively download the icons
-         if they aren't already there. */
+        // Called in the constructor to preemptively download missing icons
         getProviderLogo(JREngage.getApplicationContext());
     }
 
-    public List<String> getCookieDomains() { /* (readonly) */
+    public List<String> getCookieDomains() {
         return mCookieDomains;
     }
 
-    public String getName() {  /* (readonly) */
+    public String getName() {
         return mName;
     }
 
-    public String getFriendlyName() {  /* (readonly) */
+    public String getFriendlyName() {
         return mFriendlyName;
     }
 
-    public String getUserInputHint() {  /* (readonly) */
+    public String getUserInputHint() {
         return mInputHintText;
     }
 
-    public String getUserInputDescriptor() {  /* (readonly) */
+    public String getUserInputDescriptor() {
         return mUserInputDescriptor;
     }
 
-    public boolean requiresInput() {  /* (readonly) */
+    public boolean requiresInput() {
         return mRequiresInput;
     }
 
-    public String getOpenIdentifier() { /* (readonly) */
+    public String getOpenIdentifier() {
         return mOpenIdentifier;
     }
 
-    public String getStartAuthenticationUrl() { /* (readonly) */
+    public String getStartAuthenticationUrl() {
         return mStartAuthenticationUrl;
     }
 
-    public JRDictionary getSocialSharingProperties() { /* (readonly) */
+    public JRDictionary getSocialSharingProperties() {
         return mSocialSharingProperties;
     }
 
@@ -246,8 +247,6 @@ public class JRProvider implements Serializable {
     }
 
     public void setUserInput(String userInput) {
-        LogUtils.logd(TAG, "[prov] user input: [" + PrefUtils.KEY_JR_USER_INPUT + mName + "]");
-
         mUserInput = userInput;
 
         PrefUtils.putString(PrefUtils.KEY_JR_USER_INPUT + this.mName, this.mUserInput);
@@ -283,7 +282,7 @@ public class JRProvider implements Serializable {
             Bitmap icon = BitmapFactory.decodeStream(c.openFileInput(iconFileName));
             if (icon != null) {
                 // Downloaded icons are all at xhdpi, but Android 2.1 doesn't have the
-                // DENSITY_XHIGH constant defined yet.  Fortunately it does the right thing
+                // DENSITY_XHIGH constant defined yet. But it does the right thing
                 // if you pass in the DPI as an int
 
                 AndroidUtils.bitmapSetDensity(icon, 320);
@@ -346,9 +345,6 @@ public class JRProvider implements Serializable {
                     if (Arrays.asList(c.fileList()).contains("providericon~" + iconFileName)) continue;
 
                     try {
-                        LogUtils.logd(TAG, "Downloading icon: " + iconFileName);
-                        // This is the only point outside of JRSession that touches Engage. Maybe move this
-                        // there?
                         URL url = new URL(JRSession.getInstance().getEngageBaseUrl()
                                 + "/cdn/images/mobile_icons/android/" + iconFileName);
                         InputStream is = url.openStream();
@@ -378,8 +374,6 @@ public class JRProvider implements Serializable {
     }
 
     public void loadDynamicVariables() {
-        LogUtils.logd("JRProvider", "[prov] user input: " + PrefUtils.KEY_JR_USER_INPUT + mName);
-
         mUserInput = PrefUtils.getString(PrefUtils.KEY_JR_USER_INPUT + mName, "");
         mForceReauth = PrefUtils.getBoolean(PrefUtils.KEY_JR_FORCE_REAUTH + mName, false);
     }
@@ -420,7 +414,7 @@ public class JRProvider implements Serializable {
             error = e;
         }
 
-        Log.e(TAG, "Error parsing provider color: ", error);
+        throwDebugException(new RuntimeException("Error parsing provider color", error));
         return getResources().getColor(R.color.jr_janrain_darkblue_lightened);
     }
 

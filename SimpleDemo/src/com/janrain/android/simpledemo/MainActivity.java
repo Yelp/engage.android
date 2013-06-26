@@ -58,7 +58,7 @@ public class MainActivity extends FragmentActivity {
     private final Jump.SignInResultHandler signInResultHandler = new Jump.SignInResultHandler() {
         public void onSuccess() {
             AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
-            b.setMessage("success");
+            b.setMessage("Sign-in complete.");
             b.setNeutralButton("Dismiss", null);
             b.show();
         }
@@ -113,7 +113,7 @@ public class MainActivity extends FragmentActivity {
         Jump.init(this, engageAppId, captureDomain, captureClientId, captureLocale, captureSignInFormName,
                 signInType);
 
-        //enableStrictMode();
+        enableStrictMode();
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
         linearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -216,20 +216,20 @@ public class MainActivity extends FragmentActivity {
     }
 
     private static void enableStrictMode() {
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectAll()
-                .detectDiskReads()
-                .detectDiskWrites()
-                .detectNetwork()   // or .detectAll() for all detectable problems
-                .penaltyLog()
-                .penaltyDeath()
-                .build());
+        //StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+        //        .detectAll()
+        //        .detectDiskReads()
+        //        .detectDiskWrites()
+        //        .detectNetwork()   // or .detectAll() for all detectable problems
+        //        .penaltyLog()
+        //        .penaltyDeath()
+        //        .build());
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .detectLeakedSqlLiteObjects()
-                //.detectLeakedClosableObjects()
+                //.detectAll()
+                //.detectLeakedSqlLiteObjects()
+                .detectLeakedClosableObjects()
                 .penaltyLog()
-                .penaltyDeath()
+                //.penaltyDeath()
                 .build());
     }
 }

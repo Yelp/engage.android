@@ -32,21 +32,19 @@
 
 package com.janrain.android.capture;
 
+import com.janrain.android.utils.IoUtils;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static com.janrain.android.utils.IOUtils.readFromStream;
+import static com.janrain.android.utils.LogUtils.throwDebugException;
 
-/**
- * Created with IntelliJ IDEA. User: nathan Date: 1/24/13 Time: 1:47 PM To change this template use File |
- * Settings | File Templates.
- */
 public class CaptureStringUtils {
-    public static String readFully(InputStream is) {
+    public static String readAndClose(InputStream is) {
         try {
-            return new String(readFromStream(is, false));
+            return new String(IoUtils.readAndClose(is, false));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throwDebugException(new RuntimeException(e));
+            return null;
         }
     }
 

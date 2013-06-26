@@ -51,7 +51,7 @@ package com.janrain.android.engage.net;
 
 import android.os.Handler;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.utils.IOUtils;
+import com.janrain.android.utils.IoUtils;
 import com.janrain.android.utils.LogUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -62,7 +62,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultRedirectHandler;
@@ -74,11 +76,9 @@ import org.apache.http.protocol.HttpContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
-import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
 
 import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnection;
-import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromResponse;
 
 /**
  * @internal
@@ -91,97 +91,88 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
                     "(KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
     private static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
     private static final String ENCODING_GZIP = "gzip";
+    private static final DefaultHttpClient mHttpClient = setupHttpClient();
 
     private AsyncHttpClient() {}
 
+    static private DefaultHttpClient setupHttpClient() {
+        HttpParams connectionParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(connectionParams, 30000); // thirty seconds
+        HttpConnectionParams.setSoTimeout(connectionParams, 30000);
+        HttpClientParams.setRedirecting(connectionParams, false);
+        DefaultHttpClient client = new DefaultHttpClient(connectionParams);
+
+        evolveGzipEncoding(client);
+        //disableRedirects(client);
+
+        return client;
+    }
+
+    private static void evolveGzipEncoding(DefaultHttpClient client) {
+        client.addRequestInterceptor(new HttpRequestInterceptor() {
+            public void process(HttpRequest request, HttpContext context) {
+                if (!request.containsHeader(HEADER_ACCEPT_ENCODING)) {
+                    request.addHeader(HEADER_ACCEPT_ENCODING, ENCODING_GZIP);
+                }
+            }
+        });
+
+        client.addResponseInterceptor(new HttpResponseInterceptor() {
+            public void process(HttpResponse response, HttpContext context) {
+                final HttpEntity entity = response.getEntity();
+                if (entity == null) return;
+                final Header encoding = entity.getContentEncoding();
+                if (encoding != null) {
+                    for (HeaderElement element : encoding.getElements()) {
+                        if (element.getName().equalsIgnoreCase(ENCODING_GZIP)) {
+                            response.setEntity(new InflatingEntity(response.getEntity()));
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * @internal
+     * From the Google IO app:
+     * Simple {@link HttpEntityWrapper} that inflates the wrapped
+     * {@link HttpEntity} by passing it through {@link GZIPInputStream}.
+     */
+    private static class InflatingEntity extends HttpEntityWrapper {
+        public InflatingEntity(HttpEntity wrapped) {
+            super(wrapped);
+        }
+
+        @Override
+        public InputStream getContent() throws IOException {
+            return new GZIPInputStream(wrappedEntity.getContent());
+        }
+
+        @Override
+        public boolean isRepeatable() {
+            return false;
+        }
+
+        @Override
+        public long getContentLength() {
+            return -1;
+        }
+    }
+
     /*package*/ static class HttpExecutor implements Runnable {
-        final private Handler mHandler;
-        final private ManagedConnection mConn;
-        final private DefaultHttpClient mHttpClient;
+        private final Handler mHandler;
+        private final ManagedConnection mConn;
+        private final JRConnectionManager.HttpCallback callBack;
 
         /*package*/ HttpExecutor(Handler handler, ManagedConnection managedConnection) {
             mConn = managedConnection;
             mHandler = handler;
-            mHttpClient = setupHttpClient();
-        }
-
-        private DefaultHttpClient setupHttpClient() {
-            HttpParams connectionParams = new BasicHttpParams();
-            HttpConnectionParams.setConnectionTimeout(connectionParams, 30000); // thirty seconds
-            HttpConnectionParams.setSoTimeout(connectionParams, 30000);
-            DefaultHttpClient client = new DefaultHttpClient(connectionParams);
-
-            evolveGzipEncoding(client);
-
-            if (!mConn.getFollowRedirects()) disableRedirects(client);
-
-            return client;
-        }
-
-        private static void evolveGzipEncoding(DefaultHttpClient client) {
-            client.addRequestInterceptor(new HttpRequestInterceptor() {
-                public void process(HttpRequest request, HttpContext context) {
-                    if (!request.containsHeader(HEADER_ACCEPT_ENCODING)) {
-                        request.addHeader(HEADER_ACCEPT_ENCODING, ENCODING_GZIP);
-                    }
-                }
-            });
-
-            client.addResponseInterceptor(new HttpResponseInterceptor() {
-                public void process(HttpResponse response, HttpContext context) {
-                    final HttpEntity entity = response.getEntity();
-                    if (entity == null) return;
-                    final Header encoding = entity.getContentEncoding();
-                    if (encoding != null) {
-                        for (HeaderElement element : encoding.getElements()) {
-                            if (element.getName().equalsIgnoreCase(ENCODING_GZIP)) {
-                                response.setEntity(new InflatingEntity(response.getEntity()));
-                                break;
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        private static void disableRedirects(DefaultHttpClient client) {
-            client.setRedirectHandler(new DefaultRedirectHandler() {
-                @Override
-                public boolean isRedirectRequested(HttpResponse response, HttpContext context) {
-                    if (super.isRedirectRequested(response, context)) {
-                        LogUtils.loge("error: ignoring redirect");
-                    }
-                    return false;
-                }
-            });
-        }
-
-        /**
-         * @internal 
-         * From the Google IO app:
-         * Simple {@link HttpEntityWrapper} that inflates the wrapped
-         * {@link HttpEntity} by passing it through {@link GZIPInputStream}.
-         */
-        private static class InflatingEntity extends HttpEntityWrapper {
-            public InflatingEntity(HttpEntity wrapped) {
-                super(wrapped);
-            }
-
-            @Override
-            public InputStream getContent() throws IOException {
-                return new GZIPInputStream(wrappedEntity.getContent());
-            }
-
-            @Override
-            public long getContentLength() {
-                return -1;
-            }
+            callBack = new JRConnectionManager.HttpCallback(mConn);
         }
 
         public void run() {
-            LogUtils.logd("[run] BEGIN, URL: " + mConn.getRequestUrl());
-
-            JRConnectionManager.HttpCallback callBack = new JRConnectionManager.HttpCallback(mConn);
             try {
                 InetAddress ia = InetAddress.getByName(mConn.getHttpRequest().getURI().getHost());
                 LogUtils.logd("Connecting to: " + ia.getHostAddress());
@@ -191,12 +182,12 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
                     mConn.getHttpRequest().addHeader(header.getName(), header.getValue());
                 }
 
-                LogUtils.logd("Headers: " + Arrays.asList(mConn.getHttpRequest().getAllHeaders()).toString());
-                if (mConn.getHttpRequest() instanceof HttpPost) {
-                    HttpEntity entity = ((HttpPost) mConn.getHttpRequest()).getEntity();
-                    String postBody = new String(IOUtils.readFromStream(entity.getContent(), false));
-                    LogUtils.logd("POST to " + mConn.getRequestUrl() + ": " + postBody);
-                }
+                //LogUtils.logd("Headers: " + Arrays.asList(mConn.getHttpRequest().getAllHeaders()).toString());
+                //if (mConn.getHttpRequest() instanceof HttpPost) {
+                //    HttpEntity entity = ((HttpPost) mConn.getHttpRequest()).getEntity();
+                //    String postBody = new String(IoUtils.readAndClose(entity.getContent(), false));
+                //    LogUtils.logd("POST to " + mConn.getRequestUrl() + ": " + postBody);
+                //}
 
                 HttpResponse response;
                 try {
@@ -216,13 +207,17 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
                 // entity before we fetch it.
                 response.getStatusLine().getStatusCode();
 
-                HttpResponseHeaders headers = fromResponse(response, mConn.getHttpRequest());
+                HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response,
+                        mConn.getHttpRequest());
 
                 HttpEntity entity = response.getEntity();
-                byte[] responseBody = entity == null ?
-                        new byte[0] :
-                        IOUtils.readFromStream(entity.getContent(), true);
-                if (entity != null) entity.consumeContent();
+                byte[] responseBody;
+                if (entity == null) {
+                    responseBody = new byte[0];
+                } else {
+                    responseBody = IoUtils.readAndClose(entity.getContent(), true);
+                    entity.consumeContent();
+                }
 
                 AsyncHttpResponse ahr;
                 String statusLine = response.getStatusLine().toString();
@@ -234,10 +229,13 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
                     // Normal success
                 case HttpStatus.SC_NOT_MODIFIED:
                     // From mobile_config_and_baseurl called with an Etag
-                case HttpStatus.SC_CREATED:
-                    // Response from the Engage trail creation and maybe URL shortening calls
+                case HttpStatus.SC_MOVED_PERMANENTLY:
+                case HttpStatus.SC_SEE_OTHER:
+                case HttpStatus.SC_TEMPORARY_REDIRECT:
                 case HttpStatus.SC_MOVED_TEMPORARILY:
                     // for UPS-1390 - don't error on 302s from token URL
+                case HttpStatus.SC_CREATED:
+                    // Response from the Engage trail creation and maybe URL shortening calls
                     LogUtils.logd(statusLine + ": " + bodyStr.substring(0, bodySubStrLen));
                     ahr = new AsyncHttpResponse(mConn, null, headers, responseBody);
                     break;
@@ -250,7 +248,7 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
                 invokeCallback(callBack);
             } catch (IOException e) {
                 LogUtils.loge(this.toString());
-                LogUtils.loge("Problem executing HTTP request.", e);
+                LogUtils.loge("IOException while executing HTTP request.", e);
                 mConn.setResponse(new AsyncHttpResponse(mConn, e, null, null));
                 invokeCallback(callBack);
             } catch (AbortedRequestException e) {
