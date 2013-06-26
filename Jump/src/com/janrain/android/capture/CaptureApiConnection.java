@@ -145,8 +145,8 @@ public class CaptureApiConnection {
                                                   byte[] payload,
                                                   String requestUrl,
                                                   Object tag) {
-                        LogUtils.loge("failed request (" + responseHeaders.getResponseCode() + " ): " +
-                                requestUrl, ex);
+                        int responseCode = responseHeaders == null ? -1 : responseHeaders.getResponseCode();
+                        LogUtils.loge("failed request (" + responseCode + " ): " + requestUrl, ex);
                         callback.run(null);
                     }
                 };

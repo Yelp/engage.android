@@ -63,6 +63,7 @@ import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.HttpEntityWrapper;
@@ -72,6 +73,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -174,12 +176,13 @@ import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnecti
 
         public void run() {
             try {
-                InetAddress ia = InetAddress.getByName(mConn.getHttpRequest().getURI().getHost());
+                HttpUriRequest request = mConn.getHttpRequest();
+                InetAddress ia = InetAddress.getByName(request.getURI().getHost());
                 LogUtils.logd("Connecting to: " + ia.getHostAddress());
 
-                mConn.getHttpRequest().addHeader("User-Agent", USER_AGENT);
+                request.addHeader("User-Agent", USER_AGENT);
                 for (NameValuePair header : mConn.getRequestHeaders()) {
-                    mConn.getHttpRequest().addHeader(header.getName(), header.getValue());
+                    request.addHeader(header.getName(), header.getValue());
                 }
 
                 //LogUtils.logd("Headers: " + Arrays.asList(mConn.getHttpRequest().getAllHeaders()).toString());
@@ -191,31 +194,32 @@ import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnecti
 
                 HttpResponse response;
                 try {
-                    response = mHttpClient.execute(mConn.getHttpRequest());
+                    Object t = mHttpClient.getConnectionManager();
+                    response = mHttpClient.execute(request);
                 } catch (IOException e) {
                     // XXX Mediocre way to match exceptions from aborted requests:
-                    if (mConn.getHttpRequest().isAborted() && e.getMessage().contains("abort")) {
+                    if (request.isAborted() && e.getMessage().contains("abort")) {
                         throw new AbortedRequestException();
                     } else {
                         throw e;
                     }
                 }
 
-                if (mConn.getHttpRequest().isAborted()) throw new AbortedRequestException();
+                if (request.isAborted()) throw new AbortedRequestException();
 
                 // Fetching the status code allows the response interceptor to have a chance to un-gzip the
                 // entity before we fetch it.
                 response.getStatusLine().getStatusCode();
 
-                HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response,
-                        mConn.getHttpRequest());
+                HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response, request);
 
                 HttpEntity entity = response.getEntity();
                 byte[] responseBody;
                 if (entity == null) {
                     responseBody = new byte[0];
                 } else {
-                    responseBody = IoUtils.readAndClose(entity.getContent(), true);
+                    //responseBody = IoUtils.readAndClose(entity.getContent(), true);
+                    responseBody = EntityUtils.toByteArray(entity)
                     entity.consumeContent();
                 }
 
