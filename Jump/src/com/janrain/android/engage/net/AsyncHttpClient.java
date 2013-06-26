@@ -59,24 +59,19 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.HttpClientParams;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.DefaultRedirectHandler;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.zip.GZIPInputStream;
 
@@ -93,77 +88,11 @@ import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnecti
                     "(KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
     private static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
     private static final String ENCODING_GZIP = "gzip";
-    private static final DefaultHttpClient mHttpClient = setupHttpClient();
 
     private AsyncHttpClient() {}
 
-    static private DefaultHttpClient setupHttpClient() {
-        HttpParams connectionParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(connectionParams, 30000); // thirty seconds
-        HttpConnectionParams.setSoTimeout(connectionParams, 30000);
-        HttpClientParams.setRedirecting(connectionParams, false);
-        DefaultHttpClient client = new DefaultHttpClient(connectionParams);
-
-        evolveGzipEncoding(client);
-        //disableRedirects(client);
-
-        return client;
-    }
-
-    private static void evolveGzipEncoding(DefaultHttpClient client) {
-        client.addRequestInterceptor(new HttpRequestInterceptor() {
-            public void process(HttpRequest request, HttpContext context) {
-                if (!request.containsHeader(HEADER_ACCEPT_ENCODING)) {
-                    request.addHeader(HEADER_ACCEPT_ENCODING, ENCODING_GZIP);
-                }
-            }
-        });
-
-        client.addResponseInterceptor(new HttpResponseInterceptor() {
-            public void process(HttpResponse response, HttpContext context) {
-                final HttpEntity entity = response.getEntity();
-                if (entity == null) return;
-                final Header encoding = entity.getContentEncoding();
-                if (encoding != null) {
-                    for (HeaderElement element : encoding.getElements()) {
-                        if (element.getName().equalsIgnoreCase(ENCODING_GZIP)) {
-                            response.setEntity(new InflatingEntity(response.getEntity()));
-                            break;
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * @internal
-     * From the Google IO app:
-     * Simple {@link HttpEntityWrapper} that inflates the wrapped
-     * {@link HttpEntity} by passing it through {@link GZIPInputStream}.
-     */
-    private static class InflatingEntity extends HttpEntityWrapper {
-        public InflatingEntity(HttpEntity wrapped) {
-            super(wrapped);
-        }
-
-        @Override
-        public InputStream getContent() throws IOException {
-            return new GZIPInputStream(wrappedEntity.getContent());
-        }
-
-        @Override
-        public boolean isRepeatable() {
-            return false;
-        }
-
-        @Override
-        public long getContentLength() {
-            return -1;
-        }
-    }
-
     /*package*/ static class HttpExecutor implements Runnable {
+        private static final DefaultHttpClient mHttpClient = setupHttpClient();
         private final Handler mHandler;
         private final ManagedConnection mConn;
         private final JRConnectionManager.HttpCallback callBack;
@@ -172,6 +101,24 @@ import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnecti
             mConn = managedConnection;
             mHandler = handler;
             callBack = new JRConnectionManager.HttpCallback(mConn);
+        }
+
+        static private DefaultHttpClient setupHttpClient() {
+            HttpParams connectionParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(connectionParams, 30000); // thirty seconds
+            HttpConnectionParams.setSoTimeout(connectionParams, 30000);
+            HttpClientParams.setRedirecting(connectionParams, false);
+            DefaultHttpClient client = new DefaultHttpClient(connectionParams);
+
+            client.addRequestInterceptor(new HttpRequestInterceptor() {
+                public void process(HttpRequest request, HttpContext context) {
+                    if (!request.containsHeader(HEADER_ACCEPT_ENCODING)) {
+                        request.addHeader(HEADER_ACCEPT_ENCODING, ENCODING_GZIP);
+                    }
+                }
+            });
+
+            return client;
         }
 
         public void run() {
@@ -194,7 +141,6 @@ import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnecti
 
                 HttpResponse response;
                 try {
-                    Object t = mHttpClient.getConnectionManager();
                     response = mHttpClient.execute(request);
                 } catch (IOException e) {
                     // XXX Mediocre way to match exceptions from aborted requests:
@@ -219,8 +165,20 @@ import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnecti
                     responseBody = new byte[0];
                 } else {
                     //responseBody = IoUtils.readAndClose(entity.getContent(), true);
-                    responseBody = EntityUtils.toByteArray(entity)
+                    responseBody = EntityUtils.toByteArray(entity);
                     entity.consumeContent();
+
+                    final Header encoding = entity.getContentEncoding();
+                    if (encoding != null) {
+                        for (HeaderElement element : encoding.getElements()) {
+                            if (element.getName().equalsIgnoreCase(ENCODING_GZIP)) {
+                                GZIPInputStream gis =
+                                        new GZIPInputStream(new ByteArrayInputStream(responseBody));
+                                responseBody = IoUtils.readAndClose(gis, true);
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 AsyncHttpResponse ahr;
