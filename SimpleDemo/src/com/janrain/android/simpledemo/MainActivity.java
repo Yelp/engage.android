@@ -66,17 +66,19 @@ public class MainActivity extends FragmentActivity {
         public void onFailure(SignInError error) {
             if (error.reason == SignInError.FailureReason.CAPTURE_API_ERROR &&
                     error.captureApiError.isMergeFlowError()) {
-                // The default merge-flow handler. Merge behavior may also be implemented by API for more
-                // control over the user experience.
-                // You can implement your own merge-flow user interface by calling
-                // Jump.showSignInDialog or Jump.performTraditionalSignIn directly, and passing in the
-                // merge-token and existing-provider-name retrieved from the error.
+                // Called below is the default merge-flow handler. Merge behavior may also be implemented by
+                // headless-native-API for more control over the user experience.
+                //
+                // To do so, call Jump.showSignInDialog or Jump.performTraditionalSignIn directly, and
+                // pass in the merge-token and existing-provider-name retrieved from `error`.
                 //
                 // String mergeToken = error.captureApiError.getMergeToken();
                 // String existingProvider = error.captureApiError.getExistingAccountIdentityProvider()
                 //
                 // (An existing-provider-name of "capture" indicates a conflict with a traditional-sign-in
-                // account.)
+                // account. You can handle this case yourself, by displaying a dialog and calling
+                // Jump.performTraditionalSignIn, or you can call Jump.showSignInDialog(..., "capture") and
+                // a library-provided dialog will be provided.)
 
                 Jump.startDefaultMergeFlowUi(MainActivity.this, error, signInResultHandler);
             } else {

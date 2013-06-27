@@ -406,8 +406,8 @@ public class Jump {
                                 //     Jump.performTraditionalSignIn(String signInName, String password,
                                 //         final SignInResultHandler handler, final String mergeToken);
                                 //
-                                // ... instead of showSignInDialog if you wish to present a traditional
-                                // sign-in dialog yourself.
+                                // ... instead of showSignInDialog if you wish to present your own dialog
+                                // and then use the headless API to perform the traditional sign-in.
                                 Jump.showSignInDialog(fromActivity,
                                         existingProvider,
                                         signInResultHandler,
