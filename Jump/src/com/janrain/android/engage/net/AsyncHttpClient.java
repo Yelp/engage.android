@@ -61,6 +61,7 @@ import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -73,6 +74,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
 
 import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnection;
@@ -125,19 +127,18 @@ import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnecti
             try {
                 HttpUriRequest request = mConn.getHttpRequest();
                 InetAddress ia = InetAddress.getByName(request.getURI().getHost());
-                LogUtils.logd("Connecting to: " + ia.getHostAddress());
+                LogUtils.logd("Requesting: " + mConn.getRequestUrl() + " (" + ia.getHostAddress() + ")");
 
                 request.addHeader("User-Agent", USER_AGENT);
                 for (NameValuePair header : mConn.getRequestHeaders()) {
                     request.addHeader(header.getName(), header.getValue());
                 }
 
-                //LogUtils.logd("Headers: " + Arrays.asList(mConn.getHttpRequest().getAllHeaders()).toString());
-                //if (mConn.getHttpRequest() instanceof HttpPost) {
-                //    HttpEntity entity = ((HttpPost) mConn.getHttpRequest()).getEntity();
-                //    String postBody = new String(IoUtils.readAndClose(entity.getContent(), false));
-                //    LogUtils.logd("POST to " + mConn.getRequestUrl() + ": " + postBody);
-                //}
+                LogUtils.logd("Headers: " + Arrays.asList(mConn.getHttpRequest().getAllHeaders()).toString());
+                if (mConn.getHttpRequest() instanceof HttpPost) {
+                    String postBody = EntityUtils.toString(((HttpPost) mConn.getHttpRequest()).getEntity());
+                    LogUtils.logd("POST to " + mConn.getRequestUrl() + ": " + postBody);
+                }
 
                 HttpResponse response;
                 try {

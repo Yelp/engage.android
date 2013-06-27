@@ -114,6 +114,7 @@ public class MainActivity extends FragmentActivity {
                 signInType);
 
         enableStrictMode();
+
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
         linearLayout.setOrientation(LinearLayout.VERTICAL);

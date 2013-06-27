@@ -42,7 +42,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.params.HttpParams;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -115,7 +114,7 @@ public class JRConnectionManager {
         }
 
         managedConnection.mHttpRequest = request;
-        
+
         if (managedConnection.getFollowRedirects()) {
             HttpClientParams.setRedirecting(request.getParams(), true);
         }
@@ -137,8 +136,6 @@ public class JRConnectionManager {
             // operate synchronously
             new AsyncHttpClient.HttpExecutor(null, managedConnection).run();
         }
-
-        LogUtils.logd();
     }
 
     public static void stopConnectionsForDelegate(JRConnectionManagerDelegate delegate) {
