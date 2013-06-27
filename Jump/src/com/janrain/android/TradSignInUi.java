@@ -202,10 +202,7 @@ public class TradSignInUi extends JRCustomInterfaceConfiguration {
                             // remove this branch once CAP-1602 is out, and open a ticket to improve messages
                             // display
                             Iterator i = jmo.keys();
-                            while (i.hasNext()) {
-                                String k = (String) i.next();
-                                jsonMessages.put(jmo.opt(k));
-                            }
+                            while (i.hasNext()) jsonMessages.put(jmo.opt((String) i.next()));
                         }
                         String html = "";
                         for (int i=0; i<jsonMessages.length(); i++) {
