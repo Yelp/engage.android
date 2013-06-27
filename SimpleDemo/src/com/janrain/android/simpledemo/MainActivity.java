@@ -219,18 +219,19 @@ public class MainActivity extends FragmentActivity {
     }
 
     private static void enableStrictMode() {
-        //StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-        //        .detectAll()
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectAll()
         //        .detectDiskReads()
         //        .detectDiskWrites()
         //        .detectNetwork()   // or .detectAll() for all detectable problems
-        //        .penaltyLog()
+                .penaltyLog()
         //        .penaltyDeath()
-        //        .build());
+                .build());
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                //.detectAll()
+                .detectAll()
+                //.detectActivityLeaks()
                 //.detectLeakedSqlLiteObjects()
-                .detectLeakedClosableObjects()
+                //.detectLeakedClosableObjects()
                 .penaltyLog()
                 //.penaltyDeath()
                 .build());

@@ -48,11 +48,16 @@ import android.widget.TextView;
 import com.janrain.android.capture.Capture;
 import com.janrain.android.capture.CaptureApiConnection;
 import com.janrain.android.capture.CaptureApiError;
+import com.janrain.android.capture.CaptureJsonUtils;
 import com.janrain.android.capture.CaptureRecord;
 import com.janrain.android.engage.ui.JRCustomInterfaceConfiguration;
 import com.janrain.android.engage.ui.JRCustomInterfaceView;
 import com.janrain.android.utils.LogUtils;
 import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.AUTHENTICATION_CANCELED_BY_USER;
 import static com.janrain.android.R.string.jr_capture_trad_signin_bad_password;
@@ -191,6 +196,17 @@ public class TradSignInUi extends JRCustomInterfaceConfiguration {
                 public void onFailure(CaptureApiError error) {
                     if (error.raw_response.optJSONArray("messages") != null) {
                         JSONArray jsonMessages = error.raw_response.optJSONArray("messages");
+                        JSONObject jmo = error.raw_response.optJSONObject("messages");
+                        if (jsonMessages == null) jsonMessages = new JSONArray();
+                        if (jmo != null) {
+                            // remove this branch once CAP-1602 is out, and open a ticket to improve messages
+                            // display
+                            Iterator i = jmo.keys();
+                            while (i.hasNext()) {
+                                String k = (String) i.next();
+                                jsonMessages.put(jmo.opt(k));
+                            }
+                        }
                         String html = "";
                         for (int i=0; i<jsonMessages.length(); i++) {
                             html += "&#8226; " + jsonMessages.optString(i) + "<br/>\n";
