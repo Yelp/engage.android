@@ -386,7 +386,6 @@ public class Jump {
                                                SignInError error,
                                                final SignInResultHandler signInResultHandler) {
         final String mergeToken = error.captureApiError.getMergeToken();
-
         final String existingProvider = error.captureApiError.getExistingAccountIdentityProvider();
         String conflictingIdentityProvider = error.captureApiError.getConflictingIdentityProvider();
         String conflictingIdpNameLocalized = JRProvider.getLocalizedName(conflictingIdentityProvider);

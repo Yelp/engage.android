@@ -228,7 +228,7 @@ public class MainActivity extends FragmentActivity {
         //        .penaltyDeath()
                 .build());
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
+                //.detectAll()
                 //.detectActivityLeaks()
                 //.detectLeakedSqlLiteObjects()
                 //.detectLeakedClosableObjects()
