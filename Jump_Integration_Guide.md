@@ -29,11 +29,11 @@ Basic use flow:
 
 1. Gather your configuration details
 2. Declare the library project dependency, and add the required elements to your `AndroidManifest.xml` file.
-4. Initialize the library
-3. Start a sign-in
-6. Modify the profile
-7. Send record updates
-8. Persist the local user object
+3. Initialize the library
+4. Start a sign-in
+5. Modify the profile
+6. Send record updates
+7. Persist the local user object
 
 ## Gather your Configuration Details
 
@@ -250,12 +250,12 @@ Example:
             String existingIdpNameLocalized = JRProvider.getLocalizedName(conflictingIdentityProvider);
 
             AlertDialog alertDialog = new AlertDialog.Builder(fromActivity)
-                    .setTitle(fromActivity.getString(R.string.jr_merge_flow_default_dialog_title))
+                    .setTitle("Email Address Conflict")
                     .setCancelable(false)
-                    .setMessage(fromActivity.getString(R.string.jr_merge_flow_default_dialog_message,
-                            conflictingIdpNameLocalized,
-                            existingIdpNameLocalized))
-                    .setPositiveButton(fromActivity.getString(R.string.jr_merge_flow_default_merge_button),
+                    .setMessage("The " + conflictingIdpNameLocalized + " account that you signed in with has"
+                            + " the same email address as an existing user. Sign in with " +
+                            existingIdpNameLocalized + " to continue.")
+                    .setPositiveButton(fromActivity.getString("Merge"),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     // When existingProvider == "capture" you can also call ...
