@@ -128,7 +128,7 @@ public class MainActivity extends FragmentActivity {
         makeButton(linearLayout, "Test Share").setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 JREngage.getInstance().showSocialPublishingDialog(MainActivity.this,
-                        new JRActivityObject("aslkdfj", "google.com"));
+                        new JRActivityObject("aslkdfj", "http://google.com"));
             }
         });
         //Button refreshAccesstoken = makeButton(linearLayout, "Refresh Access Token");
