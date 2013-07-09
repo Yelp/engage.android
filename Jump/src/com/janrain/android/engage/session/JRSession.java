@@ -754,7 +754,12 @@ public class JRSession implements JRConnectionManagerDelegate {
         if (provider == null) {
             throwDebugException(new IllegalStateException("Unknown provider name:" + providerName));
         } else {
-            deleteWebViewCookiesForDomains(getApplicationContext(), provider.getCookieDomains());
+            List<String> cookieDomains = provider.getCookieDomains();
+            if (cookieDomains.size() == 0) {
+                provider.setForceReauth(true); // MOB-135
+            } else {
+                deleteWebViewCookiesForDomains(getApplicationContext(), cookieDomains);
+            }
         }
 
         if (mAuthenticatedUsersByProvider == null) throwDebugException(new IllegalStateException());
@@ -932,7 +937,6 @@ public class JRSession implements JRConnectionManagerDelegate {
         }
 
         String providerName = mCurrentlyAuthenticatingProvider.getName();
-        //mCurrentlyAuthenticatingProvider.setForceReauth(true);
         signOutUserForProvider(providerName);
 
         setCurrentlyAuthenticatingProvider(null);

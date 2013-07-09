@@ -191,6 +191,9 @@ public class JRProvider implements Serializable {
         getProviderLogo(JREngage.getApplicationContext());
     }
 
+    /**
+     * Not null
+     */
     public List<String> getCookieDomains() { /* (readonly) */
         return mCookieDomains;
     }
