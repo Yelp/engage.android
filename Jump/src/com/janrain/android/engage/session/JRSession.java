@@ -64,6 +64,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.janrain.android.utils.LogUtils.throwDebugException;
 import static com.janrain.android.utils.WebViewUtils.deleteWebViewCookiesForDomains;
@@ -722,11 +723,14 @@ public class JRSession implements JRConnectionManagerDelegate {
                     mCurrentlyAuthenticatingProvider.getCookieDomains());
         }
 
-        fullStartUrl = String.format("%s%s?%s%sdevice=android&extended=true",
+        String uuid = this.getUniqueIdentifier();
+
+        fullStartUrl = String.format("%s%s?%s%sdevice=android&extended=true&installation_id=%s",
                 mRpBaseUrl,
                 mCurrentlyAuthenticatingProvider.getStartAuthenticationUrl(),
                 oid,
-                (forceReauth ? "force_reauth=true&" : "")
+                (forceReauth ? "force_reauth=true&" : ""),
+                AndroidUtils.urlEncode(uuid)
         );
 
         LogUtils.logd("startUrl: " + fullStartUrl);
@@ -738,6 +742,19 @@ public class JRSession implements JRConnectionManagerDelegate {
             throwDebugException(new RuntimeException("URL create failed for string: " + fullStartUrl, e));
         }
         return url;
+    }
+
+    private String getUniqueIdentifier() {
+        String idString = PrefUtils.getString(PrefUtils.KEY_JR_UNIVERSALLY_UNIQUE_ID, null);
+
+        if (idString == null) {
+            UUID id = UUID.randomUUID();
+            idString = id.toString();
+
+            PrefUtils.putString(PrefUtils.KEY_JR_UNIVERSALLY_UNIQUE_ID, idString);
+        }
+
+        return idString;
     }
 
     public JRAuthenticatedUser getAuthenticatedUserForProvider(JRProvider provider) {

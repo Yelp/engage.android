@@ -53,6 +53,7 @@ public final class PrefUtils {
     public static final String KEY_JR_ENGAGE_LIBRARY_VERSION = "jr_engage_library_version";
     public static final String KEY_JR_USER_COMMENT = "jr_user_comment";
     public static final String KEY_JR_USER_COMMENT_TIME = "jr_user_comment_time";
+    public static final String KEY_JR_UNIVERSALLY_UNIQUE_ID = "jr_universally_unique_id";
 
     private PrefUtils() {}
 
