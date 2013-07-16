@@ -33,6 +33,7 @@ package com.janrain.android.simpledemo;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
@@ -59,43 +60,28 @@ public class MainActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //elgfmldanecpmanecfok <- no pub_stream
-
-        //capture testing/staging
-        //String engageAppId = "appcfamhnpkagijaeinl";
-        //String captureDomain = "mobile-testing-2.janraincapture.com";
-        //String captureClientId = "atasaz59p8cyecmbzmcwkbthsyq3wrxh";
-        //String captureLocale = "en-US";
-        //String captureSignInFormName = "signinForm";
-        //Jump.TraditionalSignInType signInType = Jump.TraditionalSignInType.EMAIL;
-
-        //capture prod
-        String engageAppId = "appcfamhnpkagijaeinl";
-        String captureDomain = "mobile-dev.janraincapture.com";
-        String captureClientId = "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6";
-        String captureLocale = "en-US";
-        String captureSignInFormName = "signinForm";
-        Jump.TraditionalSignInType signInType = Jump.TraditionalSignInType.EMAIL;
-
-        Jump.init(this, engageAppId, captureDomain, captureClientId, captureLocale, captureSignInFormName,
-                signInType);
-
         //enableStrictMode();
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
-        Button testAuth = makeButton(linearLayout, "Test Capture Auth");
-        Button dumpRecord = makeButton(linearLayout, "Dump Record to Log");
-        Button touchRecord = makeButton(linearLayout, "Edit About Me Attribute");
-        Button syncRecord = makeButton(linearLayout, "Sync Record");
-        makeButton(linearLayout, "Test Share").setOnClickListener(new View.OnClickListener() {
+        Button testAuth = addButton(linearLayout, "Test Capture Auth");
+        Button dumpRecord = addButton(linearLayout, "Dump Record to Log");
+        Button touchRecord = addButton(linearLayout, "Edit About Me Attribute");
+        Button syncRecord = addButton(linearLayout, "Sync Record");
+        addButton(linearLayout, "Test Share").setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 JREngage.getInstance().showSocialPublishingDialog(MainActivity.this,
                         new JRActivityObject("aslkdfj", "google.com"));
             }
         });
-        //Button refreshAccesstoken = makeButton(linearLayout, "Refresh Access Token");
+        //Button refreshAccesstoken = addButton(linearLayout, "Refresh Access Token");
+
+        addButton(linearLayout, "Traditional Registration").setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                MainActivity.this.startActivity(new Intent(MainActivity.this, RegistrationActivity.class));
+            }
+        });
 
         setContentView(linearLayout);
 
@@ -182,7 +168,7 @@ public class MainActivity extends FragmentActivity {
         });
     }
 
-    private Button makeButton(LinearLayout linearLayout, String label) {
+    private Button addButton(LinearLayout linearLayout, String label) {
         Button button = new Button(this);
         button.setText(label);
         button.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
