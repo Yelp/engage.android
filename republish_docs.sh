@@ -16,9 +16,8 @@ gh_docs_from_branch=`git describe`
 
 git checkout gh-pages
 git pull
-git rm -r gh_docs
-mv gh_docs_temp gh_docs
-git add gh_docs
+git rm -r docs/
+mv gh_docs_temp docs
+git add docs
 git commit -am "republish docs from $gh_docs_from_branch"
 git checkout -
-
