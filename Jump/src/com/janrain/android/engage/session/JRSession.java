@@ -111,6 +111,7 @@ public class JRSession implements JRConnectionManagerDelegate {
     private String mAppId;
     private String mRpBaseUrl;
     private String mUrlEncodedAppName;
+    private String mUniqueIdentifier;
 
     private boolean mConfigDone = false;
     private String mOldEtag;
@@ -165,6 +166,7 @@ public class JRSession implements JRConnectionManagerDelegate {
 
         mAppId = appId;
         mTokenUrl = tokenUrl;
+        mUniqueIdentifier = this.getUniqueIdentifier();
 
         ApplicationInfo ai = AndroidUtils.getApplicationInfo();
         String appName = getApplicationContext().getPackageManager().getApplicationLabel(ai).toString();
@@ -723,14 +725,12 @@ public class JRSession implements JRConnectionManagerDelegate {
                     mCurrentlyAuthenticatingProvider.getCookieDomains());
         }
 
-        String uuid = this.getUniqueIdentifier();
-
         fullStartUrl = String.format("%s%s?%s%sdevice=android&extended=true&installation_id=%s",
                 mRpBaseUrl,
                 mCurrentlyAuthenticatingProvider.getStartAuthenticationUrl(),
                 oid,
                 (forceReauth ? "force_reauth=true&" : ""),
-                AndroidUtils.urlEncode(uuid)
+                AndroidUtils.urlEncode(mUniqueIdentifier)
         );
 
         LogUtils.logd("startUrl: " + fullStartUrl);
