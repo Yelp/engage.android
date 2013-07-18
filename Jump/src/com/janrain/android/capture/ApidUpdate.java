@@ -55,12 +55,8 @@ import java.util.Set;
     }
 
     @Override
-    /*package*/ URL getUrlFor() {
-        try {
-            return new URL("https://" + Jump.getCaptureDomain() + "/entity.update");
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Unexpected", e);
-        }
+    /*package*/ String getUrlFor() {
+        return "/entity.update";
     }
 
     @Override

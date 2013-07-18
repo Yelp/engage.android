@@ -125,6 +125,18 @@ public final class CollectionUtils {
         return retMap;
     }
 
+    //public static <K, R> ArrayList<R> collectValues(Map<K, R> map, Function<Boolean, Map.Entry> f) {
+    //    ArrayList<R> retList = new ArrayList<R>();
+    //    for (Map.Entry<K, R> e : map.entrySet()) if (f.operate(e)) retList.add(e.getValue());
+    //    return retList;
+    //}
+
+    public static <K, R> HashMap<K, R> filter(Map<K, R> map, Function<Boolean, Map.Entry> f) {
+        HashMap<K, R> retMap = new HashMap<K, R>();
+        for (Map.Entry<K, R> e : map.entrySet()) if (f.operate(e)) retMap.put(e.getKey(), e.getValue());
+        return retMap;
+    }
+
     /**
      * Maps a function f onto the values of a list list. Returns a new list with with the result.
      * @param list

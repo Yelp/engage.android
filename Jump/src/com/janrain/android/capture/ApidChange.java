@@ -65,7 +65,7 @@ import java.util.regex.Pattern;
         return toString().equals(obj.toString()) && obj instanceof ApidChange;
     }
 
-    /*package*/ abstract URL getUrlFor();
+    /*package*/ abstract String getUrlFor();
 
     ///*package*/ void writeConnectionBody(URLConnection urlConnection, String accessToken) throws IOException {
     //    Set<Pair<String, String>> params = getBodyParams();

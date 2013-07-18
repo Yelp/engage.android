@@ -41,6 +41,7 @@ import android.widget.Toast;
 import com.janrain.android.Jump;
 import com.janrain.android.capture.CaptureApiError;
 import com.janrain.android.capture.CaptureRecord;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -66,6 +67,15 @@ public class RegistrationActivity extends Activity {
         lastName = getEditTextString(trad_reg_last_name);
         password = getEditTextString(trad_reg_password);
         JSONObject newUser = new JSONObject();
+        try {
+            newUser.put("email", email)
+                    .put("displayName", displayName)
+                    .put("givenName", firstName)
+                    .put("familyName", lastName)
+                    .put("password", password);
+        } catch (JSONException e) {
+            throw new RuntimeException("Unexpected", e);
+        }
 
         Jump.registerNewUser(newUser, null, new Jump.RegistrationResultHandler() {
             public void onSuccess() {

@@ -177,7 +177,7 @@ public class CaptureRecord extends JSONObject {
         //String domain = "test-multi.janraincapture.com";
         String domain = Jump.getCaptureDomain();
 
-        CaptureApiConnection c = new CaptureApiConnection("https://" + domain + "/access/getAccessToken");
+        CaptureApiConnection c = new CaptureApiConnection("/access/getAccessToken");
         String date = CAPTURE_API_SIGNATURE_DATE_FORMAT.format(new Date());
         Set<Pair<String, String>> params = new HashSet<Pair<String, String>>();
         //params.add(new Pair<String, String>("application_id", "fvbamf9kkkad3gnd9qyb4ggw6w"));
@@ -259,7 +259,7 @@ public class CaptureRecord extends JSONObject {
             }
         };
 
-        CaptureApiConnection connection = new CaptureApiConnection(change.getUrlFor().toString());
+        CaptureApiConnection connection = new CaptureApiConnection(change.getUrlFor());
         connection.addAllToParams(params);
         connection.fetchResponseAsJson(jsonCallback);
     }

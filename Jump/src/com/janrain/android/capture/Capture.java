@@ -39,7 +39,12 @@ import static com.janrain.android.Jump.TraditionalSignInType;
 import static com.janrain.android.Jump.TraditionalSignInType.EMAIL;
 import static com.janrain.android.Jump.getCaptureClientId;
 import static com.janrain.android.Jump.getCaptureDomain;
+import static com.janrain.android.utils.LogUtils.throwDebugException;
 
+/**
+ * This class implements Capture operations
+ * It's not meant to be used directly, but rather through com.janrain.android.Jump
+ */
 public class Capture {
     private Capture() {}
 
@@ -55,7 +60,6 @@ public class Capture {
                                                                 TraditionalSignInType type,
                                                                 SignInResultHandler handler,
                                                                 String mergeToken) {
-
         /**
          * client_id
          * locale
@@ -67,16 +71,16 @@ public class Capture {
          * attributeUpdates
          */
         String signInNameAttrName = type == EMAIL ? "email" : "username";
-        String url = "https://" + getCaptureDomain() + "/oauth/auth_native_traditional";
-        CaptureApiConnection connection = new CaptureApiConnection(url);
+        CaptureApiConnection connection = new CaptureApiConnection("/oauth/auth_native_traditional");
         connection.addAllToParams("client_id", getCaptureClientId(),
                 "locale", Jump.getCaptureLocale(),
                 "response_type", "token",
-                "redirect_uri", "http://android.library",
+                "redirect_uri", Jump.getRedirectUri(),
                 signInNameAttrName, username,
                 "password", password,
-                "form", Jump.getCaptureFormName());
+                "form", Jump.getCaptureTraditionalSignInFormName());
         connection.maybeAddParam("merge_token", mergeToken);
+        connection.maybeAddParam("bp_channel", Jump.getBackplaneChannelUrl());
         connection.fetchResponseAsJson(handler);
         return connection;
     }
@@ -142,8 +146,7 @@ public class Capture {
          */
         handler.authenticationToken = authInfoToken;
         handler.identityProvider = identityProvider;
-        CaptureApiConnection c =
-                new CaptureApiConnection("https://" + getCaptureDomain() + "/oauth/auth_native");
+        CaptureApiConnection c = new CaptureApiConnection("/oauth/auth_native");
         c.addAllToParams("client_id", getCaptureClientId(),
                 "locale", Jump.getCaptureLocale(),
                 "response_type", "token",
@@ -151,6 +154,7 @@ public class Capture {
                 "token", authInfoToken,
                 "thin_registration", "true"
         );
+        c.maybeAddParam("bp_channel", Jump.getBackplaneChannelUrl());
         c.maybeAddParam("merge_token", mergeToken);
         c.fetchResponseAsJson(handler);
         return c;
@@ -164,9 +168,64 @@ public class Capture {
         return performSocialSignIn(authInfoToken, handler, null, null);
     }
 
+    /**
+     * Registers a new user
+     *
+     * @param newUser the user record to fill the form fields for the registration form with.
+     * @param socialRegistrationToken the social registration token, or null to perform a tradtional
+     *                                registration
+     * @param handler a sign-in result handler. (Successful registrations are also sign-ins.)
+     *
+     */
+    public static CaptureApiConnection performRegistration(JSONObject newUser,
+                                                           String socialRegistrationToken,
+                                                           final SignInResultHandler handler) {
+        if (newUser == null) throwDebugException(new IllegalArgumentException("null newUser"));
+
+        // need to download flow
+        // then translate object to form fields
+        // then submit form
+
+        String registrationForm = socialRegistrationToken != null ?
+                Jump.getCaptureSocialRegistrationFormName() :
+                Jump.getCaptureTraditionalRegistrationFormName();
+
+        String url = socialRegistrationToken != null ? "/oauth/register_native" :
+                "/oauth/register_native_traditional";
+
+        CaptureApiConnection c = new CaptureApiConnection(url);
+
+        c.addAllToParams(CaptureFlowUtils.getFormFields(newUser, registrationForm, Jump.getCaptureFlow()));
+
+        //NSString *refreshSecret = [JRCaptureData generateAndStoreRefreshSecret];
+        //if (!refreshSecret)
+        //{
+        //    [JRCapture maybeDispatch:@selector(registerUserDidFailWithError:) forDelegate:delegate
+        //    withArg:[JRCaptureError invalidInternalStateErrorWithDescription:@"unable to generate secure "
+        //    "random refresh secret"]];
+        //    return;
+        //}
+
+        c.addAllToParams(
+                "client_id", Jump.getCaptureClientId(),
+                "locale", Jump.getCaptureLocale(),
+                "response_type", Jump.getResponseType(),
+                "redirect_uri", Jump.getRedirectUri(),
+                "flow_name", Jump.getCaptureFlowName(),
+                "form", registrationForm
+                //"refresh_secret", refreshSecret
+                );
+
+        c.maybeAddParam("bp_channel", Jump.getBackplaneChannelUrl());
+        c.maybeAddParam("flow_version", CaptureFlowUtils.getFlowVersion(Jump.getCaptureFlow()));
+        c.maybeAddParam("token", socialRegistrationToken);
+
+        c.fetchResponseAsJson(handler);
+        return c;
+    }
 
     /**
-     * Subclass this to
+     * @internal
      */
     public static abstract class SignInResultHandler implements FetchJsonCallback {
         private boolean canceled = false;
@@ -196,16 +255,8 @@ public class Capture {
             }
         }
 
-        /**
-         *
-         * @param record
-         */
         public abstract void onSuccess(CaptureRecord record);
 
-        /**
-         *
-         * @param error
-         */
         public abstract void onFailure(CaptureApiError error);
     }
 

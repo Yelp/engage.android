@@ -48,6 +48,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static android.text.TextUtils.join;
+import static com.janrain.android.Jump.getCaptureDomain;
 import static com.janrain.android.capture.Capture.FetchCallback;
 import static com.janrain.android.utils.AndroidUtils.urlEncode;
 import static com.janrain.android.utils.LogUtils.throwDebugException;
@@ -105,8 +106,11 @@ public class CaptureApiConnection {
 
     enum Method {POST, GET}
 
-    /*package*/ CaptureApiConnection(String url) {
-        this.url = url;
+    /*package*/ CaptureApiConnection(String relativeUrl) {
+        if (!relativeUrl.startsWith("/")) {
+            throwDebugException(new RuntimeException("bad looking relative URL. Should start with /"));
+        }
+        this.url = "https://" + getCaptureDomain() + relativeUrl;
     }
 
     /*package*/ void addAllToParams(String... params) {

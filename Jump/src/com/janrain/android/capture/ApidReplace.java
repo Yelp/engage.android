@@ -47,12 +47,8 @@ import java.util.Set;
         this.attrPath = attrPath;
     }
 
-    /*package*/ URL getUrlFor() {
-        try {
-            return new URL("https://" + Jump.getCaptureDomain() + "/entity.replace");
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Unexpected", e);
-        }
+    /*package*/ String getUrlFor() {
+        return "/entity.replace";
     }
 
     @Override
