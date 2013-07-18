@@ -26,29 +26,42 @@ Notably missing:
 Before you begin integrating you will need an array of configuration details:
 
 1. Sign in to your Engage Dashboard - https://rpxnow.com
-    1. Configure the providers you wish to use for authentication ("Deployment" drop down menu -> "Engage for
-       Android").
-    2. Retrieve your 20-character Application ID from the Engage Dashboard (In the right column of the "Home"
-       page on the dashboard.)
+    1. Configure the social providers you wish to use for authentication ("Deployment" drop down menu ->
+       "Engage for Android").
+    2. Retrieve your 20-character Engage application ID from the Engage Dashboard (In the right column of
+       the "Home" page on the Engage dashboard.)
 2. Ask your deployment engineer or account manager for your Capture domain.
-3. Create a new Capture API client for you Android app:
-    1. Sign in to the Capture dashboard and provision a new API client for your mobile app.
+3. Create a new Capture API client for your mobile app:
+    1. Sign in to the Capture dashboard and provision a new API client for your mobile app
+       (https://janraincapture.com)
     2. Use the [set_features API](http://developers.janrain.com/documentation/api-methods/capture/clients/set_features/)
        to add the "login_client" feature to your new API client.
-    3. Use the [setAccessSchema API](http://developers.janrain.com/documentation/api-methods/capture/entitytype/setaccessschema/)
-       to set the subset of the schema you wish your mobile app to be able to update.
-       **Warning** If you do not include the attributes your client will write to in the its write access
-       schema you will receive missing attribute errors when attempting to update attributes.
-4. Configure your flow settings:
-    1. Ask your deployment engineer or account manager which "flow" you should use.
-    2. Ask for the appropriate values for default_flow_name and default_flow_version.
-    3. Set those settings for your new API client.
-5. Coordinate with your deployment engineer or account manager for the correct value for your "flow locale."
-   The commonly used value for US English is en-US.
-6. Ask your deployment engineer or account manager for the name of the sign-in form in your flow.
 
-Note: You _must_ create a new API client with the correct login_client feature for operation of the JUMP for
-Android SDK.
+       **Warning** `login_client` is mutually exclusive with all other API client features, which means only
+       login clients can be used to sign users in, and only non-login-clients can perform client_id and
+       client_secret authenticated Capture API calls. This means that you cannot use the owner client as a
+       login client.
+    3. Use the [setAccessSchema API](http://developers.janrain.com/documentation/api-methods/capture/entitytype/setaccessschema/)
+       to set the subset of the schema you wish your mobile app to be able to update. You must use the
+       "write_with_token" schema type.
+
+       **Warning** Do not use the "write" schema type with login clients, use "write_with_token"
+
+       **Warning** If you do set the write_with_token access schema for your API client to include the
+       attributes your client will write to in the its write access schema you will receive
+       `missing attribute` errors when attempting to update attributes.
+4. Discover your flow settings:
+    Ask your deployment engineer for:
+        * The name of the Capture "flow" you should use
+        * The name of the flow's traditional sign-in form
+        * The name of the "locale" in the flow your app will use
+          The commonly used value for US English is "en-US".
+        * The appropriate values for the settings `default_flow_name` and `default_flow_version`.
+          Set these settings for your new API client in the "Settings" section of the Janrain Capture
+          dashboard (https://janraincapture.com)
+
+**Warning**: You _must_ create a new API client with the correct login_client feature for operation of the
+JUMP for Android SDK.
 
 ## Declare and Import
 
