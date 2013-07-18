@@ -34,38 +34,47 @@ package com.janrain.android.capture;
 
 import org.json.JSONObject;
 
+import java.util.Map;
+
 /**
  * http://developers.janrain.com/documentation/capture/restful_api/
  */
 public class CaptureApiError {
     /**
-     *
+     * Indicates a form field validation failure, as a result of form submission.
+     * See also getLocalizedValidationErrorMessages()
      */
-    int code;
+    public static final int FORM_VALIDATION_ERROR = 390;
+
+    /**
+     * Indicates an API response that could not be parsed
+     */
+    public static final CaptureApiError INVALID_API_RESPONSE = new CaptureApiError();
 
     /**
      *
      */
-    String error;
+    public final int code;
 
     /**
      *
      */
-    String error_description;
+    public final String error;
+
+    /**
+     *
+     */
+    public final String error_description;
 
     /**
      *
      */
     JSONObject raw_response;
 
-    /**
-     * Used to indicate an API response that could not be parsed
-     */
-    public static final CaptureApiError INVALID_API_RESPONSE = new CaptureApiError();
-
     private CaptureApiError() {
         error = "INVALID_API_RESPONSE";
         code = -1;
+        error_description = null;
     }
 
     public CaptureApiError(JSONObject response) {
@@ -88,5 +97,9 @@ public class CaptureApiError {
         if (isInvalidApiResponse()) return false;
         if (error.equals("bad username/password combo")) return true; // legacy username/password endpoint
         return false;
+    }
+
+    public Map<String, String[]> getLocalizedValidationErrorMessages() {
+        return (Map<String, String[]>) raw_response.opt("messages");
     }
 }

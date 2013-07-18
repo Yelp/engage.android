@@ -33,20 +33,65 @@
 package com.janrain.android.simpledemo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+import com.janrain.android.Jump;
+import com.janrain.android.capture.CaptureApiError;
+import com.janrain.android.capture.CaptureRecord;
+import org.json.JSONObject;
+
+import java.util.Map;
+
+import static com.janrain.android.simpledemo.R.id.trad_reg_display_name;
+import static com.janrain.android.simpledemo.R.id.trad_reg_email;
+import static com.janrain.android.simpledemo.R.id.trad_reg_first_name;
+import static com.janrain.android.simpledemo.R.id.trad_reg_last_name;
+import static com.janrain.android.simpledemo.R.id.trad_reg_password;
 
 public class RegistrationActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_activity);
+    }
 
+    public void register(View view) {
+        String email, displayName, firstName, lastName, password;
+        email = getEditTextString(trad_reg_email);
+        displayName = getEditTextString(trad_reg_display_name);
+        firstName = getEditTextString(trad_reg_first_name);
+        lastName = getEditTextString(trad_reg_last_name);
+        password = getEditTextString(trad_reg_password);
+        JSONObject newUser = new JSONObject();
+
+        Jump.registerNewUser(newUser, null, new Jump.RegistrationResultHandler() {
+            public void onSuccess() {
+                Toast.makeText(RegistrationActivity.this, "Registration Complete", Toast.LENGTH_LONG).show();
+                finish();
+            }
+
+            public void onFailure(RegistrationError error) {
+                AlertDialog.Builder adb = new AlertDialog.Builder(RegistrationActivity.this);
+                if (error.captureApiError.code == CaptureApiError.FORM_VALIDATION_ERROR) {
+                    Map<String, String[]> messages =
+                            error.captureApiError.getLocalizedValidationErrorMessages();
+                    adb.setMessage(messages.toString());
+                }
+            }
+        });
+    }
+
+    private String getEditTextString(int layoutId) {
+        return ((EditText) findViewById(layoutId)).getText().toString();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // No need to call Jump.saveToDisk here, there's no state since the user isn't signed in until
+        // Don't need to call Jump.saveToDisk here, there's no state since the user isn't signed in until
         // after they are registered.
     }
 }

@@ -40,6 +40,7 @@ import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.types.JRDictionary;
+import org.json.JSONObject;
 
 import static com.janrain.android.Jump.SignInResultHandler.SignInError;
 import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.AUTHENTICATION_CANCELED_BY_USER;
@@ -257,6 +258,21 @@ public class Jump {
     }
 
     /**
+     * Registers a new user record with Capture. Used for both traditional registrations and social two-step
+     * registrations.
+     * @param newUser A JSON object (which matches the record schema) used to populate the fields of the
+     *                registration form.
+     * @param socialRegistrationToken A social registration token, or null to perform a traditional
+     *                                registration
+     * @param registrationResultHandler A handler for the registration result
+     */
+    public static void registerNewUser(JSONObject newUser,
+                                       String socialRegistrationToken,
+                                       RegistrationResultHandler registrationResultHandler) {
+
+    }
+
+    /**
      * An interface to implement to receive callbacks notifying the completion of a sign-in flow.
      */
     public interface SignInResultHandler {
@@ -340,5 +356,19 @@ public class Jump {
      */
     public static void saveToDisk(Context context) {
         if (state.signedInUser != null) state.signedInUser.saveToDisk(context);
+    }
+
+    public interface RegistrationResultHandler {
+        public class RegistrationError extends SignInError {
+            /*package*/ RegistrationError(FailureReason reason,
+                              CaptureApiError captureApiError,
+                              JREngageError engageError) {
+                super(reason, captureApiError, engageError);
+            }
+        }
+
+        void onSuccess();
+
+        void onFailure(RegistrationError error);
     }
 }
