@@ -51,7 +51,7 @@ package com.janrain.android.engage.net;
 
 import android.os.Handler;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.utils.CaseChangeOnlyRenameIoUtils;
+import com.janrain.android.utils.IoUtils;
 import com.janrain.android.utils.LogUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -165,7 +165,7 @@ import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnecti
                 if (entity == null) {
                     responseBody = new byte[0];
                 } else {
-                    //responseBody = CaseChangeOnlyRenameIoUtils.readAndClose(entity.getContent(), true);
+                    //responseBody = IoUtils.readAndClose(entity.getContent(), true);
                     responseBody = EntityUtils.toByteArray(entity);
                     entity.consumeContent();
 
@@ -175,7 +175,7 @@ import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnecti
                             if (element.getName().equalsIgnoreCase(ENCODING_GZIP)) {
                                 GZIPInputStream gis =
                                         new GZIPInputStream(new ByteArrayInputStream(responseBody));
-                                responseBody = CaseChangeOnlyRenameIoUtils.readAndClose(gis, true);
+                                responseBody = IoUtils.readAndClose(gis, true);
                                 break;
                             }
                         }

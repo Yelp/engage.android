@@ -32,7 +32,8 @@
 
 package com.janrain.android.capture;
 
-import com.janrain.android.utils.CaseChangeOnlyRenameIoUtils;
+import com.janrain.android.utils.IoUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -41,7 +42,7 @@ import static com.janrain.android.utils.LogUtils.throwDebugException;
 public class CaptureStringUtils {
     public static String readAndClose(InputStream is) {
         try {
-            return new String(CaseChangeOnlyRenameIoUtils.readAndClose(is, false));
+            return new String(IoUtils.readAndClose(is, false));
         } catch (IOException e) {
             throwDebugException(new RuntimeException(e));
             return null;
