@@ -70,6 +70,12 @@ public final class CollectionUtils {
         return retval;
     }
 
+    public static <T> List<T> listFromIterator(Iterator<T> i) {
+        List<T> retval = new ArrayList<T>();
+        while (i.hasNext()) retval.add(i.next());
+        return retval;
+    }
+
     /**
      * Constructs the sorted union of two sets
      * @param a

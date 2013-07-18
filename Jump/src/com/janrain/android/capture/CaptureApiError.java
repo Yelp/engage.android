@@ -32,14 +32,25 @@
 
 package com.janrain.android.capture;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import static com.janrain.android.utils.CollectionUtils.listFromIterator;
+import static com.janrain.android.utils.LogUtils.throwDebugException;
 
 /**
  * http://developers.janrain.com/documentation/capture/restful_api/
  */
 public class CaptureApiError {
+    public static final int EMAIL_ADDRESS_IN_USE = 380;
+    private String engageToken;
+    private String conflictingIdentityProvider;
+
     /**
      * Indicates a form field validation failure, as a result of form submission.
      * See also getLocalizedValidationErrorMessages()
@@ -47,59 +58,112 @@ public class CaptureApiError {
     public static final int FORM_VALIDATION_ERROR = 390;
 
     /**
-     * Indicates an API response that could not be parsed
+     * Indicates an API response that could not be parsed. Has no meaningful field values.
      */
     public static final CaptureApiError INVALID_API_RESPONSE = new CaptureApiError();
 
+
     /**
-     *
+     * The Capture error code. See http://developers.janrain.com/documentation/capture/restful_api/
      */
     public final int code;
 
     /**
-     *
+     * The error string which is 1:1 associate with the code
      */
     public final String error;
 
     /**
-     *
+     * A description of this instance of the error, which can vary for a single given code.
      */
     public final String error_description;
 
     /**
-     *
+     * The raw JSON response
      */
-    JSONObject raw_response;
+    public final JSONObject raw_response;
 
     private CaptureApiError() {
         error = "INVALID_API_RESPONSE";
         code = -1;
         error_description = null;
+        raw_response = null;
     }
 
-    public CaptureApiError(JSONObject response) {
+    /**
+     * Construct an error object from a JSON response
+     * @param response the JSON response
+     * @param engageToken the Engage auth_info token in the request precipitating this error, if any
+     * @param conflictingProvider for merge errors, the identity provider in the request precipitating this
+     *                            error.
+     */
+    /*package*/ CaptureApiError(JSONObject response, String engageToken, String conflictingProvider) {
         code = response.optInt("code");
         error = response.optString("error");
         error_description = response.optString("error_description");
         raw_response = response;
+        this.engageToken = engageToken;
+        this.conflictingIdentityProvider = conflictingProvider;
     }
 
     public boolean isInvalidApiResponse() {
         return this == INVALID_API_RESPONSE;
     }
 
+    /**
+     * @return a human readable (but not end-user facing, and not localized) version of this error
+     */
     public String toString() {
         return "<CaptureApiError code: " + code + " error: " + error + " description: " + error_description
                 + ">";
     }
 
+    /**
+     * @return true if this error represents an invalid password error in a password submission form response
+     */
     public boolean isInvalidPassword() {
         if (isInvalidApiResponse()) return false;
         if (error.equals("bad username/password combo")) return true; // legacy username/password endpoint
         return false;
     }
 
+    /**
+     * @return the end-user-facing localized error messages for form field validation errors resulting from
+     *         a form submission.
+     */
     public Map<String, String[]> getLocalizedValidationErrorMessages() {
-        return (Map<String, String[]>) raw_response.opt("messages");
+        JSONObject messages = raw_response.optJSONObject("messages");
+        if (messages == null) return null;
+        Map<String, String[]> retval = new HashMap<String, String[]>();
+        List<String> keys = listFromIterator(messages.keys());
+        for (String k : keys) {
+            JSONArray fieldMessagesJson = messages.optJSONArray(k);
+            int length = fieldMessagesJson.length();
+            String[] fieldMessagesArray = new String[length];
+            for (int i=0; i<length; i++) fieldMessagesArray[i] = fieldMessagesJson.optString(i);
+            retval.put(k, fieldMessagesArray);
+        }
+
+        return retval;
+    }
+
+    /**
+     * True if this object is an error representing a merge-flow is required to continue signing in.
+     * @return whether a merge-account-flow is required.
+     */
+    public boolean isMergeFlowError() {
+        return code == EMAIL_ADDRESS_IN_USE;
+    }
+
+    public String getMergeToken() {
+        return engageToken;
+    }
+
+    public String getExistingAccountIdentityProvider() {
+        return raw_response.optString("existing_provider");
+    }
+
+    public String getConflictingIdentityProvider() {
+        return conflictingIdentityProvider;
     }
 }

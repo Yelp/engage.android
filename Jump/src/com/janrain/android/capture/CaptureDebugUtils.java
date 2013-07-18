@@ -48,7 +48,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import static com.janrain.android.capture.Capture.CaptureApiRequestCallback;
-import static com.janrain.android.capture.CaptureStringUtils.readFully;
+import static com.janrain.android.capture.CaptureStringUtils.readAndClose;
 
 public class CaptureDebugUtils {
     private static JSONObject getEntity(int id) throws IOException, JSONException {
@@ -61,7 +61,7 @@ public class CaptureDebugUtils {
                 "access_token=6vxjc6xg88g2q5ht").openConnection();
         entityConn.connect();
 
-        String response = readFully(entityConn.getInputStream());
+        String response = readAndClose(entityConn.getInputStream());
 
         JSONObject jo = new JSONObject(new JSONTokener(response));
         if ("ok".equals(jo.optString("stat"))) {
@@ -109,11 +109,11 @@ public class CaptureDebugUtils {
         String json = null;
         try {
             if (uConn.getContentType().toLowerCase().equals("application/json")) {
-                json = CaptureStringUtils.readFully(uConn.getInputStream());
+                json = CaptureStringUtils.readAndClose(uConn.getInputStream());
                 return new JSONTokener(json).nextValue();
             }
             LogUtils.logd("content type: " + uConn.getContentType());
-            LogUtils.logd(CaptureStringUtils.readFully(uConn.getInputStream()));
+            LogUtils.logd(CaptureStringUtils.readAndClose(uConn.getInputStream()));
             return null;
         } catch (IOException e) {
             LogUtils.logd(e.toString());

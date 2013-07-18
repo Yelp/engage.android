@@ -69,8 +69,6 @@ import static com.janrain.android.utils.LogUtils.throwDebugException;
 import static com.janrain.android.utils.WebViewUtils.deleteWebViewCookiesForDomains;
 
 public class JRSession implements JRConnectionManagerDelegate {
-    private static final String TAG = JRSession.class.getSimpleName();
-
     private static final String ARCHIVE_ALL_PROVIDERS = "allProviders";
     private static final String ARCHIVE_AUTH_PROVIDERS = "authProviders";
     private static final String ARCHIVE_SHARING_PROVIDERS = "sharingProviders";
@@ -132,13 +130,13 @@ public class JRSession implements JRConnectionManagerDelegate {
     public static JRSession getInstance(String appId, String tokenUrl, JRSessionDelegate delegate) {
         if (sInstance != null) {
             if (sInstance.isUiShowing()) {
-                Log.e(TAG, "Cannot reinitialize JREngage while its UI is showing");
+                LogUtils.loge("Cannot reinitialize JREngage while its UI is showing");
             } else {
-                LogUtils.logd(TAG, "[getInstance] reinitializing, registered delegates will be unregistered");
+                LogUtils.logd("reinitializing, registered delegates will be unregistered");
                 sInstance.initialize(appId, tokenUrl, delegate);
             }
         } else {
-            LogUtils.logd(TAG, "[getInstance] returning new instance.");
+            LogUtils.logd("returning new instance.");
             sInstance = new JRSession(appId, tokenUrl, delegate);
         }
 
@@ -153,7 +151,7 @@ public class JRSession implements JRConnectionManagerDelegate {
      * assignment warnings. */
     @SuppressWarnings("unchecked")
     private void initialize(String appId, String tokenUrl, JRSessionDelegate delegate) {
-        LogUtils.logd(TAG, "[initialize] initializing instance.");
+        LogUtils.logd("initializing instance.");
 
         // for configurability to test against e.g. staging
         String t = StringUtils.trim(AndroidUtils.readAsset(getApplicationContext(), "engage_base_url.txt"));
@@ -196,7 +194,7 @@ public class JRSession implements JRConnectionManagerDelegate {
             for (Object v : mAuthProviders) {
                 if (!(v instanceof  String)) throw new Archiver.LoadException("Non String in mAuthProviders");
             }
-            LogUtils.logd(TAG, "auth providers: [" + TextUtils.join(",", mAuthProviders) + "]");
+            LogUtils.logd("auth providers: [" + TextUtils.join(",", mAuthProviders) + "]");
 
             /* Load the list of social providers */
             mSharingProviders = Archiver.load(ARCHIVE_SHARING_PROVIDERS);
@@ -205,7 +203,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                     throw new Archiver.LoadException("Non String in mSharingProviders");
                 }
             }
-            LogUtils.logd(TAG, "sharing providers: [" + TextUtils.join(",", mSharingProviders) + "]");
+            LogUtils.logd("sharing providers: [" + TextUtils.join(",", mSharingProviders) + "]");
 
             /* Load the RP's base url */
             mRpBaseUrl = PrefUtils.getString(PrefUtils.KEY_JR_RP_BASE_URL, "");
@@ -218,9 +216,9 @@ public class JRSession implements JRConnectionManagerDelegate {
             mOldEtag = PrefUtils.getString(PrefUtils.KEY_JR_CONFIGURATION_ETAG, "");
             //throw new Archiver.LoadException(null);
         } catch (Archiver.LoadException e) {
-            Log.w(TAG, "LoadException loading serialized configuration, initializing from empty state. " +
-                     " Version: " + mUrlEncodedLibraryVersion + " LoadException: " +
-                    e.getStackTrace()[0].toString() + " Nested exception: " + e.getCause());
+            //LogUtils.logd("LoadException loading serialized configuration, initializing from empty state. " +
+            //         " Version: " + mUrlEncodedLibraryVersion + " LoadException: " +
+            //        e.getStackTrace()[0].toString() + " Nested exception: " + e.getCause());
             /* Blank slate */
             mAuthenticatedUsersByProvider = new HashMap<String, JRAuthenticatedUser>();
             Archiver.asyncSave(ARCHIVE_AUTH_USERS_BY_PROVIDER, mAuthenticatedUsersByProvider);
@@ -288,9 +286,6 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     public void setCurrentlyAuthenticatingProvider(JRProvider provider) {
-        LogUtils.logd(TAG, "[setCurrentlyAuthenticatingProvider] to " +
-                (provider != null ? provider.getName() : null));
-
         mCurrentlyAuthenticatingProvider = provider;
     }
 
@@ -389,10 +384,10 @@ public class JRSession implements JRConnectionManagerDelegate {
     public void connectionDidFail(Exception ex, HttpResponseHeaders responseHeaders, byte[] payload,
                                   String requestUrl, Object tag) {
         if (tag == null) {
-            Log.e(TAG, "[connectionDidFail] unexpected null userdata");
+            LogUtils.loge("unexpected null tag");
         } else if (tag instanceof String) {
             if (tag.equals(TAG_GET_CONFIGURATION)) {
-                Log.e(TAG, "[connectionDidFail] for getConfiguration");
+                LogUtils.loge("failure for getConfiguration");
                 mError = new JREngageError(
                         getApplicationContext().getString(R.string.jr_getconfig_network_failure_message),
                         ConfigurationError.CONFIGURATION_INFORMATION_ERROR,
@@ -400,13 +395,12 @@ public class JRSession implements JRConnectionManagerDelegate {
                         ex);
                 triggerConfigDidFinish();
             } else {
-                Log.e(TAG, "[connectionDidFail] unrecognized ConnectionManager tag: " + tag +
-                        " with Exception: " + ex);
+                LogUtils.loge("unrecognized ConnectionManager tag: " + tag, ex);
             }
         } else if (tag instanceof JRDictionary) {
             JRDictionary tagAsDict = (JRDictionary) tag;
             if (tagAsDict.getAsString(USERDATA_ACTION_KEY).equals(USERDATA_ACTION_CALL_TOKEN_URL)) {
-                Log.e(TAG, "[connectionDidFail] call to token url failed: " + ex);
+                LogUtils.loge("call to token url failed: ", ex);
                 JREngageError error = new JREngageError(
                         "Error: " + ex.getLocalizedMessage(),
                         JREngageError.AuthenticationError.AUTHENTICATION_TOKEN_URL_FAILED,
@@ -521,7 +515,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                 }
                 break;
             case 1000: /* Extracting code failed; Fall through. */
-            default: // TODO Other errors (find them)
+            default:
                 publishError = new JREngageError(
                         getApplicationContext().getString(R.string.jr_problem_sharing),
                         SocialPublishingError.FAILED,
@@ -535,7 +529,6 @@ public class JRSession implements JRConnectionManagerDelegate {
     public void connectionDidFinishLoading(HttpResponseHeaders headers, byte[] payload,
                                            String requestUrl, Object tag) {
         String payloadString = new String(payload);
-        LogUtils.logd(TAG, "[connectionDidFinishLoading] payload: " + payloadString);
 
         if (tag instanceof JRDictionary) {
             JRDictionary dictionary = (JRDictionary) tag;
@@ -550,39 +543,33 @@ public class JRSession implements JRConnectionManagerDelegate {
                             dictionary.getAsString(USERDATA_PROVIDER_NAME_KEY));
                 }
             } else {
-                Log.e(TAG, "unexpected userdata found in ConnectionDidFinishLoading full");
+                LogUtils.loge("unexpected userdata found in ConnectionDidFinishLoading: " + dictionary);
             }
         } else if (tag instanceof String) {
             if (tag.equals(TAG_GET_CONFIGURATION)) {
                 if (headers.getResponseCode() == HttpStatus.SC_NOT_MODIFIED) {
                     /* If the ETag matched, we're done. */
-                    LogUtils.logd(TAG, "[connectionDidFinishLoading] HTTP_NOT_MODIFIED -> matched ETag");
+                    LogUtils.logd("[connectionDidFinishLoading] HTTP_NOT_MODIFIED -> matched ETag");
                     triggerConfigDidFinish();
                     return;
                 }
 
                 finishGetConfiguration(payloadString, headers.getETag());
             } else {
-                Log.e(TAG, "unexpected userData found in ConnectionDidFinishLoading full");
+                LogUtils.loge("unexpected userData found in ConnectionDidFinishLoading full");
             }
         }
     }
 
     public void addDelegate(JRSessionDelegate delegate) {
-        LogUtils.logd(TAG, "[addDelegate]");
-
         mDelegates.add(delegate);
     }
 
     public void removeDelegate(JRSessionDelegate delegate) {
-        LogUtils.logd(TAG, "[removeDelegate]");
-
         mDelegates.remove(delegate);
     }
 
     public void tryToReconfigureLibrary() {
-        LogUtils.logd(TAG, "[tryToReconfigureLibrary]");
-
         mConfigDone = false;
         mError = null;
         mError = startGetConfiguration();
@@ -594,8 +581,6 @@ public class JRSession implements JRConnectionManagerDelegate {
                 mAppId,
                 mUrlEncodedAppName,
                 mUrlEncodedLibraryVersion);
-        LogUtils.logd(TAG, "[startGetConfiguration] url: " + urlString);
-
         BasicNameValuePair eTagHeader = new BasicNameValuePair("If-None-Match", mOldEtag);
         List<NameValuePair> headerList = new ArrayList<NameValuePair>();
         headerList.add(eTagHeader);
@@ -606,13 +591,11 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     private void finishGetConfiguration(String dataStr) {
-        LogUtils.logd(TAG, "[finishGetConfiguration]");
-
         JRDictionary jsonDict;
         try {
             jsonDict = JRDictionary.fromJsonString(dataStr);
         } catch (JSONException e) {
-            LogUtils.loge("[finishGetConfiguration] failed.");
+            LogUtils.loge("failed", e);
             mError = new JREngageError(
                     getApplicationContext().getString(R.string.jr_getconfig_parse_error_message),
                     ConfigurationError.JSON_ERROR, ErrorType.CONFIGURATION_FAILED, e);
@@ -650,7 +633,6 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     private void finishGetConfiguration(String dataStr, String eTag) {
-        LogUtils.logd(TAG, "[finishGetConfiguration-etag]");
         /* Only update all the config if the UI isn't currently displayed / using that
          * information.  Otherwise, the library may crash/behave inconsistently. In the case
          * where a dialog is showing but there isn't any config data that it could be using (that
@@ -675,8 +657,6 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     private String getWelcomeMessageFromCookieString() {
-        LogUtils.logd(TAG, "[getWelcomeMessageFromCookieString]");
-
         String cookies = CookieManager.getInstance().getCookie(getRpBaseUrl());
         String cookieString = cookies.replaceAll(".*welcome_info=([^;]*).*", "$1");
 
@@ -689,15 +669,11 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     public void saveLastUsedAuthProvider() {
-        LogUtils.logd(TAG, "[saveLastUsedAuthProvider]");
-
         setReturningAuthProvider(mCurrentlyAuthenticatingProvider.getName());
     }
 
     public URL startUrlForCurrentlyAuthenticatingProvider() {
-        LogUtils.logd(TAG, "[startUrlForCurrentlyAuthenticatingProvider]");
-
-        // What's this for?
+        // can happen on Android process restart:
         if (mCurrentlyAuthenticatingProvider == null) return null;
 
         String oid; /* open identifier */
@@ -741,14 +717,10 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     public JRAuthenticatedUser getAuthenticatedUserForProvider(JRProvider provider) {
-        LogUtils.logd();
-
         return mAuthenticatedUsersByProvider.get(provider.getName());
     }
 
     public void signOutUserForProvider(String providerName) {
-        LogUtils.logd();
-
         if (mAllProviders == null) throwDebugException(new IllegalStateException());
         JRProvider provider = mAllProviders.get(providerName);
         if (provider == null) {
@@ -773,8 +745,6 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     public void signOutAllAuthenticatedUsers() {
-        LogUtils.logd(TAG, "[signOutAllAuthenticatedUsers]");
-
         for (String p : mAllProviders.keySet()) signOutUserForProvider(p);
     }
 
@@ -790,15 +760,12 @@ public class JRSession implements JRConnectionManagerDelegate {
 
         String url = mEngageBaseUrl + "/social/record_activity";
 
-        LogUtils.logd(TAG, "[notifyEmailSmsShare]: " + url + " data: " + body.toString());
-
         JRConnectionManagerDelegate jrcmd = new SimpleJRConnectionManagerDelegate() {
             @Override
             public void connectionDidFinishLoading(HttpResponseHeaders headers,
                                                    byte[] payload,
                                                    String requestUrl,
                                                    Object tag) {
-                LogUtils.logd(TAG, "[notifyEmailSmsShare]: success");
             }
 
             @Override
@@ -806,7 +773,7 @@ public class JRSession implements JRConnectionManagerDelegate {
                                           HttpResponseHeaders responseHeaders,
                                           byte[] payload, String requestUrl,
                                           Object tag) {
-                Log.e(TAG, "[notifyEmailSmsShare]: failure", ex);
+                LogUtils.loge("notify failure", ex);
             }
         };
 
@@ -814,8 +781,6 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     public void shareActivityForUser(JRAuthenticatedUser user) {
-        LogUtils.logd(TAG, "[shareActivityForUser]");
-
         setCurrentlyPublishingProvider(user.getProviderName());
 
         /* Truncate the resource description if necessary */
@@ -841,20 +806,14 @@ public class JRSession implements JRConnectionManagerDelegate {
 
         String url = mEngageBaseUrl + "/api/v2/activity";
 
-        LogUtils.logd(TAG, "[shareActivityForUser]: " + url + " data: " + body);
-
         JRDictionary tag = new JRDictionary();
         tag.put(USERDATA_ACTION_KEY, USERDATA_ACTION_SHARE_ACTIVITY);
         tag.put(USERDATA_ACTIVITY_KEY, mActivity);
         tag.put(USERDATA_PROVIDER_NAME_KEY, mCurrentlyPublishingProvider.getName());
         JRConnectionManager.createConnection(url, this, tag, null, body.toString().getBytes(), false);
-
-        LogUtils.logd(TAG, "[shareActivityForUser] connection started for url: " + url);
     }
 
     public void setStatusForUser(JRAuthenticatedUser user) {
-        LogUtils.logd(TAG, "[shareActivityForUser]");
-
         setCurrentlyPublishingProvider(user.getProviderName());
 
         String deviceToken = user.getDeviceToken();
@@ -873,22 +832,15 @@ public class JRSession implements JRConnectionManagerDelegate {
 
         String url = mEngageBaseUrl + "/api/v2/set_status";
 
-        LogUtils.logd(TAG, "[setStatusForUser]: " + url + " data: " + body.toString());
-
         // TODO: same callback handler for status as activity?
         JRDictionary tag = new JRDictionary();
         tag.put(USERDATA_ACTION_KEY, USERDATA_ACTION_SHARE_ACTIVITY);
         tag.put(USERDATA_ACTIVITY_KEY, mActivity);
         tag.put(USERDATA_PROVIDER_NAME_KEY, mCurrentlyPublishingProvider.getName());
         JRConnectionManager.createConnection(url, this, tag, null, body.toString().getBytes(), false);
-
-        LogUtils.logd(TAG, "[setStatusForUser] connection started for url: " + url);
     }
 
     private void makeCallToTokenUrl(String tokenUrl, String token, String providerName) {
-        LogUtils.logd(TAG, "[makeCallToTokenUrl] token: " + token);
-        LogUtils.logd(TAG, "[makeCallToTokenUrl] tokenUrl: " + tokenUrl);
-
         String body = "token=" + token;
         byte[] postData = body.getBytes();
 
@@ -901,8 +853,6 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     public void triggerAuthenticationDidCompleteWithPayload(JRDictionary rpx_result) {
-        LogUtils.logd(TAG, "[triggerAuthenticationDidCompleteWithPayload]");
-
         JRAuthenticatedUser user = new JRAuthenticatedUser(
                 rpx_result,
                 mCurrentlyAuthenticatingProvider.getName(),
@@ -930,8 +880,6 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     public void triggerAuthenticationDidFail(JREngageError error) {
-        LogUtils.logd(TAG, "[triggerAuthenticationDidFailWithError]");
-
         if (mCurrentlyAuthenticatingProvider == null) {
             throwDebugException(new RuntimeException("Unexpected state"));
         }
@@ -949,8 +897,6 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     public void triggerAuthenticationDidCancel() {
-        LogUtils.logd(TAG, "[triggerAuthenticationDidCancel]");
-
         setCurrentlyAuthenticatingProvider(null);
         setReturningAuthProvider(null);
 
@@ -958,28 +904,20 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     public void triggerAuthenticationDidRestart() {
-        LogUtils.logd(TAG, "[triggerAuthenticationDidRestart]");
-
         for (JRSessionDelegate delegate : getDelegatesCopy()) delegate.authenticationDidRestart();
     }
 
     public void triggerUserWasSignedOut(String provider) {
-        LogUtils.logd(TAG, "[triggerUserWasSignedOut]");
-
         for (JRSessionDelegate d : getDelegatesCopy()) d.userWasSignedOut(provider);
     }
 
     public void triggerPublishingDidComplete() {
-        LogUtils.logd(TAG, "[triggerPublishingDidComplete]");
-
         for (JRSessionDelegate delegate : getDelegatesCopy()) delegate.publishingDidComplete();
     }
 
     public void triggerPublishingJRActivityDidFail(JREngageError error,
                                                    JRActivityObject activity,
                                                    String providerName) {
-        LogUtils.logd(TAG, "[triggerPublishingJRActivityDidFail]");
-
         for (JRSessionDelegate delegate : getDelegatesCopy()) {
             delegate.publishingJRActivityDidFail(activity, error, providerName);
         }
@@ -997,14 +935,10 @@ public class JRSession implements JRConnectionManagerDelegate {
      *      The error to send to delegates
      */
     public void triggerPublishingDialogDidFail(JREngageError err) {
-       LogUtils.logd(TAG, "[triggerPublishingDialogDidFail]");
-
         for (JRSessionDelegate delegate : getDelegatesCopy()) delegate.publishingDialogDidFail(err);
     }
 
     public void triggerPublishingDidCancel() {
-        LogUtils.logd(TAG, "[triggerPublishingDidCancel]");
-
         for (JRSessionDelegate delegate : getDelegatesCopy()) delegate.publishingDidCancel();
     }
 
@@ -1024,8 +958,6 @@ public class JRSession implements JRConnectionManagerDelegate {
     }
 
     public void setCurrentlyPublishingProvider(String provider) {
-        LogUtils.logd(TAG, "[setCurrentlyPublishingProvider]: " + provider);
-
         mCurrentlyPublishingProvider = getProviderByName(provider);
     }
 

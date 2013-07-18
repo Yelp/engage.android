@@ -51,7 +51,7 @@ package com.janrain.android.engage.net;
 
 import android.os.Handler;
 import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.utils.IOUtils;
+import com.janrain.android.utils.CaseChangeOnlyRenameIoUtils;
 import com.janrain.android.utils.LogUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -59,26 +59,25 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.HttpEntityWrapper;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.DefaultRedirectHandler;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
 
 import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnection;
-import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromResponse;
 
 /**
  * @internal
@@ -95,30 +94,24 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
     private AsyncHttpClient() {}
 
     /*package*/ static class HttpExecutor implements Runnable {
-        final private Handler mHandler;
-        final private ManagedConnection mConn;
-        final private DefaultHttpClient mHttpClient;
+        private static final DefaultHttpClient mHttpClient = setupHttpClient();
+        private final Handler mHandler;
+        private final ManagedConnection mConn;
+        private final JRConnectionManager.HttpCallback callBack;
 
         /*package*/ HttpExecutor(Handler handler, ManagedConnection managedConnection) {
             mConn = managedConnection;
             mHandler = handler;
-            mHttpClient = setupHttpClient();
+            callBack = new JRConnectionManager.HttpCallback(mConn);
         }
 
-        private DefaultHttpClient setupHttpClient() {
+        static private DefaultHttpClient setupHttpClient() {
             HttpParams connectionParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(connectionParams, 30000); // thirty seconds
             HttpConnectionParams.setSoTimeout(connectionParams, 30000);
+            HttpClientParams.setRedirecting(connectionParams, false);
             DefaultHttpClient client = new DefaultHttpClient(connectionParams);
 
-            evolveGzipEncoding(client);
-
-            if (!mConn.getFollowRedirects()) disableRedirects(client);
-
-            return client;
-        }
-
-        private static void evolveGzipEncoding(DefaultHttpClient client) {
             client.addRequestInterceptor(new HttpRequestInterceptor() {
                 public void process(HttpRequest request, HttpContext context) {
                     if (!request.containsHeader(HEADER_ACCEPT_ENCODING)) {
@@ -127,122 +120,90 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
                 }
             });
 
-            client.addResponseInterceptor(new HttpResponseInterceptor() {
-                public void process(HttpResponse response, HttpContext context) {
-                    final HttpEntity entity = response.getEntity();
-                    if (entity == null) return;
-                    final Header encoding = entity.getContentEncoding();
-                    if (encoding != null) {
-                        for (HeaderElement element : encoding.getElements()) {
-                            if (element.getName().equalsIgnoreCase(ENCODING_GZIP)) {
-                                response.setEntity(new InflatingEntity(response.getEntity()));
-                                break;
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        private static void disableRedirects(DefaultHttpClient client) {
-            client.setRedirectHandler(new DefaultRedirectHandler() {
-                @Override
-                public boolean isRedirectRequested(HttpResponse response, HttpContext context) {
-                    if (super.isRedirectRequested(response, context)) {
-                        LogUtils.loge("error: ignoring redirect");
-                    }
-                    return false;
-                }
-            });
-        }
-
-        /**
-         * @internal 
-         * From the Google IO app:
-         * Simple {@link HttpEntityWrapper} that inflates the wrapped
-         * {@link HttpEntity} by passing it through {@link GZIPInputStream}.
-         */
-        private static class InflatingEntity extends HttpEntityWrapper {
-            public InflatingEntity(HttpEntity wrapped) {
-                super(wrapped);
-            }
-
-            @Override
-            public InputStream getContent() throws IOException {
-                return new GZIPInputStream(wrappedEntity.getContent());
-            }
-
-            @Override
-            public long getContentLength() {
-                return -1;
-            }
+            return client;
         }
 
         public void run() {
-            LogUtils.logd("[run] BEGIN, URL: " + mConn.getRequestUrl());
-
-            JRConnectionManager.HttpCallback callBack = new JRConnectionManager.HttpCallback(mConn);
             try {
-                InetAddress ia = InetAddress.getByName(mConn.getHttpRequest().getURI().getHost());
-                LogUtils.logd("Connecting to: " + ia.getHostAddress());
+                HttpUriRequest request = mConn.getHttpRequest();
+                InetAddress ia = InetAddress.getByName(request.getURI().getHost());
+                LogUtils.logd("Requesting: " + mConn.getRequestUrl() + " (" + ia.getHostAddress() + ")");
 
-                mConn.getHttpRequest().addHeader("User-Agent", USER_AGENT);
+                request.addHeader("User-Agent", USER_AGENT);
                 for (NameValuePair header : mConn.getRequestHeaders()) {
-                    mConn.getHttpRequest().addHeader(header.getName(), header.getValue());
+                    request.addHeader(header.getName(), header.getValue());
                 }
 
                 LogUtils.logd("Headers: " + Arrays.asList(mConn.getHttpRequest().getAllHeaders()).toString());
                 if (mConn.getHttpRequest() instanceof HttpPost) {
-                    HttpEntity entity = ((HttpPost) mConn.getHttpRequest()).getEntity();
-                    String postBody = new String(IOUtils.readFromStream(entity.getContent(), false));
-                    LogUtils.logd("POST: " + postBody);
+                    String postBody = EntityUtils.toString(((HttpPost) mConn.getHttpRequest()).getEntity());
+                    LogUtils.logd("POST to " + mConn.getRequestUrl() + ": " + postBody);
                 }
 
                 HttpResponse response;
                 try {
-                    response = mHttpClient.execute(mConn.getHttpRequest());
+                    response = mHttpClient.execute(request);
                 } catch (IOException e) {
                     // XXX Mediocre way to match exceptions from aborted requests:
-                    if (mConn.getHttpRequest().isAborted() && e.getMessage().contains("abort")) {
+                    if (request.isAborted() && e.getMessage().contains("abort")) {
                         throw new AbortedRequestException();
                     } else {
                         throw e;
                     }
                 }
 
-                if (mConn.getHttpRequest().isAborted()) throw new AbortedRequestException();
+                if (request.isAborted()) throw new AbortedRequestException();
 
                 // Fetching the status code allows the response interceptor to have a chance to un-gzip the
                 // entity before we fetch it.
                 response.getStatusLine().getStatusCode();
 
-                HttpResponseHeaders headers = fromResponse(response, mConn.getHttpRequest());
+                HttpResponseHeaders headers = HttpResponseHeaders.fromResponse(response, request);
 
                 HttpEntity entity = response.getEntity();
-                byte[] responseBody = entity == null ?
-                        new byte[0] :
-                        IOUtils.readFromStream(entity.getContent(), true);
-                if (entity != null) entity.consumeContent();
+                byte[] responseBody;
+                if (entity == null) {
+                    responseBody = new byte[0];
+                } else {
+                    //responseBody = CaseChangeOnlyRenameIoUtils.readAndClose(entity.getContent(), true);
+                    responseBody = EntityUtils.toByteArray(entity);
+                    entity.consumeContent();
+
+                    final Header encoding = entity.getContentEncoding();
+                    if (encoding != null) {
+                        for (HeaderElement element : encoding.getElements()) {
+                            if (element.getName().equalsIgnoreCase(ENCODING_GZIP)) {
+                                GZIPInputStream gis =
+                                        new GZIPInputStream(new ByteArrayInputStream(responseBody));
+                                responseBody = CaseChangeOnlyRenameIoUtils.readAndClose(gis, true);
+                                break;
+                            }
+                        }
+                    }
+                }
 
                 AsyncHttpResponse ahr;
                 String statusLine = response.getStatusLine().toString();
+                String bodyStr = new String(responseBody);
+                int bodySubStrLen = bodyStr.length() > 300 ? 300 : bodyStr.length();
+
                 switch (response.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
                     // Normal success
                 case HttpStatus.SC_NOT_MODIFIED:
                     // From mobile_config_and_baseurl called with an Etag
-                case HttpStatus.SC_CREATED:
-                    // Response from the Engage trail creation and maybe URL shortening calls
+                case HttpStatus.SC_MOVED_PERMANENTLY:
+                case HttpStatus.SC_SEE_OTHER:
+                case HttpStatus.SC_TEMPORARY_REDIRECT:
                 case HttpStatus.SC_MOVED_TEMPORARILY:
                     // for UPS-1390 - don't error on 302s from token URL
-                    LogUtils.logd(statusLine);
+                case HttpStatus.SC_CREATED:
+                    // Response from the Engage trail creation and maybe URL shortening calls
+                    LogUtils.logd(statusLine + ": " + bodyStr.substring(0, bodySubStrLen));
                     ahr = new AsyncHttpResponse(mConn, null, headers, responseBody);
                     break;
                 default:
-                    String bodyStr = new String(responseBody);
-                    int bodySubStrLen = bodyStr.length() > 300 ? 300 : bodyStr.length();
                     LogUtils.loge(statusLine + "\n" + bodyStr.substring(0, bodySubStrLen));
-
                     ahr = new AsyncHttpResponse(mConn, new Exception(statusLine), headers, responseBody);
                 }
 
@@ -250,7 +211,7 @@ import static com.janrain.android.engage.net.async.HttpResponseHeaders.fromRespo
                 invokeCallback(callBack);
             } catch (IOException e) {
                 LogUtils.loge(this.toString());
-                LogUtils.loge("Problem executing HTTP request.", e);
+                LogUtils.loge("IOException while executing HTTP request.", e);
                 mConn.setResponse(new AsyncHttpResponse(mConn, e, null, null));
                 invokeCallback(callBack);
             } catch (AbortedRequestException e) {

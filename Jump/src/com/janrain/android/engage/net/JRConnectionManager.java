@@ -40,6 +40,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.entity.ByteArrayEntity;
 
 import java.util.ArrayList;
@@ -114,6 +115,10 @@ public class JRConnectionManager {
 
         managedConnection.mHttpRequest = request;
 
+        if (managedConnection.getFollowRedirects()) {
+            HttpClientParams.setRedirecting(request.getParams(), true);
+        }
+
         synchronized (sDelegateConnections) {
             Set<ManagedConnection> connections = sDelegateConnections.get(delegate);
             if (connections == null) {
@@ -126,14 +131,11 @@ public class JRConnectionManager {
 
         if (Looper.myLooper() != null) {
             // operate asynchronously, post a message back to the thread later
-            ThreadUtils.executeInBg(new AsyncHttpClient.HttpExecutor(new Handler(),
-                    managedConnection));
+            ThreadUtils.executeInBg(new AsyncHttpClient.HttpExecutor(new Handler(), managedConnection));
         } else {
             // operate synchronously
             new AsyncHttpClient.HttpExecutor(null, managedConnection).run();
         }
-
-        LogUtils.logd();
     }
 
     public static void stopConnectionsForDelegate(JRConnectionManagerDelegate delegate) {
