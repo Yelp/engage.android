@@ -82,6 +82,11 @@ public class JumpConfig {
     public String captureLocale;
 
     /**
+     * Controls whether thin registration is enabled. See Jump_Registration_Guide.md.
+     */
+    public boolean captureEnableThinRegistration;
+
+    /**
      * The name of the Capture sign-in form in the flow
      */
     public String captureTraditionalSignInFormName;

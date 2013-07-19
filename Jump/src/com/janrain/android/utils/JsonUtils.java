@@ -37,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -320,6 +321,8 @@ public class JsonUtils {
             return jsonToCollection((JSONObject) jsonValue);
         } else if (jsonValue instanceof JSONArray) {
             return jsonToCollection((JSONArray) jsonValue);
+        } else if (jsonValue == JSONObject.NULL) {
+            return null;
         } else {
             return jsonValue;
         }
@@ -330,5 +333,35 @@ public class JsonUtils {
         List objects = jsonArrayToList(jsonArray);
         for (Object object : objects) retval.add(jsonToCollection(object));
         return retval;
+    }
+
+    public static JSONObject collectionToJson(Map<String, Object> m) {
+        JSONObject retval = new JSONObject();
+        for (Map.Entry<String, Object> e : m.entrySet()) {
+            try {
+                retval.put(e.getKey(), collectionToJson(e.getValue()));
+            } catch (JSONException jsonException) {
+                throwDebugException(new RuntimeException("Unexpected", jsonException));
+            }
+        }
+        return retval;
+    }
+
+    public static JSONArray collectionToJson(List l) {
+        JSONArray retval = new JSONArray();
+        for (Object i : l) retval.put(collectionToJson(i));
+        return retval;
+    }
+
+    public static Object collectionToJson(Object o) {
+        if (o instanceof Map) {
+            return collectionToJson(((Map) o));
+        } else if (o instanceof List) {
+            return collectionToJson(((List) o));
+        } else if (o == null) {
+            return JSONObject.NULL;
+        } else {
+            return o;
+        }
     }
 }

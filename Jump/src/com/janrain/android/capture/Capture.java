@@ -60,16 +60,6 @@ public class Capture {
                                                                 TraditionalSignInType type,
                                                                 SignInResultHandler handler,
                                                                 String mergeToken) {
-        /**
-         * client_id
-         * locale
-         * response_type
-         * redirect_uri
-         * an email address param
-         * a password param
-         * form
-         * attributeUpdates
-         */
         String signInNameAttrName = type == EMAIL ? "email" : "username";
         CaptureApiConnection connection = new CaptureApiConnection("/oauth/auth_native_traditional");
         connection.addAllToParams("client_id", getCaptureClientId(),
@@ -134,25 +124,15 @@ public class Capture {
     public static CaptureApiConnection performSocialSignIn(String authInfoToken,
                                                            final SignInResultHandler handler,
                                                            String identityProvider, String mergeToken) {
-        /***
-         * client_id
-         * locale
-         * response_type
-         * redirect_uri
-         * token
-         * attributeUpdates
-         * thin_registration
-         * flow_name
-         */
         handler.authenticationToken = authInfoToken;
         handler.identityProvider = identityProvider;
         CaptureApiConnection c = new CaptureApiConnection("/oauth/auth_native");
         c.addAllToParams("client_id", getCaptureClientId(),
                 "locale", Jump.getCaptureLocale(),
                 "response_type", "token",
-                "redirect_uri", "http://android-library",
+                "redirect_uri", Jump.getRedirectUri(),
                 "token", authInfoToken,
-                "thin_registration", "true"
+                "thin_registration", String.valueOf(Jump.getCaptureEnableThinRegistration())
         );
         c.maybeAddParam("bp_channel", Jump.getBackplaneChannelUrl());
         c.maybeAddParam("merge_token", mergeToken);

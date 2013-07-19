@@ -111,6 +111,7 @@
         android:layout_gravity="fill" />
 
     <Button
+        android:id="@+id/trad_reg_button"
         android:text="Register"
         android:onClick="register"
         android:layout_gravity="center_horizontal"

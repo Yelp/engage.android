@@ -88,6 +88,10 @@ public final class CollectionUtils {
         return retVal;
     }
 
+    public static String collectionToHumanReadableString(Map<String, Object> messages) {
+        return JsonUtils.collectionToJson(messages).toString();
+    }
+
     /**
      * A first-class function stand-in
      * @param <L> the return type of the function

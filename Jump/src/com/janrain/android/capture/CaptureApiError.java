@@ -32,6 +32,7 @@
 
 package com.janrain.android.capture;
 
+import com.janrain.android.utils.JsonUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -41,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.janrain.android.utils.CollectionUtils.listFromIterator;
+import static com.janrain.android.utils.JsonUtils.jsonArrayToList;
 import static com.janrain.android.utils.LogUtils.throwDebugException;
 
 /**
@@ -131,17 +133,14 @@ public class CaptureApiError {
      * @return the end-user-facing localized error messages for form field validation errors resulting from
      *         a form submission.
      */
-    public Map<String, String[]> getLocalizedValidationErrorMessages() {
-        JSONObject messages = raw_response.optJSONObject("messages");
-        if (messages == null) return null;
-        Map<String, String[]> retval = new HashMap<String, String[]>();
-        List<String> keys = listFromIterator(messages.keys());
+    public Map<String, List<String>> getLocalizedValidationErrorMessages() {
+        JSONObject invalid_fields = raw_response.optJSONObject("invalid_fields");
+        if (invalid_fields == null) return null;
+        Map<String, List<String>> retval = new HashMap<String, List<String>>();
+        List<String> keys = listFromIterator(invalid_fields.keys());
         for (String k : keys) {
-            JSONArray fieldMessagesJson = messages.optJSONArray(k);
-            int length = fieldMessagesJson.length();
-            String[] fieldMessagesArray = new String[length];
-            for (int i=0; i<length; i++) fieldMessagesArray[i] = fieldMessagesJson.optString(i);
-            retval.put(k, fieldMessagesArray);
+            JSONArray fieldMessagesJson = invalid_fields.optJSONObject(k).optJSONArray("messages");
+            retval.put(k, ((List<String>) ((List) jsonArrayToList(fieldMessagesJson)))); // bleh
         }
 
         return retval;

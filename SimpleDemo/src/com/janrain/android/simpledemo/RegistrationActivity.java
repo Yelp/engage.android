@@ -41,9 +41,11 @@ import android.widget.Toast;
 import com.janrain.android.Jump;
 import com.janrain.android.capture.CaptureApiError;
 import com.janrain.android.capture.CaptureRecord;
+import com.janrain.android.utils.CollectionUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.janrain.android.simpledemo.R.id.trad_reg_display_name;
@@ -51,12 +53,17 @@ import static com.janrain.android.simpledemo.R.id.trad_reg_email;
 import static com.janrain.android.simpledemo.R.id.trad_reg_first_name;
 import static com.janrain.android.simpledemo.R.id.trad_reg_last_name;
 import static com.janrain.android.simpledemo.R.id.trad_reg_password;
+import static com.janrain.android.utils.CollectionUtils.collectionToHumanReadableString;
 
 public class RegistrationActivity extends Activity {
+
+    private View registerButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_activity);
+        registerButton = findViewById(R.id.trad_reg_button);
     }
 
     public void register(View view) {
@@ -77,21 +84,29 @@ public class RegistrationActivity extends Activity {
             throw new RuntimeException("Unexpected", e);
         }
 
-        Jump.registerNewUser(newUser, null, new Jump.RegistrationResultHandler() {
+        Jump.registerNewUser(newUser, null, new Jump.SignInResultHandler() {
             public void onSuccess() {
                 Toast.makeText(RegistrationActivity.this, "Registration Complete", Toast.LENGTH_LONG).show();
                 finish();
             }
 
-            public void onFailure(RegistrationError error) {
+            public void onFailure(SignInError error) {
                 AlertDialog.Builder adb = new AlertDialog.Builder(RegistrationActivity.this);
                 if (error.captureApiError.code == CaptureApiError.FORM_VALIDATION_ERROR) {
-                    Map<String, String[]> messages =
-                            error.captureApiError.getLocalizedValidationErrorMessages();
-                    adb.setMessage(messages.toString());
+                    adb.setTitle("Invalid Fields");
+                    Map<String, Object> messages =
+                            (Map) error.captureApiError.getLocalizedValidationErrorMessages();
+                    adb.setMessage(collectionToHumanReadableString(messages));
+                } else {
+                    adb.setTitle("Unrecognized error");
+                    adb.setMessage(error.toString());
                 }
+                adb.show();
+                registerButton.setEnabled(true);
             }
         });
+
+        registerButton.setEnabled(false);
     }
 
     private String getEditTextString(int layoutId) {

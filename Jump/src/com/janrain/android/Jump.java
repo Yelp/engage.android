@@ -88,11 +88,12 @@ public class Jump {
         /*package*/ String captureFlowName;
         /*package*/ String captureFlowVersion;
         /*package*/ String captureLocale;
+        /*package*/ boolean captureEnableThinRegistration;
         /*package*/ String captureTraditionalSignInFormName;
-        /*package*/ String captureResponseType;
         /*package*/ String captureSocialRegistrationFormName;
         /*package*/ String captureTraditionalRegistrationFormName;
         /*package*/ TraditionalSignInType traditionalSignInType;
+        /*package*/ String captureResponseType;
         /*package*/ String backplaneChannelUrl;
 
         // Transient state values:
@@ -140,10 +141,12 @@ public class Jump {
      * @param jumpConfig an instance of JumpConfig which contains your configuration values. These values
      */
     public static void init(Context context, JumpConfig jumpConfig) {
+        state.context = context;
         state.jrEngage = JREngage.initInstance(context.getApplicationContext(), jumpConfig.engageAppId,
                 null, null);
         state.captureSocialRegistrationFormName = jumpConfig.captureSocialRegistrationFormName;
         state.captureTraditionalRegistrationFormName = jumpConfig.captureTraditionalRegistrationFormName;
+        state.captureEnableThinRegistration = jumpConfig.captureEnableThinRegistration;
         state.captureFlowName = jumpConfig.captureFlowName;
         state.captureFlowVersion = jumpConfig.captureFlowVersion;
         state.captureDomain = jumpConfig.captureDomain;
@@ -160,7 +163,6 @@ public class Jump {
             loadFlow();
             downloadFlow();
         }
-
     }
 
     public static String getCaptureDomain() {
@@ -212,6 +214,10 @@ public class Jump {
 
     public static String getBackplaneChannelUrl() {
         return state.backplaneChannelUrl;
+    }
+
+    public static boolean getCaptureEnableThinRegistration() {
+        return state.captureEnableThinRegistration;
     }
 
     /**
@@ -421,6 +427,13 @@ public class Jump {
     /**
      * Registers a new user record with Capture. Used for both traditional registrations and social two-step
      * registrations.
+     *
+     * Requires:
+     *  - a flow name be configured when calling Jump.init
+     *  - a social registration form be configured
+     *  - a traditional registration form be configured
+     *  - the Capture app ID be configured
+     *
      * @param newUser A JSON object (which matches the record schema) used to populate the fields of the
      *                registration form.
      * @param socialRegistrationToken A social registration token, or null to perform a traditional
@@ -430,7 +443,9 @@ public class Jump {
     public static void registerNewUser(JSONObject newUser,
                                        String socialRegistrationToken,
                                        final SignInResultHandler registrationResultHandler) {
-        if (state.jrEngage == null || state.captureDomain == null) {
+        if (state.jrEngage == null || state.captureDomain == null || state.captureFlowName == null ||
+                state.captureSocialRegistrationFormName == null ||
+                state.captureTraditionalRegistrationFormName == null || state.captureAppId == null) {
             registrationResultHandler.onFailure(new SignInError(JUMP_NOT_INITIALIZED, null, null));
             return;
         }
@@ -528,9 +543,11 @@ public class Jump {
     }
 
     private static void loadFlow() {
+        FileInputStream fis = null;
+        ObjectInputStream ois = null;
         try {
-            FileInputStream fis = state.context.openFileInput(JR_CAPTURE_FLOW);
-            ObjectInputStream ois = new ObjectInputStream(fis);
+            fis = state.context.openFileInput(JR_CAPTURE_FLOW);
+            ois = new ObjectInputStream(fis);
             state.captureFlow = (Map<String, Object>) ois.readObject();
         } catch (ClassCastException e) {
             throwDebugException(e);
@@ -541,6 +558,15 @@ public class Jump {
             LogUtils.loge("", e);
         } catch (ClassNotFoundException e) {
             throwDebugException(new RuntimeException(e));
+        } finally {
+            try {
+                if (fis != null) fis.close();
+            } catch (IOException ignore) {
+            }
+            try {
+                if (ois != null) ois.close();
+            } catch (IOException ignore) {
+            }
         }
     }
 
@@ -554,6 +580,7 @@ public class Jump {
                         state.captureLocale);
 
         ApiConnection c = new ApiConnection(flowUrlString);
+        c.method = ApiConnection.Method.GET;
         c.fetchResponseAsJson(new ApiConnection.FetchJsonCallback() {
             public void run(JSONObject jsonObject) {
                 state.captureFlow = JsonUtils.jsonToCollection(jsonObject);
@@ -564,14 +591,25 @@ public class Jump {
     }
 
     private static void writeCaptureFlow() {
+        FileOutputStream fos = null;
+        ObjectOutputStream oos = null;
         try {
-            FileOutputStream fos = state.context.openFileOutput(JR_CAPTURE_FLOW, 0);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            fos = state.context.openFileOutput(JR_CAPTURE_FLOW, 0);
+            oos = new ObjectOutputStream(fos);
             oos.writeObject(state.captureFlow);
         } catch (FileNotFoundException e) {
             throwDebugException(new RuntimeException(e));
         } catch (IOException e) {
             throwDebugException(new RuntimeException(e));
+        } finally {
+            try {
+                if (oos != null) oos.close();
+            } catch (IOException ignore) {
+            }
+            try {
+                if (fos != null) fos.close();
+            } catch (IOException ignore) {
+            }
         }
     }
 

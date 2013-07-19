@@ -52,14 +52,14 @@ import static com.janrain.android.utils.LogUtils.throwDebugException;
 public class ApiConnection {
     private final String url;
     private  Set<Pair<String,String>> params = new HashSet<Pair<String, String>>();
-    private Method method = Method.POST;
+    public Method method = Method.POST;
     private JRConnectionManagerDelegate connectionManagerDelegate;
 
     public ApiConnection(String url) {
         this.url = url;
     }
 
-    /*package*/ static byte[] paramsGetBytes(Set<Pair<String, String>> bodyParams) {
+    public static byte[] paramsGetBytes(Set<Pair<String, String>> bodyParams) {
         try {
             return paramsToString(bodyParams).getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -67,7 +67,7 @@ public class ApiConnection {
         }
     }
 
-    /*package*/ static String paramsToString(Set<Pair<String, String>> bodyParams) {
+    public static String paramsToString(Set<Pair<String, String>> bodyParams) {
         Collection<String> paramPairs = CollectionUtils.map(bodyParams,
                 new CollectionUtils.Function<String, Pair<String, String>>() {
                     public String operate(Pair<String, String> val) {
@@ -170,7 +170,7 @@ public class ApiConnection {
         });
     }
 
-    private enum Method {POST, GET}
+    public enum Method {POST, GET}
 
     public interface FetchJsonCallback {
         void run(JSONObject jsonObject);
