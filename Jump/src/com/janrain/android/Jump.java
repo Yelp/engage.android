@@ -37,14 +37,25 @@ import android.content.Context;
 import android.content.DialogInterface;
 import com.janrain.android.capture.Capture;
 import com.janrain.android.capture.CaptureApiError;
+import com.janrain.android.capture.CaptureFlowUtils;
 import com.janrain.android.capture.CaptureRecord;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.utils.ApiConnection;
+import com.janrain.android.utils.JsonUtils;
+import com.janrain.android.utils.LogUtils;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.util.Map;
 
 import static com.janrain.android.Jump.SignInResultHandler.SignInError;
@@ -52,22 +63,28 @@ import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureRe
 import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.CAPTURE_API_ERROR;
 import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.ENGAGE_ERROR;
 import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.JUMP_NOT_INITIALIZED;
+import static com.janrain.android.utils.LogUtils.throwDebugException;
 
 /**
- * See engage.android/Jump_Integration_Guide.md for a developer's integration guide.
+ * See jump.android/Jump_Integration_Guide.md for a developer's integration guide.
  */
 public class Jump {
+    private static final String JR_CAPTURE_FLOW = "jr_capture_flow";
+
     /*package*/ enum State {
         STATE;
 
         // Computed values:
         /*package*/ CaptureRecord signedInUser;
         /*package*/ JREngage jrEngage;
-        /*package*/ Map<String, Object> captureFlow; //downloaded
+        /*package*/ Map<String, Object> captureFlow;
 
         // Configured values:
+        /*package*/ Context context;
+        /*package*/ String captureAppId;
         /*package*/ String captureClientId;
         /*package*/ String captureDomain;
+        /*package*/ boolean flowUsesTestingCdn;
         /*package*/ String captureFlowName;
         /*package*/ String captureFlowVersion;
         /*package*/ String captureLocale;
@@ -130,12 +147,20 @@ public class Jump {
         state.captureFlowName = jumpConfig.captureFlowName;
         state.captureFlowVersion = jumpConfig.captureFlowVersion;
         state.captureDomain = jumpConfig.captureDomain;
+        state.captureAppId = jumpConfig.captureAppId;
         state.captureClientId = jumpConfig.captureClientId;
         state.traditionalSignInType = jumpConfig.traditionalSignInType;
         state.captureLocale = jumpConfig.captureLocale;
         state.captureTraditionalSignInFormName = jumpConfig.captureTraditionalSignInFormName;
         state.backplaneChannelUrl = jumpConfig.backplaneChannelUrl;
         state.captureResponseType = "token";
+        loadUserFromDiskInternal(context);
+
+        if (state.captureLocale != null && state.captureFlowName != null && state.captureAppId != null) {
+            loadFlow();
+            downloadFlow();
+        }
+
     }
 
     public static String getCaptureDomain() {
@@ -492,11 +517,62 @@ public class Jump {
     }
 
     /**
-     * To be called from Application#onCreate()
-     * @param context the application context, used to interact with the disk
+     * @deprecated Loading state from disk is now done automatically from Jump.init
      */
     public static void loadFromDisk(Context context) {
+        loadUserFromDiskInternal(context);
+    }
+
+    /*package*/ static void loadUserFromDiskInternal(Context context) {
         state.signedInUser = CaptureRecord.loadFromDisk(context);
+    }
+
+    private static void loadFlow() {
+        try {
+            FileInputStream fis = state.context.openFileInput(JR_CAPTURE_FLOW);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            state.captureFlow = (Map<String, Object>) ois.readObject();
+        } catch (ClassCastException e) {
+            throwDebugException(e);
+        } catch (FileNotFoundException ignore) {
+        } catch (StreamCorruptedException e) {
+            LogUtils.loge("", e);
+        } catch (IOException e) {
+            LogUtils.loge("", e);
+        } catch (ClassNotFoundException e) {
+            throwDebugException(new RuntimeException(e));
+        }
+    }
+
+    private static void downloadFlow() {
+        String flowVersion = state.captureFlowVersion != null ? state.captureFlowVersion : "HEAD";
+
+        String flowUrlString =
+                String.format("https://%s.cloudfront.net/widget_data/flows/%s/%s/%s/%s.json",
+                        state.flowUsesTestingCdn ? "dlzjvycct5xka" : "d1lqe9temigv1p",
+                        state.captureAppId, state.captureFlowName, flowVersion,
+                        state.captureLocale);
+
+        ApiConnection c = new ApiConnection(flowUrlString);
+        c.fetchResponseAsJson(new ApiConnection.FetchJsonCallback() {
+            public void run(JSONObject jsonObject) {
+                state.captureFlow = JsonUtils.jsonToCollection(jsonObject);
+                LogUtils.logd("Parsed flow, version: " + CaptureFlowUtils.getFlowVersion(state.captureFlow));
+                writeCaptureFlow();
+            }
+        });
+    }
+
+    private static void writeCaptureFlow() {
+        try {
+            FileOutputStream fos = state.context.openFileOutput(JR_CAPTURE_FLOW, 0);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(state.captureFlow);
+        } catch (FileNotFoundException e) {
+            throwDebugException(new RuntimeException(e));
+        } catch (IOException e) {
+            throwDebugException(new RuntimeException(e));
+        }
     }
 
     /**

@@ -33,7 +33,6 @@
 package com.janrain.android.capture;
 
 import android.util.Pair;
-import com.janrain.android.utils.CollectionUtils;
 import org.json.JSONObject;
 
 import java.util.HashSet;

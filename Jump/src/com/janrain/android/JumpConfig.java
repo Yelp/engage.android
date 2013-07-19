@@ -49,6 +49,12 @@ public class JumpConfig {
     public String engageAppId;
 
     /**
+     * The application ID of your Capture app. Found on the Capture app's dashboard, at the top of the
+     * API clients page.
+     */
+    public String captureAppId;
+
+    /**
      * The domain of your Capture app, contact your deployment engineer for this
      */
     public String captureDomain;

@@ -37,8 +37,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 
 import static com.janrain.android.utils.CollectionUtils.sortedSetFromIterator;
@@ -304,5 +306,29 @@ public class JsonUtils {
             throwDebugException(new IllegalArgumentException(e));
             return null;
         }
+    }
+
+    public static Map<String, Object> jsonToCollection(JSONObject jsonObject) {
+        Map<String, Object> retval = new HashMap<String, Object>();
+        List keys = CollectionUtils.listFromIterator(jsonObject.keys());
+        for (Object key : keys) retval.put((String) key, jsonToCollection(jsonObject.opt((String) key)));
+        return retval;
+    }
+
+    public static Object jsonToCollection(Object jsonValue) {
+        if (jsonValue instanceof JSONObject) {
+            return jsonToCollection((JSONObject) jsonValue);
+        } else if (jsonValue instanceof JSONArray) {
+            return jsonToCollection((JSONArray) jsonValue);
+        } else {
+            return jsonValue;
+        }
+    }
+
+    public static List<Object> jsonToCollection(JSONArray jsonArray) {
+        List<Object> retval = new ArrayList<Object>();
+        List objects = jsonArrayToList(jsonArray);
+        for (Object object : objects) retval.add(jsonToCollection(object));
+        return retval;
     }
 }

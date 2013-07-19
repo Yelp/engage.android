@@ -61,7 +61,7 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import static com.janrain.android.capture.Capture.CaptureApiRequestCallback;
-import static com.janrain.android.capture.Capture.FetchJsonCallback;
+import static com.janrain.android.utils.ApiConnection.FetchJsonCallback;
 import static com.janrain.android.capture.Capture.InvalidApidChangeException;
 import static com.janrain.android.utils.AndroidUtils.urlEncode;
 import static com.janrain.android.utils.JsonUtils.copyJsonVal;
@@ -247,7 +247,7 @@ public class CaptureRecord extends JSONObject {
         Set<Pair<String, String>> params = new HashSet<Pair<String, String>>(change.getBodyParams());
         params.add(new Pair<String, String>("access_token", accessToken));
 
-        Capture.FetchJsonCallback jsonCallback = new FetchJsonCallback() {
+        FetchJsonCallback jsonCallback = new FetchJsonCallback() {
             public void run(JSONObject content) {
                 if (content.opt("stat").equals("ok")) {
                     LogUtils.logd("Capture", change.toString());

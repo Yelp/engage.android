@@ -32,150 +32,18 @@
 
 package com.janrain.android.capture;
 
-import android.util.Pair;
-import com.janrain.android.engage.net.JRConnectionManager;
-import com.janrain.android.engage.net.JRConnectionManagerDelegate;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.utils.CollectionUtils;
-import com.janrain.android.utils.LogUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import java.io.UnsupportedEncodingException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import com.janrain.android.utils.ApiConnection;
 
 import static android.text.TextUtils.join;
 import static com.janrain.android.Jump.getCaptureDomain;
-import static com.janrain.android.capture.Capture.FetchCallback;
-import static com.janrain.android.utils.AndroidUtils.urlEncode;
 import static com.janrain.android.utils.LogUtils.throwDebugException;
 
-public class CaptureApiConnection {
-    /*package*/ String url;
-    /*package*/ Set<Pair<String,String>> params = new HashSet<Pair<String, String>>();
-    /*package*/ Method method = Method.POST;
-    private JRConnectionManagerDelegate connectionManagerDelegate;
-
-    /*package*/ static byte[] paramsGetBytes(Set<Pair<String, String>> bodyParams) {
-        try {
-            return paramsToString(bodyParams).getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Unexpected", e);
-        }
-    }
-
-    /*package*/ static String paramsToString(Set<Pair<String, String>> bodyParams) {
-        Collection<String> paramPairs = CollectionUtils.map(bodyParams,
-                new CollectionUtils.Function<String, Pair<String, String>>() {
-                    public String operate(Pair<String, String> val) {
-                        return val.first.concat("=").concat(urlEncode(val.second));
-                    }
-                });
-
-        return join("&", paramPairs);
-    }
-
-    public static Object connectionManagerGetJsonContent(HttpResponseHeaders headers, byte[] payload) {
-        String json = null;
-        try {
-            json = new String(payload, "UTF-8");
-            if (headers.getContentType().toLowerCase().startsWith("application/json")) {
-                return new JSONTokener(json).nextValue();
-            }
-            LogUtils.logd("unrecognized content type: " + headers.getContentType());
-            LogUtils.logd(json);
-            return json;
-        } catch (JSONException ignore) {
-            return json;
-        } catch (UnsupportedEncodingException e) {
-            throwDebugException(new RuntimeException(e));
-            return json;
-        }
-    }
-
-    public void stopConnection() {
-        JRConnectionManager.stopConnectionsForDelegate(connectionManagerDelegate);
-    }
-
-    /*package*/ void maybeAddParam(String key, String value) {
-        if (key != null && value != null) params.add(new Pair<String, String>(key, value));
-    }
-
-    enum Method {POST, GET}
+public class CaptureApiConnection extends ApiConnection {
 
     /*package*/ CaptureApiConnection(String relativeUrl) {
+        super("https://" + getCaptureDomain() + relativeUrl);
         if (!relativeUrl.startsWith("/")) {
             throwDebugException(new RuntimeException("bad looking relative URL. Should start with /"));
         }
-        this.url = "https://" + getCaptureDomain() + relativeUrl;
-    }
-
-    /*package*/ void addAllToParams(String... params) {
-        for (int i = 0; i < params.length - 1; i += 2) {
-            String key = params[i];
-            String value = params[i + 1];
-            if (value != null) {
-                this.params.add(new Pair<String, String>(key, value));
-            } else {
-                throwDebugException(new RuntimeException("null value in params"));
-            }
-        }
-
-        if (params.length % 2 == 1) LogUtils.loge("error: odd number of param strings");
-    }
-
-    /*package*/ void addAllToParams(Set<Pair<String, String>> params) {
-        this.params.addAll(params);
-    }
-
-    /*package*/ void fetchResponseMaybeJson(final FetchCallback callback) {
-        JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate connectionCallback =
-                new JRConnectionManagerDelegate.SimpleJRConnectionManagerDelegate() {
-                    @Override
-                    public void connectionDidFinishLoading(HttpResponseHeaders headers,
-                                                           byte[] payload,
-                                                           String requestUrl,
-                                                           Object tag) {
-                        Object response = connectionManagerGetJsonContent(headers, payload);
-                        callback.run(response);
-                    }
-
-                    @Override
-                    public void connectionDidFail(Exception ex,
-                                                  HttpResponseHeaders responseHeaders,
-                                                  byte[] payload,
-                                                  String requestUrl,
-                                                  Object tag) {
-                        int responseCode = responseHeaders == null ? -1 : responseHeaders.getResponseCode();
-                        LogUtils.loge("failed request (" + responseCode + " ): " + requestUrl, ex);
-                        callback.run(null);
-                    }
-                };
-
-        if (method == Method.POST) {
-            byte[] postData = paramsGetBytes(params);
-            JRConnectionManager.createConnection(url, connectionCallback, null, null, postData, false);
-        } else {
-            String urlWithParams = url + "?" + paramsToString(params);
-            JRConnectionManager.createConnection(urlWithParams, connectionCallback, null, null, null, false);
-        }
-
-        connectionManagerDelegate = connectionCallback;
-    }
-
-    /*package*/ void fetchResponseAsJson(final Capture.FetchJsonCallback callback) {
-        fetchResponseMaybeJson(new FetchCallback() {
-            public void run(Object response) {
-                if (response instanceof JSONObject) {
-                    callback.run(((JSONObject) response));
-                } else {
-                    LogUtils.loge("bad response: " + response);
-                    callback.run(null);
-                }
-            }
-        });
     }
 }

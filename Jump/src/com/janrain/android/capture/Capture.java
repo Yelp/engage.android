@@ -33,12 +33,12 @@
 package com.janrain.android.capture;
 
 import com.janrain.android.Jump;
+import com.janrain.android.utils.ApiConnection;
 import org.json.JSONObject;
 
 import static com.janrain.android.Jump.TraditionalSignInType;
 import static com.janrain.android.Jump.TraditionalSignInType.EMAIL;
 import static com.janrain.android.Jump.getCaptureClientId;
-import static com.janrain.android.Jump.getCaptureDomain;
 import static com.janrain.android.utils.LogUtils.throwDebugException;
 
 /**
@@ -227,7 +227,7 @@ public class Capture {
     /**
      * @internal
      */
-    public static abstract class SignInResultHandler implements FetchJsonCallback {
+    public static abstract class SignInResultHandler implements ApiConnection.FetchJsonCallback {
         private boolean canceled = false;
         private String authenticationToken;
         private String identityProvider;
@@ -258,14 +258,6 @@ public class Capture {
         public abstract void onSuccess(CaptureRecord record);
 
         public abstract void onFailure(CaptureApiError error);
-    }
-
-    /*package*/ interface FetchJsonCallback {
-        void run(JSONObject jsonObject);
-    }
-
-    /*package*/ interface FetchCallback {
-        void run(Object response);
     }
 }
 
