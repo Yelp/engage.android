@@ -389,7 +389,7 @@ public class Jump {
         final String existingProvider = error.captureApiError.getExistingAccountIdentityProvider();
         String conflictingIdentityProvider = error.captureApiError.getConflictingIdentityProvider();
         String conflictingIdpNameLocalized = JRProvider.getLocalizedName(conflictingIdentityProvider);
-        String existingIdpNameLocalized = JRProvider.getLocalizedName(conflictingIdentityProvider);
+        String existingIdpNameLocalized = JRProvider.getLocalizedName(existingProvider);
 
         AlertDialog alertDialog = new AlertDialog.Builder(fromActivity)
                 .setTitle(fromActivity.getString(R.string.jr_merge_flow_default_dialog_title))
