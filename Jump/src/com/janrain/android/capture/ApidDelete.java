@@ -33,10 +33,7 @@
 package com.janrain.android.capture;
 
 import android.util.Pair;
-import com.janrain.android.Jump;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 

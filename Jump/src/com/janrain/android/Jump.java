@@ -47,6 +47,7 @@ import com.janrain.android.engage.types.JRDictionary;
 import com.janrain.android.utils.ApiConnection;
 import com.janrain.android.utils.JsonUtils;
 import com.janrain.android.utils.LogUtils;
+import com.janrain.android.utils.ThreadUtils;
 import org.json.JSONObject;
 
 import java.io.FileInputStream;
@@ -98,6 +99,7 @@ public class Jump {
 
         // Transient state values:
         /*package*/ SignInResultHandler signInHandler;
+        public boolean initCalled;
     }
 
     /*package*/ static final State state = State.STATE;
@@ -140,7 +142,10 @@ public class Jump {
      * @param context a context to perform IO from
      * @param jumpConfig an instance of JumpConfig which contains your configuration values. These values
      */
-    public static void init(Context context, JumpConfig jumpConfig) {
+    public static synchronized void init(Context context, JumpConfig jumpConfig) {
+        if (state.initCalled) throwDebugException(new IllegalStateException("Multiple Jump.init() calls"));
+        state.initCalled = true;
+
         state.context = context;
         state.jrEngage = JREngage.initInstance(context.getApplicationContext(), jumpConfig.engageAppId,
                 null, null);
@@ -157,12 +162,19 @@ public class Jump {
         state.captureTraditionalSignInFormName = jumpConfig.captureTraditionalSignInFormName;
         state.backplaneChannelUrl = jumpConfig.backplaneChannelUrl;
         state.captureResponseType = "token";
-        loadUserFromDiskInternal(context);
 
-        if (state.captureLocale != null && state.captureFlowName != null && state.captureAppId != null) {
-            loadFlow();
-            downloadFlow();
-        }
+        final Context tempContext = context;
+        ThreadUtils.executeInBg(new Runnable() {
+            public void run() {
+                loadUserFromDiskInternal(tempContext);
+
+                if (state.captureLocale != null && state.captureFlowName != null &&
+                        state.captureAppId != null) {
+                    loadFlow();
+                    downloadFlow();
+                }
+            }
+        });
     }
 
     public static String getCaptureDomain() {
@@ -198,6 +210,10 @@ public class Jump {
 
     public static String getResponseType() {
         return state.captureResponseType;
+    }
+
+    public static String getCaptureAppId() {
+        return state.captureAppId;
     }
 
     public static String getCaptureFlowName() {
@@ -263,19 +279,8 @@ public class Jump {
         state.jrEngage.addDelegate(new JREngageDelegate.SimpleJREngageDelegate() {
             @Override
             public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
-                String authInfoToken = auth_info.getAsString("token");
-
-                Capture.performSocialSignIn(authInfoToken, new Capture.SignInResultHandler() {
-                //Capture.performLegacySocialSignIn(authInfoToken, new Capture.SignInResultHandler() {
-                    public void onSuccess(CaptureRecord record) {
-                        state.signedInUser = record;
-                        fireHandlerSuccess();
-                    }
-
-                    public void onFailure(CaptureApiError error) {
-                        fireHandlerFailure(new SignInError(CAPTURE_API_ERROR, error, null));
-                    }
-                }, provider, mergeToken);
+                handleEngageAuthenticationSuccess(auth_info, provider, mergeToken);
+                state.jrEngage.removeDelegate(this);
             }
 
             @Override
@@ -297,11 +302,6 @@ public class Jump {
                 state.jrEngage.removeDelegate(this);
                 Jump.fireHandlerOnFailure(err);
             }
-
-            private void fireHandlerSuccess() {
-                state.jrEngage.removeDelegate(this);
-                Jump.fireHandlerOnSuccess();
-            }
         });
 
         if (providerName != null) {
@@ -309,6 +309,22 @@ public class Jump {
         } else {
             state.jrEngage.showAuthenticationDialog(fromActivity, TradSignInUi.class);
         }
+    }
+
+    private static void handleEngageAuthenticationSuccess(JRDictionary auth_info, String provider,
+                                                          String mergeToken) {
+        String authInfoToken = auth_info.getAsString("token");
+
+        Capture.performSocialSignIn(authInfoToken, new Capture.SignInResultHandler() {
+            public void onSuccess(CaptureRecord record) {
+                state.signedInUser = record;
+                Jump.fireHandlerOnSuccess();
+            }
+
+            public void onFailure(CaptureApiError error) {
+                Jump.fireHandlerOnFailure(new SignInError(CAPTURE_API_ERROR, error, null));
+            }
+        }, provider, mergeToken);
     }
 
     /**
@@ -553,9 +569,9 @@ public class Jump {
             throwDebugException(e);
         } catch (FileNotFoundException ignore) {
         } catch (StreamCorruptedException e) {
-            LogUtils.loge("", e);
+            throwDebugException(new RuntimeException(e));
         } catch (IOException e) {
-            LogUtils.loge("", e);
+            throwDebugException(new RuntimeException(e));
         } catch (ClassNotFoundException e) {
             throwDebugException(new RuntimeException(e));
         } finally {
@@ -563,6 +579,7 @@ public class Jump {
                 if (fis != null) fis.close();
             } catch (IOException ignore) {
             }
+
             try {
                 if (ois != null) ois.close();
             } catch (IOException ignore) {
@@ -585,12 +602,12 @@ public class Jump {
             public void run(JSONObject jsonObject) {
                 state.captureFlow = JsonUtils.jsonToCollection(jsonObject);
                 LogUtils.logd("Parsed flow, version: " + CaptureFlowUtils.getFlowVersion(state.captureFlow));
-                writeCaptureFlow();
+                storeCaptureFlow();
             }
         });
     }
 
-    private static void writeCaptureFlow() {
+    private static void storeCaptureFlow() {
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
@@ -606,6 +623,7 @@ public class Jump {
                 if (oos != null) oos.close();
             } catch (IOException ignore) {
             }
+
             try {
                 if (fos != null) fos.close();
             } catch (IOException ignore) {
@@ -619,5 +637,14 @@ public class Jump {
      */
     public static void saveToDisk(Context context) {
         if (state.signedInUser != null) state.signedInUser.saveToDisk(context);
+    }
+
+    /**
+     * @return the downloaded flow's version, if any
+     */
+    public static String getCaptureFlowVersion() {
+        Map<String, Object> captureFlow = getCaptureFlow();
+        if (captureFlow == null) return null;
+        return CaptureFlowUtils.getFlowVersion(captureFlow);
     }
 }

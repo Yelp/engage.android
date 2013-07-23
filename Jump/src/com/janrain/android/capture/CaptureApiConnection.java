@@ -34,7 +34,6 @@ package com.janrain.android.capture;
 
 import com.janrain.android.utils.ApiConnection;
 
-import static android.text.TextUtils.join;
 import static com.janrain.android.Jump.getCaptureDomain;
 import static com.janrain.android.utils.LogUtils.throwDebugException;
 

@@ -34,7 +34,6 @@ package com.janrain.android.capture;
 
 import android.util.Pair;
 
-import java.net.URL;
 import java.util.Set;
 import java.util.regex.Pattern;
 

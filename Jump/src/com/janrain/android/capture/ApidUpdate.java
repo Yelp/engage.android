@@ -33,12 +33,9 @@
 package com.janrain.android.capture;
 
 import android.util.Pair;
-import com.janrain.android.Jump;
 import com.janrain.android.utils.JsonUtils;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 

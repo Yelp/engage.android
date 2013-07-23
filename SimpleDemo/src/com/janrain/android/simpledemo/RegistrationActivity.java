@@ -40,12 +40,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.janrain.android.Jump;
 import com.janrain.android.capture.CaptureApiError;
-import com.janrain.android.capture.CaptureRecord;
-import com.janrain.android.utils.CollectionUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
 import java.util.Map;
 
 import static com.janrain.android.simpledemo.R.id.trad_reg_display_name;
@@ -58,12 +55,34 @@ import static com.janrain.android.utils.CollectionUtils.collectionToHumanReadabl
 public class RegistrationActivity extends Activity {
 
     private View registerButton;
+    private JSONObject newUser = new JSONObject();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_activity);
         registerButton = findViewById(R.id.trad_reg_button);
+
+        String preregJson = getIntent().getStringExtra("preregistrationRecord");
+
+        if (preregJson != null) {
+            JSONObject preregistrationRecord;
+            try {
+                preregistrationRecord = new JSONObject(preregJson);
+            } catch (JSONException e) {
+                throw new RuntimeException("Unexpected", e);
+            }
+
+            newUser = preregistrationRecord;
+            setTitle("Almost Done!");
+            setEditTextString(trad_reg_email, newUser.optString("email"));
+            setEditTextString(trad_reg_display_name, newUser.optString("displayName"));
+            setEditTextString(trad_reg_first_name, newUser.optString("givenName"));
+            setEditTextString(trad_reg_last_name, newUser.optString("familyName"));
+            setEditTextString(trad_reg_password, newUser.optString("password"));
+        } else {
+            setTitle("Sign Up");
+        }
     }
 
     public void register(View view) {
@@ -73,7 +92,6 @@ public class RegistrationActivity extends Activity {
         firstName = getEditTextString(trad_reg_first_name);
         lastName = getEditTextString(trad_reg_last_name);
         password = getEditTextString(trad_reg_password);
-        JSONObject newUser = new JSONObject();
         try {
             newUser.put("email", email)
                     .put("displayName", displayName)
@@ -111,6 +129,10 @@ public class RegistrationActivity extends Activity {
 
     private String getEditTextString(int layoutId) {
         return ((EditText) findViewById(layoutId)).getText().toString();
+    }
+
+    private void setEditTextString(int layoutId, String value) {
+        ((EditText) findViewById(layoutId)).setText(value);
     }
 
     @Override

@@ -34,7 +34,6 @@ package com.janrain.android.engage.net;
 import android.os.Handler;
 import android.os.Looper;
 import com.janrain.android.utils.ApacheSetFromMap;
-import com.janrain.android.utils.LogUtils;
 import com.janrain.android.utils.ThreadUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
@@ -61,7 +60,8 @@ public class JRConnectionManager {
     // createConnection can be called from a BG thread so this is wrapped in a synced map for thread
     // safety
     private static final Map<JRConnectionManagerDelegate, Set<ManagedConnection>> sDelegateConnections =
-            Collections.synchronizedMap(new WeakHashMap<JRConnectionManagerDelegate, Set<ManagedConnection>>());
+            Collections.synchronizedMap(
+                    new WeakHashMap<JRConnectionManagerDelegate, Set<ManagedConnection>>());
 
     private JRConnectionManager() {}
 
@@ -130,10 +130,11 @@ public class JRConnectionManager {
         }
 
         if (Looper.myLooper() != null) {
-            // operate asynchronously, post a message back to the thread later
+            // if we're on a Looper thread than operate asynchronously, and post a message back to the Looper
+            // later
             ThreadUtils.executeInBg(new AsyncHttpClient.HttpExecutor(new Handler(), managedConnection));
         } else {
-            // operate synchronously
+            // no Looper -> operate synchronously
             new AsyncHttpClient.HttpExecutor(null, managedConnection).run();
         }
     }
@@ -202,6 +203,11 @@ public class JRConnectionManager {
         }
 
         public void run() {
+            synchronized (sDelegateConnections) {
+                Set<ManagedConnection> managedConnections = sDelegateConnections.get(mConn.mDelegate);
+                if (managedConnections != null) managedConnections.remove(mConn);
+            }
+
             if (mConn.mDelegate == null || mConn.mHttpRequest.isAborted()) return;
 
             if (mConn.mResponse.hasException()) {

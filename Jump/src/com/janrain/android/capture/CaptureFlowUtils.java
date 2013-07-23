@@ -82,4 +82,8 @@ public class CaptureFlowUtils {
         throwDebugException(new RuntimeException("Error parsing flow version: " + version));
         return null;
     }
+
+    public static Map<String, Object> getFieldDefinition(Map<String, Object> flow, String fieldName) {
+        return (Map<String, Object>) ((Map<String, Object>) flow.get("fields")).get(fieldName);
+    }
 }

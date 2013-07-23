@@ -45,7 +45,7 @@ public class ThreadUtils {
         sExecutor = new ThreadPoolExecutor(0, 10, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10));
 
         // wrap the thread pool's thread factory in a thing that badges the names of its threads with a
-        // prefix so that they can be identified while debugg
+        // prefix so that they can be identified while debugging
         final ThreadFactory originalFactory = sExecutor.getThreadFactory();
         sExecutor.setThreadFactory(new ThreadFactory() {
             public Thread newThread(Runnable runnable) {

@@ -44,12 +44,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.janrain.android.Jump;
-import com.janrain.android.capture.CaptureApiError;
 import com.janrain.android.capture.Capture;
+import com.janrain.android.capture.CaptureApiError;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.types.JRActivityObject;
 import com.janrain.android.utils.LogUtils;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -82,6 +83,15 @@ public class MainActivity extends FragmentActivity {
                 // a library-provided dialog will be provided.)
 
                 Jump.startDefaultMergeFlowUi(MainActivity.this, error, signInResultHandler);
+            } else if (error.reason == SignInError.FailureReason.CAPTURE_API_ERROR &&
+                    error.captureApiError.isTwoStepRegFlowError()) {
+                // Called when a user cannot sign in because they have no record, but a two-step social
+                // registration is possible. (Which means that the error contains pre-filled form fields
+                // for the registration form.
+                Intent i = new Intent(MainActivity.this, RegistrationActivity.class);
+                JSONObject prefilledRecord = error.captureApiError.getPreregistrationRecord();
+                i.putExtra("preregistrationRecord", prefilledRecord.toString());
+                MainActivity.this.startActivity(i);
             } else {
                 AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
                 b.setMessage("Sign-in failure:" + error);

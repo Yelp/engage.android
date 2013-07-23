@@ -34,7 +34,6 @@ package com.janrain.android.engage.session;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.CookieManager;
 import com.janrain.android.R;
 import com.janrain.android.engage.JREngage;
