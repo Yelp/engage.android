@@ -130,7 +130,7 @@ public class JRConnectionManager {
         }
 
         if (Looper.myLooper() != null) {
-            // if we're on a Looper thread than operate asynchronously, and post a message back to the Looper
+            // if we're on a Looper thread then operate asynchronously, and post a message back to the Looper
             // later
             ThreadUtils.executeInBg(new AsyncHttpClient.HttpExecutor(new Handler(), managedConnection));
         } else {
