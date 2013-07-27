@@ -180,19 +180,6 @@ public class JRWebViewFragment extends JRUiFragment {
 
         if (mSession == null) return;
 
-        if (getArguments().getInt(JR_FRAGMENT_FLOW_MODE) == JR_FRAGMENT_FLOW_BETA_DIRECT_SHARE) {
-            mWebView.loadUrl("http://nathan.janrain.com/~nathan/share_widget_webview/beta_share.html");
-            mWebView.loadUrl("javascript:jrengage_beta_share_activity = " +
-                    getArguments().getString(JR_ACTIVITY_JSON));
-            String jsUrl = "http://rpxnow.com/js/lib/phonetell-dev/share_beta.js";
-            mWebView.loadUrl("javascript:jrengage_beta_share_js_url = '" + jsUrl + "'");
-            //String weinreUrl = "http://10.0.1.109:8080/target/target-script-min.js#anonymous";
-            //mWebView.loadUrl("javascript:weinreUrl = '" + weinreUrl + "';");
-
-            LogUtils.logd(TAG, "returning from onActivityCreated early due to beta share widget flow mode");
-            return;
-        }
-
         mProvider = mSession.getCurrentlyAuthenticatingProvider();
         if (mProvider == null) {
             Log.e(TAG, "[onActivityCreated] null provider, bailing out");
@@ -445,16 +432,6 @@ public class JRWebViewFragment extends JRUiFragment {
             } else {
                 mCurrentlyLoadingUrl = url;
             }
-
-            //if (getArguments().getInt(JR_FRAGMENT_FLOW_MODE) == JR_FRAGMENT_FLOW_BETA_DIRECT_SHARE) {
-            //    Uri parsedUrl = Uri.parse(url);
-            //    if (parsedUrl.getPath().equals("xdr")) {
-            //        JREngage.logd(TAG, "auto-closing XDR");
-            //        view.stopLoading();
-            //        view.loadUrl("javascript:self.close();");
-            //        return;
-            //    }
-            //}
 
             showProgressSpinner();
         }

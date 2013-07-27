@@ -135,7 +135,7 @@ public class Capture {
                 "thin_registration", String.valueOf(Jump.getCaptureEnableThinRegistration())
         );
         c.maybeAddParam("flow_version", Jump.getCaptureFlowVersion());
-        c.maybeAddParam("flow_name", Jump.getCaptureFlowName());
+        c.maybeAddParam("flow", Jump.getCaptureFlowName());
         c.maybeAddParam("registration_form", Jump.getCaptureSocialRegistrationFormName());
         c.maybeAddParam("bp_channel", Jump.getBackplaneChannelUrl());
         c.maybeAddParam("merge_token", mergeToken);
@@ -154,6 +154,11 @@ public class Capture {
     /**
      * Registers a new user
      *
+<<<<<<< topic/MOB-112-registration
+=======
+<<<<<<< master
+=======
+>>>>>>> local
      * @param newUser the user record to fill the form fields for the registration form with.
      * @param socialRegistrationToken the social registration token, or null to perform a tradtional
      *                                registration
@@ -194,7 +199,7 @@ public class Capture {
                 "locale", Jump.getCaptureLocale(),
                 "response_type", Jump.getResponseType(),
                 "redirect_uri", Jump.getRedirectUri(),
-                "flow_name", Jump.getCaptureFlowName(),
+                "flow", Jump.getCaptureFlowName(),
                 "form", registrationForm
                 //"refresh_secret", refreshSecret
                 );
@@ -209,6 +214,10 @@ public class Capture {
 
     /**
      * @internal
+<<<<<<< topic/MOB-112-registration
+=======
+>>>>>>> local
+>>>>>>> local
      */
     public static abstract class SignInResultHandler implements ApiConnection.FetchJsonCallback {
         private boolean canceled = false;
