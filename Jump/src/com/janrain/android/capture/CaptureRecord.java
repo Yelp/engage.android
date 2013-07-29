@@ -107,7 +107,8 @@ public class CaptureRecord extends JSONObject {
         FileInputStream fis = null;
         try {
             fis = applicationContext.openFileInput(JR_CAPTURE_SIGNED_IN_USER_FILENAME);
-            fileContents = CaptureStringUtils.readFully(fis);
+            fileContents = CaptureStringUtils.readAndClose(fis);
+            fis = null;
             JSONObject serializedVersion = new JSONObject(fileContents);
             CaptureRecord loadedRecord = new CaptureRecord();
             loadedRecord.original = serializedVersion.getJSONObject("original");
@@ -117,12 +118,13 @@ public class CaptureRecord extends JSONObject {
             return loadedRecord;
         } catch (FileNotFoundException ignore) {
         } catch (JSONException ignore) {
-            LogUtils.loge("Bad CaptureRecord file contents:\n" + fileContents, ignore);
+            throwDebugException(new RuntimeException("Bad CaptureRecord file contents:\n" + fileContents,
+                    ignore));
         } finally {
             if (fis != null) try {
                 fis.close();
             } catch (IOException e) {
-                throwDebugException(new RuntimeException("Unexpected", e));
+                throwDebugException(new RuntimeException(e));
             }
         }
         return null;
@@ -194,7 +196,7 @@ public class CaptureRecord extends JSONObject {
                     accessToken = (String) response.opt("access_token");
                     if (callback != null) callback.onSuccess();
                 } else {
-                    new CaptureApiError(response);
+                    new CaptureApiError(response, null, null);
                 }
             }
         });
@@ -252,7 +254,7 @@ public class CaptureRecord extends JSONObject {
                     LogUtils.logd("Capture", unsafeJsonObjectToString(content, 2));
                     fireNextChange(changeList.subList(1, changeList.size()), callback);
                 } else {
-                    if (callback != null) callback.onFailure(new CaptureApiError(content));
+                    if (callback != null) callback.onFailure(new CaptureApiError(content, null, null));
                 }
             }
         };

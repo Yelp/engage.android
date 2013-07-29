@@ -127,8 +127,6 @@ public abstract class JRUiFragment extends Fragment {
         boolean mShowing;
     }
 
-    /* These overrides are declared in the exact order they're called */
-
     @Override
     public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
         LogUtils.logd(TAG, "[" + new Object() {

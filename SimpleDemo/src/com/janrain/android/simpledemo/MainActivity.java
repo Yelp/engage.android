@@ -55,6 +55,41 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.janrain.android.capture.Capture.CaptureApiRequestCallback;
 
 public class MainActivity extends FragmentActivity {
+    private final Jump.SignInResultHandler signInResultHandler = new Jump.SignInResultHandler() {
+        public void onSuccess() {
+            AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
+            b.setMessage("Sign-in complete.");
+            b.setNeutralButton("Dismiss", null);
+            b.show();
+        }
+
+        public void onFailure(SignInError error) {
+            if (error.reason == SignInError.FailureReason.CAPTURE_API_ERROR &&
+                    error.captureApiError.isMergeFlowError()) {
+                // Called below is the default merge-flow handler. Merge behavior may also be implemented by
+                // headless-native-API for more control over the user experience.
+                //
+                // To do so, call Jump.showSignInDialog or Jump.performTraditionalSignIn directly, and
+                // pass in the merge-token and existing-provider-name retrieved from `error`.
+                //
+                // String mergeToken = error.captureApiError.getMergeToken();
+                // String existingProvider = error.captureApiError.getExistingAccountIdentityProvider()
+                //
+                // (An existing-provider-name of "capture" indicates a conflict with a traditional-sign-in
+                // account. You can handle this case yourself, by displaying a dialog and calling
+                // Jump.performTraditionalSignIn, or you can call Jump.showSignInDialog(..., "capture") and
+                // a library-provided dialog will be provided.)
+
+                Jump.startDefaultMergeFlowUi(MainActivity.this, error, signInResultHandler);
+            } else {
+                AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
+                b.setMessage("Sign-in failure:" + error);
+                b.setNeutralButton("Dismiss", null);
+                b.show();
+            }
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +98,7 @@ public class MainActivity extends FragmentActivity {
 
         //capture testing/staging
         //String engageAppId = "appcfamhnpkagijaeinl";
-        //String captureDomain = "mobile-testing-2.janraincapture.com";
+        //String captureDomain = "mobile-testing.janraincapture.com";
         //String captureClientId = "atasaz59p8cyecmbzmcwkbthsyq3wrxh";
         //String captureLocale = "en-US";
         //String captureSignInFormName = "signinForm";
@@ -80,7 +115,8 @@ public class MainActivity extends FragmentActivity {
         Jump.init(this, engageAppId, captureDomain, captureClientId, captureLocale, captureSignInFormName,
                 signInType);
 
-        //enableStrictMode();
+        enableStrictMode();
+
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
         linearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -92,30 +128,17 @@ public class MainActivity extends FragmentActivity {
         makeButton(linearLayout, "Test Share").setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 JREngage.getInstance().showSocialPublishingDialog(MainActivity.this,
-                        new JRActivityObject("aslkdfj", "google.com"));
+                        new JRActivityObject("aslkdfj", "http://google.com"));
             }
         });
+        Button signOut = makeButton(linearLayout, "Sign Out");
         //Button refreshAccesstoken = makeButton(linearLayout, "Refresh Access Token");
 
         setContentView(linearLayout);
 
         testAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Jump.showSignInDialog(MainActivity.this, null, new Jump.SignInResultHandler() {
-                    public void onSuccess() {
-                        AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
-                        b.setMessage("success");
-                        b.setNeutralButton("Dismiss", null);
-                        b.show();
-                    }
-
-                    public void onFailure(SignInError error) {
-                        AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
-                        b.setMessage("error:" + error);
-                        b.setNeutralButton("Dismiss", null);
-                        b.show();
-                    }
-                });
+                Jump.showSignInDialog(MainActivity.this, null, signInResultHandler, null);
             }
         });
 
@@ -180,6 +203,12 @@ public class MainActivity extends FragmentActivity {
                 }
             }
         });
+
+        signOut.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Jump.signOutCaptureUser(MainActivity.this);
+            }
+        });
     }
 
     private Button makeButton(LinearLayout linearLayout, String label) {
@@ -199,18 +228,19 @@ public class MainActivity extends FragmentActivity {
     private static void enableStrictMode() {
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .detectAll()
-                .detectDiskReads()
-                .detectDiskWrites()
-                .detectNetwork()   // or .detectAll() for all detectable problems
+        //        .detectDiskReads()
+        //        .detectDiskWrites()
+        //        .detectNetwork()   // or .detectAll() for all detectable problems
                 .penaltyLog()
-                .penaltyDeath()
+        //        .penaltyDeath()
                 .build());
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .detectLeakedSqlLiteObjects()
+                //.detectAll()
+                //.detectActivityLeaks()
+                //.detectLeakedSqlLiteObjects()
                 //.detectLeakedClosableObjects()
                 .penaltyLog()
-                .penaltyDeath()
+                //.penaltyDeath()
                 .build());
     }
 }

@@ -37,18 +37,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static com.janrain.android.utils.LogUtils.throwDebugException;
+
 /**
  * @internal
- * @class IOUtils
+ * @class CaseChangeOnlyRenameIoUtils
  */
-public final class IOUtils {
-    private static final String TAG = IOUtils.class.getSimpleName();
+public final class CaseChangeOnlyRenameIoUtils {
+    private static final String TAG = CaseChangeOnlyRenameIoUtils.class.getSimpleName();
 
-    private IOUtils() {
+    private CaseChangeOnlyRenameIoUtils() {
     }
 
     /**
-     * Reads the entire contents of the specified stream to a byte array.
+     * Reads the entire contents of the specified stream to a byte array, then closes the stream.
      *
      * @param in                 The input stream to read the contents of.
      * @param shouldThrowOnError Flag indicating whether or not the user wants to handle exceptions that are
@@ -57,22 +59,45 @@ public final class IOUtils {
      * @throws IOException If the user passed <code>true</code> for 'shouldThrowOnError' and an IOException
      *                     has occurred.
      */
-    public static byte[] readFromStream(InputStream in, boolean shouldThrowOnError) throws IOException {
-        if (in != null) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public static byte[] readAndClose(InputStream in, boolean shouldThrowOnError) throws IOException {
+        ByteArrayOutputStream baos = null;
+        try {
+            baos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int len;
+
+            // XXX
+            // This loop results in the HttpClient EofSensorInputStream deteching EOF and delegate it's
+            // wrapped InputStream's closure to the associated BasicManagedEntity, which only closes it's
+            // stream if it's using a managed connection, and always tells the EofSensorInputStream not to
+            // close the stream. The EofSensorInputStream also tosses the reference to it's wrapped stream,
+            // which orphans the stream and it becomes uncloseable.
+            // None of this makes sense to me, but I am working around the behavior I don't understand by
+            // rewriting the loop to not read past EOF.
+            //while ((len = in.read(buffer)) != -1) baos.write(buffer, 0, len);
+
+            // Rewwritten loop:
+            //while ((len = in.read(buffer, 0, in.available())) > 0) baos.write(buffer, 0, len);
+
+            ///asdflkajsdfkljdsaf
+            while ((len = in.read(buffer)) != -1) baos.write(buffer, 0, len);
+
+            return baos.toByteArray();
+        } catch (IOException e) {
+            Log.e(TAG, "[readAndClose] problem reading from input stream.", e);
+            if (shouldThrowOnError) throw e;
+        } finally {
             try {
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = in.read(buffer)) != -1) baos.write(buffer, 0, len);
-                return baos.toByteArray();
+                if (baos != null) baos.close();
             } catch (IOException e) {
-                Log.e(TAG, "[readFromStream] problem reading from input stream.", e);
-                if (shouldThrowOnError) throw e;
-            } finally {
-                baos.close();
+                throwDebugException(new RuntimeException(e));
             }
-        } else {
-            Log.e(TAG, "[readFromStream] unexpected null InputStream");
+
+            try {
+                in.close();
+            } catch (IOException e) {
+                throwDebugException(new RuntimeException(e));
+            }
         }
 
         return null;

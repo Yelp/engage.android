@@ -79,5 +79,13 @@
     <string name="jr_capture_signin_view_username_hint">Email</string>
     <string name="jr_capture_trad_signin_bad_password">Invalid username / password</string>
     <string name="jr_capture_trad_signin_unrecognized_error">Sorry, there was an error signing in</string>
+    <string name="jr_capture_trad_signin_dialog_title">Sign In</string>
+    <string name="jr_capture_signin_view_signing_in">Signing In …</string>
+    <string name="jr_traditional_account_name">traditional</string>
+    <string name="jr_merge_flow_default_dialog_title">Email Address Conflict</string>
+    <string name="jr_merge_flow_default_dialog_message">The %1$s account that you signed in with has the same
+        email address as an existing user. Sign in with %2$s to continue.
+    </string>
+    <string name="jr_merge_flow_default_merge_button">Merge</string>
 
 </resources>
