@@ -48,6 +48,9 @@ import static com.janrain.android.utils.JsonUtils.jsonArrayToList;
  * http://developers.janrain.com/documentation/capture/restful_api/
  */
 public class CaptureApiError {
+    private String engageToken;
+    private String conflictingIdentityProvider;
+
     /**
      * Indicates a form field validation failure, as a result of form submission.
      * See also getLocalizedValidationErrorMessages()
@@ -75,9 +78,6 @@ public class CaptureApiError {
      */
     public static final CaptureApiError INVALID_API_RESPONSE = new CaptureApiError();
 
-    private String engageToken;
-    private String conflictingIdentityProvider;
-
     /**
      * The Capture error code. See http://developers.janrain.com/documentation/capture/restful_api/
      */
@@ -97,6 +97,10 @@ public class CaptureApiError {
      * The raw JSON response
      */
     public final JSONObject raw_response;
+
+    /**
+     * Indicates an API response that could not be parsed. Has no meaningful fields values.
+     */
 
     private CaptureApiError() {
         error = "INVALID_API_RESPONSE";

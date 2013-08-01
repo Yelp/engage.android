@@ -391,56 +391,6 @@ public class Jump {
     }
 
     /**
-     * The default merge-flow handler. Provides a baseline implementation of the merge-account flow UI
-     *
-     * @param fromActivity the Activity from which to launch subsequent Activities and Dialogs.
-     * @param error the error received by your
-     * @param signInResultHandler your sign-in result handler.
-     */
-    public static void startDefaultMergeFlowUi(final Activity fromActivity,
-                                               SignInError error,
-                                               final SignInResultHandler signInResultHandler) {
-        if (state.jrEngage == null || state.captureDomain == null) {
-            signInResultHandler.onFailure(new SignInError(JUMP_NOT_INITIALIZED, null, null));
-            return;
-        }
-
-        final String mergeToken = error.captureApiError.getMergeToken();
-        final String existingProvider = error.captureApiError.getExistingAccountIdentityProvider();
-        String conflictingIdentityProvider = error.captureApiError.getConflictingIdentityProvider();
-        String conflictingIdpNameLocalized = JRProvider.getLocalizedName(conflictingIdentityProvider);
-        String existingIdpNameLocalized = JRProvider.getLocalizedName(conflictingIdentityProvider);
-
-        AlertDialog alertDialog = new AlertDialog.Builder(fromActivity)
-                .setTitle(fromActivity.getString(R.string.jr_merge_flow_default_dialog_title))
-                .setCancelable(false)
-                .setMessage(fromActivity.getString(R.string.jr_merge_flow_default_dialog_message,
-                        conflictingIdpNameLocalized,
-                        existingIdpNameLocalized))
-                .setPositiveButton(fromActivity.getString(R.string.jr_merge_flow_default_merge_button),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // When existingProvider == "capture" you can also call ...
-                                //
-                                //     Jump.performTraditionalSignIn(String signInName, String password,
-                                //         final SignInResultHandler handler, final String mergeToken);
-                                //
-                                // ... instead of showSignInDialog if you wish to present your own dialog
-                                // and then use the headless API to perform the traditional sign-in.
-                                Jump.showSignInDialog(fromActivity,
-                                        existingProvider,
-                                        signInResultHandler,
-                                        mergeToken);
-                            }
-                        })
-                .setNegativeButton(android.R.string.cancel, null)
-                .create();
-
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.show();
-    }
-
-    /**
      * Registers a new user record with Capture. Used for both traditional registrations and social two-step
      * registrations.
      *
@@ -646,5 +596,55 @@ public class Jump {
         Map<String, Object> captureFlow = getCaptureFlow();
         if (captureFlow == null) return null;
         return CaptureFlowUtils.getFlowVersion(captureFlow);
+    }
+
+    /**
+     * The default merge-flow handler. Provides a baseline implementation of the merge-account flow UI
+     *
+     * @param fromActivity the Activity from which to launch subsequent Activities and Dialogs.
+     * @param error the error received by your
+     * @param signInResultHandler your sign-in result handler.
+     */
+    public static void startDefaultMergeFlowUi(final Activity fromActivity,
+                                               SignInError error,
+                                               final SignInResultHandler signInResultHandler) {
+        if (state.jrEngage == null || state.captureDomain == null) {
+            signInResultHandler.onFailure(new SignInError(JUMP_NOT_INITIALIZED, null, null));
+            return;
+        }
+
+        final String mergeToken = error.captureApiError.getMergeToken();
+        final String existingProvider = error.captureApiError.getExistingAccountIdentityProvider();
+        String conflictingIdentityProvider = error.captureApiError.getConflictingIdentityProvider();
+        String conflictingIdpNameLocalized = JRProvider.getLocalizedName(conflictingIdentityProvider);
+        String existingIdpNameLocalized = JRProvider.getLocalizedName(existingProvider);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(fromActivity)
+                .setTitle(fromActivity.getString(R.string.jr_merge_flow_default_dialog_title))
+                .setCancelable(false)
+                .setMessage(fromActivity.getString(R.string.jr_merge_flow_default_dialog_message,
+                        conflictingIdpNameLocalized,
+                        existingIdpNameLocalized))
+                .setPositiveButton(fromActivity.getString(R.string.jr_merge_flow_default_merge_button),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // When existingProvider == "capture" you can also call ...
+                                //
+                                //     Jump.performTraditionalSignIn(String signInName, String password,
+                                //         final SignInResultHandler handler, final String mergeToken);
+                                //
+                                // ... instead of showSignInDialog if you wish to present your own dialog
+                                // and then use the headless API to perform the traditional sign-in.
+                                Jump.showSignInDialog(fromActivity,
+                                        existingProvider,
+                                        signInResultHandler,
+                                        mergeToken);
+                            }
+                        })
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.show();
     }
 }

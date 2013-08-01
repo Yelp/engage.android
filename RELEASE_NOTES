@@ -1,3 +1,7 @@
+v4.1.0:
+ - Adds support for the merge-accounts sign-in flow. (Which enables an end user
+   who has signed in with the "wrong" social identity to resolve the error by
+   linking that social identity with their existing record.) 
 v4.0.12:
  - Fixes a build error due to a missing-from-source-control utils class
 v4.0.11:

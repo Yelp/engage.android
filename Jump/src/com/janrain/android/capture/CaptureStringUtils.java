@@ -33,7 +33,6 @@
 package com.janrain.android.capture;
 
 import com.janrain.android.utils.IoUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 

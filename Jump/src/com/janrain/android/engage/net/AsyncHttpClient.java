@@ -165,7 +165,6 @@ import static com.janrain.android.engage.net.JRConnectionManager.ManagedConnecti
                 if (entity == null) {
                     responseBody = new byte[0];
                 } else {
-                    //responseBody = IoUtils.readAndClose(entity.getContent(), true);
                     responseBody = EntityUtils.toByteArray(entity);
                     entity.consumeContent();
 

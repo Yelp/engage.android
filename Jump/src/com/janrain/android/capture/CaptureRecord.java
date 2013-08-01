@@ -181,11 +181,6 @@ public class CaptureRecord extends JSONObject {
      * @param callback your handler, invoked upon completion
      */
     public void refreshAccessToken(final CaptureApiRequestCallback callback) {
-        //accessToken = "6bunfwu42h2rwgbq";
-        //refreshSecret = "a";
-        //String domain = "test-multi.janraincapture.com";
-        String domain = Jump.getCaptureDomain();
-
         CaptureApiConnection c = new CaptureApiConnection("/access/getAccessToken");
         String date = CAPTURE_API_SIGNATURE_DATE_FORMAT.format(new Date());
         Set<Pair<String, String>> params = new HashSet<Pair<String, String>>();

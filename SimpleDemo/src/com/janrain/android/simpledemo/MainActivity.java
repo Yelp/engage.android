@@ -107,6 +107,7 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
 
         //enableStrictMode();
+
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
         linearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -121,6 +122,7 @@ public class MainActivity extends FragmentActivity {
                         new JRActivityObject("aslkdfj", "http://google.com"));
             }
         });
+
         //Button refreshAccesstoken = addButton(linearLayout, "Refresh Access Token");
 
         addButton(linearLayout, "Traditional Registration").setOnClickListener(new View.OnClickListener() {
