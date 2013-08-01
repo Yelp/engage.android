@@ -1,7 +1,7 @@
 This page tells you how to:
 
-*   [Download the Library](documentation/mobile-libraries/jump-for-android/intellij-project-setup/#download-the-library)
-*   [Add the Library to Your Android IntelliJ Project](documentation/mobile-libraries/jump-for-android/intellij-project-setup/#add-the-library-to-your-android-intellij-project)
+*   [Download the Library](#download-the-library)
+*   [Add the Library to Your Android IntelliJ Project](#add-the-library-to-your-android-intellij-project)
 
 ## Download the Library
 
