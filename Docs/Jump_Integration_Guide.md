@@ -359,6 +359,11 @@ For example, from MainActivity in SimpleDemo:
 
 Call `com.janrain.android.Jump.signOutCaptureUser` to sign the user out.
 
+## Next: Registration
+
+Once you have sign-in and record updates working, see the `User_Registration_Guide.md` for a guide to new user
+registration.
+
 ## Appearance Customization
 
 ### Creating Your Own User Interface

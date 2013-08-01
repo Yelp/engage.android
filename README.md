@@ -2,7 +2,7 @@ Welcome to the JUMP platform libary for Android.  This library is available open
 license, as found in the LICENSE file.
 
 Getting Started:
-    Jump_Integration_Guide.md
+    Docs/Jump_Integration_Guide.md
 
 Phonegap Plugin:
     http://developers.janrain.com/documentation/mobile-libraries/phonegapcordova/

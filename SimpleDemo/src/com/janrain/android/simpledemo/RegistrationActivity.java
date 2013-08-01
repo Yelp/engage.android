@@ -56,6 +56,7 @@ public class RegistrationActivity extends Activity {
 
     private View registerButton;
     private JSONObject newUser = new JSONObject();
+    private String socialRegistrationToken = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class RegistrationActivity extends Activity {
         registerButton = findViewById(R.id.trad_reg_button);
 
         String preregJson = getIntent().getStringExtra("preregistrationRecord");
+        String socialRegToken = getIntent().getStringExtra("socialRegistrationToken");
 
         if (preregJson != null) {
             JSONObject preregistrationRecord;
@@ -74,6 +76,7 @@ public class RegistrationActivity extends Activity {
             }
 
             newUser = preregistrationRecord;
+            socialRegistrationToken = socialRegToken;
             setTitle("Almost Done!");
             setEditTextString(trad_reg_email, newUser.optString("email"));
             setEditTextString(trad_reg_display_name, newUser.optString("displayName"));
@@ -102,7 +105,7 @@ public class RegistrationActivity extends Activity {
             throw new RuntimeException("Unexpected", e);
         }
 
-        Jump.registerNewUser(newUser, null, new Jump.SignInResultHandler() {
+        Jump.registerNewUser(newUser, socialRegistrationToken, new Jump.SignInResultHandler() {
             public void onSuccess() {
                 Toast.makeText(RegistrationActivity.this, "Registration Complete", Toast.LENGTH_LONG).show();
                 finish();
@@ -110,11 +113,12 @@ public class RegistrationActivity extends Activity {
 
             public void onFailure(SignInError error) {
                 AlertDialog.Builder adb = new AlertDialog.Builder(RegistrationActivity.this);
-                if (error.captureApiError.code == CaptureApiError.FORM_VALIDATION_ERROR) {
+                if (error.captureApiError.isFormValidationError()) {
                     adb.setTitle("Invalid Fields");
                     Map<String, Object> messages =
                             (Map) error.captureApiError.getLocalizedValidationErrorMessages();
-                    adb.setMessage(collectionToHumanReadableString(messages));
+                    String message = collectionToHumanReadableString(messages);
+                    adb.setMessage(message);
                 } else {
                     adb.setTitle("Unrecognized error");
                     adb.setMessage(error.toString());

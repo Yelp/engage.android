@@ -91,6 +91,7 @@ public class MainActivity extends FragmentActivity {
                 Intent i = new Intent(MainActivity.this, RegistrationActivity.class);
                 JSONObject prefilledRecord = error.captureApiError.getPreregistrationRecord();
                 i.putExtra("preregistrationRecord", prefilledRecord.toString());
+                i.putExtra("socialRegistrationToken", error.captureApiError.getSocialRegistrationToken());
                 MainActivity.this.startActivity(i);
             } else {
                 AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);

@@ -171,6 +171,10 @@ public class CaptureApiError {
         return engageToken;
     }
 
+    public String getSocialRegistrationToken() {
+        return engageToken;
+    }
+
     public String getExistingAccountIdentityProvider() {
         return raw_response.optString("existing_provider");
     }
@@ -181,6 +185,10 @@ public class CaptureApiError {
 
     public boolean isTwoStepRegFlowError() {
         return code == RECORD_NOT_FOUND;
+    }
+
+    public boolean isFormValidationError() {
+        return code == FORM_VALIDATION_ERROR;
     }
 
     public JSONObject getPreregistrationRecord() {

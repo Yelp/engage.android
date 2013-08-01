@@ -36,10 +36,6 @@ import android.app.Application;
 import com.janrain.android.Jump;
 import com.janrain.android.JumpConfig;
 
-/**
- * Created with IntelliJ IDEA. User: nathan Date: 3/1/13 Time: 9:43 AM To change this template use File |
- * Settings | File Templates.
- */
 public class SimpleDemoApplication extends Application {
     @Override
     public void onCreate() {

@@ -35,9 +35,10 @@ package com.janrain.android;
 import android.content.Context;
 
 /**
- * Used to contain your configuration for the JUMP library, to be passed to Jump.init()
+ * A 'POJO' -- plain old java object, used to contain your configuration for the JUMP library, to be passed
+ * to Jump.init()
  */
-public class JumpConfig {
+public final class JumpConfig {
     /**
      * A context to perform IO with
      */
