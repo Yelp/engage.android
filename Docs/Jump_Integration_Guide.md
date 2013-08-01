@@ -11,8 +11,8 @@ the Capture user registration system. For Engage-only (i.e. social-authenticatio
 * Engage social sign-in (includes OpenID, and many OAuth identity providers, e.g. Google, Facebook, etc.)
 * Sign-in to Capture accounts
     * Either via Engage social sign-in or via traditional username/password sign-in
-    * Including the Capture "merge account flow" (which links two social accounts by verified email address at sign-in
-      time)
+    * Including the Capture "merge account flow" (which links two social accounts by verified email address
+      at sign-in time)
 * Capture account record updates
 * Capture Account "thin" social registration -- automatic account creation for social sign-in users.
 
@@ -384,7 +384,9 @@ For customizing the look and feel of the sign-in experience, please see
 
 ## Troubleshooting
 
-`<CaptureApiError code: 223 error: unknown_attribute description: attribute does not exist: /your_attr_name>`
+### Attribute Does Not Exist
+
+    <CaptureApiError code: 223 error: unknown_attribute description: attribute does not exist: /your_attr_name>`
 
 Use [entityType.setAccessSchema](http://developers.janrain.com/documentation/api-methods/capture/entitytype/setaccessschema)
 to add write-access to this attribute to your native API client.
