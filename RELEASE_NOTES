@@ -1,3 +1,5 @@
+v4.1.1:
+ - Adds a null guard protecting from NPE in JRWebViewFragment
 v4.1.0:
  - Adds support for the merge-accounts sign-in flow. (Which enables an end user
    who has signed in with the "wrong" social identity to resolve the error by
