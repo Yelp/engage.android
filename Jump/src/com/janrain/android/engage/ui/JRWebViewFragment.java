@@ -217,6 +217,7 @@ public class JRWebViewFragment extends JRUiFragment {
                     final URL startUrl = mSession.startUrlForCurrentlyAuthenticatingProvider();
                     uiThread.post(new Runnable() {
                         public void run() {
+                            if (startUrl == null) return;
                             mWebView.loadUrl(startUrl.toString());
                         }
                     });
