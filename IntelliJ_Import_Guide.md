@@ -1,18 +1,6 @@
-This page tells you how to:
+# IntelliJ IDEA Import Guide
 
-*   [Download the Library](#download-the-library)
-*   [Add the Library to Your Android IntelliJ Project](#add-the-library-to-your-android-intellij-project)
-
-## Download the Library
-
-You can either:
-
-*   Clone the Janrain Engage for Android library from GitHub: `git clone
-    git://github.com/janrain/jump.android.git`
-*   Or, [download an archive](http://github.com/janrain/jump.android/tags) of the library We recommend that
-    you clone the GitHub repository, and checkout the `master` branch. `master` is the stable branch with all
-    the latest bug fixes. By using git to clone the repository, it's easy to keep up with bug fixes — just run
-    `git pull`.
+This will guide you through adding the JUMP library to your Android IntelliJ project.
 
 ## Add the Library to Your Android IntelliJ Project
 
