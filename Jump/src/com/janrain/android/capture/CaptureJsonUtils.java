@@ -39,6 +39,8 @@ import org.json.JSONObject;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -264,4 +266,35 @@ public class CaptureJsonUtils {
                 oldVal.getClass().getSimpleName() + " New type: " + curVal.getClass().getSimpleName());
     }
 
+    public static String valueForAttrByDotPath(JSONObject user, String attrDothPath) {
+        String[] pathComponents = attrDothPath.split("\\.");
+
+        return valueForAttrByDotPathComponents(user, new LinkedList<String>(Arrays.asList(pathComponents)));
+    }
+
+    private static String valueForAttrByDotPathComponents(Object user,
+                                                          LinkedList<String> dotPathComponents) {
+        if (dotPathComponents.size() == 0) return user.toString();
+
+        if (user == null) return null;
+
+        String head = dotPathComponents.remove(0);
+        String[] pluralSplit = head.split("#");
+        if (pluralSplit.length > 1) {
+            Object val = ((JSONObject) user).opt(pluralSplit[0]);
+            if (!(val instanceof JSONArray)) return null;
+
+            List val_ = JsonUtils.jsonArrayToList((JSONArray) val);
+            for (Object elt : val_) {
+                if (!(elt instanceof JSONObject)) return null;
+                if (((JSONObject) elt).opt("id").equals(pluralSplit[1])) {
+                    return valueForAttrByDotPathComponents(elt, dotPathComponents);
+                }
+            }
+            return null;
+        } else {
+            Object val = ((JSONObject) user).opt(head);
+            return valueForAttrByDotPathComponents(val, dotPathComponents);
+        }
+    }
 }

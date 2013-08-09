@@ -34,7 +34,6 @@ package com.janrain.android.capture;
 
 import android.util.Pair;
 
-import java.net.URL;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -65,7 +64,7 @@ import java.util.regex.Pattern;
         return toString().equals(obj.toString()) && obj instanceof ApidChange;
     }
 
-    /*package*/ abstract URL getUrlFor();
+    /*package*/ abstract String getUrlFor();
 
     ///*package*/ void writeConnectionBody(URLConnection urlConnection, String accessToken) throws IOException {
     //    Set<Pair<String, String>> params = getBodyParams();

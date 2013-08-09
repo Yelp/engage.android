@@ -33,6 +33,7 @@
 package com.janrain.android.capture;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Pair;
 import com.janrain.android.Jump;
@@ -61,9 +62,9 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import static com.janrain.android.capture.Capture.CaptureApiRequestCallback;
-import static com.janrain.android.capture.Capture.FetchJsonCallback;
 import static com.janrain.android.capture.Capture.InvalidApidChangeException;
 import static com.janrain.android.utils.AndroidUtils.urlEncode;
+import static com.janrain.android.utils.ApiConnection.FetchJsonCallback;
 import static com.janrain.android.utils.JsonUtils.copyJsonVal;
 import static com.janrain.android.utils.JsonUtils.unsafeJsonObjectToString;
 import static com.janrain.android.utils.LogUtils.throwDebugException;
@@ -109,13 +110,7 @@ public class CaptureRecord extends JSONObject {
             fis = applicationContext.openFileInput(JR_CAPTURE_SIGNED_IN_USER_FILENAME);
             fileContents = CaptureStringUtils.readAndClose(fis);
             fis = null;
-            JSONObject serializedVersion = new JSONObject(fileContents);
-            CaptureRecord loadedRecord = new CaptureRecord();
-            loadedRecord.original = serializedVersion.getJSONObject("original");
-            loadedRecord.accessToken = serializedVersion.getString("accessToken");
-            loadedRecord.refreshSecret = serializedVersion.optString("refreshSecret");
-            JsonUtils.deepCopy(serializedVersion.getJSONObject("this"), loadedRecord);
-            return loadedRecord;
+            return inflateCaptureRecord(fileContents);
         } catch (FileNotFoundException ignore) {
         } catch (JSONException ignore) {
             throwDebugException(new RuntimeException("Bad CaptureRecord file contents:\n" + fileContents,
@@ -130,6 +125,16 @@ public class CaptureRecord extends JSONObject {
         return null;
     }
 
+    private static CaptureRecord inflateCaptureRecord(String jsonifiedRecord) throws JSONException {
+        JSONObject serializedVersion = new JSONObject(jsonifiedRecord);
+        CaptureRecord inflatedRecord = new CaptureRecord();
+        inflatedRecord.original = serializedVersion.getJSONObject("original");
+        inflatedRecord.accessToken = serializedVersion.getString("accessToken");
+        inflatedRecord.refreshSecret = serializedVersion.optString("refreshSecret");
+        JsonUtils.deepCopy(serializedVersion.getJSONObject("this"), inflatedRecord);
+        return inflatedRecord;
+    }
+
     /**
      * Saves the Capture record to a well-known private file on disk.
      * @param applicationContext the context to use to write to disk
@@ -138,12 +143,7 @@ public class CaptureRecord extends JSONObject {
         FileOutputStream fos = null;
         try {
             fos = applicationContext.openFileOutput(JR_CAPTURE_SIGNED_IN_USER_FILENAME, 0);
-            JSONObject serializedVersion = new JSONObject();
-            serializedVersion.put("original", original);
-            serializedVersion.put("accessToken", accessToken);
-            serializedVersion.put("refreshSecret", refreshSecret);
-            serializedVersion.put("this", this);
-            fos.write(serializedVersion.toString().getBytes("UTF-8"));
+            fos.write(deflateCaptureRecord());
         } catch (JSONException e) {
             throwDebugException(new RuntimeException("Unexpected", e));
         } catch (UnsupportedEncodingException e) {
@@ -159,6 +159,15 @@ public class CaptureRecord extends JSONObject {
         }
     }
 
+    private byte[] deflateCaptureRecord() throws JSONException, UnsupportedEncodingException {
+        JSONObject serializedVersion = new JSONObject();
+        serializedVersion.put("original", original);
+        serializedVersion.put("accessToken", accessToken);
+        serializedVersion.put("refreshSecret", refreshSecret);
+        serializedVersion.put("this", this);
+        return serializedVersion.toString().getBytes("UTF-8");
+    }
+
     /**
      * Deletes the record saved to disk
      * @param applicationContext the context with which to delete the saved record
@@ -172,15 +181,10 @@ public class CaptureRecord extends JSONObject {
      * @param callback your handler, invoked upon completion
      */
     public void refreshAccessToken(final CaptureApiRequestCallback callback) {
-        //accessToken = "6bunfwu42h2rwgbq";
-        //refreshSecret = "a";
-        //String domain = "test-multi.janraincapture.com";
-        String domain = Jump.getCaptureDomain();
-
-        CaptureApiConnection c = new CaptureApiConnection("https://" + domain + "/access/getAccessToken");
+        CaptureApiConnection c = new CaptureApiConnection("/access/getAccessToken");
         String date = CAPTURE_API_SIGNATURE_DATE_FORMAT.format(new Date());
         Set<Pair<String, String>> params = new HashSet<Pair<String, String>>();
-        //params.add(new Pair<String, String>("application_id", "fvbamf9kkkad3gnd9qyb4ggw6w"));
+        params.add(new Pair<String, String>("application_id", Jump.getCaptureAppId()));
         params.add(new Pair<String, String>("access_token", accessToken));
         params.add(new Pair<String, String>("Signature", urlEncode(getRefreshSignature(date))));
         params.add(new Pair<String, String>("Date", urlEncode(date)));
@@ -247,7 +251,7 @@ public class CaptureRecord extends JSONObject {
         Set<Pair<String, String>> params = new HashSet<Pair<String, String>>(change.getBodyParams());
         params.add(new Pair<String, String>("access_token", accessToken));
 
-        Capture.FetchJsonCallback jsonCallback = new FetchJsonCallback() {
+        FetchJsonCallback jsonCallback = new FetchJsonCallback() {
             public void run(JSONObject content) {
                 if (content.opt("stat").equals("ok")) {
                     LogUtils.logd("Capture", change.toString());
@@ -259,7 +263,7 @@ public class CaptureRecord extends JSONObject {
             }
         };
 
-        CaptureApiConnection connection = new CaptureApiConnection(change.getUrlFor().toString());
+        CaptureApiConnection connection = new CaptureApiConnection(change.getUrlFor());
         connection.addAllToParams(params);
         connection.fetchResponseAsJson(jsonCallback);
     }
@@ -333,5 +337,18 @@ public class CaptureRecord extends JSONObject {
 
     private Set<ApidChange> getApidChangeSet() throws InvalidApidChangeException {
         return collapseApidChanges(CaptureJsonUtils.compileChangeSet(original, this));
+    }
+
+    /*package*/ static JSONObject captureRecordWithPrefilledFields(Map<String, Object> prefilledFields,
+                                                                 Map<String, Object> flow) {
+        Map<String, Object> preregAttributes = new HashMap<String, Object>();
+        for (Map.Entry<String, Object> entry : prefilledFields.entrySet()) {
+            if (entry.getValue() == null) continue;
+            Map<String, Object> fieldDefinition = CaptureFlowUtils.getFieldDefinition(flow, entry.getKey());
+            if (fieldDefinition != null && !TextUtils.isEmpty((String) fieldDefinition.get("schemaId"))) {
+                preregAttributes.put((String) fieldDefinition.get("schemaId"), entry.getValue());
+            }
+        }
+        return JsonUtils.collectionToJson(preregAttributes);
     }
 }

@@ -38,7 +38,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.text.TextUtils;
-import android.util.Log;
 import com.janrain.android.R;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.types.JRDictionary;
@@ -192,6 +191,9 @@ public class JRProvider implements Serializable {
         getProviderLogo(JREngage.getApplicationContext());
     }
 
+    /**
+     * Not null
+     */
     public List<String> getCookieDomains() {
         return mCookieDomains;
     }

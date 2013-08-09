@@ -48,7 +48,6 @@ import android.widget.TextView;
 import com.janrain.android.capture.Capture;
 import com.janrain.android.capture.CaptureApiConnection;
 import com.janrain.android.capture.CaptureApiError;
-import com.janrain.android.capture.CaptureJsonUtils;
 import com.janrain.android.capture.CaptureRecord;
 import com.janrain.android.engage.ui.JRCustomInterfaceConfiguration;
 import com.janrain.android.engage.ui.JRCustomInterfaceView;
@@ -56,7 +55,6 @@ import com.janrain.android.utils.LogUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.AUTHENTICATION_CANCELED_BY_USER;

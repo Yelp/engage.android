@@ -37,8 +37,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 
 import static com.janrain.android.utils.CollectionUtils.sortedSetFromIterator;
@@ -303,6 +305,62 @@ public class JsonUtils {
         } catch (JSONException e) {
             throwDebugException(new IllegalArgumentException(e));
             return null;
+        }
+    }
+
+    public static Map<String, Object> jsonToCollection(JSONObject jsonObject) {
+        Map<String, Object> retval = new HashMap<String, Object>();
+        List keys = CollectionUtils.listFromIterator(jsonObject.keys());
+        for (Object key : keys) retval.put((String) key, jsonToCollection(jsonObject.opt((String) key)));
+        return retval;
+    }
+
+    public static Object jsonToCollection(Object jsonValue) {
+        if (jsonValue instanceof JSONObject) {
+            return jsonToCollection((JSONObject) jsonValue);
+        } else if (jsonValue instanceof JSONArray) {
+            return jsonToCollection((JSONArray) jsonValue);
+        } else if (jsonValue == JSONObject.NULL) {
+            return null;
+        } else {
+            return jsonValue;
+        }
+    }
+
+    public static List<Object> jsonToCollection(JSONArray jsonArray) {
+        List<Object> retval = new ArrayList<Object>();
+        List objects = jsonArrayToList(jsonArray);
+        for (Object object : objects) retval.add(jsonToCollection(object));
+        return retval;
+    }
+
+    public static JSONObject collectionToJson(Map<String, Object> m) {
+        JSONObject retval = new JSONObject();
+        for (Map.Entry<String, Object> e : m.entrySet()) {
+            try {
+                retval.put(e.getKey(), collectionToJson(e.getValue()));
+            } catch (JSONException jsonException) {
+                throwDebugException(new RuntimeException("Unexpected", jsonException));
+            }
+        }
+        return retval;
+    }
+
+    public static JSONArray collectionToJson(List l) {
+        JSONArray retval = new JSONArray();
+        for (Object i : l) retval.put(collectionToJson(i));
+        return retval;
+    }
+
+    public static Object collectionToJson(Object o) {
+        if (o instanceof Map) {
+            return collectionToJson(((Map) o));
+        } else if (o instanceof List) {
+            return collectionToJson(((List) o));
+        } else if (o == null) {
+            return JSONObject.NULL;
+        } else {
+            return o;
         }
     }
 }

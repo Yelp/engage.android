@@ -37,34 +37,69 @@ import android.content.Context;
 import android.content.DialogInterface;
 import com.janrain.android.capture.Capture;
 import com.janrain.android.capture.CaptureApiError;
+import com.janrain.android.capture.CaptureFlowUtils;
 import com.janrain.android.capture.CaptureRecord;
 import com.janrain.android.engage.JREngage;
 import com.janrain.android.engage.JREngageDelegate;
 import com.janrain.android.engage.JREngageError;
 import com.janrain.android.engage.session.JRProvider;
 import com.janrain.android.engage.types.JRDictionary;
+import com.janrain.android.utils.ApiConnection;
+import com.janrain.android.utils.JsonUtils;
+import com.janrain.android.utils.LogUtils;
+import com.janrain.android.utils.ThreadUtils;
+import org.json.JSONObject;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
+import java.util.Map;
 
 import static com.janrain.android.Jump.SignInResultHandler.SignInError;
 import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.AUTHENTICATION_CANCELED_BY_USER;
 import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.CAPTURE_API_ERROR;
 import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.ENGAGE_ERROR;
 import static com.janrain.android.Jump.SignInResultHandler.SignInError.FailureReason.JUMP_NOT_INITIALIZED;
+import static com.janrain.android.utils.LogUtils.throwDebugException;
 
 /**
- * See engage.android/Jump_Integration_Guide.md for a developer's integration guide.
+ * See jump.android/Jump_Integration_Guide.md for a developer's integration guide.
  */
 public class Jump {
+    private static final String JR_CAPTURE_FLOW = "jr_capture_flow";
+
     /*package*/ enum State {
         STATE;
 
+        // Computed values:
         /*package*/ CaptureRecord signedInUser;
         /*package*/ JREngage jrEngage;
+        /*package*/ Map<String, Object> captureFlow;
+
+        // Configured values:
+        /*package*/ Context context;
+        /*package*/ String captureAppId;
         /*package*/ String captureClientId;
         /*package*/ String captureDomain;
+        /*package*/ boolean flowUsesTestingCdn;
+        /*package*/ String captureFlowName;
+        /*package*/ String captureFlowVersion;
         /*package*/ String captureLocale;
-        /*package*/ String captureFormName;
-        /*package*/ SignInResultHandler signInHandler;
+        /*package*/ boolean captureEnableThinRegistration;
+        /*package*/ String captureTraditionalSignInFormName;
+        /*package*/ String captureSocialRegistrationFormName;
+        /*package*/ String captureTraditionalRegistrationFormName;
         /*package*/ TraditionalSignInType traditionalSignInType;
+        /*package*/ String captureResponseType;
+        /*package*/ String backplaneChannelUrl;
+
+        // Transient state values:
+        /*package*/ SignInResultHandler signInHandler;
+        public boolean initCalled;
     }
 
     /*package*/ static final State state = State.STATE;
@@ -72,28 +107,16 @@ public class Jump {
     private Jump() {}
 
     /**
+     * @deprecated
      * Initialize the Jump library with you configuration data
-     * @param context A context to perform some disk IO with
-     * @param engageAppId The application ID of your Engage app, from the Engage Dashboard
-     * @param captureDomain The domain of your Capture app, contact your deployment engineer for this
-     * @param captureClientId The Capture API client ID for use with this mobile app.
-     * @param captureLocale the name of the locale to use in the Capture flow
-     * @param captureSignInFormName the name of the Capture sign-in form in the flow
-     * @param traditionalSignInType The type of traditional sign-in i.e. username or email address based.
      */
     public static void init(Context context,
                             String engageAppId,
                             String captureDomain,
                             String captureClientId,
                             String captureLocale,
-                            String captureSignInFormName,
+                            String captureTraditionalSignInFormName,
                             TraditionalSignInType traditionalSignInType) {
-        state.jrEngage = JREngage.initInstance(context.getApplicationContext(), engageAppId, null, null);
-        state.captureDomain = captureDomain;
-        state.captureClientId = captureClientId;
-        state.traditionalSignInType = traditionalSignInType;
-        state.captureLocale = captureLocale;
-        state.captureFormName = captureSignInFormName;
         //j.showAuthenticationDialog();
         //j.addDelegate(); remove
         //j.cancelAuthentication();
@@ -102,43 +125,121 @@ public class Jump {
         //j.setEnabledAuthenticationProviders();
         //j.setTokenUrl();
         //j.signoutUserForAllProviders();
+        JumpConfig jumpConfig = new JumpConfig();
+        jumpConfig.engageAppId = engageAppId;
+        jumpConfig.captureDomain = captureDomain;
+        jumpConfig.captureClientId = captureClientId;
+        jumpConfig.captureLocale = captureLocale;
+        jumpConfig.captureTraditionalSignInFormName = captureTraditionalSignInFormName;
+        jumpConfig.traditionalSignInType = traditionalSignInType;
+        init(context, jumpConfig);
     }
 
     /**
-     * @return the configured Capture app domain
+     * Initializes the Jump library. It is recommended to call this method from your Application object.
+     * Initialization will cause some network and disk IO to be performed (on a background thread) so it
+     * is recommended that the library be initialized before it is used.
+     * @param context a context to perform IO from
+     * @param jumpConfig an instance of JumpConfig which contains your configuration values. These values
      */
+    public static synchronized void init(Context context, JumpConfig jumpConfig) {
+        if (state.initCalled) throwDebugException(new IllegalStateException("Multiple Jump.init() calls"));
+        state.initCalled = true;
+
+        state.context = context;
+        state.jrEngage = JREngage.initInstance(context.getApplicationContext(), jumpConfig.engageAppId,
+                null, null);
+        state.captureSocialRegistrationFormName = jumpConfig.captureSocialRegistrationFormName;
+        state.captureTraditionalRegistrationFormName = jumpConfig.captureTraditionalRegistrationFormName;
+        state.captureEnableThinRegistration = jumpConfig.captureEnableThinRegistration;
+        state.captureFlowName = jumpConfig.captureFlowName;
+        state.captureFlowVersion = jumpConfig.captureFlowVersion;
+        state.captureDomain = jumpConfig.captureDomain;
+        state.captureAppId = jumpConfig.captureAppId;
+        state.captureClientId = jumpConfig.captureClientId;
+        state.traditionalSignInType = jumpConfig.traditionalSignInType;
+        state.captureLocale = jumpConfig.captureLocale;
+        state.captureTraditionalSignInFormName = jumpConfig.captureTraditionalSignInFormName;
+        state.backplaneChannelUrl = jumpConfig.backplaneChannelUrl;
+        state.captureResponseType = "token";
+
+        final Context tempContext = context;
+        ThreadUtils.executeInBg(new Runnable() {
+            public void run() {
+                loadUserFromDiskInternal(tempContext);
+
+                if (state.captureLocale != null && state.captureFlowName != null &&
+                        state.captureAppId != null) {
+                    loadFlow();
+                    downloadFlow();
+                }
+            }
+        });
+    }
+
     public static String getCaptureDomain() {
         return state.captureDomain;
     }
 
-    /**
-     * @return the configured Capture API client ID
-     */
     public static String getCaptureClientId() {
         return state.captureClientId;
     }
 
-    /**
-     * @return the configured Capture locale
-     */
     public static String getCaptureLocale() {
         return state.captureLocale;
     }
 
+    public static String getCaptureTraditionalSignInFormName() {
+        return state.captureTraditionalSignInFormName;
+    }
+
     /**
-     * @return the configured Capture sign-in form name
+     * @deprecated use com.janrain.android.Jump#getCaptureTraditionalSignInFormName
      */
     public static String getCaptureFormName() {
-        return state.captureFormName;
+        return getCaptureTraditionalSignInFormName();
+    }
+
+    public static String getCaptureSocialRegistrationFormName() {
+        return state.captureSocialRegistrationFormName;
+    }
+
+    public static String getCaptureTraditionalRegistrationFormName() {
+        return state.captureTraditionalRegistrationFormName;
+    }
+
+    public static String getResponseType() {
+        return state.captureResponseType;
+    }
+
+    public static String getCaptureAppId() {
+        return state.captureAppId;
+    }
+
+    public static String getCaptureFlowName() {
+        return state.captureFlowName;
+    }
+
+    public static Map<String, Object> getCaptureFlow() {
+        return state.captureFlow;
+    }
+
+    public static String getRedirectUri() {
+        return "http://android.library";
+    }
+
+    public static String getBackplaneChannelUrl() {
+        return state.backplaneChannelUrl;
+    }
+
+    public static boolean getCaptureEnableThinRegistration() {
+        return state.captureEnableThinRegistration;
     }
 
     /**
      * @return the currently signed-in user, or null
      */
     public static CaptureRecord getSignedInUser() {
-        //if (state.signedInUser == null && JREngage.getApplicationContext() != null) {
-        //    state.signedInUser = CaptureRecord.loadFromDisk(JREngage.getApplicationContext());
-        //}
         return state.signedInUser;
     }
 
@@ -178,19 +279,8 @@ public class Jump {
         state.jrEngage.addDelegate(new JREngageDelegate.SimpleJREngageDelegate() {
             @Override
             public void jrAuthenticationDidSucceedForUser(JRDictionary auth_info, String provider) {
-                String authInfoToken = auth_info.getAsString("token");
-
-                Capture.performSocialSignIn(authInfoToken, new Capture.SignInResultHandler() {
-                //Capture.performLegacySocialSignIn(authInfoToken, new Capture.SignInResultHandler() {
-                    public void onSuccess(CaptureRecord record) {
-                        state.signedInUser = record;
-                        fireHandlerSuccess();
-                    }
-
-                    public void onFailure(CaptureApiError error) {
-                        fireHandlerFailure(new SignInError(CAPTURE_API_ERROR, error, null));
-                    }
-                }, provider, mergeToken);
+                handleEngageAuthenticationSuccess(auth_info, provider, mergeToken);
+                state.jrEngage.removeDelegate(this);
             }
 
             @Override
@@ -212,11 +302,6 @@ public class Jump {
                 state.jrEngage.removeDelegate(this);
                 Jump.fireHandlerOnFailure(err);
             }
-
-            private void fireHandlerSuccess() {
-                state.jrEngage.removeDelegate(this);
-                Jump.fireHandlerOnSuccess();
-            }
         });
 
         if (providerName != null) {
@@ -224,6 +309,22 @@ public class Jump {
         } else {
             state.jrEngage.showAuthenticationDialog(fromActivity, TradSignInUi.class);
         }
+    }
+
+    private static void handleEngageAuthenticationSuccess(JRDictionary auth_info, String provider,
+                                                          String mergeToken) {
+        String authInfoToken = auth_info.getAsString("token");
+
+        Capture.performSocialSignIn(authInfoToken, new Capture.SignInResultHandler() {
+            public void onSuccess(CaptureRecord record) {
+                state.signedInUser = record;
+                Jump.fireHandlerOnSuccess();
+            }
+
+            public void onFailure(CaptureApiError error) {
+                Jump.fireHandlerOnFailure(new SignInError(CAPTURE_API_ERROR, error, null));
+            }
+        }, provider, mergeToken);
     }
 
     /**
@@ -287,6 +388,43 @@ public class Jump {
                         handler.onFailure(new SignInError(CAPTURE_API_ERROR, error, null));
                     }
                 }, mergeToken);
+    }
+
+    /**
+     * Registers a new user record with Capture. Used for both traditional registrations and social two-step
+     * registrations.
+     *
+     * Requires:
+     *  - a flow name be configured when calling Jump.init
+     *  - a social registration form be configured
+     *  - a traditional registration form be configured
+     *  - the Capture app ID be configured
+     *
+     * @param newUser A JSON object (which matches the record schema) used to populate the fields of the
+     *                registration form.
+     * @param socialRegistrationToken A social registration token, or null to perform a traditional
+     *                                registration
+     * @param registrationResultHandler A handler for the registration result
+     */
+    public static void registerNewUser(JSONObject newUser,
+                                       String socialRegistrationToken,
+                                       final SignInResultHandler registrationResultHandler) {
+        if (state.jrEngage == null || state.captureDomain == null || state.captureFlowName == null ||
+                state.captureSocialRegistrationFormName == null ||
+                state.captureTraditionalRegistrationFormName == null || state.captureAppId == null) {
+            registrationResultHandler.onFailure(new SignInError(JUMP_NOT_INITIALIZED, null, null));
+            return;
+        }
+
+        Capture.performRegistration(newUser, socialRegistrationToken, new Capture.SignInResultHandler(){
+            public void onSuccess(CaptureRecord registeredUser) {
+                registrationResultHandler.onSuccess();
+            }
+
+            public void onFailure(CaptureApiError error) {
+                registrationResultHandler.onFailure(new SignInError(CAPTURE_API_ERROR, error, null));
+            }
+        });
     }
 
     /**
@@ -360,11 +498,87 @@ public class Jump {
     }
 
     /**
-     * To be called from Application#onCreate()
-     * @param context the application context, used to interact with the disk
+     * @deprecated Loading state from disk is now done automatically from Jump.init
      */
     public static void loadFromDisk(Context context) {
+        loadUserFromDiskInternal(context);
+    }
+
+    /*package*/ static void loadUserFromDiskInternal(Context context) {
         state.signedInUser = CaptureRecord.loadFromDisk(context);
+    }
+
+    private static void loadFlow() {
+        FileInputStream fis = null;
+        ObjectInputStream ois = null;
+        try {
+            fis = state.context.openFileInput(JR_CAPTURE_FLOW);
+            ois = new ObjectInputStream(fis);
+            state.captureFlow = (Map<String, Object>) ois.readObject();
+        } catch (ClassCastException e) {
+            throwDebugException(e);
+        } catch (FileNotFoundException ignore) {
+        } catch (StreamCorruptedException e) {
+            throwDebugException(new RuntimeException(e));
+        } catch (IOException e) {
+            throwDebugException(new RuntimeException(e));
+        } catch (ClassNotFoundException e) {
+            throwDebugException(new RuntimeException(e));
+        } finally {
+            try {
+                if (fis != null) fis.close();
+            } catch (IOException ignore) {
+            }
+
+            try {
+                if (ois != null) ois.close();
+            } catch (IOException ignore) {
+            }
+        }
+    }
+
+    private static void downloadFlow() {
+        String flowVersion = state.captureFlowVersion != null ? state.captureFlowVersion : "HEAD";
+
+        String flowUrlString =
+                String.format("https://%s.cloudfront.net/widget_data/flows/%s/%s/%s/%s.json",
+                        state.flowUsesTestingCdn ? "dlzjvycct5xka" : "d1lqe9temigv1p",
+                        state.captureAppId, state.captureFlowName, flowVersion,
+                        state.captureLocale);
+
+        ApiConnection c = new ApiConnection(flowUrlString);
+        c.method = ApiConnection.Method.GET;
+        c.fetchResponseAsJson(new ApiConnection.FetchJsonCallback() {
+            public void run(JSONObject jsonObject) {
+                state.captureFlow = JsonUtils.jsonToCollection(jsonObject);
+                LogUtils.logd("Parsed flow, version: " + CaptureFlowUtils.getFlowVersion(state.captureFlow));
+                storeCaptureFlow();
+            }
+        });
+    }
+
+    private static void storeCaptureFlow() {
+        FileOutputStream fos = null;
+        ObjectOutputStream oos = null;
+        try {
+            fos = state.context.openFileOutput(JR_CAPTURE_FLOW, 0);
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(state.captureFlow);
+        } catch (FileNotFoundException e) {
+            throwDebugException(new RuntimeException(e));
+        } catch (IOException e) {
+            throwDebugException(new RuntimeException(e));
+        } finally {
+            try {
+                if (oos != null) oos.close();
+            } catch (IOException ignore) {
+            }
+
+            try {
+                if (fos != null) fos.close();
+            } catch (IOException ignore) {
+            }
+        }
     }
 
     /**
@@ -373,6 +587,15 @@ public class Jump {
      */
     public static void saveToDisk(Context context) {
         if (state.signedInUser != null) state.signedInUser.saveToDisk(context);
+    }
+
+    /**
+     * @return the downloaded flow's version, if any
+     */
+    public static String getCaptureFlowVersion() {
+        Map<String, Object> captureFlow = getCaptureFlow();
+        if (captureFlow == null) return null;
+        return CaptureFlowUtils.getFlowVersion(captureFlow);
     }
 
     /**
@@ -385,6 +608,11 @@ public class Jump {
     public static void startDefaultMergeFlowUi(final Activity fromActivity,
                                                SignInError error,
                                                final SignInResultHandler signInResultHandler) {
+        if (state.jrEngage == null || state.captureDomain == null) {
+            signInResultHandler.onFailure(new SignInError(JUMP_NOT_INITIALIZED, null, null));
+            return;
+        }
+
         final String mergeToken = error.captureApiError.getMergeToken();
         final String existingProvider = error.captureApiError.getExistingAccountIdentityProvider();
         String conflictingIdentityProvider = error.captureApiError.getConflictingIdentityProvider();

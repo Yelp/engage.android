@@ -32,15 +32,51 @@
 
 package com.janrain.android.capture;
 
+import com.janrain.android.Jump;
+import com.janrain.android.utils.JsonUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.janrain.android.utils.CollectionUtils.listFromIterator;
+import static com.janrain.android.utils.JsonUtils.jsonArrayToList;
 
 /**
  * http://developers.janrain.com/documentation/capture/restful_api/
  */
 public class CaptureApiError {
-    public static final int EMAIL_ADDRESS_IN_USE = 380;
     private String engageToken;
     private String conflictingIdentityProvider;
+
+    /**
+     * Indicates a form field validation failure, as a result of form submission.
+     * See also getLocalizedValidationErrorMessages()
+     */
+    public static final int FORM_VALIDATION_ERROR = 390;
+
+    /**
+     * Recoverable.
+     *
+     * Indicates that the email address associated with the social identity is already in use by an existing
+     * Capture record. To recover, perform the "merge account flow".
+     */
+    public static final int EMAIL_ADDRESS_IN_USE = 380;
+
+    /**
+     * Recoverable.
+     *
+     * Indicates a record was not found for the social-identifier associated with the Engage auth_info
+     * token used to perform a social sign-in. To recover, perform two-step social registration.
+     */
+    public static final int RECORD_NOT_FOUND = 310;
+
+    /**
+     * Indicates an API response that could not be parsed. Has no meaningful field values.
+     */
+    public static final CaptureApiError INVALID_API_RESPONSE = new CaptureApiError();
 
     /**
      * The Capture error code. See http://developers.janrain.com/documentation/capture/restful_api/
@@ -65,7 +101,6 @@ public class CaptureApiError {
     /**
      * Indicates an API response that could not be parsed. Has no meaningful fields values.
      */
-    public static final CaptureApiError INVALID_API_RESPONSE = new CaptureApiError();
 
     private CaptureApiError() {
         error = "INVALID_API_RESPONSE";
@@ -94,15 +129,38 @@ public class CaptureApiError {
         return this == INVALID_API_RESPONSE;
     }
 
+    /**
+     * @return a human readable (but not end-user facing, and not localized) version of this error
+     */
     public String toString() {
         return "<CaptureApiError code: " + code + " error: " + error + " description: " + error_description
                 + ">";
     }
 
+    /**
+     * @return true if this error represents an invalid password error in a password submission form response
+     */
     public boolean isInvalidPassword() {
         if (isInvalidApiResponse()) return false;
         if (error.equals("bad username/password combo")) return true; // legacy username/password endpoint
         return false;
+    }
+
+    /**
+     * @return the end-user-facing localized error messages for form field validation errors resulting from
+     *         a form submission.
+     */
+    public Map<String, List<String>> getLocalizedValidationErrorMessages() {
+        JSONObject invalid_fields = raw_response.optJSONObject("invalid_fields");
+        if (invalid_fields == null) return null;
+        Map<String, List<String>> retval = new HashMap<String, List<String>>();
+        List<String> keys = listFromIterator(invalid_fields.keys());
+        for (String k : keys) {
+            JSONArray fieldMessagesJson = invalid_fields.optJSONObject(k).optJSONArray("messages");
+            retval.put(k, ((List<String>) ((List) jsonArrayToList(fieldMessagesJson)))); // bleh
+        }
+
+        return retval;
     }
 
     /**
@@ -117,11 +175,30 @@ public class CaptureApiError {
         return engageToken;
     }
 
+    public String getSocialRegistrationToken() {
+        return engageToken;
+    }
+
     public String getExistingAccountIdentityProvider() {
         return raw_response.optString("existing_provider");
     }
 
     public String getConflictingIdentityProvider() {
         return conflictingIdentityProvider;
+    }
+
+    public boolean isTwoStepRegFlowError() {
+        return code == RECORD_NOT_FOUND;
+    }
+
+    public boolean isFormValidationError() {
+        return code == FORM_VALIDATION_ERROR;
+    }
+
+    public JSONObject getPreregistrationRecord() {
+        JSONObject preregFields = raw_response.optJSONObject("prereg_fields");
+        if (preregFields == null) return null;
+        return CaptureRecord.captureRecordWithPrefilledFields(JsonUtils.jsonToCollection(preregFields),
+                Jump.getCaptureFlow());
     }
 }

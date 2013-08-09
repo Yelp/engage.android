@@ -41,13 +41,12 @@ import static com.janrain.android.utils.LogUtils.throwDebugException;
 
 /**
  * @internal
- * @class CaseChangeOnlyRenameIoUtils
+ * @class IoUtils
  */
-public final class CaseChangeOnlyRenameIoUtils {
-    private static final String TAG = CaseChangeOnlyRenameIoUtils.class.getSimpleName();
+public final class IoUtils {
+    private static final String TAG = IoUtils.class.getSimpleName();
 
-    private CaseChangeOnlyRenameIoUtils() {
-    }
+    private IoUtils() { }
 
     /**
      * Reads the entire contents of the specified stream to a byte array, then closes the stream.
@@ -67,19 +66,23 @@ public final class CaseChangeOnlyRenameIoUtils {
             int len;
 
             // XXX
-            // This loop results in the HttpClient EofSensorInputStream deteching EOF and delegate it's
-            // wrapped InputStream's closure to the associated BasicManagedEntity, which only closes it's
+            // This loop results in the HttpClient EofSensorInputStream detecting EOF and delegating its
+            // wrapped InputStream's closure to the associated BasicManagedEntity, which only closes its
             // stream if it's using a managed connection, and always tells the EofSensorInputStream not to
-            // close the stream. The EofSensorInputStream also tosses the reference to it's wrapped stream,
+            // close the stream. The EofSensorInputStream also tosses the reference to its wrapped stream,
             // which orphans the stream and it becomes uncloseable.
             // None of this makes sense to me, but I am working around the behavior I don't understand by
             // rewriting the loop to not read past EOF.
             //while ((len = in.read(buffer)) != -1) baos.write(buffer, 0, len);
 
-            // Rewwritten loop:
+            // Rewritten loop:
             //while ((len = in.read(buffer, 0, in.available())) > 0) baos.write(buffer, 0, len);
 
-            ///asdflkajsdfkljdsaf
+            // Time passes ...
+            //
+            // Rewrote the gzip handling to drain the HTTP response stream into a byte array first,
+            // which alleviates the need to rewrite the loop (letting the more efficient original
+            // version be used.)
             while ((len = in.read(buffer)) != -1) baos.write(buffer, 0, len);
 
             return baos.toByteArray();

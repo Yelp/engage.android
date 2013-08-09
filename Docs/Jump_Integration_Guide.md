@@ -47,22 +47,11 @@ Before you begin integrating you will need an array of configuration details:
 2. Ask your deployment engineer or account manager for your Capture domain.
 3. Create a new Capture API client for your mobile app:
     1. Sign in to the Capture dashboard and provision a new API client for your mobile app
-       (https://janraincapture.com) (Copy down the new API client's client ID, you will need this. Also copy
-       down your Capture app's app ID. The Capture app ID is distfrom the Engage app ID.)
-    2. Use the [set_features API](http://developers.janrain.com/documentation/api-methods/capture/clients/set_features/)
-       to add the "login_client" feature to your new API client.
 
        **Warning** `login_client` is mutually exclusive with all other API client features, which means only
        login clients can be used to sign users in, and only non-login-clients can perform client_id and
        client_secret authenticated Capture API calls. This means that you cannot use the owner client as a
        login client.
-    3. Use the
-       [setAccessSchema](http://developers.janrain.com/documentation/api-methods/capture/entitytype/setaccessschema/)
-       API to set the subset of the schema you wish your mobile app to be able to update.
-       You must use the "write_with_token" schema type.
-
-       **Warning** Do not use the "write" schema type with login clients, use "write_with_token"
-
        **Warning** If you do not set the write_with_token access schema for your API client to include the
        attributes your client will write to in the its write access schema you will receive
        `missing attribute` errors when attempting to update attributes.
@@ -71,12 +60,15 @@ Before you begin integrating you will need an array of configuration details:
         * The name of the Capture "flow" you should use
         * The name of the flow's traditional sign-in form
         * The name of the "locale" in the flow your app will use
-          (The value for US English is "en-US".)
+          The value for US English is "en-US".
         * The appropriate values for the settings `default_flow_name` and `default_flow_version`.
-          Set these settings for your new API client in the "Settings" section of the Janrain Capture
-          dashboard (https://janraincapture.com)
-**Warning**: You _must_ create a new API client with the correct login_client feature for operation of the
-JUMP for Android SDK.
+          (Set these settings for your new API client in the "Settings" section of the Janrain Capture
+          dashboard (https://janraincapture.com) )
+5. Determine whether your app should use "Thin" social registration, or "two-step" social registration.
+6. Determine the name of the traditional sign-in key-attribute (e.g. `email` or `username`)
+
+**Warning** You _must_ create a new API client with the correct `login_client` feature for operation of the
+JUMP native mobile SDKs.
 
 ## Declare and Import
 
@@ -367,6 +359,11 @@ For example, from MainActivity in SimpleDemo:
 
 Call `com.janrain.android.Jump.signOutCaptureUser` to sign the user out.
 
+## Next: Registration
+
+Once you have sign-in and record updates working, see the `User_Registration_Guide.md` for a guide to new user
+registration.
+
 ## Appearance Customization
 
 ### Creating Your Own User Interface
@@ -387,7 +384,9 @@ For customizing the look and feel of the sign-in experience, please see
 
 ## Troubleshooting
 
-`<CaptureApiError code: 223 error: unknown_attribute description: attribute does not exist: /your_attr_name>`
+### Attribute Does Not Exist
+
+    <CaptureApiError code: 223 error: unknown_attribute description: attribute does not exist: /your_attr_name>`
 
 Use [entityType.setAccessSchema](http://developers.janrain.com/documentation/api-methods/capture/entitytype/setaccessschema)
 to add write-access to this attribute to your native API client.

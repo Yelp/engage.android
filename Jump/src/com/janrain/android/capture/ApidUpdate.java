@@ -33,12 +33,9 @@
 package com.janrain.android.capture;
 
 import android.util.Pair;
-import com.janrain.android.Jump;
 import com.janrain.android.utils.JsonUtils;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -55,12 +52,8 @@ import java.util.Set;
     }
 
     @Override
-    /*package*/ URL getUrlFor() {
-        try {
-            return new URL("https://" + Jump.getCaptureDomain() + "/entity.update");
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Unexpected", e);
-        }
+    /*package*/ String getUrlFor() {
+        return "/entity.update";
     }
 
     @Override

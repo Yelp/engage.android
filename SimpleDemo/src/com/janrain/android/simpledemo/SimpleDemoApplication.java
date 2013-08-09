@@ -34,16 +34,28 @@ package com.janrain.android.simpledemo;
 
 import android.app.Application;
 import com.janrain.android.Jump;
+import com.janrain.android.JumpConfig;
 
-/**
- * Created with IntelliJ IDEA. User: nathan Date: 3/1/13 Time: 9:43 AM To change this template use File |
- * Settings | File Templates.
- */
 public class SimpleDemoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
 
-        Jump.loadFromDisk(this);
+        JumpConfig jumpConfig = new JumpConfig();
+
+        //capture prod
+        jumpConfig.engageAppId = "appcfamhnpkagijaeinl";
+        jumpConfig.captureDomain = "mobile-dev.janraincapture.com";
+        jumpConfig.captureClientId = "gpy4j6d8bcsepkb2kzm7zp5qkk8wrza6";
+        jumpConfig.captureLocale = "en-US";
+        jumpConfig.captureTraditionalSignInFormName = "signinForm";
+        jumpConfig.traditionalSignInType = Jump.TraditionalSignInType.EMAIL;
+        jumpConfig.captureAppId = "rz47skmnm48jpcv3bh4eguv4b8";
+        jumpConfig.captureFlowName = "native_flow";
+        jumpConfig.captureSocialRegistrationFormName = "socialRegistrationForm";
+        jumpConfig.captureTraditionalRegistrationFormName = "registrationForm";
+        jumpConfig.captureEnableThinRegistration = false;
+
+        Jump.init(this, jumpConfig);
     }
 }
