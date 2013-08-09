@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-source require_clean_work_tree.sh
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source $SCRIPT_DIR/require_clean_work_tree.sh
 require_clean_work_tree
 
 # measures size of gh_docs directory in blocks
@@ -16,6 +18,7 @@ gh_docs_from_branch=`git describe`
 
 git checkout gh-pages
 git pull
+cd $SCRIPT_DIR/..
 git rm -r docs/
 mv gh_docs_temp docs
 git add docs

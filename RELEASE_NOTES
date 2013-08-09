@@ -1,3 +1,6 @@
+v4.2.0:
+ - Adds support for user registration (two-step social registration, as well as
+   traditional registration.) See Docs/User_Registration_Guide.md
 v4.1.1:
  - Adds a null guard protecting from NPE in JRWebViewFragment
 v4.1.0:
