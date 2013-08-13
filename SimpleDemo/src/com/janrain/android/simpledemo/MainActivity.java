@@ -32,318 +32,213 @@
 package com.janrain.android.simpledemo;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
-import com.janrain.android.engage.session.JRSession;
-import com.janrain.android.engage.ui.JRCustomInterfaceConfiguration;
-import com.janrain.android.engage.ui.JRCustomInterfaceView;
+import com.janrain.android.Jump;
+import com.janrain.android.capture.Capture;
+import com.janrain.android.capture.CaptureApiError;
 import com.janrain.android.engage.JREngage;
-import com.janrain.android.engage.JREngageDelegate;
-import com.janrain.android.engage.JREngageError;
-import com.janrain.android.engage.net.async.HttpResponseHeaders;
-import com.janrain.android.engage.types.JRActionLink;
 import com.janrain.android.engage.types.JRActivityObject;
-import com.janrain.android.engage.types.JRDictionary;
-import com.janrain.android.engage.types.JREmailObject;
-import com.janrain.android.engage.types.JRImageMediaObject;
-import com.janrain.android.engage.types.JRSmsObject;
-import com.janrain.android.engage.utils.AndroidUtils;
-import com.janrain.android.engage.utils.StringUtils;
+import com.janrain.android.utils.LogUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static com.janrain.android.capture.Capture.CaptureApiRequestCallback;
 
 public class MainActivity extends FragmentActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private final Jump.SignInResultHandler signInResultHandler = new Jump.SignInResultHandler() {
+        public void onSuccess() {
+            AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
+            b.setMessage("Sign-in complete.");
+            b.setNeutralButton("Dismiss", null);
+            b.show();
+        }
 
-    private JREngage mEngage;
-    private JRActivityObject mActivity;
+        public void onFailure(SignInError error) {
+            if (error.reason == SignInError.FailureReason.CAPTURE_API_ERROR &&
+                    error.captureApiError.isMergeFlowError()) {
+                // Called below is the default merge-flow handler. Merge behavior may also be implemented by
+                // headless-native-API for more control over the user experience.
+                //
+                // To do so, call Jump.showSignInDialog or Jump.performTraditionalSignIn directly, and
+                // pass in the merge-token and existing-provider-name retrieved from `error`.
+                //
+                // String mergeToken = error.captureApiError.getMergeToken();
+                // String existingProvider = error.captureApiError.getExistingAccountIdentityProvider()
+                //
+                // (An existing-provider-name of "capture" indicates a conflict with a traditional-sign-in
+                // account. You can handle this case yourself, by displaying a dialog and calling
+                // Jump.performTraditionalSignIn, or you can call Jump.showSignInDialog(..., "capture") and
+                // a library-provided dialog will be provided.)
 
-    // Activity object variables
-    private String mTitleText = "title text";
-    private String mActionLink;
-    private String mDescriptionText = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam " +
-            "nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad " +
-            "minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea " +
-            "commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse " +
-            "molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et " +
-            "iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait " +
-            "nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet " +
-            "doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est " +
-            "usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores " +
-            "legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur " +
-            "mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quam nunc putamus " +
-            "parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta " +
-            "decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.";
-    //private String mImageUrl = "http://www.janrain.com/sites/default/themes/janrain/logo.png";
-    private String mImageUrl = "http://janrain.com/wp-content/themes/janrain/assets/images/sprite.png";
+                Jump.startDefaultMergeFlowUi(MainActivity.this, error, signInResultHandler);
+            } else if (error.reason == SignInError.FailureReason.CAPTURE_API_ERROR &&
+                    error.captureApiError.isTwoStepRegFlowError()) {
+                // Called when a user cannot sign in because they have no record, but a two-step social
+                // registration is possible. (Which means that the error contains pre-filled form fields
+                // for the registration form.
+                Intent i = new Intent(MainActivity.this, RegistrationActivity.class);
+                JSONObject prefilledRecord = error.captureApiError.getPreregistrationRecord();
+                i.putExtra("preregistrationRecord", prefilledRecord.toString());
+                i.putExtra("socialRegistrationToken", error.captureApiError.getSocialRegistrationToken());
+                MainActivity.this.startActivity(i);
+            } else {
+                AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
+                b.setMessage("Sign-in failure:" + error);
+                b.setNeutralButton("Dismiss", null);
+                b.show();
+            }
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        //StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-        //        .detectAll()
-        //        .detectDiskReads()
-        //        .detectDiskWrites()
-        //        .detectNetwork()   // or .detectAll() for all detectable problems
-        //        .penaltyLog()
-        //        .penaltyDeath()
-        //        .build());
-        //StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-        //        .detectAll()
-        //        .detectLeakedSqlLiteObjects()
-        //        .detectLeakedClosableObjects()
-        //        .penaltyLog()
-        //        .penaltyDeath()
-        //        .build());
-
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate");
 
-        setContentView(R.layout.main);
+        //enableStrictMode();
 
-        if (!initEngage()) return;
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
 
-        Button testAuth = (Button) findViewById(R.id.btn_test_auth);
-        EditText shareUrlEdit = (EditText) findViewById(R.id.share_url);
-        Button testDirectAuth = (Button) findViewById(R.id.btn_test_specific_provider);
-        Button testBetaShare = (Button) findViewById(R.id.btn_test_beta_direct_share);
+        Button testAuth = addButton(linearLayout, "Test Capture Auth");
+        Button dumpRecord = addButton(linearLayout, "Dump Record to Log");
+        Button touchRecord = addButton(linearLayout, "Edit About Me Attribute");
+        Button syncRecord = addButton(linearLayout, "Sync Record");
+        addButton(linearLayout, "Test Share").setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                JREngage.getInstance().showSocialPublishingDialog(MainActivity.this,
+                        new JRActivityObject("aslkdfj", "http://google.com"));
+            }
+        });
+
+        //Button refreshAccesstoken = addButton(linearLayout, "Refresh Access Token");
+
+        addButton(linearLayout, "Traditional Registration").setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                MainActivity.this.startActivity(new Intent(MainActivity.this, RegistrationActivity.class));
+            }
+        });
+        Button signOut = addButton(linearLayout, "Sign Out");
+
+        setContentView(linearLayout);
 
         testAuth.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Log.d(TAG, "testAuth onClick");
-                mEngage.showAuthenticationDialog(MainActivity.this, CustomUi.class);
+                Jump.showSignInDialog(MainActivity.this, null, signInResultHandler, null);
             }
         });
 
-        Button testShare = (Button) findViewById(R.id.btn_test_pub);
-        testShare.setOnClickListener(new View.OnClickListener() {
+        dumpRecord.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                buildActivity();
-                mEngage.showSocialPublishingDialog(MainActivity.this, mActivity, CustomUi.class);
+                LogUtils.logd(String.valueOf(Jump.getSignedInUser()));
             }
         });
-        testShare.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View v) {
-                if (findViewById(R.id.jr_publish_fragment) != null) {
-                    buildActivity();
-                    mEngage.showSocialPublishingFragment(
-                            mActivity,
-                            MainActivity.this,
-                            com.janrain.android.engage.R.id.jr_publish_fragment,
-                            false,
-                            null,
-                            null,
-                            null,
-                            null);
+
+        touchRecord.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (Jump.getSignedInUser() == null) {
+                    Toast.makeText(MainActivity.this, "Can't edit without record instance.",
+                            Toast.LENGTH_LONG).show();
+                    return;
                 }
+                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
 
-                return true;
+                alert.setTitle("About Me");
+                alert.setMessage(Jump.getSignedInUser().optString("aboutMe"));
+
+                final EditText input = new EditText(MainActivity.this);
+                alert.setView(input);
+
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        try {
+                            Jump.getSignedInUser().put("aboutMe", input.getText().toString());
+                        } catch (JSONException e) {
+                            throw new RuntimeException("Unexpected", e);
+                        }
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", null);
+                alert.show();
             }
         });
 
-        shareUrlEdit.addTextChangedListener(new TextWatcher() {
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            public void afterTextChanged(Editable s) {
-                mActionLink = s.toString();
-//                PrefUtils.putString(ACTION_LINK_KEY, mActionLink);
-            }
-        });
-        
-        testDirectAuth.setOnClickListener(new View.OnClickListener() {
+        syncRecord.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mEngage.showAuthenticationDialog(MainActivity.this, "facebook");
-            }
-        });
+                try {
+                    if (Jump.getSignedInUser() == null) {
+                        Toast.makeText(MainActivity.this, "Can't sync without record instance.",
+                                Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
-        testBetaShare.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                buildActivity();
-                mEngage.showBetaDirectShareDialog(MainActivity.this, mActivity);
-            }
-        });
-    }
+                    Jump.getSignedInUser().synchronize(new CaptureApiRequestCallback() {
+                        public void onSuccess() {
+                            Toast.makeText(MainActivity.this, "Record updated", Toast.LENGTH_LONG).show();
+                        }
 
-    public static class CustomUi extends JRCustomInterfaceConfiguration {
-        public CustomUi() {
-            //mProviderListSectionHeader = "header";
-            //mProviderListSectionFooter = "footer";
-            //mProviderListHeader = new CustomSignin();
-            //mAuthenticationBackgroundDrawable = c.getResources().getDrawable(R.drawable.custom_signin_bg);
-            //mProviderListTitle = "Sign-in to MyApplication";
-            //mLandingTitle = "Landing";
-            //mWebViewTitle = "WebView";
-            //mSharingTitle = "Sharing";
-            //mSharingUsesSystemTabs = true;
-            //mColorButtons = false;
-        }
-
-        @Override
-        public void onProviderListViewCreate(ListView providerListView) {
-            super.onProviderListViewCreate(providerListView);
-            //providerListView.setDividerHeight(AndroidUtils.scaleDipToPixels(20));
-        }
-    }
-
-    public static class CustomSignin extends JRCustomInterfaceView {
-        @Override
-        public View onCreateView(Context context,
-                LayoutInflater inflater,
-                ViewGroup container,
-                Bundle savedInstanceState) {
-            View v = inflater.inflate(R.layout.custom_signin_example, container, false);
-            final EditText userName = (EditText) v.findViewById(R.id.username_edit);
-            final EditText password = (EditText) v.findViewById(R.id.password_edit);
-            Button signIn = (Button) v.findViewById(R.id.custom_signin_button);
-            signIn.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    Toast.makeText(getActivity(), "CustomSignin:\n" + userName.getText() + "\n" +
-                            password.getText(), Toast.LENGTH_LONG).show();
-                    //finishJrSignin();
-                    showProgressIndicator(false, null);
+                        public void onFailure(CaptureApiError e) {
+                            Toast.makeText(MainActivity.this, "Record update failed, error logged",
+                                    Toast.LENGTH_LONG).show();
+                            LogUtils.loge(e.toString());
+                        }
+                    });
+                } catch (Capture.InvalidApidChangeException e) {
+                    throw new RuntimeException("Unexpected", e);
                 }
-            });
+            }
+        });
 
-            return v;
-        }
+        signOut.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Jump.signOutCaptureUser(MainActivity.this);
+            }
+        });
     }
 
-    private boolean initEngage() {
-        String engageAppId = StringUtils.trim(AndroidUtils.readAsset(this, "app_id.txt"));
-        if (engageAppId == null) {
-            new AlertDialog.Builder(this).setTitle("Configuration error")
-                    .setMessage("You need to create assets/app_id.txt, then recompile and reinstall.")
-                    .create().show();
-            return false;
-        }
-
-        String engageTokenUrl = StringUtils.trim(AndroidUtils.readAsset(this, "token_url.txt"));
-
-        mEngage = JREngage.initInstance(this, engageAppId, engageTokenUrl, mJREngageDelegate);
-        return mEngage != null;
-    }
-
-    private void buildActivity() {
-        mActivity = new JRActivityObject("shared an article from the Janrain Blog!",
-            mActionLink);
-
-        mActivity.setTitle(mTitleText);
-        mActivity.setDescription(mDescriptionText);
-        mActivity.addMedia(new JRImageMediaObject(mImageUrl, "http://developer.android.com"));
-
-        String smsBody = "Check out this article!\n" + mActionLink;
-        String emailBody = mActionLink + "\n" + mDescriptionText;
-
-        mActivity.addActionLink(new JRActionLink("test action", "http://android.com"));
-
-        JRSmsObject sms = new JRSmsObject(smsBody);
-        JREmailObject email = new JREmailObject("Check out this article!", emailBody);
-        if (!TextUtils.isEmpty(mActionLink)) {
-            sms.addUrl(mActionLink);
-            email.addUrl(mActionLink);
-        }
-        mActivity.setEmail(email);
-        mActivity.setSms(sms);
+    private Button addButton(LinearLayout linearLayout, String label) {
+        Button button = new Button(this);
+        button.setText(label);
+        button.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+        linearLayout.addView(button);
+        return button;
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart");
+    protected void onPause() {
+        Jump.saveToDisk(this);
+        super.onPause();
     }
 
-    private JREngageDelegate mJREngageDelegate  = new JREngageDelegate() {
-        public void jrEngageDialogDidFailToShowWithError(JREngageError error) {
-            String message = "Simpledemo:\nJREngage dialog failed to show.\nError: " +
-                    ((error == null) ? "unknown" : error.getMessage());
-
-            Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
-        }
-
-        public void jrAuthenticationDidSucceedForUser(JRDictionary authInfo, String provider) {
-            String deviceToken = authInfo.getAsString("device_token");
-            JRDictionary profile = (authInfo == null) ? null : authInfo.getAsDictionary("profile");
-            String identifier = profile.getAsString("identifier");
-            String displayName = (profile == null) ? null : profile.getAsString("displayName");
-            String message = "Authentication successful" + ((TextUtils.isEmpty(displayName))
-                    ? "" : (" for user: " + displayName));
-
-            //Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
-            showResultDialog(message);
-        }
-
-        public void jrAuthenticationDidReachTokenUrl(String tokenUrl,
-                                                     HttpResponseHeaders response,
-                                                     String tokenUrlPayload,
-                                                     String provider) {
-            org.apache.http.Header[] headers = response.getHeaders();
-            org.apache.http.cookie.Cookie[] cookies = response.getCookies();
-            String firstCookieValue = response.getHeaderField("set-cookie");
-            showResultDialog("Token URL response", tokenUrlPayload);
-        }
-        
-        private void showResultDialog(String title, String message) {
-            // This shouldn't be done here because MainActivity isn't displayed (resumed?) when this is
-            // called but it works most of the time.
-            (new AlertDialog.Builder(MainActivity.this)).setTitle(title)
-                    .setMessage(message)
-                    .setNeutralButton("OK", null)
-                    .show();
-        }
-        
-        private void showResultDialog(String title) {
-            showResultDialog(title, null);
-        }
-
-        public void jrAuthenticationDidNotComplete() {
-            showResultDialog("Authentication did not complete");
-        }
-
-        public void jrAuthenticationDidFailWithError(JREngageError error, String provider) {
-            String message = ((error == null) ? "unknown" : error.getMessage());
-
-            showResultDialog("Authentication Failed.", message);
-        }
-
-        public void jrAuthenticationCallToTokenUrlDidFail(String tokenUrl,
-                                                          JREngageError error,
-                                                          String provider) {
-            showResultDialog("Failed to reach token URL");
-        }
-
-        public void jrSocialDidNotCompletePublishing() {
-            showResultDialog("Sharing did not complete");
-        }
-
-        public void jrSocialDidCompletePublishing() {
-            showResultDialog("Sharing did complete");
-        }
-
-        public void jrSocialDidPublishJRActivity(JRActivityObject activity, String provider) {
-            Toast.makeText(MainActivity.this, "Activity shared", Toast.LENGTH_LONG).show();
-        }
-
-        public void jrSocialPublishJRActivityDidFail(JRActivityObject activity,
-                                                     JREngageError error,
-                                                     String provider) {
-            Toast.makeText(MainActivity.this, "Activity failed to share", Toast.LENGTH_LONG).show();
-        }
-    };
+    private static void enableStrictMode() {
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectAll()
+        //        .detectDiskReads()
+        //        .detectDiskWrites()
+        //        .detectNetwork()   // or .detectAll() for all detectable problems
+                .penaltyLog()
+        //        .penaltyDeath()
+                .build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                //.detectAll()
+                //.detectActivityLeaks()
+                //.detectLeakedSqlLiteObjects()
+                //.detectLeakedClosableObjects()
+                .penaltyLog()
+                //.penaltyDeath()
+                .build());
+    }
 }
