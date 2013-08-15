@@ -62,10 +62,7 @@
   </build>
 
   <distributionManagement>
-    <snapshotRepository>
-      <id>qype-snapshots-repository</id>
-      <url>${qypeRepositoryUrl}/snapshots</url>
-    </snapshotRepository>
+    
     <repository>
       <id>qype-releases-repository</id>
       <url>${qypeRepositoryUrl}/releases</url>
