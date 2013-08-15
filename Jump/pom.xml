@@ -24,6 +24,11 @@
       <artifactId>support-v4</artifactId>
       <version>r7</version>
     </dependency>
+    <dependency>
+        <groupId>com.google.android</groupId>
+        <artifactId>annotations</artifactId>
+        <version>4.1.1.4</version>
+    </dependency>
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>
