@@ -31,6 +31,7 @@
  */
 package com.janrain.android.engage.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -111,7 +112,9 @@ public class JRWebViewFragment extends JRUiFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         LogUtils.logd(TAG, "[onCreateView]");
-        if (mSession == null) return null;
+        if (mSession == null) {
+            return null;
+        }
         //StrictMode.ThreadPolicy tp = StrictMode.getThreadPolicy();
         //StrictMode.allowThreadDiskReads();
         //StrictMode.allowThreadDiskWrites();
@@ -178,7 +181,9 @@ public class JRWebViewFragment extends JRUiFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (mSession == null) return;
+        if (mSession == null) {
+            return;
+        }
 
         mProvider = mSession.getCurrentlyAuthenticatingProvider();
         if (mProvider == null) {
@@ -194,17 +199,23 @@ public class JRWebViewFragment extends JRUiFragment {
             String currentUrl = savedInstanceState.getString(KEY_CURRENTLY_LOADING_WEBVIEW_URL);
             configureWebViewUa();
             mWebView.restoreState(savedInstanceState);
-            if (currentUrl != null) mWebView.loadUrl(currentUrl);
+            if (currentUrl != null) {
+                mWebView.loadUrl(currentUrl);
+            }
         } else {
             mProvider = mSession.getCurrentlyAuthenticatingProvider();
             configureWebViewUa();
             final Handler uiThread = new Handler();
             ThreadUtils.executeInBg(new Runnable() {
+                @Override
                 public void run() {
                     final URL startUrl = mSession.startUrlForCurrentlyAuthenticatingProvider();
                     uiThread.post(new Runnable() {
+                        @Override
                         public void run() {
-                            if (startUrl == null) return;
+                            if (startUrl == null) {
+                                return;
+                            }
                             mWebView.loadUrl(startUrl.toString());
                         }
                     });
@@ -224,7 +235,9 @@ public class JRWebViewFragment extends JRUiFragment {
     private void configureWebViewUa() {
         String customUa = mProvider.getWebViewOptions().getAsString(JRDictionary.KEY_USER_AGENT);
         //if (mUseDesktopUa) mWebViewSettings.setUserAgentString(getString(R.string.jr_desktop_browser_ua));
-        if (customUa != null) mWebViewSettings.setUserAgentString(customUa);
+        if (customUa != null) {
+            mWebViewSettings.setUserAgentString(customUa);
+        }
     }
 
     @Override
@@ -232,7 +245,9 @@ public class JRWebViewFragment extends JRUiFragment {
         super.onStart();
         mWebView.setWebChromeClient(mWebChromeClient);
         mWebView.setWebViewClient(mWebViewClient);
-        if (mCurrentlyLoadingUrl != null) mWebView.loadUrl(mCurrentlyLoadingUrl);
+        if (mCurrentlyLoadingUrl != null) {
+            mWebView.loadUrl(mCurrentlyLoadingUrl);
+        }
     }
 
     @Override
@@ -261,13 +276,14 @@ public class JRWebViewFragment extends JRUiFragment {
     public void onDestroy() {
         super.onDestroy();
 
-<<<<<<< HEAD:JREngage/src/com/janrain/android/engage/ui/JRWebViewFragment.java
         // guard against NPEs as in onStop()
-=======
->>>>>>> upstream/master:Jump/src/com/janrain/android/engage/ui/JRWebViewFragment.java
-        if (mWebView != null) mWebView.destroy();
+        if (mWebView != null) {
+            mWebView.destroy();
+        }
 
-        if (mRetain != null) JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
+        if (mRetain != null) {
+            JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
+        }
     }
 
     @Override
@@ -280,7 +296,9 @@ public class JRWebViewFragment extends JRUiFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (mProvider != null) outState.putString(KEY_PROVIDER_NAME, mProvider.getName());
+        if (mProvider != null) {
+            outState.putString(KEY_PROVIDER_NAME, mProvider.getName());
+        }
         outState.putBoolean(KEY_IS_ALERT_SHOWING, mIsAlertShowing);
         outState.putBoolean(KEY_IS_FINISH_PENDING, mIsFinishPending);
         outState.putBoolean(KEY_IS_LOADING_MOBILE_ENDPOINT, mIsLoadingMobileEndpoint);
@@ -306,6 +324,7 @@ public class JRWebViewFragment extends JRUiFragment {
                     .setTitle(options.getString(KEY_DIALOG_TITLE))
                     .setMessage(options.getString(KEY_DIALOG_MESSAGE))
                     .setPositiveButton(getString(R.string.jr_dialog_ok), new DialogInterface.OnClickListener() {
+                        @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mIsAlertShowing = false;
                             if (mIsFinishPending) {
@@ -315,7 +334,7 @@ public class JRWebViewFragment extends JRUiFragment {
                         }
                     }).create();
         }
-        
+
         return super.onCreateDialog(id, options);
     }
 
@@ -336,25 +355,35 @@ public class JRWebViewFragment extends JRUiFragment {
         if (mIsAlertShowing) {
             mIsFinishPending = true;
         } else {
-            if (mRetain != null) JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
+            if (mRetain != null) {
+                JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
+            }
             finishFragment();
         }
     }
 
     private boolean isMobileEndpointUrl(String url) {
-        if (mSession == null) return false;
+        if (mSession == null) {
+            return false;
+        }
         final String endpointUrl = mSession.getRpBaseUrl() + "/signin/device";
         return ((!TextUtils.isEmpty(url)) && (url.startsWith(endpointUrl)));
     }
 
     private void showProgressSpinner() {
-        if (mProgressSpinner == null) return;
+        if (mProgressSpinner == null) {
+            return;
+        }
         mProgressSpinner.setVisibility(View.VISIBLE);
     }
 
     private void hideProgressSpinner() {
-        if (mProgressSpinner == null) return;
-        if (!mIsLoadingMobileEndpoint) mProgressSpinner.setVisibility(View.GONE);
+        if (mProgressSpinner == null) {
+            return;
+        }
+        if (!mIsLoadingMobileEndpoint) {
+            mProgressSpinner.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -371,7 +400,7 @@ public class JRWebViewFragment extends JRUiFragment {
             mWebView.reload();
             return true;
         }
-        
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -387,6 +416,7 @@ public class JRWebViewFragment extends JRUiFragment {
 
     private DownloadListener mWebViewDownloadListener = new DownloadListener() {
         /* Used by pre 2.3 (2.2?) instead of shouldOverrideUrlLoading because of platform bugs. */
+        @Override
         public void onDownloadStart(String url,
                                     String userAgent,
                                     String contentDisposition,
@@ -395,7 +425,9 @@ public class JRWebViewFragment extends JRUiFragment {
             LogUtils.logd(TAG, "[onDownloadStart] URL: " + url + " | mimetype: " + mimetype
                     + " | length: " + contentLength);
 
-            if (isMobileEndpointUrl(url)) loadMobileEndpointUrl(url);
+            if (isMobileEndpointUrl(url)) {
+                loadMobileEndpointUrl(url);
+            }
         }
     };
 
@@ -418,7 +450,9 @@ public class JRWebViewFragment extends JRUiFragment {
             /* Intercept and sink mailto links because the webview auto-linkifies example email addresses
              * in the Google and Yahoo login pages and it's too easy to fat finger them :(
              */
-            if (Uri.parse(url).getScheme().equals("mailto")) return true;
+            if (Uri.parse(url).getScheme().equals("mailto")) {
+                return true;
+            }
 
             // Same for any scheme besides HTTP or HTTPS, e.g. market://
             return !(Uri.parse(url).getScheme().equals("http") || Uri.parse(url).getScheme().equals("https"));
@@ -453,16 +487,20 @@ public class JRWebViewFragment extends JRUiFragment {
                         "mode");
                 return;
             }
-            /* We inject some JS into the WebView. The JS is from the configuration pulled down from 
+            /* We inject some JS into the WebView. The JS is from the configuration pulled down from
              * Engage. This way we can remotely fix up pages which render poorly/brokenly, like Yahoo!.
              */
             List<String> jsInjects =
                     mProvider.getWebViewOptions().getAsListOfStrings(JRDictionary.KEY_JS_INJECTIONS, true);
-            for (String i : jsInjects) view.loadUrl("javascript:" + i);
+            for (String i : jsInjects) {
+                view.loadUrl("javascript:" + i);
+            }
 
-            boolean showZoomControl = 
+            boolean showZoomControl =
                     mProvider.getWebViewOptions().getAsBoolean(JRDictionary.KEY_SHOW_ZOOM_CONTROL);
-            if (showZoomControl) view.invokeZoomPicker();
+            if (showZoomControl) {
+                view.invokeZoomPicker();
+            }
         }
 
         @Override
@@ -553,6 +591,7 @@ public class JRWebViewFragment extends JRUiFragment {
             }
         }
 
+        @SuppressLint("NewApi")
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
             LogUtils.logd(TAG, "[console] message: '" + AndroidUtils.consoleMessageGetMessage(consoleMessage)
@@ -564,7 +603,9 @@ public class JRWebViewFragment extends JRUiFragment {
     @Override
     /*package*/ void onBackPressed() {
         LogUtils.logd(TAG, "[onBackPressed]");
-        if (mRetain != null) JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
+        if (mRetain != null) {
+            JRConnectionManager.stopConnectionsForDelegate(mRetain.mConnectionDelegate);
+        }
         doAuthRestart();
     }
 
@@ -605,7 +646,9 @@ public class JRWebViewFragment extends JRUiFragment {
             // TODO back button is no longer disabled because of the switch from modal dialog
             // to progress spinner, fix the code path when the user hits the back button now.
 
-            if (!isSharingFlow()) mSession.saveLastUsedAuthProvider();
+            if (!isSharingFlow()) {
+                mSession.saveLastUsedAuthProvider();
+            }
             mSession.triggerAuthenticationDidCompleteWithPayload(resultDictionary);
             finishFragmentWithResult(Activity.RESULT_OK);
         } else {
@@ -719,8 +762,8 @@ public class JRWebViewFragment extends JRUiFragment {
         Exception mDeferredCdfE;
         String mDeferredCdfS;
         Object mDeferredCdfO;
-        
-        
+
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -743,6 +786,7 @@ public class JRWebViewFragment extends JRUiFragment {
         }
 
         private JRConnectionManagerDelegate mConnectionDelegate = new JRConnectionManagerDelegate() {
+            @Override
             public void connectionDidFinishLoading(HttpResponseHeaders headers,
                                                    byte[] payload,
                                                    String requestUrl,
@@ -756,6 +800,7 @@ public class JRWebViewFragment extends JRUiFragment {
                 maybeDispatchMessages();
             }
 
+            @Override
             public void connectionDidFail(Exception ex,
                                           HttpResponseHeaders responseHeaders,
                                           byte[] payload, String requestUrl,
@@ -799,7 +844,9 @@ public class JRWebViewFragment extends JRUiFragment {
 
     @Override
     String getCustomTitle() {
-        if (getCustomUiConfiguration() != null) return getCustomUiConfiguration().mWebViewTitle;
+        if (getCustomUiConfiguration() != null) {
+            return getCustomUiConfiguration().mWebViewTitle;
+        }
         return null;
     }
 }
