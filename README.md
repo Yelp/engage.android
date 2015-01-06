@@ -1,3 +1,5 @@
+**NOTE: THIS REPO HAS BEEN DEPRECATED**
+
 Welcome to the JUMP platform libary for Android.  This library is available open-source under a Berkeley
 license, as found in the LICENSE file.
 
